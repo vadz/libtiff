@@ -229,8 +229,6 @@ const TIFFFieldInfo tiffFieldInfo[] = {
 #endif
 #endif
 #ifdef PHOTOSHOP_SUPPORT
-    { TIFFTAG_PHOTOSHOP,    -1,-3, TIFF_UNDEFINED, FIELD_PHOTOSHOP, 
-      FALSE,    TRUE,   "Photoshop" },
     { TIFFTAG_PHOTOSHOP,    -1,-1, TIFF_BYTE,   FIELD_PHOTOSHOP, 
       FALSE,    TRUE,   "Photoshop" },
 #endif
