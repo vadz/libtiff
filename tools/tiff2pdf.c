@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.4  2003-12-01 10:51:39  rossf
+ * Revision 1.5  2004-01-26 17:00:56  dron
+ * Get rid of C++ style comments.
+ *
+ * Revision 1.4  2003/12/01 10:51:39  rossf
  * Some bugs fixed.
  *
  * Revision 1.3  2003/11/29 15:32:40  rossf
@@ -1726,8 +1729,8 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			t2p->tiff_whitechromaticities[0]=xfloatp[0];
 			t2p->tiff_whitechromaticities[1]=xfloatp[1];
 		} else {
-			t2p->tiff_whitechromaticities[0]=0.3457; //0.3127;
-			t2p->tiff_whitechromaticities[1]=0.3585;//0.3290;
+			t2p->tiff_whitechromaticities[0]=0.3457; /* 0.3127; */
+			t2p->tiff_whitechromaticities[1]=0.3585; /* 0.3290; */
 		}
 	}
 #endif
@@ -2075,7 +2078,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			}
 			TIFFReadRawStrip(input, 0, (tdata_t) buffer, t2p->tiff_datasize);
 			if (t2p->tiff_fillorder==FILLORDER_LSB2MSB){
-					// make sure is lsb-to-msb bit-endianness fill order
+					/* make sure is lsb-to-msb bit-endianness fill order */
 					TIFFReverseBits(buffer, t2p->tiff_datasize);
 			}
 			TIFFWriteFile(output, (tdata_t) buffer, t2p->tiff_datasize);
@@ -4664,8 +4667,8 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 			written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
 #endif
 #ifndef COLORIMETRY_SUPPORT
-			X_W = 0.3457;// 0.3127; // D50, commented D65
-			Y_W = 0.3585;//0.3290;
+			X_W = 0.3457; /* 0.3127; */ /* D50, commented D65 */
+			Y_W = 0.3585; /* 0.3290; */
 			Z_W = 1.0 - (X_W + Y_W);
 			X_W /= Y_W;
 			Z_W /= Y_W;

@@ -670,7 +670,7 @@ tiffcp(TIFF* in, TIFF* out)
 	{
 	  unsigned short pg0, pg1;
 	  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1))
-		if (pageNum < 0) // only one input file
+		if (pageNum < 0) /* only one input file */
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
 		else 
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
