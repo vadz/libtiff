@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -543,12 +543,17 @@ tiffcp(TIFF* in, TIFF* out)
                  && input_compression == COMPRESSION_JPEG ) {
                 TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
             }
-	    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric)
-		&& input_photometric == PHOTOMETRIC_RGB) {
-		if (jpegcolormode == JPEGCOLORMODE_RGB)
-		    TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
-		else
-		    TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric)) {
+		if(input_photometric == PHOTOMETRIC_RGB) {
+			if (jpegcolormode == JPEGCOLORMODE_RGB)
+		    		TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
+					     PHOTOMETRIC_YCBCR);
+			else
+		    		TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
+					     PHOTOMETRIC_RGB);
+		} else
+			TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
+				     input_photometric);
 	    }
         }
 	else if (compression == COMPRESSION_SGILOG
@@ -1045,8 +1050,7 @@ DECLAREreadFunc(readSeparateStripsIntoBuffer)
 		uint8* bufp = (uint8*) buf;
 		uint32 row;
 		tsample_t s;
-
-		for (row = 0; row < imagelength; row++) {
+for (row = 0; row < imagelength; row++) {
 			/* merge channels */
 			for (s = 0; s < spp; s++) {
 				uint8* bp = bufp + s;
