@@ -114,6 +114,7 @@ LIBTIFF_ALPHA_VERSION = @LIBTIFF_ALPHA_VERSION@
 LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
 LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
 LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
+LIBTIFF_RELEASE_DATE = @LIBTIFF_RELEASE_DATE@
 LIBTIFF_VERSION = @LIBTIFF_VERSION@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -178,7 +179,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-EXTRA_DIST = README listtif.c maketif.c xtif_dir.cxtiffio.h xtiffiop.h
+EXTRA_DIST = README listtif.c maketif.c xtif_dir.c xtiffio.h xtiffiop.h
 all: all-am
 
 .SUFFIXES:

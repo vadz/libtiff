@@ -1,46 +1,52 @@
 HOWTO-RELEASE: 
-Notes on releasing.
+
+Notes on releasing. You will need appropriate autoconf, automake and libtool
+utilities to release a package.
 
 1. Commit any unsaved changes. 
 
 2. "make clean"
 
 3. Create html/vX.X.html.  Take ChangeLog entries and html-ify in there. 
-   Easist thing to do is take html/vX.(X-1).html and use it as a template. 
+   Easist thing to do is take html/vX.(X-1).html and use it as a template.
+   Add that file to the list of EXTRA_DIST files in the html/Makefile.am.
 
 3.5. Update html/index.html to refer to this new page as the current release.
 
-4. Add any new files that have been created that should be part 
-   of the distribution (like the html file in step 2), to 
-   TIFFFILES in Makefile.in
-
-5. Increment version in file "VERSION".  Put Alpha or Beta after the version
-   with a space, if applicable. 
+4. Increment version in configure.ac.  Put 'alpha' or 'beta' after
+   the version, if applicable. 
 
    eg.
    3.5.7
     or
-   3.5.8 Beta
+   3.5.8beta
 
-6. sh configure; make; make install (to test). 
+   Version should be updated in two places: in the second argument of the
+   AC_INIT macro and in LIBTIFF_xxx_VERSION variables.
 
-7. make release -- this will update "RELEASE-DATE" in the top level dir,
-   libtiff/tiffvers.h and create the .tar.gz and .zip archives one directory 
-   above.  
+5. make release -- this will update "RELEASE-DATE" and "VERSION" in the top
+   level dir, and libtiff/tiffvers.h.  
 
-8. Please verify that the version info in libtiff/tiffvers.h is right.
+6. Please verify that the version info in RELEASE-DATE, VERSION and
+   libtiff/tiffvers.h is right.
 
-9. make distclean
+7. sh configure; make; make distcheck (to test). 
 
-10. cvs commit
+8. make distclean
 
-11. cvs tag Release-v3-5-7 (or the appropriate name for the release)
+9. cvs commit
 
-12. Copy to ftp.remotesensing.org ftp site. 
+10. cvs tag Release-v3-5-7 (or the appropriate name for the release)
+
+11. make dist
+    Two files with names tiff-version.tar.gz and tiff-version.zip will
+    be created in the top level package directory.
+
+11. Copy to ftp.remotesensing.org ftp site. 
     scp tiff-*.tar.gz remotesensing.org:/ftp/remotesensing/pub/libtiff
     scp tiff-*.zip remotesensing.org:/ftp/remotesensing/pub/libtiff
 
-13. Announce to list, tiff@olympiakos.com
+12. Announce to list, tiff@remotesensing.org]
 
 14. Update libtiff page on freshmeat with new version announcement.
 

@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-AUTOMAKE_OPTIONS = foreign dist-zip
+AUTOMAKE_OPTIONS = dist-zip foreign
 
 EXTRA_DIST = \
 	COPYRIGHT \
@@ -38,4 +38,9 @@ EXTRA_DIST = \
 	nmake.opt
 
 SUBDIRS = port libtiff tools contrib man html
+
+release:
+	(rm -f RELEASE-DATE && echo $(LIBTIFF_RELEASE_DATE) > RELEASE-DATE)
+	(rm -f VERSION && echo $(LIBTIFF_VERSION) > VERSION)
+	(rm -f ./libtiff/tiffvers.h && sed 's,LIBTIFF_VERSION,$(LIBTIFF_VERSION),;s,LIBTIFF_RELEASE_DATE,$(LIBTIFF_RELEASE_DATE),' ./libtiff/tiffvers.h.in > ./libtiff/tiffvers.h)
 

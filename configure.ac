@@ -25,7 +25,7 @@ dnl OF THIS SOFTWARE.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([LibTIFF Software], 3.7.0, [tiff@remotesensing.org], libtiff)
+AC_INIT([LibTIFF Software], 3.7.0alpha, [tiff@remotesensing.org], tiff)
 
 dnl Compute the canonical target-system type variable
 AC_CANONICAL_TARGET
@@ -34,18 +34,22 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(libtiff/config.h.in)
 AM_CONFIG_HEADER(libtiff/config.h)
 
-dnl Versioning
+dnl Versioning.
+dnl Don't fill the ALPHA_VERSION field if not applicable.
 LIBTIFF_MAJOR_VERSION=3
 LIBTIFF_MINOR_VERSION=7
 LIBTIFF_MICRO_VERSION=0
 LIBTIFF_ALPHA_VERSION=alpha
 LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
+dnl This will be used with the 'make release' target
+LIBTIFF_RELEASE_DATE=`date +"%Y%m%d"`
 
 AC_SUBST(LIBTIFF_MAJOR_VERSION)
 AC_SUBST(LIBTIFF_MINOR_VERSION)
 AC_SUBST(LIBTIFF_MICRO_VERSION)
 AC_SUBST(LIBTIFF_ALPHA_VERSION)
 AC_SUBST(LIBTIFF_VERSION)
+AC_SUBST(LIBTIFF_RELEASE_DATE)
 
 dnl Checks for programs.
 AC_PROG_LIBTOOL
@@ -381,6 +385,11 @@ AC_CONFIG_FILES([Makefile \
 		 contrib/mac-mpw/Makefile \
 		 contrib/mfs/Makefile \
 		 contrib/ojpeg/Makefile \
+		 contrib/pds/Makefile \
+		 contrib/ras/Makefile \
+		 contrib/stream/Makefile \
+		 contrib/tags/Makefile \
+		 contrib/win_dib/Makefile \
                  html/Makefile \
 		 html/images/Makefile \
 		 html/man/Makefile \

@@ -23,5 +23,5 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = README listtif.c maketif.c xtif_dir.cxtiffio.h xtiffiop.h
+EXTRA_DIST = README listtif.c maketif.c xtif_dir.c xtiffio.h xtiffiop.h
 
