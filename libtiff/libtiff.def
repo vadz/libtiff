@@ -97,6 +97,6 @@ EXPORTS TIFFOpen
 	_TIFFmemcmp
 	TIFFCreateDirectory
 	TIFFDefaultStripSize
-
+	TIFFSetTagExtender
 
 
