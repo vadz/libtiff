@@ -44,9 +44,6 @@
 # include <string.h>
 #endif
 
-#include "tiffio.h"
-#include "tif_dir.h"
-
 /* Define BSDTYPES if we don't have the ones */
 # ifndef HAVE_U_CHAR
 typedef unsigned char u_char;
@@ -60,6 +57,9 @@ typedef unsigned int u_int;
 # ifndef HAVE_U_LONG
 typedef unsigned long u_long;
 # endif
+
+#include "tiffio.h"
+#include "tif_dir.h"
 
 typedef double dblparam_t;
 

@@ -79,9 +79,6 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strncasecmp' function. */
-#undef HAVE_STRNCASECMP
-
 /* Define to 1 if you have the `strrchr' function. */
 #undef HAVE_STRRCHR
 
@@ -117,6 +114,9 @@
 
 /* Define to 1 if the system has the type `u_short'. */
 #undef HAVE_U_SHORT
+
+/* Define to 1 if you have the <winsock.h> header file. */
+#undef HAVE_WINSOCK_H
 
 /* Set the native cpu bit order */
 #undef HOST_FILLORDER
