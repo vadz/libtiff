@@ -943,6 +943,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 {
                     *va_arg(ap, void **) = tv->value;
                     ret_val = 1;
+                    break;
                 }
                 else
                 {
