@@ -1,7 +1,7 @@
 2003-09-25  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/{tiffiop.h, tif_dirread.c, tif_open.c, tif_close.c}: Store a
-	list of opened IFD to prevent looping as per bug
+	* libtiff/{tiffiop.h, tif_dirread.c, tif_dir.c, tif_open.c,
+	tif_close.c}: Store a list of opened IFD to prevent looping as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=383
 
