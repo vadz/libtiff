@@ -50,11 +50,6 @@ all default:
 	else \
 	    true; \
 	fi
-	@if [ "@OJPEG@" = yes ]; then \
-	    ${ECHO} "= "ojpeg; cd contrib/ojpeg; ${MAKE} -${MAKEFLAGS}; \
-	else \
-	    true; \
-	fi
 	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS}
 	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS}
 	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS}
