@@ -1,3 +1,13 @@
+2004-09-23  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Applied patch from Dmitry V. Levin to fix
+	possible integer overflow in CheckMalloc() function.
+
+2004-09-22  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffiop.h, tif_strip.c}: Use TIFFhowmany8() macro instead
+	of plain TIFFhowmany() where appropriate.
+
 2004-09-21  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_getimage.c: Initialize arrays after space allocation.
