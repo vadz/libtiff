@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -24,41 +24,29 @@
  * OF THIS SOFTWARE.
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(VMS)
-#include <unixio.h>
-#include <file.h>
-#elif defined(_WINDOWS)
-#include <io.h>
-#define	off_t	toff_t
-#include "tiffio.h"
-#include <fcntl.h>
-#elif defined(applec)
-#define open _open_ /* to avoid conflicts */
-#include <fcntl.h>
-#undef open
-int  open(const char*, int, int);
-typedef unsigned int off_t;
-#else /* !VMS && !_WINDOWS && !applec */
-#ifdef unix
-#include <sys/types.h>
-#endif
-#include <unistd.h>
-#include <fcntl.h>
+#if HAVE_FCNTL_H
+# include <fcntl.h>
 #endif
 
-#if defined(MSDOS)
-#include <malloc.h>
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
 #endif
+
+#if HAVE_IO_H
+# include <io.h>
+#endif
+
+#include "tiffio.h"
 
 #ifndef O_BINARY
 #define	O_BINARY	0
 #endif
-
-#include "tiffio.h"
 
 char*	appname;
 char*	curfile;
@@ -66,7 +54,7 @@ int	swabflag;
 int	bigendian;
 int	typeshift[13];		/* data type shift counts */
 long	typemask[13];		/* data type masks */
-int	maxitems = 24;		/* maximum indirect data items to print */
+uint32	maxitems = 24;		/* maximum indirect data items to print */
 
 char*	bytefmt = "%s%#02x";		/* BYTE */
 char*	sbytefmt = "%s%d";		/* SBYTE */
