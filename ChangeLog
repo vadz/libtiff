@@ -1,3 +1,7 @@
+2001-05-22  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* Added tiffset and tif_ojpeg to the dist lists in Makefile.in.
+
 2001-05-13  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tools/thumbnail.c: changed default output compression
