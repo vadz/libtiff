@@ -1,4 +1,10 @@
-22003-10-25  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/libtiff.def: Added TIFFReadRGBAImageOriented.
+
+	* html/build.html: Added note about GNU make requirement.
+
+2003-10-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in: Fixes in using MAKEFLAGS as per bug
 
@@ -7,12 +13,12 @@
 	* port/install.sh.in: Option -p added to the mkdir command to create
 	all directory tree structure before installing.
 
-22003-10-18  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-18  Andrey Kiselev  <dron@remotesensing.org>
 
 	* /tools/tiff2ps.c: #include <strings.h> replaced with the
 	#include <string.h>.
 
-003-10-16  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-16  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in: Add an absolute path to the test_pics.sh call.
 
