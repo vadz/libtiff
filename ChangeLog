@@ -1,3 +1,8 @@
+2005-03-09  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcmp.c: Added ability to compare the 32-bit integer and
+	floating point data; complain on unsupported bit depths.
+
 2005-03-05  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tif_stream.cxx: Use ios namespace instead of ios_base to support
