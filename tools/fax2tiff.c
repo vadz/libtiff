@@ -25,7 +25,7 @@
  */
 
 /* 
- * Convert a CCITT Group 3 FAX file to TIFF Group 3 format.
+ * Convert a CCITT Group 3 or 4 FAX file to TIFF Group 3 or 4 format.
  */
 #include <stdio.h>
 #include <stdlib.h>		/* should have atof & getopt */
@@ -61,10 +61,16 @@ main(int argc, char* argv[])
 	FILE *in;
 	TIFF *out = NULL;
 	TIFFErrorHandler whandler;
-	int compression = COMPRESSION_CCITTFAX3;
-	int fillorder = FILLORDER_LSB2MSB;
-	uint32 group3options = GROUP3OPT_FILLBITS|GROUP3OPT_2DENCODING;
-	int photometric = PHOTOMETRIC_MINISWHITE;
+	int compression_in = COMPRESSION_CCITTFAX3;
+	int compression_out = COMPRESSION_CCITTFAX3;
+	int fillorder_in = FILLORDER_LSB2MSB;
+	int fillorder_out = FILLORDER_LSB2MSB;
+	uint32 group3options_in = 0;	/* 1d-encoded */
+	uint32 group3options_out = 0;	/* 1d-encoded */
+	uint32 group4options_in = 0;	/* compressed */
+	uint32 group4options_out = 0;	/* compressed */
+	int photometric_in = PHOTOMETRIC_MINISWHITE;
+	int photometric_out = PHOTOMETRIC_MINISWHITE;
 	int mode = FAXMODE_CLASSF;
 	int rows;
 	int c;
@@ -74,34 +80,63 @@ main(int argc, char* argv[])
 	extern char* optarg;
 
 
-	while ((c = getopt(argc, argv, "R:o:2BLMW14cflmpsvwz")) != -1)
+	while ((c = getopt(argc, argv, "R:o:1234ABLMPUW5678abcflmpsuvwz?")) != -1)
 		switch (c) {
 			/* input-related options */
-		case '2':		/* input is 2d-encoded */
-			group3options &= GROUP3OPT_2DENCODING;
+		case '3':		/* input is g3-encoded */
+			compression_in = COMPRESSION_CCITTFAX3;
+			break;
+		case '4':		/* input is g4-encoded */
+			compression_in = COMPRESSION_CCITTFAX4;
+			break;
+		case 'U':		/* input is uncompressed (g3 and g4) */
+			group3options_in |= GROUP3OPT_UNCOMPRESSED;
+			group4options_in |= GROUP4OPT_UNCOMPRESSED;
+			break;
+		case '1':		/* input is 1d-encoded (g3 only) */
+			group3options_in &= ~GROUP3OPT_2DENCODING;
+			break;
+		case '2':		/* input is 2d-encoded (g3 only) */
+			group3options_in |= GROUP3OPT_2DENCODING;
+			break;
+		case 'P':	/* input has not-aligned EOL (g3 only) */
+			group3options_in &= ~GROUP3OPT_FILLBITS;
+			break;
+		case 'A':		/* input has aligned EOL (g3 only) */
+			group3options_in |= GROUP3OPT_FILLBITS;
 			break;
 		case 'W':		/* input has 0 mean white */
-			photometric = PHOTOMETRIC_MINISWHITE;
+			photometric_in = PHOTOMETRIC_MINISWHITE;
 			break;
 		case 'B':		/* input has 0 mean black */
-			photometric = PHOTOMETRIC_MINISBLACK;
+			photometric_in = PHOTOMETRIC_MINISBLACK;
 			break;
 		case 'L':		/* input has lsb-to-msb fillorder */
-			fillorder = FILLORDER_LSB2MSB;
+			fillorder_in = FILLORDER_LSB2MSB;
 			break;
 		case 'M':		/* input has msb-to-lsb fillorder */
-			fillorder = FILLORDER_MSB2LSB;
+			fillorder_in = FILLORDER_MSB2LSB;
 			break;
 		case 'R':		/* input resolution */
 			resY = atof(optarg);
 			break;
 
 			/* output-related options */
-		case '1':		/* generate 1d-encoded output */
-			group3options &= ~GROUP3OPT_2DENCODING;
+		case '7':		/* generate g3-encoded output */
+			compression_out = COMPRESSION_CCITTFAX3;
 			break;
-		case '4':		/* generate g4-encoded output */
-			compression = COMPRESSION_CCITTFAX4;
+		case '8':		/* generate g4-encoded output */
+			compression_out = COMPRESSION_CCITTFAX4;
+			break;
+		case 'u':	/* generate uncompressed output (g3 and g4) */
+			group3options_out |= GROUP3OPT_UNCOMPRESSED;
+			group4options_out |= GROUP4OPT_UNCOMPRESSED;
+			break;
+		case '5':	/* generate 1d-encoded output (g3 only) */
+			group3options_out &= ~GROUP3OPT_2DENCODING;
+			break;
+		case '6':	/* generate 2d-encoded output (g3 only) */
+			group3options_out |= GROUP3OPT_2DENCODING;
 			break;
 		case 'c':		/* generate "classic" g3 format */
 			mode = FAXMODE_CLASSIC;
@@ -110,27 +145,34 @@ main(int argc, char* argv[])
 			mode = FAXMODE_CLASSF;
 			break;
 		case 'm':		/* output's fillorder is msb-to-lsb */
-			fillorder = FILLORDER_MSB2LSB;
+			fillorder_out = FILLORDER_MSB2LSB;
+			break;
+		case 'l':		/* output's fillorder is lsb-to-msb */
+			fillorder_out = FILLORDER_LSB2MSB;
 			break;
 		case 'o':
 			out = TIFFOpen(optarg, "w");
 			if (out == NULL)
 			    return EXIT_FAILURE;
 			break;
-		case 'p':		/* zero pad output scanline EOLs */
-			group3options &= ~GROUP3OPT_FILLBITS;
+		case 'a':	/* generate EOL-aligned output (g3 only) */
+			group3options_out |= GROUP3OPT_FILLBITS;
+			break;
+		case 'p':	/* generate not EOL-aligned output (g3 only) */
+			group3options_out &= ~GROUP3OPT_FILLBITS;
 			break;
 		case 's':		/* stretch image by dup'ng scanlines */
 			stretch = 1;
 			break;
 		case 'w':		/* undocumented -- for testing */
-			photometric = PHOTOMETRIC_MINISBLACK;
+			photometric_out = PHOTOMETRIC_MINISWHITE;
 			break;
-
+		case 'b':		/* undocumented -- for testing */
+			photometric_out = PHOTOMETRIC_MINISBLACK;
+			break;
 		case 'z':		/* undocumented -- for testing */
-			compression = COMPRESSION_LZW;
+			compression_out = COMPRESSION_LZW;
 			break;
-
 		case 'v':		/* -v for info */
 			verbose++;
 			break;
@@ -161,15 +203,18 @@ main(int argc, char* argv[])
 	TIFFSetField(faxTIFF, TIFFTAG_IMAGEWIDTH,	XSIZE);
 	TIFFSetField(faxTIFF, TIFFTAG_SAMPLESPERPIXEL,	1);
 	TIFFSetField(faxTIFF, TIFFTAG_BITSPERSAMPLE,	1);
-	TIFFSetField(faxTIFF, TIFFTAG_FILLORDER,	fillorder);
+	TIFFSetField(faxTIFF, TIFFTAG_FILLORDER,	fillorder_in);
 	TIFFSetField(faxTIFF, TIFFTAG_PLANARCONFIG,	PLANARCONFIG_CONTIG);
-	TIFFSetField(faxTIFF, TIFFTAG_PHOTOMETRIC,	photometric);
+	TIFFSetField(faxTIFF, TIFFTAG_PHOTOMETRIC,	photometric_in);
 	TIFFSetField(faxTIFF, TIFFTAG_YRESOLUTION,	resY);
-	TIFFSetField(faxTIFF, TIFFTAG_GROUP3OPTIONS,	group3options);
 	TIFFSetField(faxTIFF, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
 	
 	/* NB: this must be done after directory info is setup */
-	TIFFSetField(faxTIFF, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
+	TIFFSetField(faxTIFF, TIFFTAG_COMPRESSION, compression_in);
+	if (compression_in == COMPRESSION_CCITTFAX3)
+		TIFFSetField(faxTIFF, TIFFTAG_GROUP3OPTIONS, group3options_in);
+	else if (compression_in == COMPRESSION_CCITTFAX4)
+		TIFFSetField(faxTIFF, TIFFTAG_GROUP4OPTIONS, group4options_in);
 	for (pn = 0; optind < argc; pn++, optind++) {
 		in = fopen(argv[optind], "r" BINMODE);
 		if (in == NULL) {
@@ -182,22 +227,31 @@ main(int argc, char* argv[])
 		faxTIFF->tif_name = argv[optind];
 		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, XSIZE);
 		TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 1);
-		TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
-		TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
+		TIFFSetField(out, TIFFTAG_COMPRESSION, compression_out);
+		TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric_out);
 		TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 		TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 1);
-		if (compression == COMPRESSION_CCITTFAX3) {
-			TIFFSetField(out, TIFFTAG_GROUP3OPTIONS, group3options);
+		switch (compression_out) {
+			/* g3 */
+			case COMPRESSION_CCITTFAX3:
+			TIFFSetField(out, TIFFTAG_GROUP3OPTIONS, group3options_out);
 			TIFFSetField(out, TIFFTAG_FAXMODE, mode);
-		}
-		if (compression == COMPRESSION_CCITTFAX3 ||
-		    compression == COMPRESSION_CCITTFAX4)
 			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, -1L);
-		else
+			break;
+
+			/* g4 */
+			case COMPRESSION_CCITTFAX4:
+			TIFFSetField(out, TIFFTAG_GROUP4OPTIONS, group4options_out);
+			TIFFSetField(out, TIFFTAG_FAXMODE, mode);
+			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, -1L);
+			break;
+
+			default:
 			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
 			    TIFFDefaultStripSize(out, 0));
+		}
 		TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
+		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder_out);
 		TIFFSetField(out, TIFFTAG_SOFTWARE, "fax2tiff");
 		TIFFSetField(out, TIFFTAG_XRESOLUTION, 204.0);
 		if (!stretch) {
@@ -224,7 +278,7 @@ main(int argc, char* argv[])
 			    (long) badfaxlines);
 			fprintf(stderr, "%d max consecutive bad rows\n", badfaxrun);
 		}
-		if (compression == COMPRESSION_CCITTFAX3 &&
+		if (compression_out == COMPRESSION_CCITTFAX3 &&
 		    mode == FAXMODE_CLASSF) {
 			TIFFSetField(out, TIFFTAG_BADFAXLINES, badfaxlines);
 			TIFFSetField(out, TIFFTAG_CLEANFAXDATA, badfaxlines ?
@@ -300,22 +354,33 @@ copyFaxFile(TIFF* tifin, TIFF* tifout)
 }
 
 char* stuff[] = {
-"usage: fax2tiff [options] input.g3...",
+"usage: fax2tiff [options] input.raw...",
 "where options are:",
-" -2		input data is 2d encoded",
-" -B		input data has min 0 means black",
-" -L		input data has LSB2MSB bit order (default)",
+" -3		input data is G3-encoded		[default]",
+" -4		input data is G4-encoded",
+" -U		input data is uncompressed (G3 and G4)",
+" -1		input data is 1D-encoded (G3 only)	[default]",
+" -2		input data is 2D-encoded (G3 only)",
+" -P		input is not EOL-aligned (G3 only)	[default]",
+" -A		input is EOL-aligned (G3 only)",
 " -M		input data has MSB2LSB bit order",
-" -W		input data has min 0 means white (default)",
-" -R #		input data has # resolution (lines/inch) (default is 196)",
+" -L		input data has LSB2MSB bit order	[default]",
+" -B		input data has min 0 means black",
+" -W		input data has min 0 means white	[default]",
+" -R #		input data has # resolution (lines/inch) [default is 196]",
 "",
 " -o out.tif	write output to out.tif",
-" -1		generate 1d-encoded output (default is G3 2d)",
-" -4		generate G4-encoded output (default is G3 2D)",
-" -c		generate \"classic\" TIFF format (default is TIFF/F)",
-" -f		generate TIFF Class F (TIFF/F) format (default)",
-" -m		output fill order is MSB2LSB (default is LSB2MSB)",
-" -p		do not byte-align EOL codes in output (default is byte-align)",
+" -7		generate G3-encoded output		[default]",
+" -8		generate G4-encoded output",
+" -u		generate uncompressed output (G3 and G4)",
+" -5		generate 1D-encoded output (G3 only)",
+" -6		generate 2D-encoded output (G3 only)	[default]",
+" -p		generate not EOL-aligned output (G3 only)",
+" -a		generate EOL-aligned output (G3 only)	[default]",
+" -c		generate \"classic\" TIFF format",
+" -f		generate TIFF Class F (TIFF/F) format	[default]",
+" -m		output fill order is MSB2LSB",
+" -l		output fill order is LSB2MSB		[default]",
 " -s		stretch image by duplicating scanlines",
 " -v		print information about conversion work",
 NULL

@@ -1,3 +1,11 @@
+2003-02-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/fax2tiff.c, man/fax2tiff.1: Applied patch from Julien Gaulmin
+	(thanks, Julien!). More switches for fax2tiff tool for better control
+	of input and output. Details at
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=272
+
 2003-02-03  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Modified to defer initialization of jpeg

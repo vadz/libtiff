@@ -87,70 +87,128 @@ output file.
 .SH OPTIONS
 Options that affect the interpretation of input data are:
 .TP
+.B \-3
+Assume input data is
+.SM CCITT
+Group 3 encoded (default).
+.TP
+.B \-4
+Assume input data is
+.SM CCITT
+Group 4 encoded.
+.TP
+.B \-U
+Assume input data is uncompressed.
+.TP
+.B \-1
+Assume input data is encoded with the 1-dimensional version of the
+.SM CCITT
+Group 3 Huffman encoding algorithm (default).
+.TP
 .B \-2
-Assume input data is 2-d Huffman encoded.
+Assume input data is 2-dimensional version of the
+.SM CCITT
+Group 3 Huffman encoding algorithm.
 .TP
-.B \-B
-Assume input data was encoded with
-black as 0 and white as 1.
+.B \-P
+Assume input data is
+.B not
+EOL-aligned (default). This option has effect with Group 3 encoded input only.
 .TP
-.B \-L
-Treat input data as having bits filled from least
-significant bit (\c
-.SM LSB\c
-) to most significant bit (\c
-.SM MSB\c
-).
-(This is the default.)
+.B \-A
+Assume input data is EOL-aligned. This option has effect with Group 3
+encoded input only.
 .TP
 .B \-M
-Treat input data as having bits filled from most
-significant bit (\c
+Treat input data as having bits filled from most significant bit (\c
 .SM MSB\c
 ) to most least bit (\c
 .SM LSB\c
 ).
 .TP
-.B \-R
-Specify the vertical resolution, in lines/inch, of the
-input images.
-By default input are assumed to have a vertical
-resolution of 196 lines/inch.
-If images are low resolution facsimile, a value of
-98 lines/inch should be specified.
+.B \-L
+Treat input data as having bits filled from least significant bit (\c
+.SM LSB\c
+) to most significant bit (\c
+.SM MSB\c
+). (This is the default.)
+.TP
+.B \-B
+Assume input data was encoded with black as 0 and white as 1.
 .TP
 .B \-W
-Assume input data was encoded with
-black as 1 and white as 0.
+Assume input data was encoded with black as 1 and white as 0.
 (This is the default.)
+.TP
+.B \-R
+Specify the vertical resolution, in lines/inch, of the input images.
+By default input are assumed to have a vertical resolution of 196 lines/inch.
+If images are low resolution facsimile, a value of 98 lines/inch should
+be specified.
 .PP
 Options that affect the output file format are:
-.TP
-.B \-1
-Force output to be compressed with the 1-dimensional
-version of the
-.SM CCITT
-Group 3 Huffman encoding algorithm.
-.TP
-.B \-4
-Force output to be compressed with the
-.SM CCITT
-Group 4 Huffman encoding.
 .TP
 .B \-o
 Specify the name of the output file.
 .TP
-.B \-p
+.B \-7
+Force output to be compressed with the
+.SM CCITT
+Group 3 Huffman encoding algorithm.
+.TP
+.B \-8
+Force output to be compressed with the
+.SM CCITT
+Group 4 Huffman encoding.
+.TP
+.B \-u
+Force output to be uncompressed (Group 3 and Group 4)
+.TP
+.B \-5
+Force output to be encoded with the 1-dimensional version of the
+.SM CCITT
+Group 3 Huffman encoding algorithm.
+.TP
+.B \-6
+Force output to be encoded with the 2-dimensional version of the
+.SM CCITT
+Group 3 Huffman encoding algorithm (default).
+.TP
+.B \-a
 Force the last bit of each
 .I "End Of Line"
 (\c
 .SM EOL\c
-) code to land on a byte boundary.
-This ``zero padding'' will be reflected in the contents of the
+) code to land on a byte boundary (default). This ``zero padding'' will
+be reflected in the contents of the
 .I Group3Options
 tag of the resultant
 .SM TIFF
-file.
+file. This option has effect with Group 3 encoded output only.
+.TP
+.B \-p
+Do not EOL-align output. This option has effect with Group 3 encoded
+output only.
+.TP
+.B \-c
+Generate "classic" Group 3 TIFF format.
+.TP
+.B \-f
+Generate TIFF Class F (TIFF/F) format.
+.TP
+.B \-m
+Force output data to have bits filled from most significant bit (\c
+.SM MSB\c
+) to most least bit (\c
+.SM LSB\c
+).
+.TP
+.B \-l
+Force  output data to have bits filled from least significant bit (\c
+.SM LSB\c
+) to most significant bit (\c
+.SM MSB\c
+). (This is the default.)
 .TP
 .B \-s
 Stretch the input image vertically by writing each input row of
