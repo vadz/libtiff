@@ -58,16 +58,22 @@ configured:
 <UL>
 <LI>CCITT Group 3 and 4 algorithms (compression codes 2, 3, 4, and 32771),
 <LI>the Macintosh PackBits algorithm (compression 32773),
-<LI>a Lempel-Ziv & Welch (LZW) algorithm (compression 5),
 <LI>a 4-bit run-length encoding scheme from ThunderScan (compression 32809),
 <LI>a 2-bit encoding scheme used by NeXT (compression 32766), and
 <LI>two experimental schemes intended for images with high dynamic range
 (compression 34676 and 34677).
 </UL>
 
-To override this behaviour define <TT>COMPRESSION_SUPPORT</TT>
-and then one or more additional defines to enable configuration of
-the appropriate codecs (see the table below); e.g.
+<P>
+
+Lempel-Ziv & Welch (LZW) algorithm (compression 5), is <b>no longer</b> supported by default, due to Unisys patent enforcement (c.f <A HREF=http://zgp.org/~dmarti/burnallgifs/>Burn All GIFs</A>).  To enable lzw compression, you must obtain the libtiff-lzw-compression-kit from <A HREF=http://www.libtiff.org>libtiff.org</A>.  N.B. to use this kit legally, you must live in a country where the patent doesn't apply or you must obtain a license from Unisys. 
+
+<P> 
+
+To override the default compression behaviour define
+<TT>COMPRESSION_SUPPORT</TT> and then one or more additional defines
+to enable configuration of the appropriate codecs (see the table
+below); e.g.
 
 <UL><PRE>
 #define	COMPRESSION_SUPPORT
