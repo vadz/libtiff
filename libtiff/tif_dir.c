@@ -1060,6 +1060,8 @@ TIFFFreeDirectory(TIFF* tif)
     for( i = 0; i < td->td_customValueCount; i++ )
         _TIFFfree( td->td_customValues[i].value );
 
+    td->td_customValueCount = 0;
+
     if( td->td_customValues != NULL )
         _TIFFfree( td->td_customValues );
           
