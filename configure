@@ -925,7 +925,7 @@ main()
     *(buf1 + j) = rand();
   fd = open("conftestmmap", O_CREAT | O_RDWR, 0666);
   write(fd, buf1, i2);
-  buf2 = mmap(NULL, i, PROT_READ|PROT_WRITE, MAP_VARIABLE|MAP_PRIVATE, fd, 0);
+  buf2 = mmap(0, i, PROT_READ|PROT_WRITE, MAP_VARIABLE|MAP_PRIVATE, fd, 0);
   for (j = 0; j < i; ++j)
     if (*(buf1 + j) != *(buf2 + j))
       exit(1);
