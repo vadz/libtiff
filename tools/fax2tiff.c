@@ -280,7 +280,7 @@ main(int argc, char* argv[])
 		} else
 			TIFFSetField(out, TIFFTAG_YRESOLUTION, 196.);
 		TIFFSetField(out, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
-		TIFFSetField(out, TIFFTAG_PAGENUMBER, pn + 1, npages);
+		TIFFSetField(out, TIFFTAG_PAGENUMBER, pn, npages);
 
 		if (!verbose)
 		    whandler = TIFFSetWarningHandler(NULL);
