@@ -42,12 +42,10 @@
 
 float	defxres = 204.;		/* default x resolution (pixels/inch) */
 float	defyres = 98.;		/* default y resolution (lines/inch) */
-const float basePageWidth = 8.5;
-const float basePageHeight = 11.0;
 const float half = 0.5;
 const float points = 72.0;
-float	pageWidth = 8.5;	/* image page width (inches) */
-float	pageHeight = 11.0;	/* image page length (inches) */
+float	pageWidth = 0;		/* image page width (inches) */
+float	pageHeight = 0;		/* image page length (inches) */
 int	scaleToPage = 0;	/* if true, scale raster to page dimensions */
 int	totalPages = 0;		/* total # pages printed */
 int	row;			/* current output row */
@@ -150,6 +148,43 @@ printruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
     printf(")s\n");
 }
 
+/* 
+ * Create a special PostScript font for printing FAX documents.  By taking
+ * advantage of the font-cacheing mechanism, a substantial speed-up in 
+ * rendering time is realized. 
+ */
+static void
+emitFont(FILE* fd)
+{
+    static const char* fontPrologue[] = {
+	"/newfont 10 dict def newfont begin /FontType 3 def /FontMatrix [1",
+	"0 0 1 0 0] def /FontBBox [0 0 512 1] def /Encoding 256 array def",
+	"0 1 31{Encoding exch /255 put}for 120 1 255{Encoding exch /255",
+	"put}for Encoding 37 /255 put Encoding 40 /255 put Encoding 41 /255",
+	"put Encoding 92 /255 put /count 0 def /ls{Encoding exch count 3",
+	"string cvs cvn put /count count 1 add def}def 32 1 36{ls}for",
+	"38 1 39{ls}for 42 1 91{ls}for 93 1 99{ls}for /count 100",
+	"def 100 1 119{ls}for /CharDict 5 dict def CharDict begin /white",
+	"{dup 255 eq{pop}{1 dict begin 100 sub neg 512 exch bitshift",
+	"/cw exch def cw 0 0 0 cw 1 setcachedevice end}ifelse}def /black",
+	"{dup 255 eq{pop}{1 dict begin 110 sub neg 512 exch bitshift",
+	"/cw exch def cw 0 0 0 cw 1 setcachedevice 0 0 moveto cw 0 rlineto",
+	"0 1 rlineto cw neg 0 rlineto closepath fill end}ifelse}def /numbuild",
+	"{dup 255 eq{pop}{6 0 0 0 6 1 setcachedevice 0 1 5{0 moveto",
+	"dup 32 and 32 eq{1 0 rlineto 0 1 rlineto -1 0 rlineto closepath",
+	"fill newpath}if 1 bitshift}for pop}ifelse}def /.notdef {}",
+	"def /255 {}def end /BuildChar{exch begin dup 110 ge{Encoding",
+	"exch get 3 string cvs cvi CharDict /black get}{dup 100 ge {Encoding",
+	"exch get 3 string cvs cvi CharDict /white get}{Encoding exch get",
+	"3 string cvs cvi CharDict /numbuild get}ifelse}ifelse exec end",
+	"}def end /Bitfont newfont definefont 1 scalefont setfont",
+	NULL
+    };
+    int i;
+    for (i = 0; fontPrologue[i] != NULL; i++)
+	fprintf(fd, "%s\n", fontPrologue[i]);
+}
+
 void
 printTIF(TIFF* tif, int pageNumber)
 {
@@ -157,25 +192,49 @@ printTIF(TIFF* tif, int pageNumber)
     uint16 unit;
     float xres, yres, scale = 1.0;
     tstrip_t s, ns;
+    time_t creation_time;
 
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
-    if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres)) {
+    if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres) || !xres) {
 	TIFFWarning(TIFFFileName(tif),
 	    "No x-resolution, assuming %g dpi", defxres);
 	xres = defxres;
     }
-    if (!TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)) {
+    if (!TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres) || !yres) {
 	TIFFWarning(TIFFFileName(tif),
 	    "No y-resolution, assuming %g lpi", defyres);
 	yres = defyres;					/* XXX */
     }
     if (TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &unit) &&
       unit == RESUNIT_CENTIMETER) {
-	xres *= 25.4;
-	yres *= 25.4;
+	xres *= 2.54;
+	yres *= 2.54;
     }
+    if (pageWidth == 0)
+	pageWidth = w / xres;
+    if (pageHeight == 0)
+	pageHeight = h / yres;
 
+    printf("%%!PS-Adobe-3.0\n");
+    printf("%%%%Creator: fax2ps\n");
+#ifdef notdef
+    printf("%%%%Title: %s\n", file);
+#endif
+    creation_time = time(0);
+    printf("%%%%CreationDate: %s", ctime(&creation_time));
+    printf("%%%%Origin: 0 0\n");
+    printf("%%%%BoundingBox: 0 0 %u %u\n",
+	(int)(pageWidth * points), (int)(pageHeight * points));	/* XXX */
+    printf("%%%%Pages: (atend)\n");
+    printf("%%%%EndComments\n");
+    printf("%%%%BeginProlog\n");
+    emitFont(stdout);
+    printf("/d{bind def}def\n"); /* bind and def proc */
+    printf("/m{0 exch moveto}d\n");
+    printf("/s{show}d\n");
+    printf("/p{showpage}d \n");	/* end page */
+    printf("%%%%EndProlog\n");
     printf("%%%%Page: \"%d\" %d\n", pageNumber, pageNumber);
     printf("/$pageTop save def gsave\n");
     if (scaleToPage)
@@ -238,43 +297,6 @@ fax2ps(TIFF* tif, int npages, int* pages, char* filename)
 
 #undef GetPageNumber
 
-/* 
- * Create a special PostScript font for printing FAX documents.  By taking
- * advantage of the font-cacheing mechanism, a substantial speed-up in 
- * rendering time is realized. 
- */
-static void
-emitFont(FILE* fd)
-{
-    static const char* fontPrologue[] = {
-	"/newfont 10 dict def newfont begin /FontType 3 def /FontMatrix [1",
-	"0 0 1 0 0] def /FontBBox [0 0 512 1] def /Encoding 256 array def",
-	"0 1 31{Encoding exch /255 put}for 120 1 255{Encoding exch /255",
-	"put}for Encoding 37 /255 put Encoding 40 /255 put Encoding 41 /255",
-	"put Encoding 92 /255 put /count 0 def /ls{Encoding exch count 3",
-	"string cvs cvn put /count count 1 add def}def 32 1 36{ls}for",
-	"38 1 39{ls}for 42 1 91{ls}for 93 1 99{ls}for /count 100",
-	"def 100 1 119{ls}for /CharDict 5 dict def CharDict begin /white",
-	"{dup 255 eq{pop}{1 dict begin 100 sub neg 512 exch bitshift",
-	"/cw exch def cw 0 0 0 cw 1 setcachedevice end}ifelse}def /black",
-	"{dup 255 eq{pop}{1 dict begin 110 sub neg 512 exch bitshift",
-	"/cw exch def cw 0 0 0 cw 1 setcachedevice 0 0 moveto cw 0 rlineto",
-	"0 1 rlineto cw neg 0 rlineto closepath fill end}ifelse}def /numbuild",
-	"{dup 255 eq{pop}{6 0 0 0 6 1 setcachedevice 0 1 5{0 moveto",
-	"dup 32 and 32 eq{1 0 rlineto 0 1 rlineto -1 0 rlineto closepath",
-	"fill newpath}if 1 bitshift}for pop}ifelse}def /.notdef {}",
-	"def /255 {}def end /BuildChar{exch begin dup 110 ge{Encoding",
-	"exch get 3 string cvs cvi CharDict /black get}{dup 100 ge {Encoding",
-	"exch get 3 string cvs cvi CharDict /white get}{Encoding exch get",
-	"3 string cvs cvi CharDict /numbuild get}ifelse}ifelse exec end",
-	"}def end /Bitfont newfont definefont 1 scalefont setfont",
-	NULL
-    };
-    int i;
-    for (i = 0; fontPrologue[i] != NULL; i++)
-	fprintf(fd, "%s\n", fontPrologue[i]);
-}
-
 static int
 pcompar(const void* va, const void* vb)
 {
@@ -293,7 +315,6 @@ main(int argc, char** argv)
     int c, pageNumber;
     int* pages = 0, npages = 0;
     int dowarnings = 0;		/* if 1, enable library warnings */
-    time_t t;
     TIFF* tif;
 
     while ((c = getopt(argc, argv, "l:p:x:y:W:H:wS")) != -1)
@@ -339,25 +360,6 @@ main(int argc, char** argv)
 	qsort(pages, npages, sizeof (int), pcompar);
     if (!dowarnings)
 	TIFFSetWarningHandler(0);
-    printf("%%!PS-Adobe-3.0\n");
-    printf("%%%%Creator: fax2ps\n");
-#ifdef notdef
-    printf("%%%%Title: %s\n", file);
-#endif
-    t = time(0);
-    printf("%%%%CreationDate: %s", ctime(&t));
-    printf("%%%%Origin: 0 0\n");
-    printf("%%%%BoundingBox: 0 0 %u %u\n",
-	(int)(pageWidth*72), (int)(pageHeight*72));	/* XXX */
-    printf("%%%%Pages: (atend)\n");
-    printf("%%%%EndComments\n");
-    printf("%%%%BeginProlog\n");
-    emitFont(stdout);
-    printf("/d{bind def}def\n"); /* bind and def proc */
-    printf("/m{0 exch moveto}d\n");
-    printf("/s{show}d\n");
-    printf("/p{showpage}d \n");	/* end page */
-    printf("%%%%EndProlog\n");
     if (optind < argc) {
 	do {
 	    tif = TIFFOpen(argv[optind], "r");
