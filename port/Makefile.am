@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -25,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-noinst_LIBRARIES	= libport.a
-libport_a_SOURCES	=
-libport_a_LIBADD	= @LIBOBJS@
+noinst_LTLIBRARIES	= libport.la
+libport_la_SOURCES	= 
+libport_la_LIBADD	= @LTLIBOBJS@
 

@@ -35,7 +35,7 @@ AC_CONFIG_SRCDIR(libtiff/config.h.in)
 AM_CONFIG_HEADER(libtiff/config.h)
 
 dnl Versioning.
-dnl Don't fill the ALPHA_VERSION field if not applicable.
+dnl Don't fill the ALPHA_VERSION field, if not applicable.
 LIBTIFF_MAJOR_VERSION=3
 LIBTIFF_MINOR_VERSION=7
 LIBTIFF_MICRO_VERSION=0
@@ -214,12 +214,12 @@ dnl ---------------------------------------------------------------------------
 dnl Check for Pixar log-format algorithm.
 dnl ---------------------------------------------------------------------------
 
-HAVE_PIXARLOG=no
-
 AC_ARG_ENABLE(pixarlog, AS_HELP_STRING([--disable-pixarlog], [disable support for Pixar log-format algorithm (requires Zlib)]), [HAVE_PIXARLOG=no], [HAVE_PIXARLOG=yes])
 
 if test "$HAVE_ZLIB" = "yes" -a "$HAVE_PIXARLOG" = "yes" ; then
   CPPFLAGS="-DPIXARLOG_SUPPORT $CPPFLAGS"
+else
+  HAVE_PIXARLOG=no
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -265,12 +265,12 @@ dnl ---------------------------------------------------------------------------
 dnl Check for Old JPEG.
 dnl ---------------------------------------------------------------------------
 
-HAVE_OJPEG=no
-
 AC_ARG_ENABLE(old-jpeg, AS_HELP_STRING([--enable-old-jpeg], [enable support for Old JPEG compresson (read contrib/ojpeg/README first! Compilation fails with unpatched IJG JPEG library)]), [HAVE_OJPEG=yes], [HAVE_OJPEG=no])
 
 if test "$HAVE_JPEG" = "yes" -a "$HAVE_OJPEG" = "yes" ; then
   CPPFLAGS="-DOJPEG_SUPPORT $CPPFLAGS"
+else
+  HAVE_OJPEG=no
 fi
 
 dnl ---------------------------------------------------------------------------
