@@ -1,5 +1,7 @@
 2000-08-14  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
+	* tif_open.c: Don't set MMAP for O_RDWR files.
+
 	* tif_open.c: Set STRIPCHOP_DEFAULT for O_RDWR as well as O_RDONLY
 	so that files opened for update can be strip chopped too.
 
