@@ -272,8 +272,9 @@ TIFFReadDirectory(TIFF* tif)
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
 
                     TIFFWarning(module,
-			"%.1000s: unknown field with tag %d (0x%x) encountered",
-                                tif->tif_name, dp->tdir_tag,  dp->tdir_tag);
+"%.1000s: unknown field with tag %d (0x%x) and type %d encountered",
+                                tif->tif_name, dp->tdir_tag, dp->tdir_tag,
+                                dp->tdir_type);
 
                     TIFFMergeFieldInfo( tif,
                                         _TIFFCreateAnonFieldInfo( tif,
@@ -296,17 +297,18 @@ TIFFReadDirectory(TIFF* tif)
 		/*
 		 * Check data type.
 		 */
-		fip = tif->tif_fieldinfo[fix];
-		while (dp->tdir_type != (u_short) fip->field_type) {
+		fip = tif->tif_fieldinfo[fix++];
+		while (dp->tdir_type != (u_short) fip->field_type
+                       && fix < tif->tif_nfields) {
 			if (fip->field_type == TIFF_ANY)	/* wildcard */
 				break;
-			fip++, fix++;
-			if (fix == tif->tif_nfields ||
+                        fip = tif->tif_fieldinfo[fix++];
+			if (fix >= tif->tif_nfields ||
 			    fip->field_tag != dp->tdir_tag) {
 				TIFFWarning(module,
 			"%.1000s: wrong data type %d for \"%s\"; tag ignored",
 					    tif->tif_name, dp->tdir_type,
-					    fip[-1].field_name);
+					    tif->tif_fieldinfo[fix-1]->field_name);
 				goto ignore;
 			}
 		}
