@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1992-1997 Sam Leffler
@@ -63,7 +63,7 @@ main(int argc, char* argv[])
 			newfilename();
 			strcpy(path, fname);
 			strcat(path, ".tif");
-			out = TIFFOpen(path, "w");
+			out = TIFFOpen(path, TIFFIsBigEndian(in)?"wb":"wl");
 			if (out == NULL)
 				return (-2);
 			if (!tiffcp(in, out))
