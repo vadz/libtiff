@@ -23,19 +23,24 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFRGBAImage 3T "October 29, 2004"
+.TH TIFFRGBAImage 3T "October 29, 2004" "libtiff"
 .SH NAME
 TIFFRGBAImageOK, TIFFRGBAImageBegin, TIFFRGBAImageGet, TIFFRGBAImageEnd
 \- read and decode an image into a raster
 .SH SYNOPSIS
-.nf
 .B "#include <tiffio.h>"
+.sp
 .B "typedef unsigned char TIFFRGBValue;"
 .B "typedef struct _TIFFRGBAImage TIFFRGBAImage;"
-.BI "int TIFFRGBAImageOK(TIFF* " tif ", char " emsg[1024] ");"
-.BI "int TIFFRGBAImageBegin(TIFFRGBAImage* " img ", TIFF* " tif ", int " stopOnError ", char " emsg[1024] ");"
-.BI "int TIFFRGBAImageGet(TIFFRGBAImage* " img ", uint32* " raster ", uint32 " width " , uint32 " height ");"
-.BI "void TIFFRGBAImageEnd(TIFFRGBAImage* " img ");"
+.sp
+.BI "int TIFFRGBAImageOK(TIFF *" tif ", char " emsg[1024] ")"
+.br
+.BI "int TIFFRGBAImageBegin(TIFFRGBAImage *" img ", TIFF* " tif ", int " stopOnError ", char " emsg[1024] ")"
+.br
+.BI "int TIFFRGBAImageGet(TIFFRGBAImage *" img ", uint32* " raster ", uint32 " width " , uint32 " height ")"
+.br
+.BI "void TIFFRGBAImageEnd(TIFFRGBAImage *" img ")"
+.br
 .SH DESCRIPTION
 The routines described here provide a high-level interface
 through which
