@@ -157,6 +157,12 @@ TIFFRGBAImageEnd(TIFFRGBAImage* img)
 	_TIFFfree(img->PALmap), img->PALmap = NULL;
     if (img->ycbcr)
 	_TIFFfree(img->ycbcr), img->ycbcr = NULL;
+
+    if( img->redcmap ) {
+        _TIFFfree( img->redcmap );
+        _TIFFfree( img->greencmap );
+        _TIFFfree( img->bluecmap );
+    }
 }
 
 static int
@@ -178,7 +184,16 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     uint16 planarconfig;
     uint16 compress;
     int colorchannels;
+    uint16	*red_orig, *green_orig, *blue_orig;
+    int		n_color, i_color;
 
+    /* Initialize to normal values */
+    img->row_offset = 0;
+    img->col_offset = 0;
+    img->redcmap = NULL;
+    img->greencmap = NULL;
+    img->bluecmap = NULL;
+    
     img->tif = tif;
     img->stoponerr = stop;
     TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE, &img->bitspersample);
@@ -224,10 +239,25 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     switch (img->photometric) {
     case PHOTOMETRIC_PALETTE:
 	if (!TIFFGetField(tif, TIFFTAG_COLORMAP,
-	    &img->redcmap, &img->greencmap, &img->bluecmap)) {
+	    &red_orig, &green_orig, &blue_orig)) {
 	    TIFFError(TIFFFileName(tif), "Missing required \"Colormap\" tag");
 	    return (0);
 	}
+
+        /* copy the colormaps so we can modify them */
+        n_color = (1L << img->bitspersample);
+        img->redcmap = (uint16 *) _TIFFmalloc(sizeof(uint16)*n_color);
+        img->greencmap = (uint16 *) _TIFFmalloc(sizeof(uint16)*n_color);
+        img->bluecmap = (uint16 *) _TIFFmalloc(sizeof(uint16)*n_color);
+        if( !img->redcmap || !img->greencmap || !img->bluecmap ) {
+	    TIFFError(TIFFFileName(tif), "Out of memory for colormap copy");
+	    return (0);
+        }
+
+        memcpy( img->redcmap, red_orig, n_color * 2 );
+        memcpy( img->greencmap, green_orig, n_color * 2 );
+        memcpy( img->bluecmap, blue_orig, n_color * 2 );
+        
 	/* fall thru... */
     case PHOTOMETRIC_MINISWHITE:
     case PHOTOMETRIC_MINISBLACK:
@@ -423,7 +453,8 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     for (row = 0; row < h; row += th) {
 	nrow = (row + th > h ? h - row : th);
 	for (col = 0; col < w; col += tw) {
-	    if (TIFFReadTile(tif, buf, col, row, 0, 0) < 0 && img->stoponerr)
+	    if (TIFFReadTile(tif, buf, col+img->col_offset,
+                             row+img->row_offset, 0, 0) < 0 && img->stoponerr)
 		break;
 	    if (col + tw > w) {
 		/*
@@ -489,13 +520,17 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     for (row = 0; row < h; row += th) {
 	nrow = (row + th > h ? h - row : th);
 	for (col = 0; col < w; col += tw) {
-	    if (TIFFReadTile(tif, r, col, row,0,0) < 0 && img->stoponerr)
+	    if (TIFFReadTile(tif, r, col+img->col_offset,
+                             row+img->row_offset,0,0) < 0 && img->stoponerr)
 		break;
-	    if (TIFFReadTile(tif, g, col, row,0,1) < 0 && img->stoponerr)
+	    if (TIFFReadTile(tif, g, col+img->col_offset,
+                             row+img->row_offset,0,1) < 0 && img->stoponerr)
 		break;
-	    if (TIFFReadTile(tif, b, col, row,0,2) < 0 && img->stoponerr)
+	    if (TIFFReadTile(tif, b, col+img->col_offset,
+                             row+img->row_offset,0,2) < 0 && img->stoponerr)
 		break;
-	    if (alpha && TIFFReadTile(tif,a,col,row,0,3) < 0 && img->stoponerr)
+	    if (alpha && TIFFReadTile(tif,a,col+img->col_offset,
+                               row+img->row_offset,0,3) < 0 && img->stoponerr)
 		break;
 	    if (col + tw > w) {
 		/*
@@ -550,8 +585,10 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     fromskew = (w < imagewidth ? imagewidth - w : 0);
     for (row = 0; row < h; row += rowsperstrip) {
 	nrow = (row + rowsperstrip > h ? h - row : rowsperstrip);
-	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, row, 0),
-	    buf, nrow*scanline) < 0 && img->stoponerr)
+	if (TIFFReadEncodedStrip(tif,
+                                 TIFFComputeStrip(tif,row+img->row_offset, 0),
+                                 buf, nrow*scanline) < 0
+            && img->stoponerr)
 		break;
 	(*put)(img, raster+y*w, 0, y, w, nrow, fromskew, toskew, buf);
 	y += (orientation == ORIENTATION_TOPLEFT ?
@@ -577,7 +614,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     u_char *r, *g, *b, *a;
     uint32 row, y, nrow;
     tsize_t scanline;
-    uint32 rowsperstrip;
+    uint32 rowsperstrip, offset_row;
     uint32 imagewidth = img->width;
     tsize_t stripsize;
     int32 fromskew, toskew;
@@ -602,17 +639,18 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     fromskew = (w < imagewidth ? imagewidth - w : 0);
     for (row = 0; row < h; row += rowsperstrip) {
 	nrow = (row + rowsperstrip > h ? h - row : rowsperstrip);
-	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, row, 0),
+        offset_row = row + img->row_offset;
+	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 0),
 	    r, nrow*scanline) < 0 && img->stoponerr)
 	    break;
-	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, row, 1),
+	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 1),
 	    g, nrow*scanline) < 0 && img->stoponerr)
 	    break;
-	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, row, 2),
+	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 2),
 	    b, nrow*scanline) < 0 && img->stoponerr)
 	    break;
 	if (alpha &&
-	    (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, row, 3),
+	    (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 3),
 	    a, nrow*scanline) < 0 && img->stoponerr))
 	    break;
 	(*put)(img, raster+y*w, 0, y, w, nrow, fromskew, toskew, r, g, b, a);
@@ -1847,4 +1885,162 @@ pickTileSeparateCase(TIFFRGBAImage* img)
 	}
     }
     return ((img->put.separate = put) != 0);
+}
+
+/*
+ * Read a whole strip off data from the file, and convert to RGBA form.
+ * If this is the last strip, then it will only contain the portion of
+ * the strip that is actually within the image space.  The result is
+ * organized in bottom to top form.
+ */
+
+
+int
+TIFFReadRGBAStrip(TIFF* tif, uint32 row, uint32 * raster )
+
+{
+    char 	emsg[1024];
+    TIFFRGBAImage img;
+    int 	ok;
+    uint32	rowsperstrip, rows_to_read;
+
+    if( TIFFIsTiled( tif ) )
+    {
+        TIFFError(TIFFFileName(tif),
+                  "Can't use TIFFReadRGBAStrip() with tiled file.");
+	return (0);
+    }
+    
+    TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
+    if( (row % rowsperstrip) != 0 )
+    {
+        TIFFError(TIFFFileName(tif),
+                "Row passed to TIFFReadRGBAStrip() must be first in a strip.");
+	return (0);
+    }
+
+    if (TIFFRGBAImageBegin(&img, tif, 0, emsg)) {
+
+        img.row_offset = row;
+        img.col_offset = 0;
+
+        if( row + rowsperstrip > img.height )
+            rows_to_read = img.height - row;
+        else
+            rows_to_read = rowsperstrip;
+        
+	ok = TIFFRGBAImageGet(&img, raster, img.width, rows_to_read );
+        
+	TIFFRGBAImageEnd(&img);
+    } else {
+	TIFFError(TIFFFileName(tif), emsg);
+	ok = 0;
+    }
+    
+    return (ok);
+}
+
+/*
+ * Read a whole tile off data from the file, and convert to RGBA form.
+ * The returned RGBA data is organized from bottom to top of tile,
+ * and may include zeroed areas if the tile extends off the image.
+ */
+
+int
+TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
+
+{
+    char 	emsg[1024];
+    TIFFRGBAImage img;
+    int 	ok;
+    uint32	tile_xsize, tile_ysize;
+    uint32	read_xsize, read_ysize;
+    int		i_row;
+
+    /*
+     * Verify that our request is legal - on a tile file, and on a
+     * tile boundary.
+     */
+    
+    if( !TIFFIsTiled( tif ) )
+    {
+        TIFFError(TIFFFileName(tif),
+                  "Can't use TIFFReadRGBATile() with stripped file.");
+	return (0);
+    }
+    
+    TIFFGetFieldDefaulted(tif, TIFFTAG_TILEWIDTH, &tile_xsize);
+    TIFFGetFieldDefaulted(tif, TIFFTAG_TILELENGTH, &tile_ysize);
+    if( (col % tile_xsize) != 0 || (row % tile_ysize) != 0 )
+    {
+        TIFFError(TIFFFileName(tif),
+                  "Row/col passed to TIFFReadRGBATile() must be top"
+                  "left corner of a tile.");
+	return (0);
+    }
+
+    /*
+     * Setup the RGBA reader.
+     */
+    
+    if ( !TIFFRGBAImageBegin(&img, tif, 0, emsg)) {
+	TIFFError(TIFFFileName(tif), emsg);
+        return( 0 );
+    }
+
+    /*
+     * The TIFFRGBAImageGet() function doesn't allow us to get off the
+     * edge of the image, even to fill an otherwise valid tile.  So we
+     * figure out how much we can read, and fix up the tile buffer to
+     * a full tile configuration afterwards.
+     */
+
+    if( row + tile_ysize > img.height )
+        read_ysize = img.height - row;
+    else
+        read_ysize = tile_ysize;
+    
+    if( col + tile_xsize > img.width )
+        read_xsize = img.width - col;
+    else
+        read_xsize = tile_xsize;
+
+    /*
+     * Read the chunk of imagery.
+     */
+    
+    img.row_offset = row;
+    img.col_offset = col;
+
+    ok = TIFFRGBAImageGet(&img, raster, read_xsize, read_ysize );
+        
+    TIFFRGBAImageEnd(&img);
+
+    /*
+     * If our read was incomplete we will need to fix up the tile by
+     * shifting the data around as if a full tile of data is being returned.
+     *
+     * This is all the more complicated because the image is organized in
+     * bottom to top format. 
+     */
+
+    if( read_xsize == tile_xsize && read_ysize == tile_ysize )
+        return( ok );
+
+    for( i_row = 0; i_row < read_ysize; i_row++ )
+    {
+        _TIFFmemcpy( raster + (tile_ysize - i_row - 1) * tile_xsize,
+                     raster + (read_ysize - i_row - 1) * read_xsize,
+                     read_xsize * sizeof(uint32) );
+        _TIFFmemset( raster + (tile_ysize - i_row - 1) * tile_xsize+read_xsize,
+                     0, sizeof(uint32) * (tile_xsize - read_xsize) );
+    }
+
+    for( i_row = read_ysize; i_row < tile_ysize; i_row++ )
+    {
+        _TIFFmemset( raster + (tile_ysize - i_row - 1) * tile_xsize,
+                     0, sizeof(uint32) * tile_xsize );
+    }
+    
+    return (ok);
 }
