@@ -1,3 +1,9 @@
+2001-12-12  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: allow jpeg data stream sampling values to 
+	override those from tiff directory.  This makes this work with 
+	ImageGear generated files. 
+
 2001-12-07  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* html/Makefile.in: added missing images per bug 92.
