@@ -142,8 +142,9 @@ TIFFWriteDirectory(TIFF* tif)
 	 */
 	nfields = 0;
 	for (b = 0; b <= FIELD_LAST; b++)
-		if (TIFFFieldSet(tif, b))
+		if (TIFFFieldSet(tif, b) && b != FIELD_CUSTOM)
 			nfields += (b < FIELD_SUBFILETYPE ? 2 : 1);
+        nfields += td->td_customValueCount;
 	dirsize = nfields * sizeof (TIFFDirEntry);
 	data = (char*) _TIFFmalloc(dirsize);
 	if (data == NULL) {
@@ -181,12 +182,35 @@ TIFFWriteDirectory(TIFF* tif)
 	}								/*XXX*/
 	for (fi = 0, nfi = tif->tif_nfields; nfi > 0; nfi--, fi++) {
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[fi];
-		if (!FieldSet(fields, fip->field_bit))
-			continue;
-		switch (fip->field_bit) {
+
+                /*
+                ** For custom fields, we test to see if the custom field
+                ** is set or not.  For normal fields, we just use the
+                ** FieldSet test. 
+                */
+                if( fip->field_bit == FIELD_CUSTOM )
+                {
+                    int ci, is_set = FALSE;
+
+                    for( ci = 0; ci < td->td_customValueCount; ci++ )
+                        is_set |= (td->td_customValues[ci].info == fip);
+
+                    if( !is_set )
+                        continue;
+                }
+		else if (!FieldSet(fields, fip->field_bit))
+                    continue;
+
+
+                /*
+                ** Handle other fields.
+                */
+		switch (fip->field_bit)
+                {
 		case FIELD_STRIPOFFSETS:
 			/*
 			 * We use one field bit for both strip and tile
+
 			 * offsets, and so must be careful in selecting
 			 * the appropriate field descriptor (so that tags
 			 * are written in sorted order).
@@ -312,8 +336,23 @@ TIFFWriteDirectory(TIFF* tif)
 			break;
 		}
 		dir++;
-		ResetFieldBit(fields, fip->field_bit);
+                
+                if( fip->field_bit != FIELD_CUSTOM )
+                    ResetFieldBit(fields, fip->field_bit);
 	}
+#ifdef notdef        
+        /*
+        ** Write custom tags.
+        */
+	for (fi = 0, nfi = td->td_customValueCount; fi < nfi; fi++) {
+            TIFFTagValue *tv = td->td_customValues + fi;
+            
+            if (!TIFFWriteNormalTag(tif, dir, tv->info))
+                goto bad;
+
+            dir++;
+        }
+#endif                
 	/*
 	 * Write directory.
 	 */
