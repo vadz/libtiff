@@ -451,7 +451,6 @@ TIFFFieldInfo*
 _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
 {
     TIFFFieldInfo *fld;
-    int            field_id;
 
     fld = _TIFFmalloc(sizeof (TIFFFieldInfo));
     _TIFFmemset( fld, 0, sizeof(TIFFFieldInfo) );
@@ -464,7 +463,7 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
     fld->field_oktochange = TRUE;
     fld->field_passcount = TRUE;
     fld->field_name = (char *) _TIFFmalloc(32);
-    sprintf( fld->field_name, "Tag %d", tag );
+    sprintf( fld->field_name, "Tag %d", (int) tag );
 
     return fld;    
 }
