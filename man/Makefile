@@ -31,7 +31,7 @@ SRCDIR	= ../man
 
 #
 # VERSION:	v3.5.6
-# DATE:		Fri Dec 22 17:22:51 EST 2000
+# DATE:		Tue Jan 23 16:40:27 EST 2001
 # TARGET:	i686-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
