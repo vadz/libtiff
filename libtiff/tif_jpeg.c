@@ -1443,11 +1443,11 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	 * override parent get/set field methods.
 	 */
 	_TIFFMergeFieldInfo(tif, jpegFieldInfo, N(jpegFieldInfo));
-	sp->vgetparent = tif->tif_vgetfield;
-	tif->tif_vgetfield = JPEGVGetField;	/* hook for codec tags */
-	sp->vsetparent = tif->tif_vsetfield;
-	tif->tif_vsetfield = JPEGVSetField;	/* hook for codec tags */
-	tif->tif_printdir = JPEGPrintDir;	/* hook for codec tags */
+	sp->vgetparent = tif->tif_tagmethods.vgetfield;
+	tif->tif_tagmethods.vgetfield = JPEGVGetField;	/* hook for codec tags */
+	sp->vsetparent = tif->tif_tagmethods.vsetfield;
+	tif->tif_tagmethods.vsetfield = JPEGVSetField;	/* hook for codec tags */
+	tif->tif_tagmethods.printdir = JPEGPrintDir;	/* hook for codec tags */
 
 	/* Default values for codec-specific fields */
 	sp->jpegtables = NULL;

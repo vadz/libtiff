@@ -2007,13 +2007,13 @@ TIFFInitOJPEG(register TIFF *tif,int scheme)
       sizeof ojpegFieldInfo/sizeof *ojpegFieldInfo);
     sp->defsparent = tif->tif_defstripsize;
     sp->deftparent = tif->tif_deftilesize;
-    sp->vgetparent = tif->tif_vgetfield;
-    sp->vsetparent = tif->tif_vsetfield;
+    sp->vgetparent = tif->tif_tagmethods.vgetfield;
+    sp->vsetparent = tif->tif_tagmethods.vsetfield;
     tif->tif_defstripsize = OJPEGDefaultStripSize;
     tif->tif_deftilesize = OJPEGDefaultTileSize;
-    tif->tif_vgetfield = OJPEGVGetField;
-    tif->tif_vsetfield = OJPEGVSetField;
-    tif->tif_printdir = OJPEGPrintDir;
+    tif->tif_tagmethods.vgetfield = OJPEGVGetField;
+    tif->tif_tagmethods.vsetfield = OJPEGVSetField;
+    tif->tif_tagmethods.printdir = OJPEGPrintDir;
 #   ifdef never
     tif->tif_setupencode = OJPEGSetupEncode;
     tif->tif_preencode = OJPEGPreEncode;

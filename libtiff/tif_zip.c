@@ -331,10 +331,10 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	 * override parent get/set field methods.
 	 */
 	_TIFFMergeFieldInfo(tif, zipFieldInfo, N(zipFieldInfo));
-	sp->vgetparent = tif->tif_vgetfield;
-	tif->tif_vgetfield = ZIPVGetField;	/* hook for codec tags */
-	sp->vsetparent = tif->tif_vsetfield;
-	tif->tif_vsetfield = ZIPVSetField;	/* hook for codec tags */
+	sp->vgetparent = tif->tif_tagmethods.vgetfield;
+	tif->tif_tagmethods.vgetfield = ZIPVGetField;	/* hook for codec tags */
+	sp->vsetparent = tif->tif_tagmethods.vsetfield;
+	tif->tif_tagmethods.vsetfield = ZIPVSetField;	/* hook for codec tags */
 
 	/* Default values for codec-specific fields */
 	sp->zipquality = Z_DEFAULT_COMPRESSION;	/* default comp. level */
