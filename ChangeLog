@@ -1,3 +1,13 @@
+2000-12-19 Mike Welles <mike@bangsate.com>   *** 3.5.6 release ***
+
+	* Took out LZW Encoding from tif_lzw.c 
+
+	* Created HOWTO-RELEASE
+
+	* Created html/v3.5.6.html
+
+	* updated index.html
+	
 2000-12-01  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* Added patches for EOFB support in tif_fax3.c and tif_fax3.h. 
