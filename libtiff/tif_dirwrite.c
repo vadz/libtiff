@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -1084,12 +1084,8 @@ TIFFRewriteDirectory( TIFF *tif )
         tif->tif_header.tiff_diroff = 0;
         tif->tif_diroff = 0;
 
-#if defined(__hpux) && defined(__LP64__)
-#define HDROFF(f) ((toff_t)(unsigned long) &(((TIFFHeader*) 0)->f))
-#else
-#define	HDROFF(f)	((toff_t) &(((TIFFHeader*) 0)->f))
-#endif
-        TIFFSeekFile(tif, HDROFF(tiff_diroff), SEEK_SET);
+        TIFFSeekFile(tif, (toff_t)(TIFF_MAGIC_SIZE+TIFF_VERSION_SIZE),
+		     SEEK_SET);
         if (!WriteOK(tif, &(tif->tif_header.tiff_diroff), 
                      sizeof (tif->tif_diroff))) 
         {
@@ -1182,8 +1178,9 @@ TIFFLinkDirectory(TIFF* tif)
 		 * First directory, overwrite offset in header.
 		 */
 		tif->tif_header.tiff_diroff = tif->tif_diroff;
-#define	HDROFF(f)	((toff_t) &(((TIFFHeader*) 0)->f))
-		(void) TIFFSeekFile(tif, HDROFF(tiff_diroff), SEEK_SET);
+		(void) TIFFSeekFile(tif,
+				    (toff_t)(TIFF_MAGIC_SIZE+TIFF_VERSION_SIZE),
+                                    SEEK_SET);
 		if (!WriteOK(tif, &diroff, sizeof (diroff))) {
 			TIFFError(tif->tif_name, "Error writing TIFF header");
 			return (0);
