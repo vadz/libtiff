@@ -323,6 +323,7 @@ TIFFFILES=\
 	    html/v3.5.1.html				\
 	    html/v3.5.2.html				\
 	    html/v3.5.3.html				\
+	    html/v3.5.7.html				\
 	    html/man				\
 	    html/man/TIFFClose.3t.html				\
 	    html/man/TIFFError.3t.html				\

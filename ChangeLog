@@ -1,3 +1,9 @@
+2001-11-23  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* added html/v3.5.7.html, updated html/index.html.
+
+	* Makefile.in: added contrib/addtiffo/tif_ovrcache.{c,h}.
+
 2001-11-15  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* configure: fixed test for -lm.
