@@ -144,6 +144,7 @@ TIFFOpen(const char* name, const char* mode)
 {
 	static const char module[] = "TIFFOpen";
 	int m, fd;
+        TIFF* tif;
 
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
@@ -167,7 +168,11 @@ TIFFOpen(const char* name, const char* mode)
 		TIFFError(module, "%s: Cannot open", name);
 		return ((TIFF *)0);
 	}
-	return (TIFFFdOpen(fd, name, mode));
+
+	tif = TIFFFdOpen((int)fd, name, mode);
+	if(!tif)
+		close(fd);
+	return tif;
 }
 
 void*
