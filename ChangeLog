@@ -1,5 +1,15 @@
 2005-01-11  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/tiffio.h: Move the color conversion routines in the 'extern
+	"C"' section as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=727
+
+	* libtiff/tiff.h: Restore back the workaround for AIX Visual Age C
+	compiler to avoid double definition of BSD types as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=39	
+
 	* libtiff/Makefile.am: Place the C++ stream API in the separate
 	library called libtiffxx to avoid unneeded dependencies. Probably
 	there will be more C++ API in the future. As per bugs
