@@ -1,4 +1,16 @@
+2002-01-04  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: fixed computation of segment_width for 
+	tiles files to avoid error about it not matching the 
+	cinfo.d.image_width values ("JPEGPreDecode: Improper JPEG strip/tile 
+	size.") for ITIFF files.  Apparently the problem was incorporated since
+	3.5.5, presumably during the OJPEG/JPEG work recently.
+
 2001-12-15  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* configure, libtiff/Makefile.in: Changes for building on MacOS 10.1.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=94
 
 	* libtiff/tif_getimage.c: If DEFAULT_EXTRASAMPLE_AS_ALPHA is 1 
 	(defined in tiffconf.h - 1 by default) then the RGBA interface

@@ -639,6 +639,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 	segment_width = td->td_imagewidth;
 	segment_height = td->td_imagelength - tif->tif_row;
 	if (isTiled(tif)) {
+                segment_width = td->td_tilewidth;
 		if (segment_height > td->td_tilelength)
 			segment_height = td->td_tilelength;
 		sp->bytesperline = TIFFTileRowSize(tif);
@@ -657,8 +658,12 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 	}
 	if (sp->cinfo.d.image_width != segment_width ||
 	    sp->cinfo.d.image_height != segment_height) {
-		TIFFError(module, "Improper JPEG strip/tile size");
-		return (0);
+		TIFFError(module, 
+                 "Improper JPEG strip/tile size, expected %dx%d, got %dx%d",
+                          segment_width, 
+                          segment_height,
+                          sp->cinfo.d.image_width, 
+                          sp->cinfo.d.image_height);
 	}
 	if (sp->cinfo.d.num_components !=
 	    (td->td_planarconfig == PLANARCONFIG_CONTIG ?
