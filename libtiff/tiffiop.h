@@ -203,7 +203,6 @@ struct tiff {
 
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))
 #define TIFFmin(A,B) ((A)<(B)?(A):(B))
-#define TIFFrint( R ) ((int)((R)>0?((R)+0.5):((R)-0.5)))
 
 #if defined(__cplusplus)
 extern "C" {
