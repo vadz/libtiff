@@ -1,5 +1,10 @@
 2004-08-23  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tools/tiff2ps.c: Fixed problem with uninitialized values.
+
+	* libtiff/tif_dir.c: Initialize tif_foundfield data member in the
+	TIFFDefaultDirectory() (in addition to 2004-08-19 fix).
+
 	* tools/tiff2pdf.c: Fixed a bunch of problems as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=590
