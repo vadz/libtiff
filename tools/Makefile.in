@@ -111,20 +111,24 @@ all:	${TARGETS}
 	    true; \
 	fi
 install: all
-	${INSTALL} -idb nostrip -idb tiff.sw.tools -m 755 -dir @DIR_BIN@
-	${INSTALL} -idb nostrip -idb tiff.sw.tools -m 755 -F @DIR_BIN@ -O ${TARGETS}
-	@if [ "@LIBIMAGE@" = yes ]; then \
-	    ${INSTALL} -idb tiff.sw.tools -m 755 -F @DIR_BIN@ -O sgi2tiff; \
-	else \
-	    true; \
+	${INSTALL} -idb nostrip -idb tiff.sw.tools -m 755 		\
+		-dir ${DESTDIR}@DIR_BIN@
+	${INSTALL} -idb nostrip -idb tiff.sw.tools -m 755 		\
+		-F ${DESTDIR}@DIR_BIN@ -O ${TARGETS}
+	@if [ "@LIBIMAGE@" = yes ]; then 				\
+	    ${INSTALL} -idb tiff.sw.tools -m 755 			\
+		-F ${DESTDIR}@DIR_BIN@ -O sgi2tiff; 			\
+	else 								\
+	    true;							\
 	fi
-	@if [ "@LIBGL@" = yes ]; then \
-	    ${INSTALL} -idb tiff.sw.tools -m 755 -F @DIR_BIN@ -O tiffgt tiffsv;\
-	else \
-	    true; \
+	@if [ "@LIBGL@" = yes ]; then 					\
+	    ${INSTALL} -idb tiff.sw.tools -m 755 -F ${DESTDIR}@DIR_BIN@ \
+		-O tiffgt tiffsv;					\
+	else 								\
+	    true; 							\
 	fi
 clean:
-	rm -f ${TARGETS} ${OBJS} sgigt.o tiffgt sgisv.o tiffsv \
+	rm -f ${TARGETS} ${OBJS} sgigt.o tiffgt sgisv.o tiffsv 		\
 	    sgi2tiff.o sgi2tiff core a.out ycbcr 
 
 #

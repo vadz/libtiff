@@ -1,3 +1,9 @@
+2001-07-17  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* */Makefile.in: added DESTDIR support. 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=60
+
 2001-07-16  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* configure, libtiff/Makefile.in: applied OpenBSD patches
