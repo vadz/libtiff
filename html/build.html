@@ -58,27 +58,24 @@ before <B>./configure</B>.
 
 <P>
 
-In general, the software is designed such that the following should
-be ``<I>make-able</I>'' in each directory:
+In general, the software is designed such that the following should be
+``<I>make-able</I>'' in each directory:
 
 <UL><PRE>
 make [all]	build stuff
 make install	build&install stuff
-make clean	remove .o files and cruft, but not executables
-make clobber	remove everything that can be recreated
-make distclean	remove <EM>absolutely everything</EM> that can be recreated
+make clean	remove .o files, executables and cruft
+make distclean	remove everything, that can be recreated
 </PRE></UL>
 
-Note that after running "<TT>make clobber</TT>" or
-"<TT>make distclean</TT>" the <TT>configure</TT> script must
-be run again to create the Makefiles and other make-related files. 
+Note that after running "<TT>make distclean</TT>" the <TT>configure</TT>
+script must be run again to create the Makefiles and other make-related files. 
 
 <A NAME="BuildTrees"><P><HR WIDTH=65% ALIGN=right><H3>Build Trees</H3></A>
 
-There are two schemes for configuring and building the software.
-If you intend to build the software for only one target system, you
-can configure the software so that it is built in the same directories
-as the source code. 
+There are two schemes for configuring and building the software. If you intend
+to build the software for only one target system, you can configure the
+software so that it is built in the same directories as the source code. 
 
 <UL><PRE>
 hyla% <B>cd tiff-v3.4beta099</B>
@@ -90,9 +87,9 @@ hyla% <B>./configure</B>
 </PRE></UL>
 
 <P>
-Otherwise, you can configure a build tree that 
-is parallel to the source tree hierarchy but which contains only
-configured files and files created during the build procedure.
+Otherwise, you can configure a build tree that is parallel to the source tree
+hierarchy but which contains only configured files and files created during
+the build procedure.
 
 <UL><PRE>
 hyla% <B>cd tiff-v3.4beta099</B>
@@ -109,96 +106,90 @@ This second scheme is useful for:
   the distribution on CD-ROM)
 </UL>
 
-<A NAME="ConfigFiles"><P><HR WIDTH=65% ALIGN=right><H3>Configuration Files</H3></A>
+<A NAME="ConfigOptions"><P><HR WIDTH=65% ALIGN=right>
+	<H3>Configuration Options</H3></A>
 
-The configuration process is critical to the proper compilation,
-installation, and operation of the software.
-The configure script runs a series of tests to
-decide whether or not the target system
-supports required functionality and, if it does not, whether it
-can emulate or workaround the missing functions.
-This procedure is fairly complicated and, due to the nonstandard
-nature of most UNIX systems, prone to error.
-The first time that you configure the software for use you should
-check the output from the configure script and look for anything
-that does not make sense for your system.
-A sample configure run is shown below together with an explanation
-of some of the work that is done.
+The configuration process is critical to the proper compilation, installation,
+and operation of the software. The configure script runs a series of tests to
+decide whether or not the target system supports required functionality and,
+if it does not, whether it can emulate or workaround the missing functions.
+This procedure is fairly complicated and, due to the nonstandard nature of
+most UNIX systems, prone to error. The first time that you configure the
+software for use you should check the output from the configure script and
+look for anything that does not make sense for your system.
 
 <P>
-A second function of the configure script is to set the default
-configuration parameters for the software.
-Of particular note are the directories where the software is to be
-installed.
-By default the software is installed in the <B>/usr/local</B> hierarchy.
-To change this behaviour the appropriate parameters can be
-specified either:
-<UL>
-<LI>on the command line to configure,
-<LI>in a site-wide configuration file, or
-<LI>in a target-specific configuration file.
-</UL>
-configure reads any site-wide configure file first, and
-then any target-specific configuration file.
-This permits target-specific definitions to override
-site-wide definitions.
+A second function of the configure script is to set the default configuration
+parameters for the software. Of particular note are the directories where the
+software is to be installed. By default the software is installed in the
+<B>/usr/local</B> hierarchy. To change this behaviour the appropriate
+parameters can be specified on the command line to configure. Run
+<B>./configure --help</B> to get a list of possible options. Installation
+related options are shown below.
 
-<P>
-Site-wide configuration files are named
-<B>config.site</B> and are automatically searched for first
-in any directory specified on the command line to configure
-(using the <TT>-site</TT> option), or if that fails, in
-the directory in in which the configure script is located.
+<PRE><TT>
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [/usr/local]
+  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+                          [PREFIX]
 
-<P>
-Target-specific configuration files are named <B>config.local</B>
-and are looked for first in the top-level configuration directory,
-or, if that fails, in the directory in which the configure script
-is located.
+By default, `make install' will install all the files in
+`/usr/local/bin', `/usr/local/lib' etc.  You can specify
+an installation prefix other than `/usr/local' using `--prefix',
+for instance `--prefix=$HOME'.
 
-<P>
-Configuration files are just shell scripts that define
-shell variables that control the configuration process.
-For example, the following file might be used on a BSDI system to
-configure the software for installation in the <B>/usr/contrib</B> area.
+For better control, use the options below.
 
-<PRE>
-#
-# Parameters suitable for BSDI 1.1
-#
-DIR_BIN="/usr/contrib/bin"		# directory for client apps
-DIR_LIB="/usr/contrib/lib"		# directory for libraries
-DIR_MAN="/usr/contrib/man"		# directory for manual pages
-</PRE>
+Fine tuning of the installation directories:
+  --bindir=DIR           user executables [EPREFIX/bin]
+  --sbindir=DIR          system admin executables [EPREFIX/sbin]
+  --libexecdir=DIR       program executables [EPREFIX/libexec]
+  --datadir=DIR          read-only architecture-independent data [PREFIX/share]
+  --sysconfdir=DIR       read-only single-machine data [PREFIX/etc]
+  --sharedstatedir=DIR   modifiable architecture-independent data [PREFIX/com]
+  --localstatedir=DIR    modifiable single-machine data [PREFIX/var]
+  --libdir=DIR           object code libraries [EPREFIX/lib]
+  --includedir=DIR       C header files [PREFIX/include]
+  --oldincludedir=DIR    C header files for non-gcc [/usr/include]
+  --infodir=DIR          info documentation [PREFIX/info]
+  --mandir=DIR           man documentation [PREFIX/man]
 
-<P>
-For a complete list of the possible configuration parameters look
-at the sample <B>config.site</B> file provided in the distribution; the
-section below describes some of the more important parameters.
+Program names:
+  --program-prefix=PREFIX            prepend PREFIX to installed program names
+  --program-suffix=SUFFIX            append SUFFIX to installed program names
+  --program-transform-name=PROGRAM   run sed PROGRAM on installed program names
+</TT></PRE>
 
-<A NAME="Packages"><P><HR WIDTH=65% ALIGN=right><H3>Configuring Optional Packages/Support</H3></A>
+<A NAME="Packages"><P><HR WIDTH=65% ALIGN=right>
+	<H3>Configuring Optional Packages/Support</H3></A>
 
-The TIFF software comes with several packages that are installed only
-as needed, or only if specifically configured at the time
-the configure script is run.  Packages can be configured in a
-<B>config.site</B> or <B>config.local</B> file, or by using a
-<TT>-with-&lt;PACKAGE&gt;</TT> option when invoking configure;
-e.g. <TT>configure -with-AFM</TT>.
+The TIFF software comes with several packages that are installed only as
+needed, or only if specifically configured at the time the configure script is
+run.  Packages can be configured via the <B>configure</B> script commandline
+parameters.
 
 <DL>
-<DT><I>DSO Support</I>
-<DD>The <TT>DSO</TT> support controls whether or not to
-configure the software
-to build a Dynamic Shared Object for the TIFF library.
-Use of DSOs can significantly reduce the disk space needed for
-users of the TIFF software.
-If DSOs are not used then the code is statically linked into
-each application that uses it.
-By default this support is configured only if the system appears
-to suport DSOs in a way that fits into the normal build scheme
-(<TT>auto</TT>).
-If DSO support is <EM>explicitly enabled</EM> and there is no
-support for using DSOs in the expected way then DSOs are not used.
+	<DT><I>Static/Shared Objects Support</I>
+
+	<DD><TT>
+		--enable-shared[=PKGS]&nbsp;&nbsp;&nbsp;&nbsp;build shared libraries [default=yes]<BR>
+		--enable-static[=PKGS]&nbsp;&nbsp;&nbsp;&nbsp;build static libraries [default=yes]
+	</TT>
+	
+	<P>These options control whether or not to configure the software to
+	build a shared and static binaries for the TIFF library. Use of shared
+	libraries can significantly reduce the disk space needed for users of
+	the TIFF software. If shared libarries are not used then the code is
+	statically linked into each application that uses it. By default both
+	types of binaries is configured.
+
+	<P><TT>
+		--enable-rpath&nbsp;&nbsp;&nbsp;&nbsp;Enable runtime linker paths (-R libtool option)
+	</TT>
+
+	<P> Add library directories (see other options below) to the TIFF
+	library	run-time linker path.
 
 <P>
 <DT><I>JPEG Support</I>
