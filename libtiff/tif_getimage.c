@@ -226,10 +226,14 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     if (extrasamples == 1)
     {
 	switch (sampleinfo[0]) {
+	case EXTRASAMPLE_UNSPECIFIED:	/* Workaround for some images without */
+		if (img->samplesperpixel == 4)	/* correct info about alpha channel */
+			img->alpha = EXTRASAMPLE_ASSOCALPHA;
+		break;
 	case EXTRASAMPLE_ASSOCALPHA:	/* data is pre-multiplied */
 	case EXTRASAMPLE_UNASSALPHA:	/* data is not pre-multiplied */
-	    img->alpha = sampleinfo[0];
-	    break;
+		img->alpha = sampleinfo[0];
+		break;
 	}
     }
 
