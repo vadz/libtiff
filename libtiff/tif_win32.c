@@ -253,7 +253,7 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 	if (mbsize > 0) {
 		mbname = _TIFFmalloc(mbsize);
 		if (!mbname) {
-			TIFFerror(module,
+			TIFFError(module,
 			"Can't allocate space for filename conversion buffer");
 			return ((TIFF*)0);
 		}
