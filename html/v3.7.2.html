@@ -58,9 +58,9 @@ The following information is located here:
 <A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
 
 <UL>
-	<li> tif_open.c: Remove unnesessary TIFFSeekFile() call as per
-	bug <a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=756">
-		http://bugzilla.remotesensing.org/show_bug.cgi?id=756</a>
+	<li> configure.ac: Use -rpath option instead of -R as per bug
+	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=732">
+		http://bugzilla.remotesensing.org/show_bug.cgi?id=732</a>
 
 	<li> tif_stream.cxx: Fixes for C++ stream interface from
 	Michael Rinne and Edward Lam.
@@ -91,6 +91,15 @@ The following information is located here:
 <A NAME="libtiff"><B><FONT SIZE=+3>C</FONT>HANGES IN LIBTIFF:</B></A>
 
 <UL>
+
+	<li> Applied patch from Lee Howard to support a new tag TIFFTAG_FAXDCS
+	(34911) used in HylaFax software. As per bug
+	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=771">
+		http://bugzilla.remotesensing.org/show_bug.cgi?id=771</a>
+
+	<li> tif_open.c: Remove unnesessary TIFFSeekFile() call as per
+	bug <a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=756">
+		http://bugzilla.remotesensing.org/show_bug.cgi?id=756</a>
 
 	<li> tiff.h: Changed the int8 definition to be always signed char
 	as per bug
@@ -159,6 +168,20 @@ The following information is located here:
 <A NAME="tools"><B><FONT SIZE=+3>C</FONT>HANGES IN THE TOOLS:</B></A>
 
 <UL>
+
+	<li> tiffcmp.c: Added ability to compare the 32-bit integer and
+	floating point data; complain on unsupported bit depths.
+
+	<li> tiffcmp.c: Use properly sized buffer in short arrays comparison
+	as per bug
+	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=785">
+		http://bugzilla.remotesensing.org/show_bug.cgi?id=785</a>
+
+	<li> fax2ps.c: Replace insecure mktemp() function with the
+	tmpfile() as per bug
+	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=786">
+		http://bugzilla.remotesensing.org/show_bug.cgi?id=786</a>
+
 	<li> tiffgt.c: Fix problem on big-endian CPUs so that images
 	display more correctly.  Images display brighter than they should
 	on a Sun workstation.

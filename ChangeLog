@@ -1,3 +1,7 @@
+2005-03-15  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.7.2 released.
+
 2005-03-09  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcmp.c: Added ability to compare the 32-bit integer and
