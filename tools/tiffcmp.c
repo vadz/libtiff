@@ -325,13 +325,13 @@ PrintDiff(uint32 row, int sample, uint32 pix, int w1, int w2)
 	case 8: 
 		printf("Scanline %lu, pixel %lu, sample %d: %02x %02x\n",
 		    (long) row, (long) pix, sample, w1, w2);
-		if (--stopondiff)
+		if (--stopondiff == 0)
 			exit(1);
 		break;
 	case 16:
 		printf("Scanline %lu, pixel %lu, sample %d: %04x %04x\n",
 		    (long) row, (long) pix, sample, w1, w2);
-		if (--stopondiff)
+		if (--stopondiff == 0)
 			exit(1);
 		break;
 	}
@@ -352,7 +352,7 @@ SeparateCompare(int reversed, int sample, uint32 row, unsigned char* cp1, unsign
 				printf("%02x %02x\n", *p2, *cp1);
 			else
 				printf("%02x %02x\n", *cp1, *p2);
-			if (--stopondiff)
+			if (--stopondiff == 0)
 				exit(1);
 		}
 }
