@@ -119,3 +119,27 @@ NotConfigured(TIFF* tif, int scheme)
     tif->tif_setupencode = _notConfigured;
     return (1);
 }
+
+/************************************************************************/
+/*                       TIFFIsCODECConfigured()                        */
+/************************************************************************/
+
+/**
+ * Check whether we have working codec for the specific coding scheme.
+ * 
+ * @return returns 1 if the codec is configured and working. Otherwise
+ * 0 will be returned.
+ */
+
+int
+TIFFIsCODECConfigured(uint16 scheme)
+{
+	const TIFFCodec* codec = TIFFFindCODEC(scheme);
+
+	if(codec == NULL)
+		return 0;
+	if(codec->init != _notConfigured)
+		return 1;
+	return 0;
+}
+

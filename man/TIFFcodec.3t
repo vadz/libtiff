@@ -34,6 +34,8 @@ TIFFFindCODEC, TIFFRegisterCODEC, TIFFUnRegisterCODEC \- codec-related utility r
 .B "TIFFCodec* TIFFRegisterCODEC(uint16 scheme, const char* method, TIFFInitMethod init);"
 .br
 .B "void TIFFUnRegisterCODEC(TIFFCodec* codec);"
+.br
+.B "int TIFFIsCODECConfigured(uint16 scheme);"
 .SH DESCRIPTION
 .I libtiff
 supports a variety of compression schemes implemented by software
@@ -59,6 +61,9 @@ already has a registered codec then it is
 .I overridden
 and any images with data encoded with this
 compression scheme will be decoded using the supplied coded.
+.PP
+.I TIFFIsCODECConfigured
+returns 1 if the codec is configured and working. Otherwise 0 will be returned.
 .SH DIAGNOSTICS
 .BR "No space to register compression scheme %s" .
 .I TIFFRegisterCODEC
