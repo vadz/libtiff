@@ -15,7 +15,7 @@ WINMODE = -DTIF_PLATFORM_CONSOLE
 CC      = cl
 INCL	= -I. 
 LIBS    = 
-CFLAGS  = /nologo $(INCL) $(WINMODE)
+CFLAGS  = /nologo /W3 $(INCL) $(WINMODE)
 
 OBJ	= \
 	tif_aux.obj \
