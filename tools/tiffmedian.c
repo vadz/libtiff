@@ -68,7 +68,7 @@ typedef	struct colorbox {
 	int	rmin, rmax;
 	int	gmin, gmax;
 	int	bmin, bmax;
-	int	total;
+	uint32	total;
 } Colorbox;
 
 typedef struct {
@@ -77,9 +77,8 @@ typedef struct {
 } C_cell;
 
 uint16	rm[MAX_CMAP_SIZE], gm[MAX_CMAP_SIZE], bm[MAX_CMAP_SIZE];
-int	bytes_per_pixel;
 int	num_colors;
-int	histogram[B_LEN][B_LEN][B_LEN];
+uint32	histogram[B_LEN][B_LEN][B_LEN];
 Colorbox *freeboxes;
 Colorbox *usedboxes;
 C_cell	**ColorCells;
@@ -355,7 +354,7 @@ get_histogram(TIFF* in, Colorbox* box)
 	box->rmax = box->gmax = box->bmax = -1;
 	box->total = imagewidth * imagelength;
 
-	{ register int *ptr = &histogram[0][0][0];
+	{ register uint32 *ptr = &histogram[0][0][0];
 	  for (i = B_LEN*B_LEN*B_LEN; i-- > 0;)
 		*ptr++ = 0;
 	}
@@ -389,10 +388,10 @@ static Colorbox *
 largest_box(void)
 {
 	register Colorbox *p, *b;
-	register int size;
+	register uint32 size;
 
 	b = NULL;
-	size = -1;
+	size = 0;
 	for (p = usedboxes; p != NULL; p = p->next)
 		if ((p->rmax > p->rmin || p->gmax > p->gmin ||
 		    p->bmax > p->bmin) &&  p->total > size)
@@ -403,13 +402,13 @@ largest_box(void)
 static void
 splitbox(Colorbox* ptr)
 {
-	int		hist2[B_LEN];
+	uint32		hist2[B_LEN];
 	int		first, last;
 	register Colorbox	*new;
-	register int	*iptr, *histp;
+	register uint32	*iptr, *histp;
 	register int	i, j;
 	register int	ir,ig,ib;
-	register int sum, sum1, sum2;
+	register uint32 sum, sum1, sum2;
 	enum { RED, GREEN, BLUE } axis;
 
 	/*
@@ -418,7 +417,7 @@ splitbox(Colorbox* ptr)
 	 * fit points and return
 	 */
 	i = ptr->rmax - ptr->rmin;
-	if (i >= ptr->gmax - ptr->gmin  && i >= ptr->bmax - ptr->bmin)
+	if (i >= ptr->gmax - ptr->gmin && i >= ptr->bmax - ptr->bmin)
 		axis = RED;
 	else if (ptr->gmax - ptr->gmin >= ptr->bmax - ptr->bmin)
 		axis = GREEN;
@@ -525,7 +524,8 @@ splitbox(Colorbox* ptr)
 static void
 shrinkbox(Colorbox* box)
 {
-	register int *histp, ir, ig, ib;
+	register uint32 *histp;
+	register int	ir, ig, ib;
 
 	if (box->rmax > box->rmin) {
 		for (ir = box->rmin; ir <= box->rmax; ++ir)
@@ -697,7 +697,7 @@ create_colorcell(int red, int green, int blue)
 static void
 map_colortable(void)
 {
-	register int *histp = &histogram[0][0][0];
+	register uint32 *histp = &histogram[0][0][0];
 	register C_cell *cell;
 	register int j, tmp, d2, dist;
 	int ir, ig, ib, i;
