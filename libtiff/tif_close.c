@@ -55,7 +55,23 @@ TIFFClose(TIFF* tif)
     if (isMapped(tif))
         TIFFUnmapFileContents(tif, tif->tif_base, tif->tif_size);
     (void) TIFFCloseFile(tif);
-    if (tif->tif_fieldinfo)
+    if (tif->tif_nfields > 0) 
+    {
+        int  i;
+
+        for (i = 0; i < tif->tif_nfields; i++) 
+	{
+	    TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
+ 	    if (fld->field_bit == FIELD_CUSTOM && 
+		strncmp("Tag ", fld->field_name, 4) == 0) 
+	    {
+                _TIFFfree(fld->field_name);
+                _TIFFfree(fld);
+	    }
+        }   
+      
         _TIFFfree(tif->tif_fieldinfo);
+    }
+
     _TIFFfree(tif);
 }
