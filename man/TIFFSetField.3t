@@ -23,19 +23,19 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFSetField 3T "August 28, 1997"
+.TH TIFFSetField 3T "October 29, 2004" "libtiff"
 .SH NAME
-TIFFSetField \- set the value(s) of a tag in a
+TIFFSetField, TIFFVSetField \- set the value(s) of a tag in a
 .SM TIFF
 file open for writing
 .SH SYNOPSIS
 .B "#include <tiffio.h>"
-.br
-.B "int TIFFSetField(TIFF* tif, ttag_t tag, ...)"
-.br
+.sp
+.BI "int TIFFSetField(TIFF *" tif ", ttag_t " tag ", " ... ")"
+.sp
 .B "#include <stdarg.h>"
-.br
-.B "int TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)"
+.sp
+.BI "int TIFFVSetField(TIFF *" tif ", ttag_t " tag ", va_list " ap ")"
 .SH DESCRIPTION
 .IR TIFFSetField
 sets the value of a field
@@ -169,6 +169,7 @@ TIFFTAG_YCBCRPOSITIONING	1	uint16	\(dg
 TIFFTAG_YCBCRSAMPLING	2	uint16	\(dg
 TIFFTAG_YPOSITION	1	float
 TIFFTAG_YRESOLUTION	1	float
+TIFFTAG_PHOTOSHOP	?	uint32,void*	count, data
 TIFFTAG_ICCPROFILE	2	uint32,void*	count, profile data*
 .fi
 .sp 5p
