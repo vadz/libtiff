@@ -202,6 +202,8 @@ MANDEVLINKS=\
 	lib/TIFFTileRowSize.3t \
 	lib/TIFFUnRegisterCODEC.3t \
 	lib/TIFFVGetField.3t \
+	lib/TIFFGetFieldDefaulted.3t \
+	lib/TIFFVGetFieldDefaulted.3t \
 	lib/TIFFVSetField.3t \
 	lib/TIFFReadBufferSetup.3t \
 	lib/TIFFWriteBufferSetup.3t \
@@ -327,6 +329,8 @@ lib/TIFFVTileSize.3t:;		${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
 lib/TIFFDefaultTileSize.3t:;	${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
 lib/TIFFTileRowSize.3t:;	${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
 lib/TIFFVGetField.3t:;		${ECHO} ".so ${MANDIR}TIFFGetField.3t" > $@
+lib/TIFFGetFieldDefaulted.3t:;	${ECHO} ".so ${MANDIR}TIFFGetField.3t" > $@
+lib/TIFFVGetFieldDefaulted.3t:;	${ECHO} ".so ${MANDIR}TIFFGetField.3t" > $@
 lib/TIFFVSetField.3t:;		${ECHO} ".so ${MANDIR}TIFFSetField.3t" > $@
 lib/TIFFFindCODEC.3t:;		${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
 lib/TIFFRegisterCODEC.3t:;	${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
