@@ -1699,6 +1699,7 @@ if [ "${JPEG}" = yes ]; then
     fi
     if [ "${OJPEG}" = yes ]; then
       CONF_JPEG="$CONF_JPEG -DOJPEG_SUPPORT"
+      LIBJPEG="${LIBJPEG} -Lcontrib/ojpeg -lojpeg"
     fi
 else
     CONF_JPEG=
@@ -1910,6 +1911,7 @@ if [ $SRCDIR_IS_LIBTIFF != yes ] ; then
         "
     test $HTML = yes &&		CONF_FILES="$CONF_FILES html/Makefile"
     test $PORT = yes &&		CONF_FILES="$CONF_FILES port/Makefile"
+    test $OJPEG = yes &&	CONF_FILES="$CONF_FILES contrib/ojpeg/Makefile"
 fi
 SedConfigFiles $CONF_FILES
 
