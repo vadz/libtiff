@@ -1,3 +1,8 @@
+2000-09-26  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Applied patch for 0x0000 sequences in tif_fax3.h's definition
+	of EXPAND1D() as per bug 11 (from Roman). 
+
 2000-09-25  Frank Warmerdam  <warmerda@cs46980-c>
 	* Fixed tiffcomp.h to avoid win32 stuff if unix #defined, to improve
 	cygwin compatibility.
