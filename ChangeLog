@@ -1,10 +1,14 @@
 2002-08-22  Andrey Kiselev  <dron@remotesensing.org>
 	
-	* /libtiff/tiff_lzw.c: Additional consistency checking added in
+	* /libtiff/tif_dirinfo.c: Further additions to free custom fields
+	in _TIFFSetupFieldInfo() function.
+	See http://bugzilla.remotesensing.org/show_bug.cgi?id=169 for details.
+
+	* /libtiff/tif_lzw.c: Additional consistency checking added in
 	LZWDecode() and LZWDecodeCompat().
 	Fixes http://bugzilla.remotesensing.org/show_bug.cgi?id=190
 	
-	* /libtiff/tiff_lzw.c:
+	* /libtiff/tif_lzw.c:
 	Added check for valid code lengths in LZWDecode() and
 	LZWDecodeCompat(). Fixes
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=115
