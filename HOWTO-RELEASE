@@ -1,83 +1,52 @@
 HOWTO-RELEASE: 
 Notes on releasing.  <mike@bangstate.com> 
 
-1. 
+1. Commit any unsaved changes. 
 
-Commit any unsaved changes. 
+2. "make clean"
 
-2. 
+3. Create html/vX.X.html.  Take ChangeLog entries and html-ify in there. 
+   Easist thing to do is take html/vX.(X-1).html and use it as a template. 
 
-"make clean"
+4. Add any new files that have been created that should be part 
+   of the distrubituion (like the html file in step 2), to 
+   TIFFFILES in Makefile.in
 
-3. 
+5. Make sure tif_dir.c in lzw-compression-kit is in sync with the 
+   main tree. 
 
-Create html/vX.X.html.  Take ChangeLog entries and html-ify in
-there. Easist thing to do is take html/vX.(X-1).html and use 
-it as a template. 
+6. Increment version in file "VERSION" 
 
-4. 
+8. sh configure; make; make install (to test). 
 
-Add any new files that have been created that should be part 
-of the distrubituion (like the html file in step 2), to 
-TIFFFILES in Makefile.in
+9. make release -- this will update "RELEASE-DATE" in the top level dir,
+   and create the .tar.gz and .zip archives one directory above.
 
-5. 
+10. make distclean
 
-Make sure tif_dir.c in lzw-compression-kit is in sync with the 
-main tree. 
+11. cvs commit
 
-6. 
+12. ftp ftp.onshore.com; 
+    cd /home/ftp/pub/libtiff
+    put ../tiff-vn-n-n.zip .
+    put ../tiff-vn-n-n.tar.gz .
 
-Increment version in file "VERSION" 
+13. ftp ftp.libtiff.org
+    lcd html
+    mput *.html
+    put ../tiff-vn-n-n.zip .
+    put ../tiff-vn-n-n.tar.gz .
 
+13. Commit any changes in libtiff-lzw-compression-kit. 
 
+    Update VERSION in Makefile. 
 
-8. 
+    make release
 
-sh configure; make; make install (to test). 
+    ftp to both sites. 
 
+14. Announce to list, tiff@olympiakos.com
 
-9. 
-
-make release -- this will update "RELEASE-DATE" in the top level dir,
-and create the .tar.gz and .zip archives one directory above.
-
-10. 
-
-make distclean
-
-11. 
-
-cvs commit
-
-12. 
-
-ftp ftp.onshore.com; 
-cd /home/ftp/pub/libtiff
-put ../tiff-vn-n-n.zip .
-put ../tiff-vn-n-n.tar.gz .
-
-13
-
-ftp ftp.libtiff.org
-lcd html
-mput *.html
-put ../tiff-vn-n-n.zip .
-put ../tiff-vn-n-n.tar.gz .
-
-13. 
-
-Commit any changes in libtiff-lzw-compression-kit. 
-
-Update VERSION in Makefile. 
-
-make release
-
-ftp to both sites. 
-
-14.  
-
-Announce to list, tiff@olympiakos.com
 
 
 
