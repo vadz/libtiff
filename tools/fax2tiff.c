@@ -32,29 +32,29 @@
 #include <stdio.h>
 #include <stdlib.h>		/* should have atof & getopt */
 
-#if HAVE_UNISTD_H
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
-#if HAVE_FCNTL_H
+#ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 
-#if HAVE_IO_H
+#ifdef HAVE_IO_H
 # include <io.h>
 #endif
 
 #include "tiffiop.h"
 
 #ifndef BINMODE
-#define	BINMODE
+# define	BINMODE
 #endif
 
 #ifndef EXIT_SUCCESS
-#define EXIT_SUCCESS	0
+# define EXIT_SUCCESS	0
 #endif
 #ifndef EXIT_FAILURE
-#define EXIT_FAILURE	1
+# define EXIT_FAILURE	1
 #endif
 
 TIFF	*faxTIFF;
