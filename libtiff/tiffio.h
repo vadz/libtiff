@@ -264,6 +264,7 @@ extern	tstrip_t TIFFCurrentStrip(TIFF*);
 extern	ttile_t TIFFCurrentTile(TIFF*);
 extern	int TIFFReadBufferSetup(TIFF*, tdata_t, tsize_t);
 extern	int TIFFWriteBufferSetup(TIFF*, tdata_t, tsize_t);
+extern	int TIFFSetupStrips(TIFF *);
 extern  int TIFFWriteCheck(TIFF*, int, const char *);
 extern  int TIFFCreateDirectory(TIFF*);
 extern	int TIFFLastDirectory(TIFF*);
@@ -273,6 +274,7 @@ extern	int TIFFUnlinkDirectory(TIFF*, tdir_t);
 extern	int TIFFSetField(TIFF*, ttag_t, ...);
 extern	int TIFFVSetField(TIFF*, ttag_t, va_list);
 extern	int TIFFWriteDirectory(TIFF *);
+extern	int TIFFCheckpointDirectory(TIFF *);
 extern	int TIFFRewriteDirectory(TIFF *);
 extern	int TIFFReassignTagToIgnore(enum TIFFIgnoreSense, int);
 

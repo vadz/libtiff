@@ -47,7 +47,6 @@
 
 static	int TIFFGrowStrips(TIFF*, int, const char*);
 static	int TIFFAppendToStrip(TIFF*, tstrip_t, tidata_t, tsize_t);
-static	int TIFFSetupStrips(TIFF*);
 
 int
 TIFFWriteScanline(TIFF* tif, tdata_t buf, uint32 row, tsample_t sample)
@@ -429,7 +428,7 @@ TIFFWriteRawTile(TIFF* tif, ttile_t tile, tdata_t data, tsize_t cc)
 #define	isUnspecified(tif, f) \
     (TIFFFieldSet(tif,f) && (tif)->tif_dir.td_imagelength == 0)
 
-static int
+int
 TIFFSetupStrips(TIFF* tif)
 {
 	TIFFDirectory* td = &tif->tif_dir;
