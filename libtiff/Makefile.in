@@ -317,7 +317,7 @@ EXTRA_SRCS = \
 
 # Read list of source files and headers from the external file,
 # shared with other makefiles
-EXTRA_DIST = Makefile.vc files.lst $(EXTRA_SRCS)
+EXTRA_DIST = Makefile.vc config.h.vc files.lst $(EXTRA_SRCS)
 libtiffincludedir = $(includedir)
 libtiffinclude_HEADERS = $(HDRS)
 noinst_HEADERS = $(EXTRA_HDRS)
