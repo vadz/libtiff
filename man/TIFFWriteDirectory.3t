@@ -23,17 +23,20 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFWriteDirectory 3T "December 16, 1991"
+.TH TIFFWriteDirectory 3T "September 26, 2001"
 .SH NAME
-TIFFWriteDirectory \- write the current directory in an open
+TIFFWriteDirectory, TIFFRewriteDirectory \- write the current directory in an open
 .SM TIFF
 file
 .SH SYNOPSIS
 .B "#include <tiffio.h>"
 .br
 .B "int TIFFWriteDirectory(TIFF* tif)"
+.br
+.B "int TIFFRewriteDirectory(TIFF* tif)"
 .SH DESCRIPTION
-Write the contents of the current directory to the file and setup
+.IR TIFFWriteDirectory 
+will write the contents of the current directory to the file and setup
 to create a new subfile in the same file.
 Applications only need to call
 .IR TIFFWriteDirectory
@@ -46,6 +49,20 @@ is automatically called by
 and
 .IR TIFFFlush
 to write a modified directory if the file is open for writing.
+.PP
+The 
+.IR TIFFRewriteDirectory
+function operates similarly to 
+.IR TIFFWriteDirectory
+but can be called with directories previously read or written that already
+have an established location in the file.  It will rewrite the directory,
+but instead of place it at it's old location (as 
+.IR TIFFWriteDirectory
+would) it will place them at the end of the file, correcting the pointer from
+the preceeding directory or file header to point to it's new location.  This
+is particularly important in cases where the size of the directory and
+pointed to data has grown, so it won't fit in the space available at the
+old location.
 .SH "RETURN VALUES"
 1 is returned when the contents are successfully
 written to the file.

@@ -178,6 +178,7 @@ MANDEVLINKS=\
 	lib/TIFFLastDirectory.3t \
 	lib/TIFFRegisterCODEC.3t \
 	lib/TIFFReverseBits.3t \
+	lib/TIFFRewriteDirectory.3t \
 	lib/TIFFRGBAImageOK.3t \
 	lib/TIFFRGBAImageBegin.3t \
 	lib/TIFFRGBAImageGet.3t \
@@ -299,6 +300,7 @@ lib/TIFFIsUpSampled.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFIsMSB2LSB.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFLastDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFReverseBits.3t:;	${ECHO} ".so ${MANDIR}TIFFswab.3t" > $@
+lib/TIFFRewriteDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFWriteDirectory.3t" > $@
 lib/TIFFRGBAImageOK.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
 lib/TIFFRGBAImageBegin.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
 lib/TIFFRGBAImageGet.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
