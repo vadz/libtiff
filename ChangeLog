@@ -1,3 +1,16 @@
+2003-04-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2ps.c, man/tiff2ps.1: Add ability to generate PS Level 3.
+	It basically allows one to use the /flateDecode filter for ZIP
+	compressed TIFF images. Patch supplied by Tom Kacvinsky. Fixes
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=328
+
+	* tools/tiff2ps.c: Force deadzone printing when EPS output specified
+	as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=325
+
 2003-04-17  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Removed additional check for StripByteCounts

@@ -91,10 +91,14 @@ a white background.
 .SH OPTIONS
 .TP
 .B \-1
-Generate \*(Ps Level I (the default).
+Generate \*(Ps Level 1 (the default).
 .TP
 .B \-2
-Generate \*(Ps Level II.
+Generate \*(Ps Level 2.
+.TP
+.B \-3
+Generate \*(Ps Level 3. It basically allows one to use the /flateDecode
+filter for ZIP compressed TIFF images.
 .TP
 .B \-a
 Generate output for all IFDs (pages) in the input file.
@@ -116,7 +120,7 @@ This option is useful for selecting individual pages in a
 multi-page (e.g. facsimile) file.
 .TP
 .B \-e
-Force the generation of Encapsulated \*(Ps.
+Force the generation of Encapsulated \*(Ps (implies -z).
 .TP
 .B \-h
 Specify the vertical size of the printed area (in inches).
@@ -181,15 +185,15 @@ Override resolution units specified in the TIFF as centimeters.
 Override resolution units specified in the TIFF as inches.
 .TP
 .B \-z
-When generating \*(Ps Level II, data is scaled so that it does not
+When generating \*(Ps Level 2, data is scaled so that it does not
 image into the 
 .I deadzone
 on a page (the outer margin that the printing device is unable to mark).
 This option suppresses this behaviour.
-When \*(Ps Level I is generated, data is imaged to the entire printed
+When \*(Ps Level 1 is generated, data is imaged to the entire printed
 page and this option has no affect.
 .SH EXAMPLES
-The following generates \*(Ps Level II for all pages of a facsimile:
+The following generates \*(Ps Level 2 for all pages of a facsimile:
 .RS
 .nf
 tiff2ps -a2 fax.tif | lpr
