@@ -1,5 +1,8 @@
 Wed Sep  8 08:19:18 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
+	* Added IRIX/gcc, and OSF/1 4.x support on behalf of 
+	  Albert Chin-A-Young <china@thewrittenword.com>
+
 	* Added TIFFReassignTagToIgnore() API on behalf of 
 	  Bruce Cameron <cameron@petris.com>.  Man page still pending.
 
