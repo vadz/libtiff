@@ -1,5 +1,8 @@
 2000-10-20  Frank Warmerdam  <warmerda@cs46980-c>
 
+	* tif_getimage.c: Fixed RGBA translation for YCbCr images for which
+	the strip/tile width and height aren't multiples of the sampling size.
+
 	* Modified tif_packbits.c encoder to avoid compressing more 
 	data than provided if rowsize doesn't factor into provided data
 	(such as occurs for YCbCr).
