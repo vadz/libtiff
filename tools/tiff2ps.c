@@ -597,53 +597,56 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			npages++;
 			fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
 			if (!generateEPSF && ( level2 || level3 )) {
-				double psw,psh;
-				if (pw!=0 && ph!=0) {
-					psw=pw;
-					psh=ph;
-			    
-				}
-				else {
-					psw=rotate ? prh:prw;
-				    psh=rotate ? prw:prh;		    
-				}
 				fprintf(fd,
 	"1 dict begin /PageSize [ %f %f ] def currentdict end setpagedevice\n",
-					psw, psh);
+					pw ? pw : (rotate ? prh : prw),
+					ph ? ph : (rotate ? prw : prh));
 				fputs(
 	"<<\n  /Policies <<\n    /PageSize 3\n  >>\n>> setpagedevice\n",
 				      fd);
 			}
 			fprintf(fd, "gsave\n");
 			fprintf(fd, "100 dict begin\n");
-			if (pw != 0 && ph != 0) {
+			if (pw != 0 || ph != 0) {
+				if (!pw)
+					pw = prw;
+				if (!ph)
+					ph = prh;
 				if (maxPageHeight) { /* used -H option */
-					split = PlaceImage(fd,pw,ph,prw,prh,0,lm,bm,cnt);
+					split = PlaceImage(fd,pw,ph,prw,prh,
+							   0,lm,bm,cnt);
 					while( split ) {
 					    PSpage(fd, tif, w, h);
 					    fprintf(fd, "end\n");
 					    fprintf(fd, "grestore\n");
 					    fprintf(fd, "showpage\n");
 					    npages++;
-					    fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
+					    fprintf(fd, "%%%%Page: %d %d\n",
+						    npages, npages);
 					    fprintf(fd, "gsave\n");
 					    fprintf(fd, "100 dict begin\n");
-					    split = PlaceImage(fd,pw,ph,prw,prh,split,lm,bm,cnt);
+					    split = PlaceImage(fd,pw,ph,prw,prh,
+							       split,lm,bm,cnt);
 					}
 				} else {
+					pw *= PS_UNIT_SIZE;
+					ph *= PS_UNIT_SIZE;
+
 					/* NB: maintain image aspect ratio */
-					scale = (pw*PS_UNIT_SIZE/prw) < (ph*PS_UNIT_SIZE/prh) ?
-					    (pw*PS_UNIT_SIZE/prw) :
-					    (ph*PS_UNIT_SIZE/prh);
+					scale = pw/prw < ph/prh ?
+						pw/prw : ph/prh;
 					if (scale > 1.0)
 						scale = 1.0;
-					bottom_offset +=
-						(ph * PS_UNIT_SIZE - prh * scale) / (cnt?2:1);
-					if (cnt)
-						left_offset += (pw * PS_UNIT_SIZE - prw * scale) / 2;
+					if (cnt) {
+						bottom_offset +=
+							(ph - prh * scale) / 2;
+						left_offset +=
+							(pw - prw * scale) / 2;
+					}
 					fprintf(fd, "%f %f translate\n",
 						left_offset, bottom_offset);
-					fprintf(fd, "%f %f scale\n", prw * scale, prh * scale);
+					fprintf(fd, "%f %f scale\n",
+						prw * scale, prh * scale);
 					if (rotate)
 						fputs ("1 1 translate 180 rotate\n", fd);
 				}
@@ -2080,3 +2083,5 @@ usage(int code)
 		fprintf(stderr, "%s\n", stuff[i]);
 	exit(code);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
