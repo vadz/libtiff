@@ -100,8 +100,9 @@ CHECK_JPEG_YCBCR_SUBSAMPLING = 1
 #
 # Pick debug or optimized build flags.  We default to an optimized build
 # with no debugging information.
+# NOTE: /GX option required if you want to build the C++ stream API
 #
-OPTFLAGS =	/Ox
+OPTFLAGS =	/Ox /MD /GX /W3
 #OPTFLAGS = 	/Zi 
 
 # Compiler specific options. You may probably want to adjust compilation
@@ -110,12 +111,14 @@ OPTFLAGS =	/Ox
 #
 MAKE	=	nmake /nologo
 CC	=	cl /nologo
+CXX	=	cl /nologo
 AR	=	lib /nologo
 LD	=	link /nologo
 
 
-CFLAGS  =	/W3 /MD $(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
-EXTRAFLAGS	=
+CFLAGS  =	$(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
+CXXFLAGS =	$(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
+EXTRAFLAGS =
 LIBS	=
 
 #
