@@ -23,10 +23,17 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -106,7 +113,7 @@ bad:
     return (1);
 }
 
-#define	CopyField1(tag, v) \
+#define	CopyField(tag, v) \
     if (TIFFGetField(in, tag, &v)) TIFFSetField(out, tag, v)
 #define	CopyField2(tag, v1, v2) \
     if (TIFFGetField(in, tag, &v1, &v2)) TIFFSetField(out, tag, v1, v2)
@@ -118,40 +125,62 @@ bad:
 static void
 cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 {
-    uint16 shortv, shortv2, *shortav;
-    float floatv, *floatav;
-    char *stringv;
-    uint32 longv;
-
-    switch (type) {
-    case TIFF_SHORT:
-	if (count == 1) {
-	    CopyField1(tag, shortv);
-	} else if (count == 2) {
-	    CopyField2(tag, shortv, shortv2);
-	} else if (count == (uint16) -1) {
-	    CopyField2(tag, shortv, shortav);
+	switch (type) {
+	case TIFF_SHORT:
+		if (count == 1) {
+			uint16 shortv;
+			CopyField(tag, shortv);
+		} else if (count == 2) {
+			uint16 shortv1, shortv2;
+			CopyField2(tag, shortv1, shortv2);
+		} else if (count == 4) {
+			uint16 *tr, *tg, *tb, *ta;
+			CopyField4(tag, tr, tg, tb, ta);
+		} else if (count == (uint16) -1) {
+			uint16 shortv1;
+			uint16* shortav;
+			CopyField2(tag, shortv1, shortav);
+		}
+		break;
+	case TIFF_LONG:
+		{ uint32 longv;
+		  CopyField(tag, longv);
+		}
+		break;
+	case TIFF_RATIONAL:
+		if (count == 1) {
+			float floatv;
+			CopyField(tag, floatv);
+		} else if (count == (uint16) -1) {
+			float* floatav;
+			CopyField(tag, floatav);
+		}
+		break;
+	case TIFF_ASCII:
+		{ char* stringv;
+		  CopyField(tag, stringv);
+		}
+		break;
+	case TIFF_DOUBLE:
+		if (count == 1) {
+			double doublev;
+			CopyField(tag, doublev);
+		} else if (count == (uint16) -1) {
+			double* doubleav;
+			CopyField(tag, doubleav);
+		}
+		break;
+          default:
+                TIFFError(TIFFFileName(in),
+                          "Data type %d is not supported, tag %d skipped.",
+                          tag, type);
 	}
-	break;
-    case TIFF_LONG:
-	CopyField1(tag, longv);
-	break;
-    case TIFF_RATIONAL:
-	if (count == 1) {
-	    CopyField1(tag, floatv);
-	} else if (count == (uint16) -1) {
-	    CopyField1(tag, floatav);
-	}
-	break;
-    case TIFF_ASCII:
-	CopyField1(tag, stringv);
-	break;
-    }
 }
+
 #undef CopyField4
 #undef CopyField3
 #undef CopyField2
-#undef CopyField1
+#undef CopyField
 
 static struct cpTag {
     uint16	tag;
@@ -572,3 +601,5 @@ usage(void)
 		fprintf(stderr, "%s\n", stuff[i]);
 	exit(-1);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

@@ -27,6 +27,8 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +36,10 @@
 #include <sys/types.h>
 #include <math.h>
 #include <ctype.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -345,7 +351,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		*length = imagesize / *width;
 		
-		fprintf(stderr, "Height is guessed as %u.\n", *length);
+		fprintf(stderr, "Height is guessed as %lu.\n", *length);
 
 		return 1;
 	} else if (*width == 0 && *length != 0) {
@@ -353,7 +359,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		*width = imagesize / *length;
 		
-		fprintf(stderr,	"Width is guessed as %u.\n", *width);
+		fprintf(stderr,	"Width is guessed as %lu.\n", *width);
 
 		return 1;
 	} else if (*width == 0 && *length == 0) {
@@ -388,7 +394,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 		}
 
 		fprintf(stderr,
-			"Width is guessed as %u, height is guessed as %u.\n",
+			"Width is guessed as %lu, height is guessed as %lu.\n",
 			*width, *length);
 
 		return 1;
@@ -596,3 +602,4 @@ usage(void)
 	exit(-1);
 }
 
+/* vim: set ts=8 sts=8 sw=8 noet: */

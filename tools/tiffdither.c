@@ -24,9 +24,15 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -135,7 +141,7 @@ static	uint32 group3options = 0;
 static void
 processG3Options(char* cp)
 {
-	if (cp = strchr(cp, ':')) {
+	if ((cp = strchr(cp, ':'))) {
 		do {
 			cp++;
 			if (strneq(cp, "1d", 2))
@@ -146,7 +152,7 @@ processG3Options(char* cp)
 				group3options |= GROUP3OPT_FILLBITS;
 			else
 				usage();
-		} while (cp = strchr(cp, ':'));
+		} while ((cp = strchr(cp, ':')));
 	}
 }
 
@@ -315,3 +321,5 @@ usage(void)
 		fprintf(stderr, "%s\n", stuff[i]);
 	exit(-1);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

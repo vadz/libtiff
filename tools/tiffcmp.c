@@ -24,9 +24,15 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -534,3 +540,5 @@ eof(const char* name, uint32 row, int s)
 		printf(", sample %d", s);
 	printf("\n");
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
