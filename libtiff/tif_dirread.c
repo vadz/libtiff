@@ -506,7 +506,7 @@ TIFFReadDirectory(TIFF* tif)
 		    _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
 		EstimateStripByteCounts(tif, dir, dircount);
 #define	BYTECOUNTLOOKSBAD \
-    (td->td_stripbytecount[0] == 0 || \
+    ((td->td_stripbytecount[0] == 0 && td->td_stripoffset[0] != 0) || \
     (td->td_compression == COMPRESSION_NONE && \
      td->td_stripbytecount[0] > TIFFGetFileSize(tif) - td->td_stripoffset[0]))
 	} else if (td->td_nstrips == 1 && BYTECOUNTLOOKSBAD) {
