@@ -1177,6 +1177,14 @@ if [ "$DSO" = auto ]; then
 	DSOOPTS='-shared'
 	DSO=GNULD
 	;;
+    *-darwin*)
+        DSOSUF=${DIST_MAJOR}.dylib
+        DSOSUF_VERSION=${DIST_MAJOR}.${DIST_MINOR}.${DIST_POINT}.dylib
+        LIBCOPTS='-fno-common'
+          DSOLD=gcc
+        DSOOPTS='-dynamiclib -undefined suppress'
+        DSO=DARWIN
+        ;;
     *-linux*)
 	DSOSUF=so.${DIST_MAJOR}
 	DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_POINT}
@@ -1189,6 +1197,7 @@ if [ "$DSO" = auto ]; then
 	DSOOPTS='-shared'
 	DSO=OSF
 	;;
+
     esac
 fi
 if [ "$DSO" != no ]; then
