@@ -1,3 +1,12 @@
+2003-12-19  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{libtiff.def, tif_color, tif_getimage.c, tiffio.h}:
+	Interface for Lab->RGB color conversion is finally cleaned up.
+	Added support for ReferenceBlackWhite tag handling when converted from
+	YCbCr color space. The latter closes
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=120
+
 2003-12-07  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_getimage.c, tiffio.h}: Avoid warnings.
