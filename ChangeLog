@@ -1,3 +1,15 @@
+2004-09-01  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffio.h, tif_open.c}: Applied patches from Joris Van Damme
+	to avoid requirement for tiffiop.h inclusion in some applications. See
+	here
+
+	http://www.asmail.be/msg0054799560.html
+	
+	for details.
+
+	* tools/fax2tiff.c: Use the new functions in the code.
+
 2004-08-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2pdf.c: Initialize arrays properly.
