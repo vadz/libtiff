@@ -190,13 +190,17 @@ void
 printTIF(TIFF* tif, uint16 pageNumber)
 {
     uint32 w, h;
-    uint16 unit;
+    uint16 unit, compression;
     float xres, yres, scale = 1.0;
     tstrip_t s, ns;
     time_t creation_time;
 
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
+    if (!TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression)
+	|| compression < COMPRESSION_CCITTRLE
+	|| compression > COMPRESSION_CCITT_T6)
+	return;
     if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres) || !xres) {
 	TIFFWarning(TIFFFileName(tif),
 	    "No x-resolution, assuming %g dpi", defxres);
@@ -368,28 +372,22 @@ main(int argc, char** argv)
     } else {
 	int n;
 	FILE* fd;
-	char temp[1024], buf[16*1024];
+	char buf[16*1024];
 
-	strcpy(temp, "/tmp/fax2psXXXXXX");
-	(void) mktemp(temp);
-	fd = fopen(temp, "w");
+	fd = tmpfile();
 	if (fd == NULL) {
-	    fprintf(stderr, "Could not create temp file \"%s\"\n", temp);
+	    fprintf(stderr, "Could not create temporary file, exiting.\n");
+	    fclose(fd);
 	    exit(-2);
 	}
 	while ((n = read(fileno(stdin), buf, sizeof (buf))) > 0)
 	    write(fileno(fd), buf, n);
-	tif = TIFFOpen(temp, "r");
-#ifndef VMS
-	unlink(temp);
-#else
-	remove(temp);
-#endif
+	tif = TIFFFdOpen(fileno(fd), "temp", "r");
 	if (tif) {
 	    fax2ps(tif, npages, pages, "<stdin>");
 	    TIFFClose(tif);
 	} else
-	    fprintf(stderr, "%s: Can not open, or not a TIFF file.\n", temp);
+	    fprintf(stderr, "Can not open, or not a TIFF file.\n");
 	fclose(fd);
     }
     printf("%%%%Trailer\n");
