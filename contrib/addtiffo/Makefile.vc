@@ -7,7 +7,7 @@ LIBTIFF_DIR =	..\..\libtiff
 CC	=	cl.exe
 CPPC	=	cl.exe
 CFLAGS	=	-O -I$(LIBTIFF_DIR)
-LIBS	=	$(LIBTIFF_DIR)\tiff.lib
+LIBS	=	$(LIBTIFF_DIR)\libtiff.lib
 
 addtiffo:	addtiffo.obj tif_overview.obj tif_ovrcache.obj
 	$(CC) $(CFLAGS) addtiffo.obj tif_overview.obj tif_ovrcache.obj \
