@@ -40,6 +40,7 @@ PORT	= ${DEPTH}/port
 # CCOMPILER:	@CCOMPILER@
 #
 SHELL	= @SCRIPT_SH@
+SCRIPT_SH = @SCRIPT_SH@
 NULL	=
 ECHO	= echo
 MV	= mv
