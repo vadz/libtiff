@@ -55,20 +55,6 @@ uint32	badfaxlines;
 int	copyFaxFile(TIFF* tifin, TIFF* tifout);
 static	void usage(void);
 
-static tsize_t
-DummyReadProc(thandle_t fd, tdata_t buf, tsize_t size)
-{
-	(void) fd; (void) buf; (void) size;
-	return (0);
-}
-
-static tsize_t
-DummyWriteProc(thandle_t fd, tdata_t buf, tsize_t size)
-{
-	(void) fd; (void) buf; (void) size;
-	return (size);
-}
-
 int
 main(int argc, char* argv[])
 {
@@ -83,54 +69,31 @@ main(int argc, char* argv[])
 	int rows;
 	int c;
 	int pn, npages;
+	float resY = 196.0;
 	extern int optind;
 	extern char* optarg;
 
-	/* smuggle a descriptor out of the library */
-	faxTIFF = TIFFClientOpen("(FakeInput)", "w", (thandle_t) -1,
-				 DummyReadProc, DummyWriteProc,
-				 NULL, NULL, NULL, NULL, NULL);
-	if (faxTIFF == NULL)
-		return (EXIT_FAILURE);
-	faxTIFF->tif_mode = O_RDONLY;
-
-	TIFFSetField(faxTIFF, TIFFTAG_IMAGEWIDTH,	XSIZE);
-	TIFFSetField(faxTIFF, TIFFTAG_SAMPLESPERPIXEL,	1);
-	TIFFSetField(faxTIFF, TIFFTAG_BITSPERSAMPLE,	1);
-	TIFFSetField(faxTIFF, TIFFTAG_FILLORDER,	FILLORDER_LSB2MSB);
-	TIFFSetField(faxTIFF, TIFFTAG_PLANARCONFIG,	PLANARCONFIG_CONTIG);
-	TIFFSetField(faxTIFF, TIFFTAG_PHOTOMETRIC,	PHOTOMETRIC_MINISWHITE);
-	TIFFSetField(faxTIFF, TIFFTAG_YRESOLUTION,	196.);
-	TIFFSetField(faxTIFF, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
-	/* NB: this is normally setup when a directory is read */
-	faxTIFF->tif_scanlinesize = TIFFScanlineSize(faxTIFF);
 
 	while ((c = getopt(argc, argv, "R:o:2BLMW14cflmpsvwz")) != -1)
 		switch (c) {
 			/* input-related options */
 		case '2':		/* input is 2d-encoded */
-			TIFFSetField(faxTIFF,
-			    TIFFTAG_GROUP3OPTIONS, GROUP3OPT_2DENCODING);
-			break;
-		case 'B':		/* input has 0 mean black */
-			TIFFSetField(faxTIFF,
-			    TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
-			break;
-		case 'L':		/* input has lsb-to-msb fillorder */
-			TIFFSetField(faxTIFF,
-			    TIFFTAG_FILLORDER, FILLORDER_LSB2MSB);
-			break;
-		case 'M':		/* input has msb-to-lsb fillorder */
-			TIFFSetField(faxTIFF,
-			    TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
-			break;
-		case 'R':		/* input resolution */
-			TIFFSetField(faxTIFF,
-			    TIFFTAG_YRESOLUTION, atof(optarg));
+			group3options &= GROUP3OPT_2DENCODING;
 			break;
 		case 'W':		/* input has 0 mean white */
-			TIFFSetField(faxTIFF,
-			    TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
+			photometric = PHOTOMETRIC_MINISWHITE;
+			break;
+		case 'B':		/* input has 0 mean black */
+			photometric = PHOTOMETRIC_MINISBLACK;
+			break;
+		case 'L':		/* input has lsb-to-msb fillorder */
+			fillorder = FILLORDER_LSB2MSB;
+			break;
+		case 'M':		/* input has msb-to-lsb fillorder */
+			fillorder = FILLORDER_MSB2LSB;
+			break;
+		case 'R':		/* input resolution */
+			resY = atof(optarg);
 			break;
 
 			/* output-related options */
@@ -175,23 +138,36 @@ main(int argc, char* argv[])
 			usage();
 			/*NOTREACHED*/
 		}
+	npages = argc - optind;
+	if (npages < 1)
+		usage();
+
 	if (out == NULL) {
 		out = TIFFOpen("fax.tif", "w");
 		if (out == NULL)
 			return (EXIT_FAILURE);
 	}
-	faxTIFF->tif_readproc = out->tif_readproc;	/* XXX */
-	faxTIFF->tif_writeproc = out->tif_writeproc;	/* XXX */
-	faxTIFF->tif_seekproc = out->tif_seekproc;	/* XXX */
-	faxTIFF->tif_closeproc = out->tif_closeproc;	/* XXX */
-	faxTIFF->tif_sizeproc = out->tif_sizeproc;	/* XXX */
-	faxTIFF->tif_mapproc = out->tif_mapproc;	/* XXX */
-	faxTIFF->tif_unmapproc = out->tif_unmapproc;	/* XXX */
-
-	npages = argc - optind;
-	if (npages < 1)
-		usage();
-
+		
+	faxTIFF = TIFFClientOpen("(FakeInput)", "w",
+	/* TIFFClientOpen() fails if we don't set existing value here */
+				 out->tif_clientdata,
+				 out->tif_readproc, out->tif_writeproc,
+				 out->tif_seekproc, out->tif_closeproc,
+				 out->tif_sizeproc,
+				 out->tif_mapproc, out->tif_unmapproc);
+	if (faxTIFF == NULL)
+		return (EXIT_FAILURE);
+	faxTIFF->tif_mode = O_RDONLY;
+	TIFFSetField(faxTIFF, TIFFTAG_IMAGEWIDTH,	XSIZE);
+	TIFFSetField(faxTIFF, TIFFTAG_SAMPLESPERPIXEL,	1);
+	TIFFSetField(faxTIFF, TIFFTAG_BITSPERSAMPLE,	1);
+	TIFFSetField(faxTIFF, TIFFTAG_FILLORDER,	fillorder);
+	TIFFSetField(faxTIFF, TIFFTAG_PLANARCONFIG,	PLANARCONFIG_CONTIG);
+	TIFFSetField(faxTIFF, TIFFTAG_PHOTOMETRIC,	photometric);
+	TIFFSetField(faxTIFF, TIFFTAG_YRESOLUTION,	resY);
+	TIFFSetField(faxTIFF, TIFFTAG_GROUP3OPTIONS,	group3options);
+	TIFFSetField(faxTIFF, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
+	
 	/* NB: this must be done after directory info is setup */
 	TIFFSetField(faxTIFF, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
 	for (pn = 0; optind < argc; pn++, optind++) {
@@ -225,9 +201,8 @@ main(int argc, char* argv[])
 		TIFFSetField(out, TIFFTAG_SOFTWARE, "fax2tiff");
 		TIFFSetField(out, TIFFTAG_XRESOLUTION, 204.0);
 		if (!stretch) {
-			float yres;
-			TIFFGetField(faxTIFF, TIFFTAG_YRESOLUTION, &yres);
-			TIFFSetField(out, TIFFTAG_YRESOLUTION, yres);
+			TIFFGetField(faxTIFF, TIFFTAG_YRESOLUTION, &resY);
+			TIFFSetField(out, TIFFTAG_YRESOLUTION, resY);
 		} else
 			TIFFSetField(out, TIFFTAG_YRESOLUTION, 196.);
 		TIFFSetField(out, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
