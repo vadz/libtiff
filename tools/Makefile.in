@@ -65,6 +65,7 @@ OBJS=	\
 	ras2tiff.o \
 	thumbnail.o \
 	tiff2bw.o \
+	tiff2rgba.o \
 	tiff2ps.o \
 	tiffcmp.o \
 	tiffcp.o \
@@ -84,6 +85,7 @@ TARGETS	=\
 	thumbnail \
 	ras2tiff \
 	tiff2bw \
+	tiff2rgba \
 	tiff2ps \
 	tiffcmp \
 	tiffcp \
@@ -171,6 +173,12 @@ tiff2bw: tiff2bw.o ${TIFFLIB}
 	${CC} -o tiff2bw ${CFLAGS} tiff2bw.o ${LIBS}
 tiff2bw.o: ${SRCDIR}/tiff2bw.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tiff2bw.c
+
+# convert anything to RGBA.
+tiff2rgba: tiff2rgba.o ${TIFFLIB}
+	${CC} -o tiff2rgba ${CFLAGS} tiff2rgba.o ${LIBS}
+tiff2rgba.o: ${SRCDIR}/tiff2rgba.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tiff2rgba.c
 
 # convert B&W image to bilevel w/ FS dithering
 tiffdither: tiffdither.o ${TIFFLIB}

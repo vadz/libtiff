@@ -52,6 +52,7 @@ OBJS=\
 	ppm2tiff.o \
 	rgb2ycbcr.o \
 	tiff2bw.o \
+	tiff2rgba.o \
 	tiff2ps.o \
 	tiffcmp.o \
 	tiffcp.o \
@@ -70,6 +71,7 @@ ALL=\
 	ppm2tiff.ttp \
 	rgb2ycbcr.ttp \
 	tiff2bw.ttp \
+	tiff2rgba.ttp \
 	tiff2ps.ttp \
 	tiffcmp.ttp \
 	tiffcp.ttp \
@@ -101,6 +103,9 @@ tiff2ps.ttp: tiff2ps.c ${LIBTIFF}
 # convert RGB image to B&W
 tiff2bw.ttp: tiff2bw.c ${GETOPT} ${LIBTIFF}
 	${CC} -o tiff2bw.ttp ${CFLAGS} tiff2bw.c ${GETOPT} ${LIBS}
+# convert anything to RGBA
+tiff2rgba.ttp: tiff2rgba.c ${GETOPT} ${LIBTIFF}
+	${CC} -o tiff2rgba.ttp ${CFLAGS} tiff2rgba.c ${GETOPT} ${LIBS}
 # convert B&W image to bilevel w/ FS dithering
 tiffdither.ttp: tiffdither.c ${LIBTIFF}
 	${CC} -o tiffdither.ttp ${CFLAGS} tiffdither.c ${LIBS}
