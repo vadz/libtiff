@@ -268,31 +268,66 @@ cmptags(TIFF* tif1, TIFF* tif2)
 static void
 ContigCompare(int sample, uint32 row, unsigned char* p1, unsigned char* p2, int size)
 {
-	register uint32 pix;
-	register int ppb = 8/bitspersample;
+    register uint32 pix;
+    register int ppb = 8/bitspersample;
+    int	 samples_to_test;
 
-	if (memcmp(p1, p2, size) == 0)
-		return;
-	switch (bitspersample) {
-	case 1: case 2: case 4: case 8: {
-		register unsigned char *pix1 = p1, *pix2 = p2;
+    if( sample == -1 )
+        samples_to_test = samplesperpixel;
+    else
+        samples_to_test = 1;
 
-		for (pix = 0; pix < imagewidth; pix1++, pix2++, pix += ppb)
-			if (*pix1 != *pix2)
-				PrintDiff(row, sample, pix,
-				    *pix1, *pix2);
-		break;
-	}
-	case 16: {
-		register uint16 *pix1 = (uint16 *)p1, *pix2 = (uint16 *)p2;
+    if (memcmp(p1, p2, size) == 0)
+        return;
 
-		for (pix = 0; pix < imagewidth; pix1++, pix2++, pix++)
-			if (*pix1 != *pix2)
-				PrintDiff(row, sample, pix,
-				    *pix1, *pix2);
-		break;
-	}
-	}
+    switch (bitspersample) {
+      case 1: case 2: case 4: case 8: 
+      {
+          register unsigned char *pix1 = p1, *pix2 = p2;
+
+          for (pix = 0; pix < imagewidth; pix += ppb)
+          {
+              int		s;
+
+              for( s = 0; s < samples_to_test; s++ )
+              {
+                  if (*pix1 != *pix2)
+                  {
+                      if( sample == -1 )
+                          PrintDiff(row, s, pix,
+                                    *pix1, *pix2);
+                      else
+                          PrintDiff(row, sample, pix,
+                                    *pix1, *pix2);
+                  }
+
+                  pix1++;
+                  pix2++;
+              }
+          }
+          break;
+      }
+      case 16: 
+      {
+          register uint16 *pix1 = (uint16 *)p1, *pix2 = (uint16 *)p2;
+
+          for (pix = 0; pix < imagewidth; pix++)
+          {
+              int	s;
+
+              for( s = 0; s < samples_to_test; s++ )
+              {
+                  if (*pix1 != *pix2)
+                      PrintDiff(row, sample, pix,
+                                *pix1, *pix2);
+                        
+                  pix1++;
+                  pix2++;
+              }
+          }
+          break;
+      }
+    }
 }
 
 static void
