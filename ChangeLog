@@ -1,3 +1,9 @@
+2004-09-14  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* commit: Added a script to make it more convenient to commit
+	updates.  The CVS commit message is extracted from this ChangeLog
+	file.
+
 2004-09-14  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure.ac, configure, aclocal.m4, libtiff/{mkspans.c, tif_fax3.c,
