@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -568,7 +568,9 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             else
             {
                 /* not supporting "pass by value" types yet */
-		TIFFWarning(module, " ... pass by value not implemented.");
+		TIFFError(module,
+			  "%s: Pass by value is not implemented.",
+			  tif->tif_name);
 
                 tv->value = _TIFFmalloc(tv_size * tv->count);
 		if ( !tv->value ) {
@@ -965,7 +967,9 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 }
                 else
                 {
-                    printf( "TIFFVGetField ... pass by value not imp.\n" );
+                    TIFFError("_TIFFVGetField",
+			      "%s: Pass by value is not implemented.",
+			      tif->tif_name);
                     break;
                 }
             }
@@ -1253,8 +1257,8 @@ TIFFSetDirectory(TIFF* tif, tdir_t dirn)
 	 */
 	tif->tif_curdir = (dirn - n) - 1;
 	/*
-	 * Reset tif_dirnumber counter nad start new list of seen directories.
-	 * We need this in order to prevent IFD loops.
+	 * Reset tif_dirnumber counter and start new list of seen directories.
+	 * We need this to prevent IFD loops.
 	 */
 	tif->tif_dirnumber = 0;
 	return (TIFFReadDirectory(tif));
@@ -1271,8 +1275,8 @@ TIFFSetSubDirectory(TIFF* tif, uint32 diroff)
 {
 	tif->tif_nextdiroff = diroff;
 	/*
-	 * Reset tif_dirnumber counter nad start new list of seen directories.
-	 * We need this in order to prevent IFD loops.
+	 * Reset tif_dirnumber counter and start new list of seen directories.
+	 * We need this to prevent IFD loops.
 	 */
 	tif->tif_dirnumber = 0;
 	return (TIFFReadDirectory(tif));
