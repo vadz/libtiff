@@ -8,6 +8,8 @@ EXPORTS TIFFOpen
 	TIFFVGetField
 	TIFFGetFieldDefaulted
 	TIFFVGetFieldDefaulted
+	TIFFGetTagListEntry
+	TIFFGetTagListCount
 	TIFFReadDirectory
 	TIFFScanlineSize
 	TIFFStripSize
