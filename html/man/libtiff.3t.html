@@ -20,7 +20,7 @@
 
 <hr>
 <!-- Creator     : groff version 1.17.2 -->
-<!-- CreationDate: Thu Nov 27 17:57:57 2003 -->
+<!-- CreationDate: Mon Dec 22 00:39:19 2003 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
 <table width="100%" border=0 rules="none" frame="void"
@@ -159,6 +159,8 @@ work.</td></table>
 
 </i>TIFFCheckpointDirectory writedir.3t     writes the current state of the directory
 TIFFCheckTile          tile.3t          very x,y,z,sample is within image
+TIFFCIELabToRGBInit    color.3t         initialize CIE L*a*b* 1976 to RGB conversion state
+TIFFCIELabToXYZ        color.3t         perform CIE L*a*b* 1976 to CIE XYZ conversion
 TIFFClientOpen         open.3t          open a file for reading or writing
 TIFFClose              close.3t         close an open file
 TIFFComputeStrip       strip.3t         return strip containing y,sample
@@ -229,6 +231,9 @@ TIFFWriteRawStrip      wrrstrip.3t      write a raw strip of data
 TIFFWriteRawTile       wrrtile.3t       write a raw tile of data
 TIFFWriteScanline      writeline.3t     write a scanline of data
 TIFFWriteTile          wrrtile.3t       compress and write a tile of data
+TIFFXYZToRGB           color.3t         perform CIE XYZ to RGB conversion
+TIFFYCbCrToRGBInit     color.3t         initialize YCbCr to RGB conversion state
+TIFFYCbCrtoRGB         color.3t         perform YCbCr to RGB conversion
 </pre></td></table>
 <a name="TAG USAGE"></a>
 <h2>TAG USAGE</h2>
