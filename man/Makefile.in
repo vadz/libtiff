@@ -144,6 +144,7 @@ MANDEV=\
 	\
 	lib/TIFFbuffer.3t \
 	lib/TIFFcodec.3t \
+	lib/TIFFcolor.3t \
 	lib/TIFFmemory.3t \
 	lib/TIFFquery.3t \
 	lib/TIFFsize.3t \
@@ -281,6 +282,7 @@ lib/TIFFWriteRawTile.3t:: ${SRCDIR}/TIFFWriteRawTile.3t;	${MANCVT}
 lib/TIFFWriteScanline.3t:: ${SRCDIR}/TIFFWriteScanline.3t;	${MANCVT}
 lib/TIFFbuffer.3t::	${SRCDIR}/TIFFbuffer.3t;		${MANCVT}
 lib/TIFFcodec.3t::	${SRCDIR}/TIFFcodec.3t;			${MANCVT}
+lib/TIFFcolor.3t::	${SRCDIR}/TIFFcolor.3t;			${MANCVT}
 lib/TIFFmemory.3t::	${SRCDIR}/TIFFmemory.3t;		${MANCVT}
 lib/TIFFquery.3t::	${SRCDIR}/TIFFquery.3t;			${MANCVT}
 lib/TIFFsize.3t::	${SRCDIR}/TIFFsize.3t;			${MANCVT}
@@ -339,6 +341,11 @@ lib/TIFFVSetField.3t:;		${ECHO} ".so ${MANDIR}TIFFSetField.3t" > $@
 lib/TIFFFindCODEC.3t:;		${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
 lib/TIFFRegisterCODEC.3t:;	${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
 lib/TIFFUnRegisterCODEC.3t:;	${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
+lib/TIFFYCbCrToRGBInit.3t:;	${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
+lib/TIFFYCbCrtoRGB.3t:;		${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
+lib/TIFFCIELabToRGBInit.3t:;	${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
+lib/TIFFCIELabToXYZ.3t:;	${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
+lib/TIFFXYZToRGB.3t:;		${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
 lib/TIFFmalloc.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
 lib/TIFFrealloc.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
 lib/TIFFfree.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
