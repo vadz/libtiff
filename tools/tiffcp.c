@@ -524,6 +524,7 @@ static int
 tiffcp(TIFF* in, TIFF* out)
 {
 	uint16 bitspersample, samplesperpixel;
+        uint16 input_compression;
 	copyFunc cf;
 	uint32 w, l;
 	struct cpTag* p;
@@ -537,7 +538,10 @@ tiffcp(TIFF* in, TIFF* out)
 	else
 		CopyField(TIFFTAG_COMPRESSION, compression);
 	if (compression == COMPRESSION_JPEG) {
-            TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
+            if ( TIFFGetField( in, TIFFTAG_COMPRESSION, &input_compression )
+                 && input_compression == COMPRESSION_JPEG ) {
+                TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
+            }
             if (jpegcolormode == JPEGCOLORMODE_RGB)
 		TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
             else
