@@ -247,8 +247,9 @@ checkImage(TIFF* tif)
 {
 	switch (photometric) {
 	case PHOTOMETRIC_YCBCR:
-		if (compression == COMPRESSION_JPEG &&
-		    planarconfiguration == PLANARCONFIG_CONTIG) {
+		if ((compression == COMPRESSION_JPEG 
+                     || compression == COMPRESION_OJPEG)
+                     && planarconfiguration == PLANARCONFIG_CONTIG) {
 			/* can rely on libjpeg to convert to RGB */
 			TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE,
 				     JPEGCOLORMODE_RGB);
