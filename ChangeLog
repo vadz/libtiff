@@ -1,4 +1,15 @@
+2003-08-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2ps.c: Added missing #include <strings.h>.
+
+	* libtiff/tif_dirwrite.c: More fixes for custom tags code
+	from Ashley Dreier.
+
 2003-08-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2ps.c: Added page size setting when creating PS Level 2.
+	Patch submitted by Balatoni Denes (with corrections from Tom
+	Kacvinsky).
 
 	* tools/tiff2ps.c: Fixed PS comment emitted when FlateDecode is
 	being used. Reported by Tom Kacvinsky.
