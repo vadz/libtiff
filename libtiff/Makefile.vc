@@ -31,6 +31,12 @@
 
 INCL	= -I. $(JPEG_INCLUDE) $(ZLIB_INCLUDE)
 
+!IFDEF USE_WIN_CRT_LIB
+OBJ_SYSDEP_MODULE = tif_unix.obj
+!ELSE
+OBJ_SYSDEP_MODULE = tif_win32.obj
+!ENDIF
+
 OBJ	= \
 	tif_aux.obj \
 	tif_close.obj \
@@ -64,11 +70,11 @@ OBJ	= \
 	tif_strip.obj \
 	tif_thunder.obj \
 	tif_tile.obj \
-	tif_win32.obj \
 	tif_version.obj \
 	tif_warning.obj \
 	tif_write.obj \
-	tif_zip.obj
+	tif_zip.obj \
+	$(OBJ_SYSDEP_MODULE)
 
 all:	libtiff.lib libtiff.dll
 

@@ -31,6 +31,10 @@
 WINMODE = -DTIF_PLATFORM_CONSOLE
 #WINMODE = -DTIF_PLATFORM_WINDOWED
 
+# Uncomment following line to enable using Windows Common RunTime Library
+# instead of system calls. See notes on top of tif_unix.c module for details.
+#USE_WIN_CRT_LIB = 1
+
 #
 # Comment out the following lines to disable internal codecs.
 #
@@ -74,7 +78,7 @@ LOGLUV_SUPPORT	= 1
 # Uncomment following line to enable Pixar log-format algorithm
 # (Zlib required).
 #
-PIXARLOG_SUPPORT = 1
+#PIXARLOG_SUPPORT = 1
 
 #
 # Comment out the following lines to disable strip chopping
