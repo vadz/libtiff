@@ -239,12 +239,19 @@ TIFFReadDirectory(TIFF* tif)
 			fix++;
 		if (fix == tif->tif_nfields ||
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
-			TIFFWarning(tif->tif_name,
-			    "unknown field with tag %d (0x%x) ignored",
-			    dp->tdir_tag,  dp->tdir_tag);
-			dp->tdir_tag = IGNORE;
-			fix = 0;			/* restart search */
-			continue;
+
+                    TIFFWarning(tif->tif_name,
+                                "unknown field with tag %d (0x%x) encountered",
+                                dp->tdir_tag,  dp->tdir_tag);
+
+                    TIFFMergeFieldInfo( tif,
+                                        _TIFFCreateAnonFieldInfo( tif,
+                                              dp->tdir_tag, dp->tdir_type ),
+                                        1 );
+                    fix = 0;
+                    while (fix < tif->tif_nfields &&
+                           tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
+			fix++;
 		}
 		/*
 		 * Null out old tags that we ignore.
