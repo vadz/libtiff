@@ -1,4 +1,12 @@
-1999-09-26  Mike Welles 	mike@onshore.com
+1999-09-29  Mike Welles		<mike@onshore.com> 
+	
+	*  Corrected one remaining 16 -> 32 bit value in tif_fax3.c, 
+	   From Ivo Penzar <ivo.penzar@infolink-software.com. 
+
+	*  Added patch from Ivo Penzar to have TiffAdvanceDirectory handle
+	   memory mapped files. <ivo.penzar@infolink-software.com>
+	
+1999-09-26  Mike Welles 	<mike@onshore.com>  ****3.5.2 release***
 	* Corrected alpha versioning.  
 
 	* Removed distinction between  alpha and release targets in Makefile.in. 

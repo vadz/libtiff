@@ -499,7 +499,7 @@ Fax3SetupState(TIFF* tif)
 		uint32 nruns = needsRefLine ?
 		     2*TIFFroundup(rowpixels,32) : rowpixels;
 
-		dsp->runs = (uint32*) _TIFFmalloc(nruns*sizeof (uint16));
+		dsp->runs = (uint32*) _TIFFmalloc(nruns*sizeof (uint32));
 		if (dsp->runs == NULL) {
 			TIFFError("Fax3SetupState",
 			    "%s: No space for Group 3/4 run arrays",
