@@ -1,5 +1,8 @@
 2001-05-08  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirinfo.c: moved pixar and copyright flags to 
+	ensure everything is in order.
+
 	* libtiff/libtiff.def: added TIFFCreateDirectory and 
 	TIFFDefaultStripSize as per:
 
