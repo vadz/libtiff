@@ -28,6 +28,7 @@
 TIFFDefaultStripSize,
 TIFFStripSize,
 TIFFVStripSize,
+TIFFRawStripSize,
 TIFFComputeStrip,
 TIFFNumberOfStrips
 \- strip-related utility routines
@@ -37,6 +38,7 @@ TIFFNumberOfStrips
 .B "uint32 TIFFDefaultStripSize(TIFF* tif, uint32 estimate)"
 .B "tsize_t TIFFStripSize(TIFF* tif)"
 .B "tsize_t TIFFVStripSize(TIFF* tif, uint32 nrows)"
+.B "tsize_t TIFFRawStripSize(TIFF* tif, tstrip_t strip)"
 .B "tstrip_t TIFFComputeStrip(TIFF* tif, uint32 row, tsample_t sample)"
 .B "tstrip_t TIFFNumberOfStrips(TIFF* tif)"
 .fi
@@ -71,6 +73,9 @@ or as it would be expected in a call to
 returns the number of bytes in a strip with
 .I nrows
 rows of data.
+.PP
+.I TIFFRawStripSize
+returns the number of bytes in a raw strip (i.e. not decoded).
 .PP
 .IR TIFFComputeStrip
 returns the strip that contains the specified coordinates.

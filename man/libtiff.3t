@@ -206,7 +206,9 @@ TIFFSetSubDirectory	setdir.3t	set the current directory
 TIFFSetErrorHandler	error.3t	set error handler function
 TIFFSetField	setfield.3t	set a tag's value in the current directory
 TIFFSetWarningHandler	error.3t	set warning handler function
-TIFFStripSize	size.3t	return size of a strip
+TIFFStripSize	strip.3t	returns size of a strip
+TIFFVStripSize	strip.3t	returns the number of bytes in a strip
+TIFFRawStripSize	strip.3t	returns the number of bytes in a raw strip
 TIFFSwabShort	swab.3t	swap bytes of short
 TIFFSwabLong	swab.3t	swap bytes of long
 TIFFSwabArrayOfShort	swab.3t	swap bytes of an array of shorts

@@ -244,6 +244,7 @@ extern	int TIFFReadDirectory(TIFF*);
 extern	tsize_t TIFFScanlineSize(TIFF*);
 extern	tsize_t TIFFRasterScanlineSize(TIFF*);
 extern	tsize_t TIFFStripSize(TIFF*);
+extern	tsize_t TIFFRawStripSize(TIFF*, tstrip_t);
 extern	tsize_t TIFFVStripSize(TIFF*, uint32);
 extern	tsize_t TIFFTileRowSize(TIFF*);
 extern	tsize_t TIFFTileSize(TIFF*);

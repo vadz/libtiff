@@ -111,6 +111,26 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 		return ((tsize_t)(nrows * TIFFScanlineSize(tif)));
 }
 
+
+/*
+ * Compute the # bytes in a raw strip.
+ */
+tsize_t
+TIFFRawStripSize(TIFF* tif, tstrip_t strip)
+{
+	TIFFDirectory* td = &tif->tif_dir;
+	tsize_t bytecount = td->td_stripbytecount[strip];
+
+	if (bytecount <= 0) {
+		TIFFError(tif->tif_name,
+			  "%lu: Invalid strip byte count, strip %lu",
+			  (u_long) bytecount, (u_long) strip);
+		bytecount = (tsize_t) -1;
+	}
+
+	return bytecount;
+}
+
 /*
  * Compute the # bytes in a (row-aligned) strip.
  *
