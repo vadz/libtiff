@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.16  2004-09-10 11:50:57  dron
+ * Revision 1.17  2004-10-09 14:15:07  dron
+ * Fixed TransferFunction tag handling reported by Ross A. Finlayson.
+ *
+ * Revision 1.16  2004/09/10 11:50:57  dron
  * Fixed reading TransferFunction tag as per bug
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=590
  *
@@ -1162,7 +1165,9 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			}
 			if(t2p->pdf_minorversion < 2)
 				t2p->pdf_minorversion = 2;
-                }
+                } else {
+			t2p->tiff_transferfunctioncount=0;
+		}
 		if( TIFFGetField(
 			input, 
 			TIFFTAG_ICCPROFILE, 
@@ -1745,7 +1750,11 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		if(t2p->tiff_transferfunction[1] !=
 		   t2p->tiff_transferfunction[0]) {
 			t2p->tiff_transferfunctioncount=3;
+		} else {
+			t2p->tiff_transferfunctioncount=1;
 		}
+	} else {
+		t2p->tiff_transferfunctioncount=0;
 	}
 	if(TIFFGetField(input, TIFFTAG_WHITEPOINT, &xfloatp)!=0){
 		t2p->tiff_whitechromaticities[0]=xfloatp[0];
