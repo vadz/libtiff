@@ -52,5 +52,5 @@ mkg3states_SOURCES = mkg3states.c tif_fax3.h
 mkg3states_LDADD = $(LIBPORT)
 
 faxtable: mkg3states
-	(rm -f tif_fax3sm.c && ./mkg3states -c const tif_fax3sm.c)
+	(rm -f tif_fax3sm.c && ./mkg3states -b -c const tif_fax3sm.c)
 
