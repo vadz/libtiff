@@ -22,9 +22,9 @@ The following sections are found in this chapter:
 <LI><A HREF=#Config>Library Configuration</A>
 <LI><A HREF=#Portability>General Portability Comments</A>
 <LI><A HREF="#Types">Types and Portability</A>
-<LI><A HREF=#AddingTags>Adding New Tags</A>
+<LI><A HREF="addingtags.html">Adding New Tags</A>
 <LI><A HREF=#AddingCODECS>Adding New Builtin Codecs</A>
-<LI><A HREF=#AddingCODECTags>Adding New Codec-private Tags</A>
+<LI><A HREF="addingtags.html#AddingCODECTags">Adding New Codec-private Tags</A>
 <LI><A HREF=#Other>Other Comments</A>
 </UL>
 
@@ -460,48 +460,11 @@ into an internal format.  Only the tags known by the library are
 available to a user and certain tag data may be maintained that a user
 does not care about (e.g. transfer function tables).
 
-<A NAME=AddingTags><P><HR WIDTH=65% ALIGN=right><H3>Adding New Tags</H3></A>
-
-To add support for a new directory tag you have three options.  If your
-tag is specific to a compression algorithm, see below. If you have a lot
-of tags you may want to try using Niles Ritter's runtime tag-extension
-scheme in the "contrib/tags" directory, which makes the changes 
-orthogonal to the main libtiff code. Otherwise use
-the following guidelines to add support to the ``core library''.
-
-<OL>
-<LI>Define the tag in <B>tiff.h</B>.
-<LI>Add a field to the directory structure in <B>tif_dir.h</B>
-   and define a <TT>FIELD_*</TT> bit (also update the definition of
-   <TT>FIELD_CODEC</TT> to reflect your addition).
-<LI>Add an entry in the <TT>TIFFFieldInfo</TT> array defined at the top of
-   <B>tif_dirinfo.c</B>. 
-   Note that you must keep this array sorted by tag
-   number and that the widest variant entry for a tag should come
-   first (e.g. <TT>LONG</TT> before <TT>SHORT</TT>).
-<LI>Add entries in <TT>_TIFFVSetField()</TT> and <TT>_TIFFVGetField()</TT>
-   for the new tag.
-<LI>(<I>optional</I>) If the value associated with the tag is not a scalar value
-   (e.g. the array for <TT>TransferFunction</TT>) and requires
-   special processing,
-   then add the appropriate code to <TT>TIFFReadDirectory()</TT> and
-   <TT>TIFFWriteDirectory()</TT>.  You're best off finding a similar tag and
-   cribbing code.
-<LI>Add support to <TT>TIFFPrintDirectory()</TT> in <B>tif_print.c</B>
-    to print the tag's value.
-</OL>
-
-<P>
-If you want to maintain portability, beware of making assumptions
-about data types.  Use the typedefs (<TT>uint16</TT>, etc. when dealing with
-data on disk and <TT>t*_t</TT> when stuff is in memory) and be careful about
-passing items through printf or similar vararg interfaces.
-
 <A NAME=AddingCODECS><P><HR WIDTH=65% ALIGN=right><H3>Adding New Builtin Codecs</H3></A>
 
 To add builtin support for a new compression algorithm, you can either
 use the "tag-extension" trick to override the handling of the
-TIFF Compression tag (see <A HREF=#AddingTags>Adding New Tags</A>, above), 
+TIFF Compression tag (see <A HREF=addingtags.html>Adding New Tags</A>), 
 or do the following to add support directly to the core library:
 
 <OL>
@@ -550,53 +513,6 @@ scanline.  The sample parameter identifies which sample is to be
 encoded or decoded if the image is organized with <TT>PlanarConfig</TT>=2
 (separate planes).  This is important for algorithms such as JPEG.
 If <TT>PlanarConfig</TT>=1 (interleaved), then sample will always be 0.
-
-
-<A NAME=AddingCODECTags><P><HR WIDTH=65% ALIGN=right><H3>Adding New Codec-private Tags</H3></A>
-
-To add tags that are meaningful <EM>only when a particular compression
-algorithm is used</EM> follow these steps:
-
-<OL>
-<LI>Define the tag in <B>tiff.h</B>.
-<LI>Allocate storage for the tag values in the private state block of
-   the codec.
-<LI>Insure the state block is created when the codec is initialized.
-<LI>At <TT>TIFFInitfoo</TT> time override the method pointers in the
-    TIFF structure
-   for getting, setting and printing tag values.  For example,
-<PRE>
-    sp->vgetparent = tif->tif_vgetfield;
-    tif->tif_vgetfield = fooVGetField;	/* hook for codec tags */
-    sp->vsetparent = tif->tif_vsetfield;
-    tif->tif_vsetfield = fooVSetField;	/* hook for codec tags */
-    tif->tif_printdir = fooPrintDir;	/* hook for codec tags */
-</PRE>
-   (Actually you may decide not to override the
-   <TT>tif_printdir</TT> method, but rather just specify it).
-<LI>Create a private <TT>TIFFFieldInfo</TT> array for your tags and
-    merge them into the core tags at initialization time using
-    <TT>_TIFFMergeFieldInfo</TT>; e.g.
-<PRE>
-    _TIFFMergeFieldInfo(tif, fooFieldInfo, N(fooFieldInfo));
-</PRE>
-   (where <TT>N</TT> is a macro used liberaly throughout the distributed code).
-<LI>Fill in the get and set routines.  Be sure to call the parent method
-   for tags that you are not handled directly.  Also be sure to set the
-   <TT>FIELD_*</TT> bits for tags that are to be written to the file.  Note that
-   you can create ``pseudo-tags'' by defining tags that are processed
-   exclusively in the get/set routines and never written to file (see
-   the handling of <TT>TIFFTAG_FAXMODE</TT> in <B>tif_fax3.c</B>
-   for an example of this).
-<LI>Fill in the print routine, if appropriate.
-</OL>
-
-Note that space has been allocated in the <TT>FIELD_*</TT> bit space for
-codec-private tags.  Define your bits as <TT>FIELD_CODEC+&lt;offset&gt;</TT> to
-keep them away from the core tags.  If you need more tags than there
-is room for, just increase <TT>FIELD_SETLONGS</TT> at the top of
-<B>tiffiop.h</B>.
-
 
 <A NAME=Other><P><HR WIDTH=65% ALIGN=right><H3>Other Comments</H3></A>
 
