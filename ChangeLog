@@ -1,3 +1,7 @@
+1999-09-23    <warmerda@CS46980-B>
+
+	* Added CYGWIN case in configure.
+
 Fri Sep 17 00:13:51 CEST 1999  Mike Welles <mike@onshore.com> 
 	* Applied Francois Dagand's patch to handle fax decompression bug. 
 	  (sizes >= 65536 were failing) 
