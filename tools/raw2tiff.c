@@ -509,7 +509,7 @@ processCompressOptions(char* opt)
 		compression = COMPRESSION_PACKBITS;
 	else if (strncmp(opt, "jpeg", 4) == 0) {
 		char* cp = strchr(opt, ':');
-		if (cp && isdigit(cp[1]))
+		if (cp && isdigit((int)cp[1]))
 			quality = atoi(cp+1);
 		if (cp && strchr(cp, 'r'))
 			jpegcolormode = JPEGCOLORMODE_RAW;
