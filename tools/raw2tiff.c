@@ -70,15 +70,14 @@ main(int argc, char* argv[])
 	FILE	*in;
 	char	*outfilename = NULL;
 	TIFF	*out;
-	
+
 	uint32 row, col, band;
 	int	c;
 	unsigned char *buf = NULL, *buf1 = NULL;
 	extern int optind;
 	extern char* optarg;
-	
 
-	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMp:si:o:h")) != -1)
+	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMp:si:o:h")) != -1) {
 		switch (c) {
 		case 'c':		/* compression scheme */
 			if (!processCompressOptions(optarg))
@@ -165,9 +164,12 @@ main(int argc, char* argv[])
 		default:
 			break;
 		}
-	if (argc - optind < 2)
+        }
+
+        if (argc - optind < 2)
 		usage();
-	in = fopen(argv[optind], "rb");
+
+        in = fopen(argv[optind], "rb");
 	if (in == NULL) {
 		fprintf(stderr, "%s: %s: Cannot open input file.\n",
 			argv[0], argv[optind]);
@@ -299,15 +301,18 @@ swapBytesInScanline(void *buf, uint32 width, TIFFDataType dtype)
 	switch (dtype) {
 		case TIFF_SHORT:
 		case TIFF_SSHORT:
-			TIFFSwabArrayOfShort((uint16*)buf, width);
+			TIFFSwabArrayOfShort((uint16*)buf,
+                                             (unsigned long)width);
 			break;
 		case TIFF_LONG:
 		case TIFF_SLONG:
-			TIFFSwabArrayOfLong((uint32*)buf, width);
+			TIFFSwabArrayOfLong((uint32*)buf,
+                                            (unsigned long)width);
 			break;
 		/* case TIFF_FLOAT: */	/* FIXME */
 		case TIFF_DOUBLE:
-			TIFFSwabArrayOfDouble((double*)buf, width);
+			TIFFSwabArrayOfDouble((double*)buf,
+                                              (unsigned long)width);
 			break;
 		default:
 			break;
