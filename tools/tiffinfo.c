@@ -44,7 +44,8 @@ static	void tiffinfo(TIFF*, uint16, long);
 int
 main(int argc, char* argv[])
 {
-	int dirnum = -1, multiplefiles, c;
+	tdir_t dirnum = -1;
+	int multiplefiles, c;
 	uint16 order = 0;
 	TIFF* tif;
 	extern int optind;

@@ -118,10 +118,10 @@ main(int argc, char* argv[])
 			fillorder_in = FILLORDER_MSB2LSB;
 			break;
 		case 'R':		/* input resolution */
-			resY = atof(optarg);
+			resY = (float) atof(optarg);
 			break;
 		case 'X':		/* input width */
-			xsize = atof(optarg);
+			xsize = atoi(optarg);
 			break;
 
 			/* output-related options */

@@ -67,7 +67,7 @@ char*	srationalfmt = "%s%g";		/* SRATIONAL */
 char*	floatfmt = "%s%g";		/* FLOAT */
 char*	doublefmt = "%s%g";		/* DOUBLE */
 
-static	void dump(int, uint32);
+static	void dump(int, off_t);
 extern	int optind;
 extern	char* optarg;
 
@@ -170,13 +170,13 @@ InitByteOrder(int magic)
 	}
 }
 
-static	uint32 ReadDirectory(int, unsigned, uint32);
+static	off_t ReadDirectory(int, unsigned, off_t);
 static	void ReadError(char*);
 static	void Error(const char*, ...);
 static	void Fatal(const char*, ...);
 
 static void
-dump(int fd, uint32 diroff)
+dump(int fd, off_t diroff)
 {
 	unsigned i;
 
@@ -247,15 +247,15 @@ static	void PrintLong(FILE*, const char*, TIFFDirEntry*);
  * and convert it to the internal format.
  * We read directories sequentially.
  */
-static uint32
-ReadDirectory(int fd, unsigned ix, uint32 off)
+static off_t
+ReadDirectory(int fd, unsigned ix, off_t off)
 {
 	register TIFFDirEntry *dp;
-	register int n;
+	register unsigned int n;
 	TIFFDirEntry *dir = 0;
 	uint16 dircount;
 	int space;
-	uint32 nextdiroff = 0;
+	off_t nextdiroff = 0;
 
 	if (off == 0)			/* no more directories */
 		goto done;
@@ -677,7 +677,7 @@ TIFFFetchData(int fd, TIFFDirEntry* dir, void* cp)
 
 	w = (dir->tdir_type < NWIDTHS ? datawidth[dir->tdir_type] : 0);
 	cc = dir->tdir_count * w;
-	if (lseek(fd, (off_t) dir->tdir_offset, 0) == dir->tdir_offset &&
+	if (lseek(fd, (off_t)dir->tdir_offset, 0) == (off_t)dir->tdir_offset &&
 	    read(fd, cp, cc) == cc) {
 		if (swabflag) {
 			switch (dir->tdir_type) {
