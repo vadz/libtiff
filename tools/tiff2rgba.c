@@ -338,33 +338,11 @@ cvt_whole_image( TIFF *in, TIFF *out )
     }
 
     /* Read the image in one chunk into an RGBA array */
-    if (!TIFFReadRGBAImage(in, width, height, raster, 0)) {
+    if (!TIFFReadRGBAImageOriented(in, width, height, raster,
+                                   ORIENTATION_TOPLEFT, 0)) {
         _TIFFfree(raster);
         return (0);
     }
-
-    /* For some reason the TIFFReadRGBAImage() function chooses the
-       lower left corner as the origin.  Vertically mirror scanlines. */
-
-    wrk_line = (uint32*)_TIFFmalloc(width * sizeof (uint32));
-    if (wrk_line == 0) {
-        TIFFError(TIFFFileName(in), "No space for raster scanline buffer");
-        return (0);
-    }
-    
-    for( row = 0; row < height / 2; row++ )
-    {
-        uint32	*top_line, *bottom_line;
-
-        top_line = raster + width * row;
-        bottom_line = raster + width * (height-row-1);
-
-        _TIFFmemcpy(wrk_line, top_line, 4*width);
-        _TIFFmemcpy(top_line, bottom_line, 4*width);
-        _TIFFmemcpy(bottom_line, wrk_line, 4*width);
-    }
-
-    _TIFFfree( wrk_line );
 
     /*
     ** Do we want to strip away alpha components?
