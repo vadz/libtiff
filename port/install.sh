@@ -32,8 +32,8 @@
 #
 # Warning, this file was automatically created by the HylaFAX configure script
 #
-# VERSION:	v3.5.2
-# DATE:		Tue Sep 28 13:26:51 CEST 1999
+# VERSION:	v3.5.4
+# DATE:		Mon Mar 20 13:09:13 EST 2000
 # TARGET:	i586-unknown-linux
 #
 

@@ -31,8 +31,8 @@
 SRCDIR	= .
 
 #
-# VERSION:	v3.5.2
-# DATE:		Tue Sep 28 13:26:51 CEST 1999
+# VERSION:	v3.5.4
+# DATE:		Mon Mar 20 13:09:13 EST 2000
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
@@ -89,7 +89,7 @@ clobber distclean: clean
 installLink::
 	if [ /usr/local/lib != /usr/lib ]; then				\
 	    ${INSTALL} -idb tiff.sw.tools -F /usr/lib			\
-		-lns /usr/local/lib/libtiff.so.3 -O libtiff.so.3;	\
+		-lns /usr/local/lib/libtiff.a -O libtiff.a;	\
 	else								\
 	    true;							\
 	fi
@@ -127,6 +127,7 @@ TIFFFILES=\
 	libtiff/Makefile.in			\
 	    libtiff/Makefile.lcc		\
 	    libtiff/makefile.vc			\
+	    libtiff/libtiff.def			\
 	    libtiff/t4.h			\
 	    libtiff/tiff.h			\
 	    libtiff/tiffcomp.h			\
@@ -152,6 +153,7 @@ TIFFFILES=\
 	    libtiff/tif_dumpmode.c		\
 	    libtiff/tif_error.c			\
 	    libtiff/tif_fax3.c			\
+	    libtiff/fax3sm_winnt.c		\
 	    libtiff/tif_fax3.h			\
 	    libtiff/tif_flush.c			\
 	    libtiff/tif_getimage.c		\
@@ -255,6 +257,7 @@ TIFFFILES=\
 	    man/TIFFWriteDirectory.3t 		\
 	    man/TIFFWriteEncodedStrip.3t	\
 	    man/TIFFWriteEncodedTile.3t		\
+	    man/TIFFWriteTile.3t		\
 	    man/TIFFWriteRawStrip.3t		\
 	    man/TIFFWriteRawTile.3t		\
 	    man/TIFFWriteScanline.3t		\
@@ -267,49 +270,111 @@ TIFFFILES=\
 	    man/TIFFstrip.3t			\
 	    man/TIFFswab.3t			\
 	    man/TIFFtile.3t			\
-	html/Makefile.in			\
-	    html/bugs.html			\
-	    html/build.html			\
-	    html/contrib.html			\
-	    html/document.html			\
-	    html/images.html			\
-	    html/index.html			\
-	    html/internals.html			\
-	    html/intro.html			\
-	    html/libtiff.html			\
-	    html/misc.html			\
-	    html/support.html			\
-	    html/tools.html			\
-	    html/v3.4beta036.html		\
-	    html/v3.4beta035.html		\
-	    html/v3.4beta034.html		\
-	    html/v3.4beta033.html		\
-	    html/v3.4beta032.html		\
-	    html/v3.4beta031.html		\
-	    html/v3.4beta029.html		\
-	    html/v3.4beta028.html		\
-	    html/v3.4beta024.html		\
-	    html/v3.4beta018.html		\
-	    html/v3.4beta016.html		\
-	    html/v3.4beta007.html		\
-	${NULL}
+	    html/images				\
+	    html/images/back.gif				\
+	    html/images/bali.jpg				\
+	    html/images/cat.gif				\
+	    html/images/cover.jpg				\
+	    html/images/cramps.gif				\
+	    html/images/dave.gif				\
+	    html/images/info.gif				\
+	    html/images/jello.jpg				\
+	    html/images/jim.gif				\
+	    html/images/note.gif				\
+	    html/images/oxford.gif				\
+	    html/images/quad.jpg				\
+	    html/images/ring.gif				\
+	    html/images/smallliz.jpg				\
+	    html/images/strike.gif				\
+	    html/images/warning.gif				\
+	    html/Makefile.in				\
+	    html/bugs.html				\
+	    html/build.html				\
+	    html/contrib.html				\
+	    html/document.html				\
+	    html/images.html				\
+	    html/index.html				\
+	    html/internals.html				\
+	    html/intro.html				\
+	    html/libtiff.html				\
+	    html/misc.html				\
+	    html/support.html				\
+	    html/tools.html				\
+	    html/v3.4beta007.html				\
+	    html/v3.4beta016.html				\
+	    html/v3.4beta018.html				\
+	    html/v3.4beta024.html				\
+	    html/v3.4beta028.html				\
+	    html/v3.4beta029.html				\
+	    html/v3.4beta031.html				\
+	    html/v3.4beta032.html				\
+	    html/v3.4beta033.html				\
+	    html/v3.4beta034.html				\
+	    html/v3.4beta035.html				\
+	    html/v3.4beta036.html				\
+	    html/v3.5.1.html				\
+	    html/v3.5.2.html				\
+	    html/v3.5.3.html				\
+	    html/man				\
+	    html/man/TIFFClose.3t.html				\
+	    html/man/TIFFError.3t.html				\
+	    html/man/TIFFFlush.3t.html				\
+	    html/man/TIFFGetField.3t.html				\
+	    html/man/TIFFOpen.3t.html				\
+	    html/man/TIFFPrintDirectory.3t.html				\
+	    html/man/TIFFRGBAImage.3t.html				\
+	    html/man/TIFFReadDirectory.3t.html				\
+	    html/man/TIFFReadEncodedStrip.3t.html				\
+	    html/man/TIFFReadEncodedTile.3t.html				\
+	    html/man/TIFFReadRGBAImage.3t.html				\
+	    html/man/TIFFReadRGBAStrip.3t.html				\
+	    html/man/TIFFReadRGBATile.3t.html				\
+	    html/man/TIFFReadRawStrip.3t.html				\
+	    html/man/TIFFReadRawTile.3t.html				\
+	    html/man/TIFFReadScanline.3t.html				\
+	    html/man/TIFFReadTile.3t.html				\
+	    html/man/TIFFSetDirectory.3t.html				\
+	    html/man/TIFFSetField.3t.html				\
+	    html/man/TIFFWarning.3t.html				\
+	    html/man/TIFFWriteDirectory.3t.html				\
+	    html/man/TIFFWriteEncodedStrip.3t.html				\
+	    html/man/TIFFWriteEncodedTile.3t.html				\
+	    html/man/TIFFWriteRawStrip.3t.html				\
+	    html/man/TIFFWriteRawTile.3t.html				\
+	    html/man/TIFFWriteScanline.3t.html				\
+	    html/man/TIFFbuffer.3t.html				\
+	    html/man/TIFFcodec.3t.html				\
+	    html/man/TIFFmemory.3t.html				\
+	    html/man/TIFFquery.3t.html				\
+	    html/man/TIFFsize.3t.html				\
+	    html/man/TIFFstrip.3t.html				\
+	    html/man/TIFFswab.3t.html				\
+	    html/man/TIFFtile.3t.html				\
+	    html/man/fax2ps.1.html				\
+	    html/man/fax2tiff.1.html				\
+	    html/man/gif2tiff.1.html				\
+	    html/man/libtiff.3t.html				\
+	    html/man/pal2rgb.1.html				\
+	    html/man/ppm2tiff.1.html				\
+	    html/man/ras2tiff.1.html				\
+	    html/man/rgb2ycbcr.1.html				\
+	    html/man/sgi2tiff.1.html				\
+	    html/man/thumbnail.1.html				\
+	    html/man/tiff2bw.1.html				\
+	    html/man/tiff2ps.1.html				\
+	    html/man/tiffcmp.1.html				\
+	    html/man/tiffcp.1.html				\
+	    html/man/tiffdither.1.html				\
+	    html/man/tiffdump.1.html				\
+	    html/man/tiffgt.1.html				\
+	    html/man/tiffinfo.1.html				\
+	    html/man/tiffmedian.1.html				\
+	    html/man/tiffsplit.1.html				\
+	    html/man/tiffsv.1.html				\
+	    html/man/index.html				\
+	    html/man/TIFFWriteTile.3t.html				\
+	    ${NULL}
 OTHERFILES=\
-	html/images/back.gif			\
-	html/images/bali.jpg			\
-	html/images/cat.gif			\
-	html/images/cover.jpg			\
-	html/images/cramps.gif			\
-	html/images/dave.gif			\
-	html/images/info.gif			\
-	html/images/jello.jpg			\
-	html/images/jim.gif			\
-	html/images/note.gif			\
-	html/images/oxford.gif			\
-	html/images/quad.jpg			\
-	html/images/ring.gif			\
-	html/images/smallliz.jpg		\
-	html/images/strike.gif			\
-	html/images/warning.gif			\
 	${NULL}
 CONTRIBFILES=\
 	contrib/dbs/README			\
@@ -393,7 +458,12 @@ CONTRIBFILES=\
 	    contrib/addtiffo/tif_overview.cpp	\
 	    contrib/addtiffo/rawblockedimage.cpp \
 	    contrib/addtiffo/rawblockedimage.h  \
+	contrib/iptcutil/Makefile		\
+		contrib/iptcutil/iptcutil.c	\
+		contrib/iptcutil/test.iptc	\
+		contrib/iptcutil/text.txt	\
 	${NULL}
+
 DISTFILES=\
 	${TIFFFILES}				\
 	dist/tiff.alpha				\
@@ -416,15 +486,16 @@ rcsclean:
 
 release:
 	(cd ${SRCDIR}/dist; sh newversion)
-	-${MAKE} clean
 	${MAKE} release.stamp
 #	${SRCDIR}/configure ${CONFIG}
-	${MAKE} product
-	${MAKE} release.tar
+#	${MAKE} product
+	${MAKE} release.tar.zip
+
 
 # stamp relevant files according to current alpha
 release.stamp:
-	cvs tag -R "Release" 
+	VERSION=`echo v3.5.4 | tr "." "-"`; \
+	cvs tag -R Release-$$VERSION	;
 	date "+%m/%d/%Y" > RELEASE-DATE
 
 #diffs since last release
@@ -434,16 +505,17 @@ releasediff:
 	done
 
 # create release distribution archive
-release.tar:
-	VERSION="v3.5.2";						\
-	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
+release.tar.zip:
+	VERSION="v3.5.4";						\
+	rm -f ../tiff-$$VERSION $$VERSION $$VERSION-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSION;					\
 	(for i in ${DISTFILES}; do					\
 	   echo $$i;							\
 	done) | sed "s;.*;tiff-$$VERSION/&;" >$$VERSION;		\
 	tar cvf $$VERSION-tar `cat $$VERSION`;				\
+	zip tiff-$$VERSION.zip `cat $$VERSION`; 				\
 	rm -f tiff-$$VERSION-tar.${ZIPSUF};				\
-	cat $$VERSION-tar | ${COMPRESS} >tiff-$$VERSION-tar.${ZIPSUF};	\
+	cat $$VERSION-tar | ${COMPRESS} >tiff-$$VERSION.tar.${ZIPSUF};	\
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;
 
 #

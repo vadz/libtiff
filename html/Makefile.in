@@ -73,6 +73,10 @@ HTMLFILES=\
 	v3.4beta034.html	\
 	v3.4beta035.html	\
 	v3.4beta036.html	\
+	v3.5.1.html		\
+	v3.5.2.html		\
+	v3.5.3.html		\
+	v3.5.4.html		\
 	${NULL}
 IMAGES=\
 	images/back.gif		\

@@ -458,6 +458,10 @@ CONTRIBFILES=\
 	    contrib/addtiffo/tif_overview.cpp	\
 	    contrib/addtiffo/rawblockedimage.cpp \
 	    contrib/addtiffo/rawblockedimage.h  \
+	contrib/iptcutil/Makefile		\
+		contrib/iptcutil/iptcutil.c	\
+		contrib/iptcutil/test.iptc	\
+		contrib/iptcutil/text.txt	\
 	${NULL}
 
 DISTFILES=\

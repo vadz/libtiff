@@ -30,8 +30,8 @@
 SRCDIR	= ../man
 
 #
-# VERSION:	v3.5.2
-# DATE:		Tue Sep 28 13:26:51 CEST 1999
+# VERSION:	v3.5.4
+# DATE:		Mon Mar 20 13:09:13 EST 2000
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
@@ -132,6 +132,7 @@ MANDEV=\
 	lib/TIFFWriteDirectory.3t \
 	lib/TIFFWriteEncodedStrip.3t \
 	lib/TIFFWriteEncodedTile.3t \
+	lib/TIFFWriteTile.3t \
 	lib/TIFFWriteRawStrip.3t \
 	lib/TIFFWriteRawTile.3t \
 	lib/TIFFWriteScanline.3t \
@@ -260,6 +261,7 @@ lib/TIFFWarning.3t::	${SRCDIR}/TIFFWarning.3t;		${MANCVT}
 lib/TIFFWriteDirectory.3t:: ${SRCDIR}/TIFFWriteDirectory.3t;	${MANCVT}
 lib/TIFFWriteEncodedStrip.3t:: ${SRCDIR}/TIFFWriteEncodedStrip.3t; ${MANCVT}
 lib/TIFFWriteEncodedTile.3t:: ${SRCDIR}/TIFFWriteEncodedTile.3t; ${MANCVT}
+lib/TIFFWriteTile.3t:: ${SRCDIR}/TIFFWriteTile.3t; ${MANCVT}
 lib/TIFFWriteRawStrip.3t:: ${SRCDIR}/TIFFWriteRawStrip.3t;	${MANCVT}
 lib/TIFFWriteRawTile.3t:: ${SRCDIR}/TIFFWriteRawTile.3t;	${MANCVT}
 lib/TIFFWriteScanline.3t:: ${SRCDIR}/TIFFWriteScanline.3t;	${MANCVT}
@@ -390,6 +392,7 @@ short:
 	${MV} TIFFWarning.3t warning.3t
 	${MV} TIFFWriteEncodedStrip.3t wrestrip.3t
 	${MV} TIFFWriteEncodedTile.3t wretile.3t
+	${MV} TIFFWriteTile.3t wrttile.3t
 	${MV} TIFFWriteDirectory.3t writedir.3t
 	${MV} TIFFWriteRawStrip.3t wrrstrip.3t
 	${MV} TIFFWriteRawTile.3t wrrtile.3t

@@ -1156,7 +1156,7 @@ if [ "$DSO" = auto ]; then
 	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
 	;;
     *-linux*)
-	if [ -r /lib/libc.so.5 ]; then
+	if [ -r /lib/libc.so.6 || -r /lib/libc.so.5 ]; then
 	    DSOSUF=so.${DIST_MAJOR}
 	    DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_ALPHA}
 	    LIBCOPTS='-fPIC'
@@ -1700,69 +1700,69 @@ fi
 
 # NB: these should be sorted alphabetically
 cat>>confsed<<EOF
-/@AR@/s;;${AR};g
-/@ALPHAFILE@/s;;`relativize ${ALPHAFILE}`;g
-/@AROPTS@/s;;${AROPTS};g
-/@CONFIGDIR@/s;;${CONFIGDIR};g
-/@CCOMPILER@/s;;${CCOMPILER};g
-/@CHMOD@/s;;${CHMOD};g
-/@CONF_JPEG@/s;;${CONF_JPEG};g
-/@CONF_ZIP@/s;;${CONF_ZIP};g
-/@COPT_LIBINC@/s;;`makeIncArgs ${DIRS_LIBINC}`;g
-/@DATE@/s;;${DATE};g
-/@DEPEND_JPEGLIB@/s;;${CONF_JPEG:+`findHeader jpeglib.h` `findHeader jerror.h`};g
-/@DEPEND_ZLIB@/s;;${CONF_ZIP:+`findHeader zlib.h`};g
-/@DIR_BIN@/s;;${DIR_BIN};g
-/@DIR_JPEGLIB@/s;;`relativize ${DIR_JPEGLIB}`;g
-/@DIR_GZLIB@/s;;`relativize ${DIR_GZLIB}`;g
-/@DIR_HTML@/s;;${DIR_HTML};g
-/@DIR_INC@/s;;${DIR_INC};g
-/@DIR_LIB@/s;;${DIR_LIB};g
-/@DIR_MAN@/s;;${DIR_MAN};g
-/@DIRS_LIBINC@/s;;`relativize ${DIRS_LIBINC}`;g
-/@DIST_ALPHA@/s;;${DIST_ALPHA};g
-/@DIST_MAJOR@/s;;${DIST_MAJOR};g
-/@DIST_MINOR@/s;;${DIST_MINOR};g
-/@DIST_TYPE@/s;;${DIST_TYPE};g
-/@DSO@/s;;${DSO};g
-/@DSOSUF@/s;;${DSOSUF};g
-/@DSOSUF_VERSION@/s;;${DSOSUF_VERSION};g
-/@ENVOPTS@/s;;${ENVOPTS};g
-/@FILLORDER@/s;;${FILLORDER};g
-/@GCOPTS@/s;;${GCOPTS};g
-/@HTML@/s;;${HTML};g
-/@INSTALL@/s;;${INSTALL};g
-/@LIBJPEG@/s;;`relativize ${LIBJPEG}`;g
-/@LIBGL@/s;;${LIBGL};g
-/@LIBGZ@/s;;`relativize ${LIBGZ}`;g
-/@LIBSRCDIR@/s;;${LIBSRCDIR};g
-/@LIBIMAGE@/s;;${LIBIMAGE};g
-/@LIBCOPTS@/s;;${LIBCOPTS};g
-/@LIBPORT@/s;;${LIBPORT};g
-/@LN@/s;;${LN};g
-/@LN_S@/s;;${LN_S};g
-/@MACHDEPLIBS@/s;;${MACHDEPLIBS};g
-/@MANAPPS@/s;;${MANAPPS};g
-/@MANAPPNAME@/s;;${MANAPPNAME};g
-/@MANLIBNAME@/s;;${MANLIBNAME};g
-/@MANCVT@/s;;${MANCVT};g
-/@MANSEDLOCAL@/s;;${MANSEDLOCAL};g
-/@MANLIB@/s;;${MANLIB};g
-/@MV_F@/s;;${MV_F};g
-/@PORT@/s;;${PORT};g
-/@PORTFUNCS@/s;;${PORTFUNCS};g
-/@RANLIB@/s;;${RANLIB};g
-/@SCRIPT_SH@/s;;${SCRIPT_SH};g
-/@SED@/s;;${SED};g
-/@SETMAKE@/s;;${SETMAKE};g
-/@SRCDIR@/s;;${SRCDIR};g
-/@RELSRCDIR@/s;;`relativize ${SRCDIR}`;g
-/@STRIP@/s;;${STRIP};g
-/@TARGET@/s;;${TARGET};g
-/@TIFFLIBREF@/s;;${TIFFLIBREF};g
-/@VERSION@/s;;${VERSION};g
-/@VERSIONFILE@/s;;`relativize ${VERSIONFILE}`;g
-/@WARNING@/s;;Warning, this file was automatically created by the TIFF configure script;g
+s;@AR@;${AR};g
+s;@ALPHAFILE@;`relativize ${ALPHAFILE}`;g
+s;@AROPTS@;${AROPTS};g
+s;@CONFIGDIR@;${CONFIGDIR};g
+s;@CCOMPILER@;${CCOMPILER};g
+s;@CHMOD@;${CHMOD};g
+s;@CONF_JPEG@;${CONF_JPEG};g
+s;@CONF_ZIP@;${CONF_ZIP};g
+s;@COPT_LIBINC@;`makeIncArgs ${DIRS_LIBINC}`;g
+s;@DATE@;${DATE};g
+s;@DEPEND_JPEGLIB@;${CONF_JPEG:+`findHeader jpeglib.h` `findHeader jerror.h`};g
+s;@DEPEND_ZLIB@;${CONF_ZIP:+`findHeader zlib.h`};g
+s;@DIR_BIN@;${DIR_BIN};g
+s;@DIR_JPEGLIB@;`relativize ${DIR_JPEGLIB}`;g
+s;@DIR_GZLIB@;`relativize ${DIR_GZLIB}`;g
+s;@DIR_HTML@;${DIR_HTML};g
+s;@DIR_INC@;${DIR_INC};g
+s;@DIR_LIB@;${DIR_LIB};g
+s;@DIR_MAN@;${DIR_MAN};g
+s;@DIRS_LIBINC@;`relativize ${DIRS_LIBINC}`;g
+s;@DIST_ALPHA@;${DIST_ALPHA};g
+s;@DIST_MAJOR@;${DIST_MAJOR};g
+s;@DIST_MINOR@;${DIST_MINOR};g
+s;@DIST_TYPE@;${DIST_TYPE};g
+s;@DSO@;${DSO};g
+s;@DSOSUF@;${DSOSUF};g
+s;@DSOSUF_VERSION@;${DSOSUF_VERSION};g
+s;@ENVOPTS@;${ENVOPTS};g
+s;@FILLORDER@;${FILLORDER};g
+s;@GCOPTS@;${GCOPTS};g
+s;@HTML@;${HTML};g
+s;@INSTALL@;${INSTALL};g
+s;@LIBJPEG@;`relativize ${LIBJPEG}`;g
+s;@LIBGL@;${LIBGL};g
+s;@LIBGZ@;`relativize ${LIBGZ}`;g
+s;@LIBSRCDIR@;${LIBSRCDIR};g
+s;@LIBIMAGE@;${LIBIMAGE};g
+s;@LIBCOPTS@;${LIBCOPTS};g
+s;@LIBPORT@;${LIBPORT};g
+s;@LN@;${LN};g
+s;@LN_S@;${LN_S};g
+s;@MACHDEPLIBS@;${MACHDEPLIBS};g
+s;@MANAPPS@;${MANAPPS};g
+s;@MANAPPNAME@;${MANAPPNAME};g
+s;@MANLIBNAME@;${MANLIBNAME};g
+s;@MANCVT@;${MANCVT};g
+s;@MANSEDLOCAL@;${MANSEDLOCAL};g
+s;@MANLIB@;${MANLIB};g
+s;@MV_F@;${MV_F};g
+s;@PORT@;${PORT};g
+s;@PORTFUNCS@;${PORTFUNCS};g
+s;@RANLIB@;${RANLIB};g
+s;@SCRIPT_SH@;${SCRIPT_SH};g
+s;@SED@;${SED};g
+s;@SETMAKE@;${SETMAKE};g
+s;@SRCDIR@;${SRCDIR};g
+s;@RELSRCDIR@;`relativize ${SRCDIR}`;g
+s;@STRIP@;${STRIP};g
+s;@TARGET@;${TARGET};g
+s;@TIFFLIBREF@;${TIFFLIBREF};g
+s;@VERSION@;${VERSION};g
+s;@VERSIONFILE@;`relativize ${VERSIONFILE}`;g
+s;@WARNING@;Warning, this file was automatically created by the TIFF configure script;g
 EOF
 
 SedConfigFiles()
