@@ -109,16 +109,16 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 				state = RUN;
 				if (n > 128) {
 					*op++ = (tidata) -127;
-					*op++ = b;
+					*op++ = (tidataval_t) b;
 					n -= 128;
 					goto again;
 				}
 				*op++ = (tidataval_t)(-(n-1));
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 			} else {
 				lastliteral = op;
 				*op++ = 0;
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 				state = LITERAL;
 			}
 			break;
@@ -127,32 +127,32 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 				state = LITERAL_RUN;
 				if (n > 128) {
 					*op++ = (tidata) -127;
-					*op++ = b;
+					*op++ = (tidataval_t) b;
 					n -= 128;
 					goto again;
 				}
 				*op++ = (tidataval_t)(-(n-1));	/* encode run */
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 			} else {			/* extend literal */
 				if (++(*lastliteral) == 127)
 					state = BASE;
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 			}
 			break;
 		case RUN:		/* last object was run */
 			if (n > 1) {
 				if (n > 128) {
 					*op++ = (tidata) -127;
-					*op++ = b;
+					*op++ = (tidataval_t) b;
 					n -= 128;
 					goto again;
 				}
 				*op++ = (tidataval_t)(-(n-1));
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 			} else {
 				lastliteral = op;
 				*op++ = 0;
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 				state = LITERAL;
 			}
 			break;
@@ -258,7 +258,7 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 			occ -= n;
 			b = *bp++, cc--;
 			while (n-- > 0)
-				*op++ = b;
+				*op++ = (tidataval_t) b;
 		} else {		/* copy next n+1 bytes literally */
 			if (occ < n + 1)
                         {

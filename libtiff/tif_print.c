@@ -497,7 +497,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
             int  i;
             short count;
 
-            count = TIFFGetTagListCount( tif );
+            count = (short) TIFFGetTagListCount( tif );
             for( i = 0; i < count; i++ )
             {
                 ttag_t  tag = TIFFGetTagListEntry( tif, i );

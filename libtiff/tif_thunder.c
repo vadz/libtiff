@@ -60,7 +60,7 @@ static const int threebitdeltas[8] = { 0, 1, 2, 3, 0, -3, -2, -1 };
 	if (npixels++ & 1) \
 	    *op++ |= lastpixel; \
 	else \
-	    op[0] = lastpixel << 4; \
+	    op[0] = (tidataval_t) (lastpixel << 4); \
 }
 
 static int
@@ -92,7 +92,7 @@ ThunderDecode(TIFF* tif, tidata_t op, tsize_t maxpixels)
 				lastpixel |= lastpixel << 4;
 			npixels += n;
 			for (; n > 0; n -= 2)
-				*op++ = lastpixel;
+				*op++ = (tidataval_t) lastpixel;
 			if (n == -1)
 				*--op &= 0xf0;
 			lastpixel &= 0xf;

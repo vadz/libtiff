@@ -170,7 +170,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		 * Setup new compression routine state.
 		 */
 		if( (status = TIFFSetCompressionScheme(tif, v)) != 0 )
-                    td->td_compression = v;
+                    td->td_compression = (uint16) v;
                 else
                     status = 0;
 		break;
@@ -986,7 +986,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 
                 if( fip->field_passcount )
                 {
-                    *va_arg(ap, u_short *) = tv->count;
+                    *va_arg(ap, u_short *) = (u_short) tv->count;
                     *va_arg(ap, void **) = tv->value;
                     ret_val = 1;
                     break;

@@ -532,14 +532,14 @@ Fax3SetupState(TIFF* tif)
 #define	Fax3FlushBits(tif, sp) {				\
 	if ((tif)->tif_rawcc >= (tif)->tif_rawdatasize)		\
 		(void) TIFFFlushData1(tif);			\
-	*(tif)->tif_rawcp++ = (sp)->data;			\
+	*(tif)->tif_rawcp++ = (tidataval_t) (sp)->data;		\
 	(tif)->tif_rawcc++;					\
 	(sp)->data = 0, (sp)->bit = 8;				\
 }
 #define	_FlushBits(tif) {					\
 	if ((tif)->tif_rawcc >= (tif)->tif_rawdatasize)		\
 		(void) TIFFFlushData1(tif);			\
-	*(tif)->tif_rawcp++ = data;				\
+	*(tif)->tif_rawcp++ = (tidataval_t) data;		\
 	(tif)->tif_rawcc++;					\
 	data = 0, bit = 8;					\
 }
