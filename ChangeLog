@@ -4,6 +4,10 @@
 	Added new function TIFFIsCODECConfigured(), suggested by Ross
 	Finlayson.
 
+	* libtiff/tif_ojpeg.c: TIFFVGetField() function now can properly
+	extract the fields from the OJPEG files. Patch supplied by Ross
+	Finlayson.
+
 2003-11-18  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirinfo.c: Implemented binary search in
