@@ -1,3 +1,7 @@
+2004-10-16  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.7.0 released.
+
 2004-10-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_jpeg.c: There seems to be no need to include stdio.h
