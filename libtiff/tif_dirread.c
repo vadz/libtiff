@@ -578,12 +578,16 @@ TIFFReadDirectory(TIFF* tif)
  * Assume we have wrong StripByteCount value (in case of single strip) in
  * following cases:
  *   - it is equal to zero along with StripOffset;
- *   - it is larger than file itself (in case of uncompressed image).
+ *   - it is larger than file itself (in case of uncompressed image);
+ *   - it is smaller than the size of the bytes per row multiplied on the
+ *     number of rows.
  */
 #define	BYTECOUNTLOOKSBAD \
     ( (td->td_stripbytecount[0] == 0 && td->td_stripoffset[0] != 0) || \
       (td->td_compression == COMPRESSION_NONE && \
-       td->td_stripbytecount[0] > TIFFGetFileSize(tif) - td->td_stripoffset[0]) )
+       td->td_stripbytecount[0] > TIFFGetFileSize(tif) - td->td_stripoffset[0]) || \
+      (tif->tif_mode == O_RDONLY && \
+       td->td_stripbytecount[0] < TIFFScanlineSize(tif) * td->td_imagelength) )
 	} else if (td->td_nstrips == 1 && BYTECOUNTLOOKSBAD) {
 		/*
 		 * Plexus (and others) sometimes give a value
