@@ -1,0 +1,41 @@
+To: sam@engr.sgi.com
+cc: adam@onshore.com
+cc: billr@corbis.com
+cc: magick@wizards.dupont.com
+Subject: libtiff fork
+X-Mailer: VM 6.63 under Emacs 20.3.2
+--text follows this line--
+
+I've finished merging a forked libtiff that was being shipped with
+ImageMagick (that added IPTC newsphoto support) with the last libtiff
+release (tiff-v3.4beta037).    I'm going to make this available at
+ftp://ftp.onshore.com/pub/libtiff (as tiff-v3.4beta037-IPTC). 
+
+I'm very reluctant to fork code, and I woud refrain, but for the following: 
+
+    1.  Repeated mail to you about the patches has gone unanswered.
+
+    2.  I keep getting mail from people strugging to get IPTC newphoto support
+        to work properly with ImageMagick. 
+
+    3.  The NT source distibution was already shipping with a forked version.
+
+In order for the situation to be less confusing, I'm going to make an
+archive of the forked version available.
+
+I very much would like for there not to be a fork.  Are you still
+maintaining libtiff?  If not, is there a current maintainer? 
+
+I'm willing to adopt it if there isn't.  I'd hate to see such an
+important library fragment.  It's extremely likely that onShore
+(http://onshore.com/), will donate web space, bandwidth, and listserv
+services if so. 
+
+
+
+------------------------------------------------------
+M. L.  Welles                   mike@onShore.com
+                                http://fifth.net/
+-------------------------------------------------------
+
+
