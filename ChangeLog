@@ -1,3 +1,7 @@
+2001-01-08  Mike Welles <mike@bangstate.com> 
+
+	* Makefile.in:  Now cleaning up after itself after creating the .tar.gz and .zip
+	
 2001-01-07  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* html/libtiff.html: Fixed arguments in example for TIFFRGBAImageGet()
