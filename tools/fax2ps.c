@@ -356,7 +356,7 @@ main(int argc, char** argv)
     printf("%%%%CreationDate: %s", ctime(&t));
     printf("%%%%Origin: 0 0\n");
     printf("%%%%BoundingBox: 0 0 %u %u\n",
-	(int)(pageHeight*72), (int)(pageWidth*72));	/* XXX */
+	(int)(pageWidth*72), (int)(pageHeight*72));	/* XXX */
     printf("%%%%Pages: (atend)\n");
     printf("%%%%EndComments\n");
     printf("%%%%BeginProlog\n");
