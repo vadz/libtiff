@@ -1,3 +1,8 @@
+2003-11-16  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiff.h, tif_dirinfo.c}: Added support for IFD (13)
+	datatype, intruduced in "Adobe PageMaker TIFF Tech. Notes".
+
 2003-11-15  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* Makefile.in: fixed missing backslash for tif_color.c in list.
