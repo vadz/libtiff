@@ -1,3 +1,7 @@
+2002-04-26  Andrey Kiselev  <dron@remotesensing.org>
+	
+	* libtiff/libtiff.def: Added missed declaration.
+	
 2002-04-22  Andrey Kiselev  <dron@remotesensing.org>
 	
 	* tools/fax2tiff.c: Updated to reflect latest changes in libtiff.
