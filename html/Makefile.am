@@ -26,6 +26,7 @@
 # Process this file with automake to produce Makefile.in.
 
 EXTRA_DIST = \
+	addingtags.html \
 	bugs.html \
 	build.html \
 	contrib.html \
