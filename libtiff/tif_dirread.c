@@ -102,6 +102,7 @@ TIFFReadDirectory(TIFF* tif)
 	toff_t nextdiroff;
 	char* cp;
 	int diroutoforderwarning = 0;
+	toff_t* new_dirlist;
 
 	tif->tif_diroff = tif->tif_nextdiroff;
 	if (tif->tif_diroff == 0)		/* no more directories */
@@ -117,14 +118,15 @@ TIFFReadDirectory(TIFF* tif)
 			return (0);
 	}
 	tif->tif_dirnumber++;
-	tif->tif_dirlist = _TIFFrealloc(tif->tif_dirlist,
-					tif->tif_dirnumber * sizeof(toff_t));
-	if (!tif->tif_dirlist) {
+	new_dirlist = _TIFFrealloc(tif->tif_dirlist,
+				   tif->tif_dirnumber * sizeof(toff_t));
+	if (!new_dirlist) {
 		TIFFError(module,
-			  "%.1000s: Failed to allocate space for IFD list",
+			  "%s: Failed to allocate space for IFD list",
 			  tif->tif_name);
 		return (0);
 	}
+	tif->tif_dirlist = new_dirlist;
 	tif->tif_dirlist[tif->tif_dirnumber - 1] = tif->tif_diroff;
 
 	/*
@@ -136,13 +138,13 @@ TIFFReadDirectory(TIFF* tif)
 	if (!isMapped(tif)) {
 		if (!SeekOK(tif, tif->tif_diroff)) {
 			TIFFError(module,
-			    "%.1000s: Seek error accessing TIFF directory",
+			    "%s: Seek error accessing TIFF directory",
                             tif->tif_name);
 			return (0);
 		}
 		if (!ReadOK(tif, &dircount, sizeof (uint16))) {
 			TIFFError(module,
-			    "%.1000s: Can not read TIFF directory count",
+			    "%s: Can not read TIFF directory count",
                             tif->tif_name);
 			return (0);
 		}
@@ -167,7 +169,7 @@ TIFFReadDirectory(TIFF* tif)
 
 		if (off + sizeof (uint16) > tif->tif_size) {
 			TIFFError(module,
-			    "%.1000s: Can not read TIFF directory count",
+			    "%s: Can not read TIFF directory count",
                             tif->tif_name);
 			return (0);
 		} else
@@ -181,7 +183,7 @@ TIFFReadDirectory(TIFF* tif)
 			return (0);
 		if (off + dircount*sizeof (TIFFDirEntry) > tif->tif_size) {
 			TIFFError(module,
-                                  "%.1000s: Can not read TIFF directory",
+                                  "%s: Can not read TIFF directory",
                                   tif->tif_name);
 			goto bad;
 		} else
@@ -268,7 +270,7 @@ TIFFReadDirectory(TIFF* tif)
 		if (dp->tdir_tag < tif->tif_fieldinfo[fix]->field_tag) {
 			if (!diroutoforderwarning) {
 				TIFFWarning(module,
-"%.1000s: invalid TIFF directory; tags are not sorted in ascending order",
+"%s: invalid TIFF directory; tags are not sorted in ascending order",
                                             tif->tif_name);
 				diroutoforderwarning = 1;
 			}
@@ -281,7 +283,7 @@ TIFFReadDirectory(TIFF* tif)
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
 
                     TIFFWarning(module,
-                        "%.1000s: unknown field with tag %d (0x%x) encountered",
+                        "%s: unknown field with tag %d (0x%x) encountered",
                                 tif->tif_name, dp->tdir_tag, dp->tdir_tag,
                                 dp->tdir_type);
 
@@ -315,7 +317,7 @@ TIFFReadDirectory(TIFF* tif)
 			if (fix >= tif->tif_nfields ||
 			    fip->field_tag != dp->tdir_tag) {
 				TIFFWarning(module,
-			"%.1000s: wrong data type %d for \"%s\"; tag ignored",
+			"%s: wrong data type %d for \"%s\"; tag ignored",
 					    tif->tif_name, dp->tdir_type,
 					    tif->tif_fieldinfo[fix-1]->field_name);
 				goto ignore;
@@ -553,7 +555,7 @@ TIFFReadDirectory(TIFF* tif)
 		    goto bad;
 		}
 		TIFFWarning(module,
-			"%.1000s: TIFF directory is missing required "
+			"%s: TIFF directory is missing required "
 			"\"%s\" field, calculating from imagelength",
 			tif->tif_name,
 		        _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
@@ -578,7 +580,7 @@ TIFFReadDirectory(TIFF* tif)
 		 * strip image.
 		 */
 		TIFFWarning(module,
-	"%.1000s: Bogus \"%s\" field, ignoring and calculating from imagelength",
+	"%s: Bogus \"%s\" field, ignoring and calculating from imagelength",
                             tif->tif_name,
 		            _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
 		if(EstimateStripByteCounts(tif, dir, dircount) < 0)
@@ -649,7 +651,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 			uint32 cc = TIFFDataWidth((TIFFDataType) dp->tdir_type);
 			if (cc == 0) {
 				TIFFError(module,
-			"%.1000s: Cannot determine size of unknown tag type %d",
+			"%s: Cannot determine size of unknown tag type %d",
 					  tif->tif_name, dp->tdir_type);
 				return -1;
 			}
@@ -692,7 +694,7 @@ MissingRequired(TIFF* tif, const char* tagname)
 	static const char module[] = "MissingRequired";
 
 	TIFFError(module,
-		  "%.1000s: TIFF directory is missing required \"%s\" field",
+		  "%s: TIFF directory is missing required \"%s\" field",
 		  tif->tif_name, tagname);
 }
 
@@ -1246,8 +1248,9 @@ TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, int* pl)
 		uint16* v = buf;
 
 		if (samples > NITEMS(buf))
-			v = (uint16*) _TIFFmalloc(samples * sizeof (uint16));
-		if (TIFFFetchShortArray(tif, dir, v)) {
+			v = (uint16*) CheckMalloc(tif, samples, sizeof (uint16),
+						  "to fetch per-sample values");
+		if (v && TIFFFetchShortArray(tif, dir, v)) {
 			int i;
 			for (i = 1; i < samples; i++)
 				if (v[i] != v[0]) {
@@ -1260,7 +1263,7 @@ TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, int* pl)
 			status = 1;
 		}
 	bad:
-		if (v != buf)
+		if (v && v != buf)
 			_TIFFfree((char*) v);
 	}
 	return (status);
@@ -1282,8 +1285,9 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
 		double* v = buf;
 
 		if (samples > NITEMS(buf))
-			v = (double*) _TIFFmalloc(samples * sizeof (double));
-		if (TIFFFetchAnyArray(tif, dir, v)) {
+			v = (double*) CheckMalloc(tif, samples, sizeof (double),
+						  "to fetch per-sample values");
+		if (v && TIFFFetchAnyArray(tif, dir, v)) {
 			int i;
 			for (i = 1; i < samples; i++)
 				if (v[i] != v[0]) {
@@ -1296,7 +1300,7 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
 			status = 1;
 		}
 	bad:
-		if (v != buf)
+		if (v && v != buf)
 			_TIFFfree(v);
 	}
 	return (status);
@@ -1379,8 +1383,12 @@ TIFFFetchExtraSamples(TIFF* tif, TIFFDirEntry* dir)
 	uint16* v = buf;
 	int status;
 
-	if (dir->tdir_count > NITEMS(buf))
-		v = (uint16*) _TIFFmalloc(dir->tdir_count * sizeof (uint16));
+	if (dir->tdir_count > NITEMS(buf)) {
+		v = (uint16*) CheckMalloc(tif, dir->tdir_count, sizeof (uint16),
+					  "to fetch extra samples");
+		if (!v)
+			return (0);
+	}
 	if (dir->tdir_type == TIFF_BYTE)
 		status = TIFFFetchByteArray(tif, dir, v);
 	else
