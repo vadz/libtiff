@@ -1,3 +1,10 @@
+2002-08-22  Andrey Kiselev  <dron@remotesensing.org>
+	
+	* /libtiff/tiff_lzw.c:
+	Added check for valid code lengths in LZWDecode() and
+	LZWDecodeCompat(). Fixes
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=115
+
 2002-08-16  Andrey Kiselev  <dron@remotesensing.org>
 	
 	* /libtiff/{Makefile.vc, libtiff.def}:
