@@ -241,9 +241,10 @@ cvtRaster(TIFF* tif, uint32* raster, uint32 width, uint32 height)
 	uint32 rwidth = roundup(width, horizSubSampling);
 	uint32 rheight = roundup(height, vertSubSampling);
 	uint32 nrows = (rowsperstrip > rheight ? rheight : rowsperstrip);
+        uint32 rnrows = roundup(nrows,vertSubSampling);
 
-	cc = nrows*rwidth +
-	    2*((nrows*rwidth) / (horizSubSampling*vertSubSampling));
+	cc = rnrows*rwidth +
+	    2*((rnrows*rwidth) / (horizSubSampling*vertSubSampling));
 	buf = (unsigned char*)_TIFFmalloc(cc);
 	for (y = height; (int32) y > 0; y -= nrows) {
 		uint32 nr = (y > nrows ? nrows : y);
