@@ -1,4 +1,10 @@
+2002-04-04  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/: tif_lzw.c: Assertions in LXWDecode and LZWDecodeCompat
+	replaced by warnings. Now libtiff should read corrupted LZW-compressed
+	files by skipping bad strips.
+	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=100
+	
 2002-04-03  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirwrite.c: Removed some dead code.
