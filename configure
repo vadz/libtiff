@@ -60,6 +60,7 @@ LIBIMAGE=auto				# auto-enable build of SGI -limage apps
 MACHDEPLIBS=-lm				# machine-dependent libraries for apps
 : ${CC=}				# name of C compiler to use
 : ${CCOMPILER=}				# full pathname of C compiler
+: ${OPTIMIZER=-O}			# Optimization flag
 : ${ENVOPTS=}				# CC opts for ANSI C compilation
 : ${MAKE=make}				# make to use
 
@@ -1748,6 +1749,7 @@ s;@MANCVT@;${MANCVT};g
 s;@MANSEDLOCAL@;${MANSEDLOCAL};g
 s;@MANLIB@;${MANLIB};g
 s;@MV_F@;${MV_F};g
+s;@OPTIMIZER@;${OPTIMIZER};g
 s;@PORT@;${PORT};g
 s;@PORTFUNCS@;${PORTFUNCS};g
 s;@RANLIB@;${RANLIB};g

@@ -132,6 +132,7 @@
 #CC="gcc"				# name/pathname of C compiler
 #ENVOPTS="-Aa"				# options for getting ANSI C
 #GCOPTS="-g"				# options to pass C compiler
+#OPTIMIZER="-O"				# Optimization options for compiler
 #LIBPORT='${PORT}/libport.a'		# library with emulation code
 #MACHDEPLIBS=""				# extra libraries for linking
 #PORTFUNCS=""				# non-standard functions to emulate
