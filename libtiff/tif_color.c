@@ -46,26 +46,26 @@ void
 TIFFCIELabToXYZ(TIFFCIELabToRGB *cielab, uint32 l, int32 a, int32 b,
 		float *X, float *Y, float *Z)
 {
-	float L = (float)l * 100.0 / 255.0;
+	float L = (float)l * 100.0 / 255.0F;
 	float cby, tmp;
 
-	if( L < 8.856 ) {
-		*Y = (L * cielab->Y0) / 903.292;
-		cby = 7.787 * (*Y / cielab->Y0) + 16.0 / 116.0;
+	if( L < 8.856F ) {
+		*Y = (L * cielab->Y0) / 903.292F;
+		cby = 7.787F * (*Y / cielab->Y0) + 16.0F / 116.0F;
 	} else {
-		cby = (L + 16.0) / 116.0;
+		cby = (L + 16.0F) / 116.0F;
 		*Y = cielab->Y0 * cby * cby * cby;
 	}
 
-	tmp = (double)a / 500.0 + cby;
-	if( tmp < 0.2069 )
-		*X = cielab->X0 * (tmp - 0.13793) / 7.787;
+	tmp = (float)a / 500.0F + cby;
+	if( tmp < 0.2069F )
+		*X = cielab->X0 * (tmp - 0.13793F) / 7.787F;
 	else    
 		*X = cielab->X0 * tmp * tmp * tmp;
 
-	tmp = cby - (double)b / 200.0;
-	if( tmp < 0.2069 )
-		*Z = cielab->Z0 * (tmp - 0.13793) / 7.787;
+	tmp = cby - (float)b / 200.0F;
+	if( tmp < 0.2069F )
+		*Z = cielab->Z0 * (tmp - 0.13793F) / 7.787F;
 	else    
 		*Z = cielab->Z0 * tmp * tmp * tmp;
 }
@@ -79,7 +79,7 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
 {
 	int i;
 	float Yr, Yg, Yb;
-	float *matrix = &cielab->display->d_mat[0][0];
+	float *matrix = &cielab->display.d_mat[0][0];
 
 	/* Multiply through the matrix to get luminosity values. */
 	Yr =  matrix[0] * X + matrix[1] * Y + matrix[2] * Z;
@@ -87,27 +87,27 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
 	Yb =  matrix[6] * X + matrix[7] * Y + matrix[8] * Z;
 
 	/* Clip input */
-	Yr = TIFFmax( Yr, cielab->display->d_Y0R );
-	Yg = TIFFmax( Yg, cielab->display->d_Y0G );
-	Yb = TIFFmax( Yb, cielab->display->d_Y0B );
+	Yr = TIFFmax( Yr, cielab->display.d_Y0R );
+	Yg = TIFFmax( Yg, cielab->display.d_Y0G );
+	Yb = TIFFmax( Yb, cielab->display.d_Y0B );
 
 	/* Turn luminosity to colour value. */
 	i = TIFFmin(cielab->range,
-		    (Yr - cielab->display->d_Y0R) / cielab->rstep);
+		    (Yr - cielab->display.d_Y0R) / cielab->rstep);
 	*r = TIFFrint(cielab->Yr2r[i]);
 
 	i = TIFFmin(cielab->range,
-		    (Yg - cielab->display->d_Y0G) / cielab->gstep);
+		    (Yg - cielab->display.d_Y0G) / cielab->gstep);
 	*g = TIFFrint(cielab->Yg2g[i]);
 
 	i = TIFFmin(cielab->range,
-		    (Yb - cielab->display->d_Y0B) / cielab->bstep);
+		    (Yb - cielab->display.d_Y0B) / cielab->bstep);
 	*b = TIFFrint(cielab->Yb2b[i]);
 
 	/* Clip output. */
-	*r = TIFFmin( *r, cielab->display->d_Vrwr );
-	*g = TIFFmin( *g, cielab->display->d_Vrwg );
-	*b = TIFFmin( *b, cielab->display->d_Vrwb );
+	*r = TIFFmin( *r, cielab->display.d_Vrwr );
+	*g = TIFFmin( *g, cielab->display.d_Vrwg );
+	*b = TIFFmin( *b, cielab->display.d_Vrwb );
 }
 
 /* 
@@ -123,71 +123,34 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab, TIFFDisplay *display,
 	int i;
 	float gamma;
 
-	cielab->range = 1500;
+	cielab->range = CIELABTORGB_TABLE_RANGE;
 
-	cielab->display = (TIFFDisplay *)_TIFFmalloc(sizeof(TIFFDisplay));
-	if (cielab == NULL) {
-		TIFFError(module, "No space for display structure");
-		return -1;
-	}
-
-	cielab->Yr2r = (float *)
-		_TIFFmalloc((cielab->range + 1) * sizeof(float));
-	if (cielab->Yr2r == NULL) {
-		TIFFError(module, "No space for Red conversion array");
-		_TIFFfree(cielab->display);
-		return -1;
-	}
-
-	cielab->Yg2g = (float *)
-		_TIFFmalloc((cielab->range + 1) * sizeof(float));
-	if (cielab->Yg2g == NULL) {
-		TIFFError(module,
-			  "No space for Green conversion array");
-		_TIFFfree(cielab->Yr2r);
-		_TIFFfree(cielab->display);
-		return -1;
-	}
-
-	cielab->Yb2b = (float *)
-		_TIFFmalloc((cielab->range + 1) * sizeof(float));
-	if (cielab->Yb2b == NULL) {
-		TIFFError(module, "No space for Blue conversion array");
-		_TIFFfree(cielab->Yb2b);
-		_TIFFfree(cielab->Yr2r);
-		_TIFFfree(cielab->display);
-		return -1;
-	}
-
-	_TIFFmemcpy(cielab->display, display, sizeof(TIFFDisplay));
+	_TIFFmemcpy(&cielab->display, display, sizeof(TIFFDisplay));
 
 	/* Red */
-	gamma = 1.0 / cielab->display->d_gammaR ;
+	gamma = 1.0 / cielab->display.d_gammaR ;
 	cielab->rstep =
-		(cielab->display->d_YCR - cielab->display->d_Y0R)
-		/ cielab->range;
+		(cielab->display.d_YCR - cielab->display.d_Y0R)	/ cielab->range;
 	for(i = 0; i <= cielab->range; i++) {
-		cielab->Yr2r[i] = cielab->display->d_Vrwr
+		cielab->Yr2r[i] = cielab->display.d_Vrwr
 		    * (pow((double)i / cielab->range, gamma));
 	}
 
 	/* Green */
-	gamma = 1.0 / cielab->display->d_gammaG ;
+	gamma = 1.0 / cielab->display.d_gammaG ;
 	cielab->gstep =
-	    (cielab->display->d_YCR - cielab->display->d_Y0R)
-	    / cielab->range;
+	    (cielab->display.d_YCR - cielab->display.d_Y0R) / cielab->range;
 	for(i = 0; i <= cielab->range; i++) {
-		cielab->Yg2g[i] = cielab->display->d_Vrwg
+		cielab->Yg2g[i] = cielab->display.d_Vrwg
 		    * (pow((double)i / cielab->range, gamma));
 	}
 
 	/* Blue */
-	gamma = 1.0 / cielab->display->d_gammaB ;
+	gamma = 1.0 / cielab->display.d_gammaB ;
 	cielab->bstep =
-	    (cielab->display->d_YCR - cielab->display->d_Y0R)
-	    / cielab->range;
+	    (cielab->display.d_YCR - cielab->display.d_Y0R) / cielab->range;
 	for(i = 0; i <= cielab->range; i++) {
-		cielab->Yb2b[i] = cielab->display->d_Vrwb
+		cielab->Yb2b[i] = cielab->display.d_Vrwb
 		    * (pow((double)i / cielab->range, gamma));
 	}
 
@@ -200,35 +163,25 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab, TIFFDisplay *display,
 }
 
 /* 
- * Free TIFFYCbCrToRGB structure.
- */
-void
-TIFFCIELabToRGBEnd(TIFFCIELabToRGB* cielab)
-{
-	_TIFFfree(cielab->Yr2r);
-	_TIFFfree(cielab->Yg2g);
-	_TIFFfree(cielab->Yb2b);
-	_TIFFfree(cielab->display);
-}
-
-/* 
  * Convert color value from the YCbCr space to CIE XYZ.
  * The colorspace conversion algorithm comes from the IJG v5a code;
  * see below for more information on how it works.
  */
+#define	SHIFT			16
+#define	FIX(x)			((int32)((x) * (1L<<SHIFT) + 0.5))
+#define	ONE_HALF		((int32)(1<<(SHIFT-1)))
+#define	Code2V(c, RB, RW, CR)	((((c)-(int)(RB))*(float)(CR))/(float)((RW)-(RB)))
+
 void
 TIFFYCbCrtoRGB(TIFFYCbCrToRGB *ycbcr, uint32 Y, int32 Cb, int32 Cr,
 	       uint32 *r, uint32 *g, uint32 *b)
 {
-	*r = ycbcr->clamptab[Y + ycbcr->Cr_r_tab[Cr]];
-	*g = ycbcr->clamptab[Y
-	    + (int)((ycbcr->Cb_g_tab[Cb] + ycbcr->Cr_g_tab[Cr]) >> 16)];
-	*b = ycbcr->clamptab[Y + ycbcr->Cb_b_tab[Cb]];
+	/* XXX: Only 8-bit YCbCr input supported for now */
+	*r = ycbcr->clamptab[ycbcr->Y_tab[Y] + ycbcr->Cr_r_tab[Cr]];
+	*g = ycbcr->clamptab[ycbcr->Y_tab[Y]
+	    + (int)((ycbcr->Cb_g_tab[Cb] + ycbcr->Cr_g_tab[Cr]) >> SHIFT)];
+	*b = ycbcr->clamptab[ycbcr->Y_tab[Y] + ycbcr->Cb_b_tab[Cb]];
 }
-
-#define	SHIFT			16
-#define	FIX(x)			((int32)((x) * (1L<<SHIFT) + 0.5))
-#define	ONE_HALF		((int32)(1<<(SHIFT-1)))
 
 /*
  * Initialize the YCbCr->RGB conversion tables.  The conversion
@@ -247,11 +200,14 @@ TIFFYCbCrtoRGB(TIFFYCbCrToRGB *ycbcr, uint32 Y, int32 Cb, int32 Cr,
  * assumes conversion is being done for 8-bit samples).
  */
 int
-TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr,
-		   float LumaRed, float LumaGreen, float LumaBlue)
+TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, float *luma, float *refBlackWhite)
 {
     TIFFRGBValue* clamptab;
     int i;
+    
+#define LumaRed	    luma[0]
+#define LumaGreen   luma[1]
+#define LumaBlue    luma[2]
 
     clamptab = (TIFFRGBValue*)(
 	(tidata_t) ycbcr+TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long)));
@@ -260,16 +216,22 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr,
     for (i = 0; i < 256; i++)
 	clamptab[i] = (TIFFRGBValue) i;
     _TIFFmemset(clamptab+256, 255, 2*256);	/* v > 255 => 255 */
+    ycbcr->Cr_r_tab = (int*) (clamptab + 3*256);
+    ycbcr->Cb_b_tab = ycbcr->Cr_r_tab + 256;
+    ycbcr->Cr_g_tab = (int32*) (ycbcr->Cb_b_tab + 256);
+    ycbcr->Cb_g_tab = ycbcr->Cr_g_tab + 256;
+    ycbcr->Y_tab = ycbcr->Cb_g_tab + 256;
+
     { float f1 = 2-2*LumaRed;		int32 D1 = FIX(f1);
       float f2 = LumaRed*f1/LumaGreen;	int32 D2 = -FIX(f2);
       float f3 = 2-2*LumaBlue;		int32 D3 = FIX(f3);
       float f4 = LumaBlue*f3/LumaGreen;	int32 D4 = -FIX(f4);
       int x;
 
-      ycbcr->Cr_r_tab = (int*) (clamptab + 3*256);
-      ycbcr->Cb_b_tab = ycbcr->Cr_r_tab + 256;
-      ycbcr->Cr_g_tab = (int32*) (ycbcr->Cb_b_tab + 256);
-      ycbcr->Cb_g_tab = ycbcr->Cr_g_tab + 256;
+#undef LumaBlue
+#undef LumaGreen
+#undef LumaRed
+      
       /*
        * i is the actual input pixel value in the range 0..255
        * Cb and Cr values are in the range -128..127 (actually
@@ -281,15 +243,23 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr,
        *     Cb/Cr values to use in constructing the tables.
        */
       for (i = 0, x = -128; i < 256; i++, x++) {
-	  ycbcr->Cr_r_tab[i] = (int)((D1*x + ONE_HALF)>>SHIFT);
-	  ycbcr->Cb_b_tab[i] = (int)((D3*x + ONE_HALF)>>SHIFT);
-	  ycbcr->Cr_g_tab[i] = D2*x;
-	  ycbcr->Cb_g_tab[i] = D4*x + ONE_HALF;
+	    int Cr = Code2V(x, refBlackWhite[4] - 128.0,
+			    refBlackWhite[5] - 128.0, 127);
+	    int Cb = Code2V(x, refBlackWhite[2] - 128.0,
+			    refBlackWhite[3] - 128.0, 127);
+
+	    ycbcr->Cr_r_tab[i] = (int)((D1*Cr + ONE_HALF)>>SHIFT);
+	    ycbcr->Cb_b_tab[i] = (int)((D3*Cb + ONE_HALF)>>SHIFT);
+	    ycbcr->Cr_g_tab[i] = D2*Cr;
+	    ycbcr->Cb_g_tab[i] = D4*Cb + ONE_HALF;
+	    ycbcr->Y_tab[i] =
+		    Code2V(x + 128, refBlackWhite[0], refBlackWhite[1], 255);
       }
     }
 
     return 0;
 }
+#undef	Code2V
 #undef	SHIFT
 #undef	ONE_HALF
 #undef	FIX

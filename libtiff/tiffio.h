@@ -153,27 +153,28 @@ typedef struct {				/* YCbCr->RGB support */
 	int*	Cb_b_tab;
 	int32*	Cr_g_tab;
 	int32*	Cb_g_tab;
+        int32*  Y_tab;
 } TIFFYCbCrToRGB;
 
 typedef struct {				/* CIE Lab 1976->RGB support */
-        TIFFDisplay *display;
-	int	range;				/* Size of conversion table*/
-	float*	Yr2r;				/* Conversion of Yr to r */
-	float*	Yg2g;				/* Conversion of Yg to g */
-	float*	Yb2b;				/* Conversion of Yb to b */
+	int	range;				/* Size of conversion table */
+#define CIELABTORGB_TABLE_RANGE 1500
 	float	rstep, gstep, bstep;
 	float	X0, Y0, Z0;			/* Reference white point */
+	TIFFDisplay display;
+	float	Yr2r[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yr to r */
+	float	Yg2g[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yg to g */
+	float	Yb2b[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yb to b */
 } TIFFCIELabToRGB;
 
-extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *display,
-			       float X0, float Y0, float Z0);
-extern void TIFFCIELabToRGBEnd(TIFFCIELabToRGB*);
+extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *,
+			       float, float, float);
 extern void TIFFCIELabToXYZ(TIFFCIELabToRGB *, uint32, int32, int32,
 			    float *, float *, float *);
 extern void TIFFXYZToRGB(TIFFCIELabToRGB *, float, float, float,
 			 uint32 *, uint32 *, uint32 *);
 
-extern int TIFFYCbCrToRGBInit(TIFFYCbCrToRGB*, float, float, float);
+extern int TIFFYCbCrToRGBInit(TIFFYCbCrToRGB*, float*, float*);
 extern void TIFFYCbCrtoRGB(TIFFYCbCrToRGB *, uint32, int32, int32,
 			   uint32 *, uint32 *, uint32 *);
 

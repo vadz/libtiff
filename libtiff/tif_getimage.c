@@ -192,10 +192,8 @@ TIFFRGBAImageEnd(TIFFRGBAImage* img)
 		_TIFFfree(img->PALmap), img->PALmap = NULL;
 	if (img->ycbcr)
 		_TIFFfree(img->ycbcr), img->ycbcr = NULL;
-	if (img->cielab) {
-		TIFFCIELabToRGBEnd(img->cielab);
+	if (img->cielab)
 		_TIFFfree(img->cielab), img->cielab = NULL;
-	}
 
 	if( img->redcmap ) {
 		_TIFFfree( img->redcmap );
@@ -2003,15 +2001,15 @@ initYCbCrConversion(TIFFRGBAImage* img)
 {
 	static char module[] = "initCIELabConversion";
 
-	float *coeffs;
+	float *luma, *refBlackWhite;
 	uint16 hs, vs;
 
 	if (img->ycbcr == NULL) {
 	    img->ycbcr = (TIFFYCbCrToRGB*) _TIFFmalloc(
-		  TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))
-		+ 4*256*sizeof (TIFFRGBValue)
-		+ 2*256*sizeof (int)
-		+ 2*256*sizeof (int32)
+		    TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))
+		    + 4*256*sizeof (TIFFRGBValue)
+		    + 2*256*sizeof (int)
+		    + 3*256*sizeof (int32)
 	    );
 	    if (img->ycbcr == NULL) {
 		    TIFFError(module,
@@ -2020,9 +2018,10 @@ initYCbCrConversion(TIFFRGBAImage* img)
 	    }
 	}
 
-	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRCOEFFICIENTS, &coeffs);
-	if (TIFFYCbCrToRGBInit(img->ycbcr,
-			       coeffs[0], coeffs[1], coeffs[2]) < 0)
+	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRCOEFFICIENTS, &luma);
+	TIFFGetFieldDefaulted(img->tif, TIFFTAG_REFERENCEBLACKWHITE,
+			      &refBlackWhite);
+	if (TIFFYCbCrToRGBInit(img->ycbcr, luma, refBlackWhite) < 0)
 		return NULL;
 
 	/*
