@@ -14,8 +14,6 @@
 
 @SET_MAKE@
 
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -203,8 +201,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
-EXTRA_DIST = README
-addtiffo_SOURCES = addtiffo.c tif_overview.c tif_ovrcache.c
+EXTRA_DIST = README Makefile.vc
+addtiffo_SOURCES = addtiffo.c tif_overview.c tif_ovrcache.c tif_ovrcache.h
 addtiffo_LDADD = $(LIBTIFF)
 INCLUDES = -I$(top_srcdir)/libtiff
 all: all-am

@@ -25,6 +25,8 @@
 
 LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
 
+EXTRA_DIST = Makefile.vc
+
 if HAVE_OPENGL
 BIN_TIFFGT = tiffgt
 else

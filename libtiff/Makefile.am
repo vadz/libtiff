@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -24,6 +22,21 @@
 # OF THIS SOFTWARE.
 
 # Process this file with automake to produce Makefile.in.
+
+EXTRA_DIST = Makefile.vc
+
+libtiffincludedir = $(includedir)
+libtiffinclude_HEADERS = \
+	tiff.h \
+	tiffio.h \
+	tiffvers.h
+noinst_HEADERS = \
+	t4.h \
+	tif_dir.h \
+	tif_fax3.h \
+	tif_predict.h \
+	tiffiop.h \
+	uvcode.h
 
 lib_LTLIBRARIES = libtiff.la
 libtiff_la_SOURCES = \

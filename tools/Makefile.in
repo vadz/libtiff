@@ -14,8 +14,6 @@
 
 @SET_MAKE@
 
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -310,6 +308,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
+EXTRA_DIST = Makefile.vc
 @HAVE_OPENGL_FALSE@BIN_TIFFGT = 
 @HAVE_OPENGL_TRUE@BIN_TIFFGT = tiffgt
 fax2ps_SOURCES = fax2ps.c

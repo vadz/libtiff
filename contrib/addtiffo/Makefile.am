@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -27,11 +25,11 @@
 
 LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
 
-EXTRA_DIST = README
+EXTRA_DIST = README Makefile.vc
 
 bin_PROGRAMS = addtiffo
 
-addtiffo_SOURCES = addtiffo.c tif_overview.c tif_ovrcache.c
+addtiffo_SOURCES = addtiffo.c tif_overview.c tif_ovrcache.c tif_ovrcache.h
 addtiffo_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
