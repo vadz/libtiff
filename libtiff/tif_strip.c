@@ -128,10 +128,15 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
                               ycbcrsubsampling + 0, 
                               ycbcrsubsampling + 1 );
 
+		samplingarea = ycbcrsubsampling[0]*ycbcrsubsampling[1];
+		if (samplingarea == 0) {
+			TIFFError(tif->tif_name, "Invalid YCbCr subsampling");
+			return 0;
+		}
+
 		w = TIFFroundup(td->td_imagewidth, ycbcrsubsampling[0]);
 		scanline = TIFFhowmany8(multiply(tif, w, td->td_bitspersample,
 						 "TIFFVStripSize"));
-		samplingarea = ycbcrsubsampling[0]*ycbcrsubsampling[1];
 		nrows = TIFFroundup(nrows, ycbcrsubsampling[1]);
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
 		scanline = multiply(tif, nrows, scanline, "TIFFVStripSize");
