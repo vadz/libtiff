@@ -1,5 +1,11 @@
 2001-06-28  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_getimage.c: Fixed so that failure is properly
+	reported by gtTileContig, gtStripContig, gtTileSeparate and 
+	gtStripSeparate.
+
+	See http://bugzilla.remotesensing.org/show_bug.cgi?id=51
+
 	* tiffcmp.c: Fixed multi samples per pixel support for ContigCompare.  
 	Updated bug section of tiffcmp.1 to note tiled file issues.
 	
