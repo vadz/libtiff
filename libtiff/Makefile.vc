@@ -59,6 +59,7 @@ OBJ	= \
 	tif_predict.obj \
 	tif_print.obj \
 	tif_read.obj \
+	tif_stream.obj \
 	tif_swab.obj \
 	tif_strip.obj \
 	tif_thunder.obj \
