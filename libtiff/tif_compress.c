@@ -233,9 +233,10 @@ TIFFUnRegisterCODEC(TIFFCodec* c)
 
 /**
  * Get list of configured codecs, both built-in and registered by user.
- * Caller is responsible to free these structure.
+ * Caller is responsible to free this structure.
  * 
- * @return returns array of TIFFCodec records, the last record should be NULL.
+ * @return returns array of TIFFCodec records (the last record should be NULL)
+ * or NULL if function failed.
  */
 
 TIFFCodec*
@@ -244,25 +245,37 @@ TIFFGetConfiguredCODECs()
 	int		i = 1;
         codec_t		*cd;
         const TIFFCodec	*c;
-	TIFFCodec	*codecs = NULL;
+	TIFFCodec	*codecs = NULL, *new_codecs;
 
         for (cd = registeredCODECS; cd; cd = cd->next) {
-                codecs = _TIFFrealloc(codecs, i * sizeof(TIFFCodec));
-		assert (codecs == NULL);
+                new_codecs = _TIFFrealloc(codecs, i * sizeof(TIFFCodec));
+		if (!new_codecs) {
+			_TIFFfree (codecs);
+			return NULL;
+		}
+		codecs = new_codecs;
 		_TIFFmemcpy(codecs + i - 1, cd, sizeof(TIFFCodec));
 		i++;
 	}
         for (c = _TIFFBuiltinCODECS; c->name; c++) {
                 if (TIFFIsCODECConfigured(c->scheme)) {
-                        codecs = _TIFFrealloc(codecs, i * sizeof(TIFFCodec));
-			assert (codecs == NULL);
+                        new_codecs = _TIFFrealloc(codecs, i * sizeof(TIFFCodec));
+			if (!new_codecs) {
+				_TIFFfree (codecs);
+				return NULL;
+			}
+			codecs = new_codecs;
 			_TIFFmemcpy(codecs + i - 1, (const tdata_t)c, sizeof(TIFFCodec));
 			i++;
 		}
 	}
 
-	codecs = _TIFFrealloc(codecs, i * sizeof(TIFFCodec));
-	assert (codecs == NULL);
+	new_codecs = _TIFFrealloc(codecs, i * sizeof(TIFFCodec));
+	if (!new_codecs) {
+		_TIFFfree (codecs);
+		return NULL;
+	}
+	codecs = new_codecs;
 	_TIFFmemset(codecs + i - 1, 0, sizeof(TIFFCodec));
 
         return codecs;
