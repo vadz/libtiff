@@ -43,10 +43,10 @@
 #endif
 
 TIFF	*faxTIFF;
-#define XSIZE		1728
-char	rowbuf[TIFFhowmany(XSIZE,8)];
-char	refbuf[TIFFhowmany(XSIZE,8)];
+char	*rowbuf;
+char	*refbuf;
 
+int	xsize = 1728;
 int	verbose;
 int	stretch;
 uint16	badfaxrun;
@@ -80,7 +80,7 @@ main(int argc, char* argv[])
 	extern char* optarg;
 
 
-	while ((c = getopt(argc, argv, "R:o:1234ABLMPUW5678abcflmpsuvwz?")) != -1)
+	while ((c = getopt(argc, argv, "R:X:o:1234ABLMPUW5678abcflmpsuvwz?")) != -1)
 		switch (c) {
 			/* input-related options */
 		case '3':		/* input is g3-encoded */
@@ -120,6 +120,9 @@ main(int argc, char* argv[])
 		case 'R':		/* input resolution */
 			resY = atof(optarg);
 			break;
+		case 'X':		/* input width */
+			xsize = atof(optarg);
+			break;
 
 			/* output-related options */
 		case '7':		/* generate g3-encoded output */
@@ -152,8 +155,12 @@ main(int argc, char* argv[])
 			break;
 		case 'o':
 			out = TIFFOpen(optarg, "w");
-			if (out == NULL)
-			    return EXIT_FAILURE;
+			if (out == NULL) {
+				fprintf(stderr,
+				    "%s: Can not create or open %s\n",
+				    argv[0], optarg);
+				return EXIT_FAILURE;
+			}
 			break;
 		case 'a':	/* generate EOL-aligned output (g3 only) */
 			group3options_out |= GROUP3OPT_FILLBITS;
@@ -184,10 +191,20 @@ main(int argc, char* argv[])
 	if (npages < 1)
 		usage();
 
+	rowbuf = _TIFFmalloc(TIFFhowmany(xsize,8));
+	refbuf = _TIFFmalloc(TIFFhowmany(xsize,8));
+	if (rowbuf == NULL || refbuf == NULL) {
+		fprintf(stderr, "%s: Not enough memory\n", argv[0]);
+		return (EXIT_FAILURE);
+	}
+
 	if (out == NULL) {
 		out = TIFFOpen("fax.tif", "w");
-		if (out == NULL)
+		if (out == NULL) {
+			fprintf(stderr, "%s: Can not create fax.tif\n",
+			    argv[0]);
 			return (EXIT_FAILURE);
+		}
 	}
 		
 	faxTIFF = TIFFClientOpen("(FakeInput)", "w",
@@ -197,10 +214,13 @@ main(int argc, char* argv[])
 				 out->tif_seekproc, out->tif_closeproc,
 				 out->tif_sizeproc,
 				 out->tif_mapproc, out->tif_unmapproc);
-	if (faxTIFF == NULL)
+	if (faxTIFF == NULL) {
+		fprintf(stderr, "%s: Can not create fake input file\n",
+		    argv[0]);
 		return (EXIT_FAILURE);
+	}
 	faxTIFF->tif_mode = O_RDONLY;
-	TIFFSetField(faxTIFF, TIFFTAG_IMAGEWIDTH,	XSIZE);
+	TIFFSetField(faxTIFF, TIFFTAG_IMAGEWIDTH,	xsize);
 	TIFFSetField(faxTIFF, TIFFTAG_SAMPLESPERPIXEL,	1);
 	TIFFSetField(faxTIFF, TIFFTAG_BITSPERSAMPLE,	1);
 	TIFFSetField(faxTIFF, TIFFTAG_FILLORDER,	fillorder_in);
@@ -225,7 +245,7 @@ main(int argc, char* argv[])
 		faxTIFF->tif_fd = fileno(in);
 		faxTIFF->tif_clientdata = (thandle_t) faxTIFF->tif_fd;
 		faxTIFF->tif_name = argv[optind];
-		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, XSIZE);
+		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, xsize);
 		TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 1);
 		TIFFSetField(out, TIFFTAG_COMPRESSION, compression_out);
 		TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric_out);
@@ -288,6 +308,8 @@ main(int argc, char* argv[])
 		TIFFWriteDirectory(out);
 	}
 	TIFFClose(out);
+	_TIFFfree(rowbuf);
+	_TIFFfree(refbuf);
 	return (EXIT_SUCCESS);
 }
 
@@ -300,6 +322,10 @@ copyFaxFile(TIFF* tifin, TIFF* tifout)
 
 	tifin->tif_rawdatasize = TIFFGetFileSize(tifin);
 	tifin->tif_rawdata = _TIFFmalloc(tifin->tif_rawdatasize);
+	if (tifin->tif_rawdata == NULL) {
+		TIFFError(tifin->tif_name, "%s: Not enough memory");
+		return (0);
+	}
 	if (!ReadOK(tifin, tifin->tif_rawdata, tifin->tif_rawdatasize)) {
 		TIFFError(tifin->tif_name, "%s: Read error at scanline 0");
 		return (0);
@@ -358,7 +384,7 @@ char* stuff[] = {
 "where options are:",
 " -3		input data is G3-encoded		[default]",
 " -4		input data is G4-encoded",
-" -U		input data is uncompressed (G3 and G4)",
+" -U		input data is uncompressed (G3 or G4)",
 " -1		input data is 1D-encoded (G3 only)	[default]",
 " -2		input data is 2D-encoded (G3 only)",
 " -P		input is not EOL-aligned (G3 only)	[default]",
@@ -368,11 +394,12 @@ char* stuff[] = {
 " -B		input data has min 0 means black",
 " -W		input data has min 0 means white	[default]",
 " -R #		input data has # resolution (lines/inch) [default is 196]",
+" -X #		input data has # width			[default is 1728]",
 "",
 " -o out.tif	write output to out.tif",
 " -7		generate G3-encoded output		[default]",
 " -8		generate G4-encoded output",
-" -u		generate uncompressed output (G3 and G4)",
+" -u		generate uncompressed output (G3 or G4)",
 " -5		generate 1D-encoded output (G3 only)",
 " -6		generate 2D-encoded output (G3 only)	[default]",
 " -p		generate not EOL-aligned output (G3 only)",

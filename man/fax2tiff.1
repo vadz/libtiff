@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH FAX2TIFF 1 "September 24, 1994"
+.TH FAX2TIFF 1 "February 27, 2003"
 .SH NAME
 fax2tiff \- create a
 .SM TIFF
@@ -36,7 +36,7 @@ Class F fax file from raw fax data
 .B \-o
 .I output.tif
 ]
-.I input.g3
+.I input.raw
 .SH DESCRIPTION
 .I Fax2tiff
 creates a
@@ -44,10 +44,10 @@ creates a
 file containing 
 .SM CCITT
 Group 3 or Group 4 encoded data from one or more files containing ``raw''
-Group 3 encoded data (typically obtained directly from a fax modem).
+Group 3 or Group 4 encoded data (typically obtained directly from a fax modem).
 By default, each row of data in the resultant
 .SM TIFF
-file is 2-dimensionally encoded and
+file is 1-dimensionally encoded and
 padded or truncated to 1728 pixels, as needed.
 The resultant image is a set of low resolution (98 lines/inch)
 or medium resolution (196 lines/inch)
@@ -98,7 +98,7 @@ Assume input data is
 Group 4 encoded.
 .TP
 .B \-U
-Assume input data is uncompressed.
+Assume input data is uncompressed (Group 3 or Group 4).
 .TP
 .B \-1
 Assume input data is encoded with the 1-dimensional version of the
@@ -131,20 +131,23 @@ Treat input data as having bits filled from least significant bit (\c
 .SM LSB\c
 ) to most significant bit (\c
 .SM MSB\c
-). (This is the default.)
+) (default).
 .TP
 .B \-B
 Assume input data was encoded with black as 0 and white as 1.
 .TP
 .B \-W
-Assume input data was encoded with black as 1 and white as 0.
-(This is the default.)
+Assume input data was encoded with black as 1 and white as 0 (default).
 .TP
 .B \-R
 Specify the vertical resolution, in lines/inch, of the input images.
 By default input are assumed to have a vertical resolution of 196 lines/inch.
 If images are low resolution facsimile, a value of 98 lines/inch should
 be specified.
+.TP
+.B \-X
+Specify the width, in pixels, of the input images.
+By default input are assumed to have a width of 1728 pixels.
 .PP
 Options that affect the output file format are:
 .TP
@@ -154,7 +157,7 @@ Specify the name of the output file.
 .B \-7
 Force output to be compressed with the
 .SM CCITT
-Group 3 Huffman encoding algorithm.
+Group 3 Huffman encoding algorithm (default).
 .TP
 .B \-8
 Force output to be compressed with the
@@ -162,7 +165,7 @@ Force output to be compressed with the
 Group 4 Huffman encoding.
 .TP
 .B \-u
-Force output to be uncompressed (Group 3 and Group 4)
+Force output to be uncompressed (Group 3 or Group 4).
 .TP
 .B \-5
 Force output to be encoded with the 1-dimensional version of the
@@ -194,7 +197,7 @@ output only.
 Generate "classic" Group 3 TIFF format.
 .TP
 .B \-f
-Generate TIFF Class F (TIFF/F) format.
+Generate TIFF Class F (TIFF/F) format (default).
 .TP
 .B \-m
 Force output data to have bits filled from most significant bit (\c
@@ -208,7 +211,7 @@ Force  output data to have bits filled from least significant bit (\c
 .SM LSB\c
 ) to most significant bit (\c
 .SM MSB\c
-). (This is the default.)
+) (default).
 .TP
 .B \-s
 Stretch the input image vertically by writing each input row of
@@ -223,7 +226,7 @@ The following warnings and errors come from the decoding
 routines in the library.
 .PP
 .BR "Warning, %s: Premature EOL at scanline %d (x %d).\en" .
-The input data had a row that was shorter than the expected value of 1728.
+The input data had a row that was shorter than the expected width.
 The row is padded with white.
 .PP
 .BR "%s: Premature EOF at scanline %d (x %d).\en" .
@@ -246,7 +249,6 @@ The row number and horizontal position is given.
 The remainder of the input row is discarded, while
 the corresponding output row is padded with white.
 .SH BUGS
-Should not have the constant width 1728 built into it.
 Input data are assumed to have a a ``top left'' orientation;
 it should be possible to override this assumption
 from the command line.
@@ -254,7 +256,7 @@ from the command line.
 .I "\s-1CCITT\s+1 Recommendation T.4"
 (Standardization of Group 3 Facsimile Apparatus for Document Transmission).
 .PP
-.IR "The Spirit of TIFF Class F" ,
+.IR "The Spirit of TIFF Class F",
 an appendix to the TIFF 5.0 specification prepared by Cygnet Technologies.
 .PP
 .IR tiffinfo (1),

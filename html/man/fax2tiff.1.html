@@ -17,7 +17,7 @@
 
 <hr>
 <!-- Creator     : groff version 1.17.2 -->
-<!-- CreationDate: Mon Feb  3 19:34:19 2003 -->
+<!-- CreationDate: Thu Feb 27 18:03:14 2003 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
 <table width="100%" border=0 rules="none" frame="void"
@@ -33,7 +33,7 @@ fax2tiff - create a <small>TIFF</small> Class F fax file from raw fax data</td><
 <tr valign="top" align="left">
 <td width="10%"></td><td width="90%">
 <b>fax2tiff</b> [ <i>options</i> ] [ <b>-o</b>
-<i>output.tif</i> ] <i>input.g3</i></td></table>
+<i>output.tif</i> ] <i>input.raw</i></td></table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
 
@@ -43,10 +43,10 @@ fax2tiff - create a <small>TIFF</small> Class F fax file from raw fax data</td><
 <td width="10%"></td><td width="90%">
 <i>Fax2tiff</i> creates a <small>TIFF</small> file
 containing <small>CCITT</small> Group 3 or Group 4 encoded
-data from one or more files containing ``raw'' Group 3
-encoded data (typically obtained directly from a fax modem).
-By default, each row of data in the resultant
-<small>TIFF</small> file is 2-dimensionally encoded and
+data from one or more files containing ``raw'' Group 3 or
+Group 4 encoded data (typically obtained directly from a fax
+modem). By default, each row of data in the resultant
+<small>TIFF</small> file is 1-dimensionally encoded and
 padded or truncated to 1728 pixels, as needed. The resultant
 image is a set of low resolution (98 lines/inch) or medium
 resolution (196 lines/inch) pages, each of which is a single
@@ -117,7 +117,8 @@ encoded.</td></table>
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="21%"></td><td width="79%">
-Assume input data is uncompressed.</td></table>
+Assume input data is uncompressed (Group 3 or Group
+4).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -200,8 +201,7 @@ bit ( <small>MSB</small> ) to most least bit (
 <td width="21%"></td><td width="79%">
 Treat input data as having bits filled from least
 significant bit ( <small>LSB</small> ) to most significant
-bit ( <small>MSB</small> ). (This is the
-default.)</td></table>
+bit ( <small>MSB</small> ) (default).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -226,8 +226,8 @@ Assume input data was encoded with black as 0 and white as
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="21%"></td><td width="79%">
-Assume input data was encoded with black as 1 and white as
-0. (This is the default.)</td></table>
+Assume input data was encoded with black as 1 and white as 0
+(default).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -244,6 +244,20 @@ images. By default input are assumed to have a vertical
 resolution of 196 lines/inch. If images are low resolution
 facsimile, a value of 98 lines/inch should be
 specified.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-X</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+Specify the width, in pixels, of the input images. By
+default input are assumed to have a width of 1728
+pixels.</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -274,7 +288,7 @@ Specify the name of the output file.</td></table>
 <tr valign="top" align="left">
 <td width="21%"></td><td width="79%">
 Force output to be compressed with the <small>CCITT</small>
-Group 3 Huffman encoding algorithm.</td></table>
+Group 3 Huffman encoding algorithm (default).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -299,8 +313,8 @@ Group 4 Huffman encoding.</td></table>
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="21%"></td><td width="79%">
-Force output to be uncompressed (Group 3 and Group
-4)</td></table>
+Force output to be uncompressed (Group 3 or Group
+4).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -383,7 +397,8 @@ format.</td></table>
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="21%"></td><td width="79%">
-Generate TIFF Class F (TIFF/F) format.</td></table>
+Generate TIFF Class F (TIFF/F) format
+(default).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -411,7 +426,7 @@ bit ( <small>MSB</small> ) to most least bit (
 <td width="21%"></td><td width="79%">
 Force output data to have bits filled from least significant
 bit ( <small>LSB</small> ) to most significant bit (
-<small>MSB</small> ). (This is the default.)</td></table>
+<small>MSB</small> ) (default).</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -454,7 +469,7 @@ routines in the library.</td></table>
 <td width="10%"></td><td width="90%">
 <b>Warning, %s: Premature EOL at scanline %d (x %d).n</b>.
 The input data had a row that was shorter than the expected
-value of 1728. The row is padded with white.</td></table>
+width. The row is padded with white.</td></table>
 
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
@@ -491,9 +506,8 @@ white.</td></table>
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="10%"></td><td width="90%">
-Should not have the constant width 1728 built into it. Input
-data are assumed to have a a ``top left'' orientation; it
-should be possible to override this assumption from the
+Input data are assumed to have a a ``top left'' orientation;
+it should be possible to override this assumption from the
 command line.</td></table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
