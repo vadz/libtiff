@@ -373,7 +373,7 @@ _TIFFFax3fillruns(u_char* buf, uint32* runs, uint32* erun, uint32 lastx)
 	x = 0;
 	for (; runs < erun; runs += 2) {
 	    run = runs[0];
-	    if (x+run > lastx || run == -1 )
+	    if (x+run > lastx || run > lastx )
 		run = runs[0] = (uint16) (lastx - x);
 	    if (run) {
 		cp = buf + (x>>3);
@@ -412,7 +412,7 @@ _TIFFFax3fillruns(u_char* buf, uint32* runs, uint32* erun, uint32 lastx)
 		x += runs[0];
 	    }
 	    run = runs[1];
-	    if (x+run > lastx || run == -1 )
+	    if (x+run > lastx || run > lastx )
 		run = runs[1] = lastx - x;
 	    if (run) {
 		cp = buf + (x>>3);
