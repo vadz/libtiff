@@ -478,6 +478,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			fprintf(fd, " %5lu", (long) td->td_subifd[i]);
 		fputc('\n', fd);
 	}
+ 	if (TIFFFieldSet(tif,FIELD_XMLPACKET)) {
+            fprintf(fd, "  XMLPacket (XMP Metadata):\n" );
+            for( i=0; i < td->td_xmlpacketLength; i++ )
+                fputc( ((char *)td->td_xmlpacketData)[i], fd );
+            fprintf( fd, "\n" );
+        }
+
         /*
         ** Custom tag support.
         */

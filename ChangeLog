@@ -1,3 +1,9 @@
+2004-09-30  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirinfo.c: changed type of XMLPacket (tag 700) to 
+	TIFFTAG_BYTE instead of TIFFTAG_UNDEFINED to comply with the info
+	in the Adobe XMP Specification.
+
 2004-09-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_jpeg.c, tif_pixarlog.c}: Use _TIFFmemset() instead of
