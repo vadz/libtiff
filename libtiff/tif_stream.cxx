@@ -109,8 +109,8 @@ _tiffosSeekProc(thandle_t fd, toff_t off, int whence)
 	// ostrstream/ostringstream does. In that situation, add intermediate
 	// '\0' characters.
 	if( os->fail() ) {
-		ios_base::iostate   old_state;
-		toff_t		    origin;
+		ios::iostate	old_state;
+		toff_t		origin;
 
 		old_state = os->rdstate();
 		// reset the fail bit or else tellp() won't work below
