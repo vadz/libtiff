@@ -29,7 +29,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.2  2001-09-26 17:42:18  warmerda
+ * Revision 1.3  2002-01-16 17:50:05  warmerda
+ * Fix bug in error output.
+ *
+ * Revision 1.2  2001/09/26 17:42:18  warmerda
  * added TIFFRewriteDirectory
  *
  * Revision 1.1  2001/03/02 04:58:53  warmerda
@@ -86,7 +89,8 @@ main(int argc, char* argv[])
 
             if( id < 1 )
             {
-                fprintf( stderr, "Field name %s not recognised.\n" );
+                fprintf( stderr, "Field name %s not recognised.\n",
+                         argv[arg_index+1] );
                 exit( -3 );
             }
 
@@ -112,7 +116,8 @@ main(int argc, char* argv[])
 
             if( id < 1 )
             {
-                fprintf( stderr, "Field name %s not recognised.\n" );
+                fprintf( stderr, "Field name %s not recognised.\n",
+                         argv[arg_index+1] );
                 exit( -3 );
             }
 
