@@ -99,15 +99,19 @@ dist_doc_DATA = $(indexfile) $(docfiles)
 INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY BGCOLOR=white><ul><H2>Man Pages</h2><p>'
 INDEXEND = '</ul></BODY></HTML>'
 
-VPATH = $(MANSRCDIR)
-index.html: $(docfiles)
+.PHONY: index
+index: $(docfiles)
 	${ECHO} ${INDEXSTART} > $(indexfile)
 	for i in $^; do							\
 		${ECHO} '<li><A HREF='$$i'>'$$i'</a>' >> $(indexfile);  \
 	done
 	${ECHO} ${INDEXEND} >> $(indexfile)
 
-%.html: %
-	${GROFF} $< > $@
+manpages := $(docfiles:.html=)
 
-html: $(docfiles) $(indexfile)
+.PHONY: html
+html: index
+	for i in $(manpages); do					\
+		${GROFF} $(MANSRCDIR)/$$i > $$i.html;			\
+	done
+
