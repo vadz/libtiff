@@ -131,7 +131,7 @@ main(int argc, char* argv[])
      * Read the RELEASE-DATE, and translate format to emit TIFFLIB_VERSION.
      */
     fd = openFile(releaseDateFile);
-    if (fgets(rawReleaseDate, sizeof (version)-1, fd) == NULL) {
+    if (fgets(rawReleaseDate, sizeof (rawReleaseDate)-1, fd) == NULL) {
 	fprintf(stderr, "mkversion: No release date information in %s.\n",
                 releaseDateFile);
 	exit(-1);
@@ -144,7 +144,7 @@ main(int argc, char* argv[])
              rawReleaseDate+3 );
     
     /*
-     * Emit the version.h file.
+     * Emit the tiffvers.h file.
      */
     if (argc > 0) {
 	fd = fopen(argv[0], "w");
