@@ -518,12 +518,14 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			if (fip->field_type == TIFF_ASCII
 			    || fip->field_readcount == TIFF_VARIABLE
 			    || fip->field_readcount == TIFF_VARIABLE2
-			    || fip->field_readcount == TIFF_SPP) {
+			    || fip->field_readcount == TIFF_SPP
+			    || value_count > 1) {
 				if(TIFFGetField(tif, tag, &raw_data) != 1)
 					continue;
 			} else {
 				raw_data = _TIFFmalloc(
-					_TIFFDataSize(fip->field_type) * value_count);
+					_TIFFDataSize(fip->field_type)
+					* value_count);
 				mem_alloc = 1;
 				if(TIFFGetField(tif, tag, raw_data) != 1)
 					continue;
@@ -534,17 +536,20 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 
 		for(j = 0; j < value_count; j++) {
 		    if(fip->field_type == TIFF_BYTE)
+		        fprintf(fd, "%u",
+				(unsigned int) ((unsigned char *) raw_data)[j]);
+		    else if(fip->field_type == TIFF_SBYTE)
 		        fprintf(fd, "%d", (int) ((char *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SHORT)
 		        fprintf(fd, "%u",
-		    	    (int)((unsigned short *) raw_data)[j]);
+		    	    (unsigned int)((unsigned short *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SSHORT)
 		        fprintf(fd, "%d", (int)((short *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_LONG)
-		        fprintf(fd, "%u",
+		        fprintf(fd, "%lu",
 		    	    (int)((unsigned long *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SLONG)
-		        fprintf(fd, "%d", (int)((long *) raw_data)[j]);
+		        fprintf(fd, "%ld", (long)((long *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_RATIONAL)
 		        fprintf(fd, "%f", ((float *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SRATIONAL)

@@ -592,7 +592,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		if (fip->field_passcount
 		    || fip->field_writecount == TIFF_VARIABLE
 		    || fip->field_writecount == TIFF_VARIABLE2
-		    || fip->field_writecount == TIFF_SPP) {
+		    || fip->field_writecount == TIFF_SPP
+		    || tv->count > 1) {
                     _TIFFmemcpy(tv->value, va_arg(ap, void *),
 				tv->count * tv_size);
 		} else {
@@ -989,8 +990,8 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             }
 
             /*
-            ** Do we have a custom value?
-            */
+	     * Do we have a custom value?
+	     */
             ret_val = 0;
             for (i = 0; i < td->td_customValueCount; i++) {
 		TIFFTagValue *tv = td->td_customValues + i;
@@ -1007,44 +1008,49 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 			ret_val = 1;
 			break;
                 } else {
-			switch (fip->field_type) {
-				case TIFF_BYTE:
-					*va_arg(ap, uint8*) =
-						*(uint8 *)tv->value;
-					ret_val = 1;
-					break;
-				case TIFF_SBYTE:
-					*va_arg(ap, int8*) =
-						*(int8 *)tv->value;
-					ret_val = 1;
-					break;
-				case TIFF_SHORT:
-					*va_arg(ap, uint16*) =
-						*(uint16 *)tv->value;
-					ret_val = 1;
-					break;
-				case TIFF_SSHORT:
-					*va_arg(ap, int16*) =
-						*(int16 *)tv->value;
-					ret_val = 1;
-					break;
-				case TIFF_LONG:
-					*va_arg(ap, uint32*) =
-						*(uint32 *)tv->value;
-					ret_val = 1;
-					break;
-				case TIFF_SLONG:
-					*va_arg(ap, int32*) =
-						*(int32 *)tv->value;
-					ret_val = 1;
-					break;
-				case TIFF_ASCII:
-					*va_arg(ap, void **) = tv->value;
-					ret_val = 1;
-					break;
-				default:
-					ret_val = 0;
-					break;
+			if (fip->field_type == TIFF_ASCII
+			    || fip->field_readcount == TIFF_VARIABLE
+			    || fip->field_readcount == TIFF_VARIABLE2
+			    || fip->field_readcount == TIFF_SPP
+			    || tv->count > 1) {
+				*va_arg(ap, void **) = tv->value;
+				ret_val = 1;
+			} else {
+				switch (fip->field_type) {
+					case TIFF_BYTE:
+						*va_arg(ap, uint8*) =
+							*(uint8 *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_SBYTE:
+						*va_arg(ap, int8*) =
+							*(int8 *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_SHORT:
+						*va_arg(ap, uint16*) =
+							*(uint16 *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_SSHORT:
+						*va_arg(ap, int16*) =
+							*(int16 *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_LONG:
+						*va_arg(ap, uint32*) =
+							*(uint32 *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_SLONG:
+						*va_arg(ap, int32*) =
+							*(int32 *)tv->value;
+						ret_val = 1;
+						break;
+					default:
+						ret_val = 0;
+						break;
+				}
 			}
                 }
             }
