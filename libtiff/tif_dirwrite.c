@@ -306,7 +306,14 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 				goto bad;
 			break;
 		case FIELD_SUBIFD:
-			if (!TIFFWriteNormalTag(tif, dir, fip))
+			/*
+			 * XXX: Always write this field using LONG type
+			 * for backward compatibility.
+			 */
+			dir->tdir_tag = (uint16) fip->field_tag;
+			dir->tdir_type = (uint16) TIFF_LONG;
+			dir->tdir_count = (uint32) td->td_nsubifd;
+			if (!TIFFWriteLongArray(tif, dir, td->td_subifd))
 				goto bad;
 			/*
 			 * Total hack: if this directory includes a SubIFD
