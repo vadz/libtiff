@@ -1,3 +1,11 @@
+2004-08-24  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2pdf.c: More fixes for bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=590
+
+	from Ross Finlayson.
+
 2004-08-23  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2ps.c: Fixed problem with uninitialized values.
