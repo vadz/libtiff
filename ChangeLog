@@ -1,3 +1,7 @@
+2003-02-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/ppm2tiff.c: Fixed problem with too many arguments.
+
 2003-02-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/raw2tiff.c: Memory leak fixed.
