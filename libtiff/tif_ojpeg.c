@@ -213,7 +213,7 @@ typedef struct             /* This module's private, per-image state variable */
         samplesperclump,
         scancount;                           /* No. of scan lines accumulated */
     J_COLOR_SPACE photometric;          /* IJG JPEG Library's photometry code */
-    u_char h_sampling,                          /* Luminance sampling factors */
+    unsigned char h_sampling,                          /* Luminance sampling factors */
            v_sampling,
            jpegcolormode;           /* Who performs RGB <-> YCbCr conversion? */
 			/* JPEGCOLORMODE_RAW <=> TIFF Library or its client */
@@ -2137,7 +2137,7 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
                 bufoff=0;
                 for(i2=0;i2<sp->jpegqtables_length;i2++){
                     TIFFSeekFile(tif, v[i2], SEEK_SET);
-                    TIFFReadFile(tif, &(((u_char*)(sp->jpegqtables))[bufoff]),
+                    TIFFReadFile(tif, &(((unsigned char*)(sp->jpegqtables))[bufoff]),
 				 64);
                     bufoff+=64;
                 }
@@ -2193,14 +2193,14 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
                     for(i2=0;i2<sp->jpegdctables_length;i2++){
                         TIFFSeekFile(tif, v[i2], SEEK_SET);
                         TIFFReadFile(tif,
-				     &(((u_char*)(sp->jpegdctables))[bufoff]),
+				     &(((unsigned char*)(sp->jpegdctables))[bufoff]),
 				     16);
                         code_count=0;
                         for(k2=0;k2<16;k2++){
-                            code_count+=((u_char*)(sp->jpegdctables))[k2+bufoff];
+                            code_count+=((unsigned char*)(sp->jpegdctables))[k2+bufoff];
                         }
                         TIFFReadFile(tif,
-				     &(((u_char*)(sp->jpegdctables))[bufoff+16]),
+				     &(((unsigned char*)(sp->jpegdctables))[bufoff+16]),
 				     code_count);
                         bufoff+=16;
                         bufoff+=code_count;
@@ -2637,3 +2637,5 @@ TIFFInitOJPEG(register TIFF *tif,int scheme)
 #   undef td
   }
 #endif /* OJPEG_SUPPORT */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
