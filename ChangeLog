@@ -1,5 +1,8 @@
 2003-08-12  Andrey Kiselev  <dron@remotesensing.org>
 
+ 	* libtiff/Makefile.in: Fixed problem with building in different
+	directory.
+
 	* tools/tiff2ps.c: Added missing #include <strings.h>.
 
 	* libtiff/tif_dirwrite.c: More fixes for custom tags code
