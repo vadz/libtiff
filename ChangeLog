@@ -1,3 +1,8 @@
+2003-12-06  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_getimage.c, tif_aux.c}: Read WhitePoint tag from the
+	file and properly use it for CIE Lab->RGB transform.
+
 2003-12-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_getimage.c, tif_color.c, tiffio.h}: YCbCr->RGB
