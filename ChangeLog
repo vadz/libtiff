@@ -1,3 +1,12 @@
+2002-03-26  Dwight Kelly  <dbmalloc@remotesensing.org>
+
+	* libtiff/: tiff.h, tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_dirread.c,
+	tif_dirwrite.c: Added get/put code for new tag XMLPACKET as defined
+	in Adobe XMP Technote. Added missing INKSET tag value from TIFF 6.0 spec 
+	INKSET_MULTIINK (=2). Added missing tags from Adobe TIFF technotes: 
+	CLIPPATH, XCLIPPATHUNITS, YCLIPPATHUNITS, OPIIMAGEID, OPIPROXY and
+	INDEXED. Added PHOTOMETRIC tag value from TIFF technote 4 ICCLAB (=9).
+
 2002-03-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/: tif_getimage.c: TIFFReadRGBAStrip and TIFFReadRGBATile
