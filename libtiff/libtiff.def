@@ -100,5 +100,7 @@ EXPORTS TIFFOpen
 	TIFFDefaultStripSize
 	TIFFSetTagExtender
 	TIFFMergeFieldInfo
-
-
+	TIFFCurrentDirOffset
+	TIFFWriteCheck
+	TIFFRGBAImageOK
+	TIFFNumberOfDirectories
