@@ -1,4 +1,4 @@
-.\" $Header$
+.\" $Id$
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -23,23 +23,24 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH SWAB 3T "December 16, 1991"
+.TH SWAB 3T "November 04, 2004" "libtiff"
 .SH NAME
-TIFFReverseBits, TIFFSwabShort, TIFFSwabLong, TIFFSwabArrayOfShort, TIFFSwabArrayOfLong \- byte- and bit-swapping routines
+TIFFGetBitRevTable, TIFFReverseBits, TIFFSwabShort, TIFFSwabLong,
+TIFFSwabArrayOfShort, TIFFSwabArrayOfLong \- byte- and bit-swapping routines
 .SH SYNOPSIS
 .B "#include <tiffio.h>"
+.sp
+.BI "const unsigned char* TIFFGetBitRevTable(int " reversed ")"
 .br
-.B "const unsigned char* TIFFGetBitRevTable(int reversed);"
+.BI "void TIFFReverseBits(u_char *" data ", unsigned long " nbytes ")"
 .br
-.B "void TIFFReverseBits(u_char* data, unsigned long nbytes)"
+.BI "void TIFFSwabShort(uint16 *" data ")"
 .br
-.B "void TIFFSwabShort(uint16* data)"
+.BI "void TIFFSwabLong(uint32 *" data ")"
 .br
-.B "void TIFFSwabLong(uint32* data)"
+.BI "void TIFFSwabArrayOfShort(uint16 *" data ", unsigned long " nshorts ")"
 .br
-.B "void TIFFSwabArrayOfShort(uint16* data, unsigned long nshorts)"
-.br
-.B "void TIFFSwabArrayOfLong(uint32* data, unsigned long nlongs)"
+.BI "void TIFFSwabArrayOfLong(uint32 *" data ", unsigned long " nlongs ")"
 .SH DESCRIPTION
 The following routines are used by the library to swap
 16- and 32-bit data and to reverse the order of bits in bytes.
@@ -56,14 +57,17 @@ swap the bytes in an array of 16-bit and 32-bit items, respectively.
 .IR TIFFReverseBits
 replaces each byte in
 .I data
-with the equivalent bit-reversed value.
-This operation is done with a lookup table,
-.I TIFFBitRevTable
-which is declared public.
-A second table,
-.I TIFFNoBitRevTable
-is also declared public; it is a lookup table that
-can be used as an
+with the equivalent bit-reversed value. This operation is performed with a
+lookup table, which is returned using the
+.IR TIFFGetBitRevTable
+function.
+.I reversed
+parameter specifies which table should be returned. Supply
+.I 1
+if you want bit reversal table. Supply
+.I 0
+to get the table that do not reverse bit values. It is a lookup table that can
+be used as an
 .IR "identity function" ;
 i.e.
 .IR "TIFFNoBitRevTable[n] == n" .
