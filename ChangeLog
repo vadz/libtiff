@@ -1,3 +1,15 @@
+2001-05-12  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_ojpeg.c: New.
+	libtiff/tif_jpeg.c, tiffconf.h, tif_getimage.c: changes related
+	to OJPEG support.
+
+	Scott Marovich <marovich@hpl.hp.com> supplied OJPEG support.
+
+2001-05-11  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tiff.h: removed, it duplicates libtiff/tiff.h.
+
 2001-05-08  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirinfo.c: moved pixar and copyright flags to 
