@@ -14,85 +14,78 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
-<!-- Creator     : groff version 1.18 -->
-<!-- CreationDate: Mon Oct  7 17:36:11 2002 -->
+<!-- Creator     : groff version 1.17.2 -->
+<!-- CreationDate: Thu Nov 27 17:57:59 2003 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>TIFFError, TIFFSetErrorHandler &minus; library error
-handling interface</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+TIFFError, TIFFSetErrorHandler - library error handling interface</td></table>
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>#include &lt;tiffio.h&gt;<br>
-void TIFFError(const char* module, const char* fmt, ...)<br>
-#include &lt;stdarg.h&gt;<br>
+<td width="10%"></td><td width="90%">
+<b>#include &lt;tiffio.h&gt;<br>
+void TIFFError(const char* module, const char* fmt,
+...)</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>#include &lt;stdarg.h&gt;<br>
 typedef void (*TIFFErrorHandler)(const char* module, const
 char* fmt, va_list ap);<br>
 TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler
-handler);</b></p>
-</td>
-</table></p>
+handler);</b></td></table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>TIFFError</i> invokes the library-wide error handling
+<td width="10%"></td><td width="90%">
+<i>TIFFError</i> invokes the library-wide error handling
 function to (normally) write an error message to the
 <b>stderr</b>. The <i>fmt</i> parameter is a
 <i>printf</i>(3S) format string, and any number arguments
 can be supplied. The <i>module</i> parameter, if non-zero,
 is printed before the message; it typically is used to
 identify the software module in which an error is
-detected.</p>
-<!-- INDENTATION -->
-<p>Applications that desire to capture control in the event
-of an error should use <i>TIFFSetErrorHandler</i> to
-override the default error handler. A <small>NULL</small>
-(0) error handling function may be installed to suppress
-error messages.</p>
-</td>
-</table></p>
+detected.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+Applications that desire to capture control in the event of
+an error should use <i>TIFFSetErrorHandler</i> to override
+the default error handler. A <small>NULL</small> (0) error
+handling function may be installed to suppress error
+messages.</td></table>
 <a name="RETURN VALUES"></a>
 <h2>RETURN VALUES</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>TIFFSetErrorHandler</i> returns a reference to the
-previous error handling function.</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+<i>TIFFSetErrorHandler</i> returns a reference to the
+previous error handling function.</td></table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>libtiff</i>(3T), <i>TIFFWarning</i>(3T),
-<i>printf</i>(3S)</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+<i>libtiff</i>(3T), <i>TIFFWarning</i>(3T),
+<i>printf</i>(3S)</td></table>
 <hr>
 </body>
 </html>

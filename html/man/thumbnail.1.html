@@ -15,95 +15,88 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
-<!-- Creator     : groff version 1.18 -->
-<!-- CreationDate: Mon Oct  7 17:36:36 2002 -->
+<!-- Creator     : groff version 1.17.2 -->
+<!-- CreationDate: Thu Nov 27 17:58:10 2003 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>thumbnail &minus; create a <small>TIFF</small> file with
-thumbnail images</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+thumbnail - create a <small>TIFF</small> file with thumbnail images</td></table>
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>thumbnail</b> [ <i>options</i> ] <i>input.tif
-output.tif</i></p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+<b>thumbnail</b> [ <i>options</i> ] <i>input.tif
+output.tif</i></td></table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>thumbnail</i> is a program written to show how one
-might use the SubIFD tag (#330) to store thumbnail images.
+<td width="10%"></td><td width="90%">
+<i>thumbnail</i> is a program written to show how one might
+use the SubIFD tag (#330) to store thumbnail images.
 <i>thumbnail</i> copies a <small>TIFF</small> Class F
 facsimile file to the output file and for each image an
 8-bit greyscale <i>thumbnail sketch</i>. The output file
 contains the thumbnail image with the associated
-full-resolution page linked below with the SubIFD tag.</p>
-<!-- INDENTATION -->
-<p>By default, thumbnail images are 216 pixels wide by 274
+full-resolution page linked below with the SubIFD
+tag.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+By default, thumbnail images are 216 pixels wide by 274
 pixels high. Pixels are calculated by sampling and filtering
 the input image with each pixel value passed through a
-contrast curve.</p>
-</td>
-</table></p>
+contrast curve.</td></table>
 <a name="OPTIONS"></a>
 <h2>OPTIONS</h2>
-<!-- TABS -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
+<td width="10%"></td><td width="90%">
+<b>-w</b></td></table>
 
-<p><b>&minus;w</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
-
-<p>Specify the width of thumbnail images in pixels.</p>
-</td>
-<td width="0%">
-</td>
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
+<td width="21%"></td><td width="79%">
+Specify the width of thumbnail images in
+pixels.</td></table>
 
-<p><b>&minus;h</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
-
-<p>Specify the height of thumbnail images in pixels.</p>
-</td>
-<td width="0%">
-</td>
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
+<td width="10%"></td><td width="90%">
+<b>-h</b></td></table>
 
-<p><b>&minus;c</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+Specify the height of thumbnail images in
+pixels.</td></table>
 
-<p>Specify a contrast curve to apply in generating the
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-c</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+Specify a contrast curve to apply in generating the
 thumbnail images. By default pixels values are passed
 through a linear contrast curve that simply maps the pixel
 value ranges. Alternative curves are: <b>exp50</b> for a 50%
@@ -111,35 +104,25 @@ exponential curve, <b>exp60</b> for a 60% exponential curve,
 <b>exp70</b> for a 70% exponential curve, <b>exp80</b> for a
 80% exponential curve, <b>exp90</b> for a 90% exponential
 curve, <b>exp</b> for a pure exponential curve,
-<b>linear</b> for a linear curve.</p>
-</td>
-<td width="0%">
-</td>
-</table></p>
+<b>linear</b> for a linear curve.</td></table>
 <a name="BUGS"></a>
 <h2>BUGS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>There are no options to control the format of the saved
-thumbnail images.</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+There are no options to control the format of the saved
+thumbnail images.</td></table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>tiffdump</i>(1), <i>tiffgt</i>(1), <i>tiffinfo</i>(1),
-<i>libtiff</i>(3)</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+<i>tiffdump</i>(1), <i>tiffgt</i>(1), <i>tiffinfo</i>(1),
+<i>libtiff</i>(3)</td></table>
 <hr>
 </body>
 </html>

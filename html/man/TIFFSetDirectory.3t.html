@@ -15,102 +15,94 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
-<!-- Creator     : groff version 1.18 -->
-<!-- CreationDate: Mon Oct  7 17:36:22 2002 -->
+<!-- Creator     : groff version 1.17.2 -->
+<!-- CreationDate: Thu Nov 27 17:58:04 2003 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>TIFFSetDirectory, TIFFSetSubDirectory &minus; set the
-current directory for an open <small>TIFF</small> file</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+TIFFSetDirectory, TIFFSetSubDirectory - set the current directory for an open <small>TIFF</small> file</td></table>
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>#include &lt;tiffio.h&gt;<br>
+<td width="10%"></td><td width="90%">
+<b>#include &lt;tiffio.h&gt;<br>
 int TIFFSetDirectory(TIFF* tif, tdir_t dirnum)<br>
-int TIFFSetSubDirectory(TIFF* tif, uint32 diroff)</b></p>
-</td>
-</table></p>
+int TIFFSetSubDirectory(TIFF* tif, uint32
+diroff)</b></td></table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>TIFFSetDirectory</i> changes the current directory and
+<td width="10%"></td><td width="90%">
+<i>TIFFSetDirectory</i> changes the current directory and
 reads its contents with <i>TIFFReadDirectory</i>. The
 parameter <i>dirnum</i> specifies the subfile/directory as
 an integer number, with the first directory numbered
-zero.</p>
-<!-- INDENTATION -->
-<p><i>TIFFSetSubDirectory</i> acts like
+zero.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<i>TIFFSetSubDirectory</i> acts like
 <i>TIFFSetDirectory</i>, except the directory is specified
 as a file offset instead of an index; this is required for
 accessing subdirectories linked through a <i>SubIFD</i>
-tag.</p>
-</td>
-</table></p>
+tag.</td></table>
 <a name="RETURN VALUES"></a>
 <h2>RETURN VALUES</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>On successful return 1 is returned. Otherwise, 0 is
-returned if <i>dirnum</i> or <i>diroff</i> specifies a
-non-existent directory, or if an error was encountered while
-reading the directory&rsquo;s contents.</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+On successful return 1 is returned. Otherwise, 0 is returned
+if <i>dirnum</i> or <i>diroff</i> specifies a non-existent
+directory, or if an error was encountered while reading the
+directory's contents.</td></table>
 <a name="DIAGNOSTICS"></a>
 <h2>DIAGNOSTICS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>All error messages are directed to the
-<i>TIFFError</i>(3T) routine.</p>
-<!-- INDENTATION -->
-<p><b>%s: Error fetching directory count</b>. An error was
-encountered while reading the &lsquo;&lsquo;directory
-count&rsquo;&rsquo; field.</p>
-<!-- INDENTATION -->
-<p><b>%s: Error fetching directory link</b>. An error was
-encountered while reading the &lsquo;&lsquo;link
-value&rsquo;&rsquo; that points to the next directory in a
-file.</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+All error messages are directed to the <i>TIFFError</i>(3T)
+routine.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>%s: Error fetching directory count</b>. An error was
+encountered while reading the ``directory count''
+field.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>%s: Error fetching directory link</b>. An error was
+encountered while reading the ``link value'' that points to
+the next directory in a file.</td></table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>libtiff</i>(3T), <i>TIFFCurrentDirectory</i>(3T),
+<td width="10%"></td><td width="90%">
+<i>libtiff</i>(3T), <i>TIFFCurrentDirectory</i>(3T),
 <i>TIFFOpen</i>(3T), <i>TIFFReadDirectory</i>(3T),
-<i>TIFFWriteDirectory</i>(3T)</p>
-</td>
-</table></p>
+<i>TIFFWriteDirectory</i>(3T)</td></table>
 <hr>
 </body>
 </html>
