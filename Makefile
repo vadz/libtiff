@@ -32,7 +32,7 @@ SRCDIR	= .
 
 #
 # VERSION:	v3.5.5
-# DATE:		Tue Mar 28 23:28:13 EST 2000
+# DATE:		Tue Mar 28 23:36:39 EST 2000
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
@@ -513,9 +513,9 @@ release.tar.zip:
 	   echo $$i;							\
 	done) | sed "s;.*;tiff-$$VERSION/&;" >$$VERSION;		\
 	tar cvf $$VERSION-tar `cat $$VERSION`;				\
-	zip tiff-$$VERSION.zip `cat $$VERSION`; 				\
+	zip ../tiff-$$VERSION.zip `cat $$VERSION`; 				\
 	rm -f tiff-$$VERSION-tar.${ZIPSUF};				\
-	cat $$VERSION-tar | ${COMPRESS} >tiff-$$VERSION.tar.${ZIPSUF};	\
+	cat $$VERSION-tar | ${COMPRESS} >../tiff-$$VERSION.tar.${ZIPSUF};	\
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;
 
 #

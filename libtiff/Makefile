@@ -29,7 +29,7 @@ SRCDIR	= ../libtiff
 
 #
 # VERSION:	v3.5.5
-# DATE:		Tue Mar 28 23:28:13 EST 2000
+# DATE:		Tue Mar 28 23:36:39 EST 2000
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
