@@ -23,19 +23,26 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFReadRGBAImage 3T "February 14, 1992"
+.TH TIFFReadRGBAImage 3T "October 03, 2003"
 .SH NAME
 TIFFReadRGBAImage \- read and decode an image into a fixed-format raster
 .SH SYNOPSIS
-.nf
 .B "#include <tiffio.h>"
+.sp
 .ta \w'\fB#define \fP'u +\w'\fBTIFFGetR(abgr)   \fP'u
+.br
 .B "#define TIFFGetR(abgr)	((abgr) & 0xff)"
+.br
 .B "#define TIFFGetG(abgr)	(((abgr) >> 8) & 0xff)"
+.br
 .B "#define TIFFGetB(abgr)	(((abgr) >> 16) & 0xff)"
+.br
 .B "#define TIFFGetA(abgr)	(((abgr) >> 24) & 0xff)"
-.sp 5p
-.B "int TIFFReadRGBAImage(TIFF* tif, u_long width, u_long height, u_long* raster, int stopOnError)"
+.sp
+.BI "int TIFFReadRGBAImage(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " stopOnError ")
+.br
+.BI "int TIFFReadRGBAImageOriented(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " orientation ", int " stopOnError ")
+.br
 .SH DESCRIPTION
 .IR TIFFReadRGBAImage
 reads a strip- or tile-based image into memory, storing the
@@ -57,6 +64,31 @@ image data are placed in the lower part of the raster.
 (Note that the raster is assume to be organized such that the pixel
 at location (\fIx\fP,\fIy\fP) is \fIraster\fP[\fIy\fP*\fIwidth\fP+\fIx\fP];
 with the raster origin in the lower-left hand corner.)
+.PP
+.IR TIFFReadRGBAImageOriented
+works like
+.IR TIFFReadRGBAImage
+with except of that user can specify the raster origin position with the
+.I orientation
+parameter. Four orientations supported:
+.TP
+.B ORIENTATION_TOPLEFT
+origin in top-left corner,
+.TP
+.B ORIENTATION_TOPRIGHT
+origin in top-right corner,
+.TP
+.B ORIENTATION_BOTLEFT
+origin in bottom-left corner
+and
+.TP
+.B ORIENTATION_BOTRIGHT
+origin in bottom-right corner.
+.LP
+If you choose
+.B ORIENTATION_BOTLEFT
+result will be the same as returned by the
+.IR TIFFReadRGBAImage.
 .PP
 Raster pixels are 8-bit packed red, green, blue, alpha samples.
 The macros

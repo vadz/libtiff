@@ -185,6 +185,7 @@ MANDEVLINKS=\
 	lib/TIFFRGBAImageBegin.3t \
 	lib/TIFFRGBAImageGet.3t \
 	lib/TIFFRGBAImageEnd.3t \
+	lib/TIFFReadRGBAImageOriented.3t \
 	lib/TIFFSetErrorHandler.3t \
 	lib/TIFFSetSubDirectory.3t \
 	lib/TIFFSetWarningHandler.3t \
@@ -312,6 +313,7 @@ lib/TIFFRGBAImageOK.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
 lib/TIFFRGBAImageBegin.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
 lib/TIFFRGBAImageGet.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
 lib/TIFFRGBAImageEnd.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
+lib/TIFFReadRGBAImageOriented.3t:;	${ECHO} ".so ${MANDIR}TIFFReadRGBAImage.3t" > $@
 lib/TIFFSetErrorHandler.3t:;	${ECHO} ".so ${MANDIR}TIFFError.3t" > $@
 lib/TIFFSetSubDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFSetDirectory.3t" > $@
 lib/TIFFSetWarningHandler.3t:;	${ECHO} ".so ${MANDIR}TIFFWarning.3t" > $@
