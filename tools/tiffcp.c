@@ -93,17 +93,20 @@ static int nextSrcImage (TIFF *tif, char **imageSpec)
     unsigned long nextImage = strtol (start, imageSpec, 0);
     if (start == *imageSpec) nextImage = TIFFCurrentDirectory (tif);
     if (**imageSpec)
+    {
       if (**imageSpec == comma) {  
         /* a trailing comma denotes remaining images in sequence */
-        if ((*imageSpec)[1] == '\0') *imageSpec == NULL;
+        if ((*imageSpec)[1] == '\0') *imageSpec = NULL;
       }else{
         fprintf (stderr, 
           "Expected a %c separated image # list after %s\n",
           comma, TIFFFileName (tif));
         exit (-4);   /* syntax error */
       }
+    }
     if (TIFFSetDirectory (tif, nextImage)) return 1;  
-    fprintf (stderr, "%s%c%d not found!\n", TIFFFileName(tif),comma,nextImage); 
+    fprintf (stderr, "%s%c%d not found!\n", 
+             TIFFFileName(tif), comma, (int) nextImage); 
   }
   return 0;
 }
@@ -281,13 +284,15 @@ main(int argc, char* argv[])
 		}
 		TIFFClose(in);
 	}
+
+        exit( 0 );
 }
 
 
 static void
 processG3Options(char* cp)
 {
-	if (cp = strchr(cp, ':')) {
+	if( (cp = strchr(cp, ':')) ) {
 		if (defg3opts == (uint32) -1)
 			defg3opts = 0;
 		do {
@@ -300,7 +305,7 @@ processG3Options(char* cp)
 				defg3opts |= GROUP3OPT_FILLBITS;
 			else
 				usage();
-		} while (cp = strchr(cp, ':'));
+		} while( (cp = strchr(cp, ':')) );
 	}
 }
 
@@ -401,24 +406,6 @@ usage(void)
 	exit(-1);
 }
 
-static void
-CheckAndCorrectColormap(TIFF* tif, int n, uint16* r, uint16* g, uint16* b)
-{
-	int i;
-
-	for (i = 0; i < n; i++)
-		if (r[i] >= 256 || g[i] >= 256 || b[i] >= 256)
-			return;
-	TIFFWarning(TIFFFileName(tif), "Scaling 8-bit colormap");
-#define	CVT(x)		(((x) * ((1L<<16)-1)) / 255)
-	for (i = 0; i < n; i++) {
-		r[i] = CVT(r[i]);
-		g[i] = CVT(g[i]);
-		b[i] = CVT(b[i]);
-	}
-#undef CVT
-}
-
 #define	CopyField(tag, v) \
     if (TIFFGetField(in, tag, &v)) TIFFSetField(out, tag, v)
 #define	CopyField2(tag, v1, v2) \
@@ -476,6 +463,8 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 			CopyField(tag, doubleav);
 		}
 		break;
+          default:
+            assert( FALSE );
 	}
 }
 
