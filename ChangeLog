@@ -1,3 +1,18 @@
+2005-02-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Estimate strip size in case of wrong or
+	suspicious values in the tags. As per bugs
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=705
+
+	and
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=320
+
+	* tools/tiff2ps.c: Fixed problem with page sizes as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=742
+
 2005-01-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tiff.h (TIFFTAG_TILEWIDTH): Corrected description.
