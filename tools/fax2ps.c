@@ -25,14 +25,22 @@
  */
 #include "config.h"
 
-#include <math.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+#include <math.h>
 #include <time.h>
+
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #if HAVE_IO_H
 # include <io.h>
+#endif
+
+#if HAVE_GETOPT_H
+# include <getopt.h>
 #endif
 
 #include "tiffio.h"

@@ -1,4 +1,4 @@
-/* "$Header$ */
+/* "$Id$ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -29,9 +29,15 @@
  * in Frank Cringle's viewfax program;
  *      Copyright (C) 1990, 1995  Frank D. Cringle.
  */
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#endif
 
 #include "tif_fax3.h"
 
