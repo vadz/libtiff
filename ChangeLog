@@ -1,3 +1,15 @@
+2005-02-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiff.h: Changed the int8 definition to be always signed char
+	as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=727
+
+	* libtiff/tiffio.h: Move TIFFOpenW() function into the extern "C"{}
+	block as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=763
+
 2005-02-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffgt.c: Fix problem on big-endian CPUs so that images
