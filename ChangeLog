@@ -1,4 +1,11 @@
+2002-04-16  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/ti_lzw.c: Additional checks for data integrity introduced.
+	Should finally close
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=100
+	
 2002-04-10  Andrey Kiselev  <dron@remotesensing.org>
+
 	* tools/tiff2ps: Divide by zero fixed.
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=88
 
