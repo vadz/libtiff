@@ -175,6 +175,8 @@ const TIFFFieldInfo tiffFieldInfo[] = {
       FALSE,	FALSE,	"TileByteCounts" },
     { TIFFTAG_SUBIFD,		-1,-1, TIFF_IFD,	FIELD_SUBIFD,
       TRUE,	TRUE,	"SubIFD" },
+    { TIFFTAG_SUBIFD,		-1,-1, TIFF_LONG,	FIELD_SUBIFD,
+      TRUE,	TRUE,	"SubIFD" },
     { TIFFTAG_INKSET,		 1, 1, TIFF_SHORT,	FIELD_INKSET,
       FALSE,	FALSE,	"InkSet" },
     { TIFFTAG_INKNAMES,		-1,-1, TIFF_ASCII,	FIELD_INKNAMES,
