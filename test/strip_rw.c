@@ -32,6 +32,7 @@
 #include "tif_config.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #ifdef HAVE_UNISTD_H 
 # include <unistd.h> 
@@ -43,10 +44,10 @@
 const char	*filename = "strip_test.tiff";
 
 int
-write_strips(TIFF *tif, tdata_t array, tsize_t size)
+write_strips(TIFF *tif, const tdata_t array, const tsize_t size)
 {
-	tstrip_t    strip;
-	tsize_t	    stripsize, offset;
+	tstrip_t	strip, nstrips;
+	tsize_t		stripsize, offset;
 
 	stripsize = TIFFStripSize(tif);
 	if (!stripsize) {
@@ -54,9 +55,19 @@ write_strips(TIFF *tif, tdata_t array, tsize_t size)
 			return -1;
 	}
 
-	for (offset = 0, strip = 0; offset < size; offset+=stripsize, strip++) {
+	nstrips = TIFFNumberOfStrips(tif);
+	for (offset = 0, strip = 0;
+	     offset < size && strip < nstrips;
+	     offset+=stripsize, strip++) {
+		/*
+		 * Properly write last strip.
+		 */
+		tsize_t	bufsize = size - offset;
+		if (bufsize > stripsize)
+			bufsize = stripsize;
+
 		if (TIFFWriteEncodedStrip(tif, strip, (char *)array + offset,
-					  stripsize) < 0) {
+					  bufsize) != bufsize) {
 			fprintf (stderr, "Can't write strip %d.\n", (int)strip);
 			return -1;
 		}
@@ -66,10 +77,199 @@ write_strips(TIFF *tif, tdata_t array, tsize_t size)
 }
 
 int
-write_scanlines(TIFF *tif, tdata_t array, tsize_t size)
+read_strips(TIFF *tif, const tdata_t array, const tsize_t size)
 {
-	uint32	    length, row;
-	tsize_t	    scanlinesize, offset;
+	tstrip_t	strip, nstrips;
+	tsize_t		stripsize, offset;
+	tdata_t		buf = NULL;
+
+	stripsize = TIFFStripSize(tif);
+	if (!stripsize) {
+		fprintf (stderr, "Wrong size of strip.\n");
+		return -1;
+	}
+
+	buf = _TIFFmalloc(stripsize);
+	if (!buf) {
+		fprintf (stderr, "Can't allocate space for strip buffer.\n");
+		return -1;
+	}
+
+	nstrips = TIFFNumberOfStrips(tif);
+	for (offset = 0, strip = 0;
+	     offset < size && strip < nstrips;
+	     offset+=stripsize, strip++) {
+		/*
+		 * Properly read last strip.
+		 */
+		tsize_t	bufsize = size - offset;
+		if (bufsize > stripsize)
+			bufsize = stripsize;
+
+		if (TIFFReadEncodedStrip(tif, strip, buf, -1) != bufsize) {
+			fprintf (stderr, "Can't read strip %d.\n", (int)strip);
+			return -1;
+		}
+		if (memcmp(buf, (char *)array + offset, bufsize) != 0) {
+			fprintf (stderr, "Wrong data read for strip %d.\n",
+				 strip);
+			_TIFFfree(buf);
+			return -1;
+		}
+        }
+
+	_TIFFfree(buf);
+
+	return 0;
+}
+
+int
+create_image_stripped(const char *name, uint32 width, uint32 length,
+		      uint32 rowsperstrip, uint16 compression,
+		      uint16 spp, uint16 bps, uint16 photometric,
+		      uint16 sampleformat, uint16 planarconfig,
+		      const tdata_t array, const tsize_t size)
+{
+	TIFF		*tif;
+
+	/* Test whether we can write tags. */
+	tif = TIFFOpen(name, "w");
+	if (!tif)
+		goto openfailure;
+
+	if (!TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width)) {
+		fprintf (stderr, "Can't set ImageWidth tag.\n");
+		goto failure;
+	}
+	if (!TIFFSetField(tif, TIFFTAG_IMAGELENGTH, length)) {
+		fprintf (stderr, "Can't set ImageLength tag.\n");
+		goto failure;
+	}
+	if (!TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps)) {
+		fprintf (stderr, "Can't set BitsPerSample tag.\n");
+		goto failure;
+	}
+	if (!TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, spp)) {
+		fprintf (stderr, "Can't set SamplesPerPixel tag.\n");
+		goto failure;
+	}
+	if (!TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, rowsperstrip)) {
+		fprintf (stderr, "Can't set RowsPerStrip tag.\n");
+		goto failure;
+	}
+	if (!TIFFSetField(tif, TIFFTAG_PLANARCONFIG, planarconfig)) {
+		fprintf (stderr, "Can't set PlanarConfiguration tag.\n");
+		goto failure;
+	}
+	if (!TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, photometric)) {
+		fprintf (stderr, "Can't set PhotometricInterpretation tag.\n");
+		goto failure;
+	}
+
+	if (write_strips(tif, array, size) < 0) {
+		fprintf (stderr, "Can't write image data.\n");
+		goto failure;
+	}
+
+	TIFFClose(tif);
+	return 0;
+
+failure:
+	TIFFClose(tif);
+openfailure:
+	fprintf (stderr, "Can't create test TIFF file %s:\n"
+"    ImageWidth=%ld, ImageLength=%ld, RowsPerStrip=%ld, Compression=%d,\n"
+"    BitsPerSample=%d, SamplesPerPixel=%d, SampleFormat=%d,\n"
+"    PlanarConfiguration=%d, PhotometricInterpretation=%d.\n",
+		 name, width, length, rowsperstrip, compression,
+		 bps, spp, sampleformat, planarconfig,
+		 photometric);
+	return -1;
+}
+
+int
+read_image_stripped(const char *name, uint32 width, uint32 length,
+		    uint32 rowsperstrip, uint16 compression,
+		    uint16 spp, uint16 bps, uint16 photometric,
+		    uint16 sampleformat, uint16 planarconfig,
+		    const tdata_t array, const tsize_t size)
+{
+	TIFF		*tif;
+	uint16		value_u16;
+	uint32		value_u32;
+
+	/* Test whether we can read written values. */
+	tif = TIFFOpen(name, "r");
+	if (!tif)
+		goto openfailure;
+	
+	if (TIFFIsTiled(tif)) {
+		fprintf (stderr, "Can't read image %s, it is tiled.\n",
+			 name);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &value_u32)
+	    || value_u32 != width) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGEWIDTH);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &value_u32)
+	    || value_u32 != length) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGELENGTH);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &value_u16)
+	    || value_u16 != bps) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_BITSPERSAMPLE);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &value_u16)
+	    || value_u16 != photometric) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_PHOTOMETRIC);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &value_u16)
+	    || value_u16 != spp) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_SAMPLESPERPIXEL);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &value_u32)
+	    || value_u32 != rowsperstrip) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_ROWSPERSTRIP);
+		goto failure;
+	}
+	if (!TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &value_u16)
+	    || value_u16 != planarconfig) {
+		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_PLANARCONFIG);
+		goto failure;
+	}
+
+	if (read_strips(tif, array, size) < 0) {
+		fprintf (stderr, "Can't read image data.\n");
+		goto failure;
+	}
+
+	TIFFClose(tif);
+	return 0;
+
+failure:
+	TIFFClose(tif);
+openfailure:
+	fprintf (stderr, "Can't read test TIFF file %s:\n"
+"    ImageWidth=%ld, ImageLength=%ld, RowsPerStrip=%ld, Compression=%d,\n"
+"    BitsPerSample=%d, SamplesPerPixel=%d, SampleFormat=%d,\n"
+"    PlanarConfiguration=%d, PhotometricInterpretation=%d.\n",
+		 name, width, length, rowsperstrip, compression,
+		 bps, spp, sampleformat, planarconfig,
+		 photometric);
+	return -1;
+}
+
+int
+write_scanlines(TIFF *tif, const tdata_t array, const tsize_t size)
+{
+	uint32		length, row;
+	tsize_t		scanlinesize, offset;
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &length)) {
 		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGELENGTH);
@@ -79,7 +279,7 @@ write_scanlines(TIFF *tif, tdata_t array, tsize_t size)
 	scanlinesize = TIFFScanlineSize(tif);
 	if (!scanlinesize) {
 		fprintf (stderr, "Wrong size of scanline.\n");
-			return -1;
+		return -1;
 	}
 
 	for (offset = 0, row = 0; row < length; offset+=scanlinesize, row++) {
@@ -96,108 +296,100 @@ write_scanlines(TIFF *tif, tdata_t array, tsize_t size)
 int
 main(int argc, char **argv)
 {
-	TIFF	    *tif;
-	uint16	    value;
-	uint16	    spp = 1;
-	uint16	    bps = 8;
-	uint16	    photometric = PHOTOMETRIC_MINISBLACK;
-	uint16	    rows_per_strip = 1;
-	uint16	    planarconfig = PLANARCONFIG_CONTIG;
+	uint32		rowsperstrip;
+	uint16		compression;
+	uint16		spp, bps, photometric, sampleformat, planarconfig;
 
-	/* Test whether we can write tags. */
-	tif = TIFFOpen(filename, "w");
-	if (!tif) {
-		fprintf (stderr, "Can't create test TIFF file %s.\n", filename);
-		return 1;
-	}
+	/* 
+	 * Test two special cases: image consisting from single line and image
+	 * consisting from single column.
+	 */
+	rowsperstrip = 1;
+	compression = COMPRESSION_NONE;
+	spp = 1;
+	bps = 8;
+        photometric = PHOTOMETRIC_MINISBLACK;
+	sampleformat = SAMPLEFORMAT_UINT;
+	planarconfig = PLANARCONFIG_CONTIG;
 
-	if (!TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, XSIZE)) {
-		fprintf (stderr, "Can't set ImageWidth tag.\n");
+	if (create_image_stripped(filename, XSIZE * YSIZE, 1, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't create TIFF file %s.\n", filename);
 		goto failure;
 	}
-	if (!TIFFSetField(tif, TIFFTAG_IMAGELENGTH, YSIZE)) {
-		fprintf (stderr, "Can't set ImageLength tag.\n");
+	if (read_image_stripped(filename, XSIZE * YSIZE, 1, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
 		goto failure;
 	}
-	if (!TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps)) {
-		fprintf (stderr, "Can't set BitsPerSample tag.\n");
-		goto failure;
-	}
-	if (!TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, spp)) {
-		fprintf (stderr, "Can't set SamplesPerPixel tag.\n");
-		goto failure;
-	}
-	if (!TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, rows_per_strip)) {
-		fprintf (stderr, "Can't set SamplesPerPixel tag.\n");
-		goto failure;
-	}
-	if (!TIFFSetField(tif, TIFFTAG_PLANARCONFIG, planarconfig)) {
-		fprintf (stderr, "Can't set PlanarConfiguration tag.\n");
-		goto failure;
-	}
-	if (!TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, photometric)) {
-		fprintf (stderr, "Can't set PhotometricInterpretation tag.\n");
-		goto failure;
-	}
-
-	if (write_strips(tif, (tdata_t) byte_array1, byte_array1_size) < 0) {
-		fprintf (stderr, "Can't write image data.\n");
-		goto failure;
-	}
-
-	TIFFClose(tif);
-	
-	/* Ok, now test whether we can read written values. */
-	tif = TIFFOpen(filename, "r");
-	if (!tif) {
-		fprintf (stderr, "Can't open test TIFF file %s.\n", filename);
-		return 1;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &value)
-	    || value != XSIZE) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGEWIDTH);
-		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &value)
-	    || value != YSIZE) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGELENGTH);
-		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &value)
-	    || value != bps) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_BITSPERSAMPLE);
-		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &value)
-	    || value != photometric) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_PHOTOMETRIC);
-		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &value)
-	    || value != spp) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_SAMPLESPERPIXEL);
-		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &value)
-	    || value != rows_per_strip) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_ROWSPERSTRIP);
-		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &value)
-	    || value != planarconfig) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_PLANARCONFIG);
-		goto failure;
-	}
-
-	TIFFClose(tif);
-	
-	/* All tests passed; delete file and exit with success status. */
 	unlink(filename);
+		
+	if (create_image_stripped(filename, 1, XSIZE * YSIZE, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't create TIFF file %s.\n", filename);
+		goto failure;
+	}
+	if (read_image_stripped(filename, 1, XSIZE * YSIZE, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
+		goto failure;
+	}
+	unlink(filename);
+		
+	/* 
+	 * Test one-channel image with different parameters.
+	 */
+	rowsperstrip = 1;
+	spp = 1;
+	bps = 8;
+        photometric = PHOTOMETRIC_MINISBLACK;
+	sampleformat = SAMPLEFORMAT_UINT;
+	planarconfig = PLANARCONFIG_CONTIG;
+
+	if (create_image_stripped(filename, XSIZE, YSIZE, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't create TIFF file %s.\n", filename);
+		goto failure;
+	}
+	if (read_image_stripped(filename, XSIZE, YSIZE, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
+		goto failure;
+	}
+	unlink(filename);
+	
+	rowsperstrip = YSIZE;
+	if (create_image_stripped(filename, XSIZE, YSIZE, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't create TIFF file %s.\n", filename);
+		goto failure;
+	}
+	if (read_image_stripped(filename, XSIZE, YSIZE, rowsperstrip,
+				  compression, spp, bps, photometric,
+				  sampleformat, planarconfig,
+				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
+		goto failure;
+	}
+	unlink(filename);
+
 	return 0;
 
 failure:
-	/* Something goes wrong; close file and return unsuccessful status. */
-	TIFFClose(tif);
 	unlink(filename);
 	return 1;
 }

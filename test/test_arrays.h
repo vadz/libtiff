@@ -32,28 +32,31 @@
 #ifndef _TEST_ARRAYS_ 
 #define _TEST_ARRAYS_
 
-#include "tiffio.h"
+#include <stddef.h>
 
 #define XSIZE 37
 #define YSIZE 23
 
 extern const unsigned char byte_array1[];
-extern const tsize_t byte_array1_size;
+extern const size_t byte_array1_size;
 
 extern const unsigned char byte_array2[];
-extern const tsize_t byte_array2_size;
+extern const size_t byte_array2_size;
+
+extern const unsigned char byte_array3[];
+extern const size_t byte_array3_size;
 
 extern const float array_float1[];
-extern const tsize_t array_float1_size;
+extern const size_t array_float1_size;
 
 extern const float array_float2[];
-extern const tsize_t array_float2_size;
+extern const size_t array_float2_size;
 
 extern const double array_double1[];
-extern const tsize_t array_double1_size;
+extern const size_t array_double1_size;
 
 extern const double array_double2[];
-extern const tsize_t array_double2_size;
+extern const size_t array_double2_size;
 
 #endif /* _TEST_ARRAYS_ */
 
