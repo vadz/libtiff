@@ -1,3 +1,7 @@
+2004-06-14  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/bmp2tiff.c: Add missed RawsPerStrip setting.
+
 2004-06-08  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/bmp2tiff.c: Added new utility to convert Windows BMP files
