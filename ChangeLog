@@ -1,3 +1,10 @@
+2004-10-28  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2ps.c: Fixed wrong variable data type when read Resolution
+	tags (Peter Fales).
+
+	* tools/{bmp2tiff.c, raw2tiff.c}: Get rid of stream I/O functions.
+
 2004-10-28  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2pdf.c: added casts to avoid warnings.
