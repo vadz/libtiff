@@ -1,3 +1,7 @@
+2004-06-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.7.0alpha released.
+
 2004-06-06  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tiff.h, tif_dirwrite.c, tif_fax3.c, tif_packbits.c,}: Get rid
