@@ -1,5 +1,9 @@
 2003-12-19  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tools/tiff2ps.c: Added support for alfa channel. Fixes
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=428
+
 	* libtiff/{libtiff.def, tif_color, tif_getimage.c, tiffio.h}:
 	Interface for Lab->RGB color conversion is finally cleaned up.
 	Added support for ReferenceBlackWhite tag handling when converted from
