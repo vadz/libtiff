@@ -602,17 +602,20 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 					if (scale > 1.0)
 						scale = 1.0;
 					bottom_offset +=
-					    (ph * PS_UNIT_SIZE - prh * scale) / (cnt?2:1);
+						(ph * PS_UNIT_SIZE - prh * scale) / (cnt?2:1);
  				        if (cnt)
-					    left_offset += (pw * PS_UNIT_SIZE - prw * scale) / 2;
+						left_offset += (pw * PS_UNIT_SIZE - prw * scale) / 2;
 					fprintf(fd, "%f %f translate\n",
 						left_offset, bottom_offset);
 					fprintf(fd, "%f %f scale\n", prw * scale, prh * scale);
 					if (rotate)
-					    fputs ("1 1 translate 180 rotate\n", fd);
+						fputs ("1 1 translate 180 rotate\n", fd);
 				}
-			} else
+			} else {
 				fprintf(fd, "%f %f scale\n", prw, prh);
+				if (rotate)
+					fputs ("1 1 translate 180 rotate\n", fd);
+			}
 			PSpage(fd, tif, w, h);
 			fprintf(fd, "end\n");
 			fprintf(fd, "grestore\n");
