@@ -40,7 +40,23 @@
 # include <unistd.h>
 #endif
 
+#if HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
+#if HAVE_IO_H
+# include <io.h>
+#endif
+
 #include "tiffio.h"
+
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
 
 enum BMPType
 {
@@ -209,10 +225,10 @@ main(int argc, char* argv[])
 {
 	uint32	width, length;
 	uint32	nbands = 1;		/* number of bands in input image */
-        int	depth = 8;		/* bits per pixel in input image */
+        int16	depth = 8;		/* bits per pixel in input image */
 	uint32	rowsperstrip = (uint32) -1;
         uint16	photometric = PHOTOMETRIC_MINISBLACK;
-	FILE	*in;
+	int	fd;
 	struct stat instat;
 	char	*outfilename = NULL, *infilename = NULL;
 	TIFF	*out = NULL;
@@ -252,35 +268,35 @@ main(int argc, char* argv[])
 		usage();
 
 	infilename = argv[optind];
-	in = fopen(infilename, "rb");
-	if (in == NULL) {
+	fd = open(infilename, O_RDONLY|O_BINARY, 0);
+	if (fd < 0) {
 		TIFFError(infilename, "Cannot open input file");
 		return -1;
 	}
 
-	fread(file_hdr.bType, 1, 2, in);
+	read(fd, file_hdr.bType, 2);
 	if(file_hdr.bType[0] != 'B' || file_hdr.bType[1] != 'M') {
-	        TIFFError(infilename, "File is not BMP");
+		TIFFError(infilename, "File is not BMP");
 		goto bad;
 	}
 
 /* -------------------------------------------------------------------- */
 /*      Read the BMPFileHeader. We need iOffBits value only             */
 /* -------------------------------------------------------------------- */
-	fseek(in, 10, SEEK_SET);
-	fread(&file_hdr.iOffBits, 1, 4, in);
+	lseek(fd, 10, SEEK_SET);
+	read(fd, &file_hdr.iOffBits, 4);
 #ifdef WORDS_BIGENDIAN
         TIFFSwabLong(&file_hdr.iOffBits);
 #endif
-	stat(argv[optind], &instat);
+	fstat(fd, &instat);
 	file_hdr.iSize = instat.st_size;
 
 /* -------------------------------------------------------------------- */
 /*      Read the BMPInfoHeader.                                         */
 /* -------------------------------------------------------------------- */
 
-        fseek(in, BFH_SIZE, SEEK_SET);
-        fread(&info_hdr.iSize, 1, 4, in);
+        lseek(fd, BFH_SIZE, SEEK_SET);
+        read(fd, &info_hdr.iSize, 4);
 #ifdef WORDS_BIGENDIAN
         TIFFSwabLong(&info_hdr.iSize);
 #endif
@@ -295,16 +311,16 @@ main(int argc, char* argv[])
                 bmp_type = BMPT_WIN5;
 
         if (bmp_type == BMPT_WIN4 || bmp_type == BMPT_WIN5 || bmp_type == BMPT_OS22) {
-                fread(&info_hdr.iWidth, 1, 4, in);
-                fread(&info_hdr.iHeight, 1, 4, in);
-                fread(&info_hdr.iPlanes, 1, 2, in);
-                fread(&info_hdr.iBitCount, 1, 2, in);
-                fread(&info_hdr.iCompression, 1, 4, in);
-                fread(&info_hdr.iSizeImage, 1, 4, in);
-                fread(&info_hdr.iXPelsPerMeter, 1, 4, in);
-                fread(&info_hdr.iYPelsPerMeter, 1, 4, in);
-                fread(&info_hdr.iClrUsed, 1, 4, in);
-                fread(&info_hdr.iClrImportant, 1, 4, in);
+                read(fd, &info_hdr.iWidth, 4);
+                read(fd, &info_hdr.iHeight, 4);
+                read(fd, &info_hdr.iPlanes, 2);
+                read(fd, &info_hdr.iBitCount, 2);
+                read(fd, &info_hdr.iCompression, 4);
+                read(fd, &info_hdr.iSizeImage, 4);
+                read(fd, &info_hdr.iXPelsPerMeter, 4);
+                read(fd, &info_hdr.iYPelsPerMeter, 4);
+                read(fd, &info_hdr.iClrUsed, 4);
+                read(fd, &info_hdr.iClrImportant, 4);
 #ifdef WORDS_BIGENDIAN
                 TIFFSwabLong(&info_hdr.iWidth);
                 TIFFSwabLong(&info_hdr.iHeight);
@@ -331,22 +347,22 @@ main(int argc, char* argv[])
 	if (bmp_type == BMPT_OS21) {
                 int16  iShort;
 
-                fread(&iShort, 1, 2, in);
+                read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
                 TIFFSwabShort(&iShort);
 #endif
                 info_hdr.iWidth = iShort;
-                fread(&iShort, 1, 2, in);
+                read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
                 TIFFSwabShort(&iShort);
 #endif
                 info_hdr.iHeight = iShort;
-                fread(&iShort, 1, 2, in);
+                read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
                 TIFFSwabShort(&iShort);
 #endif
                 info_hdr.iPlanes = iShort;
-                fread(&iShort, 1, 2, in);
+                read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
                 TIFFSwabShort(&iShort);
 #endif
@@ -360,7 +376,7 @@ main(int argc, char* argv[])
             info_hdr.iBitCount != 24 && info_hdr.iBitCount != 32) {
             TIFFError(infilename, "Cannot process BMP file with bit count %d",
 		      info_hdr.iBitCount);
-            fclose(in);
+            close(fd);
             return 0;
         }
 
@@ -389,8 +405,8 @@ main(int argc, char* argv[])
 				goto bad;
 			}
 
-			fseek(in, BFH_SIZE + info_hdr.iSize, SEEK_SET);
-                        fread(clr_tbl, n_clr_elems, clr_tbl_size, in);
+			lseek(fd, BFH_SIZE + info_hdr.iSize, SEEK_SET);
+                        read(fd, clr_tbl, n_clr_elems * clr_tbl_size);
 
 			red_tbl = (unsigned short*)
 				_TIFFmalloc(1<<depth * sizeof(unsigned short));
@@ -505,13 +521,13 @@ main(int argc, char* argv[])
                                 offset = file_hdr.iOffBits + (length - row - 1) * size;
                         else
                                 offset = file_hdr.iOffBits + row * size;
-                        if (fseek(in, offset, SEEK_SET) == -1) {
+                        if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
 				TIFFError(infilename,
 					  "scanline %lu: Seek error",
 					  (unsigned long) row);
                         }
 
-			if (fread(scanbuf, size, 1, in) != 1) {
+			if (read(fd, scanbuf, size) != size) {
 				TIFFError(infilename,
 					  "scanline %lu: Read error",
 					  (unsigned long) row);
@@ -520,7 +536,7 @@ main(int argc, char* argv[])
                         rearrangePixels(scanbuf, width, info_hdr.iBitCount);
 
                         if (TIFFWriteScanline(out, scanbuf, row, 0) < 0) {
-			        TIFFError(infilename,
+				TIFFError(infilename,
 					  "scanline %lu: Write error",
 					  (unsigned long) row);
                         }
@@ -554,8 +570,8 @@ main(int argc, char* argv[])
 			goto bad3;
 		}
 
-		fseek(in, file_hdr.iOffBits, SEEK_SET);
-		fread(comprbuf, 1, compr_size, in);
+		lseek(fd, file_hdr.iOffBits, SEEK_SET);
+		read(fd, comprbuf, compr_size);
 		i = 0;
 		j = 0;
 		if (info_hdr.iBitCount == 8) {		    /* RLE8 */
@@ -638,14 +654,14 @@ main(int argc, char* argv[])
 
 		for (row = 0; row < length; row++) {
                         if (TIFFWriteScanline(out, uncomprbuf + (length - row - 1) * width, row, 0) < 0) {
-			        TIFFError(infilename,
+				TIFFError(infilename,
 					  "scanline %lu: Write error.\n",
 					  (unsigned long) row);
                         }
 		}
 
 		_TIFFfree(uncomprbuf);
- 	}
+	}
 
 bad3:
 	if (blue_tbl)
@@ -657,7 +673,7 @@ bad1:
 	if (red_tbl)
 		_TIFFfree(red_tbl);
 bad:
-        fclose(in);
+        close(fd);
 
 	if (out)
 		TIFFClose(out);
