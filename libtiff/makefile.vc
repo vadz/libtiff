@@ -66,14 +66,14 @@ libtiff.dll:	$(OBJ)
 	link /dll /def:libtiff.def /out:libtiff.dll /implib:libtiff_i.lib \
 		$(OBJ) $(LIBS)
 	
-version.h:	$(VERSION) $(ALPHA) mkversion.c
+tiffvers.h:	$(VERSION) mkversion.c
 	$(CC) mkversion.c 
-	-del version.h
-	.\mkversion.exe -v $(VERSION) -a $(ALPHA) version.h
+	if exist tiffvers.h del tiffvers.h
+	.\mkversion.exe -v $(VERSION) tiffvers.h
 
 clean:
 	del *.obj *.lib libtiff.dll
 
-tif_version.obj:	version.h
+tif_version.obj:	tiffvers.h
 
 
