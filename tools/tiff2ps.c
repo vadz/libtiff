@@ -109,6 +109,7 @@ int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
 char	*filename;			/* input filename */
 int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
+uint16	res_unit = 0;			/* Resolution units: 1 - inches, 2 - cm*/
 
 /*
  * ASCII85 Encoding Support.
@@ -149,7 +150,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	FILE* output = stdout;
 
-	while ((c = getopt(argc, argv, "h:i:w:d:o:O:aemzps128DT")) != -1)
+	while ((c = getopt(argc, argv, "h:i:w:d:o:O:acemnzps128DT")) != -1)
 		switch (c) {
 		case 'd':
 			dirnum = atoi(optarg);
@@ -209,6 +210,12 @@ main(int argc, char* argv[])
 			break;
 		case '8':
 			ascii85 = FALSE;
+			break;
+		case 'c':
+			res_unit = RESUNIT_CENTIMETER;
+			break;
+		case 'n':
+			res_unit = RESUNIT_INCH;
 			break;
 		case '?':
 			usage(-1);
@@ -358,12 +365,13 @@ PhotoshopBanner(FILE* fd, uint32 w, uint32 h, int bs, int nc, char* startline)
 static void
 setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
 {
-	uint16 res_unit;
+//	uint16 res_unit;
 	float xres, yres;
 
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, pw);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, ph);
-	TIFFGetFieldDefaulted(tif, TIFFTAG_RESOLUTIONUNIT, &res_unit);
+	if (res_unit == 0)
+		TIFFGetFieldDefaulted(tif, TIFFTAG_RESOLUTIONUNIT, &res_unit);
 	/*
 	 * Calculate printable area.
 	 */
@@ -376,6 +384,7 @@ setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
 		xres *= 2.54, yres *= 2.54;
 		break;
 	case RESUNIT_NONE:
+	default:
 		xres *= PS_UNIT_SIZE, yres *= PS_UNIT_SIZE;
 		break;
 	}
