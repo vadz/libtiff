@@ -997,37 +997,35 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             ** Do we have a custom value?
             */
             ret_val = 0;
-            for( i = 0; i < td->td_customValueCount; i++ )
+            for (i = 0; i < td->td_customValueCount; i++)
             {
-                TIFFTagValue *tv = td->td_customValues + i;
+		TIFFTagValue *tv = td->td_customValues + i;
 
-                if( tv->info->field_tag != tag )
-                    continue;
+		if (tv->info->field_tag != tag)
+			continue;
                 
-                if( fip->field_passcount )
-                {
-                    *va_arg(ap, unsigned short *) = (unsigned short) tv->count;
-                    *va_arg(ap, void **) = tv->value;
-                    ret_val = 1;
-                    break;
-                }
-                else if( fip->field_type == TIFF_ASCII )
-                {
-                    *va_arg(ap, void **) = tv->value;
-                    ret_val = 1;
-                    break;
-                }
-                else
-                {
-                    TIFFError("_TIFFVGetField",
-			      "%s: Pass by value is not implemented.",
-			      tif->tif_name);
-                    break;
+		if (fip->field_passcount) {
+			if (fip->field_readcount == TIFF_VARIABLE2) 
+				*va_arg(ap, uint32*) = (uint32)tv->count;
+			else	/* Assume TIFF_VARIABLE */
+				*va_arg(ap, uint16*) = (uint16)tv->count;
+			*va_arg(ap, void **) = tv->value;
+			ret_val = 1;
+			break;
+                } else if (fip->field_type == TIFF_ASCII) {
+			*va_arg(ap, void **) = tv->value;
+			ret_val = 1;
+			break;
+                } else {
+			TIFFError("_TIFFVGetField",
+				  "%s: Pass by value is not implemented.",
+				  tif->tif_name);
+			break;
                 }
             }
         }
     }
-    return( ret_val );
+    return(ret_val);
 }
 
 /*
