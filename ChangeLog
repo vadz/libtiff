@@ -1,3 +1,7 @@
+2000-04-18  Frank Warmerdam  <warmerda@rommel.atlsci.com>
+
+	* tools/tiffsplit.c: Copy TIFFTAG_SAMPLEFORMAT.
+
 Tue Apr 18 16:18:08 2000  Frank Warmerdam  <warmerda@esabot.atlsci.com>
 
 	* tools/Makefile.in: Modified to install properly on SGI.
