@@ -264,18 +264,18 @@ void
 _TIFFSetupFieldInfo(TIFF* tif)
 {
 	if (tif->tif_fieldinfo) {
-        	int  i;
+		int  i;
 
-        	for (i = 0; i < tif->tif_nfields; i++) 
+		for (i = 0; i < tif->tif_nfields; i++) 
 		{
-	    		TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
- 	    		if (fld->field_bit == FIELD_CUSTOM && 
+			TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
+			if (fld->field_bit == FIELD_CUSTOM && 
 				strncmp("Tag ", fld->field_name, 4) == 0) 
-	    			{
+				{
 				_TIFFfree(fld->field_name);
-                		_TIFFfree(fld);
-	    			}
-        	}   
+				_TIFFfree(fld);
+				}
+		}   
       
 		_TIFFfree(tif->tif_fieldinfo);
 		tif->tif_nfields = 0;
@@ -292,7 +292,7 @@ tagCompare(const void* a, const void* b)
 	if (ta->field_tag != tb->field_tag)
 		return (ta->field_tag < tb->field_tag ? -1 : 1);
 	else
-		return (tb->field_type < ta->field_type ? -1 : 1);
+		return ((int)tb->field_type - (int)ta->field_type);
 }
 
 void
@@ -404,7 +404,16 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 	    (dt == TIFF_ANY || dt == last->field_type))
 		return (last);
 	/* NB: if table gets big, use sorted search (e.g. binary search) */
-	for (i = 0, n = tif->tif_nfields; i < n; i++) {
+	if(dt != TIFF_ANY) {
+            TIFFFieldInfo key = {0, 0, 0, 0, 0, 0, 0, 0};
+            key.field_tag = tag;
+            key.field_type = dt;
+            return((const TIFFFieldInfo *) bsearch(&key, 
+						   tif->tif_fieldinfo, 
+						   tif->tif_nfields,
+						   sizeof(TIFFFieldInfo), 
+						   tagCompare));
+        } else for (i = 0, n = tif->tif_nfields; i < n; i++) {
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		if (fip->field_tag == tag &&
 		    (dt == TIFF_ANY || fip->field_type == dt))
