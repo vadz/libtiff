@@ -38,12 +38,18 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <ctype.h>
 #include <assert.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -469,7 +475,9 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 		}
 		break;
           default:
-            assert( FALSE );
+                TIFFError(TIFFFileName(in),
+                          "Data type %d is not supported, tag %d skipped.",
+                          tag, type);
 	}
 }
 
@@ -1567,3 +1575,5 @@ pickCopyFunc(TIFF* in, TIFF* out, uint16 bitspersample, uint16 samplesperpixel)
 	    TIFFFileName(in));
 	return (NULL);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
