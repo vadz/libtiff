@@ -1,8 +1,9 @@
 /*
  * Warning, this file was automatically created by the TIFF configure script
- * VERSION:	 v3.5.5
- * DATE:	 Tue Mar 28 23:36:39 EST 2000
- * TARGET:	 i586-unknown-linux
+ * VERSION:	 v3.5.6
+ * RELEASE:    beta
+ * DATE:	 Fri Dec 22 17:22:51 EST 2000
+ * TARGET:	 i686-unknown-linux
  * CCOMPILER:	 /usr/bin/gcc-2.95.2 20000220 (Debian GNU/Linux)
  */
 #ifndef _PORT_
@@ -11,7 +12,7 @@
 extern "C" {
 #endif
 #include <sys/types.h>
-#define HOST_FILLORDER FILLORDER_LSB2MSB
+#define HOST_FILLORDER FILLORDER_MSB2LSB
 #define HOST_BIGENDIAN	0
 #define HAVE_MMAP 1
 #include <stdio.h>

@@ -31,10 +31,6 @@ main tree.
 Increment version in file "VERSION" 
 
 
-7. 
-
-Set current date in "RELEASE-DATE" file.
-
 
 8. 
 
@@ -43,7 +39,8 @@ sh configure; make; make install (to test).
 
 9. 
 
-make release. 
+make release -- this will update "RELEASE-DATE" in the top level dir,
+and create the .tar.gz and .zip archives one directory above.
 
 10. 
 
@@ -67,6 +64,16 @@ lcd html
 mput *.html
 put ../tiff-vn-n-n.zip .
 put ../tiff-vn-n-n.tar.gz .
+
+13. 
+
+Commit any changes in libtiff-lzw-compression-kit. 
+
+Update VERSION in Makefile. 
+
+make release
+
+ftp to both sites. 
 
 14.  
 

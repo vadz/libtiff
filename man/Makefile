@@ -30,9 +30,9 @@
 SRCDIR	= ../man
 
 #
-# VERSION:	v3.5.5
-# DATE:		Tue Mar 28 23:36:39 EST 2000
-# TARGET:	i586-unknown-linux
+# VERSION:	v3.5.6
+# DATE:		Fri Dec 22 17:22:51 EST 2000
+# TARGET:	i686-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
 SHELL	= /bin/sh

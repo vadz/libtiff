@@ -258,9 +258,10 @@ EOF
 VERSIONFILE=$SRCDIR/VERSION
 DATE=`date`
 
-eval `cat $VERSIONFILE | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)\.\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_POINT=\3/'`
+eval `cat $VERSIONFILE |  sed 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_POINT=\3/'`
 VERSION="v${DIST_MAJOR}.${DIST_MINOR}.${DIST_POINT}"
 
+RELEASE=`cat $VERSIONFILE |  sed -e 's/[0-9 \.]//g'`
 Note()
 {
     echo "$@" 1>&4
@@ -268,9 +269,9 @@ Note()
 
 Note ""
 if [ $SRCDIR_IS_LIBTIFF = yes ] ; then
-  Note "Configuring TIFF Software (library only) $VERSION."
+  Note "Configuring TIFF Software (library only) $VERSION"
 else
-  Note "Configuring TIFF Software $VERSION."
+  Note "Configuring TIFF Software $VERSION"
 fi
 
 Note ""
@@ -728,6 +729,7 @@ EmitCPlusPlusPrologue()
     echo '/*'
     echo ' * Warning, this file was automatically created by the TIFF configure script'
     echo ' * VERSION:	' $VERSION
+    echo ' * RELEASE:   ' $RELEASE
     echo ' * DATE:	' $DATE
     echo ' * TARGET:	' $TARGET
     if [ $ISGCC = yes ]; then
@@ -1758,6 +1760,7 @@ s;@STRIP@;${STRIP};g
 s;@TARGET@;${TARGET};g
 s;@TIFFLIBREF@;${TIFFLIBREF};g
 s;@VERSION@;${VERSION};g
+s;@RELEASE@;${RELEASE};g
 s;@VERSIONFILE@;`relativize ${VERSIONFILE}`;g
 s;@WARNING@;Warning, this file was automatically created by the TIFF configure script;g
 EOF

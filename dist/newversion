@@ -27,6 +27,5 @@
 #
 rm -f tiff.version
 awk '
-$1 ~ /.*beta/ { print "define TIFF_VNUM " $0 }
-$1 !~ /.*beta/{ print "define TIFF_VNUM \"" $0 " (release)\"" }
+{ print "define TIFF_VNUM \"" $1 " (" $2 ")\"" }
 ' ../VERSION > tiff.version

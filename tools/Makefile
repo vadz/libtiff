@@ -32,9 +32,9 @@ SRCDIR	= ../tools
 LIBDIR	= ../libtiff
 
 #
-# VERSION:	v3.5.5
-# DATE:		Tue Mar 28 23:36:39 EST 2000
-# TARGET:	i586-unknown-linux
+# VERSION:	v3.5.6
+# DATE:		Fri Dec 22 17:22:51 EST 2000
+# TARGET:	i686-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
 SHELL	= /bin/sh
@@ -47,10 +47,10 @@ OPTIMIZER=-O
 IPATH	= -I. -I${SRCDIR} -I${LIBDIR}
 CFLAGS	=  ${COPTS} ${OPTIMIZER} ${IPATH}
 #
-TIFFLIB	= ${DEPTH}/libtiff/libtiff.a
+TIFFLIB	= ${DEPTH}/libtiff/libtiff.so.3
 LIBJPEG	= 
 LIBGZ	= 
-LIBTIFF	= ${DEPTH}/libtiff/libtiff.a
+LIBTIFF	= ${DEPTH}/libtiff/libtiff.so.3
 LIBPORT	= 
 MACHLIBS= -lm
 LIBS	= ${LIBTIFF} ${LIBJPEG} ${LIBGZ} ${LIBPORT} ${MACHLIBS}
@@ -108,8 +108,8 @@ all:	${TARGETS}
 	    true; \
 	fi
 install: all
-	${INSTALL} -idb nostrip tiff.sw.tools -m 755 -dir /usr/local/bin
-	${INSTALL} -idb nostrip tiff.sw.tools -m 755 -F /usr/local/bin -O ${TARGETS}
+	${INSTALL} -idb nostrip -idb tiff.sw.tools -m 755 -dir /usr/local/bin
+	${INSTALL} -idb nostrip -idb tiff.sw.tools -m 755 -F /usr/local/bin -O ${TARGETS}
 	@if [ "no" = yes ]; then \
 	    ${INSTALL} -idb tiff.sw.tools -m 755 -F /usr/local/bin -O sgi2tiff; \
 	else \

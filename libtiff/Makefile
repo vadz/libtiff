@@ -28,9 +28,9 @@
 SRCDIR	= ../libtiff
 
 #
-# VERSION:	v3.5.5
-# DATE:		Tue Mar 28 23:36:39 EST 2000
-# TARGET:	i586-unknown-linux
+# VERSION:	v3.5.6
+# DATE:		Fri Dec 22 17:22:51 EST 2000
+# TARGET:	i686-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
 SHELL	= /bin/sh
@@ -63,7 +63,7 @@ IPATH	= -I. -I${SRCDIR}
 CONF_LIBRARY= 
 COPTS	= -g
 OPTIMIZER=-O
-CFLAGS	=   ${COPTS} ${OPTIMIZER} ${IPATH} ${CONF_LIBRARY}
+CFLAGS	=  -fPIC ${COPTS} ${OPTIMIZER} ${IPATH} ${CONF_LIBRARY}
 #
 SRCS	= \
 	tif_aux.c \
@@ -138,8 +138,8 @@ OBJS	= \
 TARGETS	= libtiff.a
 
 all:	${TARGETS}
-	if [ nodso != nodso ]; then \
-	    ${MAKE} nodso; \
+	if [ GNULDdso != nodso ]; then \
+	    ${MAKE} GNULDdso; \
 	else \
 	    true; \
 	fi
@@ -162,10 +162,10 @@ libtiff.a: ${OBJS}
 # default IRIX DSO building rule
 IRIXdso: ${OBJS}
 	@if [ "`basename ${CC}`" = "gcc" ]; then \
-	   ${LD} -n32  -o libtiff.a -shared -rdata_shared \
+	   ${LD} -n32  -o libtiff.so.3 -shared -rdata_shared \
 	   ${OBJS}; \
 	else \
-	    ${CC}  -o libtiff.a -shared -rdata_shared \
+	    ${CC}  -o libtiff.so.3 -shared -rdata_shared \
 	        -check_registry ${SRCDIR}/../port/irix/so_locations \
 	        -quickstart_info \
 	        ${OBJS}  ; \
@@ -173,16 +173,16 @@ IRIXdso: ${OBJS}
 	touch $@
 # special rule for IRIX 5.2
 IRIX52dso: ${OBJS}
-	${LD} -elf -o libtiff.a -shared -no_unresolved -all ${OBJS} \
+	${LD} -elf -o libtiff.so.3 -shared -no_unresolved -all ${OBJS} \
 	      -lc -lm
 	touch $@
 # Solaris 2.x
 SOLARISdso: ${OBJS}
-	${LD} -L/usr/local/lib -G -h libtiff.a -o libtiff.a ${OBJS}
+	${LD} -L/usr/local/lib -G -h libtiff.so.3 -o libtiff.so.3 ${OBJS}
 	touch $@
 # HP-UX A.09.03
 HPUXdso: ${OBJS}
-	${LD} +b/usr/local/lib -b -o libtiff.a ${OBJS}
+	${LD} +b/usr/local/lib -b -o libtiff.so.3 ${OBJS}
 	touch $@
 # AIX 2.3.5 and 4.1.1
 AIXdso: ${OBJS}
@@ -193,40 +193,51 @@ AIXdso: ${OBJS}
 	      >> libtiff.syms
 	${LD} -o shr.o libtiff.a -H512 -T512 -bM\:SRE \
 	    -bE\:libtiff.syms   -lc -lm -L/usr/local/lib
-	rm -f libtiff.syms libtiff.a
-	${AR} ${AROPTS} libtiff.a shr.o
+	rm -f libtiff.syms libtiff.so.3
+	${AR} ${AROPTS} libtiff.so.3 shr.o
 	rm -f shr.o
 	touch $@
-# NetBSD 1.1 or FreeBSD
+# GNU linker shared libraries
+GNULDdso: ${OBJS}
+	${CC} -shared -Wl,-soname,libtiff.so.3 \
+	    -o libtiff.so.3.5.6  ${OBJS} \
+		  -lm
+	rm -f libtiff.so.3
+	if [ @DSOSUB_VERSION != @DSOSUF ] ; then \
+	  /bin/ln -s libtiff.so.3.5.6 libtiff.so.3; \
+	fi
+	touch $@
+# NetBSD 1.1 or FreeBSD (old style)
 NETBSDdso FREEBSDdso: ${OBJS}
 	@rm -f libtiff_pic.a
 	@${AR} cq libtiff_pic.a `lorder ${OBJS} | tsort -q`
 	${RANLIB} libtiff_pic.a
-	${LD} -x -Bshareable -Bforcearchive -o libtiff.a libtiff_pic.a
+	${LD} -x -Bshareable -Bforcearchive -o libtiff.so.3 libtiff_pic.a
 	rm -f libtiff_pic.a
 	touch $@
 # linux ELF shared lib rule
 LINUXdso:  ${OBJS}
-	${CC} -shared -Wl,-soname,libtiff.a \
-	    -o libtiff.a  ${OBJS}   
-	rm -f libtiff.a
-	/bin/ln -s libtiff.a libtiff.a
+	${CC} -shared -Wl,-soname,libtiff.so.3 \
+	    -o libtiff.so.3.5.6  ${OBJS} \
+		  @MACHLIBDEPS@
+	rm -f libtiff.so.3
+	/bin/ln -s libtiff.so.3.5.6 libtiff.so.3
 	touch $@
 # OSF/1 3.2 shared lib rule
 OSFdso: ${OBJS}
-	${LD} -o libtiff.a -shared -error_unresolved ${OBJS}   -lc -lm
+	${LD} -o libtiff.so.3 -shared -error_unresolved ${OBJS}   -lc -lm
 
 
 ${OBJS}: ${SRCDIR}/tiffio.h ${SRCDIR}/tiff.h ${SRCDIR}/tif_dir.h
 ${OBJS}: ${SRCDIR}/tiffcomp.h ${SRCDIR}/tiffiop.h ${SRCDIR}/tiffconf.h
+${OBJS}: ${SRCDIR}/tiffvers.h
 
-ALPHA	= .././dist/tiff.alpha
 VERSION	= .././VERSION
 
-version.h: ${VERSION} ${ALPHA} ${SRCDIR}/mkversion.c
+${SRCDIR}/tiffvers.h: ${VERSION} ${SRCDIR}/mkversion.c
 	${CC} -o mkversion ${CFLAGS} ${SRCDIR}/mkversion.c
-	rm -f version.h; ./mkversion -v ${VERSION} -a ${ALPHA} version.h
-tif_version.o: version.h
+	rm -f ${SRCDIR}/tiffvers.h
+	./mkversion -v ${VERSION} ${SRCDIR}/tiffvers.h
 
 #
 # The finite state machine tables used by the G3/G4 decoders
@@ -313,7 +324,10 @@ tif_vms.o: ${SRCDIR}/tif_vms.c
 tif_win3.o: ${SRCDIR}/tif_win3.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_win3.c
 
-INCS	= ${SRCDIR}/tiff.h ${SRCDIR}/tiffio.h ${SRCDIR}/tiffconf.h
+INCS	= ${SRCDIR}/tiff.h ${SRCDIR}/tiffio.h ${SRCDIR}/tiffconf.h \
+	${SRCDIR}/tiffvers.h
+
+INCS_PRIVATE = ${SRCDIR}/tiffiop.h ${SRCDIR}/tif_dir.h ${SRCDIR}/port.h
 
 installHdrs: ${INCS}
 	${INSTALL} -idb tiff.sw.dev -m 755 -dir /usr/local/include
@@ -322,27 +336,41 @@ installHdrs: ${INCS}
 	    ${INSTALL} -idb tiff.sw.dev -m 444 -F /usr/local/include		\
 		-src $$i -O $$f;					\
 	done
-installDSO: nodso
-	if [ a != a ]; then			\
+
+installPrivateHdrs: ${INCS_PRIVATE}
+	${INSTALL} -idb tiff.sw.dev -m 755 -dir /usr/local/include
+	for i in ${INCS_PRIVATE}; do					\
+	    f=`basename $$i`;						\
+	    ${INSTALL} -idb tiff.sw.dev -m 444 -F /usr/local/include		\
+		-src $$i -O $$f;					\
+	done
+
+installDSO: GNULDdso
+	if [ so.3.5.6 != so.3 ]; then			\
 	    ${INSTALL} -idb tiff.sw.tools -m 555 -F /usr/local/lib		\
-		-O libtiff.a;				\
+		-O libtiff.so.3.5.6;				\
 	    ${INSTALL} -idb tiff.sw.tools -F /usr/local/lib			\
-		-ln libtiff.a -O libtiff.a;	\
+		-lns libtiff.so.3.5.6 -O libtiff.so.3;	\
+	    ${INSTALL} -idb tiff.sw.tools -F /usr/local/lib			\
+		-lns libtiff.so.3 -O libtiff.so;			\
 	else								\
 	    ${INSTALL} -idb tiff.sw.tools -m 555 -F /usr/local/lib		\
-		-O libtiff.a;					\
+		-O libtiff.so.3;					\
 	fi
+
 install: all installHdrs
 	${INSTALL} -idb tiff.sw.dev -m 755 -dir /usr/local/lib
 	${INSTALL} -idb tiff.sw.dev -m 444 -F /usr/local/lib -O libtiff.a
-	if [ nodso != nodso ]; then					\
+	if [ GNULDdso != nodso ]; then					\
 	    ${MAKE} installDSO;						\
 	else								\
 	    true;							\
 	fi
 
+install-private: install installPrivateHdrs
+
 clean:
 	rm -f ${TARGETS} ${OBJS} core a.out \
 	    mkg3states tif_fax3sm.c \
-	    mkversion version.h \
-	    libtiff.a libtiff.a libtiff.a *dso
+	    mkversion ${SRCDIR}/tiffvers.h \
+	    libtiff.a libtiff.so.3 libtiff.so.3.5.6 *dso
