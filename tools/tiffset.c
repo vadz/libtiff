@@ -29,7 +29,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.3  2002-01-16 17:50:05  warmerda
+ * Revision 1.4  2004-05-03 16:39:11  warmerda
+ * Increase -sf buffer size.
+ *
+ * Revision 1.3  2002/01/16 17:50:05  warmerda
  * Fix bug in error output.
  *
  * Revision 1.2  2001/09/26 17:42:18  warmerda
@@ -128,8 +131,8 @@ main(int argc, char* argv[])
                 continue;
             }
 
-            text = (char *) malloc(66000);
-            len = fread( text, 1, 65535, fp );
+            text = (char *) malloc(1000000);
+            len = fread( text, 1, 999999, fp );
             text[len] = '\0';
 
             fclose( fp );
