@@ -39,18 +39,19 @@ static	int jpegcolormode = JPEGCOLORMODE_RGB;
 static	int quality = 75;		/* JPEG quality */
 static	uint16 predictor = 0;
 
+static void swapBytesInScanline(unsigned char *, uint32, TIFFDataType);
 static void usage(void);
 static	int processCompressOptions(char*);
 
 int
 main(int argc, char* argv[])
 {
-	unsigned char* buf;
-	tsize_t	width = 0, length = 0, hdr_size = 0, linebytes;
-	int	nbands = 1;	/* number of bands in input image*/
+	tsize_t	width = 0, length = 0, hdr_size = 0, linebytes, bufsize;
+	int	nbands = 1;		/* number of bands in input image*/
 	TIFFDataType dtype = TIFF_BYTE;
-	int	depth = 1;	/* bytes per pixel in input image */
-	int	swab = 0;
+	int	depth = 1;		/* bytes per pixel in input image */
+	int	swab = 0;		/* byte swapping flag */
+	int	interleaving = 0;	/* interleaving type flag */
 	uint32 rowsperstrip = (uint32) -1;
 	uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	uint16	config = PLANARCONFIG_CONTIG;
@@ -60,13 +61,14 @@ main(int argc, char* argv[])
 	char	*outfilename = NULL;
 	TIFF	*out;
 	
-	uint32 row;
+	uint32 row, col, band;
 	int	c;
+	unsigned char *buf, *buf1;
 	extern int optind;
 	extern char* optarg;
 	
 
-	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMso:h")) != -1)
+	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMsi:o:h")) != -1)
 		switch (c) {
 		case 'c':		/* compression scheme */
 			if (!processCompressOptions(optarg))
@@ -116,12 +118,21 @@ main(int argc, char* argv[])
 		case 's':		/* do we need to swap bytes? */
 			swab = 1;
 			break;
+		case 'i':		/* type of interleaving */
+			if (strncmp(optarg, "pixel", 4) == 0)
+				interleaving = 0;
+			else if  (strncmp(optarg, "band", 6) == 0)
+				interleaving = 1;
+			else
+				interleaving = 0;
+			break;
 		case 'o':
 			outfilename = optarg;
 			break;
 		case 'h':
 			usage();
-			/*NOTREACHED*/
+		default:
+			break;
 		}
 	if (argc - optind < 2)
 		usage();
@@ -133,13 +144,15 @@ main(int argc, char* argv[])
 	}
 	stat(argv[optind], &instat);
 	if (width == 0 ) {
-		fprintf(stderr, "%s: You should specify at least width of input image.\n",
-			argv[0], argv[optind]);
+		fprintf(stderr,
+		"%s: %s: You should specify at least width of input image (use -w switch).\n",
+		argv[0], argv[optind]);
 		return (-1);
 	}
 	if (length == 0)
 		length = (instat.st_size - hdr_size) / (width * nbands * depth);
-	fprintf(stderr, "%s: Height is not specified, guessed as %d\n", argv[0], length);
+	fprintf(stderr, "%s: %s: Height is not specified, guessed as %d\n",
+		argv[0], argv[optind], length);
 	if (instat.st_size < hdr_size + width * length * nbands * depth) {
 		fprintf(stderr, "%s: %s: Input file too small.\n",
 			argv[0], argv[optind]);
@@ -150,7 +163,7 @@ main(int argc, char* argv[])
 		outfilename = argv[optind+1];
 	out = TIFFOpen(outfilename, "w");
 	if (out == NULL) {
-		fprintf(stderr, "%s: %s: Cannot open output file.\n",
+		fprintf(stderr, "%s: %s: Cannot open file for output.\n",
 			argv[0], outfilename);
 		return (-1);
 	}
@@ -161,8 +174,7 @@ main(int argc, char* argv[])
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, depth * 8);
 	TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, config);
-	switch (dtype)
-	{
+	switch (dtype) {
 	case TIFF_BYTE:
 	case TIFF_SHORT:
 	case TIFF_LONG:
@@ -198,41 +210,82 @@ main(int argc, char* argv[])
 		break;
 	}
 	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
-	linebytes = width * nbands * depth;
-	buf = (unsigned char *)_TIFFmalloc(linebytes);
+	switch(interleaving) {
+	case 1:				/* band interleaved data */
+		linebytes = width * depth;
+		buf = (unsigned char *)_TIFFmalloc(linebytes);
+		break;
+	case 0:				/* pixel interleaved data */
+	default:
+		linebytes = width * nbands * depth;
+		break;
+	}
+	bufsize = width * nbands * depth;
+	buf1 = (unsigned char *)_TIFFmalloc(bufsize);
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
 	    TIFFDefaultStripSize(out, rowsperstrip));
-	fseek(in, hdr_size, SEEK_SET);		/* Skip file header */
+	fseek(in, hdr_size, SEEK_SET);		/* Skip the file header */
 	for (row = 0; row < length; row++) {
-		if (fread(buf, linebytes, 1, in) != 1) {
-			fprintf(stderr, "%s: %s: scanline %lu: Read error.\n",
-				argv[0], argv[optind], (unsigned long) row);
+		switch(interleaving) {
+		case 1:				/* band interleaved data */
+			for (band = 0; band < nbands; band++) {
+				fseek(in,
+					hdr_size + (length * band + row) * linebytes,
+					SEEK_SET);
+				if (fread(buf, linebytes, 1, in) != 1) {
+					fprintf(stderr,
+					"%s: %s: scanline %lu: Read error.\n",
+					argv[0], argv[optind], (unsigned long) row);
+				break;
+				}
+				if (swab)	/* Swap bytes if needed */
+					swapBytesInScanline(buf, width, dtype);
+				for (col = 0; col < width; col++)
+					memcpy(buf1 + (col * nbands + band) * depth,
+						buf + col * depth, depth);
+			}
 			break;
-		}
-		if (swab)	/* Swapping bytes if needed */
-			switch(dtype)
-			{
-			case TIFF_SHORT:
-			case TIFF_SSHORT:
-				TIFFSwabArrayOfShort((uint16*)buf, width);
-				break;
-			case TIFF_LONG:
-			case TIFF_SLONG:
-				TIFFSwabArrayOfLong((uint32*)buf, width);
-				break;
-			/* case TIFF_FLOAT: */	/* FIXME */
-			case TIFF_DOUBLE:
-				TIFFSwabArrayOfDouble((double*)buf, width);
-				break;
-			default:
+		case 0:				/* pixel interleaved data */
+		default:
+			if (fread(buf1, bufsize, 1, in) != 1) {
+				fprintf(stderr, "%s: %s: scanline %lu: Read error.\n",
+					argv[0], argv[optind], (unsigned long) row);
 				break;
 			}
-				
-		if (TIFFWriteScanline(out, buf, row, 0) < 0)
+			if (swab)		/* Swap bytes if needed */
+				swapBytesInScanline(buf1, width, dtype);
 			break;
+		}
+				
+		if (TIFFWriteScanline(out, buf1, row, 0) < 0) {
+			fprintf(stderr,	"%s: %s: scanline %lu: Write error.\n",
+					argv[0], outfilename, (unsigned long) row);
+			break;
+		}
 	}
 	(void) TIFFClose(out);
 	return (0);
+}
+
+static void
+swapBytesInScanline(unsigned char *buf, uint32 width, TIFFDataType dtype)
+{
+	switch(dtype) {
+	case TIFF_SHORT:
+	case TIFF_SSHORT:
+		TIFFSwabArrayOfShort((uint16*)buf, width);
+		break;
+	case TIFF_LONG:
+	case TIFF_SLONG:
+		TIFFSwabArrayOfLong((uint32*)buf, width);
+		break;
+	/* case TIFF_FLOAT: */	/* FIXME */
+	case TIFF_DOUBLE:
+		TIFFSwabArrayOfDouble((double*)buf, width);
+		break;
+	default:
+		break;
+	}
 }
 
 static int
@@ -271,10 +324,10 @@ char* stuff[] = {
 " -L		input data has LSB2MSB bit order (default)",
 " -M		input data has MSB2LSB bit order",
 " -r #		make each strip have no more than # rows",
-" -H #		size of input image file header in bytes",
+" -H #		size of input image file header in bytes (0 by default)",
 " -w #		width of input image in pixels (obligatory)",
 " -l #		length of input image in lines",
-" -b #		number of bands in input image",
+" -b #		number of bands in input image (1 by default)",
 "",
 " -d data_type	type of samples in input image",
 "where data_type may be:",
@@ -288,6 +341,11 @@ char* stuff[] = {
 " double		64-bit IEEE floating point",
 "",
 " -s		swap bytes fetched from input file",
+"",
+" -i config	type of samples interleaving in input image",
+"where config may be:",
+" pixel		pixel interleaved data (default)",
+" band		band interleaved data",
 "",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
 "               (no longer supported by default due to Unisys patent enforcement)", 
