@@ -12,9 +12,6 @@
 /* Define to 1 if you have the `getopt' function. */
 #undef HAVE_GETOPT
 
-/* Define to 1 if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
-
 /* Define as 0 or 1 according to the floating point format suported by the
    machine */
 #undef HAVE_IEEEFP
