@@ -179,7 +179,7 @@ typedef	enum {
 #define	    COMPRESSION_CCITTRLEW	32771	/* #1 w/ word alignment */
 #define	    COMPRESSION_PACKBITS	32773	/* Macintosh RLE */
 #define	    COMPRESSION_THUNDERSCAN	32809	/* ThunderScan RLE */
-/* codes 32895-32898 are reserved for ANSI IT8 TIFF/IT <dkelly@etsinc.com) */
+/* codes 32895-32898 are reserved for ANSI IT8 TIFF/IT <dkelly@apago.com) */
 #define	    COMPRESSION_IT8CTPAD	32895   /* IT8 CT w/padding */
 #define	    COMPRESSION_IT8LW		32896   /* IT8 Linework RLE */
 #define	    COMPRESSION_IT8MP		32897   /* IT8 Monochrome picture */
@@ -203,6 +203,7 @@ typedef	enum {
 #define	    PHOTOMETRIC_SEPARATED	5	/* !color separations */
 #define	    PHOTOMETRIC_YCBCR		6	/* !CCIR 601 */
 #define	    PHOTOMETRIC_CIELAB		8	/* !1976 CIE L*a*b* */
+#define	    PHOTOMETRIC_ICCLAB		9	/* ICC L*a*b* */
 #define	    PHOTOMETRIC_ITULAB		10	/* ITU L*a*b* */
 #define     PHOTOMETRIC_LOGL		32844	/* CIE Log2(L) */
 #define     PHOTOMETRIC_LOGLUV		32845	/* CIE Log2(L) (u',v') */
@@ -332,6 +333,7 @@ typedef	enum {
 #define	    YCBCRPOSITION_CENTERED	1	/* !as in PostScript Level 2 */
 #define	    YCBCRPOSITION_COSITED	2	/* !as in CCIR 601-1 */
 #define	TIFFTAG_REFERENCEBLACKWHITE	532	/* !colorimetry info */
+#define	TIFFTAG_XMLPACKET		700	/* XML packet [Adobe XMP technote 9-14-02] (dkelly@apago.com) */
 /* tags 32952-32956 are private tags registered to Island Graphics */
 #define TIFFTAG_REFPTS			32953	/* image reference points */
 #define TIFFTAG_REGIONTACKPOINT		32954	/* region-xform tack point */
@@ -366,7 +368,7 @@ typedef	enum {
 #define	TIFFTAG_COPYRIGHT		33432	/* copyright string */
 /* IPTC TAG from RichTIFF specifications */
 #define TIFFTAG_RICHTIFFIPTC    33723
-/* 34016-34029 are reserved for ANSI IT8 TIFF/IT <dkelly@etsinc.com) */
+/* 34016-34029 are reserved for ANSI IT8 TIFF/IT <dkelly@apago.com) */
 #define TIFFTAG_IT8SITE			34016	/* site name */
 #define TIFFTAG_IT8COLORSEQUENCE	34017	/* color seq. [RGB,CMYK,etc] */
 #define TIFFTAG_IT8HEADER		34018	/* DDES Header */
@@ -381,6 +383,9 @@ typedef	enum {
 #define TIFFTAG_IT8PIXELINTENSITYRANGE	34027	/* MP pixel intensity value */
 #define TIFFTAG_IT8TRANSPARENCYINDICATOR 34028	/* HC transparency switch */
 #define TIFFTAG_IT8COLORCHARACTERIZATION 34029	/* color character. table */
+#define TIFFTAG_IT8HCUSAGE			34030	/* HC usage indicator */
+#define TIFFTAG_IT8TRAPINDICATOR	34031	/* Trapping indicator (untrapped=0, trapped=1) */
+#define TIFFTAG_IT8CMYKEQUIVALENT	34032	/* CMYK color equivalents */
 /* tags 34232-34236 are private tags registered to Texas Instruments */
 #define TIFFTAG_FRAMECOUNT              34232   /* Sequence Frame Count */
 /* tag 34750 is a private tag registered to Adobe? */
