@@ -25,11 +25,11 @@
 # You may edit this file to specify building options.
 
 # 
-# Select _CONSOLE to build a library which reports errors to stderr, or
-# _WINDOWED to build such that errors are reported via MessageBox().
+# Select WINMODE_CONSOLE to build a library which reports errors to stderr, or
+# WINMODE_WINDOWED to build such that errors are reported via MessageBox().
 #
-WINMODE = -DTIF_PLATFORM_CONSOLE
-#WINMODE = -DTIF_PLATFORM_WINDOWED
+WINMODE_CONSOLE = 1
+#WINMODE_WINDOWED = 1
 
 # Uncomment following line to enable using Windows Common RunTime Library
 # instead of system calls. See notes on top of tif_unix.c module for details.
@@ -119,8 +119,8 @@ CXX	=	cl /nologo
 AR	=	lib /nologo
 LD	=	link /nologo
 
-CFLAGS  =	$(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
-CXXFLAGS =	$(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
+CFLAGS  =	$(OPTFLAGS) $(INCL) $(EXTRAFLAGS)
+CXXFLAGS =	$(OPTFLAGS) $(INCL) $(EXTRAFLAGS)
 EXTRAFLAGS =
 LIBS	=
 
@@ -133,6 +133,13 @@ DLLNAME	= libtiff.dll
 
 # Set the native cpu bit order
 EXTRAFLAGS	= -DFILLODER_LSB2MSB $(EXTRAFLAGS)
+
+!IFDEF WINMODE_WINDOWED
+EXTRAFLAGS	= -DTIF_PLATFORM_WINDOWED $(EXTRAFLAGS)
+LIBS		= user32.lib $(LIBS)
+!ELSE
+EXTRAFLAGS	= -DTIF_PLATFORM_CONSOLE $(EXTRAFLAGS)
+!ENDIF
 
 # Codec stuff
 !IFDEF CCITT_SUPPORT
