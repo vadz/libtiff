@@ -208,6 +208,21 @@ TIFFWriteEncodedStrip(TIFF* tif, tstrip_t strip, tdata_t data, tsize_t cc)
 			return ((tsize_t) -1);
 		tif->tif_flags |= TIFF_CODERSETUP;
 	}
+        
+#ifdef REWRITE_HACK        
+	tif->tif_rawcc = 0;
+	tif->tif_rawcp = tif->tif_rawdata;
+
+        if( td->td_stripbytecount[strip] > 0 )
+        {
+            /* if we are writing over existing tiles, zero length. */
+            td->td_stripbytecount[strip] = 0;
+
+            /* this forces TIFFAppendToStrip() to do a seek */
+            tif->tif_curoff = 0;
+        }
+#endif
+        
 	tif->tif_flags &= ~TIFF_POSTENCODE;
 	sample = (tsample_t)(strip / td->td_stripsperimage);
 	if (!(*tif->tif_preencode)(tif, sample))
@@ -329,6 +344,21 @@ TIFFWriteEncodedTile(TIFF* tif, ttile_t tile, tdata_t data, tsize_t cc)
 	if (!BUFFERCHECK(tif))
 		return ((tsize_t) -1);
 	tif->tif_curtile = tile;
+
+#ifdef REWRITE_HACK        
+	tif->tif_rawcc = 0;
+	tif->tif_rawcp = tif->tif_rawdata;
+
+        if( td->td_stripbytecount[tile] > 0 )
+        {
+            /* if we are writing over existing tiles, zero length. */
+            td->td_stripbytecount[tile] = 0;
+
+            /* this forces TIFFAppendToStrip() to do a seek */
+            tif->tif_curoff = 0;
+        }
+#endif
+        
 	/* 
 	 * Compute tiles per row & per column to compute
 	 * current row and column
