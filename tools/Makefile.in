@@ -74,6 +74,7 @@ OBJS=	\
 	tiffinfo.o \
 	tiffmedian.o \
 	tiffsplit.o \
+	tiffset.o \
 	${NULL}
 TARGETS	=\
 	fax2tiff \
@@ -94,6 +95,7 @@ TARGETS	=\
 	tiffinfo \
 	tiffmedian \
 	tiffsplit \
+	tiffset \
 	${NULL}
 
 all:	${TARGETS}
@@ -162,6 +164,11 @@ tiff2ps: tiff2ps.o ${TIFFLIB}
 	${CC} -o tiff2ps ${CFLAGS} tiff2ps.o ${LIBS}
 tiff2ps.o: ${SRCDIR}/tiff2ps.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tiff2ps.c
+
+tiffset: tiffset.o ${TIFFLIB}
+	${CC} -o tiffset ${CFLAGS} tiffset.o ${LIBS}
+tiffset.o: ${SRCDIR}/tiffset.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tiffset.c
 
 #
 # Junky stuff... programs that are more examples of how
