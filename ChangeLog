@@ -1,3 +1,9 @@
+2002-09-02  Andrey Kiselev  <dron@remotesensing.org>
+
+	* /libtiff/tif_dirread.c: Fixed problem with SBYTE type data fetching
+	in TIFFFetchByteArray(). Problem described at
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=52
+
 2002-08-22  Andrey Kiselev  <dron@remotesensing.org>
 	
 	* /libtiff/tif_dirinfo.c: Further additions to free custom fields
