@@ -2,11 +2,11 @@
 #ifdef OJPEG_SUPPORT
 
 /* JPEG Compression support, as per the original TIFF 6.0 specification.
-  
+
    WARNING: KLUDGE ALERT!  The type of JPEG encapsulation defined by the TIFF
                            Version 6.0 specification is now totally obsolete and
    deprecated for new applications and images.  This file is an unsupported hack
-   that was created solely in order to read (but NOT write!) a few old, 
+   that was created solely in order to read (but NOT write!) a few old,
    unconverted images still present on some users' computer systems.  The code
    isn't pretty or robust, and it won't read every "old format" JPEG-in-TIFF
    file (see Samuel Leffler's draft "TIFF Technical Note No. 2" for a long and
@@ -15,11 +15,11 @@
    file should NEVER be enhanced to write new images using anything other than
    the latest approved JPEG-in-TIFF encapsulation method, implemented by the
    "tif_jpeg.c" file elsewhere in this library.
-  
+
    This file interfaces with Release 5 (or later) of the "libjpeg" library,
    written by the Independent JPEG Group, which you can find on the Internet at:
    ftp.uu.net:/graphics/jpeg/.
-  
+
    Contributed by Scott Marovich <marovich@hpl.hp.com>.
 */
 #include <setjmp.h>
@@ -27,8 +27,8 @@
 #ifdef FAR
 #undef FAR /* Undefine FAR to avoid conflict with JPEG definition */
 #endif
-#undef INLINE
 #define JPEG_INTERNALS /* Include "jpegint.h" for "DSTATE_*" symbols */
+#undef INLINE
 #include "jpeglib.h"
 #undef JPEG_INTERNALS
 
@@ -57,6 +57,7 @@ extern void jpeg_reset_huff_decode(j_decompress_ptr,float *);
 #define FIELD_JPEGDCTABLES (FIELD_CODEC+8)
 #define FIELD_JPEGACTABLES (FIELD_CODEC+9)
 #define FIELD_WANG_PAGECONTROL (FIELD_CODEC+10)
+#define FIELD_JPEGCOLORMODE (FIELD_CODEC+11)
 
 typedef struct jpeg_destination_mgr jpeg_destination_mgr;
 typedef struct jpeg_source_mgr jpeg_source_mgr;
@@ -84,7 +85,7 @@ typedef struct             /* This module's private, per-image state variable */
 #   ifdef never
 
  /* (The following two fields could be a "union", but they're small enough that
-     it's not worth the effort.
+    it's not worth the effort.)
  */
     jpeg_destination_mgr dest;             /* Destination for compressed data */
 #   endif
@@ -106,7 +107,10 @@ typedef struct             /* This module's private, per-image state variable */
            v_sampling,
            photometric;      /* Copy of "PhotometricInterpretation" tag value */
     u_char is_WANG,    /* <=> Microsoft Wang Imaging for Windows output file? */
-           jpegcolormode;          /* <=> Automatic RGB <-> YCbCr conversion? */
+
+           jpegcolormode;           /* Who performs RGB <-> YCbCr conversion? */
+        /* JPEGCOLORMODE_RAW <=> TIFF Library does conversion */
+        /* JPEGCOLORMODE_RGB <=> JPEG Library does conversion */
   } OJPEGState;
 #define OJState(tif)((OJPEGState*)(tif)->tif_data)
 
@@ -171,6 +175,17 @@ static const TIFFFieldInfo ojpegFieldInfo[]= /* JPEG-specific TIFF-record tags *
       TIFFTAG_WANG_PAGECONTROL      ,1            ,1            ,
       TIFF_LONG     ,FIELD_WANG_PAGECONTROL      ,FALSE,FALSE,"WANG PageControl"
     },
+
+ /* This is a pseudo tag intended for internal use only by the TIFF Library and
+    its clients, which should never appear in an input/output image file.  It
+    specifies whether the TIFF Library will perform YCbCr<->RGB color-space
+    conversion (JPEGCOLORMODE_RAW <=> 0) or ask the JPEG Library to do it
+    (JPEGCOLORMODE_RGB <=> 1).
+ */
+    {
+      TIFFTAG_JPEGCOLORMODE         ,0            ,0            ,
+      TIFF_ANY      ,FIELD_PSEUDO                ,FALSE,FALSE,"JPEGColorMode"
+    }
   };
 static const char JPEGLib_name[]={"JPEG Library"},
                   bad_bps[]={"%u BitsPerSample not allowed for JPEG"},
@@ -570,7 +585,7 @@ OJPEGSetupEncode(register TIFF *tif)
   { static const char module[]={"OJPEGSetupEncode"};
     register OJPEGState *sp = OJState(tif);
 #   define td (&tif->tif_dir)
-    
+
  /* Verify miscellaneous parameters.  This will need work if the TIFF Library
     ever supports different depths for different components, or if the JPEG
     Library ever supports run-time depth selection.  Neither seems imminent.
@@ -580,7 +595,7 @@ OJPEGSetupEncode(register TIFF *tif)
         TIFFError(module,bad_bps,td->td_bitspersample);
         return 0;
       };
-  
+
  /* Initialize all JPEG parameters to default values.  Note that the JPEG
     Library's "jpeg_set_defaults()" method needs legal values for the
     "in_color_space" and "input_components" fields.
@@ -872,7 +887,7 @@ OJPEGPostEncode(register TIFF *tif)
         if (sp->scancount < DCTSIZE && sp->cinfo.c.num_components > 0)
           { int ci = 0, n;                         /* Pad the data vertically */
             register jpeg_component_info *compptr = sp->cinfo.c.comp_info;
-    
+
             do
                { tsize_t row_width =
                    compptr->width_in_blocks*DCTSIZE*sizeof(JSAMPLE);
@@ -900,7 +915,7 @@ OJPEGSetupDecode(register TIFF *tif)
   { static const char module[]={"OJPEGSetupDecode"};
     register OJPEGState *sp = OJState(tif);
 #   define td (&tif->tif_dir)
-    
+
  /* Verify miscellaneous parameters.  This will need work if the TIFF Library
     ever supports different depths for different components, or if the JPEG
     Library ever supports run-time depth selection.  Neither seems imminent.
@@ -945,19 +960,50 @@ OJPEGSetupDecode(register TIFF *tif)
 OJPEGDecode(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
   { tsize_t nrows;
     register OJPEGState *sp = OJState(tif);
+#   ifndef COLORIMETRY_SUPPORT
+    static float zeroes[6];
+
+ /* BEWARE OF KLUDGE:  If our input file was produced by Microsoft's Wang
+                       Imaging for Windows application, the DC coefficients of
+    each JPEG image component (Y,Cb,Cr) must be reset at the beginning of each
+    TIFF "strip", and any JPEG data bits remaining in the decoder's input buffer
+    must be discarded, up to the next input-Byte storage boundary.  To do so, we
+    create an "ad hoc" interface in the "jdhuff.c" module of IJG JPEG Library
+    Version 6, and we invoke that interface here before decoding each "strip".
+ */
+    if (sp->is_WANG) jpeg_reset_huff_decode(&sp->cinfo.d,zeroes);
+#   else /* COLORIMETRY_SUPPORT */
+    if (sp->is_WANG)
+      jpeg_reset_huff_decode(&sp->cinfo.d,tif->tif_dir.td_refblackwhite);
+#   endif
 
  /* Decode a chunk of pixels, where returned data is NOT down-sampled (the
     standard case).  The data is expected to be read in scan-line multiples.
  */
     if (nrows = sp->cinfo.d.image_height)
-      do
-        { JSAMPROW bufptr = (JSAMPROW)buf;
+      { unsigned int bytesperline = isTiled(tif)
+                                  ? TIFFTileRowSize(tif)
+                                  : TIFFScanlineSize(tif);
 
-          if (TIFFojpeg_read_scanlines(sp,&bufptr,1) != 1) return 0;
-          ++tif->tif_row;
-          buf += sp->bytesperline;
-        }
-      while ((cc -= sp->bytesperline) > 0 && --nrows > 0);
+     /* WARNING:  Unlike "OJPEGDecodeRaw()", below, the no. of Bytes in each
+                  decoded row is calculated here as "bytesperline" instead of
+        using "sp->bytesperline", which might be a little smaller.  This can
+        occur for an old tiled image whose width isn't a multiple of 8 pixels.
+        That's illegal according to the TIFF Version 6 specification, but some
+        test files, like "zackthecat.tif", were built that way.  In those cases,
+        we want to embed the image's true width in our caller's buffer (which is
+        presumably allocated according to the expected tile width) by
+        effectively "padding" it with unused Bytes at the end of each row.
+     */
+        do
+          { JSAMPROW bufptr = (JSAMPROW)buf;
+
+            if (TIFFojpeg_read_scanlines(sp,&bufptr,1) != 1) return 0;
+            buf += bytesperline;
+            ++tif->tif_row;
+          }
+        while ((cc -= bytesperline) > 0 && --nrows > 0);
+      }
     return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
         || TIFFojpeg_finish_decompress(sp);
   }
@@ -1033,7 +1079,7 @@ OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
 
                         do
                           { register int xpos = 0;
-  
+
                             do outptr[xpos] = *inptr++;
                             while (++xpos < compptr->h_samp_factor);
                           }
@@ -1048,8 +1094,8 @@ OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
               while (++compptr,++ci < sp->cinfo.d.num_components);
             };
           ++sp->scancount;
-          ++tif->tif_row;
           buf += sp->bytesperline;
+          ++tif->tif_row;
         }
       while ((cc -= sp->bytesperline) > 0 && --nrows > 0);
     return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
@@ -1118,7 +1164,7 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
             case PHOTOMETRIC_SEPARATED : in_color_space = JCS_CMYK;
                                          break;
             case PHOTOMETRIC_YCBCR     : in_color_space = JCS_YCbCr;
-                                      /* Convert YCbCr to RGB? */
+                                      /* JPEG Library converts YCbCr to RGB? */
                                          if (   sp->jpegcolormode
                                              == JPEGCOLORMODE_RGB
                                             ) downsampled_output = FALSE;
@@ -1309,6 +1355,7 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
             p = (unsigned char *)sp->jpegtables + sp->jpegtables_length;
             p[-2] = 0xFF; p[-1] = JPEG_EOI; /* Append EOI marker */
             TIFFSetFieldBit(tif,FIELD_JPEGTABLES);
+            tif->tif_flags |= TIFF_DIRTYDIRECT;
           }
         else sp->jpegtables = 0; /* Don't simulate "JPEGTables" */
         if (TIFFojpeg_read_header(sp,TRUE) != JPEG_HEADER_OK) return 0;
@@ -1335,9 +1382,9 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
           };
         if (td->td_planarconfig == PLANARCONFIG_CONTIG)
           { int ci;
-    
+
          /* Component 0 should have expected sampling factors. */
-    
+
             if (   sp->cinfo.d.comp_info[0].h_samp_factor != sp->h_sampling
                 || sp->cinfo.d.comp_info[0].v_samp_factor != sp->v_sampling
                )
@@ -1403,7 +1450,7 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
             , sp->cinfo.d.num_components * sizeof *sp->cinfo.d.comp_info
             );
         i = 0;
-        do 
+        do
           {
             sp->cinfo.d.comp_info[i].component_index = i;
             sp->cinfo.d.comp_info[i].component_needed = TRUE;
@@ -1480,12 +1527,40 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
             sp->src.bytes_in_buffer = td->td_stripoffset[i] -
               td->td_stripoffset[0] + td->td_stripbytecount[i];
 
-         /* Force the TIFF Library to create a default array of reference black
-            and white levels in case our input file doesn't define them, since
-            we need these for our "jpeg_reset_huff_decode()" hook into the JPEG
-            Library.
+         /* We need reference black levels for our "jpeg_reset_huff_decode()"
+            hook into the JPEG Library, so create a default array of reference
+            black and white levels in case our input file doesn't define them.
+
+            BOGOSITY ALERT!  Microsoft's Wang Imaging application seems to alter
+                             the intensity and hue of JPEG images when it
+            encapsulates them in TIFF files, and the exact reason/algorithm is
+            currently unknown to this author (is it a bug?), but we try to
+            correct them by debiassing, using the DC coefficient of each image
+            component (the 0th element of each JPEG quantization table)
+            weighted by the corresponding CCIR 601-1 luminance coefficient
+            (this is strictly a wild-ass guess at what Microsoft might have
+            screwed up).  Experiments with a few test images indicate that this
+            does not produce an exact correction, but it is reasonably close.
+            Can someone else figure out a better algorithm?
          */
-            (void)TIFFGetFieldDefaulted(tif,TIFFTAG_REFERENCEBLACKWHITE,&refbw);
+            if (!TIFFGetFieldDefaulted(tif,TIFFTAG_REFERENCEBLACKWHITE,&refbw))
+              {
+                TIFFError(tif->tif_name,"Can't extract reference black and white levels");
+                return 0;
+              };
+            if (refbw[0] == 0.0 && refbw[2] == 0.0 && refbw[4] == 0.0)
+              { /* default reference black levels */
+                refbw[2] =
+                  sp->cinfo.d.quant_tbl_ptrs[sp->cinfo.d.comp_info[1].quant_tbl_no]
+                    ->quantval[0] * 1.402;
+                refbw[4] =
+                  sp->cinfo.d.quant_tbl_ptrs[sp->cinfo.d.comp_info[2].quant_tbl_no]
+                    ->quantval[0] * 1.772;
+                refbw[0] =
+                  refbw[2] + refbw[4] -
+                  sp->cinfo.d.quant_tbl_ptrs[sp->cinfo.d.comp_info[0].quant_tbl_no]
+                    ->quantval[0];
+              };
             i = TIFFojpeg_read_header(sp,TRUE);
           };
         if (i != JPEG_HEADER_OK) return 0;
@@ -1518,6 +1593,7 @@ static int
 OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
   { uint32 v32;
     register OJPEGState *sp = OJState(tif);
+#   define td (&tif->tif_dir)
 
     switch (tag)
       {
@@ -1532,7 +1608,8 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
         case TIFFTAG_JPEGQTABLES           :
         case TIFFTAG_JPEGDCTABLES          :
         case TIFFTAG_JPEGACTABLES          :
-        case TIFFTAG_WANG_PAGECONTROL      : ;
+        case TIFFTAG_WANG_PAGECONTROL      :
+        case TIFFTAG_JPEGCOLORMODE         : ;
       };
     v32 = va_arg(ap,uint32); /* No. of values in this TIFF record */
 
@@ -1688,9 +1765,41 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
             };
           sp->is_WANG = 1;
           tag = TIFFTAG_JPEGPROC+FIELD_WANG_PAGECONTROL-FIELD_JPEGPROC;
+          break;
+
+     /* This pseudo tag indicates whether we think that our caller is supposed
+        to do YCbCr<->RGB color-space conversion (JPEGCOLORMODE_RAW <=> 0) or
+        whether we must ask the JPEG Library to do it (JPEGCOLORMODE_RGB <=> 1).
+     */
+        case TIFFTAG_JPEGCOLORMODE         :
+          sp->jpegcolormode = v32;
+
+       /* Mark the image to indicate whether returned data is up-sampled, so
+          that "TIFF{Strip,Tile}Size()" reflect the true amount of data present.
+       */
+          v32 = tif->tif_flags; /* Save flags temporarily */
+          tif->tif_flags &= ~TIFF_UPSAMPLED;
+          if (td->td_planarconfig == PLANARCONFIG_CONTIG)
+            if (   td->td_photometric == PHOTOMETRIC_YCBCR
+                && sp->jpegcolormode == JPEGCOLORMODE_RGB
+               ) tif->tif_flags |= TIFF_UPSAMPLED;
+            else
+              if (   (td->td_ycbcrsubsampling[1]<<16|td->td_ycbcrsubsampling[0])
+                  != (1 << 16 | 1)
+                 ) /* XXX what about up-sampling? */;
+
+       /* If the up-sampling state changed, re-calculate tile size. */
+
+          if ((tif->tif_flags ^ v32) & TIFF_UPSAMPLED)
+            {
+              tif->tif_tilesize = TIFFTileSize(tif);
+              tif->tif_flags |= TIFF_DIRTYDIRECT;
+            };
+          return 1;
       };
     TIFFSetFieldBit(tif,tag-TIFFTAG_JPEGPROC+FIELD_JPEGPROC);
     return 1;
+#   undef td
   }
 
 static int
@@ -1712,6 +1821,14 @@ OJPEGVGetField(register TIFF *tif,ttag_t tag,va_list ap)
               *va_arg(ap,char **) = sp->jpegtables;
               return 1;
             };
+
+     /* This pseudo tag indicates whether we think that our caller is supposed
+        to do YCbCr<->RGB color-space conversion (JPEGCOLORMODE_RAW <=> 0) or
+        whether we must ask the JPEG Library to do it (JPEGCOLORMODE_RGB <=> 1).
+     */
+        case TIFFTAG_JPEGCOLORMODE         :
+          *va_arg(ap,uint32 *) = sp->jpegcolormode;
+          return 1;
 
      /* The following tags are defined by the TIFF Version 6.0 specification
         and are obsolete.  If our caller asks for information about them, do not
