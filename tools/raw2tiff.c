@@ -565,7 +565,6 @@ static char* stuff[] = {
 " band		band interleaved data",
 "",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
-"               (no longer supported by default due to Unisys patent enforcement)", 
 " -c zip[:opts]	compress output with deflate encoding",
 " -c jpeg[:opts]compress output with JPEG encoding",
 " -c packbits	compress output with packbits encoding",

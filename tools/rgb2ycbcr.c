@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -324,7 +324,6 @@ char* stuff[] = {
     "where comp is one of the following compression algorithms:\n",
     " jpeg\t\tJPEG encoding\n",
     " lzw\t\tLempel-Ziv & Welch encoding\n",
-    " (lzw no longer supported by default due to Unisys patent enforcement)\n", 
     " zip\t\tdeflate encoding\n",
     " packbits\tPackBits encoding (default)\n",
     " none\t\tno compression\n",

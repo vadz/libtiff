@@ -455,7 +455,6 @@ static char* stuff[] = {
     " jpeg\t\tJPEG encoding\n",
     " zip\t\tLempel-Ziv & Welch encoding\n",
     " lzw\t\tLempel-Ziv & Welch encoding\n",
-    " (lzw compression unsupported by default due to Unisys patent enforcement)\n",
     " packbits\tPackBits encoding\n",
     " none\t\tno compression\n",
     "and the other options are:\n",

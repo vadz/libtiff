@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1990-1997 Sam Leffler
@@ -410,6 +410,7 @@ char* stuff[] = {
 " -l		output fill order is LSB2MSB		[default]",
 " -s		stretch image by duplicating scanlines",
 " -v		print information about conversion work",
+" -z		generate LZW compressed output",
 NULL
 };
 

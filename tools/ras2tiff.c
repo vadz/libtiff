@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -256,7 +256,6 @@ char* stuff[] = {
 " -r #		make each strip have no more than # rows",
 "",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
-"               (no longer supported by default due to Unisys patent enforcement)", 
 " -c zip[:opts]	compress output with deflate encoding",
 " -c jpeg[:opts]	compress output with JPEG encoding",
 " -c packbits	compress output with packbits encoding",
