@@ -23,12 +23,11 @@
 
 # Process this file with automake to produce Makefile.in.
 
-man_MANS = \
+dist_man1_MANS = \
 	bmp2tiff.1 \
 	fax2ps.1 \
 	fax2tiff.1 \
 	gif2tiff.1 \
-	libtiff.3tiff \
 	pal2rgb.1 \
 	ppm2tiff.1 \
 	ras2tiff.1 \
@@ -40,8 +39,6 @@ man_MANS = \
 	tiff2pdf.1 \
 	tiff2ps.1 \
 	tiff2rgba.1 \
-	TIFFbuffer.3tiff \
-	TIFFClose.3tiff \
 	tiffcmp.1 \
 	tiffcp.1 \
 	tiffdither.1 \
@@ -51,7 +48,12 @@ man_MANS = \
 	tiffmedian.1 \
 	tiffset.1 \
 	tiffsplit.1 \
-	tiffsv.1 \
+	tiffsv.1
+
+dist_man3_MANS = \
+	libtiff.3tiff \
+	TIFFbuffer.3tiff \
+	TIFFClose.3tiff \
 	TIFFcodec.3tiff \
 	TIFFcolor.3tiff \
 	TIFFDataWidth.3tiff \
@@ -87,6 +89,3 @@ man_MANS = \
 	TIFFWriteRawTile.3tiff \
 	TIFFWriteScanline.3tiff \
 	TIFFWriteTile.3tiff
-
-EXTRA_DIST = $(man_MANS)
-
