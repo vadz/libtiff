@@ -306,7 +306,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 
 		/* calculate amount of space used by indirect values */
 		for (dp = dir, n = dircount; n > 0; n--, dp++) {
-			uint32 cc = dp->tdir_count*tiffDataWidth[dp->tdir_type];
+			uint32 cc = dp->tdir_count*TIFFDataWidth(dp->tdir_type);
 			if (cc > sizeof (uint32))
 				space += cc;
 		}
@@ -367,7 +367,7 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 static tsize_t
 TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 {
-	int w = tiffDataWidth[dir->tdir_type];
+	int w = TIFFDataWidth(dir->tdir_type);
 	tsize_t cc = dir->tdir_count * w;
 
 	if (!isMapped(tif)) {
@@ -589,7 +589,7 @@ TIFFFetchRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 	uint32* l;
 
 	l = (uint32*)CheckMalloc(tif,
-	    dir->tdir_count*tiffDataWidth[dir->tdir_type],
+	    dir->tdir_count*TIFFDataWidth(dir->tdir_type),
 	    "to fetch array of rationals");
 	if (l) {
 		if (TIFFFetchData(tif, dir, (char *)l)) {

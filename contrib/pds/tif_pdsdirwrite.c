@@ -736,8 +736,8 @@ TIFFWriteAnyArray(TIFF* tif,
 	char* w = buf;
 	int i, status = 0;
 
-	if (n * tiffDataWidth[type] > sizeof buf)
-		w = (char*) _TIFFmalloc(n * tiffDataWidth[type]);
+	if (n * TIFFDataWidth(type) > sizeof buf)
+		w = (char*) _TIFFmalloc(n * TIFFDataWidth(type));
 	switch (type) {
 	case TIFF_BYTE:
 		{ unsigned char* bp = (unsigned char*) w;
@@ -872,7 +872,7 @@ TIFFWriteData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 		}
 	}
 	dir->tdir_offset = tif->tif_dataoff;
-	cc = dir->tdir_count * tiffDataWidth[dir->tdir_type];
+	cc = dir->tdir_count * TIFFDataWidth(dir->tdir_type);
 	if (SeekOK(tif, dir->tdir_offset) &&
 	    WriteOK(tif, cp, cc)) {
 		tif->tif_dataoff += (cc + 1) & ~1;
