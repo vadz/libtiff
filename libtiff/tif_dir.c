@@ -954,7 +954,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 
                 if( fip->field_passcount )
                 {
-                    *va_arg(ap, u_short *) = (u_short) tv->count;
+                    *va_arg(ap, unsigned short *) = (unsigned short) tv->count;
                     *va_arg(ap, void **) = tv->value;
                     ret_val = 1;
                     break;
@@ -1424,3 +1424,4 @@ TIFFReassignTagToIgnore (enum TIFFIgnoreSense task, int TIFFtagID)
     return (FALSE);
 }
 
+/* vim: set ts=8 sts=8 sw=8 noet: */
