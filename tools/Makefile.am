@@ -28,12 +28,6 @@ LIBTIFF = -L$(top_builddir)/libtiff -ltiff
 
 EXTRA_DIST = Makefile.vc
 
-if HAVE_OPENGL
-BIN_TIFFGT = tiffgt
-else
-BIN_TIFFGT =
-endif
-
 bin_PROGRAMS = \
 	bmp2tiff \
 	fax2ps \
@@ -56,9 +50,12 @@ bin_PROGRAMS = \
 	tiffinfo \
 	tiffmedian \
 	tiffset \
-	tiffsplit \
-	$(BIN_TIFFGT)
-EXTRA_PROGRAMS = $(BIN_TIFFGT) sgi2tiff sgisv ycbcr
+	tiffsplit
+if HAVE_OPENGL
+bin_PROGRAMS += tiffgt
+endif
+
+EXTRA_PROGRAMS = sgi2tiff sgisv ycbcr
 
 bmp2tiff_SOURCES = bmp2tiff.c
 bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
@@ -105,7 +102,7 @@ tiffset_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffsplit_SOURCES = tiffsplit.c
 tiffsplit_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffgt_SOURCES = tiffgt.c
-tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) @OPENGL_LIBS@
+tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) @X_PRE_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ @GL_LIBS@ @GLU_LIBS@ @GLUT_LIBS@
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
