@@ -490,11 +490,9 @@ TIFFReadDirectory(TIFF* tif)
 		case TIFFTAG_DOTRANGE:
 			(void) TIFFFetchShortPair(tif, dp);
 			break;
-#ifdef COLORIMETRY_SUPPORT
 		case TIFFTAG_REFERENCEBLACKWHITE:
 			(void) TIFFFetchRefBlackWhite(tif, dp);
 			break;
-#endif
 /* BEGIN REV 4.0 COMPATIBILITY */
 		case TIFFTAG_OSUBFILETYPE:
 			v = 0;
@@ -1376,7 +1374,6 @@ TIFFFetchExtraSamples(TIFF* tif, TIFFDirEntry* dir)
 }
 #undef NITEMS
 
-#ifdef COLORIMETRY_SUPPORT
 /*
  * Fetch and set the RefBlackWhite tag.
  */
@@ -1408,7 +1405,6 @@ TIFFFetchRefBlackWhite(TIFF* tif, TIFFDirEntry* dir)
 		_TIFFfree(cp);
 	return (ok);
 }
-#endif
 
 /*
  * Replace a single strip (tile) of uncompressed data by
