@@ -1,3 +1,8 @@
+2003-11-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffio.h, tif_strip.c}, man/{TIFFstrip.3t, libtiff.3t}:
+	Added TIFFRawStripSize() function as suggested by Chris Hanson.
+
 2003-11-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_lzw.c, tif_fax3.c}: Proper support for update mode as
