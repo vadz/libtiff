@@ -7,6 +7,7 @@
 	* /libtiff/tif_lzw.c: Additional consistency checking added in
 	LZWDecode() and LZWDecodeCompat().
 	Fixes http://bugzilla.remotesensing.org/show_bug.cgi?id=190
+	and http://bugzilla.remotesensing.org/show_bug.cgi?id=100
 	
 	* /libtiff/tif_lzw.c:
 	Added check for valid code lengths in LZWDecode() and
