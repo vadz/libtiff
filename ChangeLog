@@ -1,3 +1,11 @@
+2004-09-24  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffio.h, tif_compress.c}: Added TIFFGetConfiguredCODECs()
+	to get the list of configured codecs.
+
+	* libtiff/{tiffiop.h, tif_dirread.c}: More overflow fixes from
+	Dmitry V. Levin.
+
 2004-09-23  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Applied patch from Dmitry V. Levin to fix
@@ -2055,7 +2063,7 @@ Tue Apr 18 16:18:08 2000  Frank Warmerdam  <warmerda@esabot.atlsci.com>
 	  caught by BoundsChecker.  From Arvan Pritchard 
 	  <arvan.pritchard@infomatix.co.uk>  (untested). 
 	
-        * tif_getimage.c:  Applied patch to silence VC6 warnings.  From 
+	* tif_getimage.c:  Applied patch to silence VC6 warnings.  From 
 	  Arvan Pritchard <arvan.pritchard@informatix.co.uk>
 	
 	* tif_lzw.c:  Applied patch to silence VC6 warnings.  From 
