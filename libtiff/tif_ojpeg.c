@@ -505,11 +505,12 @@ std_fill_input_buffer(register j_decompress_ptr cinfo)
   }
 
 static void
-std_skip_input_data(register j_decompress_ptr cinfo,long num_bytes)
+std_skip_input_data(register j_decompress_ptr cinfo, long num_bytes)
   {
 #   define sp ((OJPEGState *)cinfo)
 
     if (num_bytes > 0)
+    {
       if (num_bytes > (long)sp->src.bytes_in_buffer) /* oops: buffer overrun */
         (void)std_fill_input_buffer(cinfo);
       else
@@ -517,6 +518,7 @@ std_skip_input_data(register j_decompress_ptr cinfo,long num_bytes)
           sp->src.next_input_byte += (size_t)num_bytes;
           sp->src.bytes_in_buffer -= (size_t)num_bytes;
         }
+    }
 #   undef sp
   }
 
@@ -698,7 +700,6 @@ OJPEGSetupEncode(register TIFF *tif)
     switch (td->td_photometric)
       {
         case PHOTOMETRIC_YCBCR     :
-#         ifdef YCBCR_SUPPORT
 
        /* ISO IS 10918-1 requires that JPEG subsampling factors be 1-4, but
           TIFF Version 6.0 is more restrictive: only 1, 2, and 4 are allowed.
@@ -721,8 +722,6 @@ OJPEGSetupEncode(register TIFF *tif)
               TIFFError(module,bad_subsampling);
               status = 0;
             };
-#         endif /* YCBCR_SUPPORT */
-#         ifdef COLORIMETRY_SUPPORT
 
        /* A ReferenceBlackWhite field MUST be present, since the default value
           is inapproriate for YCbCr.  Fill in the proper value if the
@@ -740,7 +739,6 @@ OJPEGSetupEncode(register TIFF *tif)
               refbw[5] = refbw[1];
               TIFFSetField(tif,TIFFTAG_REFERENCEBLACKWHITE,refbw);
             };
-#         endif /* COLORIMETRY_SUPPORT */
           sp->cinfo.c.jpeg_color_space = JCS_YCbCr;
           if (sp->jpegcolormode == JPEGCOLORMODE_RGB)
             {
@@ -1304,7 +1302,6 @@ OJPEGSetupDecode(register TIFF *tif)
     switch (td->td_photometric)
       {
         case PHOTOMETRIC_YCBCR     :
-#         ifdef YCBCR_SUPPORT
 
        /* ISO IS 10918-1 requires that JPEG subsampling factors be 1-4, but
           TIFF Version 6.0 is more restrictive: only 1, 2, and 4 are allowed.
@@ -1328,7 +1325,6 @@ OJPEGSetupDecode(register TIFF *tif)
               TIFFError(module,bad_subsampling);
               status = 0;
             };
-#         endif /* YCBCR_SUPPORT */
           jpeg_color_space = JCS_YCbCr;
           if (sp->jpegcolormode == JPEGCOLORMODE_RGB)
             {
@@ -1872,7 +1868,6 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
 
     switch (tag)
       {
-#       ifdef COLORIMETRY_SUPPORT
 
      /* If a "ReferenceBlackWhite" TIFF tag appears in the file explicitly, undo
         any modified default definition that we might have installed below, then
@@ -1883,10 +1878,8 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
                                                  _TIFFfree(td->td_refblackwhite);
                                                  td->td_refblackwhite = 0;
                                                };
-#       endif /* COLORIMETRY_SUPPORT */
         default                            : return
                                                (*sp->vsetparent)(tif,tag,ap);
-#       ifdef COLORIMETRY_SUPPORT
 
      /* BEWARE OF KLUDGE:  Some old-format JPEG-in-TIFF files, including those
                            produced by the Wang Imaging application for Micro-
@@ -1907,7 +1900,8 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
           if (   (v32 = (*sp->vsetparent)(tif,tag,ap))
               && td->td_photometric == PHOTOMETRIC_YCBCR
              )
-            if (td->td_refblackwhite = _TIFFmalloc(6*sizeof(float)))
+	  {
+            if ( (td->td_refblackwhite = _TIFFmalloc(6*sizeof(float))) )
               { register long top = 1 << td->td_bitspersample;
 
                 td->td_refblackwhite[0] = 0;
@@ -1921,8 +1915,8 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
                   "Cannot set default reference black and white levels");
                 v32 = 0;
               };
+	  }
           return v32;
-#       endif /* COLORIMETRY_SUPPORT */
 
      /* BEWARE OF KLUDGE:  According to Charles Auer <Bumble731@msn.com>, if our
                            input is a multi-image (multi-directory) JPEG-in-TIFF
@@ -2282,7 +2276,6 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
      */
         case TIFFTAG_JPEGCOLORMODE         :
           sp->jpegcolormode = v32;
-#         ifdef YCBCR_SUPPORT
 
        /* Mark the image to indicate whether returned data is up-sampled, so
           that "TIFF{Strip,Tile}Size()" reflect the true amount of data present.
@@ -2302,7 +2295,6 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
               tif->tif_tilesize = TIFFTileSize(tif);
               tif->tif_flags |= TIFF_DIRTYDIRECT;
             };
-#         endif /* YCBCR_SUPPORT */
           return 1;
       };
     TIFFSetFieldBit(tif,tag-TIFFTAG_JPEGPROC+FIELD_JPEGPROC);
@@ -2453,7 +2445,7 @@ static void
 OJPEGCleanUp(register TIFF *tif)
   { register OJPEGState *sp;
 
-    if (sp = OJState(tif))
+    if ( (sp = OJState(tif)) )
       {
         CALLVJPEG(sp,jpeg_destroy(&sp->cinfo.comm)); /* Free JPEG Lib. vars. */
         if (sp->jpegtables) {_TIFFfree(sp->jpegtables);sp->jpegtables=0;}
