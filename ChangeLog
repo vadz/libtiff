@@ -1,3 +1,7 @@
+2003-11-22  Andrey Kiselev  <dron@remotesensing.org>
+
+	* /tools/raw2tiff.c: sqrtf() replaced with sqrt().
+
 2003-11-21  Andrey Kiselev  <dron@remotesensing.org>
 
 	* /tools/raw2tiff.c: #include <getopt.h> removed.
