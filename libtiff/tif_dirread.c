@@ -780,28 +780,36 @@ TIFFFetchByteArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
          * Extract data from offset field.
          */
         if (tif->tif_header.tiff_magic == TIFF_BIGENDIAN) {
-            switch (dir->tdir_count) {
-                case 4: v[3] = (uint16)(dir->tdir_offset & 0xff);
-                case 3: v[2] = (uint16)((dir->tdir_offset >> 8) & 0xff);
-                case 2: v[1] = (uint16)((dir->tdir_offset >> 16) & 0xff);
-		case 1:
-		if (dir->tdir_type == TIFF_SBYTE)
-			v[0] = (signed char)(dir->tdir_offset >> 24);	
-		else
-                	v[0] = (uint16)(dir->tdir_offset >> 24);
-            }
-        } else {
-            switch (dir->tdir_count) {
-                case 4: v[3] = (uint16)(dir->tdir_offset >> 24);
-                case 3: v[2] = (uint16)((dir->tdir_offset >> 16) & 0xff);
-                case 2: v[1] = (uint16)((dir->tdir_offset >> 8) & 0xff);
-                case 1: 
-		if (dir->tdir_type == TIFF_SBYTE)
-			v[0] = (signed char)((dir->tdir_offset) & 0xff);
-		else
-			v[0] = (uint16)(dir->tdir_offset & 0xff);
-            }
-        }
+	    if (dir->tdir_type == TIFF_SBYTE)
+                switch (dir->tdir_count) {
+                    case 4: v[3] = (signed char)(dir->tdir_offset & 0xff);
+                    case 3: v[2] = (signed char)((dir->tdir_offset >> 8) & 0xff);
+                    case 2: v[1] = (signed char)((dir->tdir_offset >> 16) & 0xff);
+		    case 1: v[0] = (signed char)(dir->tdir_offset >> 24);	
+                }
+	    else
+                switch (dir->tdir_count) {
+                    case 4: v[3] = (uint16)(dir->tdir_offset & 0xff);
+                    case 3: v[2] = (uint16)((dir->tdir_offset >> 8) & 0xff);
+                    case 2: v[1] = (uint16)((dir->tdir_offset >> 16) & 0xff);
+		    case 1: v[0] = (uint16)(dir->tdir_offset >> 24);	
+                }
+	} else {
+	    if (dir->tdir_type == TIFF_SBYTE)
+                switch (dir->tdir_count) {
+                    case 4: v[3] = (signed char)(dir->tdir_offset >> 24);
+                    case 3: v[2] = (signed char)((dir->tdir_offset >> 16) & 0xff);
+                    case 2: v[1] = (signed char)((dir->tdir_offset >> 8) & 0xff);
+                    case 1: v[0] = (signed char)(dir->tdir_offset & 0xff);
+		}
+	    else
+                switch (dir->tdir_count) {
+                    case 4: v[3] = (uint16)(dir->tdir_offset >> 24);
+                    case 3: v[2] = (uint16)((dir->tdir_offset >> 16) & 0xff);
+                    case 2: v[1] = (uint16)((dir->tdir_offset >> 8) & 0xff);
+                    case 1: v[0] = (uint16)(dir->tdir_offset & 0xff);
+		}
+	}
         return (1);
     } else
         return (TIFFFetchData(tif, dir, (char*) v) != 0);	/* XXX */

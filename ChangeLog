@@ -1,3 +1,10 @@
+2002-10-02  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Another fix for the fetching SBYTE arrays
+	by the TIFFFetchByteArray() function. Should finally resolve
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=52
+
 2002-09-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in, /man/{raw2tiff.1, Makefile.in, libtiff.3}: Added
