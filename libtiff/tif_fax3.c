@@ -240,8 +240,6 @@ Fax3Decode1D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		(*sp->fill)(buf, thisrun, pa, lastx);
 		buf += sp->b.rowbytes;
 		occ -= sp->b.rowbytes;
-		if (occ != 0)
-			tif->tif_row++;
 		continue;
 	EOF1D:				/* premature EOF */
 		CLEANUP_RUNS();
@@ -294,8 +292,6 @@ Fax3Decode2D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		SWAP(uint32*, sp->curruns, sp->refruns);
 		buf += sp->b.rowbytes;
 		occ -= sp->b.rowbytes;
-		if (occ != 0)
-			tif->tif_row++;
 		continue;
 	EOF2D:				/* premature EOF */
 		CLEANUP_RUNS();
@@ -1027,8 +1023,6 @@ Fax3Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 		}
 		bp += sp->b.rowbytes;
 		cc -= sp->b.rowbytes;
-		if (cc != 0)
-			tif->tif_row++;
 	}
 	return (1);
 }
@@ -1375,8 +1369,6 @@ Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		SWAP(uint32*, sp->curruns, sp->refruns);
 		buf += sp->b.rowbytes;
 		occ -= sp->b.rowbytes;
-		if (occ != 0)
-			tif->tif_row++;
 		continue;
 	EOFG4:
                 NeedBits16( 13, BADG4 );
@@ -1410,8 +1402,6 @@ Fax4Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 		_TIFFmemcpy(sp->refline, bp, sp->b.rowbytes);
 		bp += sp->b.rowbytes;
 		cc -= sp->b.rowbytes;
-		if (cc != 0)
-			tif->tif_row++;
 	}
 	return (1);
 }
@@ -1492,8 +1482,6 @@ Fax3DecodeRLE(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		}
 		buf += sp->b.rowbytes;
 		occ -= sp->b.rowbytes;
-		if (occ != 0)
-			tif->tif_row++;
 		continue;
 	EOFRLE:				/* premature EOF */
 		(*sp->fill)(buf, thisrun, pa, lastx);
