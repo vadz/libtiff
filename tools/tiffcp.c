@@ -693,47 +693,7 @@ tiffcp(TIFF* in, TIFF* out)
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
 	  }
 	}
-        {
-            int  i;
-            short count;
-	    TIFFFieldInfo *xtiffFieldInfo;
 
-            count = (short) TIFFGetTagListCount(in);
-	    xtiffFieldInfo = _TIFFmalloc(count * sizeof(TIFFFieldInfo));
-            for(i = 0; i < count; i++)
-            {
-                ttag_t  tag = TIFFGetTagListEntry(in, i);
-                const TIFFFieldInfo *fld = TIFFFieldWithTag(in, tag);
-
-                if(fld == NULL)
-			continue;
-
-                _TIFFmemcpy(&xtiffFieldInfo[i], (void *)fld, sizeof(TIFFFieldInfo));
-	    }
-	    TIFFMergeFieldInfo( out, xtiffFieldInfo, count );
-	    for(i = 0; i < count; i++)
-            {
-		const TIFFFieldInfo *fld = &xtiffFieldInfo[i];
-                if(fld->field_passcount)
-                {
-			short value_count;
-			void *raw_data;
-                    
-			if(TIFFGetField(in, fld->field_tag, &value_count, &raw_data))
-				TIFFSetField(out, fld->field_tag, value_count, raw_data);
-                } 
-                else if(!fld->field_passcount
-                        && fld->field_type == TIFF_ASCII)
-                {
-                    char *data;
-                    
-                    if(TIFFGetField(in, fld->field_tag, &data))
-                       TIFFSetField(out, fld->field_tag, data);
-                }
-            }
-
-	    _TIFFfree(xtiffFieldInfo);
-        }
 	for (p = tags; p < &tags[NTAGS]; p++)
 		CopyTag(p->tag, p->count, p->type);
 
