@@ -70,7 +70,7 @@ EXPORTS TIFFOpen
 	TIFFWriteEncodedTile
 	TIFFWriteRawTile
 	TIFFSetWriteOffset
-	TFFSwabDouble
+	TIFFSwabDouble
 	TIFFSwabShort
 	TIFFSwabLong
 	TIFFSwabArrayOfShort
