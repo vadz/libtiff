@@ -47,7 +47,7 @@
  *
  */
 #include "tiffiop.h"
-#include "tif_imgiter.h"
+#include "tif_imageiter.h"
 #include <assert.h>
 #include <stdio.h>
 
