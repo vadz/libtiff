@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>			/* for atof */
 #include <math.h>
@@ -31,6 +33,12 @@
 #include <string.h>
 
 #include "tiffio.h"
+
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#else
+extern int getopt(int, char**, char*);
+#endif
 
 /*
  * Revision history
@@ -414,9 +422,11 @@ setupPageState(TIFF* tif, uint32* pw, uint32* ph, double* pprw, double* pprh)
 	/*
 	 * Calculate printable area.
 	 */
-	if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres) || !xres)
+	if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres)
+            || fabs(xres) < 0.0000001)
 		xres = PS_UNIT_SIZE;
-	if (!TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres) || !yres)
+	if (!TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)
+            || fabs(yres) < 0.0000001)
 		yres = PS_UNIT_SIZE;
 	switch (res_unit) {
 	case RESUNIT_CENTIMETER:
@@ -600,7 +610,7 @@ TIFF2PS(FILE* fd, TIFF* tif,
 				}
 				fprintf(fd,
 	"1 dict begin /PageSize [ %f %f ] def currentdict end setpagedevice\n",
-				        psw, psh);
+					psw, psh);
 				fputs(
 	"<<\n  /Policies <<\n    /PageSize 3\n  >>\n>> setpagedevice\n",
 				      fd);
@@ -1152,7 +1162,7 @@ int
 PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 {
 	uint16 fillorder;
-	int use_rawdata, tiled_image, breaklen;
+	int use_rawdata, tiled_image, breaklen = 0;
 	uint32 chunk_no, num_chunks, *bc;
 	unsigned char *buf_data, *cp;
 	tsize_t chunk_size, byte_count;
@@ -1608,6 +1618,7 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 
 	(void) w; (void) h;
 	tf_buf = (unsigned char *) _TIFFmalloc(stripsize);
+        memset(tf_buf, 0, stripsize);
 	if (tf_buf == NULL) {
 		TIFFError(filename, "No space for scanline buffer");
 		return;
