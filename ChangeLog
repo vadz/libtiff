@@ -1,3 +1,7 @@
+2004-11-26  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/makefile.vc: make it easier to rename the libtiff DLL. 
+
 2004-10-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* man/libtiff.3tiff: Improvements in the "LIST OF ROUTINES" table as

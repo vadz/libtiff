@@ -76,7 +76,7 @@ OBJ	= \
 	tif_zip.obj \
 	$(OBJ_SYSDEP_MODULE)
 
-all:	libtiff.lib libtiff.dll
+all:	libtiff.lib $(DLLNAME)
 
 tif_config.h:
 	copy tif_config.h.vc tif_config.h
@@ -87,8 +87,8 @@ tiffconf.h:
 libtiff.lib:	tif_config.h $(OBJ)
 	$(AR) /out:libtiff.lib $(OBJ) $(LIBS)
 
-libtiff.dll:	tif_config.h $(OBJ)
-	$(LD) /dll /def:libtiff.def /out:libtiff.dll \
+$(DLLNAME):	tif_config.h $(OBJ)
+	$(LD) /debug /dll /def:libtiff.def /out:$(DLLNAME) \
 	/implib:libtiff_i.lib $(OBJ) $(LIBS)
 	
 clean:
