@@ -908,7 +908,7 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	fprintf(fd, "  /BitsPerComponent %d\n", bitspersample);
 	fprintf(fd, "  /Interpolate %s\n", interpolate ? "true" : "false");
 
-	switch (samplesperpixel) {
+	switch (samplesperpixel - extrasamples) {
 	case 1:
 		switch (photometric) {
 		case PHOTOMETRIC_MINISBLACK:
@@ -1249,6 +1249,35 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			if (ascii85)
 				Ascii85Put('\0', fd);
 		}
+		/*
+		 * For images with alpha, matte against a white background;
+		 * i.e. Cback * (1 - Aimage) where Cback = 1. We will fill the
+		 * lower part of the buffer with the modified values.
+		 *
+		 * XXX: needs better solution
+		 */
+		if (alpha) {
+			int adjust, i, j = 0;
+			int ncomps = samplesperpixel - extrasamples;
+			for (i = 0; i < byte_count; i+=samplesperpixel) {
+				adjust = 255 - buf_data[i + ncomps];
+				switch (ncomps) {
+					case 1:
+						buf_data[j++] = buf_data[i] + adjust;
+						break;
+					case 2:
+						buf_data[j++] = buf_data[i] + adjust;
+						buf_data[j++] = buf_data[i+1] + adjust;
+						break;
+					case 3:
+						buf_data[j++] = buf_data[i] + adjust;
+						buf_data[j++] = buf_data[i+1] + adjust;
+						buf_data[j++] = buf_data[i+2] + adjust;
+						break;
+				}
+			}
+			byte_count -= j;
+		}
 
 		if (ascii85) {
 #if defined( EXP_ASCII85ENCODER )
@@ -1308,7 +1337,7 @@ PSpage(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 
 	if ((level2 || level3) && PS_Lvl2page(fd, tif, w, h))
 		return;
-	ps_bytesperrow = tf_bytesperrow;
+	ps_bytesperrow = tf_bytesperrow - (extrasamples * bitspersample / 8)*w;
 	switch (photometric) {
 	case PHOTOMETRIC_RGB:
 		if (planarconfiguration == PLANARCONFIG_CONTIG) {
@@ -1620,6 +1649,15 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		}
 		if (ascii85) {
 #if defined( EXP_ASCII85ENCODER )
+			if (alpha) {
+				int adjust, i;
+				for (i = 0; i < cc; i+=2) {
+					adjust = 255 - cp[i + 1];
+				    cp[i / 2] = cp[i] + adjust;
+				}
+				cc /= 2;
+			}
+
 			ascii85_l = Ascii85EncodeBlock( ascii85_p, 1, cp, cc );
 
 			if ( ascii85_l > 0 )
@@ -1629,10 +1667,28 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 				Ascii85Put(*cp++, fd);
 #endif /* EXP_ASCII85_ENCODER */
 		} else {
-			while (cc-- > 0) {
-				unsigned char c = *cp++;
-				DOBREAK(breaklen, 1, fd);
-				PUTHEX(c, fd);
+			unsigned char c;
+
+			if (alpha) {
+				int adjust;
+				while (cc-- > 0) {
+					DOBREAK(breaklen, 1, fd);
+					/*
+					 * For images with alpha, matte against
+					 * a white background; i.e.
+					 *    Cback * (1 - Aimage)
+					 * where Cback = 1.
+					 */
+					adjust = 255 - cp[1];
+					c = *cp++ + adjust; PUTHEX(c,fd);
+					cp++, cc--;
+				}
+			} else {
+				while (cc-- > 0) {
+					c = *cp++;
+					DOBREAK(breaklen, 1, fd);
+					PUTHEX(c, fd);
+				}
 			}
 		}
 	}
