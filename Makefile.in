@@ -127,6 +127,7 @@ TIFFFILES=\
 	libtiff/Makefile.in			\
 	    libtiff/Makefile.lcc		\
 	    libtiff/makefile.vc			\
+	    libtiff/libtiff.def			\
 	    libtiff/t4.h			\
 	    libtiff/tiff.h			\
 	    libtiff/tiffcomp.h			\
