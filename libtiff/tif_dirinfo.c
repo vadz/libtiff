@@ -131,6 +131,8 @@ const TIFFFieldInfo tiffFieldInfo[] = {
 #endif
     { TIFFTAG_SOFTWARE,		-1,-1, TIFF_ASCII,	FIELD_SOFTWARE,
       TRUE,	FALSE,	"Software" },
+    { TIFFTAG_COPYRIGHT,	-1,-1, TIFF_ASCII,	FIELD_COPYRIGHT,
+      TRUE,	FALSE,	"Copyright" },
     { TIFFTAG_DATETIME,		20,20, TIFF_ASCII,	FIELD_DATETIME,
       TRUE,	FALSE,	"DateTime" },
     { TIFFTAG_ARTIST,		-1,-1, TIFF_ASCII,	FIELD_ARTIST,

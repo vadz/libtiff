@@ -353,6 +353,8 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		_TIFFprintAsciiTag(fd, "Host Computer", td->td_hostcomputer);
 	if (TIFFFieldSet(tif,FIELD_SOFTWARE))
 		_TIFFprintAsciiTag(fd, "Software", td->td_software);
+	if (TIFFFieldSet(tif,FIELD_COPYRIGHT))
+		_TIFFprintAsciiTag(fd, "Copyright", td->td_copyright);
 	if (TIFFFieldSet(tif,FIELD_DOCUMENTNAME))
 		_TIFFprintAsciiTag(fd, "Document Name", td->td_documentname);
 	if (TIFFFieldSet(tif,FIELD_IMAGEDESCRIPTION))
