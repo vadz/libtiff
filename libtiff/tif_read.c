@@ -177,8 +177,7 @@ TIFFReadRawStrip1(TIFF* tif,
 			return (-1);
 		}
 	} else {
-		if (((tsize_t) (td->td_stripoffset[strip] + size))
-                     > tif->tif_size) {
+		if (td->td_stripoffset[strip] + size > tif->tif_size) {
 			TIFFError(module,
     "%s: Read error at scanline %lu, strip %lu; got %lu bytes, expected %lu",
 			    tif->tif_name,
@@ -257,8 +256,7 @@ TIFFFillStrip(TIFF* tif, tstrip_t strip)
 		if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata)
 			_TIFFfree(tif->tif_rawdata);
 		tif->tif_flags &= ~TIFF_MYBUFFER;
-		if (((tsize_t) td->td_stripoffset[strip] + bytecount)
-                                                        > tif->tif_size) {
+		if ( td->td_stripoffset[strip] + bytecount > tif->tif_size) {
 			/*
 			 * This error message might seem strange, but it's
 			 * what would happen if a read were done instead.
@@ -381,8 +379,7 @@ TIFFReadRawTile1(TIFF* tif,
 			return ((tsize_t) -1);
 		}
 	} else {
-		if (((tsize_t) (td->td_stripoffset[tile] + size))
-                                                         > tif->tif_size) {
+		if (td->td_stripoffset[tile] + size > tif->tif_size) {
 			TIFFError(module,
     "%s: Read error at row %ld, col %ld, tile %ld; got %lu bytes, expected %lu",
 			    tif->tif_name,
@@ -456,8 +453,7 @@ TIFFFillTile(TIFF* tif, ttile_t tile)
 		if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata)
 			_TIFFfree(tif->tif_rawdata);
 		tif->tif_flags &= ~TIFF_MYBUFFER;
-		if ( ((tsize_t) (td->td_stripoffset[tile] + bytecount))
-                                                         > tif->tif_size) {
+		if ( td->td_stripoffset[tile] + bytecount > tif->tif_size) {
 			tif->tif_curtile = NOTILE;
 			return (0);
 		}

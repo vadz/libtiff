@@ -91,7 +91,7 @@ int
 TIFFWriteDirectory(TIFF* tif)
 {
 	uint16 dircount;
-	uint32 diroff;
+	toff_t diroff;
 	ttag_t tag;
 	uint32 nfields;
 	tsize_t dirsize;
@@ -947,11 +947,11 @@ static int
 TIFFLinkDirectory(TIFF* tif)
 {
 	static const char module[] = "TIFFLinkDirectory";
-	uint32 nextdir;
-	uint32 diroff;
+	toff_t nextdir;
+	toff_t diroff, off;
 
 	tif->tif_diroff = (TIFFSeekFile(tif, (toff_t) 0, SEEK_END)+1) &~ 1;
-	diroff = (uint32) tif->tif_diroff;
+	diroff = tif->tif_diroff;
 	if (tif->tif_flags & TIFF_SWAB)
 		TIFFSwabLong(&diroff);
 #if SUBIFD_SUPPORT
@@ -979,7 +979,7 @@ TIFFLinkDirectory(TIFF* tif)
 		/*
 		 * First directory, overwrite offset in header.
 		 */
-		tif->tif_header.tiff_diroff = (uint32) tif->tif_diroff;
+		tif->tif_header.tiff_diroff = tif->tif_diroff;
 #define	HDROFF(f)	((toff_t) &(((TIFFHeader*) 0)->f))
 		(void) TIFFSeekFile(tif, HDROFF(tiff_diroff), SEEK_SET);
 		if (!WriteOK(tif, &diroff, sizeof (diroff))) {
@@ -1011,7 +1011,8 @@ TIFFLinkDirectory(TIFF* tif)
 		if (tif->tif_flags & TIFF_SWAB)
 			TIFFSwabLong(&nextdir);
 	} while (nextdir != 0);
-	(void) TIFFSeekFile(tif, -(toff_t) sizeof (nextdir), SEEK_CUR);
+        off = TIFFSeekFile(tif, 0, SEEK_CUR); // get current offset
+        (void) TIFFSeekFile(tif, off - (toff_t)sizeof(nextdir), SEEK_SET);
 	if (!WriteOK(tif, &diroff, sizeof (diroff))) {
 		TIFFError(module, "Error writing directory link");
 		return (0);

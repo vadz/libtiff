@@ -88,7 +88,7 @@ TIFFReadDirectory(TIFF* tif)
 	const TIFFFieldInfo* fip;
 	int fix;
 	uint16 dircount;
-	uint32 nextdiroff;
+	toff_t nextdiroff;
 	char* cp;
 	int diroutoforderwarning = 0;
 
@@ -129,7 +129,7 @@ TIFFReadDirectory(TIFF* tif)
 	} else {
 		toff_t off = tif->tif_diroff;
 
-		if ((tsize_t) (off + sizeof (uint16)) > tif->tif_size) {
+		if (off + sizeof (uint16) > tif->tif_size) {
 			TIFFError(tif->tif_name,
 			    "Can not read TIFF directory count");
 			return (0);
@@ -142,15 +142,14 @@ TIFFReadDirectory(TIFF* tif)
 		    dircount * sizeof (TIFFDirEntry), "to read TIFF directory");
 		if (dir == NULL)
 			return (0);
-		if (((tsize_t) (off + dircount*sizeof (TIFFDirEntry)))
-                                                   > tif->tif_size) {
+		if (off + dircount*sizeof (TIFFDirEntry) > tif->tif_size) {
 			TIFFError(tif->tif_name, "Can not read TIFF directory");
 			goto bad;
 		} else
 			_TIFFmemcpy(dir, tif->tif_base + off,
 			    dircount*sizeof (TIFFDirEntry));
 		off += dircount* sizeof (TIFFDirEntry);
-		if (((tsize_t)(off + sizeof (uint32))) <= tif->tif_size)
+		if (off + sizeof (uint32) <= tif->tif_size)
 			_TIFFmemcpy(&nextdiroff, tif->tif_base+off, sizeof (uint32));
 	}
 	if (tif->tif_flags & TIFF_SWAB)
@@ -655,7 +654,7 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 		if (!ReadOK(tif, cp, cc))
 			goto bad;
 	} else {
-		if (((tsize_t) (dir->tdir_offset + cc)) > tif->tif_size)
+		if (dir->tdir_offset + cc > tif->tif_size)
 			goto bad;
 		_TIFFmemcpy(cp, tif->tif_base + dir->tdir_offset, cc);
 	}
