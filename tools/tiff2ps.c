@@ -598,13 +598,13 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
 			if (!generateEPSF && ( level2 || level3 )) {
 				double psw, psh;
-				if (psw != 0.0) {
+				if (pw != 0.0) {
 					psw = pw * PS_UNIT_SIZE;
 					if (res_unit == RESUNIT_CENTIMETER)
 						psw *= 2.54F;
 				} else
 					psw=rotate ? prh:prw;
-				if (psh != 0.0) {
+				if (ph != 0.0) {
 					psh = ph * PS_UNIT_SIZE;
 					if (res_unit == RESUNIT_CENTIMETER)
 						psh *= 2.54F;
