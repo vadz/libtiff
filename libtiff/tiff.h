@@ -71,21 +71,30 @@ typedef unsigned int uint32;
 #ifndef _TIFF_DATA_TYPEDEFS_
 #define _TIFF_DATA_TYPEDEFS_
 
-#ifdef __STDC__
+# ifndef HAVE_INT8
+#  ifdef __STDC__
 typedef	signed char int8;	/* NB: non-ANSI compilers may not grok */
-#else
+#  else
 typedef	char int8;
-#endif
+#  endif
+# endif
+
 typedef	unsigned char uint8;
+# ifndef HAVE_INT16
 typedef	short int16;
+# endif
 typedef	unsigned short uint16;	/* sizeof (uint16) must == 2 */
-#if defined(__alpha) || (defined(_MIPS_SZLONG) && _MIPS_SZLONG == 64) || defined(__LP64__) || defined(__arch64__) || defined(_LP64)
+# if defined(__alpha) || (defined(_MIPS_SZLONG) && _MIPS_SZLONG == 64) || defined(__LP64__) || defined(__arch64__) || defined(_LP64)
+# ifndef HAVE_INT32
 typedef	int int32;
+#  endif
 typedef	unsigned int uint32;	/* sizeof (uint32) must == 4 */
-#else
+# else
+#  ifndef HAVE_INT32
 typedef	long int32;
+#  endif
 typedef	unsigned long uint32;	/* sizeof (uint32) must == 4 */
-#endif
+# endif
 #endif /* _TIFF_DATA_TYPEDEFS_ */
 
 /*	For TIFFReassignTagToIgnore */
