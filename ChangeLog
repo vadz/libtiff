@@ -1,3 +1,9 @@
+2004-07-24  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_lzw.c: LZW compression code is merged back from the
+	separate package. All libtiff tools are updated to not advertise an
+	abcence of LZW support.
+
 2004-07-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tiffio.h: Revert thandle_t back to void* type.
