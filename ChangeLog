@@ -1,3 +1,11 @@
+2003-12-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_getimage.c, tif_color.c, tiffio.h}: YCbCr->RGB
+	conversion routines now in the tif_color.c module. New function
+	TIFFYCbCrtoRGB() available in TIFF API.
+
+	* libtiff/tif_dirwrite.c: Handle TIFF_IFD tag type correctly.
+
 2003-12-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_getimage.c, tif_color.c, tiffio.h}: Improvements in
