@@ -495,7 +495,7 @@ release:
 # stamp relevant files according to current alpha
 release.stamp:
 	VERSION=`echo @VERSION@ | tr "." "-"`; \
-	cvs tag -R Release-$$VERSION	;
+#	cvs tag -R Release-$$VERSION	;
 	date "+%m/%d/%Y" > RELEASE-DATE
 
 #diffs since last release

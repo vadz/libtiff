@@ -1,8 +1,8 @@
 #!/bin/sh
-
 #
 #	The -f force flag will force new logs to overwrite existing ones.
 #
+set -x 
 FORCE=0
 if test "$1" = "-f" ; then
   FORCE=1
