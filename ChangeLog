@@ -1,3 +1,12 @@
+2005-03-18  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tif2pdf.c: Fixed problem with alpha channel handling as per
+	bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=794
+
+	* man/TIFFGetField.3tiff: Add a note about autoregistered tags.
+
 2005-03-17  Andrey Kiselev  <dron@remotesensing.org>
 
 	* nmake.opt: Build with Win32 CRT library by default.
