@@ -280,6 +280,19 @@ void
 _TIFFSetupFieldInfo(TIFF* tif)
 {
 	if (tif->tif_fieldinfo) {
+        	int  i;
+
+        	for (i = 0; i < tif->tif_nfields; i++) 
+		{
+	    		TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
+ 	    		if (fld->field_bit == FIELD_CUSTOM && 
+				strncmp("Tag ", fld->field_name, 4) == 0) 
+	    			{
+				_TIFFfree(fld->field_name);
+                		_TIFFfree(fld);
+	    			}
+        	}   
+      
 		_TIFFfree(tif->tif_fieldinfo);
 		tif->tif_nfields = 0;
 	}
@@ -464,7 +477,9 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
     fld->field_passcount = TRUE;
     fld->field_name = (char *) _TIFFmalloc(32);
 
-    /* note that this name is a special sign to TIFFClose() to free the field*/
+    /* note that this name is a special sign to TIFFClose() and
+     * _TIFFSetupFieldInfo() to free the field
+     */
     sprintf(fld->field_name, "Tag %d", (int) tag);
 
     return fld;    
