@@ -1,5 +1,7 @@
 2000-03-02  Frank Warmerdam  <warmerda@cs46980-c.mtnk1.on.wave.home.com>
 
+	* Added "GetDefaulted" support for TIFFTAG_SAMPLEFORMAT in tif_aux.c.
+
 	* Patched tif_fax3.c so that dsp->runs is allocated a bit bigger
 	to avoid overruns encountered with frle_bug.tif.
 
