@@ -157,7 +157,11 @@ TIFFOpen(const char* name, const char* mode)
 #ifdef _AM29K
 	fd = open(name, m);
 #else
+#if USE_64BIT_API == 1
+	fd = open(name, m | O_LARGEFILE, 0666);
+#else
 	fd = open(name, m, 0666);
+#endif
 #endif
 	if (fd < 0) {
 		TIFFError(module, "%s: Cannot open", name);
