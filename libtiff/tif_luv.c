@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * Copyright (c) 1997 Greg Ward Larson
  * Copyright (c) 1997 Silicon Graphics, Inc.
@@ -185,7 +187,7 @@ LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 {
 	LogLuvState* sp = DecoderState(tif);
 	int shft, i, npixels;
-	u_char* bp;
+	unsigned char* bp;
 	int16* tp;
 	int16 b;
 	int cc, rc;
@@ -203,7 +205,7 @@ LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	}
 	_TIFFmemset((tdata_t) tp, 0, npixels*sizeof (tp[0]));
 
-	bp = (u_char*) tif->tif_rawcp;
+	bp = (unsigned char*) tif->tif_rawcp;
 	cc = tif->tif_rawcc;
 					/* get each byte string */
 	for (shft = 2*8; (shft -= 8) >= 0; ) {
@@ -242,7 +244,7 @@ LogLuvDecode24(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 {
 	LogLuvState* sp = DecoderState(tif);
 	int cc, i, npixels;
-	u_char* bp;
+	unsigned char* bp;
 	uint32* tp;
 
 	assert(s == 0);
@@ -257,7 +259,7 @@ LogLuvDecode24(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		tp = (uint32 *) sp->tbuf;
 	}
 					/* copy to array of uint32 */
-	bp = (u_char*) tif->tif_rawcp;
+	bp = (unsigned char*) tif->tif_rawcp;
 	cc = tif->tif_rawcc;
 	for (i = 0; i < npixels && cc > 0; i++) {
 		tp[i] = bp[0] << 16 | bp[1] << 8 | bp[2];
@@ -284,7 +286,7 @@ LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 {
 	LogLuvState* sp;
 	int shft, i, npixels;
-	u_char* bp;
+	unsigned char* bp;
 	uint32* tp;
 	uint32 b;
 	int cc, rc;
@@ -303,7 +305,7 @@ LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	}
 	_TIFFmemset((tdata_t) tp, 0, npixels*sizeof (tp[0]));
 
-	bp = (u_char*) tif->tif_rawcp;
+	bp = (unsigned char*) tif->tif_rawcp;
 	cc = tif->tif_rawcc;
 					/* get each byte string */
 	for (shft = 4*8; (shft -= 8) >= 0; ) {
@@ -1584,3 +1586,5 @@ bad:
 	return (0);
 }
 #endif /* LOGLUV_SUPPORT */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
