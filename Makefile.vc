@@ -22,6 +22,7 @@
 # OF THIS SOFTWARE.
 #
 # Simple MS VC++ Makefile
+# Edit nmake.opt file if you want to ajust building options.
 #
 # To build:
 # C:\libtiff> nmake /f makefile.vc 
