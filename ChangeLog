@@ -1,3 +1,13 @@
+2004-11-13  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiff.h: Added Adobe DNG tags.
+
+	* libtiff/tif_win32.c: Typo fixed.
+
+	* libtiff/{tif_stream.cxx, tiffio.h}: C++ stream interface updated to
+	be compliant with the latest standard. Appropriate additions in
+	makefiles now completed.
+
 2004-11-11  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffset.c, libtiff/tif_dirinfo.c: Properly handle the
