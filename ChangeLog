@@ -1,5 +1,8 @@
 Wed Aug 25 11:39:07 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
+	* Added test target in Makefile, test_pics.sh script and pics/*.rpt 
+	files to provide for a rudimentary testsuite.
+
 	* Added contrib/tags back from old distribution ... fixed up a bit.
 
 1999-08-16    <warmerda@CS46980-B>

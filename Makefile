@@ -31,8 +31,8 @@
 SRCDIR	= .
 
 #
-# VERSION:	v3.4beta037
-# DATE:		Wed Feb  3 19:53:27 EST 1999
+# VERSION:	v3.5.1
+# DATE:		Wed Aug 25 15:30:36 EST 1999
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
@@ -89,7 +89,7 @@ clobber distclean: clean
 installLink::
 	if [ /usr/local/lib != /usr/lib ]; then				\
 	    ${INSTALL} -idb tiff.sw.tools -F /usr/lib			\
-		-lns /usr/local/lib/libtiff.a -O libtiff.a;	\
+		-lns /usr/local/lib/libtiff.so.3 -O libtiff.so.3;	\
 	else								\
 	    true;							\
 	fi
@@ -435,7 +435,7 @@ alphadiff:
 
 # create alpha distribution archive
 alpha.tar:
-	VERSION="v3.4beta037";						\
+	VERSION="v3.5.1";						\
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSION;					\
 	(for i in ${DISTFILES}; do					\
@@ -458,12 +458,12 @@ release.stamp:
 	NOW=`date`;							\
 	for i in ${TIFFFILES}; do					\
 	    REV=`rlog -h -d"$$NOW" ${SRCDIR}/$$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-NRelease3_4_beta:$$REV" "-sRel:$$REV" ${SRCDIR}/$$i && co -sRel ${SRCDIR}/$$i;	\
+	    rcs "-NRelease3_5_.1:$$REV" "-sRel:$$REV" ${SRCDIR}/$$i && co -sRel ${SRCDIR}/$$i;	\
 	done
 
 # create release distribution archive
 release.tar:
-	VERSION="v3.4beta037";						\
+	VERSION="v3.5.1";						\
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSION;					\
 	(for i in ${DISTFILES}; do					\
@@ -473,6 +473,13 @@ release.tar:
 	rm -f tiff-$$VERSION-tar.${ZIPSUF};				\
 	cat $$VERSION-tar | ${COMPRESS} >tiff-$$VERSION-tar.${ZIPSUF};	\
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;
+
+#
+#	Simple rule to run test suite assuming that pics directory is 
+#	just below this one, and that .rpt files are available. 
+#
+test:
+	test_pics.sh pics/*.tif
 
 #
 # Create a package of the test images.
