@@ -1,3 +1,15 @@
+2001-12-15  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_getimage.c: If DEFAULT_EXTRASAMPLE_AS_ALPHA is 1 
+	(defined in tiffconf.h - 1 by default) then the RGBA interface
+	will assume that a fourth extra sample is ASSOCALPHA if the
+	EXTRASAMPLE value isn't set for it.  This changes the behaviour of
+	the library, but makes it work better with RGBA files produced by
+	lots of applications that don't mark the alpha values properly.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=93
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=65
+
 2001-12-12  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: allow jpeg data stream sampling values to 

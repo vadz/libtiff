@@ -220,12 +220,28 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     TIFFGetFieldDefaulted(tif, TIFFTAG_EXTRASAMPLES,
 	&extrasamples, &sampleinfo);
     if (extrasamples == 1)
+    {
 	switch (sampleinfo[0]) {
 	case EXTRASAMPLE_ASSOCALPHA:	/* data is pre-multiplied */
 	case EXTRASAMPLE_UNASSALPHA:	/* data is not pre-multiplied */
 	    img->alpha = sampleinfo[0];
 	    break;
 	}
+    }
+
+#if DEFAULT_EXTRASAMPLE_AS_ALPHA == 1
+    if( !TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &img->photometric))
+        img->photometric = PHOTOMETRIC_MINISWHITE;
+
+    if( extrasamples == 0 
+        && img->samplesperpixel == 4 
+        && img->photometric == PHOTOMETRIC_RGB )
+    {
+        img->alpha = EXTRASAMPLE_ASSOCALPHA;
+        extrasamples = 1;
+    }
+#endif
+
     colorchannels = img->samplesperpixel - extrasamples;
     TIFFGetFieldDefaulted(tif, TIFFTAG_COMPRESSION, &compress);
     TIFFGetFieldDefaulted(tif, TIFFTAG_PLANARCONFIG, &planarconfig);

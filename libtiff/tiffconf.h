@@ -133,6 +133,11 @@
  *			or not to convert single-strip uncompressed images
  *			to mutiple strips of ~8Kb--to reduce memory use)
  * SUBIFD_SUPPORT	enable support for SubIFD tag (thumbnails and such)
+ * DEFAULT_EXTRASAMPLE_AS_ALPHA
+ *                      The RGBA interface will treat a fourth sample with
+ *                      no EXTRASAMPLE_ value as being ASSOCALPHA.  Many
+ *                      packages produce RGBA files but don't mark the alpha
+ *                      properly.
  */
 #ifndef STRIPCHOP_DEFAULT
 #define	STRIPCHOP_DEFAULT	TIFF_STRIPCHOP	/* default is to enable */
@@ -140,4 +145,8 @@
 #ifndef SUBIFD_SUPPORT
 #define	SUBIFD_SUPPORT		1	/* enable SubIFD tag (330) support */
 #endif
+#ifndef DEFAULT_EXTRASAMPLE_AS_ALPHA
+#define DEFAULT_EXTRASAMPLE_AS_ALPHA 1
+#endif
+
 #endif /* _TIFFCONF_ */
