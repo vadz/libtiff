@@ -1,3 +1,7 @@
+2004-11-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_next.c: avoid use of u_long and u_char types.  Bug 653.
+
 2004-11-02  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2rgba.c: removed extra newlines in usage message.
