@@ -1,4 +1,4 @@
-.\" $Header$
+.\" $Id$
 .\"
 .\" Copyright (c) 1991-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -23,9 +23,10 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFReadRGBAImage 3T "October 03, 2003"
+.TH TIFFReadRGBAImage 3T "October 29, 2004" "libtiff"
 .SH NAME
-TIFFReadRGBAImage \- read and decode an image into a fixed-format raster
+TIFFReadRGBAImage, TIFFReadRGBAImageOriented \- read and decode an image
+into a fixed-format raster
 .SH SYNOPSIS
 .B "#include <tiffio.h>"
 .sp
@@ -39,9 +40,9 @@ TIFFReadRGBAImage \- read and decode an image into a fixed-format raster
 .br
 .B "#define TIFFGetA(abgr)	(((abgr) >> 24) & 0xff)"
 .sp
-.BI "int TIFFReadRGBAImage(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " stopOnError ")
+.BI "int TIFFReadRGBAImage(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " stopOnError ")"
 .br
-.BI "int TIFFReadRGBAImageOriented(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " orientation ", int " stopOnError ")
+.BI "int TIFFReadRGBAImageOriented(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " orientation ", int " stopOnError ")"
 .br
 .SH DESCRIPTION
 .IR TIFFReadRGBAImage
