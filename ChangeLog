@@ -1,3 +1,12 @@
+2004-12-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dir.c, tif_dirread.c}: Remove TIFFReassignTagToIgnore()
+	call from the TIFFReadDirectory() function. TIFFReassignTagToIgnore
+	must be removed in the future, as it was never used properly. As per
+	bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=692
+
 2004-11-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_jpeg.c: Added a work-around in order to allow
@@ -26,7 +35,7 @@
 
 	* libtiff/makefile.vc: make it easier to rename the libtiff DLL. 
 
-2004-10-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* man/libtiff.3tiff: Improvements in the "LIST OF ROUTINES" table as
 	per bug
