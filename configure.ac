@@ -132,6 +132,12 @@ esac
 AC_DEFINE_UNQUOTED(HOST_FILLORDER, $HOST_FILLORDER, [Set the native cpu bit order])
 
 dnl ---------------------------------------------------------------------------
+dnl Make the POSIX.2 features available.
+dnl ---------------------------------------------------------------------------
+_POSIX_C_SOURCE=2
+AC_DEFINE_UNQUOTED(_POSIX_C_SOURCE, $_POSIX_C_SOURCE, [Define this macro to a positive integer to control which POSIX functionality is made available.])
+
+dnl ---------------------------------------------------------------------------
 dnl Set the floating point format.
 dnl FIXME: write appropriate test.
 dnl ---------------------------------------------------------------------------

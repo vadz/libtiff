@@ -167,6 +167,10 @@
 /* Define for large files, on AIX-style hosts. */
 #undef _LARGE_FILES
 
+/* Define this macro to a positive integer to control which POSIX
+   functionality is made available. */
+#undef _POSIX_C_SOURCE
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
