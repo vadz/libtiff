@@ -122,6 +122,7 @@ docfiles = \
 	TIFFSetDirectory.3t.html \
 	TIFFSetField.3t.html \
 	TIFFSetField.3t.html \
+	tiffset.1.html \
 	TIFFsize.3t.html \
 	TIFFsize.3t.html \
 	tiffsplit.1.html \

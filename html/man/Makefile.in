@@ -66,8 +66,8 @@ subdir = html/man
 DIST_COMMON = $(dist_doc_DATA) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/libtool.m4 \
+	$(top_srcdir)/acinclude.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -311,6 +311,7 @@ docfiles = \
 	TIFFSetDirectory.3t.html \
 	TIFFSetField.3t.html \
 	TIFFSetField.3t.html \
+	tiffset.1.html \
 	TIFFsize.3t.html \
 	TIFFsize.3t.html \
 	tiffsplit.1.html \
