@@ -316,8 +316,8 @@ typedef	enum {
 #define	TIFFTAG_SMAXSAMPLEVALUE		341	/* !variable MaxSampleValue */
 #define	TIFFTAG_CLIPPATH		343	/* %ClipPath [Adobe TIFF technote 2] */
 #define	TIFFTAG_XCLIPPATHUNITS	344	/* %XClipPathUnits [Adobe TIFF technote 2] */
-#define	TIFFTAG_YCLIPPATHUNITS	344	/* %YClipPathUnits [Adobe TIFF technote 2] */
-#define	TIFFTAG_INDEXED			345	/* %Indexed [Adobe TIFF Technote 3] */
+#define	TIFFTAG_YCLIPPATHUNITS	345	/* %YClipPathUnits [Adobe TIFF technote 2] */
+#define	TIFFTAG_INDEXED			346	/* %Indexed [Adobe TIFF Technote 3] */
 #define	TIFFTAG_JPEGTABLES		347	/* %JPEG table stream */
 #define	TIFFTAG_OPIPROXY		351	/* %OPI Proxy [Adobe TIFF technote] */
 /*
