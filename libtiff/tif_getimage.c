@@ -1418,7 +1418,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
     (void) y;
     /* XXX adjust fromskew */
     do {
-	x = w>>1;
+        x = w; /* was x = w>>1; patched 2000/09/25 warmerda@home.com */ 
 	do {
 	    int Cb = pp[1];
 	    int Cr = pp[2];
