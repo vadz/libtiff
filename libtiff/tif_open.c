@@ -156,6 +156,11 @@ TIFFClientOpen(
 	tif->tif_curstrip = (tstrip_t) -1;	/* invalid strip */
 	tif->tif_row = (uint32) -1;		/* read/write pre-increment */
 	tif->tif_clientdata = clientdata;
+	if (!readproc || !writeproc || !seekproc || !closeproc
+			|| !sizeproc || !mapproc || !unmapproc) {
+		TIFFError(module, "One of the client procedures are NULL pointer");
+		goto bad3;
+	}
 	tif->tif_readproc = readproc;
 	tif->tif_writeproc = writeproc;
 	tif->tif_seekproc = seekproc;
@@ -387,6 +392,7 @@ bad:
 	return ((TIFF*)0);
 bad2:
 	(void) (*closeproc)(clientdata);
+bad3:
 	return ((TIFF*)0);
 }
 
