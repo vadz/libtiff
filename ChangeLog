@@ -1,3 +1,9 @@
+2001-06-13  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiff2rgba.c: added -n flag to avoid emitting alpha component.
+
+	* man/tiff2rgba.1: new
+
 2001-05-22  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* Added tiffset and tif_ojpeg to the dist lists in Makefile.in.

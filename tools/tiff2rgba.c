@@ -42,6 +42,7 @@
 uint16	compression = COMPRESSION_PACKBITS;
 uint32	rowsperstrip = (uint32) -1;
 int	process_by_block = 0; /* default is whole image at once */
+int     no_alpha = 0;
 
 
 static	int tiffcvt(TIFF* in, TIFF* out);
@@ -55,7 +56,7 @@ main(int argc, char* argv[])
     extern int optind;
     extern char *optarg;
 
-    while ((c = getopt(argc, argv, "c:r:t:b")) != -1)
+    while ((c = getopt(argc, argv, "c:r:t:b:n")) != -1)
         switch (c) {
           case 'b':
             process_by_block = 1;
@@ -70,6 +71,8 @@ main(int argc, char* argv[])
                 compression = COMPRESSION_LZW;
             else if (streq(optarg, "jpeg"))
                 compression = COMPRESSION_JPEG;
+            else if (streq(optarg, "zip"))
+                compression = COMPRESSION_DEFLATE;
             else
                 usage();
             break;
@@ -80,6 +83,10 @@ main(int argc, char* argv[])
 
           case 't':
             rowsperstrip = atoi(optarg);
+            break;
+            
+          case 'n':
+            no_alpha = 1;
             break;
             
           case '?':
@@ -358,25 +365,53 @@ cvt_whole_image( TIFF *in, TIFF *out )
     }
 
     _TIFFfree( wrk_line );
-    
+
+    /*
+    ** Do we want to strip away alpha components?
+    */
+    if( no_alpha )
+    {
+        int	pixel_count = width * height;
+        unsigned char *src, *dst;
+
+        src = (unsigned char *) raster;
+        dst = (unsigned char *) raster;
+        while( pixel_count > 0 )
+        {
+            *(dst++) = *(src++);
+            *(dst++) = *(src++);
+            *(dst++) = *(src++);
+            src++;
+            pixel_count--;
+        }
+    }
 
     /* Write out the result in strips */
 
     for( row = 0; row < height; row += rowsperstrip )
     {
-        uint32* raster_strip;
+        unsigned char * raster_strip;
         int	rows_to_write;
+        int	bytes_per_pixel;
 
-        raster_strip = raster + row * width;
+        if( no_alpha )
+        {
+            raster_strip = ((unsigned char *) raster) + 3 * row * width;
+            bytes_per_pixel = 3;
+        }
+        else
+        {
+            raster_strip = (unsigned char *) (raster + row * width);
+            bytes_per_pixel = 4;
+        }
 
         if( row + rowsperstrip > height )
             rows_to_write = height - row;
         else
             rows_to_write = rowsperstrip;
 
-        if( TIFFWriteEncodedStrip( out, row / rowsperstrip,
-                                   raster_strip,
-                                   4 * rows_to_write * width ) == -1 )
+        if( TIFFWriteEncodedStrip( out, row / rowsperstrip, raster_strip,
+                             bytes_per_pixel * rows_to_write * width ) == -1 )
         {
             _TIFFfree( raster );
             return 0;
@@ -411,9 +446,18 @@ tiffcvt(TIFF* in, TIFF* out)
 
 	CopyField(TIFFTAG_FILLORDER, shortv);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 4);
-        v[0] = EXTRASAMPLE_ASSOCALPHA;
-	TIFFSetField(out, TIFFTAG_EXTRASAMPLES, 1, v);
+
+        if( no_alpha )
+            TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 3);
+        else
+            TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 4);
+
+        if( !no_alpha )
+        {
+            v[0] = EXTRASAMPLE_ASSOCALPHA;
+            TIFFSetField(out, TIFFTAG_EXTRASAMPLES, 1, v);
+        }
+
 	CopyField(TIFFTAG_XRESOLUTION, floatv);
 	CopyField(TIFFTAG_YRESOLUTION, floatv);
 	CopyField(TIFFTAG_RESOLUTIONUNIT, shortv);
@@ -433,6 +477,7 @@ static char* usageMsg[] = {
     "usage: tiff2rgba [-c comp] [-r rows] [-b] input... output\n",
     "where comp is one of the following compression algorithms:\n",
     " jpeg\t\tJPEG encoding\n",
+    " zip\t\tLempel-Ziv & Welch encoding\n",
     " lzw\t\tLempel-Ziv & Welch encoding\n",
     " (lzw compression unsupported by default due to Unisys patent enforcement)\n",
     " packbits\tPackBits encoding\n",
@@ -440,6 +485,7 @@ static char* usageMsg[] = {
     "and the other options are:\n",
     " -r\trows/strip\n",
     " -b (progress by block rather than as a whole image)\n",
+    " -n don't emit alpha component.\n",
     NULL
 };
 
