@@ -57,7 +57,6 @@ PORT=auto				# enable portability emulations
 HTML=no					# install HTML documentation
 LIBGL=auto				# auto-enable build of SGI -lgl apps
 LIBIMAGE=auto				# auto-enable build of SGI -limage apps
-MACHDEPLIBS=-lm				# machine-dependent libraries for apps
 : ${CC=}				# name of C compiler to use
 : ${CCOMPILER=}				# full pathname of C compiler
 : ${OPTIMIZER=-O}			# Optimization flag
@@ -592,10 +591,10 @@ if [ -z "${GCOPTS-}" ]; then
     if capture $CCOMPILER $ENVOPTS -g -c dummy.c; then
 	Note "Looks like $CCOMPILER supports the -g option."
 	# NB: cannot use captureX here 'cuz we lose stderr
-	if $CCOMPILER $ENVOPTS -c -g -O dummy.c >t 2>&1 && CheckForGandO t; then
+	if $CCOMPILER $ENVOPTS -c -g $OPTIMIZER dummy.c >t 2>&1 && CheckForGandO t; then
 	    GCOPTS="-g"
 	else
-	    Note "... but not together with the -O option, not using it."
+	    Note "... but not together with the $OPTIMIZER option, not using it."
 	    GCOPTS=
 	fi
     else
@@ -763,6 +762,21 @@ CheckForFunc()
     echo "extern int $1(); main(){$1();exit(0);}" >t.c
     runMake t "t:; ${CCOMPILER} ${ENVOPTS} t.c ${MACHDEPLIBS}"
 }
+
+# 
+# Verify that we have -lm.  Darwin (for instance) does not.  Add to 
+# MACHDEPLIBS if required.
+#
+
+if [ -z "${MACHDEPLIBS-}" ]; then
+    MACHDEPLIBS=""
+    if ! CheckForFunc cos ; then
+        MACHDEPLIBS="-lm"
+        echo "Defaulting MACHDEPLIBS to -lm."
+    else
+        echo "Leaving MACHDEPLIBS empty, apparently you don't need -lm."
+    fi
+fi
 
 #
 # Look for a function declaration in system include files.

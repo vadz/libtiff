@@ -1,5 +1,8 @@
 2001-04-02  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* configure/config.site: modified to check if -lm is needed for
+	MACHDEPLIBS if not supplied by config.site.  Needed for Darwin.
+
 	* config.guess: updated wholesale to an FSF version apparently 
 	from 1998 (as opposed to 1994).  This is mainly inspired by 
 	providing for MacOS X support.

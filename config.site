@@ -134,7 +134,7 @@
 #GCOPTS="-g"				# options to pass C compiler
 #OPTIMIZER="-O"				# Optimization options for compiler
 #LIBPORT='${PORT}/libport.a'		# library with emulation code
-#MACHDEPLIBS=""				# extra libraries for linking
+#MACHDEPLIBS="-lm"			# extra libraries for linking
 #PORTFUNCS=""				# non-standard functions to emulate
 #RANLIB=":"				# pathname of suitable ranlib program
 #DSOSUF="so"				# DSO filename suffix
