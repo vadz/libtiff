@@ -338,9 +338,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/files.lst $(am__configur
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  libtiff/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  libtiff/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  libtiff/Makefile
+	  $(AUTOMAKE) --foreign  libtiff/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

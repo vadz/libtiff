@@ -133,6 +133,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBTIFF_ALPHA_VERSION = @LIBTIFF_ALPHA_VERSION@
 LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
 LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
 LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
@@ -195,7 +196,11 @@ program_transform_name = @program_transform_name@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
 EXTRA_DIST = \
 	COPYRIGHT \
 	ChangeLog \

@@ -16,6 +16,15 @@
    machine */
 #undef HAVE_IEEEFP
 
+/* Define to 1 if the system has the type `int16'. */
+#undef HAVE_INT16
+
+/* Define to 1 if the system has the type `int32'. */
+#undef HAVE_INT32
+
+/* Define to 1 if the system has the type `int8'. */
+#undef HAVE_INT8
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
