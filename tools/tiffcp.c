@@ -630,7 +630,7 @@ tiffcp(TIFF* in, TIFF* out)
 	switch (compression) {
 	case COMPRESSION_JPEG:
 		TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
-		//TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
+		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
 		break;
 	case COMPRESSION_LZW:
 	case COMPRESSION_DEFLATE:
