@@ -28,7 +28,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.2  2000-01-28 15:36:38  warmerda
+ * Revision 1.3  2000-04-18 22:48:31  warmerda
+ * Added support for averaging resampling
+ *
+ * Revision 1.2  2000/01/28 15:36:38  warmerda
  * pass TIFF handle instead of filename to overview builder
  *
  * Revision 1.1  1999/08/17 01:47:59  warmerda
@@ -48,7 +51,8 @@
 #include <stdlib.h>
 #include "tiffio.h"
 
-void TIFFBuildOverviews( TIFF *, int, int *, int );
+void TIFFBuildOverviews( TIFF *, int, int *, int, const char *,
+                         int (*)(double,void*), void * );
 
 /************************************************************************/
 /*                                main()                                */
@@ -61,23 +65,35 @@ int main( int argc, char ** argv )
     int		nOverviewCount = 0;
     int		bUseSubIFD = 0;
     TIFF	*hTIFF;
+    const char  *pszResampling = "nearest";
 
 /* -------------------------------------------------------------------- */
 /*      Usage:                                                          */
 /* -------------------------------------------------------------------- */
     if( argc < 2 )
     {
-        printf( "Usage: addtiffo tiff_filename [resolution_reductions]\n" );
-        printf( "\n" );
-        printf( "Example:\n" );
-        printf( " %% addtifo abc.tif 2 4 8 16\n" );
+        printf( "Usage: addtiffo [-r {nearest,average,mode}]\n"
+                "                tiff_filename [resolution_reductions]\n"
+                "\n"
+                "Example:\n"
+                " %% addtifo abc.tif 2 4 8 16\n" );
         exit( 1 );
     }
 
-    if( strcmp(argv[1],"-subifd") == 0 )
+    while( argv[1][0] == '-' )
     {
-        bUseSubIFD = 1;
-        argv++;
+        if( strcmp(argv[1],"-subifd") == 0 )
+        {
+            bUseSubIFD = 1;
+            argv++;
+            argc--;
+        }
+        else if( strcmp(argv[1],"-r") == 0 )
+        {
+            argv += 2;
+            argc -= 2;
+            pszResampling = *argv;
+        }
     }
 
 /* -------------------------------------------------------------------- */
@@ -113,7 +129,8 @@ int main( int argc, char ** argv )
         exit( 1 );
     }
 
-    TIFFBuildOverviews( hTIFF, nOverviewCount, anOverviews, bUseSubIFD );
+    TIFFBuildOverviews( hTIFF, nOverviewCount, anOverviews, bUseSubIFD,
+                        pszResampling, NULL, NULL );
 
     TIFFClose( hTIFF );
     
