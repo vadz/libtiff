@@ -319,6 +319,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_CONFIG_FILES([Makefile \
 		 contrib/Makefile \
+		 contrib/acorn/Makefile \
 		 contrib/addtiffo/Makefile \
                  html/Makefile \
 		 html/images/Makefile \

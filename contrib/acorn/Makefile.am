@@ -25,7 +25,5 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = README
-
-SUBDIRS = acorn addtiffo
+EXTRA_DIST = Makefile.acorn ReadMe SetVars cleanlib convert install
 
