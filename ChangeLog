@@ -1,3 +1,9 @@
+2000-10-16  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Modified tif_packbits.c decoding to avoid overrunning the
+	output buffer, and to issue a warning if data needs to be
+	discarded.  See http://bugzilla.remotesensing.org/show_bug.cgi?id=18
+
 2000-10-12  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* Modified tiff2bw to ensure portions add to 100%, and that
@@ -16,7 +22,7 @@
 
 2000-09-27  Frank Warmerdam  <warmerda@cs46980-c>
 
-	* Added GNULDdso target and switched linux and freebsd to use it. 
+	* Added GNULDdso target an`d switched linux and freebsd to use it. 
 
 2000-09-26  Frank Warmerdam  <warmerda@cs46980-c>
 
