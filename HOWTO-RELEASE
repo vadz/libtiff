@@ -14,14 +14,21 @@ Notes on releasing.
    of the distribution (like the html file in step 2), to 
    TIFFFILES in Makefile.in
 
-5. Increment version in file "VERSION" 
+5. Increment version in file "VERSION".  Put Alpha or Beta after the version
+   with a space, if applicable. 
 
-6. Update the date in libtiff/tiffvers.h.
+   eg.
+   3.5.7
+    or
+   3.5.8 Beta
 
-7. sh configure; make; make install (to test). 
+6. sh configure; make; make install (to test). 
 
-8. make release -- this will update "RELEASE-DATE" in the top level dir,
-   and create the .tar.gz and .zip archives one directory above.
+7. make release -- this will update "RELEASE-DATE" in the top level dir,
+   libtiff/tiffvers.h and create the .tar.gz and .zip archives one directory 
+   above.  
+
+8. Please verify that the version info in libtiff/tiffvers.h is right.
 
 9. make distclean
 
