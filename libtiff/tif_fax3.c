@@ -504,7 +504,8 @@ Fax3SetupState(TIFF* tif)
 		dsp->refruns = dsp->runs + (nruns>>1);
 	else
 		dsp->refruns = NULL;
-	if (is2DEncoding(dsp)) {	/* NB: default is 1D routine */
+	if (td->td_compression == COMPRESSION_CCITTFAX3
+	    && is2DEncoding(dsp)) {	/* NB: default is 1D routine */
 		tif->tif_decoderow = Fax3Decode2D;
 		tif->tif_decodestrip = Fax3Decode2D;
 		tif->tif_decodetile = Fax3Decode2D;
