@@ -1,11 +1,11 @@
-Tue Nov 30 14:41:43 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+Tue Nov 30 14:41:43 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>    ***3.5.3. release***
 
 	* Added tif_luv to contrib/djgpp/Makefile.lib.
 
 Tue Nov 30 14:15:32 EST 1999   Mike Welles <mike@onshore.com> 
 
         * Added zip creation to relase makefile target 
-	
+
 	* Added html for TIFFWriteTile.3t man page. 
 	
 Tue Nov 30 09:20:16 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>

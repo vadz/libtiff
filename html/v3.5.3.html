@@ -17,7 +17,7 @@ Changes in TIFF v3.5.3
 <HR SIZE=4 WIDTH=65% ALIGN=left>
 <B>Current Version</B>: v3.5.3<BR>
 <B>Previous Version</B>: <A HREF=v3.5.2.html>v3.5.2</a><BR>
-<B>Master FTP Site</B>: <A HREF="ftp://ftp.onshore.com/pub/libtiff">ftp.onshore.com, directory graphics/tiff</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://ftp.onshore.com/pub/libtiff">ftp.onshore.com</a>, directory pub/libtiff</A><BR>
 <B>Master HTTP Site</B>: <A HREF="http://www.libtiff.org/">http://www.libtiff.org</a> 
 <HR SIZE=4 WIDTH=65% ALIGN=left>
 </UL>
@@ -33,8 +33,37 @@ The following information is located here:
 <LI><A HREF="#libtiff">Changes in libtiff</A>
 <LI><A HREF="#tools">Changes in the tools</A>
 </UL>
-
-<P><HR WIDTH=65% ALIGN=right>
+<p> 
+The ChangeLog will follow, but please note the most important change: 
+LZW compression has been removed. 
+<p>
+Unisys has the patent on LZW compression and have been very active in
+their enforcement of late, demanding payments of $5000 or more from
+websites using unlicensed software to create GIF's.  They could well
+do the same do persons using libtiff to create LZW compressed TIFF
+images.
+<p> 
+From <A HREF=http://burnallgifs.org>Burn All GIF's Day</a>:
+<br> 
+<em>The catch is that it appears to be difficult or impossible to get a
+Unisys license to use LZW in free software that complies with the Open
+Source Definition</em>
+<P>
+Unfortunatly, the removal of LZW compression means that saved image size has
+grown dramatically.  Without a change in the TIFF spec to support
+another lossless compression format, this is unavoidable.
+<P>
+The library can use zip for lossless compression, but as this is not
+part of the spec, TIFFs using zip compression may not work with other
+software
+<P> 
+We will be making a patch available that will contain the LZW
+compression code for users who have either obtained a license from
+Unisys or are willing to risk it. 
+<p> 
+LZW decompression is unchanged. 
+<p> 
+<P><HR WIDTH=65% ALIGN=left>
 
 <A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
 
@@ -44,7 +73,7 @@ The following information is located here:
 
 </UL>
 
-<P><HR WIDTH=65% ALIGN=right>
+<P><HR WIDTH=65% ALIGN=left>
 
 <A NAME="libtiff"><B><FONT SIZE=+3>C</FONT>HANGES IN LIBTIFF:</B></A>
 
@@ -85,7 +114,7 @@ The following information is located here:
 	   memory mapped files. <ivo.penzar@infolink-software.com>
 </UL>
 
-<P><HR WIDTH=65% ALIGN=right>
+<P><HR WIDTH=65% ALIGN=left>
 
 <A NAME="tools"><B><FONT SIZE=+3>C</FONT>HANGES IN THE TOOLS:</B></A>
 
