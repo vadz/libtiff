@@ -1,5 +1,8 @@
 2003-02-26  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dir.c: fixed up the tif_postdecode settings
+	responsible for byte swapping complex image data.
+
 	* libtiff/tif_lzw.c: fixed so that decoder state isn't allocated till
 	LZWSetupDecode().  Needed to read LZW files in "r+" mode.
 
