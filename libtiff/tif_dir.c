@@ -1021,54 +1021,53 @@ TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 void
 TIFFFreeDirectory(TIFF* tif)
 {
-    TIFFDirectory *td = &tif->tif_dir;
-    int            i;
+	TIFFDirectory *td = &tif->tif_dir;
+	int            i;
 
-    CleanupField(td_colormap[0]);
-    CleanupField(td_colormap[1]);
-    CleanupField(td_colormap[2]);
-    CleanupField(td_documentname);
-    CleanupField(td_artist);
-    CleanupField(td_datetime);
-    CleanupField(td_hostcomputer);
-    CleanupField(td_imagedescription);
-    CleanupField(td_make);
-    CleanupField(td_model);
-    CleanupField(td_copyright);
-    CleanupField(td_pagename);
-    CleanupField(td_sampleinfo);
-    CleanupField(td_subifd);
-    CleanupField(td_ycbcrcoeffs);
-    CleanupField(td_inknames);
-    CleanupField(td_targetprinter);
-    CleanupField(td_whitepoint);
-    CleanupField(td_primarychromas);
-    CleanupField(td_refblackwhite);
-    CleanupField(td_transferfunction[0]);
-    CleanupField(td_transferfunction[1]);
-    CleanupField(td_transferfunction[2]);
-    CleanupField(td_profileData);
-    CleanupField(td_photoshopData);
-    CleanupField(td_richtiffiptcData);
-    CleanupField(td_xmlpacketData);
-    CleanupField(td_stripoffset);
-    CleanupField(td_stripbytecount);
-    /* Begin Pixar Tags */
-    CleanupField(td_textureformat);
-    CleanupField(td_wrapmodes);
-    CleanupField(td_matrixWorldToScreen);
-    CleanupField(td_matrixWorldToCamera);
-    /* End Pixar Tags */
+	CleanupField(td_colormap[0]);
+	CleanupField(td_colormap[1]);
+	CleanupField(td_colormap[2]);
+	CleanupField(td_documentname);
+	CleanupField(td_artist);
+	CleanupField(td_datetime);
+	CleanupField(td_hostcomputer);
+	CleanupField(td_imagedescription);
+	CleanupField(td_make);
+	CleanupField(td_model);
+	CleanupField(td_copyright);
+	CleanupField(td_pagename);
+	CleanupField(td_sampleinfo);
+	CleanupField(td_subifd);
+	CleanupField(td_ycbcrcoeffs);
+	CleanupField(td_inknames);
+	CleanupField(td_targetprinter);
+	CleanupField(td_whitepoint);
+	CleanupField(td_primarychromas);
+	CleanupField(td_refblackwhite);
+	CleanupField(td_transferfunction[0]);
+	CleanupField(td_transferfunction[1]);
+	CleanupField(td_transferfunction[2]);
+	CleanupField(td_profileData);
+	CleanupField(td_photoshopData);
+	CleanupField(td_richtiffiptcData);
+	CleanupField(td_xmlpacketData);
+	CleanupField(td_stripoffset);
+	CleanupField(td_stripbytecount);
+	/* Begin Pixar Tags */
+	CleanupField(td_textureformat);
+	CleanupField(td_wrapmodes);
+	CleanupField(td_matrixWorldToScreen);
+	CleanupField(td_matrixWorldToCamera);
+	/* End Pixar Tags */
 
-    /* Cleanup custom tag values */
-    for( i = 0; i < td->td_customValueCount; i++ )
-        _TIFFfree( td->td_customValues[i].value );
+	/* Cleanup custom tag values */
+	for( i = 0; i < td->td_customValueCount; i++ ) {
+		if (td->td_customValues[i].value)
+			_TIFFfree(td->td_customValues[i].value);
+	}
 
-    td->td_customValueCount = 0;
-
-    if( td->td_customValues != NULL )
-        _TIFFfree( td->td_customValues );
-          
+	td->td_customValueCount = 0;
+	CleanupField(td_customValues);
 }
 #undef CleanupField
 
