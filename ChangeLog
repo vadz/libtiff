@@ -1,5 +1,10 @@
 2002-10-06  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_jpeg.c: fixed problem with boolean defined with wrong
+	size on windows.  Use #define boolean hack.  
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=188
+
 	* libtiff/tiff.h: Don't do special type handling in tiff.h unless
 	USING_VISUALAGE is defined.
 	

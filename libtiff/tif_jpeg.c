@@ -51,9 +51,17 @@ int TIFFFillTile(TIFF*, ttile_t);
 #undef FAR
 #endif
 
-/* The windows RPCNDR.H file defines boolean. */
-#ifdef __RPCNDR_H__
+/*
+   The windows RPCNDR.H file defines boolean, but defines it with the
+   wrong size.  So we declare HAVE_BOOLEAN so that the jpeg include file
+   won't try to typedef boolean, but #define it to override the rpcndr.h
+   definition.
+
+   http://bugzilla.remotesensing.org/show_bug.cgi?id=188
+*/
+#if defined(__RPCNDR_H__)
 #define HAVE_BOOLEAN
+#define boolean unsigned int
 #endif
 
 #include "jpeglib.h"
