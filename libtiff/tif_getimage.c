@@ -82,13 +82,22 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
     case PHOTOMETRIC_MINISWHITE:
     case PHOTOMETRIC_MINISBLACK:
     case PHOTOMETRIC_PALETTE:
-	if (td->td_planarconfig == PLANARCONFIG_CONTIG && td->td_samplesperpixel != 1) {
+	if (td->td_planarconfig == PLANARCONFIG_CONTIG 
+            && td->td_samplesperpixel != 1
+            && td->td_bitspersample < 8 ) {
 	    sprintf(emsg,
-		"Sorry, can not handle contiguous data with %s=%d, and %s=%d",
-		photoTag, photometric,
-		"Samples/pixel", td->td_samplesperpixel);
+                    "Sorry, can not handle contiguous data with %s=%d, "
+                    "and %s=%d and Bits/Sample=%d",
+                    photoTag, photometric,
+                    "Samples/pixel", td->td_samplesperpixel,
+                    td->td_bitspersample);
 	    return (0);
 	}
+        /*
+        ** We should likely validate that any extra samples are either
+        ** to be ignored, or are alpha, and if alpha we should try to use
+        ** them.  But for now we won't bother with this. 
+        */
 	break;
     case PHOTOMETRIC_YCBCR:
 	if (td->td_planarconfig != PLANARCONFIG_CONTIG) {
@@ -261,11 +270,15 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	/* fall thru... */
     case PHOTOMETRIC_MINISWHITE:
     case PHOTOMETRIC_MINISBLACK:
-	if (planarconfig == PLANARCONFIG_CONTIG && img->samplesperpixel != 1) {
+	if (planarconfig == PLANARCONFIG_CONTIG 
+            && img->samplesperpixel != 1
+            && img->bitspersample < 8 ) {
 	    sprintf(emsg,
-		"Sorry, can not handle contiguous data with %s=%d, and %s=%d",
-		photoTag, img->photometric,
-		"Samples/pixel", img->samplesperpixel);
+                    "Sorry, can not handle contiguous data with %s=%d, "
+                    "and %s=%d and Bits/Sample=%d",
+                    photoTag, img->photometric,
+                    "Samples/pixel", img->samplesperpixel,
+                    img->bitspersample);
 	    return (0);
 	}
 	break;
@@ -789,10 +802,15 @@ static void name(\
 DECLAREContigPutFunc(put8bitcmaptile)
 {
     uint32** PALmap = img->PALmap;
+    int samplesperpixel = img->samplesperpixel;
 
-    (void) x; (void) y;
+    (void) y;
     while (h-- > 0) {
-	UNROLL8(w, NOP, *cp++ = PALmap[*pp++][0]);
+	for (x = w; x-- > 0;)
+        {
+	    *cp++ = PALmap[*pp][0];
+            pp += samplesperpixel;
+        }
 	cp += toskew;
 	pp += fromskew;
     }
@@ -854,12 +872,16 @@ DECLAREContigPutFunc(put1bitcmaptile)
  */
 DECLAREContigPutFunc(putgreytile)
 {
+    int samplesperpixel = img->samplesperpixel;
     uint32** BWmap = img->BWmap;
 
     (void) y;
     while (h-- > 0) {
 	for (x = w; x-- > 0;)
-	    *cp++ = BWmap[*pp++][0];
+        {
+	    *cp++ = BWmap[*pp][0];
+            pp += samplesperpixel;
+        }
 	cp += toskew;
 	pp += fromskew;
     }
@@ -870,6 +892,7 @@ DECLAREContigPutFunc(putgreytile)
  */
 DECLAREContigPutFunc(put16bitbwtile)
 {
+    int samplesperpixel = img->samplesperpixel;
     uint32** BWmap = img->BWmap;
 
     (void) y;
@@ -880,8 +903,9 @@ DECLAREContigPutFunc(put16bitbwtile)
         {
             /* use high order byte of 16bit value */
 
-	    *cp++ = BWmap[*(wp++) >> 8][0];
-            pp += 2;
+	    *cp++ = BWmap[*wp >> 8][0];
+            pp += 2 * samplesperpixel;
+            wp += samplesperpixel;
         }
 	cp += toskew;
 	pp += fromskew;
