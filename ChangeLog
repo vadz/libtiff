@@ -1,3 +1,8 @@
+2004-08-16  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/ras2tiff.c: Fixed issue with missed big-endian checks as per
+	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=586
+
 2004-08-01  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_config.h.in, tif_config.h.vc}: config.h.in and
