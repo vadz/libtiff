@@ -1203,7 +1203,6 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 				ok = (fip->field_passcount ?
 					TIFFSetField(tif, dp->tdir_tag, 1, c)
 				      : TIFFSetField(tif, dp->tdir_tag, c));
-				ok = TIFFSetField(tif, dp->tdir_tag, c);
 			  }
 			}
 			break;
