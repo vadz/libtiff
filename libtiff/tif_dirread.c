@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -409,6 +409,8 @@ TIFFReadDirectory(TIFF* tif)
 		case TIFFTAG_MINSAMPLEVALUE:
 		case TIFFTAG_MAXSAMPLEVALUE:
 		case TIFFTAG_BITSPERSAMPLE:
+		case TIFFTAG_DATATYPE:
+		case TIFFTAG_SAMPLEFORMAT:
 			/*
 			 * The 5.0 spec says the Compression tag has
 			 * one value, while earlier specs say it has
@@ -426,14 +428,11 @@ TIFFReadDirectory(TIFF* tif)
 				    dp->tdir_type, dp->tdir_offset);
 				if (!TIFFSetField(tif, dp->tdir_tag, (int)v))
 					goto bad;
-				break;
+			} else {
+				if (!TIFFFetchPerSampleShorts(tif, dp, &iv) ||
+				    !TIFFSetField(tif, dp->tdir_tag, iv))
+					goto bad;
 			}
-			/* fall thru... */
-		case TIFFTAG_DATATYPE:
-		case TIFFTAG_SAMPLEFORMAT:
-			if (!TIFFFetchPerSampleShorts(tif, dp, &iv) ||
-			    !TIFFSetField(tif, dp->tdir_tag, iv))
-				goto bad;
 			break;
 		case TIFFTAG_SMINSAMPLEVALUE:
 		case TIFFTAG_SMAXSAMPLEVALUE:
