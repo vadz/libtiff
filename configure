@@ -23171,7 +23171,7 @@ if test "x$enable_zlib" != "xno" ; then
     LDFLAGS="-L$with_zlib_lib_dir $LDFLAGS"
 
     if test "$HAVE_RPATH" = "yes"; then
-      LDFLAGS="-R$with_zlib_lib_dir $LDFLAGS"
+      LDFLAGS="-rpath$with_zlib_lib_dir $LDFLAGS"
     fi
 
   fi
@@ -23464,7 +23464,7 @@ if test "x$enable_jpeg" != "xno" ; then
     LDFLAGS="-L$with_jpeg_lib_dir $LDFLAGS"
 
     if test "$HAVE_RPATH" = "yes"; then
-      LDFLAGS="-R$with_jpeg_lib_dir $LDFLAGS"
+      LDFLAGS="-rpath$with_jpeg_lib_dir $LDFLAGS"
     fi
 
   fi
