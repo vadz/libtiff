@@ -1,5 +1,11 @@
 2001-09-09  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtif/tif_fax3.c: Removed #ifdef PURIFY logic, and modified to
+	always use the "safe" version, even if there is a very slight
+	cost in performance.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=54
+
 	* libtiff/Makefile.in: Fixed @DSOSUB_VERSION to be @DSOSUF_VERSION@
 	in two places.
 
