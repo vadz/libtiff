@@ -1,3 +1,17 @@
+2003-10-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_getimage.c, tiffio.h}, man/TIFFReadRGBAImage.3t: New
+	function TIFFReadRGBAImageOriented() implemented to retrieve raster
+	array with user-specified origin position as suggested by Jason Frank.
+	See
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=322
+
+	for details.
+	
+	* tools/tiff2rgba.c: Switched to use TIFFReadRGBAImageOriented()
+	instead of TIFFReadRGBAImage().
+
 2003-09-30  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Check field counter against number of field
