@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -66,12 +66,12 @@ static const int threebitdeltas[8] = { 0, 1, 2, 3, 0, -3, -2, -1 };
 static int
 ThunderDecode(TIFF* tif, tidata_t op, tsize_t maxpixels)
 {
-	register u_char *bp;
+	register unsigned char *bp;
 	register tsize_t cc;
-	u_int lastpixel;
+	unsigned int lastpixel;
 	tsize_t npixels;
 
-	bp = (u_char *)tif->tif_rawcp;
+	bp = (unsigned char *)tif->tif_rawcp;
 	cc = tif->tif_rawcc;
 	lastpixel = 0;
 	npixels = 0;
@@ -152,3 +152,5 @@ TIFFInitThunderScan(TIFF* tif, int scheme)
 	return (1);
 }
 #endif /* THUNDER_SUPPORT */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
