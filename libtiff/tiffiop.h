@@ -30,14 +30,8 @@
  * ``Library-private'' definitions.
  */
 
-/*
- * UNIX systems should run the configure script to generate
- * a port.h file that reflects the system capabilities.
- * Doing this obviates all the dreck done in tiffcomp.h.
- */
 #if defined(_MSC_VER)
 # include "config.h.vc"
-# include "tiffcomp.h"
 #else
 # include "config.h"
 #endif
