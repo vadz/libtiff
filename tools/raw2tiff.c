@@ -352,8 +352,8 @@ guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands, int swab,
 	} else if (*width == 0 && *length == 0) {
 		fprintf(stderr,	"Image width and height are not specified.\n");
 
-		for (w = sqrtf(imagesize / longt);
-		     w < sqrtf(imagesize * longt);
+		for (w = sqrt(imagesize / longt);
+		     w < sqrt(imagesize * longt);
 		     w++) {
 			if (imagesize % w == 0) {
 				scanlinesize = w * depth;
@@ -447,7 +447,6 @@ correlation(void *buf1, void *buf2, uint32 n_elem, TIFFDataType dtype)
 				D1 += X * X, D2 += Y * Y;
 				K += X * Y;
                         }
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_SLONG:
                         for (i = 0; i < n_elem; i++) {
