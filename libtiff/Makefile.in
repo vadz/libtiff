@@ -66,11 +66,12 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-DIST_COMMON = $(libtiffinclude_HEADERS) $(noinst_HEADERS) \
+DIST_COMMON = $(am__libtiffinclude_HEADERS_DIST) $(noinst_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/files.lst $(srcdir)/tif_config.h.in \
 	$(srcdir)/tiffconf.h.in
-@HAVE_CXX_TRUE@am__append_1 = tif_stream.cxx
+@HAVE_CXX_TRUE@am__append_1 = tiffio.hxx
+@HAVE_CXX_TRUE@am__append_2 = tif_stream.cxx
 noinst_PROGRAMS = mkg3states$(EXEEXT)
 subdir = libtiff
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -139,6 +140,8 @@ CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libtiff_la_SOURCES) $(mkg3states_SOURCES)
 DIST_SOURCES = $(am__libtiff_la_SOURCES_DIST) $(mkg3states_SOURCES)
+am__libtiffinclude_HEADERS_DIST = tiff.h tiffconf.h tiffio.h \
+	tiffvers.h tiffio.hxx
 libtiffincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(libtiffinclude_HEADERS) $(noinst_HEADERS)
 ETAGS = etags
@@ -272,12 +275,7 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 LIBPORT = -L$(top_builddir)/port -lport
-HDRS = \
-	tiff.h \
-        tiffconf.h \
-	tiffio.h \
-	tiffvers.h
-
+HDRS = tiff.h tiffconf.h tiffio.h tiffvers.h $(am__append_1)
 EXTRA_HDRS = \
 	t4.h \
 	tif_dir.h \
@@ -293,7 +291,7 @@ SRCS = tif_aux.c tif_close.c tif_codec.c tif_color.c tif_compress.c \
 	tif_pixarlog.c tif_predict.c tif_print.c tif_read.c \
 	tif_strip.c tif_swab.c tif_thunder.c tif_tile.c tif_unix.c \
 	tif_version.c tif_warning.c tif_write.c tif_zip.c \
-	$(am__append_1)
+	$(am__append_2)
 EXTRA_SRCS = \
 	tif_acorn.c \
 	tif_apple.c \
@@ -334,9 +332,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/fi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  libtiff/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  libtiff/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  libtiff/Makefile
+	  $(AUTOMAKE) --foreign  libtiff/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
