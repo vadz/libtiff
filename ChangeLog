@@ -1,3 +1,8 @@
+Sat Nov 27 16:49:21 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* fixed various VC++ warnings as suggested by Gilles Vollant
+	<info@winimage.com>.  
+
 Wed Nov 24 12:08:16 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Modified TIFFquery.3t man pages info on TIFFIsByteSwapped() to
