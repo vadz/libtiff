@@ -415,16 +415,15 @@ typedef	enum {
 #define TIFFTAG_IT8CMYKEQUIVALENT	34032	/* CMYK color equivalents */
 /* tags 34232-34236 are private tags registered to Texas Instruments */
 #define TIFFTAG_FRAMECOUNT              34232   /* Sequence Frame Count */
-/* tags 34665, 34853 and 40965 are documented in EXIF specification */
-#define TIFFTAG_EXIFIFD			34665	/* Pointer to EXIF private directory */
-#define TIFFTAG_GPSIFD			34853	/* Pointer to GPS private directory */
-#define TIFFTAG_INTEROPERABILITYIFD	40965	/* Pointer to Interoperability private directory */
-/* tag 34750 is a private tag registered to Adobe? */
-#define TIFFTAG_ICCPROFILE		34675	/* ICC profile data */
 /* tag 34377 is private tag registered to Adobe for PhotoShop */
 #define TIFFTAG_PHOTOSHOP		34377 
+/* tags 34665, 34853 and 40965 are documented in EXIF specification */
+#define TIFFTAG_EXIFIFD			34665	/* Pointer to EXIF private directory */
+/* tag 34750 is a private tag registered to Adobe? */
+#define TIFFTAG_ICCPROFILE		34675	/* ICC profile data */
 /* tag 34750 is a private tag registered to Pixel Magic */
 #define	TIFFTAG_JBIGOPTIONS		34750	/* JBIG options */
+#define TIFFTAG_GPSIFD			34853	/* Pointer to GPS private directory */
 /* tags 34908-34914 are private tags registered to SGI */
 #define	TIFFTAG_FAXRECVPARAMS		34908	/* encoded Class 2 ses. parms */
 #define	TIFFTAG_FAXSUBADDRESS		34909	/* received SubAddr string */
@@ -434,8 +433,7 @@ typedef	enum {
 #define TIFFTAG_STONITS			37439	/* Sample value to Nits */
 /* tag 34929 is a private tag registered to FedEx */
 #define	TIFFTAG_FEDEX_EDR		34929	/* unknown use */
-/* tag 65535 is an undefined tag used by Eastman Kodak */
-#define TIFFTAG_DCSHUESHIFTVALUES       65535   /* hue shift correction data */
+#define TIFFTAG_INTEROPERABILITYIFD	40965	/* Pointer to Interoperability private directory */
 /* Adobe Digital Negative (DNG) format tags */
 #define TIFFTAG_DNGVERSION		50706	/* &DNG version number */
 #define TIFFTAG_DNGBACKWARDVERSION	50707	/* &DNG compatibility version */
@@ -517,6 +515,8 @@ typedef	enum {
 						   into ICC profile space */
 #define TIFFTAG_CURRENTICCPROFILE	50833	/* & */
 #define TIFFTAG_CURRENTPREPROFILEMATRIX	50834	/* & */
+/* tag 65535 is an undefined tag used by Eastman Kodak */
+#define TIFFTAG_DCSHUESHIFTVALUES       65535   /* hue shift correction data */
 
 /*
  * The following are ``pseudo tags'' that can be used to control
