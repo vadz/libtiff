@@ -59,12 +59,8 @@ static	int TIFFWriteDoubleArray(TIFF *,
 static	int TIFFWriteByteArray(TIFF*, TIFFDirEntry*, char*);
 static	int TIFFWriteAnyArray(TIFF*,
 	    TIFFDataType, ttag_t, TIFFDirEntry*, uint32, double*);
-#ifdef COLORIMETRY_SUPPORT
 static	int TIFFWriteTransferFunction(TIFF*, TIFFDirEntry*);
-#endif
-#ifdef CMYK_SUPPORT
 static	int TIFFWriteInkNames(TIFF*, TIFFDirEntry*);
-#endif
 static	int TIFFWriteData(TIFF*, TIFFDirEntry*, char*);
 static	int TIFFLinkDirectory(TIFF*);
 
@@ -296,28 +292,19 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 			break;
 		case FIELD_PAGENUMBER:
 		case FIELD_HALFTONEHINTS:
-#ifdef YCBCR_SUPPORT
 		case FIELD_YCBCRSUBSAMPLING:
-#endif
-#ifdef CMYK_SUPPORT
 		case FIELD_DOTRANGE:
-#endif
 			if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
 				goto bad;
 			break;
-#ifdef CMYK_SUPPORT
 		case FIELD_INKNAMES:
 			if (!TIFFWriteInkNames(tif, dir))
 				goto bad;
 			break;
-#endif
-#ifdef COLORIMETRY_SUPPORT
 		case FIELD_TRANSFERFUNCTION:
 			if (!TIFFWriteTransferFunction(tif, dir))
 				goto bad;
 			break;
-#endif
-#if SUBIFD_SUPPORT
 		case FIELD_SUBIFD:
 			if (!TIFFWriteNormalTag(tif, dir, fip))
 				goto bad;
@@ -341,7 +328,6 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 					    + ((char*)&dir->tdir_offset-data));
 			}
 			break;
-#endif
 		default:
 			if (!TIFFWriteNormalTag(tif, dir, fip))
 				goto bad;
@@ -997,7 +983,6 @@ TIFFWriteAnyArray(TIFF* tif,
 	return (status);
 }
 
-#ifdef COLORIMETRY_SUPPORT
 static int
 TIFFWriteTransferFunction(TIFF* tif, TIFFDirEntry* dir)
 {
@@ -1020,9 +1005,7 @@ TIFFWriteTransferFunction(TIFF* tif, TIFFDirEntry* dir)
 	return (TIFFWriteShortTable(tif,
 	    TIFFTAG_TRANSFERFUNCTION, dir, ncols, tf));
 }
-#endif
 
-#ifdef CMYK_SUPPORT
 static int
 TIFFWriteInkNames(TIFF* tif, TIFFDirEntry* dir)
 {
@@ -1033,7 +1016,6 @@ TIFFWriteInkNames(TIFF* tif, TIFFDirEntry* dir)
 	dir->tdir_count = td->td_inknameslen;
 	return (TIFFWriteByteArray(tif, dir, td->td_inknames));
 }
-#endif
 
 /*
  * Write a contiguous directory item.
@@ -1171,8 +1153,11 @@ TIFFLinkDirectory(TIFF* tif)
 	diroff = tif->tif_diroff;
 	if (tif->tif_flags & TIFF_SWAB)
 		TIFFSwabLong(&diroff);
-#if SUBIFD_SUPPORT
-	if (tif->tif_flags & TIFF_INSUBIFD) {
+
+	/*
+	 * Handle SubIFDs
+	 */
+        if (tif->tif_flags & TIFF_INSUBIFD) {
 		(void) TIFFSeekFile(tif, tif->tif_subifdoff, SEEK_SET);
 		if (!WriteOK(tif, &diroff, sizeof (diroff))) {
 			TIFFError(module,
@@ -1191,7 +1176,7 @@ TIFFLinkDirectory(TIFF* tif)
 			tif->tif_flags &= ~TIFF_INSUBIFD;
 		return (1);
 	}
-#endif
+
 	if (tif->tif_header.tiff_diroff == 0) {
 		/*
 		 * First directory, overwrite offset in header.

@@ -71,6 +71,7 @@ AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h stdlib.h string.h sys/time.
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST
+AC_C_INLINE
 AC_C_BIGENDIAN
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
@@ -93,7 +94,7 @@ dnl ---------------------------------------------------------------------------
 AC_MSG_CHECKING([native cpu bit order])
 case "$target_cpu" in
     i*86*)
-        HOST_FILLORDER=FILLODER_LSB2MSB
+        HOST_FILLORDER=FILLORDER_LSB2MSB
 	AC_MSG_RESULT([lsb2msb])
 	;;
     *)

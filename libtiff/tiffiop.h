@@ -51,23 +51,7 @@
 #include "tiffio.h"
 #include "tif_dir.h"
 
-#define HOST_FILLORDER FILLORDER_MSB2LSB
-
 typedef double dblparam_t;
-/*
- * If your compiler supports inline functions, then
- * set INLINE appropriately to get the known hotspots
- * in the library expanded inline.
- */
-#if defined(__GNUC__)
-# ifdef __STRICT_ANSI__
-#  define	INLINE	__inline__
-# else
-#  define	INLINE	inline
-# endif
-#else
-# define INLINE
-#endif
 
 #define GLOBALDATA(TYPE,NAME)	extern TYPE NAME
 
@@ -131,10 +115,9 @@ struct tiff {
 	tstrip_t	tif_curstrip;	/* current strip for read/write */
 	toff_t		tif_curoff;	/* current offset for read/write */
 	toff_t		tif_dataoff;	/* current offset for writing dir */
-#if SUBIFD_SUPPORT
+/* SubIFD support */
 	uint16		tif_nsubifd;	/* remaining subifds to write */
 	toff_t		tif_subifdoff;	/* offset for patching SubIFD link */
-#endif
 /* tiling support */
 	uint32 		tif_col;	/* current column (offset by row too) */
 	ttile_t		tif_curtile;	/* current tile for read/write */
