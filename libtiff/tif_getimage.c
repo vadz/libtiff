@@ -2345,9 +2345,9 @@ TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
 
     for( i_row = 0; i_row < read_ysize; i_row++ )
     {
-        _TIFFmemcpy( raster + (tile_ysize - i_row - 1) * tile_xsize,
-                     raster + (read_ysize - i_row - 1) * read_xsize,
-                     read_xsize * sizeof(uint32) );
+        memmove( raster + (tile_ysize - i_row - 1) * tile_xsize,
+                 raster + (read_ysize - i_row - 1) * read_xsize,
+                 read_xsize * sizeof(uint32) );
         _TIFFmemset( raster + (tile_ysize - i_row - 1) * tile_xsize+read_xsize,
                      0, sizeof(uint32) * (tile_xsize - read_xsize) );
     }
@@ -2357,6 +2357,6 @@ TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
         _TIFFmemset( raster + (tile_ysize - i_row - 1) * tile_xsize,
                      0, sizeof(uint32) * tile_xsize );
     }
-    
+
     return (ok);
 }
