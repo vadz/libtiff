@@ -32,6 +32,66 @@
 #include "tiffio.h"
 
 /*
+ * Revision history
+ *
+ * 2001-Mar-21
+ *    I (Bruce A. Mallett) added this revision history comment ;)
+ *
+ *    Fixed PS_Lvl2page() code which outputs non-ASCII85 raw
+ *    data.  Moved test for when to output a line break to
+ *    *after* the output of a character.  This just serves
+ *    to fix an eye-nuisance where the first line of raw
+ *    data was one character shorter than subsequent lines.
+ *
+ *    Added an experimental ASCII85 encoder which can be used
+ *    only when there is a single buffer of bytes to be encoded.
+ *    This version is much faster at encoding a straight-line
+ *    buffer of data because it can avoid alot of the loop
+ *    overhead of the byte-by-bye version.  To use this version
+ *    you need to define EXP_ASCII85ENCODER (experimental ...).
+ *
+ *    Added bug fix given by Michael Schmidt to PS_Lvl2page()
+ *    in which an end-of-data marker ('>') was not being output
+ *    when producing non-ASCII85 encoded PostScript Level 2
+ *    data.
+ *
+ *    Fixed PS_Lvl2colorspace() so that it no longer assumes that
+ *    a TIFF having more than 2 planes is a CMYK.  This routine
+ *    no longer looks at the samples per pixel but instead looks
+ *    at the "photometric" value.  This change allows support of
+ *    CMYK TIFFs.
+ *
+ *    Modified the PostScript L2 imaging loop so as to test if
+ *    the input stream is still open before attempting to do a
+ *    flushfile on it.  This was done because some RIPs close
+ *    the stream after doing the image operation.
+ *
+ *    Got rid of the realloc() being done inside a loop in the
+ *    PSRawDataBW() routine.  The code now walks through the
+ *    byte-size array outside the loop to determine the largest
+ *    size memory block that will be needed.
+ *
+ *    Added "-m" switch to ask tiff2ps to, where possible, use the
+ *    "imagemask" operator instead of the "image" operator.
+ *
+ *    Added the "-i #" switch to allow interpolation to be disabled.
+ *
+ *    Unrolled a loop or two to improve performance.
+ */
+
+/*
+ * Define EXP_ASCII85ENCODER if you want to use an experimental
+ * version of the ASCII85 encoding routine.  The advantage of
+ * using this routine is that tiff2ps will convert to ASCII85
+ * encoding at between 3 and 4 times the speed as compared to
+ * using the old (non-experimental) encoder.  The disadvantage
+ * is that you will be using a new (and unproven) encoding
+ * routine.  So user beware, you have been warned!
+ */
+
+#define	EXP_ASCII85ENCODER
+
+/*
  * NB: this code assumes uint32 works with printf's %l[ud].
  */
 #ifndef TRUE
@@ -48,6 +108,7 @@ int 	PSduplex = FALSE;		/* enable duplex printing */
 int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
 char	*filename;			/* input filename */
+int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
 
 /*
  * ASCII85 Encoding Support.
@@ -71,6 +132,10 @@ void	Ascii85Flush(FILE* fd);
 void    PSHead(FILE*, TIFF*, uint32, uint32, float, float, float, float);
 void 	PSTail(FILE*, int);
 
+#if	defined( EXP_ASCII85ENCODER)
+int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, int raw_l );
+#endif
+
 static	void usage(int);
 
 int
@@ -84,13 +149,16 @@ main(int argc, char* argv[])
 	extern int optind;
 	FILE* output = stdout;
 
-	while ((c = getopt(argc, argv, "h:w:d:o:O:aezps128DT")) != -1)
+	while ((c = getopt(argc, argv, "h:i:w:d:o:O:aemzps128DT")) != -1)
 		switch (c) {
 		case 'd':
 			dirnum = atoi(optarg);
 			break;
 	        case 'D':
 			PSduplex = TRUE;
+			break;
+		case 'i':
+			interpolate = atoi(optarg) ? TRUE:FALSE;
 			break;
 		case 'T':
 			PStumble = TRUE;
@@ -100,6 +168,9 @@ main(int argc, char* argv[])
 			break;
 		case 'h':
 			pageHeight = atof(optarg);
+			break;
+		case 'm':
+			useImagemask = TRUE;
 			break;
 		case 'o':
 			diroff = (uint32) strtoul(optarg, NULL, 0);
@@ -375,6 +446,9 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
 			case 3:
 				photometric = PHOTOMETRIC_RGB;
 				break;
+			case 4:
+				photometric = PHOTOMETRIC_SEPARATED;
+				break;
 			}
 		}
 		if (checkImage(tif)) {
@@ -495,6 +569,21 @@ PS_Lvl2colorspace(FILE* fd, TIFF* tif)
 {
 	uint16 *rmap, *gmap, *bmap;
 	int i, num_colors;
+	const char * colorspace_p;
+
+	switch ( photometric )
+	{
+	case PHOTOMETRIC_SEPARATED:
+		colorspace_p = "CMYK";
+		break;
+
+	case PHOTOMETRIC_RGB:
+		colorspace_p = "RGB";
+		break;
+
+	default:
+		colorspace_p = "Gray";
+	}
 
 	/*
 	 * Set up PostScript Level 2 colorspace according to
@@ -505,9 +594,7 @@ PS_Lvl2colorspace(FILE* fd, TIFF* tif)
 		if (photometric == PHOTOMETRIC_YCBCR) {
 		    /* MORE CODE HERE */
 		}
-		fprintf(fd, "/Device%s",
-		    samplesperpixel > 2 ? "RGB" : "Gray");
-		fputs(" setcolorspace\n", fd);
+		fprintf(fd, "/Device%s setcolorspace\n", colorspace_p );
 		return;
 	}
 
@@ -565,6 +652,10 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	uint16 predictor, minsamplevalue, maxsamplevalue;
 	int repeat_count;
 	char im_h[64], im_x[64], im_y[64];
+	char * imageOp = "image";
+
+	if ( useImagemask && (bitspersample == 1) )
+		imageOp = "imagemask";
 
 	(void)strcpy(im_x, "0");
 	(void)sprintf(im_y, "%lu", (long) h);
@@ -808,9 +899,10 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			fputs(" dup", fd);
 		fputs(" ]", fd);
 	}
-	fputs("\n >> image\n", fd);
+
+	fprintf( fd, "\n >> %s\n", imageOp );
 	if (ascii85)
-		fputs(" im_stream flushfile\n", fd);
+		fputs(" im_stream status { im_stream flushfile } if\n", fd);
 	if (repeat_count > 1) {
 		if (tile_width < w) {
 			fprintf(fd, " /im_x im_x %lu add def\n",
@@ -857,6 +949,11 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	unsigned char *buf_data, *cp;
 	tsize_t chunk_size, byte_count;
 
+#if defined( EXP_ASCII85ENCODER )
+	int			ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
+	uint8		*	ascii85_p = 0;		/* Holds ASCII85 encoded data */
+#endif
+
 	PS_Lvl2colorspace(fd, tif);
 	use_rawdata = PS_Lvl2ImageDict(fd, tif, w, h);
 
@@ -890,6 +987,28 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		return(FALSE);
 	}
 
+#if defined( EXP_ASCII85ENCODER )
+	if ( ascii85 ) {
+	    /*
+	     * Allocate a buffer to hold the ASCII85 encoded data.  Note
+	     * that it is allocated with sufficient room to hold the
+	     * encoded data (5*chunk_size/4) plus the EOD marker (+8)
+	     * and formatting line breaks.  The line breaks are more
+	     * than taken care of by using 6*chunk_size/4 rather than
+	     * 5*chunk_size/4.
+	     */
+
+	    ascii85_p = _TIFFmalloc( (chunk_size+(chunk_size/2)) + 8 );
+
+	    if ( !ascii85_p ) {
+		_TIFFfree( buf_data );
+
+		TIFFError( filename, "Cannot allocate ASCII85 encoding buffer." );
+		return ( FALSE );
+	    }
+	}
+#endif
+
 	TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fillorder);
 	for (chunk_no = 0; chunk_no < num_chunks; chunk_no++) {
 		if (ascii85)
@@ -921,24 +1040,48 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			if (ascii85)
 				Ascii85Put('\0', fd);
 		}
-		for (cp = buf_data; byte_count > 0; byte_count--) {
-			if (ascii85)
+
+		if (ascii85) {
+#if defined( EXP_ASCII85ENCODER )
+			ascii85_l = Ascii85EncodeBlock(ascii85_p, 1, buf_data, byte_count );
+
+			if ( ascii85_l > 0 )
+				fwrite( ascii85_p, ascii85_l, 1, fd );
+#else
+			for (cp = buf_data; byte_count > 0; byte_count--)
 				Ascii85Put(*cp++, fd);
-			else {
+#endif
+		}
+		else
+		{
+			for (cp = buf_data; byte_count > 0; byte_count--) {
+				putc(hex[((*cp)>>4)&0xf], fd);
+				putc(hex[(*cp)&0xf], fd);
+				cp++;
+
 				if (--breaklen <= 0) {
 					putc('\n', fd);
 					breaklen = 36;
 				}
-				putc(hex[((*cp)>>4)&0xf], fd);
-				putc(hex[(*cp)&0xf], fd);
-				cp++;
 			}
 		}
-		if (ascii85)
-			Ascii85Flush(fd);
-		else
+
+		if ( !ascii85 ) {
+			if ( level2 )
+				putc( '>', fd );
 			putc('\n', fd);
+		}
+#if !defined( EXP_ASCII85ENCODER )
+		else
+			Ascii85Flush(fd);
+#endif
 	}
+
+#if defined( EXP_ASCII85ENCODER )
+	if ( ascii85_p )
+	    _TIFFfree( ascii85_p );
+#endif
+       
 	_TIFFfree(buf_data);
 	fputs("%%EndData\n", fd);
 	return(TRUE);
@@ -947,6 +1090,11 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 void
 PSpage(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 {
+	char	*	imageOp = "image";
+
+	if ( useImagemask && (bitspersample == 1) )
+		imageOp = "imagemask";
+
 	if (level2 && PS_Lvl2page(fd, tif, w, h))
 		return;
 	ps_bytesperrow = tf_bytesperrow;
@@ -986,7 +1134,7 @@ PSpage(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		break;
 	case PHOTOMETRIC_MINISBLACK:
 	case PHOTOMETRIC_MINISWHITE:
-		PhotoshopBanner(fd, w, h, 1, 1, "image");
+		PhotoshopBanner(fd, w, h, 1, 1, imageOp);
 		fprintf(fd, "/scanLine %ld string def\n",
 		    (long) ps_bytesperrow);
 		fprintf(fd, "%lu %lu %d\n",
@@ -995,7 +1143,7 @@ PSpage(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		    (unsigned long) w, (unsigned long) h, (unsigned long) h);
 		fprintf(fd,
 		    "{currentfile scanLine readhexstring pop} bind\n");
-		fprintf(fd, "image\n");
+		fprintf(fd, "%s\n", imageOp);
 		PSDataBW(fd, tif, w, h);
 		break;
 	}
@@ -1210,14 +1358,43 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	tsize_t stripsize = TIFFStripSize(tif);
 	tstrip_t s;
 
+#if defined( EXP_ASCII85ENCODER )
+	int			ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
+	uint8		*	ascii85_p = 0;		/* Holds ASCII85 encoded data */
+#endif
+
 	(void) w; (void) h;
 	tf_buf = (unsigned char *) _TIFFmalloc(stripsize);
 	if (tf_buf == NULL) {
 		TIFFError(filename, "No space for scanline buffer");
 		return;
 	}
+
+#if defined( EXP_ASCII85ENCODER )
+	if ( ascii85 ) {
+	    /*
+	     * Allocate a buffer to hold the ASCII85 encoded data.  Note
+	     * that it is allocated with sufficient room to hold the
+	     * encoded data (5*stripsize/4) plus the EOD marker (+8)
+	     * and formatting line breaks.  The line breaks are more
+	     * than taken care of by using 6*stripsize/4 rather than
+	     * 5*stripsize/4.
+	     */
+
+	    ascii85_p = _TIFFmalloc( (stripsize+(stripsize/2)) + 8 );
+
+	    if ( !ascii85_p ) {
+		_TIFFfree( tf_buf );
+
+		TIFFError( filename, "Cannot allocate ASCII85 encoding buffer." );
+		return;
+	    }
+	}
+#endif
+
 	if (ascii85)
 	        Ascii85Init();
+
 	for (s = 0; s < TIFFNumberOfStrips(tif); s++) {
 		int cc = TIFFReadEncodedStrip(tif, s, tf_buf, stripsize);
 		if (cc < 0) {
@@ -1231,8 +1408,15 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			cp++;
 		}
 		if (ascii85) {
+#if defined( EXP_ASCII85ENCODER )
+			ascii85_l = Ascii85EncodeBlock( ascii85_p, 1, cp, cc );
+
+			if ( ascii85_l > 0 )
+			    fwrite( ascii85_p, ascii85_l, 1, fd );
+#else
 			while (cc-- > 0)
 				Ascii85Put(*cp++, fd);
+#endif /* EXP_ASCII85_ENCODER */
 		} else {
 			while (cc-- > 0) {
 				unsigned char c = *cp++;
@@ -1241,10 +1425,20 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			}
 		}
 	}
-	if (ascii85)
-	        Ascii85Flush(fd);
-	else if (level2)
+
+	if ( !ascii85 )
+	{
+	    if ( level2 )
 	        fputs(">\n", fd);
+	}
+#if !defined( EXP_ASCII85ENCODER )
+	else
+	    Ascii85Flush(fd);
+#else
+	if ( ascii85_p )
+	    _TIFFfree( ascii85_p );
+#endif
+
 	_TIFFfree(tf_buf);
 }
 
@@ -1259,25 +1453,55 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	unsigned char *cp, c;
 	tstrip_t s;
 
+#if defined( EXP_ASCII85ENCODER )
+	int			ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
+	uint8		*	ascii85_p = 0;		/* Holds ASCII85 encoded data */
+#endif
+
 	(void) w; (void) h;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fillorder);
 	TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &bc);
+
+	/*
+	 * Find largest strip:
+	 */
+
 	bufsize = bc[0];
+
+	for ( s = 0; ++s < tf_numberstrips; ) {
+		if ( bc[s] > bufsize )
+			bufsize = bc[s];
+	}
+
 	tf_buf = (unsigned char*) _TIFFmalloc(bufsize);
 	if (tf_buf == NULL) {
 		TIFFError(filename, "No space for strip buffer");
 		return;
 	}
+
+#if defined( EXP_ASCII85ENCODER )
+	if ( ascii85 ) {
+	    /*
+	     * Allocate a buffer to hold the ASCII85 encoded data.  Note
+	     * that it is allocated with sufficient room to hold the
+	     * encoded data (5*bufsize/4) plus the EOD marker (+8)
+	     * and formatting line breaks.  The line breaks are more
+	     * than taken care of by using 6*bufsize/4 rather than
+	     * 5*bufsize/4.
+	     */
+
+	    ascii85_p = _TIFFmalloc( (bufsize+(bufsize/2)) + 8 );
+
+	    if ( !ascii85_p ) {
+		_TIFFfree( tf_buf );
+
+		TIFFError( filename, "Cannot allocate ASCII85 encoding buffer." );
+		return;
+	    }
+	}
+#endif
+
 	for (s = 0; s < tf_numberstrips; s++) {
-		if (bc[s] > bufsize) {
-			tf_buf = (unsigned char *) _TIFFrealloc(tf_buf, bc[s]);
-			if (tf_buf == NULL) {
-				TIFFError(filename,
-				    "No space for strip buffer");
-				return;
-			}
-			bufsize = bc[s];
-		}
 		cc = TIFFReadRawStrip(tif, s, tf_buf, bc[s]);
 		if (cc < 0) {
 			TIFFError(filename, "Can't read strip");
@@ -1295,12 +1519,24 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			breaklen = MAXLINE;
 		} else {
 		        Ascii85Init();
+#if defined( EXP_ASCII85ENCODER )
+			ascii85_l = Ascii85EncodeBlock( ascii85_p, 1, tf_buf, cc );
+
+			if ( ascii85_l > 0 )
+				fwrite( ascii85_p, ascii85_l, 1, fd );
+#else
 			for (cp = tf_buf; cc > 0; cc--)
 				Ascii85Put(*cp++, fd);
 			Ascii85Flush(fd);
+#endif	/* EXP_ASCII85ENCODER */
 		}
 	}
 	_TIFFfree((char *) tf_buf);
+
+#if defined( EXP_ASCII85ENCODER )
+	if ( ascii85_p )
+		_TIFFfree( ascii85_p );
+#endif
 }
 
 void
@@ -1373,6 +1609,151 @@ Ascii85Flush(FILE* fd)
 	}
 	fputs("~>\n", fd);
 }
+#if	defined( EXP_ASCII85ENCODER)
+
+#define A85BREAKCNTR    ascii85breaklen
+#define A85BREAKLEN     (2*MAXLINE)
+
+/*****************************************************************************
+*
+* Name:         Ascii85EncodeBlock( ascii85_p, f_eod, raw_p, raw_l )
+*
+* Description:  This routine will encode the raw data in the buffer described
+*               by raw_p and raw_l into ASCII85 format and store the encoding
+*               in the buffer given by ascii85_p.
+*
+* Parameters:   ascii85_p   -   A buffer supplied by the caller which will
+*                               contain the encoded ASCII85 data.
+*               f_eod       -   Flag: Nz means to end the encoded buffer with
+*                               an End-Of-Data marker.
+*               raw_p       -   Pointer to the buffer of data to be encoded
+*               raw_l       -   Number of bytes in raw_p[] to be encoded
+*
+* Returns:      (int)   <   0   Error, see errno
+*                       >=  0   Number of bytes written to ascii85_p[].
+*
+* Notes:        An external variable given by A85BREAKCNTR is used to
+*               determine when to insert newline characters into the
+*               encoded data.  As each byte is placed into ascii85_p this
+*               external is decremented.  If the variable is decrement to
+*               or past zero then a newline is inserted into ascii85_p
+*               and the A85BREAKCNTR is then reset to A85BREAKLEN.
+*                   Note:  for efficiency reasons the A85BREAKCNTR variable
+*                          is not actually checked on *every* character
+*                          placed into ascii85_p but often only for every
+*                          5 characters.
+*
+*               THE CALLER IS RESPONSIBLE FOR ENSURING THAT ASCII85_P[] IS
+*               SUFFICIENTLY LARGE TO THE ENCODED DATA!
+*                   You will need at least 5 * (raw_l/4) bytes plus space for
+*                   newline characters and space for an EOD marker (if
+*                   requested).  A safe calculation is to use 6*(raw_l/4) + 8
+*                   to size ascii85_p.
+*
+*****************************************************************************/
+
+int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, int raw_l )
+
+{
+    char                        ascii85[5];     /* Encoded 5 tuple */
+    int                         ascii85_l;      /* Number of bytes written to ascii85_p[] */
+    int                         rc;             /* Return code */
+    uint32                      val32;          /* Unencoded 4 tuple */
+
+    ascii85_l = 0;                              /* Nothing written yet */
+
+    if ( raw_p )
+    {
+        --raw_p;                                /* Prepare for pre-increment fetches */
+
+        for ( ; raw_l > 3; raw_l -= 4 )
+        {
+            val32  = *(++raw_p) << 24;
+            val32 += *(++raw_p) << 16;
+            val32 += *(++raw_p) <<  8;
+            val32 += *(++raw_p);
+    
+            if ( val32 == 0 )                   /* Special case */
+            {
+                ascii85_p[ascii85_l] = 'z';
+                rc = 1;
+            }
+    
+            else
+            {
+                ascii85[4] = (val32 % 85) + 33;
+                val32 /= 85;
+    
+                ascii85[3] = (val32 % 85) + 33;
+                val32 /= 85;
+    
+                ascii85[2] = (val32 % 85) + 33;
+                val32 /= 85;
+    
+                ascii85[1] = (val32 % 85) + 33;
+                ascii85[0] = (val32 / 85) + 33;
+
+                _TIFFmemcpy( &ascii85_p[ascii85_l], ascii85, sizeof(ascii85) );
+                rc = sizeof(ascii85);
+            }
+    
+            ascii85_l += rc;
+    
+            if ( (A85BREAKCNTR -= rc) <= 0 )
+            {
+                ascii85_p[ascii85_l] = '\n';
+                ++ascii85_l;
+                A85BREAKCNTR = A85BREAKLEN;
+            }
+        }
+    
+        /*
+         * Output any straggler bytes:
+         */
+    
+        if ( raw_l )
+        {
+            int             len;                /* Output this many bytes */
+    
+            len = raw_l + 1;
+            val32 = *++raw_p << 24;             /* Prime the pump */
+    
+            if ( --raw_l )  val32 += *(++raw_p) << 16;
+            if ( --raw_l )  val32 += *(++raw_p) <<  8;
+    
+            val32 /= 85;
+    
+            ascii85[3] = (val32 % 85) + 33;;
+            val32 /= 85;
+    
+            ascii85[2] = (val32 % 85) + 33;;
+            val32 /= 85;
+    
+            ascii85[1] = (val32 % 85) + 33;;
+            ascii85[0] = (val32 / 85) + 33;;
+    
+            _TIFFmemcpy( &ascii85_p[ascii85_l], ascii85, len );
+            ascii85_l += len;
+        }
+    }
+
+    /*
+     * If requested add an ASCII85 End Of Data marker:
+     */
+
+    if ( f_eod )
+    {
+        ascii85_p[ascii85_l++] = '~';
+        ascii85_p[ascii85_l++] = '>';
+        ascii85_p[ascii85_l++] = '\n';
+    }
+
+    return ( ascii85_l );
+
+}   /* Ascii85EncodeBlock() */
+
+#endif	/* EXP_ASCII85ENCODER */
+
 
 char* stuff[] = {
 "usage: tiff2ps [options] input.tif ...",
@@ -1384,6 +1765,8 @@ char* stuff[] = {
 " -D            enable duplex printing (two pages per sheet of paper)",
 " -e            generate Encapsulated PostScript (EPS)",
 " -h #          assume printed page height is # inches (default 11)",
+" -i #          enable/disable (Nz/0) pixel interpolation (default: enable)",
+" -m            use \"imagemask\" operator instead of \"image\"",
 " -o #          convert directory at file offset #",
 " -O file       write PostScript to file instead of standard output",
 " -a            convert all directories in file (default is first)",
