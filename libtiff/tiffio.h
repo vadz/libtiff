@@ -93,7 +93,7 @@ DECLARE_HANDLE(thandle_t);	/* Win32 file handle */
 typedef	HFILE thandle_t;	/* client data handle */
 #endif
 #else
-typedef	int thandle_t;		/* client data handle */
+typedef	void* thandle_t;	/* client data handle */
 #endif
 
 #ifndef NULL
