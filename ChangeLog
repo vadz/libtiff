@@ -1,3 +1,8 @@
+2003-11-17  Andrey Kiselev  <dron@remotesensing.org>
+
+	* contrib/pds/{tif_pdsdirread.c, tif_pdsdirwrite.c}: Use
+	TIFFDataWidth() function insted of tiffDataWidth array.
+
 2003-11-16  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tiff.h, tif_dirinfo.c}: Added support for IFD (13)
