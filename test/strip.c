@@ -59,7 +59,8 @@ write_strips(TIFF *tif, const tdata_t array, const tsize_t size)
 
 		if (TIFFWriteEncodedStrip(tif, strip, (char *)array + offset,
 					  bufsize) != bufsize) {
-			fprintf (stderr, "Can't write strip %d.\n", (int)strip);
+			fprintf (stderr, "Can't write strip %lu.\n",
+				 (unsigned long)strip);
 			return -1;
 		}
         }
@@ -98,12 +99,13 @@ read_strips(TIFF *tif, const tdata_t array, const tsize_t size)
 			bufsize = stripsize;
 
 		if (TIFFReadEncodedStrip(tif, strip, buf, -1) != bufsize) {
-			fprintf (stderr, "Can't read strip %d.\n", (int)strip);
+			fprintf (stderr, "Can't read strip %lu.\n",
+				 (unsigned long)strip);
 			return -1;
 		}
 		if (memcmp(buf, (char *)array + offset, bufsize) != 0) {
-			fprintf (stderr, "Wrong data read for strip %d.\n",
-				 strip);
+			fprintf (stderr, "Wrong data read for strip %lu.\n",
+				 (unsigned long)strip);
 			_TIFFfree(buf);
 			return -1;
 		}
@@ -276,7 +278,7 @@ write_scanlines(TIFF *tif, const tdata_t array, const tsize_t size)
 	for (offset = 0, row = 0; row < length; offset+=scanlinesize, row++) {
 		if (TIFFWriteScanline(tif, (char *)array + offset, row, 0) < 0) {
 			fprintf (stderr,
-				 "Can't write image data at row %ld.\n", row);
+				 "Can't write image data at row %lu.\n", row);
 			return -1;
 		}
         }
