@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.17  2004-10-09 14:15:07  dron
+ * Revision 1.18  2004-10-10 11:38:34  dron
+ * Move _TIFFmemset() behind the pointer check in t2p_init().
+ *
+ * Revision 1.17  2004/10/09 14:15:07  dron
  * Fixed TransferFunction tag handling reported by Ross A. Finlayson.
  *
  * Revision 1.16  2004/09/10 11:50:57  dron
@@ -912,7 +915,6 @@ int tiff2pdf_match_paper_size(float* width, float* length, char* papersize){
 T2P* t2p_init(){
 
 	T2P* t2p = (T2P*) _TIFFmalloc(sizeof(T2P));
-	_TIFFmemset(t2p, 0x00, sizeof(T2P));
 	if(t2p==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
@@ -920,6 +922,7 @@ T2P* t2p_init(){
 			sizeof(T2P));
 		return( (T2P*) NULL );
 	}
+	_TIFFmemset(t2p, 0x00, sizeof(T2P));
 	t2p->pdf_majorversion=1;
 	t2p->pdf_minorversion=1;
 	t2p->pdf_defaultxres=300.0;
