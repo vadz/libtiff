@@ -149,6 +149,9 @@ typedef	struct {
 	int		jpegtablesmode;	/* What to put in JPEGTables */
 
         int             ycbcrsampling_fetched;
+	uint32		recvparams;	/* encoded Class 2 session params */
+	char*		subaddress;	/* subaddress string */
+	uint32		recvtime;	/* time spent receiving (secs) */
 } JPEGState;
 
 #define	JState(tif)	((JPEGState*)(tif)->tif_data)
@@ -160,6 +163,9 @@ static	int JPEGEncodeRaw(TIFF*, tidata_t, tsize_t, tsample_t);
 static  int JPEGInitializeLibJPEG( TIFF * tif );
 
 #define	FIELD_JPEGTABLES	(FIELD_CODEC+0)
+#define	FIELD_RECVPARAMS	(FIELD_CODEC+1)
+#define	FIELD_SUBADDRESS	(FIELD_CODEC+2)
+#define	FIELD_RECVTIME		(FIELD_CODEC+3)
 
 static const TIFFFieldInfo jpegFieldInfo[] = {
     { TIFFTAG_JPEGTABLES,	 -3,-3,	TIFF_UNDEFINED,	FIELD_JPEGTABLES,
@@ -170,6 +176,13 @@ static const TIFFFieldInfo jpegFieldInfo[] = {
       FALSE,	FALSE,	"" },
     { TIFFTAG_JPEGTABLESMODE,	 0, 0,	TIFF_ANY,	FIELD_PSEUDO,
       FALSE,	FALSE,	"" },
+    /* Specific for JPEG in faxes */
+    { TIFFTAG_FAXRECVPARAMS,	 1, 1, TIFF_LONG,	FIELD_RECVPARAMS,
+      TRUE,	FALSE,	"FaxRecvParams" },
+    { TIFFTAG_FAXSUBADDRESS,	-1,-1, TIFF_ASCII,	FIELD_SUBADDRESS,
+      TRUE,	FALSE,	"FaxSubAddress" },
+    { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	FIELD_RECVTIME,
+      TRUE,	FALSE,	"FaxRecvTime" },
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
@@ -1415,6 +1428,15 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 /* mark the fact that we have a real ycbcrsubsampling! */
 		sp->ycbcrsampling_fetched = 1;
 		return (*sp->vsetparent)(tif, tag, ap);
+	case TIFFTAG_FAXRECVPARAMS:
+		sp->recvparams = va_arg(ap, uint32);
+		break;
+	case TIFFTAG_FAXSUBADDRESS:
+		_TIFFsetString(&sp->subaddress, va_arg(ap, char*));
+		break;
+	case TIFFTAG_FAXRECVTIME:
+		sp->recvtime = va_arg(ap, uint32);
+		break;
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
