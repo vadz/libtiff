@@ -65,6 +65,7 @@ static	uint16 config;
 static	uint16 compression;
 static	uint16 predictor;
 static	uint16 fillorder;
+static	uint16 orientation;
 static	uint32 rowsperstrip;
 static	uint32 g3opts;
 static	int ignore = FALSE;		/* if true, ignore read errors */
@@ -479,7 +480,7 @@ static struct cpTag {
 	{ TIFFTAG_IMAGEDESCRIPTION,	1, TIFF_ASCII },
 	{ TIFFTAG_MAKE,			1, TIFF_ASCII },
 	{ TIFFTAG_MODEL,		1, TIFF_ASCII },
-	{ TIFFTAG_ORIENTATION,		1, TIFF_SHORT },
+//FIXME	{ TIFFTAG_ORIENTATION,		1, TIFF_SHORT },
 	{ TIFFTAG_MINSAMPLEVALUE,	1, TIFF_SHORT },
 	{ TIFFTAG_MAXSAMPLEVALUE,	1, TIFF_SHORT },
 	{ TIFFTAG_XRESOLUTION,		1, TIFF_RATIONAL },
@@ -547,6 +548,30 @@ tiffcp(TIFF* in, TIFF* out)
 		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
 	else
 		CopyTag(TIFFTAG_FILLORDER, 1, TIFF_SHORT);
+	/*
+	 * Will copy `Orientation' tag from input image
+	 */
+	TIFFGetField(in, TIFFTAG_ORIENTATION, &orientation);
+	switch (orientation) {
+		case ORIENTATION_BOTRIGHT:
+		case ORIENTATION_RIGHTBOT:	/* XXX */
+		case ORIENTATION_LEFTBOT:	/* XXX */
+			TIFFWarning(TIFFFileName(in), "using bottom-left orientation");
+			orientation = ORIENTATION_BOTLEFT;
+		/* fall thru... */
+		case ORIENTATION_BOTLEFT:
+			break;
+		case ORIENTATION_TOPRIGHT:
+		case ORIENTATION_RIGHTTOP:	/* XXX */
+		case ORIENTATION_LEFTTOP:	/* XXX */
+		default:
+			TIFFWarning(TIFFFileName(in), "using top-left orientation");
+			orientation = ORIENTATION_TOPLEFT;
+		/* fall thru... */
+		case ORIENTATION_TOPLEFT:
+			break;
+	}
+	TIFFSetField(out, TIFFTAG_ORIENTATION, orientation);
 	/*
 	 * Choose tiles/strip for the output image according to
 	 * the command line arguments (-tiles, -strips) and the
@@ -884,8 +909,12 @@ static void
 cpStripToTile(uint8* out, uint8* in,
 	uint32 rows, uint32 cols, int outskew, int inskew)
 {
+        uint8 *base = out;
 	while (rows-- > 0) {
 		uint32 j = cols;
+		if (orientation == ORIENTATION_BOTLEFT)
+			/* Mirror rows vertically */
+			out = base + (cols + outskew) * rows;
 		while (j-- > 0)
 			*out++ = *in++;
 		out += outskew;
