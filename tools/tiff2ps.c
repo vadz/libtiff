@@ -28,7 +28,7 @@
 #include <stdlib.h>			/* for atof */
 #include <math.h>
 #include <time.h>
-#include <strings.h>
+#include <string.h>
 
 #include "tiffio.h"
 
