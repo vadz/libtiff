@@ -55,11 +55,11 @@ all default:
 	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS}
 
 install:
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS} install
-	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS} install
-	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS} install
+	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} install
+	@${ECHO} "= "tools; cd tools; ${MAKE} install
+	@${ECHO} "= "man; cd man; ${MAKE} install
 	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} -${MAKEFLAGS} install; \
+	    ${ECHO} "= "html; cd html; ${MAKE} install; \
 	else \
 	    true; \
 	fi
