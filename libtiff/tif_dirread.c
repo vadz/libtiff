@@ -514,10 +514,17 @@ TIFFReadDirectory(TIFF* tif)
 		    _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
 		if (EstimateStripByteCounts(tif, dir, dircount) < 0)
 		    goto bad;
+/* 
+ * Assume we have wrong StripByteCount value (in case of single strip) if:
+ *   - it is equal to zero along with StripOffset;
+ *   - it is larger than file itself (in case of uncompressed image);
+ *   - it smaller than single row.
+ */
 #define	BYTECOUNTLOOKSBAD \
-    ((td->td_stripbytecount[0] == 0 && td->td_stripoffset[0] != 0) || \
-    (td->td_compression == COMPRESSION_NONE && \
-     td->td_stripbytecount[0] > TIFFGetFileSize(tif) - td->td_stripoffset[0]))
+    ( (td->td_stripbytecount[0] == 0 && td->td_stripoffset[0] != 0) || \
+      (td->td_compression == COMPRESSION_NONE && \
+       td->td_stripbytecount[0] > TIFFGetFileSize(tif) - td->td_stripoffset[0] \
+        || td->td_stripbytecount[0] < TIFFVTileSize(tif, 1)) )
 	} else if (td->td_nstrips == 1 && BYTECOUNTLOOKSBAD) {
 		/*
 		 * Plexus (and others) sometimes give a value
