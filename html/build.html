@@ -460,193 +460,6 @@ Finally, to complete support for the shared library added the appropriate
 rules to <B>libtiff/Makefile.in</B> under the target specified in the
 <TT>configure</TT> script.
 
-
-
-
-<A NAME="Parameters"><P><HR WIDTH=65% ALIGN=right><H3>Configuration Parameters</H3></A>
-
-This section gives a brief description of the less obvious
-configuration parameters.  Consult the distributed <B>config.site</B>
-for a <EM>complete list of parameters</EM>.
-The list here is sorted alphabetically.
-
-<P>
-<TABLE BORDER CELLPADDING=3>
-
-<TR>
-<TD VALIGN=top><TT>AROPTS</TT></TD>
-<TD>The options passed to ar when creating an archive.
-Note that configure will automatically check to see if ar
-supports an <TT>s</TT> to create a symbol table instead of
-using ranlib.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIR_BIN</TT></TD>
-<TD>The directory where client applications should be installed; by
-default this is <B>/usr/local/bin</B>.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIR_GZLIB</TT></TD>
-<TD>The pathname of the directory containing the zlib library
-(when ZIP or PixarLog compression support is enabled);
-e.g. ``<TT>../src/zlib</TT>''.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIR_JPEGLIB</TT></TD>
-<TD>The pathname of the directory containing the JPEG library
-(when JPEG support is enabled); e.g. ``<TT>/usr/local/lib</TT>''.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIR_LIB</TT></TD>
-<TD>The directory to install libraries and DSO's; by default
-this is <B>/usr/local/lib</B>.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIR_MAN</TT></TD>
-<TD>The top-most directory of the manual area where manual
-pages should be installed.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIRS_LIBINC</TT></TD>
-<TD>A space-separated list of directories in which to search for
-include files when building the library and tools.
-If JPEG or ZIP support is configured this parameter should include
-the directories where the associated include files are located.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIST_POINT</TT></TD>
-<TD>The most point release number for the distribution; e.g. if this
-is version 3.5.4 then the the point release number is 4.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIST_MAJOR</TT></TD>
-<TD>The major version number for the distribution; e.g. if this
-is version 3.5.4 then the the major number is 3.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DIST_MINOR</TT></TD>
-<TD>The minor version number for the distribution; e.g. if this
-is version 3.5.4 then the the major number is 5.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DSOSUF</TT></TD>
-<TD>When DSO's are built, the filename suffix for a DSO.
-If this is set to <TT>"a"</TT> then  statically linked archives are used.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>DSOSUF_VERSION</TT></TD>
-<TD>When DSO's are built, a version-specific filename suffix for a DSO.
-If this is set to something other than the value of <TT>DSO</TT> then
-the file <B>libtiff.<TT>DSOSUF_VERSION</TT></B> will be installed and
-a link to it named <B>libtiff.<TT>DSOSUF</TT></B> will automatically
-be created.  (Note that this means that rule for building the target
-DSO must generate a file named <B>libtiff.<TT>DSOSUF_VERSION</TT></B>.)</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>ENVOPTS</TT></TD>
-<TD>Options to pass to <TT>CC</TT> to force ANSI C compilation.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>FILLORDER</TT></TD>
-<TD>The order of bits in a byte on the server machine;
-either LSB2MSB or MSB2LSB.
-This is normally selected according to the target system.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>GCOPTS</TT></TD>
-<TD>Special options to pass the C compiler.  If this parameter
-is set, then configure may append other options to this list.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>INSTALL</TT></TD>
-<TD>The pathname of the install program to use.  Note that this program
-must emulate the command line interface used by the IRIX install program.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>LIBPORT</TT></TD>
-<TD>The pathname of the library that holds code to emulate missing
-system functionality.
-Normally this parameter is set by configure based on whether or
-not emulation code is required for the target.
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>LLDOPTS</TT>
-<TD>Extra command line options passed to <TT>CC</TT>
-when linking an executable.
-This option is usually set only when DSO support is enabled
-(to force the executable to search for the TIFF DSO
-in non-standard locations in the filesystem.)</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>MACHDEPLIBS</TT></TD>
-<TD>Target-dependent libraries that should be used when linking
-tools.
-Note that if this parameter is specified configure will append to
-the list of libraries.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>MANSCHEME</TT></TD>
-<TD>The scheme to use when preparing and installing manual pages.
-Schemes are constructed according to:
-<UL>
-&lt;<I>organization</I>&gt;-&lt;<I>formatting</I>&gt;-&lt;<I>compression</I>&gt;[-&lt;<I>suffix</I>&gt;]
-</UL>
-where:
-&lt;<I>organization</I>&gt; is either <TT>bsd</TT>
-for BSD-style section organization (e.g.  file formats in
-section 5) or <TT>sysv</TT> for System V-style
-organization (e.g. file formats in section 4).
-&lt;<I>formatting</I>&gt; is either <TT>nroff</TT> to force
-installation of formatted materials (using nroff) or
-<TT>source</TT> to get the nroff source installed.
-&lt;<I>compression</I>&gt; is either the name of a program
-to compress the manual pages (gipz, compress, pack) or
-<TT>cat</TT> for uncompressed data.
-&lt;<I>suffix</I>&gt; is either the file suffix to convert
-installed pages to (e.g. 0.gz for gzip-compressed pages under BSD)
-or <TT>strip</TT> to force the normal ".4f" suffix to be converted to ".4"
-(or ".5" if using the BSD organization).  If no -&lt;suffix&gt;
-is specified then filenames are not converted when they are installed.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>PORTFUNCS</TT></TD>
-<TD>A list of non-standard functions that should be emulated.
-Normally this list is constructed by configure based on checks it does.
-If this parameter is set, configure will append to the specified list.</TD>
-</TR>
-
-<TR>
-<TD VALIGN=top><TT>SETMAKE</TT></TD>
-<TD>If make does not automatically set <TT>$MAKE</TT> to
-the name of the make program to invoke for subdirectories, then
-configure will create an explicit definition.
-If this parameter is set, then it will be used instead.
-by default <TT>bin</TT> is used.</TD>
-</TR>
-
-</TABLE>
-
-
 <A NAME=PC><P><HR><H2>Building the Software under Windows 95/98/NT/2000 with MS VC++</H2></A>
 
 With Microsoft Visual C++ installed, and properly configured for commandline
@@ -659,10 +472,9 @@ C:\LIBTIFF\LIBTIFF> cd ..\tools
 C:\LIBTIFF\TOOLS> nmake /f makefile.vc
 </pre>
 
-This will build the library file <tt>LIBTIFF\LIBTIFF\LIBTIFF.LIB</tt>.  This
-can be used in Win32 programs.  If used in a project using the /MD compiler
-switch (using the runtime C library), it may be necessary to modify the 
-CFLAGS macro in makefile.vc to correspond.<p>
+This will build the library file <tt>libtiff\libtiff\libtiff.lib</tt>.  This
+can be used in Win32 programs.You may want to adjust the build options before start compiling. All parameters contained in the <TT>nmake.opt<TT> file.This is
+a plain text file you can open with your favorite text editor.<p>
 
 The makefile also builds a DLL (libtiff.dll) with an associated import
 library (libtiff_i.lib).  Any builds using libtiff will need to include
@@ -670,9 +482,6 @@ the LIBTIFF\LIBTIFF directory in the include path.<p>
 
 The <tt>libtiff\tools\makefile.vc</tt> should build .exe's for all the
 standard TIFF tool programs.<p>
-
-NOTE: The contents of the contrib/win32 directory should no longer be
-needed, and are kept in the distribution temporarily.<p>
 
 <A NAME=DJGPP><P><HR><H2>Building the Software under MS/DOS with the DJGPP v2 compiler</H2></A>
 
