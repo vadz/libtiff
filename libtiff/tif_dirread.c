@@ -64,8 +64,8 @@ static	void ChopUpSingleUncompressedStrip(TIFF*);
 static char *
 CheckMalloc(TIFF* tif, size_t nmemb, size_t elem_size, const char* what)
 {
-	char *cp = NULL;
-	size_t bytes = nmemb * elem_size;
+	char	*cp = NULL;
+	tsize_t	bytes = nmemb * elem_size;
 
 	/*
 	 * XXX: Check for integer overflow.

@@ -206,8 +206,9 @@ struct tiff {
 	(TIFFWriteFile(tif, (tdata_t) buf, (tsize_t) size) == (tsize_t) size)
 #endif
 
-#define	TIFFhowmany(x, y) (((x)+((y)-1))/(y))
-#define TIFFhowmany8(x) (((x)&0x07)?((x)>>3)+1:(x)>>3)
+/* NB: the uint32 casts are to silence certain ANSI-C compilers */
+#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
+#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
 #define	TIFFroundup(x, y) (TIFFhowmany(x,y)*(y))
 
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))
