@@ -1,4 +1,8 @@
-1999-11-22  Mike Welles
+1999-11-22  Mike Welles <mike@onshore.com>
+	*  HTML-ized the man pages, added to html/man
+	
+1999-11-22  Mike Welles <mike@onshore.com>
+
 	*  Removed LZW Compression to comply with Unisys patent extortion. 
 	
 1999-09-29  Mike Welles		<mike@onshore.com> 
