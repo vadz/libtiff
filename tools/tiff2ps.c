@@ -99,12 +99,13 @@
 #define	FALSE	0
 #endif
 
-int     ascii85 = FALSE;		/* use ASCII85 encoding */
+int	ascii85 = FALSE;		/* use ASCII85 encoding */
 int	interpolate = TRUE;		/* interpolate level2 image */
 int	level2 = FALSE;			/* generate PostScript level 2 */
+int	level3 = FALSE;			/* generate PostScript level 3 */
 int	printAll = FALSE;		/* print all images in file */
 int	generateEPSF = TRUE;		/* generate Encapsulated PostScript */
-int 	PSduplex = FALSE;		/* enable duplex printing */
+int	PSduplex = FALSE;		/* enable duplex printing */
 int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
 float	maxPageHeight = 0;		/* maximum size to fit on page */
@@ -156,7 +157,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	FILE* output = stdout;
 
-	while ((c = getopt(argc, argv, "b:d:h:H:L:i:w:l:o:O:acelmrxyzps128DT")) != -1)
+	while ((c = getopt(argc, argv, "b:d:h:H:L:i:w:l:o:O:acelmrxyzps1238DT")) != -1)
 		switch (c) {
  		case 'b':
  			bottommargin = atof(optarg);
@@ -167,7 +168,7 @@ main(int argc, char* argv[])
 		case 'd':
 			dirnum = atoi(optarg);
 			break;
-	        case 'D':
+		case 'D':
 			PSduplex = TRUE;
 			break;
 		case 'i':
@@ -177,6 +178,7 @@ main(int argc, char* argv[])
 			PStumble = TRUE;
 			break;
 		case 'e':
+			PSavoiddeadzone = FALSE;
 			generateEPSF = TRUE;
 			break;
 		case 'h':
@@ -227,10 +229,15 @@ main(int argc, char* argv[])
 			break;
 		case '1':
 			level2 = FALSE;
+			level3 = FALSE;
 			ascii85 = FALSE;
 			break;
 		case '2':
 			level2 = TRUE;
+			ascii85 = TRUE;			/* default to yes */
+			break;
+		case '3':
+			level3 = TRUE;
 			ascii85 = TRUE;			/* default to yes */
 			break;
 		case '8':
@@ -259,9 +266,9 @@ main(int argc, char* argv[])
 		}
 	}
 	if (np)
-	        PSTail(output, np);
+		PSTail(output, np);
 	else
-	        usage(-1);
+		usage(-1);
 	if (output != stdout)
 		fclose(output);
 	return (0);
@@ -280,15 +287,14 @@ checkImage(TIFF* tif)
 {
 	switch (photometric) {
 	case PHOTOMETRIC_YCBCR:
-		if ((compression == COMPRESSION_JPEG 
-                     || compression == COMPRESSION_OJPEG)
-                     && planarconfiguration == PLANARCONFIG_CONTIG) {
+		if ((compression == COMPRESSION_JPEG || compression == COMPRESSION_OJPEG)
+			&& planarconfiguration == PLANARCONFIG_CONTIG) {
 			/* can rely on libjpeg to convert to RGB */
 			TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE,
 				     JPEGCOLORMODE_RGB);
 			photometric = PHOTOMETRIC_RGB;
 		} else {
-			if (level2)
+			if (level2 || level3)
 				break;
 			TIFFError(filename, "Can not handle image with %s",
 			    "PhotometricInterpretation=YCbCr");
@@ -541,12 +547,12 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 	setupPageState(tif, &w, &h, &prw, &prh);
 
 	do {
-	        tf_numberstrips = TIFFNumberOfStrips(tif);
+		tf_numberstrips = TIFFNumberOfStrips(tif);
 		TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP,
 		    &tf_rowsperstrip);
 		setupPageState(tif, &w, &h, &prw, &prh);
 		if (!npages)
-		        PSHead(fd, tif, w, h, prw, prh, ox, oy);
+			PSHead(fd, tif, w, h, prw, prh, ox, oy);
 		TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE,
 		    &bitspersample);
 		TIFFGetFieldDefaulted(tif, TIFFTAG_SAMPLESPERPIXEL,
@@ -603,7 +609,7 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 						scale = 1.0;
 					bottom_offset +=
 						(ph * PS_UNIT_SIZE - prh * scale) / (cnt?2:1);
- 				        if (cnt)
+ 					if (cnt)
 						left_offset += (pw * PS_UNIT_SIZE - prw * scale) / 2;
 					fprintf(fd, "%f %f translate\n",
 						left_offset, bottom_offset);
@@ -647,7 +653,7 @@ static char TumblePreamble[] = "\
 systemdict begin\n\
   /languagelevel where { pop languagelevel } { 1 } ifelse\n\
   2 ge { 1 dict dup /Tumble true put setpagedevice }\n\
-  { statusdict /settumble known { statusdict begin settumble true end } if\n\
+  { statusdict /settumble known { statusdict begin true settumble end } if\n\
   } ifelse\n\
 end\n\
 %%EndFeature\n\
@@ -667,7 +673,7 @@ void
 PSHead(FILE *fd, TIFF *tif, uint32 w, uint32 h, float pw, float ph,
 	float ox, float oy)
 {
-        time_t t;
+	time_t t;
 
 	(void) tif; (void) w; (void) h;
 	t = time(0);
@@ -680,16 +686,16 @@ PSHead(FILE *fd, TIFF *tif, uint32 w, uint32 h, float pw, float ph,
 	/* NB: should use PageBoundingBox */
 	fprintf(fd, "%%%%BoundingBox: 0 0 %ld %ld\n",
 	    (long) ceil(pw), (long) ceil(ph));
-	fprintf(fd, "%%%%LanguageLevel: %d\n", level2 ? 2 : 1);
+	fprintf(fd, "%%%%LanguageLevel: %d\n", (level3 ? 3 : (level2 ? 2 : 1)));
 	fprintf(fd, "%%%%Pages: (atend)\n");
 	fprintf(fd, "%%%%EndComments\n");
 	fprintf(fd, "%%%%BeginSetup\n");
 	if (PSduplex)
-	        fprintf(fd, "%s", DuplexPreamble);
+		fprintf(fd, "%s", DuplexPreamble);
 	if (PStumble)
-	        fprintf(fd, "%s", TumblePreamble);
-	if (PSavoiddeadzone && level2)
-	        fprintf(fd, "%s", AvoidDeadZonePreamble);
+		fprintf(fd, "%s", TumblePreamble);
+	if (PSavoiddeadzone && (level2 || level3))
+		fprintf(fd, "%s", AvoidDeadZonePreamble);
 	fprintf(fd, "%%%%EndSetup\n");
 }
 
@@ -697,7 +703,7 @@ void
 PSTail(FILE *fd, int npages)
 {
 	fprintf(fd, "%%%%Trailer\n");
-        fprintf(fd, "%%%%Pages: %d\n", npages);
+	fprintf(fd, "%%%%Pages: %d\n", npages);
 	fprintf(fd, "%%%%EOF\n");
 }
 
@@ -1016,6 +1022,25 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		}
 		fputs(" /LZWDecode filter", fd);
 		break;
+	case COMPRESSION_DEFLATE:	/* 5: ZIP */
+	case COMPRESSION_ADOBE_DEFLATE:
+		if ( level3 ) {
+			 TIFFGetFieldDefaulted(tif, TIFFTAG_PREDICTOR, &predictor);
+			 if (predictor >= 2) {
+				 fputs("\n\t<<\n", fd);
+				 fprintf(fd, "\t /Predictor %u\n", predictor);
+				 fprintf(fd, "\t /Columns %lu\n",
+					 (unsigned long) tile_width);
+				 fprintf(fd, "\t /Colors %u\n", samplesperpixel);
+					 fprintf(fd, "\t /BitsPerComponent %u\n",
+					 bitspersample);
+				 fputs("\t>>", fd);
+			 }
+			 fputs(" /FlateDecode filter", fd);
+		} else {
+			use_rawdata = FALSE ;
+		}
+		break;
 	case COMPRESSION_PACKBITS:	/* 32773: Macintosh RLE */
 		fputs(" /RunLengthDecode filter", fd);
 		use_rawdata = TRUE;
@@ -1035,7 +1060,6 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	case COMPRESSION_NEXT:		/* 32766: NeXT 2-bit RLE */
 	case COMPRESSION_THUNDERSCAN:	/* 32809: ThunderScan RLE */
 	case COMPRESSION_PIXARFILM:	/* 32908: Pixar companded 10bit LZW */
-	case COMPRESSION_DEFLATE:	/* 32946: Deflate compression */
 	case COMPRESSION_JBIG:		/* 34661: ISO JBIG */
 		use_rawdata = FALSE;
 		break;
@@ -1232,7 +1256,7 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		}
 
 		if ( !ascii85 ) {
-			if ( level2 )
+			if ( level2 || level3 )
 				putc( '>', fd );
 			putc('\n', fd);
 		}
@@ -1262,7 +1286,7 @@ PSpage(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	if ( useImagemask && (bitspersample == 1) )
 		imageOp = "imagemask";
 
-	if (level2 && PS_Lvl2page(fd, tif, w, h))
+	if ((level2 || level3) && PS_Lvl2page(fd, tif, w, h))
 		return;
 	ps_bytesperrow = tf_bytesperrow;
 	switch (photometric) {
@@ -1560,7 +1584,7 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 #endif
 
 	if (ascii85)
-	        Ascii85Init();
+		Ascii85Init();
 
 	for (s = 0; s < TIFFNumberOfStrips(tif); s++) {
 		int cc = TIFFReadEncodedStrip(tif, s, tf_buf, stripsize);
@@ -1595,8 +1619,8 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 
 	if ( !ascii85 )
 	{
-	    if ( level2 )
-	        fputs(">\n", fd);
+	    if ( level2 || level3)
+		fputs(">\n", fd);
 	}
 #if !defined( EXP_ASCII85ENCODER )
 	else
@@ -1685,7 +1709,7 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			fputs(">\n", fd);
 			breaklen = MAXLINE;
 		} else {
-		        Ascii85Init();
+			Ascii85Init();
 #if defined( EXP_ASCII85ENCODER )
 			ascii85_l = Ascii85EncodeBlock( ascii85_p, 1, tf_buf, cc );
 
@@ -1925,15 +1949,16 @@ int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, 
 char* stuff[] = {
 "usage: tiff2ps [options] input.tif ...",
 "where options are:",
-" -1            generate PostScript Level I (default)",
-" -2            generate PostScript Level II",
-" -8            disable use of ASCII85 encoding with PostScript Level II",
+" -1            generate PostScript Level 1 (default)",
+" -2            generate PostScript Level 2",
+" -3            generate PostScript Level 3",
+" -8            disable use of ASCII85 encoding with PostScript Level 2/3",
 " -a            convert all directories in file (default is first)",
 " -b #          set the bottom margin to # inches",
 " -c            center image (-b and -l still add to this)",
 " -d #          convert directory number #",
 " -D            enable duplex printing (two pages per sheet of paper)",
-" -e            generate Encapsulated PostScript (EPS)",
+" -e            generate Encapsulated PostScript (EPS) (implies -z)",
 " -h #          assume printed page height is # inches (default 11)",
 " -w #          assume printed page width is # inches (default 8.5)",
 " -H #          split image if height is more than # inches",
@@ -1949,7 +1974,7 @@ char* stuff[] = {
 " -T            print pages for top edge binding",
 " -x            override resolution units as centimeters",
 " -y            override resolution units as inches",
-" -z            enable printing in the deadzone (only for PostScript Level II)",
+" -z            enable printing in the deadzone (only for PostScript Level 2/3)",
 NULL
 };
 
