@@ -20,12 +20,6 @@
 /* The size of a `long', as computed by sizeof. */
 #define SIZEOF_LONG 4
 
-/* Redefine functions from the <io.h> as normal ones */
-#define lseek _lseek
-#define open _open
-#define close _close
-#define read _read
-
 /* Set the native cpu bit order */
 #define HOST_FILLORDER FILLORDER_LSB2MSB
 
