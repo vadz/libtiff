@@ -1,4 +1,4 @@
-.\" $Header$
+.\" $Id$
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH QUERY 3T "October 15, 1995"
+.TH QUERY 3T "October 29, 2004" "libtiff"
 .SH NAME
 TIFFCurrentRow,
 TIFFCurrentStrip,
@@ -36,25 +36,37 @@ TIFFGetMode,
 TIFFIsTiled,
 TIFFIsByteSwapped,
 TIFFIsUpSampled,
-TIFFIsMSB2LSB
+TIFFIsMSB2LSB,
+TIFFGetVersion
 \- query routines
 .SH SYNOPSIS
-.nf
 .B "#include <tiffio.h>"
-.B "uint32 TIFFCurrentRow(TIFF* tif)"
-.B "tstrip_t TIFFCurrentStrip(TIFF* tif)"
-.B "ttile_t TIFFCurrentTile(TIFF* tif)"
-.B "tdir_t TIFFCurrentDirectory(TIFF* tif)"
-.B "int TIFFLastDirectory(TIFF* tif)"
-.B "int TIFFFileno(TIFF* tif)"
-.B "char* TIFFFileName(TIFF* tif)"
-.B "int TIFFGetMode(TIFF* tif)"
-.B "int TIFFIsTiled(TIFF* tif)"
-.B "int TIFFIsByteSwapped(TIFF* tif)"
-.B "int TIFFIsUpSampled(TIFF* tif)"
-.B "int TIFFIsMSB2LSB(TIFF* tif)"
-.B "const char* TIFFGetVersion(void)"
-.fi
+.sp
+.BI "uint32 TIFFCurrentRow(TIFF* " tif ")"
+.br
+.BI "tstrip_t TIFFCurrentStrip(TIFF* " tif ")"
+.br
+.BI "ttile_t TIFFCurrentTile(TIFF* " tif ")"
+.br
+.BI "tdir_t TIFFCurrentDirectory(TIFF* " tif ")"
+.br
+.BI "int TIFFLastDirectory(TIFF* " tif ")"
+.br
+.BI "int TIFFFileno(TIFF* " tif ")"
+.br
+.BI "char* TIFFFileName(TIFF* " tif ")"
+.br
+.BI "int TIFFGetMode(TIFF* " tif ")"
+.br
+.BI "int TIFFIsTiled(TIFF* " tif ")"
+.br
+.BI "int TIFFIsByteSwapped(TIFF* " tif ")"
+.br
+.BI "int TIFFIsUpSampled(TIFF* " tif ")"
+.br
+.BI "int TIFFIsMSB2LSB(TIFF* " tif ")"
+.br
+.BI "const char* TIFFGetVersion(void)"
 .SH DESCRIPTION
 The following routines return status information about an open
 .SM TIFF
