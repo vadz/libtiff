@@ -1,3 +1,12 @@
+2001-01-23  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_fax3.c: keep rw_mode flag internal to fax3 state to remember
+	whether we are encoding or decoding.  This is to ensure graceful 
+	recovery if TIFFClientOpen() discovers an attempt to open a compressed
+	file for "r+" access, and subsequently close it, as it resets the 
+	tif_mode flag to O_RDONLY in this case to avoid writes, confusing the
+	compressor's concept of whether it is in encode or decode mode.
+
 2001-01-08  Mike Welles <mike@bangstate.com> 
 
 	* Makefile.in:  Now cleaning up after itself after creating the .tar.gz and .zip
