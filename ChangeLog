@@ -1,3 +1,9 @@
+2004-01-30  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/libtiff.def: Added TIFFCurrentDirOffset, TIFFWriteCheck,
+	TIFFRGBAImageOK, and TIFFNumberOfDirectories as suggested by 
+	Scott Reynolds. 
+
 2004-01-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tiff.h: Fixed tag definitions for TIFFTAG_YCLIPPATHUNITS
