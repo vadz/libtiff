@@ -120,11 +120,13 @@ TIFFFILES=\
 	VERSION					\
 	COPYRIGHT				\
 	TODO					\
+	test_pics.sh				\
 	dist/tiff.spec				\
 	    dist/newalpha			\
 	    dist/newversion			\
 	libtiff/Makefile.in			\
 	    libtiff/Makefile.lcc		\
+	    libtiff/makefile.vc			\
 	    libtiff/t4.h			\
 	    libtiff/tiff.h			\
 	    libtiff/tiffcomp.h			\
@@ -184,6 +186,7 @@ TIFFFILES=\
 	    port/strcasecmp.c			\
 	    port/strtoul.c			\
 	tools/Makefile.in			\
+	    tools/Makefile.vc			\
 	    tools/Makefile.lcc			\
 	    tools/fax2tiff.c			\
 	    tools/fax2ps.c			\
@@ -198,6 +201,7 @@ TIFFFILES=\
 	    tools/sgisv.c			\
 	    tools/thumbnail.c			\
 	    tools/tiff2bw.c			\
+	    tools/tiff2rgba.c			\
 	    tools/tiff2ps.c			\
 	    tools/tiffcmp.c			\
 	    tools/tiffcp.c			\
@@ -238,6 +242,8 @@ TIFFFILES=\
 	    man/TIFFReadEncodedStrip.3t		\
 	    man/TIFFReadEncodedTile.3t		\
 	    man/TIFFReadRGBAImage.3t		\
+	    man/TIFFReadRGBAStrip.3t		\
+	    man/TIFFReadRGBATile.3t		\
 	    man/TIFFReadRawStrip.3t		\
 	    man/TIFFReadRawTile.3t		\
 	    man/TIFFReadScanline.3t		\
@@ -380,6 +386,13 @@ CONTRIBFILES=\
 	    contrib/pds/tif_imageiter.h		\
 	    contrib/pds/tif_pdsdirread.c	\
 	    contrib/pds/tif_pdsdirwrite.c	\
+	contrib/addtiffo/README			\
+	    contrib/addtiffo/Makefile		\
+	    contrib/addtiffo/Makefile.vc	\
+	    contrib/addtiffo/addtiffo.c		\
+	    contrib/addtiffo/tif_overview.cpp	\
+	    contrib/addtiffo/rawblockedimage.cpp \
+	    contrib/addtiffo/rawblockedimage.h  \
 	${NULL}
 DISTFILES=\
 	${TIFFFILES}				\
