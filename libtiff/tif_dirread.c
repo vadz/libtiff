@@ -256,13 +256,6 @@ TIFFReadDirectory(TIFF* tif)
 	fix = 0;
 	for (dp = dir, n = dircount; n > 0; n--, dp++) {
 
-                /*
-                 * Find the field information entry for this tag.
-		 * Added check for tags to ignore ... [BFC]
-                 */
-		if( TIFFReassignTagToIgnore(TIS_EXTRACT, dp->tdir_tag) )
-                    dp->tdir_tag = IGNORE;
-
 		if (fix >= tif->tif_nfields || dp->tdir_tag == IGNORE)
 			continue;
                
