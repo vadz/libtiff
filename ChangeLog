@@ -1,3 +1,9 @@
+2000-09-14  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* tif_flush.c: Changed so that TIFFFlushData() doesn't return an
+	error when TIFF_BEENWRITING is not set.  This ensures that the
+	directory contents can still be flushed by TIFFFlush().
+
 2000-08-14  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
 	* tif_open.c: Don't set MMAP for O_RDWR files.
