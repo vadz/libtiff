@@ -1,14 +1,22 @@
+2000-03-27  Mike Welles	     <mike@onshore.com> 
+
+	* fax2ps:  Modified printruns to take uint32 instead of uint16.  
+	Patch courtesy of Bernt Herd <herd@herdsoft.com> 
+	
 2000-03-20  Mike Welles	     <mike@onshore.com> 
 
 	* configure: added test for libc6 for linux targets.  Bug reported by 
-          Stanislav Brabec <utx@k332.feld.cvut.cz>
+        Stanislav Brabec <utx@k332.feld.cvut.cz>
 
-	* Added 3.5 docs to html/Makefile.in.  Thanks to  Stanislav Brabec <utx@k332.feld.cvut.cz>
+	* Added 3.5 docs to html/Makefile.in.  
+	Thanks to  Stanislav Brabec <utx@k332.feld.cvut.cz>
 
-	* configure: fixed bugs in sed scripts (applied sed script s:/@:s;@:;s:/s;;:;: to configure). 
-	  fix submitted to Stanislav Brabec <utx@k332.feld.cvut.cz>
+	* configure: fixed bugs in sed scripts 
+	(applied sed script s:/@:s;@:;s:/s;;:;: to configure). 
+	fix submitted to Stanislav Brabec <utx@k332.feld.cvut.cz>
 
-	* tools/iptcutil was not in files list, and wasn't being added to tar archive.  Updated Makefile.in.
+	* tools/iptcutil was not in files list, and wasn't being 
+	added to tar archive.  Updated Makefile.in.
 
 2000-03-17  Frank Warmerdam  <warmerda@cs46980-c>
 

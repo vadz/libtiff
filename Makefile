@@ -31,8 +31,8 @@
 SRCDIR	= .
 
 #
-# VERSION:	v3.5.4
-# DATE:		Mon Mar 20 13:09:13 EST 2000
+# VERSION:	v3.5.5
+# DATE:		Mon Mar 27 11:15:15 EST 2000
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
@@ -494,7 +494,7 @@ release:
 
 # stamp relevant files according to current alpha
 release.stamp:
-	VERSION=`echo v3.5.4 | tr "." "-"`; \
+	VERSION=`echo v3.5.5 | tr "." "-"`; \
 	cvs tag -R Release-$$VERSION	;
 	date "+%m/%d/%Y" > RELEASE-DATE
 
@@ -506,7 +506,7 @@ releasediff:
 
 # create release distribution archive
 release.tar.zip:
-	VERSION="v3.5.4";						\
+	VERSION="v3.5.5";						\
 	rm -f ../tiff-$$VERSION $$VERSION $$VERSION-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSION;					\
 	(for i in ${DISTFILES}; do					\

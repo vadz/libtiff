@@ -1,9 +1,9 @@
 /*
  * Warning, this file was automatically created by the TIFF configure script
- * VERSION:	 v3.5.4
- * DATE:	 Mon Mar 20 13:09:13 EST 2000
+ * VERSION:	 v3.5.5
+ * DATE:	 Mon Mar 27 11:15:15 EST 2000
  * TARGET:	 i586-unknown-linux
- * CCOMPILER:	 /usr/bin/gcc-2.95.2 19991024 (release)
+ * CCOMPILER:	 /usr/bin/gcc-2.95.2 20000220 (Debian GNU/Linux)
  */
 #ifndef _PORT_
 #define _PORT_ 1

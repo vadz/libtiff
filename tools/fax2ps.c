@@ -62,7 +62,7 @@ int	maxline = 512;		/* max output line of PostScript */
  * March 13-15, 1995.
  */
 static void
-printruns(unsigned char* buf, uint16* runs, uint16* erun, uint32 lastx)
+printruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
 {
     static struct {
 	char white, black;
