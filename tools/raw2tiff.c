@@ -48,7 +48,8 @@ static	int quality = 75;		/* JPEG quality */
 static	uint16 predictor = 0;
 
 static void swapBytesInScanline(void *, uint32, TIFFDataType);
-static int guessSize(FILE *, TIFFDataType, uint32, int, uint32 *, uint32 *);
+static int guessSize(FILE *, TIFFDataType, uint32, int, int,
+		     uint32 *, uint32 *);
 static double correlation(void *, void *, uint32, TIFFDataType);
 static void usage(void);
 static	int processCompressOptions(char*);
@@ -173,7 +174,7 @@ main(int argc, char* argv[])
 		return (-1);
 	}
 
-	if (guessSize(in, dtype, hdr_size, nbands, &width, &length) < 0)
+	if (guessSize(in, dtype, hdr_size, nbands, swab, &width, &length) < 0)
 		return 1;
 
 	if (outfilename == NULL)
@@ -314,7 +315,7 @@ swapBytesInScanline(void *buf, uint32 width, TIFFDataType dtype)
 }
 
 static int
-guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands,
+guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands, int swab,
 	  uint32 *width, uint32 *length)
 {
 	const float longt = 40.0;    /* maximum possible height/width ratio */
@@ -364,7 +365,10 @@ guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands,
 				      SEEK_SET);
 				fread(buf1, scanlinesize, 1, fp);
 				fread(buf2, scanlinesize, 1, fp);
-				
+				if (swab) {
+					swapBytesInScanline(buf1, w, dtype);
+					swapBytesInScanline(buf2, w, dtype);
+				}
 				tmp = fabs(correlation(buf1, buf2, w, dtype));
 				if (tmp > cor_coef) {
 					cor_coef = tmp;
@@ -395,168 +399,91 @@ guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands,
 static double
 correlation(void *buf1, void *buf2, uint32 n_elem, TIFFDataType dtype)
 {
-	float	M1 = 0.0, M2 = 0.0, D1 = 0.0, D2 = 0.0, K = 0.0;
+	float	X, Y, M1 = 0.0, M2 = 0.0, D1 = 0.0, D2 = 0.0, K = 0.0;
 	int	i;
 
 	switch (dtype) {
 		case TIFF_BYTE:
 		default:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((u_char *)buf1)[i];
-                            M2 += ((u_char *)buf2)[i];
+				X = ((u_char *)buf1)[i];
+				Y = ((u_char *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((u_char *)buf1)[i] * ((u_char *)buf1)[i];
-			    D2 += ((u_char *)buf2)[i] * ((u_char *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((u_char *)buf1)[i] * ((u_char *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_SBYTE:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((signed char *)buf1)[i];
-                            M2 += ((signed char *)buf2)[i];
+				X = ((signed char *)buf1)[i];
+				Y = ((signed char *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((signed char*)buf1)[i]
-				* ((signed char *)buf1)[i];
-			    D2 += ((signed char*)buf2)[i]
-				* ((signed char *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((signed char *)buf1)[i]
-				    * ((signed char *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
-			break;
 			break;
 		case TIFF_SHORT:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((uint16 *)buf1)[i];
-                            M2 += ((uint16 *)buf2)[i];
+				X = ((uint16 *)buf1)[i];
+				Y = ((uint16 *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((uint16 *)buf1)[i] * ((uint16 *)buf1)[i];
-			    D2 += ((uint16 *)buf2)[i] * ((uint16 *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((uint16 *)buf1)[i] * ((uint16 *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_SSHORT:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((int16 *)buf1)[i];
-                            M2 += ((int16 *)buf2)[i];
+				X = ((int16 *)buf1)[i];
+				Y = ((int16 *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((int16 *)buf1)[i] * ((int16 *)buf1)[i];
-			    D2 += ((int16 *)buf2)[i] * ((int16 *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((int16 *)buf1)[i] * ((int16 *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_LONG:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((uint32 *)buf1)[i];
-                            M2 += ((uint32 *)buf2)[i];
+				X = ((uint32 *)buf1)[i];
+				Y = ((uint32 *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((uint32 *)buf1)[i] * ((uint32 *)buf1)[i];
-			    D2 += ((uint32 *)buf2)[i] * ((uint32 *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((uint32 *)buf1)[i] * ((uint32 *)buf2)[i];
 			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_SLONG:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((int32 *)buf1)[i];
-                            M2 += ((int32 *)buf2)[i];
+				X = ((int32 *)buf1)[i];
+				Y = ((int32 *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((int32 *)buf1)[i] * ((int32 *)buf1)[i];
-			    D2 += ((int32 *)buf2)[i] * ((int32 *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((int32 *)buf1)[i] * ((int32 *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_FLOAT:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((float *)buf1)[i];
-                            M2 += ((float *)buf2)[i];
+				X = ((float *)buf1)[i];
+				Y = ((float *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((float *)buf1)[i] * ((float *)buf1)[i];
-			    D2 += ((float *)buf2)[i] * ((float *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((float *)buf1)[i] * ((float *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 		case TIFF_DOUBLE:
                         for (i = 0; i < n_elem; i++) {
-                            M1 += ((double *)buf1)[i];
-                            M2 += ((double *)buf2)[i];
+				X = ((double *)buf1)[i];
+				Y = ((double *)buf2)[i];
+				M1 += X, M2 += Y;
+				D1 += X * X, D2 += Y * Y;
+				K += X * Y;
                         }
-                        M1 /= n_elem;
-                        M2 /= n_elem;
-
-                        for (i = 0; i < n_elem; i++) {
-			    D1 += ((double *)buf1)[i] * ((double *)buf1)[i];
-			    D2 += ((double *)buf2)[i] * ((double *)buf2)[i];
-                        }
-			D1 -= M1 * M1 * n_elem;
-			D2 -= M2 * M2 * n_elem;
-
-                        for (i = 0; i < n_elem; i++)
-				K += ((double *)buf1)[i] * ((double *)buf2)[i];
-			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 			break;
 	}
+
+	M1 /= n_elem;
+	M2 /= n_elem;
+	D1 -= M1 * M1 * n_elem;
+	D2 -= M2 * M2 * n_elem;
+	K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
 
 	return K;
 }
