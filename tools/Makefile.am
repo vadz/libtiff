@@ -23,8 +23,8 @@
 
 # Process this file with automake to produce Makefile.in.
 
-LIBPORT = -L$(top_builddir)/port -lport
-LIBTIFF = -L$(top_builddir)/libtiff -ltiff
+LIBPORT = $(top_builddir)/port/libport.la
+LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 EXTRA_DIST = Makefile.vc
 
@@ -59,50 +59,73 @@ EXTRA_PROGRAMS = sgi2tiff sgisv ycbcr
 
 bmp2tiff_SOURCES = bmp2tiff.c
 bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
+
 fax2ps_SOURCES = fax2ps.c
 fax2ps_LDADD = $(LIBTIFF) $(LIBPORT)
+
 fax2tiff_SOURCES = fax2tiff.c
 fax2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
+
 gif2tiff_SOURCES = gif2tiff.c
 gif2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
+
 pal2rgb_SOURCES = pal2rgb.c
 pal2rgb_LDADD = $(LIBTIFF) $(LIBPORT)
+
 ppm2tiff_SOURCES = ppm2tiff.c
 ppm2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
+
 ras2tiff_SOURCES = ras2tiff.c rasterfile.h
 ras2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
+
 raw2tiff_SOURCES = raw2tiff.c
 raw2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
+
 rgb2ycbcr_SOURCES = rgb2ycbcr.c
 rgb2ycbcr_LDADD = $(LIBTIFF) $(LIBPORT)
+
 thumbnail_SOURCES = thumbnail.c
 thumbnail_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiff2bw_SOURCES = tiff2bw.c
 tiff2bw_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiff2pdf_SOURCES = tiff2pdf.c
 tiff2pdf_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiff2ps_SOURCES = tiff2ps.c
 tiff2ps_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiff2rgba_SOURCES = tiff2rgba.c
 tiff2rgba_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffcmp_SOURCES = tiffcmp.c
 tiffcmp_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffcp_SOURCES = tiffcp.c
 tiffcp_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffdither_SOURCES = tiffdither.c
 tiffdither_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffdump_SOURCES = tiffdump.c
 tiffdump_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffinfo_SOURCES = tiffinfo.c
 tiffinfo_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffmedian_SOURCES = tiffmedian.c
 tiffmedian_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffset_SOURCES = tiffset.c
 tiffset_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffsplit_SOURCES = tiffsplit.c
 tiffsplit_LDADD = $(LIBTIFF) $(LIBPORT)
+
 tiffgt_SOURCES = tiffgt.c
-tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) @X_PRE_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ @GL_LIBS@ @GLU_LIBS@ @GLUT_LIBS@
+tiffgt_CFLAGS = $(CFLAGS) $(GLUT_CFLAGS) $(GLU_CFLAGS) $(GL_CFLAGS)
+tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) $(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS) $(GL_LIBS) $(GLU_LIBS) $(GLUT_LIBS)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 

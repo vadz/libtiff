@@ -1,3 +1,16 @@
+2004-09-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffgt.c: Include "tif_config.h".
+
+	* configure.ac: Use AM_PROG_CC_C_O since it is now needed to build
+	tiffgt.  This results in the 'compile' script being added to the
+	project.
+
+	* tools/Makefile.am (tiffgt_CFLAGS): Add extra build options
+	required to find OpenGL headers necessary to build tiffgt.  Also
+	ensure that the libtiff that we built is used rather than some other
+	libtiff installed on the system.
+
 2004-09-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure.ac, acinclude.m4, aclocal.m4: New macros to detect GLUT

@@ -32,6 +32,7 @@ dnl Compute the canonical target-system type variable
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
+AM_PROG_CC_C_O
 dnl Do not rebuild generated files every time
 AM_MAINTAINER_MODE
 
