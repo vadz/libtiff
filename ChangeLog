@@ -1,5 +1,12 @@
 2002-10-14  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tools/tiff2ps.c: fixes a problem where "tiff2ps -1e" did not make
+	the scanline buffer long enough when writing rgb triplets.
+	The scanline needs to be 3 X the number of dots or else it will
+	contain	an incomplete triplet and programs that try to separate
+	the eps by redefining the colorimage operator will get messed up.
+	Patch supplied by William Bader.
+
 	* Makefile.in: added tif_extension.c to file list as per 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=218.
 
