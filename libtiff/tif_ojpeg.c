@@ -17,22 +17,23 @@
    "tif_jpeg.c" file elsewhere in this library.
   
    This file interfaces with Release 5 (or later) of the "libjpeg" library,
-   written by the Independent JPEG Group, which you can find on the Internet 
-   at:
-
+   written by the Independent JPEG Group, which you can find on the Internet at:
    ftp.uu.net:/graphics/jpeg/.
   
    Contributed by Scott Marovich <marovich@hpl.hp.com>.
 */
-
 #include <setjmp.h>
 #include <stdio.h>
 #ifdef FAR
 #undef FAR /* Undefine FAR to avoid conflict with JPEG definition */
 #endif
+#undef INLINE
 #define JPEG_INTERNALS /* Include "jpegint.h" for "DSTATE_*" symbols */
 #include "jpeglib.h"
 #undef JPEG_INTERNALS
+
+/* Hack for Microsoft's Wang Imaging for Windows output files */
+extern void jpeg_reset_huff_decode(j_decompress_ptr,float *);
 
 /* On some machines, it may be worthwhile to use "_setjmp()" or "sigsetjmp()"
    instead of "setjmp()".  These macros make it easier:
@@ -40,6 +41,8 @@
 #define SETJMP(jbuf)setjmp(jbuf)
 #define LONGJMP(jbuf,code)longjmp(jbuf,code)
 #define JMP_BUF jmp_buf
+
+#define TIFFTAG_WANG_PAGECONTROL 32934
 
 /* Bit-vector offsets for keeping track of TIFF records that we've parsed. */
 
@@ -53,6 +56,7 @@
 #define FIELD_JPEGQTABLES (FIELD_CODEC+7)
 #define FIELD_JPEGDCTABLES (FIELD_CODEC+8)
 #define FIELD_JPEGACTABLES (FIELD_CODEC+9)
+#define FIELD_WANG_PAGECONTROL (FIELD_CODEC+10)
 
 typedef struct jpeg_destination_mgr jpeg_destination_mgr;
 typedef struct jpeg_source_mgr jpeg_source_mgr;
@@ -94,14 +98,15 @@ typedef struct             /* This module's private, per-image state variable */
     void *jpegtables;           /* ->"New" JPEG tables, if we synthesized any */
     uint32 jpegtables_length;   /* Length of "new" JPEG tables, if they exist */
     tsize_t bytesperline;          /* No. of decompressed Bytes per scan line */
-    int jpegcolormode,                 /* Automatic RGB <-> YCbCr conversion? */
-        jpegquality,                             /* Compression quality level */
+    int jpegquality,                             /* Compression quality level */
         jpegtablesmode,                          /* What to put in JPEGTables */
         samplesperclump,
         scancount;                           /* No. of scan lines accumulated */
     uint16 h_sampling,                          /* Luminance sampling factors */
            v_sampling,
            photometric;      /* Copy of "PhotometricInterpretation" tag value */
+    u_char is_WANG,    /* <=> Microsoft Wang Imaging for Windows output file? */
+           jpegcolormode;          /* <=> Automatic RGB <-> YCbCr conversion? */
   } OJPEGState;
 #define OJState(tif)((OJPEGState*)(tif)->tif_data)
 
@@ -161,7 +166,11 @@ static const TIFFFieldInfo ojpegFieldInfo[]= /* JPEG-specific TIFF-record tags *
     {
       TIFFTAG_JPEGACTABLES          ,TIFF_VARIABLE,TIFF_VARIABLE,
       TIFF_LONG     ,FIELD_JPEGACTABLES          ,FALSE,TRUE ,"JPEGACTables"
-    }
+    },
+    {
+      TIFFTAG_WANG_PAGECONTROL      ,1            ,1            ,
+      TIFF_LONG     ,FIELD_WANG_PAGECONTROL      ,FALSE,FALSE,"WANG PageControl"
+    },
   };
 static const char JPEGLib_name[]={"JPEG Library"},
                   bad_bps[]={"%u BitsPerSample not allowed for JPEG"},
@@ -500,11 +509,10 @@ alloc_downsampled_buffers(TIFF *tif,jpeg_component_info *comp_info,
             sp->samplesperclump +=
               compptr->h_samp_factor * compptr->v_samp_factor;
             if (!(buf = TIFFojpeg_alloc_sarray( sp
-                                             , JPOOL_IMAGE
-                                             , compptr->width_in_blocks*DCTSIZE
-                                             , (JDIMENSION)
-                                               (compptr->v_samp_factor*DCTSIZE)
-                                             )
+                                              , JPOOL_IMAGE
+                                              , compptr->width_in_blocks*DCTSIZE
+                                              , compptr->v_samp_factor  *DCTSIZE
+                                              )
                  )
                ) return 0;
             sp->ds_buffer[ci] = buf;
@@ -948,9 +956,8 @@ OJPEGDecode(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
           if (TIFFojpeg_read_scanlines(sp,&bufptr,1) != 1) return 0;
           ++tif->tif_row;
           buf += sp->bytesperline;
-          cc -= sp->bytesperline;
         }
-      while (--nrows > 0);
+      while ((cc -= sp->bytesperline) > 0 && --nrows > 0);
     return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
         || TIFFojpeg_finish_decompress(sp);
   }
@@ -959,6 +966,22 @@ OJPEGDecode(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
 OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
   { tsize_t nrows;
     register OJPEGState *sp = OJState(tif);
+#   ifndef COLORIMETRY_SUPPORT
+    static float zeroes[6];
+
+ /* BEWARE OF KLUDGE:  If our input file was produced by Microsoft's Wang
+                       Imaging for Windows application, the DC coefficients of
+    each JPEG image component (Y,Cb,Cr) must be reset at the beginning of each
+    TIFF "strip", and any JPEG data bits remaining in the decoder's input buffer
+    must be discarded, up to the next input-Byte storage boundary.  To do so, we
+    create an "ad hoc" interface in the "jdhuff.c" module of IJG JPEG Library
+    Version 6, and we invoke that interface here before decoding each "strip".
+ */
+    if (sp->is_WANG) jpeg_reset_huff_decode(&sp->cinfo.d,zeroes);
+#   else /* COLORIMETRY_SUPPORT */
+    if (sp->is_WANG)
+      jpeg_reset_huff_decode(&sp->cinfo.d,tif->tif_dir.td_refblackwhite);
+#   endif
 
  /* Decode a chunk of pixels, where returned data is down-sampled as per the
     sampling factors.  The data is expected to be read in scan-line multiples.
@@ -982,42 +1005,53 @@ OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
               do
                 { int ypos = 0;
 
-                  do
-                    { register JSAMPLE *inptr =
-                        sp->ds_buffer[ci][sp->scancount*compptr->v_samp_factor+ypos],
-                                       *outptr = (JSAMPLE*)buf + clumpoffset;
-                   /* Cb,Cr both have sampling factors 1, so this is correct */
-                      register int clumps_per_line =
-                        sp->cinfo.d.comp_info[1].downsampled_width;
+                  if (compptr->h_samp_factor == 1) /* Cb & Cr fast path */
+                    do
+                      { register JSAMPLE *inptr =
+                          sp->ds_buffer[ci][sp->scancount*compptr->v_samp_factor+ypos],
+                                         *outptr = (JSAMPLE *)buf + clumpoffset;
+                     /* Cb & Cr have sampling factors = 1, so this is correct */
+                        register int clumps_per_line =
+                          sp->cinfo.d.comp_info[1].downsampled_width;
 
-                      if (compptr->h_samp_factor == 1) /* Cb & Cr fast path */
-                        do
-                          {
-                            outptr[0] = *inptr++;
-                            outptr += sp->samplesperclump;
-                          }
-                        while (--clumps_per_line > 0);
-                      else /* general case */
+                        do *outptr = *inptr++;
+                        while ( (outptr += sp->samplesperclump)
+                              , --clumps_per_line > 0
+                              );
+                      }
+                    while ( (clumpoffset += compptr->h_samp_factor)
+                          , ++ypos < compptr->v_samp_factor
+                          );
+                  else /* general case */
+                    do
+                      { register JSAMPLE *inptr =
+                          sp->ds_buffer[ci][sp->scancount*compptr->v_samp_factor+ypos],
+                                         *outptr = (JSAMPLE *)buf + clumpoffset;
+                     /* Cb & Cr have sampling factors = 1, so this is correct */
+                        register int clumps_per_line =
+                          sp->cinfo.d.comp_info[1].downsampled_width;
+
                         do
                           { register int xpos = 0;
   
                             do outptr[xpos] = *inptr++;
                             while (++xpos < compptr->h_samp_factor);
-                            outptr += sp->samplesperclump;
                           }
-                        while (--clumps_per_line > 0);
-                      clumpoffset += compptr->h_samp_factor;
-                    }
-                  while (++ypos < compptr->v_samp_factor);
+                        while ( (outptr += sp->samplesperclump)
+                              , --clumps_per_line > 0
+                              );
+                      }
+                    while ( (clumpoffset += compptr->h_samp_factor)
+                          , ++ypos < compptr->v_samp_factor
+                          );
                 }
               while (++compptr,++ci < sp->cinfo.d.num_components);
             };
           ++sp->scancount;
           ++tif->tif_row;
           buf += sp->bytesperline;
-          cc -= sp->bytesperline;
         }
-      while (--nrows > 0);
+      while ((cc -= sp->bytesperline) > 0 && --nrows > 0);
     return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
         || TIFFojpeg_finish_decompress(sp);
   }
@@ -1026,8 +1060,11 @@ OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
    subroutine as a "dummy" input reader, to fool it into thinking that it has
    read the image's 1st "Start of Scan" (SOS) marker and initialize accordingly.
 */
-/*ARGSUSED*/ int
+/*ARGSUSED*/ METHODDEF(int)
 fake_SOS_marker(j_decompress_ptr cinfo){return JPEG_REACHED_SOS;}
+
+/*ARGSUSED*/ METHODDEF(int)
+suspend(j_decompress_ptr cinfo){return JPEG_SUSPENDED;}
 
 /*ARGSUSED*/ static int
 OJPEGPreDecode(register TIFF *tif,tsample_t s)
@@ -1035,10 +1072,26 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
                       module[]={"OJPEGPreDecode"};
     uint32 segment_width, segment_height;
     int downsampled_output = FALSE,
-        is_JFIF = TIFFFieldSet(tif,FIELD_JPEGIFOFFSET);    /* <=> JFIF image? */
+        is_JFIF;                                           /* <=> JFIF image? */
     J_COLOR_SPACE in_color_space = JCS_UNKNOWN;  /* Image's input color space */
     register OJPEGState *sp = OJState(tif);
 #   define td (&tif->tif_dir)
+
+    tif->tif_predecode = _TIFFNoPreCode; /* Don't call us again */
+
+ /* BOGOSITY ALERT!  MicroSoft's Wang Imaging for Windows application produces
+                     images containing "JPEGInterchangeFormat[Length]" TIFF
+    records that resemble JFIF-in-TIFF encapsulations but, in fact, violate the
+    TIFF Version 6 specification in several ways; nevertheless, we try to handle
+    them gracefully because there are apparently a lot of them around.  The
+    purported "JFIF" data stream in one of these files vaguely resembles a JPEG
+    "tables only" data stream, except that there's no trailing EOI marker.  The
+    rest of the JPEG data stream lies in a discontiguous file region, identified
+    by the 0th Strip offset (which is *also* illegal!), where it begins with an
+    SOS marker and apparently continues to the end of the file.  There is no
+    trailing EOI marker here, either.
+ */
+    is_JFIF = !sp->is_WANG && TIFFFieldSet(tif,FIELD_JPEGIFOFFSET);
 
  /* Set up to decode a strip or tile.  Start by resetting decoder state left
     over from any previous strip/tile, in case our client application didn't
@@ -1075,8 +1128,11 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
     segment_height = td->td_imagelength - tif->tif_row;
     if (isTiled(tif))
       {
-        if (segment_height > td->td_tilelength)
-          segment_height = td->td_tilelength;
+        if (sp->is_WANG) /* we don't know how to handle it */
+          {
+            TIFFError(module,"Tiled Wang image not supported");
+            return 0;
+          };
 
      /* BOGOSITY ALERT!  "TIFFTileRowSize()" seems to work fine for modern JPEG-
                          in-TIFF encapsulations where the image width--like the
@@ -1100,12 +1156,7 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
             sp->bytesperline = segment_width * td->td_samplesperpixel;
           }
       }
-    else
-      {
-        if (segment_height > td->td_rowsperstrip)
-          segment_height = td->td_rowsperstrip;
-        sp->bytesperline = TIFFScanlineSize(tif);
-      };
+    else sp->bytesperline = TIFFVStripSize(tif,1);
     if (td->td_planarconfig == PLANARCONFIG_SEPARATE && s > 0)
       {
 
@@ -1201,28 +1252,41 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
           switch (p[1])
             {
               default  : goto L;
-              case 0xC4: /* DHT */
-              case 0xCC: /* DAC */
-              case 0xDB: /* DQT */
-              case 0xDD: /* DRI */
-              case 0xDF: /* EXP */
-              case 0xE0: /* APP0 */
-              case 0xE1: /* APP1 */
-              case 0xE2: /* APP2 */
-              case 0xE3: /* APP3 */
-              case 0xE4: /* APP4 */
-              case 0xE5: /* APP5 */
-              case 0xE6: /* APP6 */
-              case 0xE7: /* APP7 */
-              case 0xE8: /* APP8 */
-              case 0xE9: /* APP9 */
+              case 0xC0: /* SOF0  */
+              case 0xC1: /* SOF1  */
+              case 0xC2: /* SOF2  */
+              case 0xC3: /* SOF3  */
+              case 0xC4: /* DHT   */
+              case 0xC5: /* SOF5  */
+              case 0xC6: /* SOF6  */
+              case 0xC7: /* SOF7  */
+              case 0xC9: /* SOF9  */
+              case 0xCA: /* SOF10 */
+              case 0xCB: /* SOF11 */
+              case 0xCC: /* DAC   */
+              case 0xCD: /* SOF13 */
+              case 0xCE: /* SOF14 */
+              case 0xCF: /* SOF15 */
+              case 0xDB: /* DQT   */
+              case 0xDD: /* DRI   */
+              case 0xDF: /* EXP   */
+              case 0xE0: /* APP0  */
+              case 0xE1: /* APP1  */
+              case 0xE2: /* APP2  */
+              case 0xE3: /* APP3  */
+              case 0xE4: /* APP4  */
+              case 0xE5: /* APP5  */
+              case 0xE6: /* APP6  */
+              case 0xE7: /* APP7  */
+              case 0xE8: /* APP8  */
+              case 0xE9: /* APP9  */
               case 0xEA: /* APP10 */
               case 0xEB: /* APP11 */
               case 0xEC: /* APP12 */
               case 0xED: /* APP13 */
               case 0xEE: /* APP14 */
               case 0xEF: /* APP15 */
-              case 0xFE: /* COM */
+              case 0xFE: /* COM   */
                          p += (p[2] << 8 | p[3]) + 2;
             };
      L: if (p - (unsigned char *)sp->jpegtables > 2) /* fake "JPEGTables" */
@@ -1317,7 +1381,8 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
      */
         sp->cinfo.d.marker->saw_SOI =       /* Pretend we saw SOI marker */
         sp->cinfo.d.marker->saw_SOF = TRUE; /* Pretend we saw SOF marker */
-        sp->cinfo.d.marker->read_markers = fake_SOS_marker;
+        sp->cinfo.d.marker->read_markers =
+          sp->is_WANG ? suspend : fake_SOS_marker;
         sp->cinfo.d.global_state = DSTATE_INHEADER;
         sp->cinfo.d.Se = DCTSIZE2-1; /* Suppress JPEG Library warning */
         sp->cinfo.d.image_width  = segment_width;
@@ -1341,6 +1406,7 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
         do 
           {
             sp->cinfo.d.comp_info[i].component_index = i;
+            sp->cinfo.d.comp_info[i].component_needed = TRUE;
             sp->cinfo.d.cur_comp_info[i] = &sp->cinfo.d.comp_info[i];
           }
         while (++i < sp->cinfo.d.num_components);
@@ -1396,8 +1462,33 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
               sp->cinfo.d.comp_info[0].v_samp_factor = sp->v_sampling;
           };
         sp->cinfo.d.comps_in_scan = sp->cinfo.d.num_components;
-        if (TIFFojpeg_read_header(sp,TRUE) != JPEG_HEADER_OK) return 0;
+        i = TIFFojpeg_read_header(sp,!sp->is_WANG);
         sp->cinfo.d.marker->read_markers = save; /* Restore input method */
+        if (sp->is_WANG) /* Microsoft Wang Imaging for Windows file */
+          { float *refbw;
+
+            if (i != JPEG_SUSPENDED) return 0;
+
+         /* BOGOSITY ALERT!  Files generated by Microsoft's Wang Imaging
+                             application are a special--and, technically
+            illegal--case.  A JPEG SOS marker and rest of the data stream should
+            be located at the end of the file, in a position identified by the
+            0th Strip offset.
+         */
+            i = td->td_nstrips - 1;
+            sp->src.next_input_byte = tif->tif_base + td->td_stripoffset[0];
+            sp->src.bytes_in_buffer = td->td_stripoffset[i] -
+              td->td_stripoffset[0] + td->td_stripbytecount[i];
+
+         /* Force the TIFF Library to create a default array of reference black
+            and white levels in case our input file doesn't define them, since
+            we need these for our "jpeg_reset_huff_decode()" hook into the JPEG
+            Library.
+         */
+            (void)TIFFGetFieldDefaulted(tif,TIFFTAG_REFERENCEBLACKWHITE,&refbw);
+            i = TIFFojpeg_read_header(sp,TRUE);
+          };
+        if (i != JPEG_HEADER_OK) return 0;
       };
 
  /* The JPEG Library doesn't seem to be as smart as we are about choosing
@@ -1440,7 +1531,8 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
         case TIFFTAG_JPEGPOINTTRANSFORM    :
         case TIFFTAG_JPEGQTABLES           :
         case TIFFTAG_JPEGDCTABLES          :
-        case TIFFTAG_JPEGACTABLES          : ;
+        case TIFFTAG_JPEGACTABLES          :
+        case TIFFTAG_WANG_PAGECONTROL      : ;
       };
     v32 = va_arg(ap,uint32); /* No. of values in this TIFF record */
 
@@ -1573,10 +1665,29 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
                       return 0;
                     };
                   if ((j = size) > 0) do *to++ = *from++; while (--j > 0);
+                  while (++size <= sizeof (*h)->huffval/sizeof *(*h)->huffval)
+                    *to++ = 0; /* Zero the rest of the table for cleanliness */
                 }
               while (++i < v32);
               sp->jpegtablesmode |= JPEGTABLESMODE_HUFF;
-            }
+            };
+          break;
+
+     /* The following vendor-specific TIFF tag occurs in (highly illegal) files
+        generated by MicroSoft's Wang Imaging for Windows application.  These
+        can apparently have several "pages", in which case this tag specifies
+        the offset of a "page control" structure, which we don't currently know
+        how to handle.  0 indicates a 1-page image with no "page control", which
+        we make a feeble effort to handle.
+     */
+        case TIFFTAG_WANG_PAGECONTROL      :
+          if (v32)
+            {
+              TIFFError(tif->tif_name,"Multi-page Wang image not supported");
+              return 0;
+            };
+          sp->is_WANG = 1;
+          tag = TIFFTAG_JPEGPROC+FIELD_WANG_PAGECONTROL-FIELD_JPEGPROC;
       };
     TIFFSetFieldBit(tif,tag-TIFFTAG_JPEGPROC+FIELD_JPEGPROC);
     return 1;
@@ -1760,7 +1871,6 @@ TIFFInitOJPEG(register TIFF *tif,int scheme)
  */
     _TIFFMergeFieldInfo(tif,ojpegFieldInfo,
       sizeof ojpegFieldInfo/sizeof *ojpegFieldInfo);
-
     sp->defsparent = tif->tif_defstripsize;
     sp->deftparent = tif->tif_deftilesize;
     sp->vgetparent = tif->tif_vgetfield;
@@ -1774,31 +1884,18 @@ TIFFInitOJPEG(register TIFF *tif,int scheme)
     tif->tif_setupencode = OJPEGSetupEncode;
     tif->tif_preencode = OJPEGPreEncode;
     tif->tif_postencode = OJPEGPostEncode;
-    tif->tif_encoderow = tif->tif_encodestrip = tif->tif_encodetile =
-      OJPEGEncode;
 #   else /* well, hardly ever */
     tif->tif_setupencode = tif->tif_postencode = _notSupported;
     tif->tif_preencode = (TIFFPreMethod)_notSupported;
-    tif->tif_encoderow = tif->tif_encodestrip = tif->tif_encodetile =
-      (TIFFCodeMethod)_notSupported;
 #   endif /* never */
     tif->tif_setupdecode = OJPEGSetupDecode;
     tif->tif_predecode = OJPEGPreDecode;
-    tif->tif_decoderow = tif->tif_decodestrip = tif->tif_decodetile =
-      OJPEGDecode;
     tif->tif_cleanup = OJPEGCleanUp;
 
- /* Initialize other CODEC-specific variables requiring default values.
-    Concerning the TIFF bit-flags:
+ /* Initialize other CODEC-specific variables requiring default values. */
 
-    1. We definitely don't want bit-reversal within data bytes, so disable it.
-
-    2. Even though we're not yet certain that we'll be doing YCbCr-to-RGB color-
-       space conversion of a tiled image, we want to insure that a big enough
-    buffer is allocated "just in case", so assume by default that the image will
-    be up-sampled, thereby forcing more space to be allocated.
- */
-    tif->tif_flags |= (TIFF_UPSAMPLED|TIFF_NOBITREV);
+    tif->tif_flags |= TIFF_NOBITREV; /* No bit-reversal within data bytes */
+    sp->is_WANG = 0; /* Assume not a Microsoft Wang Imaging file by default */
     sp->jpegtables = 0; /* No "new"-style JPEG tables synthesized yet */
     sp->jpegtables_length = 0;
     sp->jpegquality = 75; /* Default IJG quality */
