@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -270,13 +270,14 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		i = td->td_samplesperpixel;
 		sep = "";
 		for (cp = td->td_inknames; i > 0; cp = strchr(cp,'\0')+1, i--) {
-			fprintf(fd, "%s", sep);
+			fputs(sep, fd);
 			_TIFFprintAscii(fd, cp);
 			sep = ", ";
 		}
+                fputs("\n", fd);
 	}
 	if (TIFFFieldSet(tif,FIELD_NUMBEROFINKS))
-		fprintf(fd, " Number of Inks: %u\n", td->td_ninks);
+		fprintf(fd, "  Number of Inks: %u\n", td->td_ninks);
 	if (TIFFFieldSet(tif,FIELD_DOTRANGE))
 		fprintf(fd, "  Dot Range: %u-%u\n",
 		    td->td_dotrange[0], td->td_dotrange[1]);
@@ -606,3 +607,5 @@ _TIFFprintAsciiTag(FILE* fd, const char* name, const char* value)
 	_TIFFprintAscii(fd, value);
 	fprintf(fd, "\"\n");
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
