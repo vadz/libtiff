@@ -4,7 +4,9 @@
 	by the TIFFFetchByteArray() function. Should finally resolve
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=52
-
+	
+	* configure: Set -DPIXARLOG_SUPPORT option along with -DZIP_SUPPORT
+	
 2002-09-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in, /man/{raw2tiff.1, Makefile.in, libtiff.3}: Added
