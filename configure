@@ -22743,7 +22743,7 @@ done
 LIBTIFF=../libtiff/libtiff.la
 
 
-                                                  ac_config_files="$ac_config_files Makefile html/Makefile libtiff/Makefile man/Makefile tools/Makefile"
+                                                                      ac_config_files="$ac_config_files Makefile html/Makefile html/images/Makefile html/man/Makefile libtiff/Makefile man/Makefile tools/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -23310,6 +23310,8 @@ do
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "html/Makefile" ) CONFIG_FILES="$CONFIG_FILES html/Makefile" ;;
+  "html/images/Makefile" ) CONFIG_FILES="$CONFIG_FILES html/images/Makefile" ;;
+  "html/man/Makefile" ) CONFIG_FILES="$CONFIG_FILES html/man/Makefile" ;;
   "libtiff/Makefile" ) CONFIG_FILES="$CONFIG_FILES libtiff/Makefile" ;;
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "tools/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;

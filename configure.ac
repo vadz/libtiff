@@ -91,6 +91,8 @@ AC_SUBST(LIBTIFF,../libtiff/libtiff.la)
 
 AC_CONFIG_FILES([Makefile \
                  html/Makefile \
+		 html/images/Makefile \
+		 html/man/Makefile \
                  libtiff/Makefile \
                  man/Makefile \
                  tools/Makefile])
