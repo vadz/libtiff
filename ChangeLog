@@ -1,4 +1,4 @@
-2000-03-28  Frank Warmerdam  <warmerda@cs46980-c>
+2000-03-28  Frank Warmerdam  <warmerda@cs46980-c>    *** 3.5.5 release ***
 
 	* fax2ps: Fixed mixup of width and height in bounding box statement
 	as per submission by Nalin Dahyabhai <nalin@redhat.com>.
@@ -97,7 +97,7 @@ Tue Dec 21 14:01:51 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Added fax3sm_winnt.c to distribution list in Makefile.in. 
 
-Tue Dec 21 11:04:45 EST 1999  Mike Welles <mike@onshore.com> ***3.5.4 release***
+Tue Dec 21 11:04:45 EST 1999  Mike Welles <mike@onshore.com> *** 3.5.4 release ***
 	
 	* Aadded Pixar tag support.  Contributed by Phil Beffery <phil@pixar.com> 
 
@@ -125,7 +125,7 @@ Sat Dec  4 15:47:11 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 	* Made Packbits the default compression in tools/tiff2rgba.c instead
 	of LZW.
 
-Tue Nov 30 14:41:43 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>    ***3.5.3. release***
+Tue Nov 30 14:41:43 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>    *** 3.5.3. release ***
 
 	* Added tif_luv to contrib/djgpp/Makefile.lib.
 
@@ -185,7 +185,7 @@ Wed Nov 24 12:08:16 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 	*  Added patch from Ivo Penzar to have TiffAdvanceDirectory handle
 	   memory mapped files. <ivo.penzar@infolink-software.com>
 	
-1999-09-26  Mike Welles 	<mike@onshore.com>  ****3.5.2 release***
+1999-09-26  Mike Welles 	<mike@onshore.com>  *** 3.5.2 release ***
 	* Corrected alpha versioning.  
 
 	* Removed distinction between  alpha and release targets in Makefile.in. 
