@@ -1,3 +1,15 @@
+2005-01-11  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/Makefile.am: Place the C++ stream API in the separate
+	library called libtiffxx to avoid unneeded dependencies. Probably
+	there will be more C++ API in the future. As per bugs
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=733
+
+	and
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=730
+
 2005-01-05  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffdump.c: Fixed problem when read broken TIFFs with the

@@ -25,20 +25,92 @@
 
 LIBPORT = -L$(top_builddir)/port -lport
 
-# Read list of source files and headers from the external file,
-# shared with other makefiles
-include files.lst
-
-EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc files.lst libtiff.def \
+EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc libtiff.def \
 	     $(EXTRA_SRCS)
+
+HDRS = \
+	tiff.h \
+        tiffconf.h \
+	tiffio.h \
+	tiffvers.h
+
+if HAVE_CXX
+HDRS +=	tiffio.hxx
+endif
+
+EXTRA_HDRS = \
+	t4.h \
+	tif_dir.h \
+	tif_predict.h \
+	tiffiop.h \
+	uvcode.h
+
+SRCS = \
+	tif_aux.c \
+	tif_close.c \
+	tif_codec.c \
+	tif_color.c \
+	tif_compress.c \
+	tif_dir.c \
+	tif_dirinfo.c \
+	tif_dirread.c \
+	tif_dirwrite.c \
+	tif_dumpmode.c \
+	tif_error.c \
+	tif_extension.c \
+	tif_fax3.c \
+	tif_fax3sm.c \
+	tif_flush.c \
+	tif_getimage.c \
+	tif_jpeg.c \
+	tif_luv.c \
+	tif_lzw.c \
+	tif_next.c \
+	tif_ojpeg.c \
+	tif_open.c \
+	tif_packbits.c \
+	tif_pixarlog.c \
+	tif_predict.c \
+	tif_print.c \
+	tif_read.c \
+	tif_strip.c \
+	tif_swab.c \
+	tif_thunder.c \
+	tif_tile.c \
+	tif_unix.c \
+	tif_version.c \
+	tif_warning.c \
+	tif_write.c \
+	tif_zip.c
+
+SRCSXX = \
+	tif_stream.cxx
+
+EXTRA_SRCS = \
+	tif_acorn.c \
+	tif_apple.c \
+	tif_atari.c \
+	tif_msdos.c \
+	tif_next.c \
+	tif_win3.c \
+	tif_win32.c
 
 libtiffincludedir = $(includedir)
 libtiffinclude_HEADERS = $(HDRS)
 noinst_HEADERS = $(EXTRA_HDRS)
 
 lib_LTLIBRARIES = libtiff.la
+if HAVE_CXX
+lib_LTLIBRARIES += libtiffxx.la
+endif
+
 libtiff_la_SOURCES = $(SRCS)
 libtiff_la_LDFLAGS = \
+	-no-undefined \
+	-version-number $(LIBTIFF_MAJOR_VERSION):$(LIBTIFF_MINOR_VERSION):$(LIBTIFF_MICRO_VERSION)
+
+libtiffxx_la_SOURCES = $(SRCSXX)
+libtiffxx_la_LDFLAGS = \
 	-no-undefined \
 	-version-number $(LIBTIFF_MAJOR_VERSION):$(LIBTIFF_MINOR_VERSION):$(LIBTIFF_MICRO_VERSION)
 
