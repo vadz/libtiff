@@ -6,6 +6,9 @@
 #ifndef _TIFFCONF_
 #define _TIFFCONF_
 
+#warning "Inclusion of the tiffconf.h file is now obsoleted!"
+#warning "Don't use this file, it will be removed in future libtiff releases."
+
 /* Define as 0 or 1 according to the floating point format suported by the
    machine */
 #undef HAVE_IEEEFP
