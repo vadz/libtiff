@@ -180,10 +180,12 @@ main(int argc, char* argv[])
 	out = TIFFOpen(argv[optind+1], "w");
 	if (out == NULL)
 		return (-1);
-	cpTags(in, out);
+	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, w);
+	TIFFSetField(out, TIFFTAG_IMAGELENGTH, h);
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
 	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 1);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	cpTags(in, out);
 	if (compression != (uint16) -1) {
 		TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
 		switch (compression) {
