@@ -1,3 +1,8 @@
+2004-10-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* contrib/iptcutil/README: Added the missing README which goes
+	along with iptcutil.
+
 2004-10-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_compress.c: Improved error reporting in
