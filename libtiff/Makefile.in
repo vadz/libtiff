@@ -181,6 +181,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBTIFF_ALPHA_VERSION = @LIBTIFF_ALPHA_VERSION@
 LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
 LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
 LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
@@ -243,7 +244,11 @@ program_transform_name = @program_transform_name@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
 LIBPORT = $(top_builddir)/port/libport.a
 EXTRA_DIST = Makefile.vc files.lst
 HDRS = \
@@ -669,6 +674,9 @@ uninstall-am: uninstall-info-am uninstall-libLTLIBRARIES \
 
 tif_fax3sm.c: mkg3states
 	(rm -f tif_fax3sm.c && ./mkg3states -c const tif_fax3sm.c)
+
+version:
+	(rm -f tiffvers.h && sed 's,LIBTIFF_VERSION,$(LIBTIFF_VERSION),;s,LIBTIFF_RELEASE_DATE,$(LIBTIFF_RELEASE_DATE),' tiffvers.h.in > tiffvers.h)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -53,3 +53,5 @@ mkg3states_LDADD = $(LIBPORT)
 tif_fax3sm.c: mkg3states
 	(rm -f tif_fax3sm.c && ./mkg3states -c const tif_fax3sm.c)
 
+version:
+	(rm -f tiffvers.h && sed 's,LIBTIFF_VERSION,$(LIBTIFF_VERSION),;s,LIBTIFF_RELEASE_DATE,$(LIBTIFF_RELEASE_DATE),' tiffvers.h.in > tiffvers.h)
