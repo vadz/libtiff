@@ -773,7 +773,8 @@ oog_encode(double u, double v)		/* encode out-of-gamut chroma */
 				ustep = 1;
 			for (ui = uv_row[vi].nus-1; ui >= 0; ui -= ustep) {
 				ua = uv_row[vi].ustart + (ui+.5)*UV_SQSIZ;
-				i = ang = uv2ang(ua, va);
+				ang = uv2ang(ua, va);
+                                i = (int) ang;
 				epsa = fabs(ang - (i+.5));
 				if (epsa < eps[i]) {
 					oog_table[i] = uv_row[vi].ncum + ui;
@@ -799,7 +800,7 @@ oog_encode(double u, double v)		/* encode out-of-gamut chroma */
 			}
 		initialized = 1;
 	}
-	i = uv2ang(u, v);		/* look up hue angle */
+	i = (int) uv2ang(u, v);		/* look up hue angle */
 	return (oog_table[i]);
 }
 
