@@ -1,3 +1,8 @@
+2003-10-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiffio.h: Typo fixed: ORIENTATION_BOTTOMLEFT replaced with
+	ORIENTATION_BOTLEFT.
+
 2003-10-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* 3.6.0 final release.
@@ -22,7 +27,7 @@
 
 2003-09-30  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/tif_dirread.c: Check field counter against number of field
+	* libtiff/tif_dirread.c: Check field counter against number of fields
 	in order to fix
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=366
