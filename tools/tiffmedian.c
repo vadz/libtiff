@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Apply median cut on an image.
@@ -760,7 +760,7 @@ quant(TIFF* in, TIFF* out)
 			red = *inptr++ >> COLOR_SHIFT;
 			green = *inptr++ >> COLOR_SHIFT;
 			blue = *inptr++ >> COLOR_SHIFT;
-			*outptr++ = histogram[red][green][blue];
+			*outptr++ = (unsigned char)histogram[red][green][blue];
 		}
 		if (TIFFWriteScanline(out, outline, i, 0) < 0)
 			break;

@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -109,8 +109,8 @@ int	generateEPSF = TRUE;		/* generate Encapsulated PostScript */
 int	PSduplex = FALSE;		/* enable duplex printing */
 int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
-float	maxPageHeight = 0;		/* maximum size to fit on page */
-float	splitOverlap = 0;		/* amount for split pages to overlag */
+double	maxPageHeight = 0;		/* maximum size to fit on page */
+double	splitOverlap = 0;		/* amount for split pages to overlag */
 int	rotate = FALSE;			/* rotate image by 180 degrees */
 char	*filename;			/* input filename */
 int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
@@ -123,7 +123,7 @@ unsigned char ascii85buf[10];
 int	ascii85count;
 int	ascii85breaklen;
 
-int	TIFF2PS(FILE*, TIFF*, float, float, double, double, int);
+int	TIFF2PS(FILE*, TIFF*, double, double, double, double, int);
 void	PSpage(FILE*, TIFF*, uint32, uint32);
 void	PSColorContigPreamble(FILE*, uint32, uint32, int);
 void	PSColorSeparatePreamble(FILE*, uint32, uint32, int);
@@ -135,7 +135,7 @@ void	PSRawDataBW(FILE*, TIFF*, uint32, uint32);
 void	Ascii85Init(void);
 void	Ascii85Put(unsigned char code, FILE* fd);
 void	Ascii85Flush(FILE* fd);
-void    PSHead(FILE*, TIFF*, uint32, uint32, float, float, float, float);
+void    PSHead(FILE*, TIFF*, uint32, uint32, double, double, double, double);
 void	PSTail(FILE*, int);
 
 #if	defined( EXP_ASCII85ENCODER)
@@ -147,12 +147,13 @@ static	void usage(int);
 int
 main(int argc, char* argv[])
 {
-	int dirnum = -1, c, np = 0;
+	tdir_t dirnum = -1;
+	int c, np = 0;
 	int centered = 0;
-	float bottommargin = 0;
-	float leftmargin = 0;
-	float pageWidth = 0;
-	float pageHeight = 0;
+	double bottommargin = 0;
+	double leftmargin = 0;
+	double pageWidth = 0;
+	double pageHeight = 0;
 	uint32 diroff = 0;
 	extern char *optarg;
 	extern int optind;
@@ -402,9 +403,9 @@ PhotoshopBanner(FILE* fd, uint32 w, uint32 h, int bs, int nc, char* startline)
  * pprh : image height in PS units (72 dpi)
  */
 static void
-setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
+setupPageState(TIFF* tif, uint32* pw, uint32* ph, double* pprw, double* pprh)
 {
-	float xres, yres;
+	double xres, yres;
 
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, pw);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, ph);
@@ -454,19 +455,19 @@ static	char *hex = "0123456789abcdef";
  * pagewidth & pageheight are inches
  */
 int
-PlaceImage(FILE *fp, float pagewidth, float pageheight,
-	   float imagewidth, float imageheight, int splitpage,
+PlaceImage(FILE *fp, double pagewidth, double pageheight,
+	   double imagewidth, double imageheight, int splitpage,
 	   double lm, double bm, int cnt)
 {
-	float xtran = 0;
-	float ytran = 0;
-	float xscale = 1;
-	float yscale = 1;
-	float left_offset = lm * PS_UNIT_SIZE;
-	float bottom_offset = bm * PS_UNIT_SIZE;
-	float subimageheight;
-	float splitheight;
-	float overlap;
+	double xtran = 0;
+	double ytran = 0;
+	double xscale = 1;
+	double yscale = 1;
+	double left_offset = lm * PS_UNIT_SIZE;
+	double bottom_offset = bm * PS_UNIT_SIZE;
+	double subimageheight;
+	double splitheight;
+	double overlap;
 
 	pagewidth *= PS_UNIT_SIZE;
 	pageheight *= PS_UNIT_SIZE;
@@ -529,13 +530,14 @@ PlaceImage(FILE *fp, float pagewidth, float pageheight,
 
 /* returns the sequence number of the page processed */
 int
-TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
+TIFF2PS(FILE* fd, TIFF* tif,
+	double pw, double ph, double lm, double bm, int cnt)
 {
 	uint32 w, h;
-	float ox, oy, prw, prh;
-	float scale = 1.0;
-	float left_offset = lm * PS_UNIT_SIZE;
-	float bottom_offset = bm * PS_UNIT_SIZE;
+	double ox, oy, prw, prh;
+	double scale = 1.0;
+	double left_offset = lm * PS_UNIT_SIZE;
+	double bottom_offset = bm * PS_UNIT_SIZE;
 	uint32 subfiletype;
 	uint16* sampleinfo;
 	static int npages = 0;
@@ -586,7 +588,7 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 			npages++;
 			fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
 			if (!generateEPSF && ( level2 || level3 )) {
-				float psw,psh;
+				double psw,psh;
 				if (pw!=0 && ph!=0) {
 					psw=pw;
 					psh=ph;
@@ -689,8 +691,8 @@ gsave newpath clippath pathbbox grestore\n\
 ";
 
 void
-PSHead(FILE *fd, TIFF *tif, uint32 w, uint32 h, float pw, float ph,
-	float ox, float oy)
+PSHead(FILE *fd, TIFF *tif, uint32 w, uint32 h,
+       double pw, double ph, double ox, double oy)
 {
 	time_t t;
 
@@ -801,9 +803,9 @@ PS_Lvl2colorspace(FILE* fd, TIFF* tif)
 		fputs(" <", fd);
 	for (i = 0; i < num_colors; i++) {
 		if (ascii85) {
-			Ascii85Put(rmap[i], fd);
-			Ascii85Put(gmap[i], fd);
-			Ascii85Put(bmap[i], fd);
+			Ascii85Put((unsigned char)rmap[i], fd);
+			Ascii85Put((unsigned char)gmap[i], fd);
+			Ascii85Put((unsigned char)bmap[i], fd);
 		} else {
 			fputs((i % 8) ? " " : "\n  ", fd);
 			fprintf(fd, "%02x%02x%02x",
@@ -1179,10 +1181,10 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	}
 
 	if (use_rawdata) {
-		chunk_size = bc[0];
+		chunk_size = (tsize_t) bc[0];
 		for (chunk_no = 1; chunk_no < num_chunks; chunk_no++)
-			if (bc[chunk_no] > chunk_size)
-				chunk_size = bc[chunk_no];
+			if ((tsize_t) bc[chunk_no] > chunk_size)
+				chunk_size = (tsize_t) bc[chunk_no];
 	} else {
 		if (tiled_image)
 			chunk_size = TIFFTileSize(tif);
@@ -1489,7 +1491,8 @@ void
 PSDataColorSeparate(FILE* fd, TIFF* tif, uint32 w, uint32 h, int nc)
 {
 	uint32 row;
-	int breaklen = MAXLINE, cc, s, maxs;
+	int breaklen = MAXLINE, cc;
+	tsample_t s, maxs;
 	unsigned char *tf_buf;
 	unsigned char *cp, c;
 
@@ -1546,7 +1549,7 @@ PSDataPalette(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	}
 	if (checkcmap(tif, 1<<bitspersample, rmap, gmap, bmap) == 16) {
 		int i;
-#define	CVT(x)		(((x) * 255) / ((1U<<16)-1))
+#define	CVT(x)		((unsigned short) (((x) * 255) / ((1U<<16)-1)))
 		for (i = (1<<bitspersample)-1; i >= 0; i--) {
 			rmap[i] = CVT(rmap[i]);
 			gmap[i] = CVT(gmap[i]);
@@ -1735,7 +1738,7 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 
 	bufsize = bc[0];
 
-	for ( s = 0; ++s < tf_numberstrips; ) {
+	for ( s = 0; ++s < (tstrip_t)tf_numberstrips; ) {
 		if ( bc[s] > bufsize )
 			bufsize = bc[s];
 	}
@@ -1768,7 +1771,7 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	}
 #endif
 
-	for (s = 0; s < tf_numberstrips; s++) {
+	for (s = 0; s < (tstrip_t) tf_numberstrips; s++) {
 		cc = TIFFReadRawStrip(tif, s, tf_buf, bc[s]);
 		if (cc < 0) {
 			TIFFError(filename, "Can't read strip");
@@ -1825,17 +1828,17 @@ Ascii85Encode(unsigned char* raw)
 		uint16 w1;
 
 		q = word / (85L*85*85*85);	/* actually only a byte */
-		encoded[0] = q + '!';
+		encoded[0] = (char) (q + '!');
 
 		word -= q * (85L*85*85*85); q = word / (85L*85*85);
-		encoded[1] = q + '!';
+		encoded[1] = (char) (q + '!');
 
 		word -= q * (85L*85*85); q = word / (85*85);
-		encoded[2] = q + '!';
+		encoded[2] = (char) (q + '!');
 
 		w1 = (uint16) (word - q*(85L*85));
-		encoded[3] = (w1 / 85) + '!';
-		encoded[4] = (w1 % 85) + '!';
+		encoded[3] = (char) ((w1 / 85) + '!');
+		encoded[4] = (char) ((w1 % 85) + '!');
 		encoded[5] = '\0';
 	} else
 		encoded[0] = 'z', encoded[1] = '\0';
@@ -1948,17 +1951,17 @@ int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, 
     
             else
             {
-                ascii85[4] = (val32 % 85) + 33;
+                ascii85[4] = (char) ((val32 % 85) + 33);
                 val32 /= 85;
     
-                ascii85[3] = (val32 % 85) + 33;
+                ascii85[3] = (char) ((val32 % 85) + 33);
                 val32 /= 85;
     
-                ascii85[2] = (val32 % 85) + 33;
+                ascii85[2] = (char) ((val32 % 85) + 33);
                 val32 /= 85;
     
-                ascii85[1] = (val32 % 85) + 33;
-                ascii85[0] = (val32 / 85) + 33;
+                ascii85[1] = (char) ((val32 % 85) + 33);
+                ascii85[0] = (char) ((val32 / 85) + 33);
 
                 _TIFFmemcpy( &ascii85_p[ascii85_l], ascii85, sizeof(ascii85) );
                 rc = sizeof(ascii85);
@@ -1990,14 +1993,14 @@ int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, 
     
             val32 /= 85;
     
-            ascii85[3] = (val32 % 85) + 33;;
+            ascii85[3] = (char) ((val32 % 85) + 33);
             val32 /= 85;
     
-            ascii85[2] = (val32 % 85) + 33;;
+            ascii85[2] = (char) ((val32 % 85) + 33);
             val32 /= 85;
     
-            ascii85[1] = (val32 % 85) + 33;;
-            ascii85[0] = (val32 / 85) + 33;;
+            ascii85[1] = (char) ((val32 % 85) + 33);
+            ascii85[0] = (char) ((val32 / 85) + 33);
     
             _TIFFmemcpy( &ascii85_p[ascii85_l], ascii85, len );
             ascii85_l += len;
