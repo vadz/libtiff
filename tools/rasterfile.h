@@ -4,18 +4,18 @@
  * Description of header for files containing raster images
  */
 struct rasterfile {
-	int	ras_magic;		/* magic number */
-	int	ras_width;		/* width (pixels) of image */
-	int	ras_height;		/* height (pixels) of image */
-	int	ras_depth;		/* depth (1, 8, or 24 bits) of pixel */
-	int	ras_length;		/* length (bytes) of image */
-	int	ras_type;		/* type of file; see RT_* below */
-	int	ras_maptype;		/* type of colormap; see RMT_* below */
-	int	ras_maplength;		/* length (bytes) of following map */
+	char	ras_magic[4];		/* magic number */
+	long	ras_width;		/* width (pixels) of image */
+	long	ras_height;		/* height (pixels) of image */
+	long	ras_depth;		/* depth (1, 8, or 24 bits) of pixel */
+	long	ras_length;		/* length (bytes) of image */
+	long	ras_type;		/* type of file; see RT_* below */
+	long	ras_maptype;		/* type of colormap; see RMT_* below */
+	long	ras_maplength;		/* length (bytes) of following map */
 	/* color map follows for ras_maplength bytes, followed by image */
 };
-#define	RAS_MAGIC	0x59a66a95
-#define	RAS_MAGIC_INV	0x956aa659
+#define	RAS_MAGIC	"\x59\xa6\x6a\x95"
+#define	RAS_MAGIC_INV	"\x95\x6a\xa6\x59"
 
 	/* Sun supported ras_type's */
 #define RT_OLD		0	/* Raw pixrect image in 68000 byte order */

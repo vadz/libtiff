@@ -90,7 +90,27 @@ main(int argc, char* argv[])
 		fprintf(stderr, "%s: Can not read header.\n", argv[optind]);
 		return (-2);
 	}
-	if (h.ras_magic != RAS_MAGIC && h.ras_magic != RAS_MAGIC_INV) {
+	if (strcmp(h.ras_magic, RAS_MAGIC) == 0) {
+#if (HOST_BIGENDIAN == 0)
+			TIFFSwabLong(&h.ras_width);
+			TIFFSwabLong(&h.ras_height);
+			TIFFSwabLong(&h.ras_depth);
+			TIFFSwabLong(&h.ras_length);
+			TIFFSwabLong(&h.ras_type);
+			TIFFSwabLong(&h.ras_maptype);
+			TIFFSwabLong(&h.ras_maplength);
+#endif
+	} else if (strcmp(h.ras_magic, RAS_MAGIC_INV) == 0) {
+#if (HOST_BIGENDIAN == 1)
+			TIFFSwabLong(&h.ras_width);
+			TIFFSwabLong(&h.ras_height);
+			TIFFSwabLong(&h.ras_depth);
+			TIFFSwabLong(&h.ras_length);
+			TIFFSwabLong(&h.ras_type);
+			TIFFSwabLong(&h.ras_maptype);
+			TIFFSwabLong(&h.ras_maplength);
+#endif
+	} else {
 		fprintf(stderr, "%s: Not a rasterfile.\n", argv[optind]);
 		return (-3);
 	}
