@@ -152,6 +152,7 @@ TIFFFILES=\
 	    libtiff/tif_dumpmode.c		\
 	    libtiff/tif_error.c			\
 	    libtiff/tif_fax3.c			\
+	    libtiff/fax3sm_winnt.c		\
 	    libtiff/tif_fax3.h			\
 	    libtiff/tif_flush.c			\
 	    libtiff/tif_getimage.c		\
