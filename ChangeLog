@@ -1,3 +1,8 @@
+2005-01-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiff.h (TIFFTAG_TILEWIDTH): Corrected description.
+	(TIFFTAG_TILELENGTH): Corrected description.
+
 2005-01-30  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure.ac: Fixes for --with-docdir option as per bug
