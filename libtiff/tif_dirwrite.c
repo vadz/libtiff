@@ -474,6 +474,7 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 		break;
 	case TIFF_LONG:
 	case TIFF_SLONG:
+	case TIFF_IFD:
 		if (wc > 1) {
 			uint32* lp;
 			if (wc == (u_short) TIFF_VARIABLE
