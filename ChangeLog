@@ -1,3 +1,10 @@
+2004-05-17  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_fax3.c: Avoid reading CCITT compression options
+	if compression type mismatches. See
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=565
+
 2004-04-30  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_strip.c: Never return 0 from the
