@@ -27,7 +27,7 @@
 /*
  * CIE L*a*b* to CIE XYZ and CIE XYZ to RGB conversion routines are taken
  * from the VIPS library (http://www.vips.ecs.soton.ac.uk) with
- * the permission of John Cupitt, the author.
+ * the permission of John Cupitt, the VIPS author.
  */
 
 /*
@@ -44,31 +44,31 @@
  * reference white tristimuli can be specified.
  */
 void
-TIFFCIELabToXYZ(uint32 l, int32 a, int32 b, float *X, float *Y, float *Z,
-		float X0, float Y0, float Z0)
+TIFFCIELabToXYZ(TIFFCIELabToRGB *cielab, uint32 l, int32 a, int32 b,
+		float *X, float *Y, float *Z)
 {
 	float L = (float)l * 100.0 / 255.0;
 	float cby, tmp;
 
 	if( L < 8.856 ) {
-		*Y = (L * Y0) / 903.292;
-		cby = 7.787 * (*Y / Y0) + 16.0 / 116.0;
+		*Y = (L * cielab->Y0) / 903.292;
+		cby = 7.787 * (*Y / cielab->Y0) + 16.0 / 116.0;
 	} else {
 		cby = (L + 16.0) / 116.0;
-		*Y = Y0 * cby * cby * cby;
+		*Y = cielab->Y0 * cby * cby * cby;
 	}
 
 	tmp = (double)a / 500.0 + cby;
 	if( tmp < 0.2069 )
-		*X = X0 * (tmp - 0.13793) / 7.787;
+		*X = cielab->X0 * (tmp - 0.13793) / 7.787;
 	else    
-		*X = X0 * tmp * tmp * tmp;
+		*X = cielab->X0 * tmp * tmp * tmp;
 
 	tmp = cby - (double)b / 200.0;
 	if( tmp < 0.2069 )
-		*Z = Z0 * (tmp - 0.13793) / 7.787;
+		*Z = cielab->Z0 * (tmp - 0.13793) / 7.787;
 	else    
-		*Z = Z0 * tmp * tmp * tmp;
+		*Z = cielab->Z0 * tmp * tmp * tmp;
 }
 
 /*
@@ -116,118 +116,170 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
  * the Yr,Yb,Yg <=> r,g,b conversions.
  */
 int
-TIFFCIELabToRGBInit(TIFFCIELabToRGB** cielab)
+TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab, TIFFDisplay *display,
+		    float X0, float Y0, float Z0)
 {
 	static char module[] = "TIFFCIELabToRGBInit";
 
 	int i;
 	float gamma;
 
-        TIFFDisplay sRGB_display = {
-		{			/* XYZ -> luminance matrix */
-			{  3.2410, -1.5374, -0.4986 },
-			{  -0.9692, 1.8760, 0.0416 },
-			{  0.0556, -0.2040, 1.0570 }
-		},	
-		100, 100, 100,		/* Light o/p for reference white */
-		255, 255, 255,		/* Pixel values for ref. white */
-		1, 1, 1,		/* Residual light o/p for black pixel */
-		2.4, 2.4, 2.4,		/* Gamma values for the three guns */
-        };
+	cielab->range = 1500;
 
-
-	if (!(*cielab)) {
-		*cielab = (TIFFCIELabToRGB *)
-			_TIFFmalloc(sizeof(TIFFCIELabToRGB));
-		if (*cielab == NULL) {
-			TIFFError(module,
-				  "No space for CIE L*a*b* control structure");
-			return -1;
-		}
-
-		(*cielab)->range = 1500;
-
-		(*cielab)->display =
-			(TIFFDisplay *)_TIFFmalloc(sizeof(TIFFDisplay));
-		if ((*cielab) == NULL) {
-			TIFFError(module, "No space for display structure");
-			_TIFFfree(*cielab);
-			*cielab = 0;
-			return -1;
-		}
-
-		(*cielab)->Yr2r = (float *)
-			_TIFFmalloc(((*cielab)->range + 1) * sizeof(float));
-		if ((*cielab)->Yr2r == NULL) {
-			TIFFError(module, "No space for Red conversion array");
-			_TIFFfree((*cielab)->display);
-			_TIFFfree(*cielab);
-			*cielab = 0;
-			return -1;
-		}
-
-		(*cielab)->Yg2g = (float *)
-			_TIFFmalloc(((*cielab)->range + 1) * sizeof(float));
-		if ((*cielab)->Yg2g == NULL) {
-			TIFFError(module,
-				  "No space for Green conversion array");
-			_TIFFfree((*cielab)->Yr2r);
-			_TIFFfree((*cielab)->display);
-			_TIFFfree(*cielab);
-			*cielab = 0;
-			return -1;
-		}
-
-		(*cielab)->Yb2b = (float *)
-			_TIFFmalloc(((*cielab)->range + 1) * sizeof(float));
-		if ((*cielab)->Yb2b == NULL) {
-			TIFFError(module, "No space for Blue conversion array");
-			_TIFFfree((*cielab)->Yb2b);
-			_TIFFfree((*cielab)->Yr2r);
-			_TIFFfree((*cielab)->display);
-			_TIFFfree(*cielab);
-			*cielab = 0;
-			return -1;
-		}
-
-		_TIFFmemcpy((*cielab)->display, &sRGB_display,
-			    sizeof(TIFFDisplay));
+	cielab->display = (TIFFDisplay *)_TIFFmalloc(sizeof(TIFFDisplay));
+	if (cielab == NULL) {
+		TIFFError(module, "No space for display structure");
+		return -1;
 	}
 
+	cielab->Yr2r = (float *)
+		_TIFFmalloc((cielab->range + 1) * sizeof(float));
+	if (cielab->Yr2r == NULL) {
+		TIFFError(module, "No space for Red conversion array");
+		_TIFFfree(cielab->display);
+		return -1;
+	}
+
+	cielab->Yg2g = (float *)
+		_TIFFmalloc((cielab->range + 1) * sizeof(float));
+	if (cielab->Yg2g == NULL) {
+		TIFFError(module,
+			  "No space for Green conversion array");
+		_TIFFfree(cielab->Yr2r);
+		_TIFFfree(cielab->display);
+		return -1;
+	}
+
+	cielab->Yb2b = (float *)
+		_TIFFmalloc((cielab->range + 1) * sizeof(float));
+	if (cielab->Yb2b == NULL) {
+		TIFFError(module, "No space for Blue conversion array");
+		_TIFFfree(cielab->Yb2b);
+		_TIFFfree(cielab->Yr2r);
+		_TIFFfree(cielab->display);
+		return -1;
+	}
+
+	_TIFFmemcpy(cielab->display, display, sizeof(TIFFDisplay));
+
 	/* Red */
-	gamma = 1.0 / (*cielab)->display->d_gammaR ;
-	(*cielab)->rstep =
-		((*cielab)->display->d_YCR - (*cielab)->display->d_Y0R)
-		/ (*cielab)->range;
-	for(i = 0; i <= (*cielab)->range; i++) {
-		(*cielab)->Yr2r[i] =
-		    (*cielab)->display->d_Vrwr
-		    * (pow((double)i / (*cielab)->range, gamma));
+	gamma = 1.0 / cielab->display->d_gammaR ;
+	cielab->rstep =
+		(cielab->display->d_YCR - cielab->display->d_Y0R)
+		/ cielab->range;
+	for(i = 0; i <= cielab->range; i++) {
+		cielab->Yr2r[i] = cielab->display->d_Vrwr
+		    * (pow((double)i / cielab->range, gamma));
 	}
 
 	/* Green */
-	gamma = 1.0 / (*cielab)->display->d_gammaG ;
-	(*cielab)->gstep =
-	    ((*cielab)->display->d_YCR - (*cielab)->display->d_Y0R)
-	    / (*cielab)->range;
-	for(i = 0; i <= (*cielab)->range; i++) {
-		(*cielab)->Yg2g[i] =
-		    (*cielab)->display->d_Vrwg
-		    * (pow((double)i / (*cielab)->range, gamma));
+	gamma = 1.0 / cielab->display->d_gammaG ;
+	cielab->gstep =
+	    (cielab->display->d_YCR - cielab->display->d_Y0R)
+	    / cielab->range;
+	for(i = 0; i <= cielab->range; i++) {
+		cielab->Yg2g[i] = cielab->display->d_Vrwg
+		    * (pow((double)i / cielab->range, gamma));
 	}
 
 	/* Blue */
-	gamma = 1.0 / (*cielab)->display->d_gammaB ;
-	(*cielab)->bstep =
-	    ((*cielab)->display->d_YCR - (*cielab)->display->d_Y0R)
-	    / (*cielab)->range;
-	for(i = 0; i <= (*cielab)->range; i++) {
-		(*cielab)->Yb2b[i] =
-		    (*cielab)->display->d_Vrwb
-		    * (pow((double)i / (*cielab)->range, gamma));
+	gamma = 1.0 / cielab->display->d_gammaB ;
+	cielab->bstep =
+	    (cielab->display->d_YCR - cielab->display->d_Y0R)
+	    / cielab->range;
+	for(i = 0; i <= cielab->range; i++) {
+		cielab->Yb2b[i] = cielab->display->d_Vrwb
+		    * (pow((double)i / cielab->range, gamma));
 	}
+
+	/* Init reference white point */
+	cielab->X0 = X0;
+	cielab->Y0 = Y0;
+	cielab->Z0 = Z0;
 
 	return 0;
 }
+
+/* 
+ * Free TIFFYCbCrToRGB structure.
+ */
+int
+TIFFCIELabToRGBEnd(TIFFCIELabToRGB* cielab)
+{
+	static char module[] = "TIFFCIELabToRGBEnd";
+
+	_TIFFfree(cielab->Yr2r);
+	_TIFFfree(cielab->Yg2g);
+	_TIFFfree(cielab->Yb2b);
+	_TIFFfree(cielab->display);
+}
+
+#define	SHIFT			16
+#define	FIX(x)			((int32)((x) * (1L<<SHIFT) + 0.5))
+#define	ONE_HALF		((int32)(1<<(SHIFT-1)))
+
+/*
+ * Initialize the YCbCr->RGB conversion tables.  The conversion
+ * is done according to the 6.0 spec:
+ *
+ *    R = Y + Cr*(2 - 2*LumaRed)
+ *    B = Y + Cb*(2 - 2*LumaBlue)
+ *    G =   Y
+ *        - LumaBlue*Cb*(2-2*LumaBlue)/LumaGreen
+ *        - LumaRed*Cr*(2-2*LumaRed)/LumaGreen
+ *
+ * To avoid floating point arithmetic the fractional constants that
+ * come out of the equations are represented as fixed point values
+ * in the range 0...2^16.  We also eliminate multiplications by
+ * pre-calculating possible values indexed by Cb and Cr (this code
+ * assumes conversion is being done for 8-bit samples).
+ */
+int
+TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr,
+		   float LumaRed, float LumaGreen, float LumaBlue)
+{
+    TIFFRGBValue* clamptab;
+    int i;
+
+    clamptab = (TIFFRGBValue*)(
+	(tidata_t) ycbcr+TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long)));
+    _TIFFmemset(clamptab, 0, 256);		/* v < 0 => 0 */
+    ycbcr->clamptab = (clamptab += 256);
+    for (i = 0; i < 256; i++)
+	clamptab[i] = (TIFFRGBValue) i;
+    _TIFFmemset(clamptab+256, 255, 2*256);	/* v > 255 => 255 */
+    { float f1 = 2-2*LumaRed;		int32 D1 = FIX(f1);
+      float f2 = LumaRed*f1/LumaGreen;	int32 D2 = -FIX(f2);
+      float f3 = 2-2*LumaBlue;		int32 D3 = FIX(f3);
+      float f4 = LumaBlue*f3/LumaGreen;	int32 D4 = -FIX(f4);
+      int x;
+
+      ycbcr->Cr_r_tab = (int*) (clamptab + 3*256);
+      ycbcr->Cb_b_tab = ycbcr->Cr_r_tab + 256;
+      ycbcr->Cr_g_tab = (int32*) (ycbcr->Cb_b_tab + 256);
+      ycbcr->Cb_g_tab = ycbcr->Cr_g_tab + 256;
+      /*
+       * i is the actual input pixel value in the range 0..255
+       * Cb and Cr values are in the range -128..127 (actually
+       * they are in a range defined by the ReferenceBlackWhite
+       * tag) so there is some range shifting to do here when
+       * constructing tables indexed by the raw pixel data.
+       *
+       * XXX handle ReferenceBlackWhite correctly to calculate
+       *     Cb/Cr values to use in constructing the tables.
+       */
+      for (i = 0, x = -128; i < 256; i++, x++) {
+	  ycbcr->Cr_r_tab[i] = (int)((D1*x + ONE_HALF)>>SHIFT);
+	  ycbcr->Cb_b_tab[i] = (int)((D3*x + ONE_HALF)>>SHIFT);
+	  ycbcr->Cr_g_tab[i] = D2*x;
+	  ycbcr->Cb_g_tab[i] = D4*x + ONE_HALF;
+      }
+    }
+
+    return 0;
+}
+#undef	SHIFT
+#undef	ONE_HALF
+#undef	FIX
 
 

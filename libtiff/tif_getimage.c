@@ -42,8 +42,27 @@ static	int pickTileSeparateCase(TIFFRGBAImage*);
 
 static	const char photoTag[] = "PhotometricInterpretation";
 
+/* 
+ * Helper constants used in Orientation tag handling
+ */
 #define FLIP_VERTICALLY 0x01
 #define FLIP_HORIZONTALLY 0x02
+
+/*
+ * Color conversion constants. We will define display types here.
+ */
+
+TIFFDisplay display_sRGB = {
+	{			/* XYZ -> luminance matrix */
+		{  3.2410, -1.5374, -0.4986 },
+		{  -0.9692, 1.8760, 0.0416 },
+		{  0.0556, -0.2040, 1.0570 }
+	},	
+	100, 100, 100,		/* Light o/p for reference white */
+	255, 255, 255,		/* Pixel values for ref. white */
+	1, 1, 1,		/* Residual light o/p for black pixel */
+	2.4, 2.4, 2.4,		/* Gamma values for the three guns */
+};
 
 /*
  * Check the image to see if TIFFReadRGBAImage can deal with it.
@@ -174,10 +193,7 @@ TIFFRGBAImageEnd(TIFFRGBAImage* img)
 	if (img->ycbcr)
 		_TIFFfree(img->ycbcr), img->ycbcr = NULL;
 	if (img->cielab) {
-		_TIFFfree(img->cielab->Yr2r);
-		_TIFFfree(img->cielab->Yg2g);
-		_TIFFfree(img->cielab->Yb2b);
-		_TIFFfree(img->cielab->display);
+		TIFFCIELabToRGBEnd(img->cielab);
 		_TIFFfree(img->cielab), img->cielab = NULL;
 	}
 
@@ -1540,11 +1556,11 @@ DECLAREContigPutFunc(putcontig8bitCIELab)
 	fromskew *= 3;
 	while (h-- > 0) {
 		for (x = w; x-- > 0;) {
-			TIFFCIELabToXYZ((u_char)pp[0],
+			TIFFCIELabToXYZ(img->cielab,
+					(u_char)pp[0],
 					(signed char)pp[1],
 					(signed char)pp[2],
-					&X, &Y, &Z,
-					D50_X0, D50_Y0, D50_Z0);
+					&X, &Y, &Z);
 			TIFFXYZToRGB(img->cielab, X, Y, Z, &r, &g, &b);
 			*cp++ = PACK(r, g, b);
 			pp += 3;
@@ -2005,128 +2021,76 @@ DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 #undef	YCbCrSetup
 #undef	YCbCrtoRGB
 
-#define	LumaRed			coeffs[0]
-#define	LumaGreen		coeffs[1]
-#define	LumaBlue		coeffs[2]
-#define	SHIFT			16
-#define	FIX(x)			((int32)((x) * (1L<<SHIFT) + 0.5))
-#define	ONE_HALF		((int32)(1<<(SHIFT-1)))
-
-/*
- * Initialize the YCbCr->RGB conversion tables.  The conversion
- * is done according to the 6.0 spec:
- *
- *    R = Y + Cr*(2 - 2*LumaRed)
- *    B = Y + Cb*(2 - 2*LumaBlue)
- *    G =   Y
- *        - LumaBlue*Cb*(2-2*LumaBlue)/LumaGreen
- *        - LumaRed*Cr*(2-2*LumaRed)/LumaGreen
- *
- * To avoid floating point arithmetic the fractional constants that
- * come out of the equations are represented as fixed point values
- * in the range 0...2^16.  We also eliminate multiplications by
- * pre-calculating possible values indexed by Cb and Cr (this code
- * assumes conversion is being done for 8-bit samples).
- */
-static void
-TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, TIFF* tif)
-{
-    TIFFRGBValue* clamptab;
-    float* coeffs;
-    int i;
-
-    clamptab = (TIFFRGBValue*)(
-	(tidata_t) ycbcr+TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long)));
-    _TIFFmemset(clamptab, 0, 256);		/* v < 0 => 0 */
-    ycbcr->clamptab = (clamptab += 256);
-    for (i = 0; i < 256; i++)
-	clamptab[i] = (TIFFRGBValue) i;
-    _TIFFmemset(clamptab+256, 255, 2*256);	/* v > 255 => 255 */
-    TIFFGetFieldDefaulted(tif, TIFFTAG_YCBCRCOEFFICIENTS, &coeffs);
-    _TIFFmemcpy(ycbcr->coeffs, coeffs, 3*sizeof (float));
-    { float f1 = 2-2*LumaRed;		int32 D1 = FIX(f1);
-      float f2 = LumaRed*f1/LumaGreen;	int32 D2 = -FIX(f2);
-      float f3 = 2-2*LumaBlue;		int32 D3 = FIX(f3);
-      float f4 = LumaBlue*f3/LumaGreen;	int32 D4 = -FIX(f4);
-      int x;
-
-      ycbcr->Cr_r_tab = (int*) (clamptab + 3*256);
-      ycbcr->Cb_b_tab = ycbcr->Cr_r_tab + 256;
-      ycbcr->Cr_g_tab = (int32*) (ycbcr->Cb_b_tab + 256);
-      ycbcr->Cb_g_tab = ycbcr->Cr_g_tab + 256;
-      /*
-       * i is the actual input pixel value in the range 0..255
-       * Cb and Cr values are in the range -128..127 (actually
-       * they are in a range defined by the ReferenceBlackWhite
-       * tag) so there is some range shifting to do here when
-       * constructing tables indexed by the raw pixel data.
-       *
-       * XXX handle ReferenceBlackWhite correctly to calculate
-       *     Cb/Cr values to use in constructing the tables.
-       */
-      for (i = 0, x = -128; i < 256; i++, x++) {
-	  ycbcr->Cr_r_tab[i] = (int)((D1*x + ONE_HALF)>>SHIFT);
-	  ycbcr->Cb_b_tab[i] = (int)((D3*x + ONE_HALF)>>SHIFT);
-	  ycbcr->Cr_g_tab[i] = D2*x;
-	  ycbcr->Cb_g_tab[i] = D4*x + ONE_HALF;
-      }
-    }
-}
-#undef	SHIFT
-#undef	ONE_HALF
-#undef	FIX
-#undef	LumaBlue
-#undef	LumaGreen
-#undef	LumaRed
-
 static tileContigRoutine
 initYCbCrConversion(TIFFRGBAImage* img)
 {
-    uint16 hs, vs;
+	static char module[] = "initCIELabConversion";
 
-    if (img->ycbcr == NULL) {
-	img->ycbcr = (TIFFYCbCrToRGB*) _TIFFmalloc(
-	      TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))
-	    + 4*256*sizeof (TIFFRGBValue)
-	    + 2*256*sizeof (int)
-	    + 2*256*sizeof (int32)
-	);
+	float *coeffs;
+	uint16 hs, vs;
+
 	if (img->ycbcr == NULL) {
-	    TIFFError(TIFFFileName(img->tif),
-		"No space for YCbCr->RGB conversion state");
-	    return (NULL);
+	    img->ycbcr = (TIFFYCbCrToRGB*) _TIFFmalloc(
+		  TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))
+		+ 4*256*sizeof (TIFFRGBValue)
+		+ 2*256*sizeof (int)
+		+ 2*256*sizeof (int32)
+	    );
+	    if (img->ycbcr == NULL) {
+		    TIFFError(module,
+			      "No space for YCbCr->RGB conversion state");
+		    return (NULL);
+	    }
 	}
-	TIFFYCbCrToRGBInit(img->ycbcr, img->tif);
-    } else {
-	float* coeffs;
 
 	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRCOEFFICIENTS, &coeffs);
-	if (_TIFFmemcmp(coeffs, img->ycbcr->coeffs, 3*sizeof (float)) != 0)
-	    TIFFYCbCrToRGBInit(img->ycbcr, img->tif);
-    }
-    /*
-     * The 6.0 spec says that subsampling must be
-     * one of 1, 2, or 4, and that vertical subsampling
-     * must always be <= horizontal subsampling; so
-     * there are only a few possibilities and we just
-     * enumerate the cases.
-     */
-    TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
-    switch ((hs<<4)|vs) {
-    case 0x44: return (putcontig8bitYCbCr44tile);
-    case 0x42: return (putcontig8bitYCbCr42tile);
-    case 0x41: return (putcontig8bitYCbCr41tile);
-    case 0x22: return (putcontig8bitYCbCr22tile);
-    case 0x21: return (putcontig8bitYCbCr21tile);
-    case 0x11: return (putcontig8bitYCbCr11tile);
-    }
-    return (NULL);
+	if (TIFFYCbCrToRGBInit(img->ycbcr,
+			       coeffs[0], coeffs[1], coeffs[2]) < 0)
+		return NULL;
+
+	/*
+	 * The 6.0 spec says that subsampling must be
+	 * one of 1, 2, or 4, and that vertical subsampling
+	 * must always be <= horizontal subsampling; so
+	 * there are only a few possibilities and we just
+	 * enumerate the cases.
+	 */
+	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
+	switch ((hs<<4)|vs) {
+		case 0x44: return (putcontig8bitYCbCr44tile);
+		case 0x42: return (putcontig8bitYCbCr42tile);
+		case 0x41: return (putcontig8bitYCbCr41tile);
+		case 0x22: return (putcontig8bitYCbCr22tile);
+		case 0x21: return (putcontig8bitYCbCr21tile);
+		case 0x11: return (putcontig8bitYCbCr11tile);
+	}
+
+	return (NULL);
 }
 
 static tileContigRoutine
-initCIELabToRGBConversion(TIFFRGBAImage* img)
+initCIELabConversion(TIFFRGBAImage* img)
 {
-	TIFFCIELabToRGBInit(&img->cielab);
+	static char module[] = "initCIELabConversion";
+
+	if (!img->cielab) {
+		img->cielab = (TIFFCIELabToRGB *)
+			_TIFFmalloc(sizeof(TIFFCIELabToRGB));
+		if (!img->cielab) {
+			TIFFError(module,
+			    "No space for CIE L*a*b*->RGB conversion state.");
+			return NULL;
+		}
+	}
+	
+	if (TIFFCIELabToRGBInit(img->cielab, &display_sRGB,
+				D50_X0, D50_Y0, D50_Z0) < 0) {
+		TIFFError(module,
+		    "Failed to initialize CIE L*a*b*->RGB conversion state.");
+		_TIFFfree(img->cielab);
+		return NULL;
+	}
+
 	return putcontig8bitCIELab;
 }
 
@@ -2430,7 +2394,7 @@ pickTileContigCase(TIFFRGBAImage* img)
 	    break;
 	case PHOTOMETRIC_CIELAB:
 	    if (img->bitspersample == 8)
-		put = initCIELabToRGBConversion(img);
+		put = initCIELabConversion(img);
 	    break;
 	}
     }
