@@ -28,26 +28,6 @@
  * OF THIS SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.6  2004-06-07 09:05:09  dron
- * Forgotten debug output removed.
- *
- * Revision 1.5  2004/06/05 09:05:26  dron
- * tiffset now can set any libtiff supported tags. Tags can be supplied by the
- * mnemonic name or number.
- *
- * Revision 1.4  2004/05/03 16:39:11  warmerda
- * Increase -sf buffer size.
- *
- * Revision 1.3  2002/01/16 17:50:05  warmerda
- * Fix bug in error output.
- *
- * Revision 1.2  2001/09/26 17:42:18  warmerda
- * added TIFFRewriteDirectory
- *
- * Revision 1.1  2001/03/02 04:58:53  warmerda
- * New
- *
  */
 
 
@@ -70,11 +50,12 @@ usage(void)
 {
 	int i;
 	for (i = 0; usageMsg[i]; i++)
-		fprintf(stderr, "%s", usageMsg[i]);
+		fprintf(stderr, "%s\n", usageMsg[i]);
 	exit(-1);
 }
 
-const TIFFFieldInfo *GetField(TIFF *tiff, const char *tagname)
+static const TIFFFieldInfo *
+GetField(TIFF *tiff, const char *tagname)
 {
     const TIFFFieldInfo *fip;
 
@@ -110,9 +91,11 @@ main(int argc, char* argv[])
         if( strcmp(argv[arg_index],"-s") == 0 && arg_index < argc-3 )
         {
             const TIFFFieldInfo *fip;
+            const char *tagname;
 
             arg_index++;
-            fip = GetField(tiff, argv[arg_index]);
+            tagname = argv[arg_index];
+            fip = GetField(tiff, tagname);
 
             if (!fip)
                 return -3;
@@ -120,11 +103,9 @@ main(int argc, char* argv[])
             arg_index++;
             if (fip->field_type == TIFF_ASCII)
             {
-                TIFFSetField(tiff, fip->field_tag, argv[arg_index]);
-                {
+                if (TIFFSetField(tiff, fip->field_tag, argv[arg_index]) != 1)
                     fprintf( stderr, "Failed to set %s=%s\n",
                              fip->field_name, argv[arg_index] );
-                }
             }
 
             else if (fip->field_writecount > 0)
@@ -143,8 +124,13 @@ main(int argc, char* argv[])
                 }
                     
 
-                array = malloc(fip->field_writecount
+                array = _TIFFmalloc(fip->field_writecount
                                * TIFFDataWidth(fip->field_type));
+                if (!array)
+                {
+                    fprintf( stderr, "No space for %s tag\n", tagname);
+                    return -4;
+                }
 
                 switch (fip->field_type)
                 {
@@ -191,7 +177,7 @@ main(int argc, char* argv[])
                     fprintf( stderr, "Failed to set %s\n", fip->field_name );
                 arg_index += fip->field_writecount;
                 
-                free(array);
+                _TIFFfree(array);
             }
         }
         else if( strcmp(argv[arg_index],"-sf") == 0 && arg_index < argc-3 )
@@ -235,7 +221,7 @@ main(int argc, char* argv[])
                          fip->field_name, argv[arg_index] );
             }
 
-            free( text );
+            _TIFFfree( text );
             arg_index++;
         }
         else
