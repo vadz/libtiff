@@ -115,6 +115,8 @@ bad:
 static int
 _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 {
+	static const char module[] = "_TIFFVSetField";
+	
 	TIFFDirectory* td = &tif->tif_dir;
 	int status = 1;
 	uint32 v32;
@@ -564,6 +566,10 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             if( fip->field_passcount )
             {
                 tv->value = _TIFFmalloc(tv_size * tv->count);
+		if ( !tv->value ) {
+			va_end(ap);
+			return 0;
+		}
                 _TIFFmemcpy( tv->value, (void *) va_arg(ap,void*),
                              tv->count * tv_size );
             }
@@ -572,6 +578,10 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 const char *value = (const char *) va_arg(ap,const char *);
                 tv->count = strlen(value)+1;
                 tv->value = _TIFFmalloc(tv->count);
+		if ( !tv->value ) {
+			va_end(ap);
+			return 0;
+		}
                 strcpy( tv->value, value );
             }
             else
@@ -581,6 +591,10 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 printf( "TIFFVSetField ... pass by value not imp.\n" );
 
                 tv->value = _TIFFmalloc(tv_size * tv->count);
+		if ( !tv->value ) {
+			va_end(ap);
+			return 0;
+		}
                 _TIFFmemset( tv->value, 0, tv->count * tv_size );
                 status = 0;
             }
@@ -593,18 +607,18 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	va_end(ap);
 	return (status);
 badvalue:
-	TIFFError(tif->tif_name, "%d: Bad value for \"%s\"", v,
-	    _TIFFFieldWithTag(tif, tag)->field_name);
+	TIFFError(module, "%.1000s: Bad value %d for \"%s\"", v,
+		  tif->tif_name, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvalue32:
-	TIFFError(tif->tif_name, "%ld: Bad value for \"%s\"", v32,
-	    _TIFFFieldWithTag(tif, tag)->field_name);
+	TIFFError(module, "%.1000s: Bad value %ld for \"%s\"", v32,
+		   tif->tif_name, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvaluedbl:
-	TIFFError(tif->tif_name, "%f: Bad value for \"%s\"", d,
-	    _TIFFFieldWithTag(tif, tag)->field_name);
+	TIFFError(module, "%.1000s: Bad value %f for \"%s\"", d,
+		  tif->tif_name, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 }
@@ -951,7 +965,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
              */
             if( fip == NULL || fip->field_bit != FIELD_CUSTOM )
             {
-                TIFFError("TIFFGetField",
+                TIFFError("_TIFFVGetField",
                           "%s: Invalid %stag \"%s\" (not supported by codec)",
                           tif->tif_name, isPseudoTag(tag) ? "pseudo-" : "",
                           _TIFFFieldWithTag(tif, tag)->field_name);

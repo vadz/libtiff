@@ -592,6 +592,8 @@ bad:
 static int
 EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 {
+	static const char module[] = "EstimateStripByteCounts";
+
 	register TIFFDirEntry *dp;
 	register TIFFDirectory *td = &tif->tif_dir;
 	uint16 i;
@@ -612,9 +614,16 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		/* calculate amount of space used by indirect values */
 		for (dp = dir, n = dircount; n > 0; n--, dp++)
 		{
-		    uint32 cc = dp->tdir_count*TIFFDataWidth(dp->tdir_type);
-		    if (cc > sizeof (uint32))
-			space += cc;
+			uint32 cc = TIFFDataWidth(dp->tdir_type);
+			if (cc == 0) {
+				TIFFError(module,
+			"%.1000s: Cannot determine size of unknown tag type %d",
+					  tif->tif_name, dp->tdir_type);
+				return -1;
+			}
+			cc = cc * dp->tdir_count;
+			if (cc > sizeof (uint32))
+				space += cc;
 		}
 		space = filesize - space;
 		if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
