@@ -446,6 +446,7 @@ static	struct tagname {
     { TIFFTAG_JPEGRESTARTINTERVAL,"JPEGRestartInterval" },
     { TIFFTAG_JPEGLOSSLESSPREDICTORS,"JPEGLosslessPredictors" },
     { TIFFTAG_JPEGPOINTTRANSFORM,"JPEGPointTransform" },
+    { TIFFTAG_JPEGTABLES,       "JPEGTables" },
     { TIFFTAG_JPEGQTABLES,	"JPEGQTables" },
     { TIFFTAG_JPEGDCTABLES,	"JPEGDCTables" },
     { TIFFTAG_JPEGACTABLES,	"JPEGACTables" },
