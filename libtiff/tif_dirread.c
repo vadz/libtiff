@@ -277,7 +277,8 @@ TIFFReadDirectory(TIFF* tif)
 
                     TIFFMergeFieldInfo( tif,
                                         _TIFFCreateAnonFieldInfo( tif,
-                                              dp->tdir_tag, dp->tdir_type ),
+                                              dp->tdir_tag,
+					      (TIFFDataType) dp->tdir_type ),
                                         1 );
                     fix = 0;
                     while (fix < tif->tif_nfields &&
@@ -634,7 +635,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		/* calculate amount of space used by indirect values */
 		for (dp = dir, n = dircount; n > 0; n--, dp++)
 		{
-			uint32 cc = TIFFDataWidth(dp->tdir_type);
+			uint32 cc = TIFFDataWidth((TIFFDataType) dp->tdir_type);
 			if (cc == 0) {
 				TIFFError(module,
 			"%.1000s: Cannot determine size of unknown tag type %d",
@@ -709,7 +710,7 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 static tsize_t
 TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 {
-	int w = TIFFDataWidth(dir->tdir_type);
+	int w = TIFFDataWidth((TIFFDataType) dir->tdir_type);
 	tsize_t cc = dir->tdir_count * w;
 
 	if (!isMapped(tif)) {
@@ -930,7 +931,7 @@ TIFFFetchRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 	uint32* l;
 
 	l = (uint32*)CheckMalloc(tif,
-	    dir->tdir_count*TIFFDataWidth(dir->tdir_type),
+	    dir->tdir_count*TIFFDataWidth((TIFFDataType) dir->tdir_type),
 	    "to fetch array of rationals");
 	if (l) {
 		if (TIFFFetchData(tif, dir, (char *)l)) {
