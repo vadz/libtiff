@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.14  2004-08-25 13:43:14  dron
+ * Revision 1.15  2004-08-25 18:34:55  dron
+ * Work out getopt problems.
+ *
+ * Revision 1.14  2004/08/25 13:43:14  dron
  * Initialize arrays properly.
  *
  * Revision 1.13  2004/08/24 07:48:36  dron
@@ -84,12 +87,6 @@
 
 #if HAVE_UNISTD_H
 # include <unistd.h>
-#endif
-
-#ifdef HAVE_GETOPT_H
-# include <getopt.h>
-#else
-extern int getopt(int, char**, char*);
 #endif
 
 #ifndef NULL

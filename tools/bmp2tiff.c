@@ -36,10 +36,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if HAVE_GETOPT_H
-# include <getopt.h>
-#endif
-
 #include "tiffio.h"
 
 enum BMPType

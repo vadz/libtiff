@@ -34,12 +34,6 @@
 
 #include "tiffio.h"
 
-#ifdef HAVE_GETOPT_H
-# include <getopt.h>
-#else
-extern int getopt(int, char**, char*);
-#endif
-
 /*
  * Revision history
  *

@@ -39,10 +39,6 @@
 # include <io.h>
 #endif
 
-#if HAVE_GETOPT_H
-# include <getopt.h>
-#endif
-
 #include "tiffio.h"
 
 float	defxres = 204.;		/* default x resolution (pixels/inch) */
