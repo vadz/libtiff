@@ -144,21 +144,6 @@ typedef double dblparam_t;
 #endif
 
 /*
- * If your compiler supports inline functions, then
- * set INLINE appropriately to get the known hotspots
- * in the library expanded inline.
- */
-#if defined(__GNUC__)
-#if defined(__STRICT_ANSI__)
-#define	INLINE	__inline__
-#else
-#define	INLINE	inline
-#endif
-#else /* !__GNUC__ */
-#define	INLINE
-#endif
-
-/*
  * GLOBALDATA is a macro that is used to define global variables
  * private to the library.  We use this indirection to hide
  * brain-damage in VAXC (and GCC) under VAX/VMS.  In these

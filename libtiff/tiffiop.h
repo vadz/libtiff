@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -30,36 +30,46 @@
  * ``Library-private'' definitions.
  */
 
-#include <sys/types.h>
-#define HOST_FILLORDER FILLORDER_MSB2LSB
-#define WORDS_BIGENDIAN	0
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
-#include <fcntl.h>
-typedef double dblparam_t;
-#ifdef __STRICT_ANSI__
-#define	INLINE	__inline__
-#else
-#define	INLINE	inline
-#endif
-#define GLOBALDATA(TYPE,NAME)	extern TYPE NAME
-
 /*
  * UNIX systems should run the configure script to generate
  * a port.h file that reflects the system capabilities.
  * Doing this obviates all the dreck done in tiffcomp.h.
  */
-#if defined(unix) || defined(__unix)
-#include "config.h"
-#include "tiffconf.h"
+#if defined(_MSC_VER)
+# include "config.h.vc"
+# include "tiffconf.h"
+# include "tiffcomp.h"
 #else
-#include "tiffconf.h"
-#include "tiffcomp.h"
+# include "config.h"
+# include "tiffconf.h"
 #endif
+
+#if HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
 #include "tiffio.h"
 #include "tif_dir.h"
+
+#define HOST_FILLORDER FILLORDER_MSB2LSB
+
+typedef double dblparam_t;
+/*
+ * If your compiler supports inline functions, then
+ * set INLINE appropriately to get the known hotspots
+ * in the library expanded inline.
+ */
+#if defined(__GNUC__)
+# ifdef __STRICT_ANSI__
+#  define	INLINE	__inline__
+# else
+#  define	INLINE	inline
+# endif
+#else
+# define INLINE
+#endif
+
+#define GLOBALDATA(TYPE,NAME)	extern TYPE NAME
 
 #ifndef TRUE
 #define	TRUE	1
