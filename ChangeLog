@@ -3,6 +3,14 @@
 	* tools/ppm2tiff.c: PPM header parser improved: now able to skip
 	comments.
 
+	* tools/tiffdither.c: Fixed problem with bit fill order tag setting:
+	was not copied from source image.
+
+	* libtiff/getimage.c: Workaround for some images without correct
+	info about alpha channel as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=331
+
 2003-04-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2ps.c, man/tiff2ps.1: Add ability to generate PS Level 3.
@@ -163,8 +171,8 @@
 	* libtiff/Makefile.in: added direct rule for tiffvers.h for release.
 
 2002-10-07  Andrey Kiselev  <dron@remotesensing.org>
-	* tools/tiff2ps.c, man/tiff2ps.1: Applied patch form Sebastian Eken (thanks,
-	Sebastian!). New switches:
+	* tools/tiff2ps.c, man/tiff2ps.1: Applied patch form Sebastian Eken
+	(thanks, Sebastian!). New switches:
 	-b # for a bottom margin of # inches
 	-c   center image
 	-l # for a left margin of # inches
