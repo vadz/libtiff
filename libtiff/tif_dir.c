@@ -524,7 +524,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             if( tv == NULL )
             {
                 td->td_customValueCount++;
-                if( td->td_customValueCount != 0 )
+                if( td->td_customValueCount > 1 )
                     td->td_customValues = (TIFFTagValue *)
                         _TIFFrealloc(td->td_customValues,
                                      sizeof(TIFFTagValue) * td->td_customValueCount);

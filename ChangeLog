@@ -1,3 +1,8 @@
+2002-12-02  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dir.c: fix problem with test on td_customValueCount.
+	Was using realloc even first time.  Fix by Igor Venevtsev.
+
 2002-11-30  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dir.c: fixed bug with resetting an existing custom
