@@ -30,7 +30,7 @@
 
 #include "tiffio.h"
 
-#define	streq(a,b)	(strcmp(a,b) == 0)
+#define	streq(a,b)	(strcasecmp(a,b) == 0)
 
 int	showdata = 0;			/* show data */
 int	rawdata = 0;			/* show raw/decoded data */
@@ -44,8 +44,7 @@ static	void tiffinfo(TIFF*, uint16, long);
 int
 main(int argc, char* argv[])
 {
-	tdir_t dirnum = -1;
-	int multiplefiles, c;
+	int dirnum = -1, multiplefiles, c;
 	uint16 order = 0;
 	TIFF* tif;
 	extern int optind;
@@ -114,7 +113,7 @@ main(int argc, char* argv[])
 		tif = TIFFOpen(argv[optind], chopstrips ? "rC" : "rc");
 		if (tif != NULL) {
 			if (dirnum != -1) {
-				if (TIFFSetDirectory(tif, dirnum))
+				if (TIFFSetDirectory(tif, (tdir_t) dirnum))
 					tiffinfo(tif, order, flags);
 			} else if (diroff != 0) {
 				if (TIFFSetSubDirectory(tif, diroff))

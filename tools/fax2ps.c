@@ -256,10 +256,10 @@ printTIF(TIFF* tif, int pageNumber)
 TIFFGetField(tif, TIFFTAG_PAGENUMBER, &pn, &ptotal)
 
 int
-findPage(TIFF* tif, tdir_t pageNumber)
+findPage(TIFF* tif, int pageNumber)
 {
-    tdir_t pn = (tdir_t) -1;
-    tdir_t ptotal = (tdir_t) -1;
+    uint16 pn = (uint16) -1;
+    uint16 ptotal = (uint16) -1;
     if (GetPageNumber(tif)) {
 	while (pn != pageNumber && TIFFReadDirectory(tif) && GetPageNumber(tif))
 	    ;
@@ -269,10 +269,10 @@ findPage(TIFF* tif, tdir_t pageNumber)
 }
 
 void
-fax2ps(TIFF* tif, int npages, tdir_t* pages, char* filename)
+fax2ps(TIFF* tif, int npages, int* pages, char* filename)
 {
     if (npages > 0) {
-	tdir_t pn, ptotal;
+	uint16 pn, ptotal;
 	int i;
 
 	if (!GetPageNumber(tif))
@@ -310,7 +310,7 @@ main(int argc, char** argv)
     extern int optind;
     extern char* optarg;
     int c, pageNumber;
-    tdir_t* pages = 0, npages = 0;
+    int* pages = 0, npages = 0;
     int dowarnings = 0;		/* if 1, enable library warnings */
     TIFF* tif;
 
@@ -333,9 +333,9 @@ main(int argc, char** argv)
 		usage(-1);
 	    }
 	    if (pages)
-		pages = (tdir_t*) realloc((char*)pages, (npages+1)*sizeof(tdir_t));
+		pages = (int*) realloc((char*)pages, (npages+1)*sizeof(int));
 	    else
-		pages = (tdir_t*) malloc(sizeof(tdir_t));
+		pages = (int*) malloc(sizeof(int));
 	    pages[npages++] = pageNumber;
 	    break;
 	case 'w':

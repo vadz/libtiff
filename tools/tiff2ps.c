@@ -147,8 +147,7 @@ static	void usage(int);
 int
 main(int argc, char* argv[])
 {
-	tdir_t dirnum = -1;
-	int c, np = 0;
+	int dirnum = -1, c, np = 0;
 	int centered = 0;
 	double bottommargin = 0;
 	double leftmargin = 0;
@@ -257,7 +256,8 @@ main(int argc, char* argv[])
 	for (; argc - optind > 0; optind++) {
 		TIFF* tif = TIFFOpen(filename = argv[optind], "r");
 		if (tif != NULL) {
-			if (dirnum != -1 && !TIFFSetDirectory(tif, dirnum))
+			if (dirnum != -1
+                            && !TIFFSetDirectory(tif, (tdir_t)dirnum))
 				return (-1);
 			else if (diroff != 0 &&
 			    !TIFFSetSubDirectory(tif, diroff))
