@@ -32,14 +32,14 @@ SRCDIR	= ../tools
 LIBDIR	= ../libtiff
 
 #
-# VERSION:	v3.5.1
-# DATE:		Mon Aug 16 13:54:45 EDT 1999
+# VERSION:	v3.5.2
+# DATE:		Tue Sep 28 13:26:51 CEST 1999
 # TARGET:	i586-unknown-linux
-# CCOMPILER:	/usr/local/bin/gcc
+# CCOMPILER:	/usr/bin/gcc
 #
 SHELL	= /bin/sh
 NULL	=
-CC	= /usr/local/bin/gcc
+CC	= /usr/bin/gcc
 INSTALL	= ${SHELL} ../port/install.sh
 #
 COPTS	= -g

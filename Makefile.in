@@ -419,7 +419,7 @@ release:
 	-${MAKE} clean
 	${MAKE} release.stamp
 	${SRCDIR}/configure ${CONFIG}
-	${MAKE} product
+#	${MAKE} product
 	${MAKE} release.tar
 
 # stamp relevant files according to current alpha

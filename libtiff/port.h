@@ -1,7 +1,7 @@
 /*
  * Warning, this file was automatically created by the TIFF configure script
- * VERSION:	 v3.4beta037
- * DATE:	 Wed Feb 3 19:53:27 EST 1999
+ * VERSION:	 v3.5.2
+ * DATE:	 Tue Sep 28 13:26:51 CEST 1999
  * TARGET:	 i586-unknown-linux
  * CCOMPILER:	 /usr/bin/gcc-2.7.2.3
  */

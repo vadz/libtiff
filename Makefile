@@ -32,7 +32,7 @@ SRCDIR	= .
 
 #
 # VERSION:	v3.5.2
-# DATE:		Wed Aug 25 15:30:36 EST 1999
+# DATE:		Tue Sep 28 13:26:51 CEST 1999
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc
 #
@@ -120,11 +120,13 @@ TIFFFILES=\
 	VERSION					\
 	COPYRIGHT				\
 	TODO					\
+	test_pics.sh				\
 	dist/tiff.spec				\
 	    dist/newalpha			\
 	    dist/newversion			\
 	libtiff/Makefile.in			\
 	    libtiff/Makefile.lcc		\
+	    libtiff/makefile.vc			\
 	    libtiff/t4.h			\
 	    libtiff/tiff.h			\
 	    libtiff/tiffcomp.h			\
@@ -184,6 +186,7 @@ TIFFFILES=\
 	    port/strcasecmp.c			\
 	    port/strtoul.c			\
 	tools/Makefile.in			\
+	    tools/Makefile.vc			\
 	    tools/Makefile.lcc			\
 	    tools/fax2tiff.c			\
 	    tools/fax2ps.c			\
@@ -198,6 +201,7 @@ TIFFFILES=\
 	    tools/sgisv.c			\
 	    tools/thumbnail.c			\
 	    tools/tiff2bw.c			\
+	    tools/tiff2rgba.c			\
 	    tools/tiff2ps.c			\
 	    tools/tiffcmp.c			\
 	    tools/tiffcp.c			\
@@ -238,6 +242,8 @@ TIFFFILES=\
 	    man/TIFFReadEncodedStrip.3t		\
 	    man/TIFFReadEncodedTile.3t		\
 	    man/TIFFReadRGBAImage.3t		\
+	    man/TIFFReadRGBAStrip.3t		\
+	    man/TIFFReadRGBATile.3t		\
 	    man/TIFFReadRawStrip.3t		\
 	    man/TIFFReadRawTile.3t		\
 	    man/TIFFReadScanline.3t		\
@@ -380,6 +386,13 @@ CONTRIBFILES=\
 	    contrib/pds/tif_imageiter.h		\
 	    contrib/pds/tif_pdsdirread.c	\
 	    contrib/pds/tif_pdsdirwrite.c	\
+	contrib/addtiffo/README			\
+	    contrib/addtiffo/Makefile		\
+	    contrib/addtiffo/Makefile.vc	\
+	    contrib/addtiffo/addtiffo.c		\
+	    contrib/addtiffo/tif_overview.cpp	\
+	    contrib/addtiffo/rawblockedimage.cpp \
+	    contrib/addtiffo/rawblockedimage.h  \
 	${NULL}
 DISTFILES=\
 	${TIFFFILES}				\
@@ -401,69 +414,28 @@ CONFIG=\
 rcsclean:
 	rcsclean ${TIFFFILES} && co ${TIFFFILES}
 
-alpha:
-	(cd ${SRCDIR}/dist; sh newversion)
-	-${MAKE} clean
-	${MAKE} alpha.stamp
-	${SRCDIR}/configure ${CONFIG}
-	${MAKE} product
-	${MAKE} alpha.tar
-
-# stamp relevant files according to current alpha
-alpha.stamp:
-	VERSION="Alpha037";					\
-	NOW=`date`;							\
-	for i in ${TIFFFILES}; do					\
-	    REV=`rlog -h -d"$$NOW" ${SRCDIR}/$$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" ${SRCDIR}/$$i && co -sExp ${SRCDIR}/$$i;	\
-	done
-
-purge-old-alphas:
-	VERSIONS=`awk 'BEGIN {						\
-		for (i=1; i<=037; i++) printf " -nAlpha%03d",i;\
-		exit							\
-	    }'`;							\
-	for i in ${TIFFFILES}; do					\
-	    echo rcs $$VERSIONS ${SRCDIR}/$$i;				\
-	    rcs $$VERSIONS ${SRCDIR}/$$i && co ${SRCDIR}/$$i;		\
-	done
-
-alphadiff:
-	-@for i in ${TIFFFILES}; do					\
-	    rcsdiff -r${ALPHA} ${SRCDIR}/$$i;				\
-	done
-
-# create alpha distribution archive
-alpha.tar:
-	VERSION="v3.5.1";						\
-	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
-	ln -s ${SRCDIR} tiff-$$VERSION;					\
-	(for i in ${DISTFILES}; do					\
-	   echo $$i;							\
-	done) | sed "s;.*;tiff-$$VERSION/&;" >$$VERSION;		\
-	tar cvf $$VERSION-tar `cat $$VERSION`;				\
-	rm -f tiff-$$VERSION-tar.${ZIPSUF};				\
-	cat $$VERSION-tar | ${COMPRESS} >tiff-$$VERSION-tar.${ZIPSUF};	\
-	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;
-
 release:
 	(cd ${SRCDIR}/dist; sh newversion)
 	-${MAKE} clean
 	${MAKE} release.stamp
-	${SRCDIR}/configure ${CONFIG}
+#	${SRCDIR}/configure ${CONFIG}
 	${MAKE} product
 	${MAKE} release.tar
 
+# stamp relevant files according to current alpha
 release.stamp:
-	NOW=`date`;							\
-	for i in ${TIFFFILES}; do					\
-	    REV=`rlog -h -d"$$NOW" ${SRCDIR}/$$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-NRelease3_5_.1:$$REV" "-sRel:$$REV" ${SRCDIR}/$$i && co -sRel ${SRCDIR}/$$i;	\
+	cvs tag -R "Release" 
+	date "+%m/%d/%Y" > RELEASE-DATE
+
+#diffs since last release
+releasediff:
+	-@for i in ${TIFFFILES}; do					\
+	    cvs diff -D`cat RELEASE-DATE` ${SRCDIR}/$$i;				\
 	done
 
 # create release distribution archive
 release.tar:
-	VERSION="v3.5.1";						\
+	VERSION="v3.5.2";						\
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSION;					\
 	(for i in ${DISTFILES}; do					\
