@@ -68,7 +68,7 @@ main(int argc, char* argv[])
 	extern char* optarg;
 	
 
-	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMsi:o:h")) != -1)
+	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMp:si:o:h")) != -1)
 		switch (c) {
 		case 'c':		/* compression scheme */
 			if (!processCompressOptions(optarg))
@@ -115,6 +115,27 @@ main(int argc, char* argv[])
 			break;
 		case 'M':		/* input has msb-to-lsb fillorder */
 			fillorder = FILLORDER_MSB2LSB;
+			break;
+		case 'p':		/* photometric interpretation */
+			if (strncmp(optarg, "miniswhite", 10) == 0)
+				photometric = PHOTOMETRIC_MINISWHITE;
+			else if (strncmp(optarg, "minisblack", 10) == 0)
+				photometric = PHOTOMETRIC_MINISBLACK;
+			else if (strncmp(optarg, "rgb", 3) == 0)
+				photometric = PHOTOMETRIC_RGB;
+			else if (strncmp(optarg, "cmyk", 4) == 0)
+				photometric = PHOTOMETRIC_SEPARATED;
+			else if (strncmp(optarg, "ycbcr", 5) == 0)
+				photometric = PHOTOMETRIC_YCBCR;
+			else if (strncmp(optarg, "cielab", 6) == 0)
+				photometric = PHOTOMETRIC_CIELAB;
+			else if (strncmp(optarg, "icclab", 6) == 0)
+				photometric = PHOTOMETRIC_ICCLAB;
+			else if (strncmp(optarg, "itulab", 6) == 0)
+				photometric = PHOTOMETRIC_ITULAB;
+			else
+				photometric = PHOTOMETRIC_MINISBLACK;
+			break;
 		case 's':		/* do we need to swap bytes? */
 			swab = 1;
 			break;
@@ -149,10 +170,12 @@ main(int argc, char* argv[])
 		argv[0], argv[optind]);
 		return (-1);
 	}
-	if (length == 0)
+	if (length == 0) {
 		length = (instat.st_size - hdr_size) / (width * nbands * depth);
-	fprintf(stderr, "%s: %s: Height is not specified, guessed as %d\n",
-		argv[0], argv[optind], length);
+		fprintf(stderr,
+			"%s: %s: Height is not specified, guessed as %d\n",
+			argv[0], argv[optind], length);
+	}
 	if (instat.st_size < hdr_size + width * length * nbands * depth) {
 		fprintf(stderr, "%s: %s: Input file too small.\n",
 			argv[0], argv[optind]);
@@ -174,6 +197,7 @@ main(int argc, char* argv[])
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, depth * 8);
 	TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, config);
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
 	switch (dtype) {
 	case TIFF_BYTE:
 	case TIFF_SHORT:
@@ -209,7 +233,6 @@ main(int argc, char* argv[])
 			TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
 		break;
 	}
-	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
 	switch(interleaving) {
 	case 1:				/* band interleaved data */
 		linebytes = width * depth;
@@ -343,6 +366,17 @@ char* stuff[] = {
 " slong		32-bit signed integer",
 " float		32-bit IEEE floating point",
 " double		64-bit IEEE floating point",
+"",
+" -p photo	photometric interpretation (color space) of the input image",
+"where photo may be:",
+" miniswhite	white color represented with 0 value",
+" minisblack	black color represented with 0 value (default)",
+" rgb		image has RGB color model",
+" cmyk		image has CMYK (separated) color model",
+" ycbcr		image has YCbCr color model",
+" cielab		image has CIE L*a*b color model",
+" icclab		image has ICC L*a*b color model",
+" itulab		image has ITU L*a*b color model",
 "",
 " -s		swap bytes fetched from input file",
 "",

@@ -14,392 +14,227 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
-<!-- Creator     : groff version 1.18 -->
-<!-- CreationDate: Mon Oct  7 17:36:35 2002 -->
+<!-- Creator     : groff version 1.17.2 -->
+<!-- CreationDate: Thu Jul 10 23:58:04 2003 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>raw2tiff &minus; create a <small>TIFF</small> file from a
-raw data</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+raw2tiff - create a <small>TIFF</small> file from a raw data</td></table>
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>raw2tiff</b> <i>-w &lt;number&gt;</i> [ <i>options</i>
-] <i>input.raw output.tif</i></p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+<b>raw2tiff</b> <i>-w &lt;number&gt;</i> [ <i>options</i> ]
+<i>input.raw output.tif</i></td></table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>raw2tiff</i> converts a raw byte sequence into
+<td width="10%"></td><td width="90%">
+<i>raw2tiff</i> converts a raw byte sequence into
 <small>TIFF.</small> By default, the <small>TIFF</small>
 image is created with data samples packed
 (<i>PlanarConfiguration</i>=1), compressed with the PackBits
 algorithm (<i>Compression</i>=<i>32773),</i> and with each
 strip no more than 8 kilobytes. These characteristics can
 overridden, or explicitly specified with the options
-described below.</p>
-</td>
-</table></p>
+described below.</td></table>
 <a name="OPTIONS"></a>
 <h2>OPTIONS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;H &lt;number&gt;</b></p></td>
-</table></p>
-<!-- INDENTATION -->
+
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>size of input image file header in bytes (0 by default).
+<td width="10%"></td><td width="90%">
+<b>-H &lt;number&gt;</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+size of input image file header in bytes (0 by default).
 This amount of data just will be skipped from the start of
-file while reading.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;w &lt;number&gt;</b></p></td>
-</table></p>
-<!-- INDENTATION -->
+file while reading.</td></table>
+
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>width of input image in pixels. You must set this
-parameter.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;l &lt;number&gt;</b></p></td>
-</table></p>
-<!-- INDENTATION -->
+<td width="10%"></td><td width="90%">
+<b>-w &lt;number&gt;</b></td></table>
+
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>length of input image in lines. Will be calculated from
-the size of input file if not specified.</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;b &lt;number&gt;</b></p></td>
-</table></p>
-<!-- INDENTATION -->
+<td width="21%"></td><td width="79%">
+width of input image in pixels. You must set this
+parameter.</td></table>
+
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>number of bands in input image (1 by default).</p>
-</td>
-</table>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;d data_type</b></p></td>
-</table></p>
-<!-- INDENTATION -->
+<td width="10%"></td><td width="90%">
+<b>-l &lt;number&gt;</b></td></table>
+
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>type of samples in input image, where <b>data_type</b>
-may be:</p></td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
+<td width="21%"></td><td width="79%">
+length of input image in lines. Will be calculated from the
+size of input file if not specified.</td></table>
 
-<p><i>byte</i></p>
-</td>
-<td width="6%">
-</td>
-<td width="6%">
-
-<p>8-bit unsigned integer (default),</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>short</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>16-bit unsigned integer,</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>long</i></p>
-</td>
-<td width="6%">
-</td>
-<td width="6%">
-
-<p>32-bit unsigned integer,</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>sbyte</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>8-bit signed integer,</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>sshort</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>16-bit signed integer,</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>slong</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>32-bit signed integer,</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>float</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>32-bit IEEE floating point,</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>double</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>64-bit IEEE floating point,</p>
-</td>
-<td width="61%">
-</td>
-</table>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;i config</b></p></td>
-</table></p>
-<!-- INDENTATION -->
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>type of samples interleaving in input image, where
-<b>config</b> may be:</p></td>
-</table>
-<!-- TABS -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
+<td width="10%"></td><td width="90%">
+<b>-b &lt;number&gt;</b></td></table>
 
-<p><i>pixel</i></p>
-</td>
-<td width="6%"></td>
-<td width="6%">
-
-<p>pixel interleaved data (default),</p>
-</td>
-<td width="61%">
-</td>
-<tr valign="top" align="left">
-<td width="19%"></td>
-<td width="6%">
-
-<p><i>band</i></p>
-</td>
-<td width="6%">
-</td>
-<td width="6%">
-
-<p>band interleaved data.</p>
-</td>
-<td width="61%">
-</td>
-</table>
-<!-- TABS -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
-
-<p><b>&minus;s</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
-
-<p>swap bytes fetched from the input file.</p>
-</td>
-<td width="0%">
-</td>
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
-
-<p><b>&minus;L</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
-
-<p>input data has LSB2MSB bit order (default).</p>
-</td>
-<td width="0%">
-</td>
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
-
-<p><b>&minus;M</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
-
-<p>input data has MSB2LSB bit order.</p>
-</td>
-<td width="0%">
-</td>
-<tr valign="top" align="left">
-<td width="10%"></td>
-<td width="3%">
-
-<p><b>&minus;c</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
-
-<p>Specify a compression scheme to use when writing image
-data: <b>&minus;c none</b> for no compression, <b>-c
-packbits</b> for the PackBits compression algorithm (the
-default), <b>-c jpeg</b> for the baseline JPEG compression
-algorithm, <b>-c zip</b> for the Deflate compression
-algorithm, and <b>&minus;c lzw</b> for Lempel-Ziv &amp;
-Welch.</p>
-</td>
-<td width="0%">
-</td>
-</table></p>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>&minus;r &lt;number&gt;</b></p></td>
-</table></p>
-<!-- INDENTATION -->
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="19%"></td>
-<td width="80%">
-<p>Write data with a specified number of rows per strip; by
+<td width="21%"></td><td width="79%">
+number of bands in input image (1 by default).</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-d data_type</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+type of samples in input image, where <b>data_type</b> may
+be:<i><br>
+byte</i> 8-bit unsigned integer (default),<i><br>
+short</i> 16-bit unsigned integer,<i><br>
+long</i> 32-bit unsigned integer,<i><br>
+sbyte</i> 8-bit signed integer,<i><br>
+sshort</i> 16-bit signed integer,<i><br>
+slong</i> 32-bit signed integer,<i><br>
+float</i> 32-bit IEEE floating point,<i><br>
+double</i> 64-bit IEEE floating point,</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-i config</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+type of samples interleaving in input image, where
+<b>config</b> may be:<i><br>
+pixel</i> pixel interleaved data (default),<i><br>
+band</i> band interleaved data.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-p photo</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+photometric interpretation (color space) of the input image,
+where <b>photo</b> may be:<i><br>
+miniswhite</i> white color represented with 0 value,<i><br>
+minisblack</i> black color represented with 0 value
+(default),<i><br>
+rgb</i> image has RGB color model,<i><br>
+cmyk</i> image has CMYK (separated) color model,<i><br>
+ycbcr</i> image has YCbCr color model,<i><br>
+cielab</i> image has CIE L*a*b color model,<i><br>
+icclab</i> image has ICC L*a*b color model,<i><br>
+itulab</i> image has ITU L*a*b color model,</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-s</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+swap bytes fetched from the input file.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-L</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+input data has LSB2MSB bit order (default).</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-M</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+input data has MSB2LSB bit order.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-c</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+Specify a compression scheme to use when writing image data:
+<b>-c none</b> for no compression, <b>-c packbits</b> for
+the PackBits compression algorithm (the default), <b>-c
+jpeg</b> for the baseline JPEG compression algorithm, <b>-c
+zip</b> for the Deflate compression algorithm, and <b>-c
+lzw</b> for Lempel-Ziv &amp; Welch.</td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td><td width="90%">
+<b>-r &lt;number&gt;</b></td></table>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td><td width="79%">
+Write data with a specified number of rows per strip; by
 default the number of rows/strip is selected so that each
-strip is approximately 8 kilobytes.</p>
-</td>
-</table>
+strip is approximately 8 kilobytes.</td></table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
+
+<table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>pal2rgb</i>(1), <i>tiffinfo</i>(1), <i>tiffcp</i>(1),
-<i>tiffmedian</i>(1), <i>libtiff</i>(3)</p>
-</td>
-</table></p>
+<td width="10%"></td><td width="90%">
+<i>pal2rgb</i>(1), <i>tiffinfo</i>(1), <i>tiffcp</i>(1),
+<i>tiffmedian</i>(1), <i>libtiff</i>(3)</td></table>
 <hr>
 </body>
 </html>

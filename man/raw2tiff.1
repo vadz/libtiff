@@ -105,6 +105,35 @@ pixel interleaved data (default),
 .I band\t\t
 band interleaved data.
 .TP
+.B \-p photo
+photometric interpretation (color space) of the input image, where
+.B photo
+may be:
+.br
+.I miniswhite
+white color represented with 0 value,
+.br
+.I minisblack
+black color represented with 0 value (default),
+.br
+.I rgb\t\t
+image has RGB color model,
+.br
+.I cmyk\t\t
+image has CMYK (separated) color model,
+.br
+.I ycbcr\t\t
+image has YCbCr color model,
+.br
+.I cielab\t
+image has CIE L*a*b color model,
+.br
+.I icclab\t
+image has ICC L*a*b color model,
+.br
+.I itulab\t
+image has ITU L*a*b color model,
+.TP
 .B \-s
 swap bytes fetched from the input file.
 .TP
