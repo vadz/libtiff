@@ -31,32 +31,41 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <math.h>
+#include <getopt.h>
+#include <ctype.h>
 
 #include "tiffio.h"
+
+typedef enum {
+	PIXEL,
+	BAND
+} InterleavingType;
 
 static	uint16 compression = (uint16) -1;
 static	int jpegcolormode = JPEGCOLORMODE_RGB;
 static	int quality = 75;		/* JPEG quality */
 static	uint16 predictor = 0;
 
-static void swapBytesInScanline(unsigned char *, uint32, TIFFDataType);
+static void swapBytesInScanline(void *, uint32, TIFFDataType);
+static int guessSize(FILE *, TIFFDataType, uint32, int, uint32 *, uint32 *);
+static double correlation(void *, void *, uint32, TIFFDataType);
 static void usage(void);
 static	int processCompressOptions(char*);
 
 int
 main(int argc, char* argv[])
 {
-	tsize_t	width = 0, length = 0, hdr_size = 0, linebytes, bufsize;
-	int	nbands = 1;		/* number of bands in input image*/
+	uint32	width = 0, length = 0, hdr_size = 0, linebytes, bufsize;
+	int	nbands = 1;		    /* number of bands in input image*/
 	TIFFDataType dtype = TIFF_BYTE;
-	int	depth = 1;		/* bytes per pixel in input image */
-	int	swab = 0;		/* byte swapping flag */
-	int	interleaving = 0;	/* interleaving type flag */
+	int	depth = 1;		    /* bytes per pixel in input image */
+	int	swab = 0;		    /* byte swapping flag */
+	InterleavingType interleaving = 0;  /* interleaving type flag */
 	uint32 rowsperstrip = (uint32) -1;
 	uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	uint16	config = PLANARCONFIG_CONTIG;
 	uint16	fillorder = FILLORDER_LSB2MSB;
-	struct stat instat;
 	FILE	*in;
 	char	*outfilename = NULL;
 	TIFF	*out;
@@ -141,9 +150,9 @@ main(int argc, char* argv[])
 			break;
 		case 'i':		/* type of interleaving */
 			if (strncmp(optarg, "pixel", 4) == 0)
-				interleaving = 0;
+				interleaving = PIXEL;
 			else if  (strncmp(optarg, "band", 6) == 0)
-				interleaving = 1;
+				interleaving = BAND;
 			else
 				interleaving = 0;
 			break;
@@ -163,25 +172,10 @@ main(int argc, char* argv[])
 			argv[0], argv[optind]);
 		return (-1);
 	}
-	stat(argv[optind], &instat);
-	if (width == 0 ) {
-		fprintf(stderr,
-		"%s: %s: You should specify at least width of input image (use -w switch).\n",
-		argv[0], argv[optind]);
-		return (-1);
-	}
-	if (length == 0) {
-		length = (instat.st_size - hdr_size) / (width * nbands * depth);
-		fprintf(stderr,
-			"%s: %s: Height is not specified, guessed as %d\n",
-			argv[0], argv[optind], length);
-	}
-	if (instat.st_size < hdr_size + width * length * nbands * depth) {
-		fprintf(stderr, "%s: %s: Input file too small.\n",
-			argv[0], argv[optind]);
-		return (-1);
-	}
-	
+
+	if (guessSize(in, dtype, hdr_size, nbands, &width, &length) < 0)
+		return 1;
+
 	if (outfilename == NULL)
 		outfilename = argv[optind+1];
 	out = TIFFOpen(outfilename, "w");
@@ -222,7 +216,8 @@ main(int argc, char* argv[])
 	TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
 	switch (compression) {
 	case COMPRESSION_JPEG:
-		if (photometric == PHOTOMETRIC_RGB && jpegcolormode == JPEGCOLORMODE_RGB)
+		if (photometric == PHOTOMETRIC_RGB
+		    && jpegcolormode == JPEGCOLORMODE_RGB)
 			photometric = PHOTOMETRIC_YCBCR;
 		TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
 		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
@@ -234,11 +229,11 @@ main(int argc, char* argv[])
 		break;
 	}
 	switch(interleaving) {
-	case 1:				/* band interleaved data */
+	case BAND:				/* band interleaved data */
 		linebytes = width * depth;
 		buf = (unsigned char *)_TIFFmalloc(linebytes);
 		break;
-	case 0:				/* pixel interleaved data */
+	case PIXEL:				/* pixel interleaved data */
 	default:
 		linebytes = width * nbands * depth;
 		break;
@@ -250,29 +245,32 @@ main(int argc, char* argv[])
 	fseek(in, hdr_size, SEEK_SET);		/* Skip the file header */
 	for (row = 0; row < length; row++) {
 		switch(interleaving) {
-		case 1:				/* band interleaved data */
+		case BAND:			/* band interleaved data */
 			for (band = 0; band < nbands; band++) {
 				fseek(in,
-					hdr_size + (length * band + row) * linebytes,
-					SEEK_SET);
+				      hdr_size + (length*band+row)*linebytes,
+				      SEEK_SET);
 				if (fread(buf, linebytes, 1, in) != 1) {
 					fprintf(stderr,
 					"%s: %s: scanline %lu: Read error.\n",
-					argv[0], argv[optind], (unsigned long) row);
+					argv[0], argv[optind],
+					(unsigned long) row);
 				break;
 				}
 				if (swab)	/* Swap bytes if needed */
 					swapBytesInScanline(buf, width, dtype);
 				for (col = 0; col < width; col++)
-					memcpy(buf1 + (col * nbands + band) * depth,
-						buf + col * depth, depth);
+					memcpy(buf1 + (col*nbands+band)*depth,
+					       buf + col * depth, depth);
 			}
 			break;
-		case 0:				/* pixel interleaved data */
+		case PIXEL:			/* pixel interleaved data */
 		default:
 			if (fread(buf1, bufsize, 1, in) != 1) {
-				fprintf(stderr, "%s: %s: scanline %lu: Read error.\n",
-					argv[0], argv[optind], (unsigned long) row);
+				fprintf(stderr,
+					"%s: %s: scanline %lu: Read error.\n",
+					argv[0], argv[optind],
+					(unsigned long) row);
 				break;
 			}
 			if (swab)		/* Swap bytes if needed */
@@ -282,7 +280,7 @@ main(int argc, char* argv[])
 				
 		if (TIFFWriteScanline(out, buf1, row, 0) < 0) {
 			fprintf(stderr,	"%s: %s: scanline %lu: Write error.\n",
-					argv[0], outfilename, (unsigned long) row);
+				argv[0], outfilename, (unsigned long) row);
 			break;
 		}
 	}
@@ -295,24 +293,272 @@ main(int argc, char* argv[])
 }
 
 static void
-swapBytesInScanline(unsigned char *buf, uint32 width, TIFFDataType dtype)
+swapBytesInScanline(void *buf, uint32 width, TIFFDataType dtype)
 {
-	switch(dtype) {
-	case TIFF_SHORT:
-	case TIFF_SSHORT:
-		TIFFSwabArrayOfShort((uint16*)buf, width);
-		break;
-	case TIFF_LONG:
-	case TIFF_SLONG:
-		TIFFSwabArrayOfLong((uint32*)buf, width);
-		break;
-	/* case TIFF_FLOAT: */	/* FIXME */
-	case TIFF_DOUBLE:
-		TIFFSwabArrayOfDouble((double*)buf, width);
-		break;
-	default:
-		break;
+	switch (dtype) {
+		case TIFF_SHORT:
+		case TIFF_SSHORT:
+			TIFFSwabArrayOfShort((uint16*)buf, width);
+			break;
+		case TIFF_LONG:
+		case TIFF_SLONG:
+			TIFFSwabArrayOfLong((uint32*)buf, width);
+			break;
+		/* case TIFF_FLOAT: */	/* FIXME */
+		case TIFF_DOUBLE:
+			TIFFSwabArrayOfDouble((double*)buf, width);
+			break;
+		default:
+			break;
 	}
+}
+
+static int
+guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands,
+	  uint32 *width, uint32 *length)
+{
+	const float longt = 40.0;    /* maximum possible height/width ratio */
+	char	    *buf1, *buf2;
+	struct stat filestat;
+	uint32	    w, h, scanlinesize, imagesize;
+	int	    depth = TIFFDataWidth(dtype);
+	float	    cor_coef = 0, tmp;
+
+	fstat(fileno(fp), &filestat);
+
+	if (filestat.st_size < hdr_size) {
+		fprintf(stderr, "Too large header size specified.\n");
+		return -1;
+	}
+
+	imagesize = (filestat.st_size - hdr_size) / nbands / depth;
+
+	if (*width != 0 && *length == 0) {
+		fprintf(stderr,	"Image height is not specified.\n");
+
+		*length = imagesize / *width;
+		
+		fprintf(stderr, "Height is guessed as %ld.\n", *length);
+
+		return 1;
+	} else if (*width == 0 && *length != 0) {
+		fprintf(stderr, "Image width is not specified.\n");
+
+		*width = imagesize / *length;
+		
+		fprintf(stderr,	"Width is guessed as %ld.\n", *width);
+
+		return 1;
+	} else if (*width == 0 && *length == 0) {
+		fprintf(stderr,	"Image width and height are not specified.\n");
+
+		for (w = sqrtf(imagesize / longt);
+		     w < sqrtf(imagesize * longt);
+		     w++) {
+			if (imagesize % w == 0) {
+				scanlinesize = w * depth;
+				buf1 = _TIFFmalloc(scanlinesize);
+				buf2 = _TIFFmalloc(scanlinesize);
+				h = imagesize / w;
+				fseek(fp, hdr_size + (int)(h/2)*scanlinesize,
+				      SEEK_SET);
+				fread(buf1, scanlinesize, 1, fp);
+				fread(buf2, scanlinesize, 1, fp);
+				
+				tmp = fabs(correlation(buf1, buf2, w, dtype));
+				if (tmp > cor_coef) {
+					cor_coef = tmp;
+					*width = w, *length = h;
+				}
+
+				_TIFFfree(buf1);
+				_TIFFfree(buf2);
+			}
+		}
+
+		fprintf(stderr,
+			"Width is guessed as %ld, height is guessed as %ld.\n",
+			*width, *length);
+
+		return 1;
+	} else {
+		if (filestat.st_size<hdr_size+(*width)*(*length)*nbands*depth) {
+			fprintf(stderr, "Input file too small.\n");
+		return -1;
+		}
+	}
+
+	return 1;
+}
+
+/* Calculate correlation coefficient between two numeric vectors */
+static double
+correlation(void *buf1, void *buf2, uint32 n_elem, TIFFDataType dtype)
+{
+	float	M1 = 0.0, M2 = 0.0, D1 = 0.0, D2 = 0.0, K = 0.0;
+	int	i;
+
+	switch (dtype) {
+		case TIFF_BYTE:
+		default:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((u_char *)buf1)[i];
+                            M2 += ((u_char *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((u_char *)buf1)[i] * ((u_char *)buf1)[i];
+			    D2 += ((u_char *)buf2)[i] * ((u_char *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((u_char *)buf1)[i] * ((u_char *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+		case TIFF_SBYTE:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((signed char *)buf1)[i];
+                            M2 += ((signed char *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((signed char*)buf1)[i]
+				* ((signed char *)buf1)[i];
+			    D2 += ((signed char*)buf2)[i]
+				* ((signed char *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((signed char *)buf1)[i]
+				    * ((signed char *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+			break;
+		case TIFF_SHORT:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((uint16 *)buf1)[i];
+                            M2 += ((uint16 *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((uint16 *)buf1)[i] * ((uint16 *)buf1)[i];
+			    D2 += ((uint16 *)buf2)[i] * ((uint16 *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((uint16 *)buf1)[i] * ((uint16 *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+		case TIFF_SSHORT:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((int16 *)buf1)[i];
+                            M2 += ((int16 *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((int16 *)buf1)[i] * ((int16 *)buf1)[i];
+			    D2 += ((int16 *)buf2)[i] * ((int16 *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((int16 *)buf1)[i] * ((int16 *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+		case TIFF_LONG:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((uint32 *)buf1)[i];
+                            M2 += ((uint32 *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((uint32 *)buf1)[i] * ((uint32 *)buf1)[i];
+			    D2 += ((uint32 *)buf2)[i] * ((uint32 *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((uint32 *)buf1)[i] * ((uint32 *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+		case TIFF_SLONG:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((int32 *)buf1)[i];
+                            M2 += ((int32 *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((int32 *)buf1)[i] * ((int32 *)buf1)[i];
+			    D2 += ((int32 *)buf2)[i] * ((int32 *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((int32 *)buf1)[i] * ((int32 *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+		case TIFF_FLOAT:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((float *)buf1)[i];
+                            M2 += ((float *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((float *)buf1)[i] * ((float *)buf1)[i];
+			    D2 += ((float *)buf2)[i] * ((float *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((float *)buf1)[i] * ((float *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+		case TIFF_DOUBLE:
+                        for (i = 0; i < n_elem; i++) {
+                            M1 += ((double *)buf1)[i];
+                            M2 += ((double *)buf2)[i];
+                        }
+                        M1 /= n_elem;
+                        M2 /= n_elem;
+
+                        for (i = 0; i < n_elem; i++) {
+			    D1 += ((double *)buf1)[i] * ((double *)buf1)[i];
+			    D2 += ((double *)buf2)[i] * ((double *)buf2)[i];
+                        }
+			D1 -= M1 * M1 * n_elem;
+			D2 -= M2 * M2 * n_elem;
+
+                        for (i = 0; i < n_elem; i++)
+				K += ((double *)buf1)[i] * ((double *)buf2)[i];
+			K = (K - M1 * M2 * n_elem) / sqrt(D1 * D2);
+			break;
+	}
+
+	return K;
 }
 
 static int
@@ -352,7 +598,7 @@ char* stuff[] = {
 " -M		input data has MSB2LSB bit order",
 " -r #		make each strip have no more than # rows",
 " -H #		size of input image file header in bytes (0 by default)",
-" -w #		width of input image in pixels (obligatory)",
+" -w #		width of input image in pixels",
 " -l #		length of input image in lines",
 " -b #		number of bands in input image (1 by default)",
 "",
