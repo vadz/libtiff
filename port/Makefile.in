@@ -65,4 +65,4 @@ ${PORT}/libport.a: libport.a
 install: default
 
 clean:
-	rm -f ${TARGETS} ${OBJS} core a.out
+	rm -f ${TARGETS} ${OBJECTS} core a.out
