@@ -1,3 +1,13 @@
+2001-11-28  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/mkversion.c: Fix output of TIFF_VERSION to be
+	YYYYMMDD so that it is increasing over time. 
+
+	* Makefile.in: Ensure that tiffvers.h is regenerated in the
+	make release target.
+
+	* Makefile.in: added libtiff/tiffvers.h to the release file list.
+
 2001-11-23  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* added html/v3.5.7.html, updated html/index.html.
