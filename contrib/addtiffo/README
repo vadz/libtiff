@@ -19,7 +19,8 @@ http://members.home.com/warmerda
 Usage
 -----
 
-Usage: addtiffo [-subifd] tiff_filename [resolution_reductions]
+Usage: addtiffo [-r {average/nearest} [-subifd] 
+                tiff_filename [resolution_reductions]
 
 Example:
  % addtiffo abc.tif 2 4 8 16
@@ -34,16 +35,8 @@ Limitations
 
 See tif_overview.cpp for up to date details. 
 
-  o RawBlockedImage will create temporary files in the current directory
-    to cache the overviews so it doesn't have to hold them all in memory.
-    If the application crashes these will not be deleted (*.rbi).
-
   o Currently only images with bits_per_sample of a multiple of eight
     will work.
-
-  o The downsampler currently just takes the top left pixel from the
-    source rectangle.  Eventually sampling options of averaging, mode, and
-    ``center pixel'' should be offered.
 
   o The code will attempt to use the same kind of compression,
     photometric interpretation, and organization as the source image, but
@@ -119,7 +112,7 @@ TIFF Directory at offset 0x17b40c
 Building
 --------
 
-You will need a C, and C++ compiler.  You will need to have libtiff already
+You will need a C compiler.  You will need to have libtiff already
 built and installed.  The provided Makefile should work on most Unix systems.
 A similar file will be needed for Windows, but is not provided. 
 
@@ -140,6 +133,10 @@ Credits
 
  o Max Martinez of Erdas for his discussion of external overviews. 
 
+ o Atlantis Scientific who supported adding averaging, and some other
+   generalizations. 
+
  o Frank Warmerdam for writing the bulk of the code. 
 
  o Sam Leffler since this only exists because of his libtiff. 
+
