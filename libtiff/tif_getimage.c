@@ -2050,6 +2050,8 @@ initCIELabConversion(TIFFRGBAImage* img)
 {
 	static char module[] = "initCIELabConversion";
 
+	float *coeffs, X0, Y0, Z0;
+
 	if (!img->cielab) {
 		img->cielab = (TIFFCIELabToRGB *)
 			_TIFFmalloc(sizeof(TIFFCIELabToRGB));
@@ -2059,9 +2061,12 @@ initCIELabConversion(TIFFRGBAImage* img)
 			return NULL;
 		}
 	}
-	
-	if (TIFFCIELabToRGBInit(img->cielab, &display_sRGB,
-				D50_X0, D50_Y0, D50_Z0) < 0) {
+
+	TIFFGetFieldDefaulted(img->tif, TIFFTAG_WHITEPOINT, &coeffs);
+	Y0 = 100.0;
+	X0 = coeffs[0] / coeffs[1] * Y0;
+	Z0 = (1.0 - coeffs[0] - coeffs[1]) / coeffs[1] * Y0;
+	if (TIFFCIELabToRGBInit(img->cielab, &display_sRGB, X0, Y0, Z0) < 0) {
 		TIFFError(module,
 		    "Failed to initialize CIE L*a*b*->RGB conversion state.");
 		_TIFFfree(img->cielab);
