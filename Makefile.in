@@ -305,6 +305,7 @@ TIFFFILES=\
 	    html/images/strike.gif				\
 	    html/images/warning.gif				\
 	    html/Makefile.in				\
+	    html/TIFFTechNote2.html			\
 	    html/bugs.html				\
 	    html/build.html				\
 	    html/contrib.html				\
