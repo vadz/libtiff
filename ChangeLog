@@ -2,6 +2,10 @@
 	* Fixed tiffcomp.h to avoid win32 stuff if unix #defined, to improve
 	cygwin compatibility.
 
+	* Applied patch from Roman Shpount to tif_fax3.c.  This seems to
+	be a proper fix to the buffer sizing problem.  See 
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=11
+
 	* Fixed tif_getimage.c to fix overrun bug with YCbCr images without
 	downsampling.  http://bugzilla.remotesensing.org/show_bug.cgi?id=10
 	Thanks to Nick Lamb <njl98r@ecs.soton.ac.uk> for reporting the
