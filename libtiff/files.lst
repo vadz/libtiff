@@ -2,6 +2,7 @@ HDRS = \
 	tiff.h \
         tiffconf.h \
 	tiffio.h \
+	tiffio.hxx \
 	tiffvers.h
 
 EXTRA_HDRS = \

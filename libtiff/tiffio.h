@@ -494,12 +494,6 @@ extern  void TIFFSetClientInfo( TIFF *, void *, const char * );
 }
 #endif
 
-#if defined(c_plusplus) || defined(__cplusplus)
-# include <iostream>
-extern	TIFF* TIFFStreamOpen(const char*, std::ostream *);
-extern	TIFF* TIFFStreamOpen(const char*, std::istream *);
-#endif
-
 #endif /* _TIFFIO_ */
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
