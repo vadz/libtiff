@@ -1,3 +1,13 @@
+2005-03-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: More logic to guess missed strip size as per
+	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=705
+
+	* tools/fax2ps.c: Replace insecure mktemp() function with the
+	tmpfile() as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=786
+
 2005-02-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tiff.h: Changed the int8 definition to be always signed char
