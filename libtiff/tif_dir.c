@@ -475,13 +475,11 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 #endif
  		break;
 #endif
-#ifdef XML_SUPPORT
 	case TIFFTAG_XMLPACKET:
 		td->td_xmlpacketLength = (uint32) va_arg(ap, uint32);
 		_TIFFsetByteArray(&td->td_xmlpacketData, va_arg(ap, void*),
 		    td->td_xmlpacketLength);
 		break;
-#endif
         default: {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
             TIFFTagValue *tv;
@@ -878,12 +876,10 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             *va_arg(ap, void**) = td->td_richtiffiptcData;
             break;
 #endif
-#ifdef XML_SUPPORT
 	case TIFFTAG_XMLPACKET:
             *va_arg(ap, uint32*) = td->td_xmlpacketLength;
             *va_arg(ap, void**) = td->td_xmlpacketData;
             break;
-#endif
             /* Begin Pixar Tags */
  	case TIFFTAG_PIXAR_IMAGEFULLWIDTH:
             *va_arg(ap, uint32*) = td->td_imagefullwidth;
@@ -1052,9 +1048,7 @@ TIFFFreeDirectory(TIFF* tif)
 #ifdef IPTC_SUPPORT
     CleanupField(td_richtiffiptcData);
 #endif
-#ifdef XML_SUPPORT
     CleanupField(td_xmlpacketData);
-#endif
     CleanupField(td_stripoffset);
     CleanupField(td_stripbytecount);
     /* Begin Pixar Tags */

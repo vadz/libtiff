@@ -119,10 +119,8 @@ typedef	struct {
  	float*	td_matrixWorldToScreen;
  	float*	td_matrixWorldToCamera;
  	/* End Pixar Tag Values. */
-#ifdef XML_SUPPORT
 	uint32	td_xmlpacketLength;
 	void	*td_xmlpacketData;
-#endif
 		int     td_customValueCount;
         TIFFTagValue *td_customValues;
 } TIFFDirectory;
@@ -212,7 +210,7 @@ typedef	struct {
 #define FIELD_XMLPACKET			63
 /* end of support for well-known tags; codec-private tags follow */
 #define	FIELD_CODEC			64	/* base of codec-private tags */
-/*      FIELD_CUSTOM (see tiffio.h)     64 */
+/*      FIELD_CUSTOM (see tiffio.h)     65 */
 
 /*
  * Pseudo-tags don't normally need field bits since they
