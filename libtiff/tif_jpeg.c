@@ -66,11 +66,12 @@ int TIFFFillTile(TIFF*, ttile_t);
 */
 
 /* Define "boolean" as unsigned char, not int, per Windows custom. */
-#ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
-typedef unsigned char boolean;
+#if defined(__WIN32__)
+# ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
+   typedef unsigned char boolean;
+# endif
+# define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
 #endif
-#define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
-
 
 #include "jpeglib.h"
 #include "jerror.h"
