@@ -255,21 +255,11 @@ wrong thing, you can use the information captured here to aid in debugging.
 
 EOF
 
-if [ -r $SRCDIR/tiff.alpha ] ; then
-    VERSIONFILE=$SRCDIR/VERSION
-    ALPHAFILE=$SRCDIR/tiff.alpha
-else
-    VERSIONFILE=$SRCDIR/VERSION
-    ALPHAFILE=$SRCDIR/dist/tiff.alpha
-fi
+VERSIONFILE=$SRCDIR/VERSION
 DATE=`date`
 
-eval `cat $VERSIONFILE | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_TYPE=\3/'`
-DIST_ALPHA=`awk '{print $3}' $ALPHAFILE`
-VERSION="v${DIST_MAJOR}.${DIST_MINOR}${DIST_TYPE}"
-if [ $DIST_TYPE = beta ]; then
-    VERSION="${VERSION}${DIST_ALPHA}"
-fi
+eval `cat $VERSIONFILE | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)\.\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_POINT=\3/'`
+VERSION="v${DIST_MAJOR}.${DIST_MINOR}.${DIST_POINT}"
 
 Note()
 {
@@ -1161,19 +1151,17 @@ if [ "$DSO" = auto ]; then
 	;;
     *-freebsd*)
 	DSOSUF=so.${DIST_MAJOR}
-	DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_ALPHA}
+	DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_POINT}
 	LIBCOPTS='-fPIC'
 	DSOOPTS='-shared'
 	DSO=GNULD
 	;;
     *-linux*)
-	if [ -r /lib/libc.so.6 ] || [ -r /lib/libc.so.5 ]; then
-	    DSOSUF=so.${DIST_MAJOR}
-	    DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_ALPHA}
-	    LIBCOPTS='-fPIC'
-	    DSOOPTS='-shared'
-	    DSO=GNULD
-	fi
+	DSOSUF=so.${DIST_MAJOR}
+	DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_POINT}
+	LIBCOPTS='-fPIC'
+	DSOOPTS='-shared'
+	DSO=GNULD
 	;;
     *-osf3*|*-osf4*)
 	DSOSUF=so
@@ -1712,7 +1700,6 @@ fi
 # NB: these should be sorted alphabetically
 cat>>confsed<<EOF
 s;@AR@;${AR};g
-s;@ALPHAFILE@;`relativize ${ALPHAFILE}`;g
 s;@AROPTS@;${AROPTS};g
 s;@CONFIGDIR@;${CONFIGDIR};g
 s;@CCOMPILER@;${CCOMPILER};g
@@ -1731,10 +1718,9 @@ s;@DIR_INC@;${DIR_INC};g
 s;@DIR_LIB@;${DIR_LIB};g
 s;@DIR_MAN@;${DIR_MAN};g
 s;@DIRS_LIBINC@;`relativize ${DIRS_LIBINC}`;g
-s;@DIST_ALPHA@;${DIST_ALPHA};g
+s;@DIST_POINT@;${DIST_POINT};g
 s;@DIST_MAJOR@;${DIST_MAJOR};g
 s;@DIST_MINOR@;${DIST_MINOR};g
-s;@DIST_TYPE@;${DIST_TYPE};g
 s;@DSO@;${DSO};g
 s;@DSOSUF@;${DSOSUF};g
 s;@DSOSUF_VERSION@;${DSOSUF_VERSION};g
