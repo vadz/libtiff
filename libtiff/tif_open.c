@@ -313,6 +313,8 @@ TIFFClientOpen(
 		if (!TIFFDefaultDirectory(tif))
 			goto bad;
 		tif->tif_diroff = 0;
+		tif->tif_dirlist = NULL;
+		tif->tif_dircount = 0;
 		return (tif);
 	}
 	/*

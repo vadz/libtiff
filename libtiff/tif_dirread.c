@@ -97,6 +97,27 @@ TIFFReadDirectory(TIFF* tif)
 	tif->tif_diroff = tif->tif_nextdiroff;
 	if (tif->tif_diroff == 0)		/* no more directories */
 		return (0);
+
+	/*
+	 * XXX: Trick to prevent IFD looping. The one can create TIFF file
+	 * with looped directory pointers. We will maintain a list of already
+	 * seen directories and check every IFD offset against this list.
+	 */
+	for (n = 0; n < tif->tif_dircount; n++) {
+		if (tif->tif_dirlist[n] == tif->tif_diroff)
+			return (0);
+	}
+	tif->tif_dircount++;
+	tif->tif_dirlist = _TIFFrealloc(tif->tif_dirlist,
+					tif->tif_dircount * sizeof(toff_t));
+	if (!tif->tif_dirlist) {
+		TIFFError(module,
+			  "%.1000s: Failed to allocate space for IFD list",
+			  tif->tif_name);
+		return (0);
+	}
+	tif->tif_dirlist[tif->tif_dircount - 1] = tif->tif_diroff;
+
 	/*
 	 * Cleanup any previous compression state.
 	 */

@@ -39,6 +39,9 @@ TIFFClose(TIFF* tif)
         TIFFFlush(tif);
     (*tif->tif_cleanup)(tif);
     TIFFFreeDirectory(tif);
+
+    if (tif->tif_dirlist)
+        _TIFFfree(tif->tif_dirlist);
         
     /* Clean up client info links */
     while( tif->tif_clientinfo )
