@@ -1,8 +1,8 @@
 #!/bin/sh
 set -x
-aclocal
+libtoolize --force --install --copy
+aclocal -I .
 autoheader
-libtoolize --automake --copy
 automake --foreign --add-missing --copy
 autoconf
 

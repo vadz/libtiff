@@ -1,3 +1,9 @@
+2004-12-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* autogen.sh: aclocal and autoheader should be executed after
+	libtoolize.  Also add '-I .' to aclocal invocation to check
+	current directory for macros.
+
 2004-12-10  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirwrite.c: Always write TIFFTAG_SUBIFD using LONG type
