@@ -1,3 +1,10 @@
+2003-07-08  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_aux.c, tif_codec.c, tif_dir.c, tif_dirread.c, tif_extension.c,
+	tif_fax3.c, tif_getimage.c, tif_luv.c, tif_lzw.c, tif_next.c, 
+	tif_packbits.c, tif_predict.c, tif_print.c, tif_swab.c, tif_thunder.c:
+	avoid casting warning at /W4. 
+
 2003-07-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/thumbnail.c: Memory leak fixed as reported by Robert S. Kissel.
