@@ -571,11 +571,16 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 		}
 		break;
 	case TIFF_ASCII:
-		{ char* cp;
-		  TIFFGetField(tif, fip->field_tag, &cp);
-		  dir->tdir_count = (uint32) (strlen(cp) + 1);
-		  if (!TIFFWriteByteArray(tif, dir, cp))
-			return (0);
+		{ 
+                    char* cp;
+                    if (fip->field_passcount)
+                        TIFFGetField(tif, fip->field_tag, &wc, &cp);
+                    else
+                        TIFFGetField(tif, fip->field_tag, &cp);
+
+                    dir->tdir_count = (uint32) (strlen(cp) + 1);
+                    if (!TIFFWriteByteArray(tif, dir, cp))
+                        return (0);
 		}
 		break;
 
