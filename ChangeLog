@@ -1,3 +1,11 @@
+2000-10-12  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Modified tiff2bw to ensure portions add to 100%, and that
+	white is properly recovered. 
+	
+	See bug http://bugzilla.remotesensing.org/show_bug.cgi?id=15
+	Patch c/o Stanislav Brabec <utx@penguin.cz>
+
 2000-09-30  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* Modified TIFFClientOpen() to emit an error on an attempt to
