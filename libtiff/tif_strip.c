@@ -44,8 +44,8 @@ TIFFComputeStrip(TIFF* tif, uint32 row, tsample_t sample)
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE) {
 		if (sample >= td->td_samplesperpixel) {
 			TIFFError(tif->tif_name,
-			    "%u: Sample out of range, max %u",
-			    sample, td->td_samplesperpixel);
+			    "%lu: Sample out of range, max %lu",
+			    (u_long) sample, (u_long) td->td_samplesperpixel);
 			return ((tstrip_t) 0);
 		}
 		strip += sample*td->td_stripsperimage;
