@@ -247,6 +247,12 @@ const TIFFFieldInfo tiffFieldInfo[] = {
 /* end Pixar tags */
     { TIFFTAG_RICHTIFFIPTC, -1,-3, TIFF_LONG,   FIELD_RICHTIFFIPTC, 
       FALSE,    TRUE,   "RichTIFFIPTC" },
+    { TIFFTAG_EXIFIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"EXIFIFDOffset" },
+    { TIFFTAG_GPSIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"GPSIFDOffset" },
+    { TIFFTAG_INTEROPERABILITYIFD,	1, 1,	TIFF_LONG,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"InteroperabilityIFDOffset" },
     { TIFFTAG_PHOTOSHOP,    -1,-3, TIFF_BYTE,   FIELD_PHOTOSHOP, 
       FALSE,    TRUE,   "Photoshop" },
     { TIFFTAG_ICCPROFILE,	-1,-3, TIFF_UNDEFINED,	FIELD_ICCPROFILE,
@@ -375,6 +381,39 @@ TIFFDataWidth(TIFFDataType type)
 		return 8;
 	default:
 		return 0; /* will return 0 for unknown types */
+	}
+}
+
+/*
+ * Return size of TIFFDataType in bytes.
+ *
+ * XXX: We need a separate function to determine the space needed
+ * to store the value. For TIFF_RATIONAL values TIFFDataWidth() returns 8,
+ * but we use 4-byte float to represent rationals.
+ */
+int
+_TIFFDataSize(TIFFDataType type)
+{
+	switch (type) {
+		case TIFF_BYTE:
+		case TIFF_ASCII:
+		case TIFF_SBYTE:
+		case TIFF_UNDEFINED:
+		    return 1;
+		case TIFF_SHORT:
+		case TIFF_SSHORT:
+		    return 2;
+		case TIFF_LONG:
+		case TIFF_SLONG:
+		case TIFF_FLOAT:
+		case TIFF_IFD:
+		case TIFF_RATIONAL:
+		case TIFF_SRATIONAL:
+		    return 4;
+		case TIFF_DOUBLE:
+		    return 8;
+		default:
+		    return 0;
 	}
 }
 

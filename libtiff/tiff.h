@@ -415,6 +415,9 @@ typedef	enum {
 #define TIFFTAG_IT8CMYKEQUIVALENT	34032	/* CMYK color equivalents */
 /* tags 34232-34236 are private tags registered to Texas Instruments */
 #define TIFFTAG_FRAMECOUNT              34232   /* Sequence Frame Count */
+#define TIFFTAG_EXIFIFD			34665	/* Pointer to EXIF private directory */
+#define TIFFTAG_GPSIFD			34853	/* Pointer to GPS private directory */
+#define TIFFTAG_INTEROPERABILITYIFD	40965	/* Pointer to Interoperability private directory */
 /* tag 34750 is a private tag registered to Adobe? */
 #define TIFFTAG_ICCPROFILE		34675	/* ICC profile data */
 /* tag 34377 is private tag registered to Adobe for PhotoShop */
