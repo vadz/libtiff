@@ -180,6 +180,7 @@ TIFFOpen(const char* name, const char* mode)
 	return tif;
 }
 
+#ifdef __WIN32__
 /*
  * Open a TIFF file with a Unicode filename, for read/writing.
  */
@@ -230,6 +231,7 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 		close(fd);
 	return tif;
 }
+#endif
 
 void*
 _TIFFmalloc(tsize_t s)
