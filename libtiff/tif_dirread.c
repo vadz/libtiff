@@ -836,7 +836,7 @@ TIFFFetchShortArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
 static int
 TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir)
 {
-	uint16 v[2];
+	uint16 v[4];
 	int ok = 0;
 
 	switch (dir->tdir_type) {
