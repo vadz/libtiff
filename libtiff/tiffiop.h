@@ -180,7 +180,7 @@ struct tiff {
  */
 #ifndef ReadOK
 #define	ReadOK(tif, buf, size) \
-	(TIFFReadFile(tif, (tdata_t) buf, (tsize_t) size) == (tsize_t) size)
+	(TIFFReadFile(tif, (tdata_t) buf, (tsize_t)(size)) == (tsize_t)(size))
 #endif
 #ifndef SeekOK
 #define	SeekOK(tif, off) \
