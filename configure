@@ -25040,15 +25040,26 @@ fi
 
 
 
-#LOC_MSG()
-#LOC_MSG([Libtiff is now configured for ${host}])
-#LOC_MSG()
-#LOC_MSG([  Installation directory:    ${prefix}])
-#LOC_MSG([  C compiler:                ${CC} ${CFLAGS}])
-#LOC_MSG()
-#LOC_MSG([  ZLIB support:              ${HAVE_ZLIB}])
-#LOC_MSG([  JPEG support:              ${HAVE_JPEG}])
-#LOC_MSG([  Old JPEG support:          ${HAVE_OJPEG}])
-#LOC_MSG([  OpenGL support:            ${HAVE_OPENGL}])
-#LOC_MSG()
+echo ""
+echo "Libtiff is now configured for ${host}"
+echo ""
+echo "  Installation directory:            ${prefix}"
+echo "  C compiler:                        ${CC} ${CFLAGS}"
+echo ""
+echo " Support for internal codecs:"
+echo "  CCITT Group 3 & 4 algorithms:      ${HAVE_CCITT}"
+echo "  Macintosh PackBits algorithm:      ${HAVE_PACKBITS}"
+echo "  LZW algorithm:                     ${HAVE_LZW}"
+echo "  ThunderScan 4-bit RLE algorithm:   ${HAVE_THUNDER}"
+echo "  NeXT 2-bit RLE algorithm:          ${HAVE_NEXT}"
+echo "  LogLuv high dynamic range encoding:${HAVE_LOGLUV}"
+echo ""
+echo " Support for external codecs:"
+echo "  ZLIB support:                      ${HAVE_ZLIB}"
+echo "  Pixar log-format algorithm:        ${HAVE_PIXARLOG}"
+echo "  JPEG support:                      ${HAVE_JPEG}"
+echo "  Old JPEG support:                  ${HAVE_OJPEG}"
+echo ""
+echo "  OpenGL support:                    ${HAVE_OPENGL}"
+echo ""
 
