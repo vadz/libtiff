@@ -135,7 +135,7 @@ void	Ascii85Init(void);
 void	Ascii85Put(unsigned char code, FILE* fd);
 void	Ascii85Flush(FILE* fd);
 void    PSHead(FILE*, TIFF*, uint32, uint32, float, float, float, float);
-void 	PSTail(FILE*, int);
+void	PSTail(FILE*, int);
 
 #if	defined( EXP_ASCII85ENCODER)
 int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, int raw_l );
@@ -159,12 +159,12 @@ main(int argc, char* argv[])
 
 	while ((c = getopt(argc, argv, "b:d:h:H:L:i:w:l:o:O:acelmrxyzps1238DT")) != -1)
 		switch (c) {
- 		case 'b':
- 			bottommargin = atof(optarg);
- 			break;
- 		case 'c':
- 			centered = 1;
- 			break;
+		case 'b':
+			bottommargin = atof(optarg);
+			break;
+		case 'c':
+			centered = 1;
+			break;
 		case 'd':
 			dirnum = atoi(optarg);
 			break;
@@ -444,7 +444,7 @@ isCCITTCompression(TIFF* tif)
 
 static	tsize_t tf_bytesperrow;
 static	tsize_t ps_bytesperrow;
-static 	tsize_t	tf_rowsperstrip;
+static	tsize_t	tf_rowsperstrip;
 static	tsize_t	tf_numberstrips;
 static	char *hex = "0123456789abcdef";
 
@@ -515,7 +515,7 @@ PlaceImage(FILE *fp, float pagewidth, float pageheight,
 	}
 	
 	bottom_offset += ytran / (cnt?2:1);
- 	if (cnt)
+	if (cnt)
 	    left_offset += xtran / 2;
 	fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
 	fprintf(fp, "%f %f scale\n", xscale, yscale);
@@ -609,7 +609,7 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 						scale = 1.0;
 					bottom_offset +=
 						(ph * PS_UNIT_SIZE - prh * scale) / (cnt?2:1);
- 					if (cnt)
+					if (cnt)
 						left_offset += (pw * PS_UNIT_SIZE - prw * scale) / 2;
 					fprintf(fd, "%f %f translate\n",
 						left_offset, bottom_offset);
@@ -1008,7 +1008,7 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			fputs("\t /BlackIs1 true\n", fd);
 		fprintf(fd, "\t>> /CCITTFaxDecode filter");
 		break;
-	case COMPRESSION_LZW:	/* 5: Lempel-Ziv  & Welch */
+	case COMPRESSION_LZW:	/* 5: Lempel-Ziv & Welch */
 		TIFFGetFieldDefaulted(tif, TIFFTAG_PREDICTOR, &predictor);
 		if (predictor == 2) {
 			fputs("\n\t<<\n", fd);
@@ -1026,15 +1026,16 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	case COMPRESSION_ADOBE_DEFLATE:
 		if ( level3 ) {
 			 TIFFGetFieldDefaulted(tif, TIFFTAG_PREDICTOR, &predictor);
-			 if (predictor >= 2) {
-				 fputs("\n\t<<\n", fd);
-				 fprintf(fd, "\t /Predictor %u\n", predictor);
-				 fprintf(fd, "\t /Columns %lu\n",
-					 (unsigned long) tile_width);
-				 fprintf(fd, "\t /Colors %u\n", samplesperpixel);
-					 fprintf(fd, "\t /BitsPerComponent %u\n",
-					 bitspersample);
-				 fputs("\t>>", fd);
+			 if (predictor > 1) {
+				fprintf(fd, "\t % PostScript Level 3 only.");
+				fputs("\n\t<<\n", fd);
+				fprintf(fd, "\t /Predictor %u\n", predictor);
+				fprintf(fd, "\t /Columns %lu\n",
+					(unsigned long) tile_width);
+				fprintf(fd, "\t /Colors %u\n", samplesperpixel);
+					fprintf(fd, "\t /BitsPerComponent %u\n",
+					bitspersample);
+				fputs("\t>>", fd);
 			 }
 			 fputs(" /FlateDecode filter", fd);
 		} else {
@@ -1902,15 +1903,15 @@ int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, 
          * Output any straggler bytes:
          */
     
-        if ( raw_l )
+        if ( raw_l > 0 )
         {
             int             len;                /* Output this many bytes */
     
             len = raw_l + 1;
             val32 = *++raw_p << 24;             /* Prime the pump */
     
-            if ( --raw_l )  val32 += *(++raw_p) << 16;
-            if ( --raw_l )  val32 += *(++raw_p) <<  8;
+            if ( --raw_l > 0 )  val32 += *(++raw_p) << 16;
+            if ( --raw_l > 0 )  val32 += *(++raw_p) <<  8;
     
             val32 /= 85;
     
