@@ -228,6 +228,7 @@ apps/rgb2ycbcr.1::	${SRCDIR}/rgb2ycbcr.1;	${MANCVT}
 apps/sgi2tiff.1::	${SRCDIR}/sgi2tiff.1;	${MANCVT}
 apps/thumbnail.1::	${SRCDIR}/thumbnail.1;	${MANCVT}
 apps/tiff2bw.1::	${SRCDIR}/tiff2bw.1;	${MANCVT}
+apps/tiff2rgba.1::	${SRCDIR}/tiff2rgba.1;	${MANCVT}
 apps/tiff2ps.1::	${SRCDIR}/tiff2ps.1;	${MANCVT}
 apps/tiffcmp.1::	${SRCDIR}/tiffcmp.1;	${MANCVT}
 apps/tiffcp.1::		${SRCDIR}/tiffcp.1;	${MANCVT}
