@@ -96,6 +96,7 @@ MANTOOLS=\
 	apps/sgi2tiff.1 \
 	apps/thumbnail.1 \
 	apps/tiff2bw.1 \
+	apps/tiff2rgba.1 \
 	apps/tiff2ps.1 \
 	apps/tiffcmp.1 \
 	apps/tiffcp.1 \

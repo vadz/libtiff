@@ -163,6 +163,7 @@ TIFFFILES=\
 	    libtiff/tif_flush.c			\
 	    libtiff/tif_getimage.c		\
 	    libtiff/tif_jpeg.c			\
+	    libtiff/tif_ojpeg.c			\
 	    libtiff/tif_luv.c			\
 	    libtiff/tif_lzw.c			\
 	    libtiff/tif_msdos.c			\
@@ -217,6 +218,7 @@ TIFFFILES=\
 	    tools/tiffinfo.c			\
 	    tools/tiffmedian.c			\
 	    tools/tiffsplit.c			\
+	    tools/tiffset.c			\
 	    tools/ycbcr.c			\
 	man/Makefile.in				\
 	    man/fax2tiff.1			\
@@ -229,6 +231,7 @@ TIFFFILES=\
 	    man/sgi2tiff.1			\
 	    man/thumbnail.1			\
 	    man/tiff2bw.1			\
+	    man/tiff2rgba.1			\
 	    man/tiff2ps.1			\
 	    man/tiffcmp.1			\
 	    man/tiffcp.1			\
