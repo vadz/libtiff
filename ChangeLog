@@ -1,3 +1,15 @@
+2002-06-11  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/contrib/win95: renamed to contrib/win_dib.  Added new 
+	Tiffile.cpp example of converting TIFF files into a DIB on Win32.  
+	This one is described in:
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=143
+
+	* libtiff/tif_ojpeg.c: Major upgrade from Scott.  See details at:
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=156
+
 2002-05-10  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2ps: New commandline switches to override resolution
