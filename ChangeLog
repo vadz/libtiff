@@ -1,3 +1,12 @@
+2004-02-05  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_fax3.c: Fixed problem with CCITT encoding modes as per
+	bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=483
+
+	But we need more work on fax codec to support update mode.
+
 2004-01-30  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/libtiff.def: Added TIFFCurrentDirOffset, TIFFWriteCheck,
