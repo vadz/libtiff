@@ -1083,7 +1083,10 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	PS_Lvl2colorspace(fd, tif);
 	use_rawdata = PS_Lvl2ImageDict(fd, tif, w, h);
 
+/* See http://bugzilla.remotesensing.org/show_bug.cgi?id=80 */
+#ifdef ENABLE_BROKEN_BEGINENDDATA
 	fputs("%%BeginData:\n", fd);
+#endif
 	fputs("exec\n", fd);
 
 	tiled_image = TIFFIsTiled(tif);
@@ -1209,7 +1212,9 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 #endif
        
 	_TIFFfree(buf_data);
+#ifdef ENABLE_BROKEN_BEGINENDDATA
 	fputs("%%EndData\n", fd);
+#endif
 	return(TRUE);
 }
 
