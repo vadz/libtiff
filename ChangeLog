@@ -1,5 +1,17 @@
 2004-09-24  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/tif_dirread.c: Always check the return values, returned
+	by the _TIFFmalloc() (Dmitry V. Levin).
+
+	* libtiff/tif_dir.c: Fixed possible integer overflow _TIFFset*Array()
+	functions (Dmitry V. Levin).
+
+	* libtiff/{tif_dirread.c, tif_dir.c, tif_write.c}:
+	Potential memory leak fixed in TIFFReadDirectory(), _TIFFVSetField(),
+	TIFFGrowStrips() (found by Dmitry V. Levin).
+
+2004-09-24  Andrey Kiselev  <dron@remotesensing.org>
+
 	* libtiff/{tiffio.h, tif_compress.c}: Added TIFFGetConfiguredCODECs()
 	to get the list of configured codecs.
 
