@@ -1,20 +1,28 @@
-#! smake
-#	$Header$
+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# $Id$
 #
-# @WARNING@
+# Tag Image File Format (TIFF) Software
 #
-# Tag Image File Format Library Manual Pages
+# Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
 #
-# Copyright (c) 1991-1997 Sam Leffler
-# Copyright (c) 1991-1997 Silicon Graphics, Inc.
-# 
 # Permission to use, copy, modify, distribute, and sell this software and 
 # its documentation for any purpose is hereby granted without fee, provided
 # that (i) the above copyright notices and this permission notice appear in
 # all copies of the software and related documentation, and (ii) the names of
 # Sam Leffler and Silicon Graphics may not be used in any advertising or
 # publicity relating to the software without the specific, prior written
-# permission of Stanford and Silicon Graphics.
+# permission of Sam Leffler and Silicon Graphics.
 # 
 # THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
 # EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
@@ -26,412 +34,273 @@
 # WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
 # LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
-#
-SRCDIR	= @RELSRCDIR@/man
 
-#
-# VERSION:	@VERSION@
-# DATE:		@DATE@
-# TARGET:	@TARGET@
-# CCOMPILER:	@CCOMPILER@
-#
-SHELL	= @SCRIPT_SH@
-SCRIPT_SH = @SCRIPT_SH@
-NULL	=
-ECHO	= echo
-SED	= sed
-MV	= mv
-RM	= rm -f
-INSTALL	= @INSTALL@
+# Process this file with automake to produce Makefile.in.
 
-#
-# Manual-related controls:
-#
-# MAN		head of manual tree
-# MANAPPS	subdirectory for application programs
-# MANLIB	subdirectory for library functions
-#
-MAN		= @DIR_MAN@
-MANAPPS		= @MANAPPS@
-MANLIB		= @MANLIB@
-#
-# MANSEDLOCAL	additional sed commands to use during source transformation
-#		(might want to transform section names here)
-# MANCVT	command to convert source to installable target (can use
-#		$? and $@, but not $<)
-MANSEDLOCAL	= @MANSEDLOCAL@
-MANCVT		= @MANCVT@
-#
-# The following macros are used during the install step to generate
-# the filenames of the target manual pages.  They appear inside a
-# shell for loop in a command of the form:
-#
-#	f=${MAN*NAME}
-#
-# where the variable ``i'' contains the filename of the formatted
-# manual page (formatted according to the MANCVT macro).
-#
-# MANAPPNAME	generate installed app man page filename
-# MANLIBNAME	generate installed library man page filename
-#
-#
-MANAPPNAME	= @MANAPPNAME@
-MANLIBNAME	= @MANLIBNAME@
 
-#
-# Set this up if your manual system requires a
-# pathname prefix in the .so commands when setting
-# up alternate files for multi-function manual pages.
-#
-#MANDIR	= man3/
+SHELL = @SHELL@
 
-MANTOOLS=\
-	apps/fax2tiff.1 \
-	apps/fax2ps.1 \
-	apps/gif2tiff.1 \
-	apps/pal2rgb.1 \
-	apps/ppm2tiff.1 \
-	apps/ras2tiff.1 \
-	apps/raw2tiff.1 \
-	apps/rgb2ycbcr.1 \
-	apps/sgi2tiff.1 \
-	apps/thumbnail.1 \
-	apps/tiff2bw.1 \
-	apps/tiff2rgba.1 \
-	apps/tiff2pdf.1 \
-	apps/tiff2ps.1 \
-	apps/tiffcmp.1 \
-	apps/tiffcp.1 \
-	apps/tiffdither.1 \
-	apps/tiffdump.1 \
-	apps/tiffgt.1 \
-	apps/tiffinfo.1 \
-	apps/tiffmedian.1 \
-	apps/tiffsplit.1 \
-	apps/tiffsv.1 \
-	${NULL}
-MANDEV=\
-	lib/libtiff.3t \
-	\
-	lib/TIFFClose.3t \
-	lib/TIFFDataWidth.3t \
-	lib/TIFFError.3t \
-	lib/TIFFFlush.3t \
-	lib/TIFFGetField.3t \
-	lib/TIFFOpen.3t \
-	lib/TIFFPrintDirectory.3t \
-	lib/TIFFReadDirectory.3t \
-	lib/TIFFReadEncodedStrip.3t \
-	lib/TIFFReadEncodedTile.3t \
-	lib/TIFFReadRGBAImage.3t \
-	lib/TIFFReadRGBAStrip.3t \
-	lib/TIFFReadRGBATile.3t \
-	lib/TIFFReadRawStrip.3t \
-	lib/TIFFReadRawTile.3t \
-	lib/TIFFReadScanline.3t \
-	lib/TIFFReadTile.3t \
-	lib/TIFFRGBAImage.3t \
-	lib/TIFFSetDirectory.3t \
-	lib/TIFFSetField.3t \
-	lib/TIFFWarning.3t \
-	lib/TIFFWriteDirectory.3t \
-	lib/TIFFWriteEncodedStrip.3t \
-	lib/TIFFWriteEncodedTile.3t \
-	lib/TIFFWriteTile.3t \
-	lib/TIFFWriteRawStrip.3t \
-	lib/TIFFWriteRawTile.3t \
-	lib/TIFFWriteScanline.3t \
-	\
-	lib/TIFFbuffer.3t \
-	lib/TIFFcodec.3t \
-	lib/TIFFcolor.3t \
-	lib/TIFFmemory.3t \
-	lib/TIFFquery.3t \
-	lib/TIFFsize.3t \
-	lib/TIFFstrip.3t \
-	lib/TIFFswab.3t \
-	lib/TIFFtile.3t \
-	${NULL}
-MANDEVLINKS=\
-	lib/TIFFmalloc.3t \
-	lib/TIFFrealloc.3t \
-	lib/TIFFfree.3t \
-	lib/TIFFmemset.3t \
-	lib/TIFFmemcpy.3t \
-	lib/TIFFmemcmp.3t \
-	lib/TIFFComputeTile.3t \
-	lib/TIFFCheckTile.3t \
-	lib/TIFFNumberOfTiles.3t \
-	lib/TIFFComputeStrip.3t \
-	lib/TIFFNumberOfStrips.3t \
-	lib/TIFFCurrentDirectory.3t \
-	lib/TIFFCurrentRow.3t \
-	lib/TIFFCurrentStrip.3t \
-	lib/TIFFCurrentTile.3t \
-	lib/TIFFFdOpen.3t \
-	lib/TIFFClientOpen.3t \
-	lib/TIFFFileName.3t \
-	lib/TIFFFileno.3t \
-	lib/TIFFFindCODEC.3t \
-	lib/TIFFFlushData.3t \
-	lib/TIFFGetMode.3t \
-	lib/TIFFIsTiled.3t \
-	lib/TIFFIsByteSwapped.3t \
-	lib/TIFFIsUpSampled.3t \
-	lib/TIFFIsMSB2LSB.3t \
-	lib/TIFFLastDirectory.3t \
-	lib/TIFFRegisterCODEC.3t \
-	lib/TIFFReverseBits.3t \
-	lib/TIFFRewriteDirectory.3t \
-	lib/TIFFRGBAImageOK.3t \
-	lib/TIFFRGBAImageBegin.3t \
-	lib/TIFFRGBAImageGet.3t \
-	lib/TIFFRGBAImageEnd.3t \
-	lib/TIFFReadRGBAImageOriented.3t \
-	lib/TIFFSetErrorHandler.3t \
-	lib/TIFFSetSubDirectory.3t \
-	lib/TIFFSetWarningHandler.3t \
-	lib/TIFFSwabArrayOfLong.3t \
-	lib/TIFFSwabArrayOfShort.3t \
-	lib/TIFFSwabLong.3t \
-	lib/TIFFSwabShort.3t \
-	lib/TIFFScanlineSize.3t \
-	lib/TIFFDefaultStripSize.3t \
-	lib/TIFFVStripSize.3t \
-	lib/TIFFStripSize.3t \
-	lib/TIFFDefaultTileSize.3t \
-	lib/TIFFVTileSize.3t \
-	lib/TIFFTileSize.3t \
-	lib/TIFFTileRowSize.3t \
-	lib/TIFFUnRegisterCODEC.3t \
-	lib/TIFFVGetField.3t \
-	lib/TIFFGetFieldDefaulted.3t \
-	lib/TIFFVGetFieldDefaulted.3t \
-	lib/TIFFVSetField.3t \
-	lib/TIFFReadBufferSetup.3t \
-	lib/TIFFWriteBufferSetup.3t \
-	${NULL}
-TARGETS=apps/Makefile lib/Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
-#
-# System-specific manual page formatting commands should
-# apply this sed command to the manual page source before
-# handing it to the formatter.  This sets any pathnames
-# in the man pages to reflect local conventions.
-#
-MANSED=${SED}\
-	-e 's;\$${DIR_BIN};@DIR_BIN@;g' \
-	-e 's;\$${DIR_LIB};@DIR_LIB@;g' \
-	-e 's;\$${DIR_INC};@DIR_INC@;g' \
-	${MANSEDLOCAL}
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
 
-all:	${TARGETS}
+DESTDIR =
 
-apps/fax2tiff.1::	${SRCDIR}/fax2tiff.1;	${MANCVT}
-apps/fax2ps.1::		${SRCDIR}/fax2ps.1;	${MANCVT}
-apps/gif2tiff.1::	${SRCDIR}/gif2tiff.1;	${MANCVT}
-apps/pal2rgb.1::	${SRCDIR}/pal2rgb.1;	${MANCVT}
-apps/ppm2tiff.1::	${SRCDIR}/ppm2tiff.1;	${MANCVT}
-apps/ras2tiff.1::	${SRCDIR}/ras2tiff.1;	${MANCVT}
-apps/raw2tiff.1::	${SRCDIR}/raw2tiff.1;	${MANCVT}
-apps/rgb2ycbcr.1::	${SRCDIR}/rgb2ycbcr.1;	${MANCVT}
-apps/sgi2tiff.1::	${SRCDIR}/sgi2tiff.1;	${MANCVT}
-apps/thumbnail.1::	${SRCDIR}/thumbnail.1;	${MANCVT}
-apps/tiff2bw.1::	${SRCDIR}/tiff2bw.1;	${MANCVT}
-apps/tiff2rgba.1::	${SRCDIR}/tiff2rgba.1;	${MANCVT}
-apps/tiff2pdf.1::	${SRCDIR}/tiff2pdf.1;	${MANCVT}
-apps/tiff2ps.1::	${SRCDIR}/tiff2ps.1;	${MANCVT}
-apps/tiffcmp.1::	${SRCDIR}/tiffcmp.1;	${MANCVT}
-apps/tiffcp.1::		${SRCDIR}/tiffcp.1;	${MANCVT}
-apps/tiffdither.1::	${SRCDIR}/tiffdither.1;	${MANCVT}
-apps/tiffdump.1::	${SRCDIR}/tiffdump.1;	${MANCVT}
-apps/tiffgt.1::		${SRCDIR}/tiffgt.1;	${MANCVT}
-apps/tiffinfo.1::	${SRCDIR}/tiffinfo.1;	${MANCVT}
-apps/tiffmedian.1::	${SRCDIR}/tiffmedian.1;	${MANCVT}
-apps/tiffsplit.1::	${SRCDIR}/tiffsplit.1;	${MANCVT}
-apps/tiffsv.1::		${SRCDIR}/tiffsv.1;	${MANCVT}
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
-lib/libtiff.3t::	${SRCDIR}/libtiff.3t;			${MANCVT}
-lib/TIFFClose.3t::	${SRCDIR}/TIFFClose.3t;			${MANCVT}
-lib/TIFFDataWidth.3t::	${SRCDIR}/TIFFDataWidth.3t;		${MANCVT}
-lib/TIFFError.3t::	${SRCDIR}/TIFFError.3t;			${MANCVT}
-lib/TIFFFlush.3t::	${SRCDIR}/TIFFFlush.3t;			${MANCVT}
-lib/TIFFGetField.3t::	${SRCDIR}/TIFFGetField.3t;		${MANCVT}
-lib/TIFFOpen.3t::	${SRCDIR}/TIFFOpen.3t;			${MANCVT}
-lib/TIFFPrintDirectory.3t:: ${SRCDIR}/TIFFPrintDirectory.3t;	${MANCVT}
-lib/TIFFReadDirectory.3t:: ${SRCDIR}/TIFFReadDirectory.3t;	${MANCVT}
-lib/TIFFReadEncodedStrip.3t:: ${SRCDIR}/TIFFReadEncodedStrip.3t;${MANCVT}
-lib/TIFFReadEncodedTile.3t:: ${SRCDIR}/TIFFReadEncodedTile.3t;	${MANCVT}
-lib/TIFFReadRGBAImage.3t:: ${SRCDIR}/TIFFReadRGBAImage.3t;	${MANCVT}
-lib/TIFFReadRGBATile.3t:: ${SRCDIR}/TIFFReadRGBATile.3t;	${MANCVT}
-lib/TIFFReadRGBAStrip.3t:: ${SRCDIR}/TIFFReadRGBAStrip.3t;	${MANCVT}
-lib/TIFFReadRawStrip.3t:: ${SRCDIR}/TIFFReadRawStrip.3t;	${MANCVT}
-lib/TIFFReadRawTile.3t:: ${SRCDIR}/TIFFReadRawTile.3t;		${MANCVT}
-lib/TIFFReadScanline.3t:: ${SRCDIR}/TIFFReadScanline.3t;	${MANCVT}
-lib/TIFFReadTile.3t::	${SRCDIR}/TIFFReadTile.3t;		${MANCVT}
-lib/TIFFRGBAImage.3t::	${SRCDIR}/TIFFRGBAImage.3t;		${MANCVT}
-lib/TIFFSetDirectory.3t:: ${SRCDIR}/TIFFSetDirectory.3t;	${MANCVT}
-lib/TIFFSetField.3t::	${SRCDIR}/TIFFSetField.3t;		${MANCVT}
-lib/TIFFWarning.3t::	${SRCDIR}/TIFFWarning.3t;		${MANCVT}
-lib/TIFFWriteDirectory.3t:: ${SRCDIR}/TIFFWriteDirectory.3t;	${MANCVT}
-lib/TIFFWriteEncodedStrip.3t:: ${SRCDIR}/TIFFWriteEncodedStrip.3t; ${MANCVT}
-lib/TIFFWriteEncodedTile.3t:: ${SRCDIR}/TIFFWriteEncodedTile.3t; ${MANCVT}
-lib/TIFFWriteTile.3t:: ${SRCDIR}/TIFFWriteTile.3t; ${MANCVT}
-lib/TIFFWriteRawStrip.3t:: ${SRCDIR}/TIFFWriteRawStrip.3t;	${MANCVT}
-lib/TIFFWriteRawTile.3t:: ${SRCDIR}/TIFFWriteRawTile.3t;	${MANCVT}
-lib/TIFFWriteScanline.3t:: ${SRCDIR}/TIFFWriteScanline.3t;	${MANCVT}
-lib/TIFFbuffer.3t::	${SRCDIR}/TIFFbuffer.3t;		${MANCVT}
-lib/TIFFcodec.3t::	${SRCDIR}/TIFFcodec.3t;			${MANCVT}
-lib/TIFFcolor.3t::	${SRCDIR}/TIFFcolor.3t;			${MANCVT}
-lib/TIFFmemory.3t::	${SRCDIR}/TIFFmemory.3t;		${MANCVT}
-lib/TIFFquery.3t::	${SRCDIR}/TIFFquery.3t;			${MANCVT}
-lib/TIFFsize.3t::	${SRCDIR}/TIFFsize.3t;			${MANCVT}
-lib/TIFFstrip.3t::	${SRCDIR}/TIFFstrip.3t;			${MANCVT}
-lib/TIFFswab.3t::	${SRCDIR}/TIFFswab.3t;			${MANCVT}
-lib/TIFFtile.3t::	${SRCDIR}/TIFFtile.3t;			${MANCVT}
+top_builddir = ..
 
-lib/TIFFComputeTile.3t:;	${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFCheckTile.3t:;		${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFNumberOfTiles.3t:;	${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFComputeStrip.3t:;	${ECHO} ".so ${MANDIR}TIFFstrip.3t" > $@
-lib/TIFFNumberOfStrips.3t:;	${ECHO} ".so ${MANDIR}TIFFstrip.3t" > $@
-lib/TIFFCurrentDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFCurrentRow.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFCurrentStrip.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFCurrentTile.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFFdOpen.3t:;		${ECHO} ".so ${MANDIR}TIFFOpen.3t" > $@
-lib/TIFFClientOpen.3t:;		${ECHO} ".so ${MANDIR}TIFFOpen.3t" > $@
-lib/TIFFFileName.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFFileno.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFFlushData.3t:;		${ECHO} ".so ${MANDIR}TIFFFlush.3t" > $@
-lib/TIFFGetMode.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFIsTiled.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFIsByteSwapped.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFIsUpSampled.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFIsMSB2LSB.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFLastDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
-lib/TIFFReverseBits.3t:;	${ECHO} ".so ${MANDIR}TIFFswab.3t" > $@
-lib/TIFFRewriteDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFWriteDirectory.3t" > $@
-lib/TIFFCheckpointDirectory.3t:; ${ECHO} ".so ${MANDIR}TIFFWriteDirectory.3t" > $@
-lib/TIFFRGBAImageOK.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
-lib/TIFFRGBAImageBegin.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
-lib/TIFFRGBAImageGet.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
-lib/TIFFRGBAImageEnd.3t:;	${ECHO} ".so ${MANDIR}TIFFRGBAImage.3t" > $@
-lib/TIFFReadRGBAImageOriented.3t:;	${ECHO} ".so ${MANDIR}TIFFReadRGBAImage.3t" > $@
-lib/TIFFSetErrorHandler.3t:;	${ECHO} ".so ${MANDIR}TIFFError.3t" > $@
-lib/TIFFSetSubDirectory.3t:;	${ECHO} ".so ${MANDIR}TIFFSetDirectory.3t" > $@
-lib/TIFFSetWarningHandler.3t:;	${ECHO} ".so ${MANDIR}TIFFWarning.3t" > $@
-lib/TIFFSwabArrayOfLong.3t:;	${ECHO} ".so ${MANDIR}TIFFswab.3t" > $@
-lib/TIFFSwabArrayOfShort.3t:;	${ECHO} ".so ${MANDIR}TIFFswab.3t" > $@
-lib/TIFFSwabLong.3t:;		${ECHO} ".so ${MANDIR}TIFFswab.3t" > $@
-lib/TIFFSwabShort.3t:;		${ECHO} ".so ${MANDIR}TIFFswab.3t" > $@
-lib/TIFFScanlineSize.3t:;	${ECHO} ".so ${MANDIR}TIFFsize.3t" > $@
-lib/TIFFRasterScanlineSize.3t:;	${ECHO} ".so ${MANDIR}TIFFsize.3t" > $@
-lib/TIFFDefaultStripSize.3t:;	${ECHO} ".so ${MANDIR}TIFFstrip.3t" > $@
-lib/TIFFStripSize.3t:;		${ECHO} ".so ${MANDIR}TIFFstrip.3t" > $@
-lib/TIFFVStripSize.3t:;		${ECHO} ".so ${MANDIR}TIFFstrip.3t" > $@
-lib/TIFFTileSize.3t:;		${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFVTileSize.3t:;		${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFDefaultTileSize.3t:;	${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFTileRowSize.3t:;	${ECHO} ".so ${MANDIR}TIFFtile.3t" > $@
-lib/TIFFVGetField.3t:;		${ECHO} ".so ${MANDIR}TIFFGetField.3t" > $@
-lib/TIFFGetFieldDefaulted.3t:;	${ECHO} ".so ${MANDIR}TIFFGetField.3t" > $@
-lib/TIFFVGetFieldDefaulted.3t:;	${ECHO} ".so ${MANDIR}TIFFGetField.3t" > $@
-lib/TIFFVSetField.3t:;		${ECHO} ".so ${MANDIR}TIFFSetField.3t" > $@
-lib/TIFFFindCODEC.3t:;		${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
-lib/TIFFRegisterCODEC.3t:;	${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
-lib/TIFFUnRegisterCODEC.3t:;	${ECHO} ".so ${MANDIR}TIFFcodec.3t" > $@
-lib/TIFFYCbCrToRGBInit.3t:;	${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
-lib/TIFFYCbCrtoRGB.3t:;		${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
-lib/TIFFCIELabToRGBInit.3t:;	${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
-lib/TIFFCIELabToXYZ.3t:;	${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
-lib/TIFFXYZToRGB.3t:;		${ECHO} ".so ${MANDIR}TIFFcolor.3t" > $@
-lib/TIFFmalloc.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
-lib/TIFFrealloc.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
-lib/TIFFfree.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
-lib/TIFFmemset.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
-lib/TIFFmemcpy.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
-lib/TIFFmemcmp.3t:;		${ECHO} ".so ${MANDIR}TIFFmemory.3t" > $@
-lib/TIFFReadBufferSetup.3t:;	${ECHO} ".so ${MANDIR}TIFFbuffer.3t" > $@
-lib/TIFFWriteBufferSetup.3t:;	${ECHO} ".so ${MANDIR}TIFFbuffer.3t" > $@
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
 
-apps/Makefile:
-	test -d apps || mkdir apps
-	${MAKE} -${MAKEFLAGS} ${MANTOOLS}
-	${RM} apps/Makefile
-	(cd apps;							\
-	 ${ECHO} 'install:';						\
-	 for i in *.1; do						\
-	    f=${MANAPPNAME};						\
-	    ${ECHO} '	cd ..; ${INSTALL} -m 444 			\
-		-F $${DESTDIR}${MAN}/${MANAPPS}				\
-		-idb tiff.man.tools -src' apps/"$$i" '-O' "$$f";	\
-	 done								\
-	)>apps/Makefile
-lib/Makefile:
-	test -d lib || mkdir lib
-	${MAKE} -${MAKEFLAGS} ${MANDEV} ${MANDEVLINKS}
-	${RM} lib/Makefile
-	(cd lib;							\
-	 ${ECHO} 'install:';						\
-	 for i in *.3t; do						\
-	    f=${MANLIBNAME};						\
-	    ${ECHO} '	cd ..; ${INSTALL} -m 444 			\
-		-F $${DESTDIR}${MAN}/${MANLIB}				\
-		-idb tiff.man.dev -src' lib/"$$i" '-O' "$$f";		\
-	 done								\
-	)>lib/Makefile
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
 
-install: all
-	${INSTALL} -m 755 -dir -idb tiff.man.tools ${DESTDIR}${MAN}
-	${INSTALL} -m 755 -dir -idb tiff.man.tools ${DESTDIR}${MAN}/${MANAPPS}
-	cd apps; ${MAKE} -${MAKEFLAGS} install
-	${INSTALL} -m 755 -dir -idb tiff.man.dev ${DESTDIR}${MAN}/${MANLIB}
-	cd lib; ${MAKE} -${MAKEFLAGS} install
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AR = @AR@
+AS = @AS@
+CC = @CC@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EGREP = @EGREP@
+EXEEXT = @EXEEXT@
+F77 = @F77@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
+LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
+LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
+LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
+LIBTIFF_VERSION = @LIBTIFF_VERSION@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+RC = @RC@
+STRIP = @STRIP@
+VERSION = @VERSION@
 
-clean:
-	rm -rf apps lib
+man_MANS =  	fax2ps.1 	fax2tiff.1 	gif2tiff.1 	libtiff.3t 	pal2rgb.1 	ppm2tiff.1 	ras2tiff.1 	raw2tiff.1 	rgb2ycbcr.1 	sgi2tiff.1 	thumbnail.1 	tiff2bw.1 	tiff2pdf.1 	tiff2ps.1 	tiff2rgba.1 	TIFFbuffer.3t 	TIFFClose.3t 	tiffcmp.1 	tiffcp.1 	tiffdither.1 	tiffdump.1 	tiffgt.1 	tiffinfo.1 	tiffmedian.1 	tiffsplit.1 	tiffsv.1 	TIFFcodec.3t 	TIFFcolor.3t 	TIFFDataWidth.3t 	TIFFError.3t 	TIFFFlush.3t 	TIFFGetField.3t 	TIFFmemory.3t 	TIFFOpen.3t 	TIFFPrintDirectory.3t 	TIFFquery.3t 	TIFFReadDirectory.3t 	TIFFReadEncodedStrip.3t 	TIFFReadEncodedTile.3t 	TIFFReadRawStrip.3t 	TIFFReadRawTile.3t 	TIFFReadRGBAImage.3t 	TIFFReadRGBAStrip.3t 	TIFFReadRGBATile.3t 	TIFFReadScanline.3t 	TIFFReadTile.3t 	TIFFRGBAImage.3t 	TIFFSetDirectory.3t 	TIFFSetField.3t 	TIFFsize.3t 	TIFFstrip.3t 	TIFFswab.3t 	TIFFtile.3t 	TIFFWarning.3t 	TIFFWriteDirectory.3t 	TIFFWriteEncodedStrip.3t 	TIFFWriteEncodedTile.3t 	TIFFWriteRawStrip.3t 	TIFFWriteRawTile.3t 	TIFFWriteScanline.3t 	TIFFWriteTile.3t
 
-#
-# Miscellaneous junk left over...
-#
 
-links:	${MANDEVLINKS}
+EXTRA_DIST = $(man_MANS)
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../libtiff/config.h
+CONFIG_CLEAN_FILES = 
+man1dir = $(mandir)/man1
+man3dir = $(mandir)/man3
+MANS = $(man_MANS)
 
-short:
-	${MV} TIFFClose.3t close.3t
-	${MV} TIFFDataWidth.3t width.3t
-	${MV} TIFFError.3t error.3t
-	${MV} TIFFFlush.3t flush.3t
-	${MV} TIFFGetField.3t getfield.3t
-	${MV} TIFFOpen.3t open.3t
-	${MV} TIFFPrintDirectory.3t print.3t
-	${MV} TIFFReadEncodedStrip.3t rdestrip.3t
-	${MV} TIFFReadencodedTile.3t rdetile.3t
-	${MV} TIFFReadRawStrip.3t rdrstrip.3t
-	${MV} TIFFReadRawTile.3t rdrtile.3t
-	${MV} TIFFReadDirectory.3t readdir.3t
-	${MV} TIFFReadRGBAImage.3t rdimage.3t
-	${MV} TIFFReadRGBAStrip.3t rdsimage.3t
-	${MV} TIFFReadRGBATile.3t rdtimage.3t
-	${MV} TIFFReadScanline.3t readline.3t
-	${MV} TIFFReadTile.3t readtile.3t
-	${MV} TIFFRGBAImage.3t rgbaimage.3t
-	${MV} TIFFSetDirectory.3t setdir.3t
-	${MV} TIFFSetField.3t setfield.3t
-	${MV} TIFFWarning.3t warning.3t
-	${MV} TIFFWriteEncodedStrip.3t wrestrip.3t
-	${MV} TIFFWriteEncodedTile.3t wretile.3t
-	${MV} TIFFWriteTile.3t wrttile.3t
-	${MV} TIFFWriteDirectory.3t writedir.3t
-	${MV} TIFFWriteRawStrip.3t wrrstrip.3t
-	${MV} TIFFWriteRawTile.3t wrrtile.3t
-	${MV} TIFFWriteScanline.3t writeline.3t
-	${MV} TIFFtile.3t tile.3t
-	${MV} TIFFstrip.3t strip.3t
-	${MV} TIFFquery.3t query.3t
-	${MV} TIFFswab.3t swab.3t
-	${MV} TIFFsize.3t size.3t
-	${MV} TIFFcodec.3t codec.3t
-	${MV} TIFFmemory.3t memory.3t
-	${MV} TIFFbuffer.3t buffer.3t
+NROFF = nroff
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP_ENV = --best
+all: all-redirect
+.SUFFIXES:
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --foreign man/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+install-man1:
+	$(mkinstalldirs) $(DESTDIR)$(man1dir)
+	@list='$(man1_MANS)'; \
+	l2='$(man_MANS)'; for i in $$l2; do \
+	  case "$$i" in \
+	    *.1*) list="$$list $$i" ;; \
+	  esac; \
+	done; \
+	for i in $$list; do \
+	  if test -f $(srcdir)/$$i; then file=$(srcdir)/$$i; \
+	  else file=$$i; fi; \
+	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+	  echo " $(INSTALL_DATA) $$file $(DESTDIR)$(man1dir)/$$inst"; \
+	  $(INSTALL_DATA) $$file $(DESTDIR)$(man1dir)/$$inst; \
+	done
+
+uninstall-man1:
+	@list='$(man1_MANS)'; \
+	l2='$(man_MANS)'; for i in $$l2; do \
+	  case "$$i" in \
+	    *.1*) list="$$list $$i" ;; \
+	  esac; \
+	done; \
+	for i in $$list; do \
+	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+	  echo " rm -f $(DESTDIR)$(man1dir)/$$inst"; \
+	  rm -f $(DESTDIR)$(man1dir)/$$inst; \
+	done
+
+install-man3:
+	$(mkinstalldirs) $(DESTDIR)$(man3dir)
+	@list='$(man3_MANS)'; \
+	l2='$(man_MANS)'; for i in $$l2; do \
+	  case "$$i" in \
+	    *.3*) list="$$list $$i" ;; \
+	  esac; \
+	done; \
+	for i in $$list; do \
+	  if test -f $(srcdir)/$$i; then file=$(srcdir)/$$i; \
+	  else file=$$i; fi; \
+	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+	  echo " $(INSTALL_DATA) $$file $(DESTDIR)$(man3dir)/$$inst"; \
+	  $(INSTALL_DATA) $$file $(DESTDIR)$(man3dir)/$$inst; \
+	done
+
+uninstall-man3:
+	@list='$(man3_MANS)'; \
+	l2='$(man_MANS)'; for i in $$l2; do \
+	  case "$$i" in \
+	    *.3*) list="$$list $$i" ;; \
+	  esac; \
+	done; \
+	for i in $$list; do \
+	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+	  echo " rm -f $(DESTDIR)$(man3dir)/$$inst"; \
+	  rm -f $(DESTDIR)$(man3dir)/$$inst; \
+	done
+install-man: $(MANS)
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-man1 install-man3
+uninstall-man:
+	@$(NORMAL_UNINSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-man1 uninstall-man3
+tags: TAGS
+TAGS:
+
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = man
+
+distdir: $(DISTFILES)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign man/Makefile
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am: install-man
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-man
+uninstall: uninstall-am
+all-am: Makefile $(MANS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(mandir)/man1 $(DESTDIR)$(mandir)/man3
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: install-man1 uninstall-man1 install-man3 uninstall-man3 \
+install-man uninstall-man tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
