@@ -1,3 +1,9 @@
+2003-05-20  Andrey Kiselev  <dron@remotesensing.org>
+
+	* contrib/ojpeg/{Makefile.in, jdhuff.h, jinclude.h, ojpeg.c, README},
+	configure, Makefile.in:	Switched back to the old behaviour. Likely
+	better solution should be found for OJPEG support.
+
 2003-05-11  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/mkversion.c: Fixed problem with wrong string size when
