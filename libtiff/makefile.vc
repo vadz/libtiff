@@ -68,7 +68,7 @@ libtiff.dll:	$(OBJ)
 	
 version.h:	$(VERSION) $(ALPHA) mkversion.c
 	$(CC) mkversion.c 
-	del version.h
+	-del version.h
 	.\mkversion.exe -v $(VERSION) -a $(ALPHA) version.h
 
 clean:
