@@ -35,5 +35,5 @@ EXTRA_DIST = \
 	VERSION \
 	autogen.sh
 
-SUBDIRS = libtiff man tools
+SUBDIRS = html libtiff man tools
 
