@@ -40,15 +40,18 @@ static	int stopondiff = 1;
 static	int stoponfirsttag = 1;
 static	uint16 bitspersample = 1;
 static	uint16 samplesperpixel = 1;
+static	uint16 sampleformat = SAMPLEFORMAT_UINT;
 static	uint32 imagewidth;
 static	uint32 imagelength;
 
 static	void usage(void);
 static	int tiffcmp(TIFF*, TIFF*);
 static	int cmptags(TIFF*, TIFF*);
-static	void ContigCompare(int, uint32, unsigned char*, unsigned char*, int);
-static	void PrintDiff(uint32, int, uint32, int, int);
-static	void SeparateCompare(int, int, uint32, unsigned char*, unsigned char*);
+static	int ContigCompare(int, uint32, unsigned char*, unsigned char*, int);
+static	int SeparateCompare(int, int, uint32, unsigned char*, unsigned char*);
+static	void PrintIntDiff(uint32, int, uint32, int32, int32);
+static	void PrintFloatDiff(uint32, int, uint32, double, double);
+
 static	void leof(const char*, uint32, int);
 
 int
@@ -156,6 +159,7 @@ tiffcmp(TIFF* tif1, TIFF* tif2)
 		return (1);
 	(void) TIFFGetField(tif1, TIFFTAG_BITSPERSAMPLE, &bitspersample);
 	(void) TIFFGetField(tif1, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+	(void) TIFFGetField(tif1, TIFFTAG_SAMPLEFORMAT, &sampleformat);
 	(void) TIFFGetField(tif1, TIFFTAG_IMAGEWIDTH, &imagewidth);
 	(void) TIFFGetField(tif1, TIFFTAG_IMAGELENGTH, &imagelength);
 	(void) TIFFGetField(tif1, TIFFTAG_PLANARCONFIG, &config1);
@@ -180,7 +184,8 @@ tiffcmp(TIFF* tif1, TIFF* tif2)
 			for (s = 0; s < samplesperpixel; s++) {
 				if (TIFFReadScanline(tif1, buf1, row, s) < 0)
 					checkEOF(tif1, row, s)
-				SeparateCompare(1, s, row, buf2, buf1);
+				if (SeparateCompare(1, s, row, buf2, buf1) < 0)
+					goto bad1;
 			}
 		}
 		break;
@@ -191,7 +196,8 @@ tiffcmp(TIFF* tif1, TIFF* tif2)
 			for (s = 0; s < samplesperpixel; s++) {
 				if (TIFFReadScanline(tif2, buf2, row, s) < 0)
 					checkEOF(tif2, row, s)
-				SeparateCompare(0, s, row, buf1, buf2);
+				if (SeparateCompare(0, s, row, buf1, buf2) < 0)
+					goto bad1;
 			}
 		}
 		break;
@@ -202,7 +208,8 @@ tiffcmp(TIFF* tif1, TIFF* tif2)
 					checkEOF(tif1, row, s)
 				if (TIFFReadScanline(tif2, buf2, row, s) < 0)
 					checkEOF(tif2, row, s)
-				ContigCompare(s, row, buf1, buf2, size1);
+				if (ContigCompare(s, row, buf1, buf2, size1) < 0)
+					goto bad1;
 			}
 		break;
 	case pack(PLANARCONFIG_CONTIG, PLANARCONFIG_CONTIG):
@@ -211,7 +218,8 @@ tiffcmp(TIFF* tif1, TIFF* tif2)
 				checkEOF(tif1, row, -1)
 			if (TIFFReadScanline(tif2, buf2, row, 0) < 0)
 				checkEOF(tif2, row, -1)
-			ContigCompare(-1, row, buf1, buf2, size1);
+			if (ContigCompare(-1, row, buf1, buf2, size1) < 0)
+				goto bad1;
 		}
 		break;
 	}
@@ -221,6 +229,7 @@ tiffcmp(TIFF* tif1, TIFF* tif2)
 bad:
 	if (stopondiff)
 		exit(1);
+bad1:
 	if (buf1) _TIFFfree(buf1);
 	if (buf2) _TIFFfree(buf2);
 	return (0);
@@ -255,6 +264,7 @@ cmptags(TIFF* tif1, TIFF* tif2)
 	CmpShortField(TIFFTAG_SAMPLESPERPIXEL,	"SamplesPerPixel");
 	CmpShortField(TIFFTAG_MINSAMPLEVALUE,	"MinSampleValue");
 	CmpShortField(TIFFTAG_MAXSAMPLEVALUE,	"MaxSampleValue");
+	CmpShortField(TIFFTAG_SAMPLEFORMAT,	"SampleFormat");
 	CmpFloatField(TIFFTAG_XRESOLUTION,	"XResolution");
 	CmpFloatField(TIFFTAG_YRESOLUTION,	"YResolution");
 	CmpLongField(TIFFTAG_GROUP3OPTIONS,	"Group3Options");
@@ -292,40 +302,33 @@ cmptags(TIFF* tif1, TIFF* tif2)
 	return (1);
 }
 
-static void
-ContigCompare(int sample, uint32 row, unsigned char* p1, unsigned char* p2, int size)
+static int
+ContigCompare(int sample, uint32 row,
+	      unsigned char* p1, unsigned char* p2, int size)
 {
-    register uint32 pix;
-    register int ppb = 8/bitspersample;
+    uint32 pix;
+    int ppb = 8 / bitspersample;
     int	 samples_to_test;
 
-    if( sample == -1 )
-        samples_to_test = samplesperpixel;
-    else
-        samples_to_test = 1;
-
     if (memcmp(p1, p2, size) == 0)
-        return;
+        return 0;
+
+    samples_to_test = (sample == -1) ? samplesperpixel : 1;
 
     switch (bitspersample) {
       case 1: case 2: case 4: case 8: 
       {
-          register unsigned char *pix1 = p1, *pix2 = p2;
+          unsigned char *pix1 = p1, *pix2 = p2;
 
-          for (pix = 0; pix < imagewidth; pix += ppb)
-          {
+          for (pix = 0; pix < imagewidth; pix += ppb) {
               int		s;
 
-              for( s = 0; s < samples_to_test; s++ )
-              {
-                  if (*pix1 != *pix2)
-                  {
+              for(s = 0; s < samples_to_test; s++) {
+                  if (*pix1 != *pix2) {
                       if( sample == -1 )
-                          PrintDiff(row, s, pix,
-                                    *pix1, *pix2);
+                          PrintIntDiff(row, s, pix, *pix1, *pix2);
                       else
-                          PrintDiff(row, sample, pix,
-                                    *pix1, *pix2);
+                          PrintIntDiff(row, sample, pix, *pix1, *pix2);
                   }
 
                   pix1++;
@@ -336,17 +339,14 @@ ContigCompare(int sample, uint32 row, unsigned char* p1, unsigned char* p2, int 
       }
       case 16: 
       {
-          register uint16 *pix1 = (uint16 *)p1, *pix2 = (uint16 *)p2;
+          uint16 *pix1 = (uint16 *)p1, *pix2 = (uint16 *)p2;
 
-          for (pix = 0; pix < imagewidth; pix++)
-          {
+          for (pix = 0; pix < imagewidth; pix++) {
               int	s;
 
-              for( s = 0; s < samples_to_test; s++ )
-              {
+              for(s = 0; s < samples_to_test; s++) {
                   if (*pix1 != *pix2)
-                      PrintDiff(row, sample, pix,
-                                *pix1, *pix2);
+                      PrintIntDiff(row, sample, pix, *pix1, *pix2);
                         
                   pix1++;
                   pix2++;
@@ -354,25 +354,71 @@ ContigCompare(int sample, uint32 row, unsigned char* p1, unsigned char* p2, int 
           }
           break;
       }
+      case 32: 
+	if (sampleformat == SAMPLEFORMAT_UINT
+	    || sampleformat == SAMPLEFORMAT_INT) {
+		uint32 *pix1 = (uint32 *)p1, *pix2 = (uint32 *)p2;
+
+		for (pix = 0; pix < imagewidth; pix++) {
+			int	s;
+
+			for(s = 0; s < samples_to_test; s++) {
+				if (*pix1 != *pix2) {
+					PrintIntDiff(row, sample, pix,
+						     *pix1, *pix2);
+				}
+                        
+				pix1++;
+				pix2++;
+			}
+		}
+	} else if (sampleformat == SAMPLEFORMAT_IEEEFP) {
+		float *pix1 = (float *)p1, *pix2 = (float *)p2;
+
+		for (pix = 0; pix < imagewidth; pix++) {
+			int	s;
+
+			for(s = 0; s < samples_to_test; s++) {
+				if (*pix1 != *pix2) {
+					PrintFloatDiff(row, sample, pix,
+						       *pix1, *pix2);
+				}
+                        
+				pix1++;
+				pix2++;
+			}
+		}
+	} else {
+		  fprintf(stderr, "Sample format %d is not supported.\n",
+			  sampleformat);
+		  return -1;
+	}
+        break;
+      default:
+	fprintf(stderr, "Bit depth %d is not supported.\n", bitspersample);
+	return -1;
     }
+
+    return 0;
 }
 
 static void
-PrintDiff(uint32 row, int sample, uint32 pix, int w1, int w2)
+PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
 {
-	register int mask1, mask2, s, bps;
-
 	if (sample < 0)
 		sample = 0;
-	bps = bitspersample;
-	switch (bps) {
+	switch (bitspersample) {
 	case 1:
 	case 2:
 	case 4:
-		mask1 =  ~((-1)<<bps);
-		s = (8-bps);
-		mask2 = mask1<<s;
-		for (; mask2 && pix < imagewidth; mask2 >>= bps, s -= bps, pix++) {
+	    {
+		int32 mask1, mask2, s;
+
+		mask1 =  ~((-1) << bitspersample);
+		s = (8 - bitspersample);
+		mask2 = mask1 << s;
+		for (; mask2 && pix < imagewidth;
+		     mask2 >>= bitspersample, s -= bitspersample, pix++) {
 			if ((w1 & mask2) ^ (w2 & mask2)) {
 				printf(
 			"Scanline %lu, pixel %lu, sample %d: %01x %01x\n",
@@ -384,6 +430,7 @@ PrintDiff(uint32 row, int sample, uint32 pix, int w1, int w2)
 			}
 		}
 		break;
+	    }
 	case 8: 
 		printf("Scanline %lu, pixel %lu, sample %d: %02x %02x\n",
 		    (long) row, (long) pix, sample, w1, w2);
@@ -396,17 +443,43 @@ PrintDiff(uint32 row, int sample, uint32 pix, int w1, int w2)
 		if (--stopondiff == 0)
 			exit(1);
 		break;
+	case 32:
+		printf("Scanline %lu, pixel %lu, sample %d: %08x %08x\n",
+		    (long) row, (long) pix, sample, w1, w2);
+		if (--stopondiff == 0)
+			exit(1);
+		break;
+	default:
+		break;
 	}
 }
 
 static void
-SeparateCompare(int reversed, int sample, uint32 row, unsigned char* cp1, unsigned char* p2)
+PrintFloatDiff(uint32 row, int sample, uint32 pix, double w1, double w2)
+{
+	if (sample < 0)
+		sample = 0;
+	switch (bitspersample) {
+	case 32: 
+		printf("Scanline %lu, pixel %lu, sample %d: %g %g\n",
+		    (long) row, (long) pix, sample, w1, w2);
+		if (--stopondiff == 0)
+			exit(1);
+		break;
+	default:
+		break;
+	}
+}
+
+static int
+SeparateCompare(int reversed, int sample, uint32 row,
+		unsigned char* cp1, unsigned char* p2)
 {
 	uint32 npixels = imagewidth;
-	register int pixel;
+	int pixel;
 
 	cp1 += sample;
-	for (pixel = 0; npixels-- > 0; pixel++, cp1 += samplesperpixel, p2++)
+	for (pixel = 0; npixels-- > 0; pixel++, cp1 += samplesperpixel, p2++) {
 		if (*cp1 != *p2) {
 			printf("Scanline %lu, pixel %lu, sample %ld: ",
 			    (long) row, (long) pixel, (long) sample);
@@ -417,6 +490,9 @@ SeparateCompare(int reversed, int sample, uint32 row, unsigned char* cp1, unsign
 			if (--stopondiff == 0)
 				exit(1);
 		}
+	}
+
+	return 0;
 }
 
 static int
