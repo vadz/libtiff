@@ -160,7 +160,7 @@ TIFFTAG_THRESHHOLDING	1	uint16
 TIFFTAG_TILEDEPTH	1	uint32	\(dg
 TIFFTAG_TILELENGTH	1	uint32	\(dg must be a multiple of 8
 TIFFTAG_TILEWIDTH	1	uint32	\(dg must be a multiple of 8
-TIFFTAG_TRANSFERFUNCTION	1 or 3 \(dd	uint16*	1<<BitsPerSample entry arrays
+TIFFTAG_TRANSFERFUNCTION	1 or 3\(dd uint16*	1<<BitsPerSample entry arrays
 TIFFTAG_XPOSITION	1	float
 TIFFTAG_XRESOLUTION	1	float
 TIFFTAG_WHITEPOINT	1	float*	2-entry array
