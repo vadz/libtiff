@@ -27,7 +27,7 @@ Notes on releasing.
 
 10. cvs commit
 
-11. cvs tag 3_5_7 (or the appropriate name for the release)
+11. cvs tag Release-v3-5-7 (or the appropriate name for the release)
 
 12. Copy to ftp.remotesensing.org ftp site. 
     scp tiff-*.tar.gz remotesensing.org:/ftp/remotesensing/pub/libtiff
