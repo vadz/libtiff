@@ -226,7 +226,6 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	(void) s;
 	bp = (char*) tif->tif_rawcp;
 	cc = tif->tif_rawcc;
-        printf( "occ = %d\n", occ );
 	while (cc > 0 && (long)occ > 0) {
 		n = (long) *bp++, cc--;
 		/*
