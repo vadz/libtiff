@@ -365,7 +365,6 @@ PhotoshopBanner(FILE* fd, uint32 w, uint32 h, int bs, int nc, char* startline)
 static void
 setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
 {
-//	uint16 res_unit;
 	float xres, yres;
 
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, pw);
@@ -382,6 +381,8 @@ setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
 	switch (res_unit) {
 	case RESUNIT_CENTIMETER:
 		xres *= 2.54, yres *= 2.54;
+		break;
+	case RESUNIT_INCH:
 		break;
 	case RESUNIT_NONE:
 	default:
@@ -1771,6 +1772,8 @@ char* stuff[] = {
 " -1            generate PostScript Level I (default)",
 " -2            generate PostScript Level II",
 " -8            disable use of ASCII85 encoding with PostScript Level II",
+" -n		override resolution units as inches",
+" -c		override resolution units as centimeters",
 " -d #          convert directory number #",
 " -D            enable duplex printing (two pages per sheet of paper)",
 " -e            generate Encapsulated PostScript (EPS)",
