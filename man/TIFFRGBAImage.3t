@@ -84,7 +84,9 @@ If the raster height is greater than that of the image, then the
 image data are placed in the lower part of the raster.
 (Note that the raster is assume to be organized such that the pixel
 at location (\fIx\fP,\fIy\fP) is \fIraster\fP[\fIy\fP*\fIwidth\fP+\fIx\fP];
-with the raster origin in the lower-left hand corner.)
+with the raster origin in the 
+.B lower-left
+hand corner.)
 .PP
 Raster pixels are 8-bit packed red, green, blue, alpha samples.
 The macros
