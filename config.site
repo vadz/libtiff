@@ -41,11 +41,11 @@
 # Package controls.
 #
 #DSO="auto"			# auto|IRIX|IRIX52 enable DSO support for system
-#JPEG="no"			# yes|no configure JPEG support (see below)
-#ZIP="no"			# yes|no configure Deflate support (see below)
+#JPEG="yes"			# yes|no configure JPEG support (see below)
+#ZIP="yes"			# yes|no configure Deflate support (see below)
 #LIBGL="auto"			# yes|no|auto configure IRIS GL-based tools
 #LIBIMAGE="auto"		# yes|no|auto configure SGI RGB image tools
-#HTML="no"			# yes|no install HTML documentation
+#HTML="yes"			# yes|no install HTML documentation
 
 #NONINTERACTIVE=yes		# yes|no Don't ask for confirmation on console
 
@@ -125,6 +125,7 @@
 #
 #FILLORDER="MS2LSB"			# bit order of cpu (MSB2LSB/LSB2MSB)
 #MANSCHEME="sysv-source-cat-strip"	# manual page installation scheme
+#LARGEFILE="yes"			# support for large (>2GiB) files
 
 #
 # Parameters used when building the software.

@@ -1715,6 +1715,12 @@ else
     LIBGZ=
 fi
 
+if [ "${LARGEFILE}" = yes ]; then
+    LFSOPTS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DUSE_64BIT_API=1"
+else
+    LFSOPTS=
+fi
+
 Note ""
 
 #
@@ -1814,6 +1820,7 @@ s;@LIBCOPTS@;${LIBCOPTS};g
 s;@LIBPORT@;${LIBPORT};g
 s;@LN@;${LN};g
 s;@LN_S@;${LN_S};g
+s;@LFSOPTS@;${LFSOPTS};g
 s;@MACHDEPLIBS@;${MACHDEPLIBS};g
 s;@MANAPPS@;${MANAPPS};g
 s;@MANAPPNAME@;${MANAPPNAME};g
