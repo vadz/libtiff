@@ -258,6 +258,8 @@ extern	int TIFFUnlinkDirectory(TIFF*, tdir_t);
 extern	int TIFFSetField(TIFF*, ttag_t, ...);
 extern	int TIFFVSetField(TIFF*, ttag_t, va_list);
 extern	int TIFFWriteDirectory(TIFF *);
+extern	int TIFFReassignTagToIgnore(enum TIFFIgnoreSense, int);
+
 #if defined(c_plusplus) || defined(__cplusplus)
 extern	void TIFFPrintDirectory(TIFF*, FILE*, long = 0);
 extern	int TIFFReadScanline(TIFF*, tdata_t, uint32, tsample_t = 0);

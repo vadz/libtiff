@@ -1129,3 +1129,54 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	tif->tif_curstrip = (tstrip_t) -1;
 	return (1);
 }
+
+/*			[BFC]
+ *
+ * Author: Bruce Cameron <cameron@petris.com>
+ *
+ * Set a table of tags that are to be replaced during directory process by the
+ * 'IGNORE' state - or return TRUE/FALSE for the requested tag such that
+ * 'ReadDirectory' can use the stored information.
+ */
+int
+TIFFReassignTagToIgnore (enum TIFFIgnoreSense task, int TIFFtagID)
+{
+    static int TIFFignoretags [FIELD_LAST];
+    static int tagcount = 0 ;
+    int		i;					/* Loop index */
+    int		j;					/* Loop index */
+
+    switch (task)
+    {
+      case TIS_STORE:
+        if ( tagcount < (FIELD_LAST - 1) )
+        {
+            for ( j = 0 ; j < tagcount ; ++j )
+            {					/* Do not add duplicate tag */
+                if ( TIFFignoretags [j] == TIFFtagID )
+                    return (TRUE) ;
+            }
+            TIFFignoretags [tagcount++] = TIFFtagID ;
+            return (TRUE) ;
+        }
+        break ;
+        
+      case TIS_EXTRACT:
+        for ( i = 0 ; i < tagcount ; ++i )
+        {
+            if ( TIFFignoretags [i] == TIFFtagID )
+                return (TRUE) ;
+        }
+        break;
+        
+      case TIS_EMPTY:
+        tagcount = 0 ;			/* Clear the list */
+        return (TRUE) ;
+        break;
+        
+      default:
+        break;
+    }
+    
+    return (FALSE);
+}

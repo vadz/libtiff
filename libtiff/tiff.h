@@ -69,6 +69,14 @@ typedef	unsigned long uint32;	/* sizeof (uint32) must == 4 */
 #endif
 #endif /* _TIFF_DATA_TYPEDEFS_ */
 
+/*	For TIFFReassignTagToIgnore */
+enum TIFFIgnoreSense /* IGNORE tag table */
+{
+	TIS_STORE,
+	TIS_EXTRACT,
+	TIS_EMPTY
+};
+
 typedef	struct {
 	uint16	tiff_magic;	/* magic number (defines byte order) */
 	uint16	tiff_version;	/* TIFF version number */

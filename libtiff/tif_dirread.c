@@ -210,11 +210,17 @@ TIFFReadDirectory(TIFF* tif)
 	 */
 	fix = 0;
 	for (dp = dir, n = dircount; n > 0; n--, dp++) {
-		/*
-		 * Find the field information entry for this tag.
-		 */
+
+                /*
+                 * Find the field information entry for this tag.
+		 * Added check for tags to ignore ... [BFC]
+                 */
+		if( TIFFReassignTagToIgnore(TIS_EXTRACT, dp->tdir_tag) )
+                    dp->tdir_tag = IGNORE;
+
 		if (dp->tdir_tag == IGNORE)
-			continue;
+                    continue;
+                
 		/*
 		 * Silicon Beach (at least) writes unordered
 		 * directory tags (violating the spec).  Handle
