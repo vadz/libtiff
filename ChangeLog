@@ -1,3 +1,8 @@
+2004-10-27  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure, configure.ac: Added --enable-rpath option to embed linker
+	paths into library binary.
+
 2004-10-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffset.c: Check the malloc return value (Dmitry V. Levin).

@@ -1042,6 +1042,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-rpath          Enable runtime linker paths (-R libtool option)
   --disable-largefile     omit support for large files
   --disable-ccitt         disable support for CCITT Group 3 & 4 algorithms
   --disable-packbits      disable support for Macintosh PackBits algorithm
@@ -4779,7 +4780,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 4782 "configure"' > conftest.$ac_ext
+  echo '#line 4783 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6343,7 +6344,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:6346:" \
+echo "$as_me:6347:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
@@ -7375,11 +7376,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7378: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7379: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7382: \$? = $ac_status" >&5
+   echo "$as_me:7383: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -7608,11 +7609,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7611: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7612: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7615: \$? = $ac_status" >&5
+   echo "$as_me:7616: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -7668,11 +7669,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7671: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7672: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7675: \$? = $ac_status" >&5
+   echo "$as_me:7676: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9856,7 +9857,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 9859 "configure"
+#line 9860 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9954,7 +9955,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 9957 "configure"
+#line 9958 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12131,11 +12132,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12134: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12135: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:12138: \$? = $ac_status" >&5
+   echo "$as_me:12139: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -12191,11 +12192,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12194: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12195: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:12198: \$? = $ac_status" >&5
+   echo "$as_me:12199: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13560,7 +13561,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 13563 "configure"
+#line 13564 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13658,7 +13659,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 13661 "configure"
+#line 13662 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14485,11 +14486,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14488: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14489: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14492: \$? = $ac_status" >&5
+   echo "$as_me:14493: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -14545,11 +14546,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14548: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14549: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14552: \$? = $ac_status" >&5
+   echo "$as_me:14553: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16590,11 +16591,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16593: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16594: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16597: \$? = $ac_status" >&5
+   echo "$as_me:16598: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -16823,11 +16824,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16826: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16827: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16830: \$? = $ac_status" >&5
+   echo "$as_me:16831: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -16883,11 +16884,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16886: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16887: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16890: \$? = $ac_status" >&5
+   echo "$as_me:16891: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19071,7 +19072,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 19074 "configure"
+#line 19075 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -19169,7 +19170,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 19172 "configure"
+#line 19173 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -22604,6 +22605,57 @@ done
 
 
 
+echo "$as_me:$LINENO: checking native cpu bit order" >&5
+echo $ECHO_N "checking native cpu bit order... $ECHO_C" >&6
+case "$target_cpu" in
+    i*86*)
+        HOST_FILLORDER=FILLORDER_LSB2MSB
+	echo "$as_me:$LINENO: result: lsb2msb" >&5
+echo "${ECHO_T}lsb2msb" >&6
+	;;
+    *)
+	HOST_FILLORDER=FILLORDER_MSB2LSB
+	echo "$as_me:$LINENO: result: msb2lsb" >&5
+echo "${ECHO_T}msb2lsb" >&6
+        ;;
+esac
+
+cat >>confdefs.h <<_ACEOF
+#define HOST_FILLORDER $HOST_FILLORDER
+_ACEOF
+
+
+if test "$ac_cv_c_bigendian" = yes ; then
+    HOST_BIGENDIAN=1
+else
+    HOST_BIGENDIAN=0
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define HOST_BIGENDIAN $HOST_BIGENDIAN
+_ACEOF
+
+
+#_POSIX_C_SOURCE=2
+#AC_DEFINE_UNQUOTED(_POSIX_C_SOURCE, $_POSIX_C_SOURCE, [Define this macro to a positive integer to control which POSIX functionality is made available.])
+
+HAVE_IEEEFP=1
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_IEEEFP $HAVE_IEEEFP
+_ACEOF
+
+
+
+# Check whether --enable-rpath or --disable-rpath was given.
+if test "${enable_rpath+set}" = set; then
+  enableval="$enable_rpath"
+  HAVE_RPATH=$enableval
+else
+  HAVE_RPATH=no
+fi;
+
+
 # Check whether --enable-largefile or --disable-largefile was given.
 if test "${enable_largefile+set}" = set; then
   enableval="$enable_largefile"
@@ -22963,54 +23015,11 @@ rm -f conftest*
 fi
 
 
-echo "$as_me:$LINENO: checking native cpu bit order" >&5
-echo $ECHO_N "checking native cpu bit order... $ECHO_C" >&6
-case "$target_cpu" in
-    i*86*)
-        HOST_FILLORDER=FILLORDER_LSB2MSB
-	echo "$as_me:$LINENO: result: lsb2msb" >&5
-echo "${ECHO_T}lsb2msb" >&6
-	;;
-    *)
-	HOST_FILLORDER=FILLORDER_MSB2LSB
-	echo "$as_me:$LINENO: result: msb2lsb" >&5
-echo "${ECHO_T}msb2lsb" >&6
-        ;;
-esac
-
-cat >>confdefs.h <<_ACEOF
-#define HOST_FILLORDER $HOST_FILLORDER
-_ACEOF
-
-
-if test "$ac_cv_c_bigendian" = yes ; then
-    HOST_BIGENDIAN=1
-else
-    HOST_BIGENDIAN=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HOST_BIGENDIAN $HOST_BIGENDIAN
-_ACEOF
-
-
-#_POSIX_C_SOURCE=2
-#AC_DEFINE_UNQUOTED(_POSIX_C_SOURCE, $_POSIX_C_SOURCE, [Define this macro to a positive integer to control which POSIX functionality is made available.])
-
-HAVE_IEEEFP=1
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_IEEEFP $HAVE_IEEEFP
-_ACEOF
-
-
-
-HAVE_CCITT=yes
 
 # Check whether --enable-ccitt or --disable-ccitt was given.
 if test "${enable_ccitt+set}" = set; then
   enableval="$enable_ccitt"
-  HAVE_CCITT=no
+  HAVE_CCITT=$enableval
 else
   HAVE_CCITT=yes
 fi;
@@ -23023,12 +23032,10 @@ _ACEOF
 
 fi
 
-HAVE_PACKBITS=yes
-
 # Check whether --enable-packbits or --disable-packbits was given.
 if test "${enable_packbits+set}" = set; then
   enableval="$enable_packbits"
-  HAVE_PACKBITS=no
+  HAVE_PACKBITS=$enableval
 else
   HAVE_PACKBITS=yes
 fi;
@@ -23041,12 +23048,10 @@ _ACEOF
 
 fi
 
-HAVE_LZW=yes
-
 # Check whether --enable-lzw or --disable-lzw was given.
 if test "${enable_lzw+set}" = set; then
   enableval="$enable_lzw"
-  HAVE_LZW=no
+  HAVE_LZW=$enableval
 else
   HAVE_LZW=yes
 fi;
@@ -23059,12 +23064,10 @@ _ACEOF
 
 fi
 
-HAVE_THUNDER=yes
-
 # Check whether --enable-thunder or --disable-thunder was given.
 if test "${enable_thunder+set}" = set; then
   enableval="$enable_thunder"
-  HAVE_THUNDER=no
+  HAVE_THUNDER=$enableval
 else
   HAVE_THUNDER=yes
 fi;
@@ -23082,7 +23085,7 @@ HAVE_NEXT=yes
 # Check whether --enable-next or --disable-next was given.
 if test "${enable_next+set}" = set; then
   enableval="$enable_next"
-  HAVE_NEXT=no
+  HAVE_NEXT=$enableval
 else
   HAVE_NEXT=yes
 fi;
@@ -23095,12 +23098,10 @@ _ACEOF
 
 fi
 
-HAVE_LOGLUV=yes
-
 # Check whether --enable-logluv or --disable-logluv was given.
 if test "${enable_logluv+set}" = set; then
   enableval="$enable_logluv"
-  HAVE_LOGLUV=no
+  HAVE_LOGLUV=$enableval
 else
   HAVE_LOGLUV=yes
 fi;
@@ -23137,8 +23138,14 @@ fi;
 if test "x$enable_zlib" != "xno" ; then
 
   if test "x$with_zlib_lib_dir" != "x" ; then
-    LIBS="-L$with_zlib_lib_dir $LIBS"
+    LDFLAGS="-L$with_zlib_lib_dir $LDFLAGS"
+
+    if test "$HAVE_RPATH" = "yes"; then
+      LDFLAGS="-R$with_zlib_lib_dir $LDFLAGS"
+    fi
+
   fi
+
   echo "$as_me:$LINENO: checking for inflateEnd in -lz" >&5
 echo $ECHO_N "checking for inflateEnd in -lz... $ECHO_C" >&6
 if test "${ac_cv_lib_z_inflateEnd+set}" = set; then
@@ -23385,7 +23392,7 @@ fi
 # Check whether --enable-pixarlog or --disable-pixarlog was given.
 if test "${enable_pixarlog+set}" = set; then
   enableval="$enable_pixarlog"
-  HAVE_PIXARLOG=no
+  HAVE_PIXARLOG=$enableval
 else
   HAVE_PIXARLOG=yes
 fi;
@@ -23424,8 +23431,14 @@ fi;
 if test "x$enable_jpeg" != "xno" ; then
 
   if test "x$with_jpeg_lib_dir" != "x" ; then
-    LIBS="-L$with_jpeg_lib_dir $LIBS"
+    LDFLAGS="-L$with_jpeg_lib_dir $LDFLAGS"
+
+    if test "$HAVE_RPATH" = "yes"; then
+      LDFLAGS="-R$with_jpeg_lib_dir $LDFLAGS"
+    fi
+
   fi
+
   echo "$as_me:$LINENO: checking for jpeg_read_scanlines in -ljpeg" >&5
 echo $ECHO_N "checking for jpeg_read_scanlines in -ljpeg... $ECHO_C" >&6
 if test "${ac_cv_lib_jpeg_jpeg_read_scanlines+set}" = set; then
@@ -26068,12 +26081,10 @@ fi
 
 
 
-HAVE_STRIPCHOP=yes
-
 # Check whether --enable-strip-chopping or --disable-strip-chopping was given.
 if test "${enable_strip_chopping+set}" = set; then
   enableval="$enable_strip_chopping"
-  HAVE_STRIPCHOP=no
+  HAVE_STRIPCHOP=$enableval
 else
   HAVE_STRIPCHOP=yes
 fi;
@@ -26093,12 +26104,10 @@ _ACEOF
 
 
 
-HAVE_EXTRASAMPLE_AS_ALPHA=yes
-
 # Check whether --enable-extrasample-as-alpha or --disable-extrasample-as-alpha was given.
 if test "${enable_extrasample_as_alpha+set}" = set; then
   enableval="$enable_extrasample_as_alpha"
-  HAVE_EXTRASAMPLE_AS_ALPHA=no
+  HAVE_EXTRASAMPLE_AS_ALPHA=$enableval
 else
   HAVE_EXTRASAMPLE_AS_ALPHA=yes
 fi;
@@ -26112,12 +26121,10 @@ _ACEOF
 fi
 
 
-CHECK_JPEG_YCBCR_SUBSAMPLING=yes
-
 # Check whether --enable-check-ycbcr-subsampling or --disable-check-ycbcr-subsampling was given.
 if test "${enable_check_ycbcr_subsampling+set}" = set; then
   enableval="$enable_check_ycbcr_subsampling"
-  CHECK_JPEG_YCBCR_SUBSAMPLING=no
+  CHECK_JPEG_YCBCR_SUBSAMPLING=$enableval
 else
   CHECK_JPEG_YCBCR_SUBSAMPLING=yes
 fi;
@@ -27644,6 +27651,7 @@ echo "Libtiff is now configured for ${host}"
 echo ""
 echo "  Installation directory:            ${prefix}"
 echo "  C compiler:                        ${CC} ${CFLAGS}"
+echo "  Enable runtime linker paths:       ${HAVE_RPATH}"
 echo ""
 echo " Support for internal codecs:"
 echo "  CCITT Group 3 & 4 algorithms:      ${HAVE_CCITT}"
