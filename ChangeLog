@@ -1,6 +1,12 @@
+2002-04-18  Andrey Kiselev  <dron@remotesensing.org>
+	
+	* libtiff/libtiff.def: Added missed declarations.
+
+	* libtiff/tif_pixarlog.c: Updated for using tif_tagmethods structure.
+
 2002-04-16  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/ti_lzw.c: Additional checks for data integrity introduced.
+	* libtiff/tif_lzw.c: Additional checks for data integrity introduced.
 	Should finally close
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=100
 	

@@ -427,11 +427,6 @@ LZWDecode(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 				 */
 				sp->dec_codep = codep;
 				do {
-					if (codep < sp->dec_codetab) {
-						TIFFError(tif->tif_name,
-							"LZWDecode: Corrupted LZW data");
-						return (0);
-					}
 					codep = codep->next;
 				} while (codep && codep->length > occ);
 				if (codep) {
@@ -611,11 +606,6 @@ LZWDecodeCompat(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 				 */
 				sp->dec_codep = codep;
 				do {
-					if (codep < sp->dec_codetab) {
-						TIFFError(tif->tif_name,
-							"LZWDecode: Corrupted LZW data");
-						return (0);
-					}
 					codep = codep->next;
 				} while (codep->length > occ);
 				sp->dec_restart = occ;
