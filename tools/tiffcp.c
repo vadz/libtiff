@@ -480,7 +480,6 @@ static struct cpTag {
 	{ TIFFTAG_IMAGEDESCRIPTION,	1, TIFF_ASCII },
 	{ TIFFTAG_MAKE,			1, TIFF_ASCII },
 	{ TIFFTAG_MODEL,		1, TIFF_ASCII },
-//FIXME	{ TIFFTAG_ORIENTATION,		1, TIFF_SHORT },
 	{ TIFFTAG_MINSAMPLEVALUE,	1, TIFF_SHORT },
 	{ TIFFTAG_MAXSAMPLEVALUE,	1, TIFF_SHORT },
 	{ TIFFTAG_XRESOLUTION,		1, TIFF_RATIONAL },
@@ -909,12 +908,8 @@ static void
 cpStripToTile(uint8* out, uint8* in,
 	uint32 rows, uint32 cols, int outskew, int inskew)
 {
-        uint8 *base = out;
 	while (rows-- > 0) {
 		uint32 j = cols;
-		if (orientation == ORIENTATION_BOTLEFT)
-			/* Mirror rows vertically */
-			out = base + (cols + outskew) * rows;
 		while (j-- > 0)
 			*out++ = *in++;
 		out += outskew;
