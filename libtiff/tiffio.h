@@ -203,8 +203,9 @@ typedef struct {
 #include <stdio.h>
 #include <stdarg.h>
 
+/* share internal LogLuv conversion routines? */
 #ifndef LOGLUV_PUBLIC
-#define LOGLUV_PUBLIC		1	// share internal LogLuv conversion routines
+#define LOGLUV_PUBLIC		1	
 #endif
 
 #if defined(__cplusplus)
