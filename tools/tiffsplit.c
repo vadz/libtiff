@@ -157,6 +157,7 @@ tiffcp(TIFF* in, TIFF* out)
 		TIFFGetField(in, TIFFTAG_JPEGTABLES, &count, &table);
 		TIFFSetField(out, TIFFTAG_JPEGTABLES, count, table);
 	}
+        CopyField(TIFFTAG_PHOTOMETRIC, shortv);
 	CopyField(TIFFTAG_PREDICTOR, shortv);
 	CopyField(TIFFTAG_THRESHHOLDING, shortv);
 	CopyField(TIFFTAG_FILLORDER, shortv);
