@@ -6,9 +6,9 @@
 #
 TARGETS	=	tiffcp.exe tiffinfo.exe tiffdump.exe fax2tiff.exe \
 		fax2ps.exe gif2tiff.exe pal2rgb.exe ppm2tiff.exe \
-		rgb2ycbcr.exe thumbnail.exe ras2tiff.exe tiff2bw.exe \
-		tiff2rgba.exe tiff2ps.exe tiffcmp.exe tiffdither.exe \
-		tiffmedian.exe tiffsplit.exe 
+		rgb2ycbcr.exe thumbnail.exe ras2tiff.exe raw2tiff.exe \
+		tiff2bw.exe tiff2rgba.exe tiff2ps.exe tiffcmp.exe \
+		tiffdither.exe tiffmedian.exe tiffsplit.exe 
 
 EXTRA_OBJ = 	strcasecmp.obj getopt.obj
 

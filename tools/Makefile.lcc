@@ -62,6 +62,7 @@ OBJS=\
 	tiffmedian.o \
 	tiffsplit.o \
 	ras2tiff.o \
+	raw2tiff.o \
 	${GETOPT} \
 	${NULL}
 ALL=\
@@ -80,6 +81,7 @@ ALL=\
 	tiffinfo.ttp \
 	tiffmedian.ttp \
 	tiffsplit.ttp \
+	raw2tiff.ttp \
 	${MACHALL} \
 	${NULL}
 
@@ -127,6 +129,9 @@ ppm2tiff.ttp: ppm2tiff.c ${LIBTIFF}
 # Sun rasterfile converter
 ras2tiff.ttp: ras2tiff.c ${LIBTIFF}
 	${CC} -o ras2tiff.ttp ${CFLAGS} ras2tiff.c ${LIBS}
+# convert raw images to TIFFs
+raw2tiff.ttp: raw2tiff.c ${LIBTIFF}
+	${CC} -o raw2tiff.ttp ${CFLAGS} raw2tiff.c ${LIBS}
 # generate thumbnail images from fax
 thumbnail: thumbnail.c ${LIBTIFF}
 	${CC} -o thumbnail ${CFLAGS} thumbnail.c ${LIBS} -lm

@@ -64,6 +64,7 @@ OBJS=	\
 	ppm2tiff.o \
 	rgb2ycbcr.o \
 	ras2tiff.o \
+	raw2tiff.o \
 	thumbnail.o \
 	tiff2bw.o \
 	tiff2rgba.o \
@@ -86,6 +87,7 @@ TARGETS	=\
 	rgb2ycbcr \
 	thumbnail \
 	ras2tiff \
+	raw2tiff \
 	tiff2bw \
 	tiff2rgba \
 	tiff2ps \
@@ -204,6 +206,12 @@ ras2tiff: ras2tiff.o ${TIFFLIB}
 ras2tiff.o: ${SRCDIR}/ras2tiff.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/ras2tiff.c
 
+# convert raw images to TIFFs
+raw2tiff: raw2tiff.o ${TIFFLIB}
+	${CC} -o raw2tiff ${CFLAGS} raw2tiff.o ${LIBS}
+raw2tiff.o: ${SRCDIR}/raw2tiff.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/raw2tiff.c
+
 # simple GIF converter
 gif2tiff: gif2tiff.o ${TIFFLIB}
 	${CC} -o gif2tiff ${CFLAGS} gif2tiff.o ${LIBS}
@@ -269,3 +277,4 @@ tiffsv:	sgisv.o ${TIFFLIB}
 	${CC} -o tiffsv ${CFLAGS} sgisv.o -lgutil -lgl ${LIBS}
 sgisv.o: ${SRCDIR}/sgisv.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/sgisv.c
+
