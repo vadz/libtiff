@@ -1,4 +1,4 @@
-/* $Header$" */
+/* $Id$" */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -23,19 +23,16 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+#include "config.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
 
-#if defined(VMS)
-#include <unixio.h>
-#elif defined(_WINDOWS)
-#include <io.h>
-#define	off_t	toff_t
-#else
-#include <unistd.h>
+#if HAVE_IO_H
+# include <io.h>
 #endif
 
 #include "tiffio.h"
@@ -64,7 +61,7 @@ printruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
 {
     static struct {
 	char white, black;
-	short width;
+	unsigned short width;
     } WBarr[] = {
 	{ 'd', 'n', 512 }, { 'e', 'o', 256 }, { 'f', 'p', 128 },
 	{ 'g', 'q',  64 }, { 'h', 'r',  32 }, { 'i', 's',  16 },
@@ -74,9 +71,9 @@ printruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
     static char* svalue =
 	" !\"#$&'*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abc";
     int colormode = 1;		/* 0 for white, 1 for black */
-    int runlength = 0;
+    uint32 runlength = 0;
     int n = maxline;
-    int x = 0;
+    uint32 x = 0;
     int l;
 
     (void) buf;
@@ -114,7 +111,7 @@ printruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
 		l++;
 	}
 	while (runlength > 0 && runlength <= 6) {
-	    int bitsleft = 6;
+	    uint32 bitsleft = 6;
 	    int t = 0;
 	    while (bitsleft) {
 		if (runlength <= bitsleft) {
@@ -208,8 +205,8 @@ printTIF(TIFF* tif, int pageNumber)
     }
     if (TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &unit) &&
       unit == RESUNIT_CENTIMETER) {
-	xres *= 2.54;
-	yres *= 2.54;
+	xres *= 2.54F;
+	yres *= 2.54F;
     }
     if (pageWidth == 0)
 	pageWidth = w / xres;
@@ -320,13 +317,13 @@ main(int argc, char** argv)
     while ((c = getopt(argc, argv, "l:p:x:y:W:H:wS")) != -1)
 	switch (c) {
 	case 'H':		/* page height */
-	    pageHeight = atof(optarg);
+	    pageHeight = (float)atof(optarg);
 	    break;
 	case 'S':		/* scale to page */
 	    scaleToPage = 1;
 	    break;
 	case 'W':		/* page width */
-	    pageWidth = atof(optarg);
+	    pageWidth = (float)atof(optarg);
 	    break;
 	case 'p':		/* print specific page */
 	    pageNumber = atoi(optarg);
@@ -345,10 +342,10 @@ main(int argc, char** argv)
 	    dowarnings = 1;
 	    break;
 	case 'x':
-	    defxres = atof(optarg);
+	    defxres = (float)atof(optarg);
 	    break;
 	case 'y':
-	    defyres = atof(optarg);
+	    defyres = (float)atof(optarg);
 	    break;
 	case 'l':
 	    maxline = atoi(optarg);

@@ -92,7 +92,7 @@ static int nextSrcImage (TIFF *tif, char **imageSpec)
 {
   if (**imageSpec == comma) {  /* if not @comma, we've done all images */
     char *start = *imageSpec + 1;
-    unsigned long nextImage = strtol (start, imageSpec, 0);
+    tdir_t nextImage = (tdir_t)strtol(start, imageSpec, 0);
     if (start == *imageSpec) nextImage = TIFFCurrentDirectory (tif);
     if (**imageSpec)
     {

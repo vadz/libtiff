@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -239,7 +239,7 @@ static void
 ShowTile(uint32 row, uint32 col, tsample_t sample,
     unsigned char* pp, uint32 nrow, uint32 rowsize)
 {
-	register tsize_t cc;
+	uint32 cc;
 
 	printf("Tile (%lu,%lu", (unsigned long) row, (unsigned long) col);
 	if (sample != (tsample_t) -1)
@@ -337,7 +337,7 @@ TIFFReadData(TIFF* tif)
 static void
 ShowRawBytes(unsigned char* pp, uint32 n)
 {
-	tsize_t i;
+	uint32 i;
 
 	for (i = 0; i < n; i++) {
 		printf(" %02x", *pp++);
@@ -350,7 +350,7 @@ ShowRawBytes(unsigned char* pp, uint32 n)
 static void
 ShowRawWords(uint16* pp, uint32 n)
 {
-	tsize_t i;
+	uint32 i;
 
 	for (i = 0; i < n; i++) {
 		printf(" %04x", *pp++);
@@ -369,7 +369,7 @@ TIFFReadRawData(TIFF* tif, int bitrev)
 
 	TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbc);
 	if (nstrips > 0) {
-		tsize_t bufsize = stripbc[0];
+		uint32 bufsize = stripbc[0];
 		tdata_t buf = _TIFFmalloc(bufsize);
 		tstrip_t s;
 
