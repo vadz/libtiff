@@ -538,7 +538,9 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		    if(fip->field_type == TIFF_BYTE)
 		        fprintf(fd, "%u",
 				(unsigned int) ((unsigned char *) raw_data)[j]);
-		    else if(fip->field_type == TIFF_SBYTE)
+		    else if(fip->field_type == TIFF_UNDEFINED)
+		        fprintf(fd, "0x%x",
+				(unsigned int) ((unsigned char *) raw_data)[j]);		    else if(fip->field_type == TIFF_SBYTE)
 		        fprintf(fd, "%d", (int) ((char *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SHORT)
 		        fprintf(fd, "%u",
@@ -550,10 +552,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		    	    (int)((unsigned long *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SLONG)
 		        fprintf(fd, "%ld", (long)((long *) raw_data)[j]);
-		    else if(fip->field_type == TIFF_RATIONAL)
+		    else if(fip->field_type == TIFF_RATIONAL
+			    || fip->field_type == TIFF_SRATIONAL
+			    || fip->field_type == TIFF_FLOAT)
 		        fprintf(fd, "%f", ((float *) raw_data)[j]);
-		    else if(fip->field_type == TIFF_SRATIONAL)
-		        fprintf(fd, "%f", ((float *) raw_data)[j]);
+		    else if(fip->field_type == TIFF_IFD)
+		        fprintf(fd, "0x%x",
+		    	    (int)((unsigned long *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_ASCII) {
 		        fprintf(fd, "%s", (char *) raw_data);
 		        break;

@@ -553,8 +553,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	    if (tv_size == 0) {
 		    status = 0;
 		    TIFFError(module, "%s: Bad field type %d for \"%s\"",
-		    	  tif->tif_name, fip->field_type,
-		    	  fip->field_name);
+			      tif->tif_name, fip->field_type, fip->field_name);
 		    goto end;
 	    }
            
@@ -563,9 +562,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			tv->count = (uint32) va_arg(ap, uint32);
 		    else
 			tv->count = (int) va_arg(ap, int);
-	    }
-            else if (fip->field_writecount == TIFF_VARIABLE
-		     || fip->field_writecount == TIFF_VARIABLE2)
+	    } else if (fip->field_writecount == TIFF_VARIABLE
+		       || fip->field_writecount == TIFF_VARIABLE2)
 		tv->count = 1;
 	    else if (fip->field_writecount == TIFF_SPP)
 		tv->count = td->td_samplesperpixel;
@@ -602,21 +600,32 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			case TIFF_SBYTE:
 			case TIFF_SHORT:
 			case TIFF_SSHORT:
+			case TIFF_UNDEFINED:
 			    {
 				int v = va_arg(ap, int);
 				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
 			    }
 			    break;
 			case TIFF_LONG:
+			case TIFF_IFD:
 			    {
-				uint32 v32 = va_arg(ap, uint32);
-				_TIFFmemcpy(tv->value, &v32, tv_size*tv->count);
+				uint32 v = va_arg(ap, uint32);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
 			    }
 			    break;
 			case TIFF_SLONG:
 			    {
-				int32 v32 = va_arg(ap, int32);
-				_TIFFmemcpy(tv->value, &v32, tv_size*tv->count);
+				int32 v = va_arg(ap, int32);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
+			    }
+			    break;
+			case TIFF_RATIONAL:
+			case TIFF_SRATIONAL:
+			case TIFF_FLOAT:
+			case TIFF_DOUBLE:
+			    {
+				double v = va_arg(ap, double);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
 			    }
 			    break;
 			default:
@@ -629,8 +638,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
           }
 	}
 	if (status) {
-            TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
-            tif->tif_flags |= TIFF_DIRTYDIRECT;
+		TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
+		tif->tif_flags |= TIFF_DIRTYDIRECT;
 	}
 
 end:
@@ -1018,6 +1027,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 			} else {
 				switch (fip->field_type) {
 					case TIFF_BYTE:
+					case TIFF_UNDEFINED:
 						*va_arg(ap, uint8*) =
 							*(uint8 *)tv->value;
 						ret_val = 1;
@@ -1038,6 +1048,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 						ret_val = 1;
 						break;
 					case TIFF_LONG:
+					case TIFF_IFD:
 						*va_arg(ap, uint32*) =
 							*(uint32 *)tv->value;
 						ret_val = 1;
@@ -1045,6 +1056,18 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 					case TIFF_SLONG:
 						*va_arg(ap, int32*) =
 							*(int32 *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_RATIONAL:
+					case TIFF_SRATIONAL:
+					case TIFF_FLOAT:
+						*va_arg(ap, float*) =
+							*(float *)tv->value;
+						ret_val = 1;
+						break;
+					case TIFF_DOUBLE:
+						*va_arg(ap, double*) =
+							*(double *)tv->value;
 						ret_val = 1;
 						break;
 					default:
