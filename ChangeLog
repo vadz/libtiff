@@ -1,5 +1,10 @@
 2001-02-16  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirinfo.c: don't declare tiffFieldInfo static on VMS.
+	Some sort of weird VMS thing.  
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=31
+
 	* tif_luv.c/tiff.h/tiffio.h: 
 	New version of TIFF LogLuv (SGILOG) modules contributed by Greg Ward 
 	(greg@shutterfly.com).  He writes:

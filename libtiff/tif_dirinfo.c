@@ -38,7 +38,10 @@
  *     then the LONG must be placed before the SHORT for
  *     writing to work properly.
  */
-static const TIFFFieldInfo tiffFieldInfo[] = {
+#ifndef VMS
+static 
+#endif
+const TIFFFieldInfo tiffFieldInfo[] = {
     { TIFFTAG_SUBFILETYPE,	 1, 1, TIFF_LONG,	FIELD_SUBFILETYPE,
       TRUE,	FALSE,	"SubfileType" },
 /* XXX SHORT for compatibility w/ old versions of the library */
