@@ -1,4 +1,4 @@
-.\" $Header$
+.\" $Id$
 .\"
 .\" Copyright (c) 1995 Sam Leffler
 .\" Copyright (c) 1995 Silicon Graphics, Inc.
@@ -23,19 +23,20 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH CODEC 3T "October 15, 1995"
+.TH CODEC 3T "October 29, 2004" "libtiff"
 .SH NAME
-TIFFFindCODEC, TIFFRegisterCODEC, TIFFUnRegisterCODEC \- codec-related utility routines
+TIFFFindCODEC, TIFFRegisterCODEC, TIFFUnRegisterCODEC, TIFFIsCODECConfigured
+\- codec-related utility routines
 .SH SYNOPSIS
 .B "#include <tiffio.h>"
+.sp
+.BI "const TIFFCodec* TIFFFindCODEC(uint16 " scheme ");"
 .br
-.B "const TIFFCodec* TIFFFindCODEC(uint16 scheme);"
+.BI "TIFFCodec* TIFFRegisterCODEC(uint16 " scheme ", const char *" method ", TIFFInitMethod " init ");"
 .br
-.B "TIFFCodec* TIFFRegisterCODEC(uint16 scheme, const char* method, TIFFInitMethod init);"
+.BI "void TIFFUnRegisterCODEC(TIFFCodec *" codec ");"
 .br
-.B "void TIFFUnRegisterCODEC(TIFFCodec* codec);"
-.br
-.B "int TIFFIsCODECConfigured(uint16 scheme);"
+.BI "int TIFFIsCODECConfigured(uint16 " scheme ");"
 .SH DESCRIPTION
 .I libtiff
 supports a variety of compression schemes implemented by software
