@@ -149,7 +149,7 @@ main(int argc, char* argv[])
 	uint16 deffillorder = 0;
 	uint32 deftilewidth = (uint32) -1;
 	uint32 deftilelength = (uint32) -1;
-	uint32 defrowsperstrip = (uint32) -1;
+	uint32 defrowsperstrip = (uint32) 0;
 	uint32 diroff = 0;
 	TIFF* in;
 	TIFF* out;
@@ -528,11 +528,11 @@ tiffcp(TIFF* in, TIFF* out)
 	uint16 bitspersample, samplesperpixel;
         uint16 input_compression;
 	copyFunc cf;
-	uint32 w, l;
+	uint32 width, length;
 	struct cpTag* p;
 
-	CopyField(TIFFTAG_IMAGEWIDTH, w);
-	CopyField(TIFFTAG_IMAGELENGTH, l);
+	CopyField(TIFFTAG_IMAGEWIDTH, width);
+	CopyField(TIFFTAG_IMAGELENGTH, length);
 	CopyField(TIFFTAG_BITSPERSAMPLE, bitspersample);
 	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
 	if (compression != (uint16)-1)
@@ -610,11 +610,13 @@ tiffcp(TIFF* in, TIFF* out)
 		 * value from the input image or, if nothing is defined,
 		 * use the library default.
 		 */
-		if (rowsperstrip == (uint32) -1) {
+		if (rowsperstrip == (uint32) 0) {
 			if (!TIFFGetField(in, TIFFTAG_ROWSPERSTRIP,&rowsperstrip))
 				rowsperstrip =
 					TIFFDefaultStripSize(out, rowsperstrip);
 		}
+		else if (rowsperstrip == (uint32) -1)
+			rowsperstrip = length;
 		TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
 	}
 	if (config != (uint16) -1)
@@ -672,7 +674,7 @@ tiffcp(TIFF* in, TIFF* out)
 		CopyTag(p->tag, p->count, p->type);
 
 	cf = pickCopyFunc(in, out, bitspersample, samplesperpixel);
-	return (cf ? (*cf)(in, out, l, w, samplesperpixel) : FALSE);
+	return (cf ? (*cf)(in, out, length, width, samplesperpixel) : FALSE);
 }
 
 /*

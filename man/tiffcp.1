@@ -178,10 +178,16 @@ will force samples to be written in separate planes.
 .B \-r
 Specify the number of rows (scanlines) in each strip of data
 written to the output file.
-By default,
+By default (or when value
+.B 0
+is specified),
 .I tiffcp
 attempts to set the rows/strip
-that no more than 8 kilobytes of data appear in a strip.
+that no more than 8 kilobytes of data appear in a strip. If you specify
+special value
+.B -1
+it will results in infinite number of the rows per strip. The entire image
+will be the one strip in that case.
 .TP
 .B \-s
 Force the output file to be written with data organized in strips
