@@ -1,3 +1,11 @@
+2003-05-06  Andrey Kiselev  <dron@remotesensing.org>
+
+	* contrib/ojpeg/{Makefile.in, jdhuff.h, jinclude.h, ojpeg.c, README},
+	configure, Makefile.in:	Improved libtiff compilation with OJPEG
+	support. Now no need for patching IJG JPEG library, hack requred by
+	libtiff will be compiled and used in-place. Implemented with
+	suggestion and help from Bill Allombert, Debian's libjpeg maintainer.
+
 2003-05-05  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/ppm2tiff.c: PPM header parser improved: now able to skip
