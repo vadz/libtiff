@@ -72,7 +72,8 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	uint16 i;
 	long l, n;
 
-	fprintf(fd, "TIFF Directory at offset 0x%lx\n", tif->tif_diroff);
+	fprintf(fd, "TIFF Directory at offset 0x%lx\n",
+		(unsigned int)tif->tif_diroff);
 	td = &tif->tif_dir;
 	if (TIFFFieldSet(tif,FIELD_SUBFILETYPE)) {
 		fprintf(fd, "  Subfile Type:");
@@ -586,7 +587,7 @@ _TIFFprintAscii(FILE* fd, const char* cp)
 	for (; *cp != '\0'; cp++) {
 		const char* tp;
 
-		if (isprint(*cp)) {
+		if (isprint((int)*cp)) {
 			fputc(*cp, fd);
 			continue;
 		}
