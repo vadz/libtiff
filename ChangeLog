@@ -1,5 +1,8 @@
 2000-05-11  Frank Warmerdam  <warmerda@cs46980-c>
 
+	* README: update to mention www.libtiff.org, don't list Sam's old
+	email address.
+
 	* configure: Fixed DSO test for Linux as per patch from
 	  Jan Van Buggenhout <chipzz@Ace.ULYSSIS.Student.KULeuven.Ac.Be>.
 
