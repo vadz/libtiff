@@ -1,5 +1,7 @@
 2000-12-28  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* Added RELEASE-DATE file to release file list.
+
 	* Fixed libtiff/makefile.vc to make tiffvers.h not version.h.
 
 2000-12-22  Mike Welles <mike@bangstate.com> 
