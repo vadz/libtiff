@@ -1150,10 +1150,11 @@ if [ "$DSO" = auto ]; then
 	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
 	;;
     *-freebsd*)
-	DSOSUF=so.${DIST_MAJOR}.0
-	LIBCOPTS='-fpic -fPIC'
-	DSO=FREEBSD
-	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
+	DSOSUF=so.${DIST_MAJOR}
+	DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_ALPHA}
+	LIBCOPTS='-fPIC'
+	DSOOPTS='-shared'
+	DSO=GNULD
 	;;
     *-linux*)
 	if [ -r /lib/libc.so.6 ] || [ -r /lib/libc.so.5 ]; then
@@ -1161,7 +1162,7 @@ if [ "$DSO" = auto ]; then
 	    DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_ALPHA}
 	    LIBCOPTS='-fPIC'
 	    DSOOPTS='-shared'
-	    DSO=LINUX
+	    DSO=GNULD
 	fi
 	;;
     *-osf3*|*-osf4*)

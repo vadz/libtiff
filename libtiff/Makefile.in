@@ -197,7 +197,16 @@ AIXdso: ${OBJS}
 	${AR} ${AROPTS} libtiff.@DSOSUF@ shr.o
 	rm -f shr.o
 	touch $@
-# NetBSD 1.1 or FreeBSD
+# GNU linker shared libraries
+GNULDdso: ${OBJS}
+	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
+	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} @LIBJPEG@ @LIBGZ@ 
+	rm -f libtiff.@DSOSUF@
+	if [ @DSOSUB_VERSION != @DSOSUF ] ; then \
+	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
+	fi
+	touch $@
+# NetBSD 1.1 or FreeBSD (old style)
 NETBSDdso FREEBSDdso: ${OBJS}
 	@rm -f libtiff_pic.a
 	@${AR} cq libtiff_pic.a `lorder ${OBJS} | tsort -q`

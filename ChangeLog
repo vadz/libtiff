@@ -1,3 +1,7 @@
+2000-09-27  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Added GNULDdso target and switched linux and freebsd to use it. 
+
 2000-09-26  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* Applied patch for 0x0000 sequences in tif_fax3.h's definition
