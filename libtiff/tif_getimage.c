@@ -387,12 +387,11 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	!(planarconfig == PLANARCONFIG_SEPARATE && colorchannels > 1);
     if (img->isContig) {
 	img->get = TIFFIsTiled(tif) ? gtTileContig : gtStripContig;
-	(void) pickTileContigCase(img);
+	return pickTileContigCase(img);
     } else {
 	img->get = TIFFIsTiled(tif) ? gtTileSeparate : gtStripSeparate;
-	(void) pickTileSeparateCase(img);
+	return pickTileSeparateCase(img);
     }
-    return (1);
 }
 
 int
