@@ -371,7 +371,7 @@ extern  ttag_t TIFFGetTagListEntry( TIFF *, int tag_index );
 #define	TIFF_SPP	-2		/* marker for SamplesPerPixel tags */
 #define	TIFF_VARIABLE2	-3		/* marker for uint32 var-length tags */
 
-#define FIELD_CUSTOM    64    
+#define FIELD_CUSTOM    65    
 
 typedef	struct {
 	ttag_t	field_tag;		/* field's tag */
