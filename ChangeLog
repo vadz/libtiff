@@ -1,3 +1,7 @@
+2004-10-10  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/bmp2tif.c: Check the space allocation results.
+
 2004-10-09  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dir.c: Initialize td_tilewidth and td_tilelength fields
