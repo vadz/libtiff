@@ -1,3 +1,9 @@
+2003-04-17  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Removed additional check for StripByteCounts
+	due to problems with multidirectory images. Quality of error messages
+	improved.
+
 2003-04-16  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Fixed problem with colorspace conversion for JPEG
