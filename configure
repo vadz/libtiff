@@ -649,7 +649,7 @@ SHELL=@SHELL@
 all:
 	@if [ -n "${MAKE}" ] ; then echo "make sets make"  ; fi
 EOF
-) | tee out.sh | $MAKE -f - | grep "make sets make" > /dev/null ; then
+) | $MAKE -f - | grep "make sets make" > /dev/null ; then
 	SETMAKE=
     else
 	Note "Looks like $MAKE does not setup MAKE in Makefiles, will compensate."
