@@ -28,10 +28,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#ifndef VMS
-#include <unistd.h>
-#else
+
+#if defined(VMS)
 #include <unixio.h>
+#elif defined(_WINDOWS)
+#include <io.h>
+#define	off_t	toff_t
+#else
+#include <unistd.h>
 #endif
 
 #include "tiffio.h"
