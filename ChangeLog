@@ -1,3 +1,8 @@
+2004-04-04  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_open.c: close clientdata if TIFFClientOpen() fails
+	via bad2. 
+
 2004-03-26  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiffcp.c: Properly set Photometric Interpretation in case of
