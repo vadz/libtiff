@@ -120,7 +120,7 @@ double	splitOverlap = 0;		/* amount for split pages to overlag */
 int	rotate = FALSE;			/* rotate image by 180 degrees */
 char	*filename;			/* input filename */
 int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
-uint16	res_unit = 0;			/* Resolution units: 1 - inches, 2 - cm*/
+uint16	res_unit = 0;			/* Resolution units: 2 - inches, 3 - cm */
 
 /*
  * ASCII85 Encoding Support.
@@ -597,10 +597,22 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			npages++;
 			fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
 			if (!generateEPSF && ( level2 || level3 )) {
+				double psw, psh;
+				if (psw != 0.0) {
+					psw = pw * PS_UNIT_SIZE;
+					if (res_unit == RESUNIT_CENTIMETER)
+						psw *= 2.54F;
+				} else
+					psw=rotate ? prh:prw;
+				if (psh != 0.0) {
+					psh = ph * PS_UNIT_SIZE;
+					if (res_unit == RESUNIT_CENTIMETER)
+						psh *= 2.54F;
+				} else
+					psh=rotate ? prw:prh;
 				fprintf(fd,
 	"1 dict begin /PageSize [ %f %f ] def currentdict end setpagedevice\n",
-					pw ? pw * PS_UNIT_SIZE : (rotate ? prh : prw),
-					ph ? ph * PS_UNIT_SIZE : (rotate ? prw : prh));
+					psw, psh);
 				fputs(
 	"<<\n  /Policies <<\n    /PageSize 3\n  >>\n>> setpagedevice\n",
 				      fd);
