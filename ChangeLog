@@ -1,3 +1,21 @@
+2005-01-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_jpeg.c: Added ability to read/write the fax specific
+	TIFFTAG_FAXRECVPARAMS, TIFFTAG_FAXSUBADDRESS and TIFFTAG_FAXRECVTIME
+	tags as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=736
+
+	* libtiff/tif_win32.c: Fixed message formatting in functions
+	Win32WarningHandler() and Win32ErrorHandler() as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=735
+
+	* tools/tiff2ps.c: Interpret the -w and -h options independently. As
+	per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=689
+
 2005-01-11  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tiffio.h: Move the color conversion routines in the 'extern
