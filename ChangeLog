@@ -1,5 +1,7 @@
 2003-11-21  Andrey Kiselev  <dron@remotesensing.org>
 
+	* /tools/raw2tiff.c: #include <getopt.h> removed.
+
 	* tools/{Makefile.in, tiffgt.c}: Unmaintained and platform dependent
 	sgigt utility removed and replaced with the completely rewritten
 	portable tiffgt tool (depend on OpenGL and GLUT). Initial revision,
