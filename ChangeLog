@@ -1,7 +1,10 @@
 2003-11-18  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/tif_dirinfo.c: Implemented binary search in
+	_TIFFMergeFieldInfo(). Patch supplied by Ross Finlayson.
+
 	* libtiff/tif_dir.h: _TIFFFindOrRegisterdInfo declaration replaced
-	with _TIFFFindOrRegisterFieldInfo as reported by  Ross Finlayson.
+	with _TIFFFindOrRegisterFieldInfo as reported by Ross Finlayson.
 
 2003-11-17  Frank Warmerdam  <warmerdam@pobox.com>
 
