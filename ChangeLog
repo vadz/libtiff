@@ -1,4 +1,6 @@
 2000-09-25  Frank Warmerdam  <warmerda@cs46980-c>
+	* Fixed tiffcomp.h to avoid win32 stuff if unix #defined, to improve
+	cygwin compatibility.
 
 	* Fixed tif_getimage.c to fix overrun bug with YCbCr images without
 	downsampling.  http://bugzilla.remotesensing.org/show_bug.cgi?id=10
