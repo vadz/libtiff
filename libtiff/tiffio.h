@@ -136,9 +136,9 @@ typedef struct {
 	float d_YCR;			/* Light o/p for reference white */
 	float d_YCG;
 	float d_YCB;
-	int d_Vrwr;			/* Pixel values for ref. white */
-	int d_Vrwg;
-	int d_Vrwb;
+	uint32 d_Vrwr;			/* Pixel values for ref. white */
+	uint32 d_Vrwg;
+	uint32 d_Vrwb;
 	float d_Y0R;			/* Residual light for black pixel */
 	float d_Y0G;
 	float d_Y0B;

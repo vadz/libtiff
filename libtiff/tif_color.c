@@ -46,7 +46,7 @@ void
 TIFFCIELabToXYZ(TIFFCIELabToRGB *cielab, uint32 l, int32 a, int32 b,
 		float *X, float *Y, float *Z)
 {
-	float L = (float)l * 100.0 / 255.0F;
+	float L = (float)l * 100.0F / 255.0F;
 	float cby, tmp;
 
 	if( L < 8.856F ) {
@@ -93,15 +93,15 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
 
 	/* Turn luminosity to colour value. */
 	i = TIFFmin(cielab->range,
-		    (Yr - cielab->display.d_Y0R) / cielab->rstep);
+		    (int)((Yr - cielab->display.d_Y0R) / cielab->rstep));
 	*r = TIFFrint(cielab->Yr2r[i]);
 
 	i = TIFFmin(cielab->range,
-		    (Yg - cielab->display.d_Y0G) / cielab->gstep);
+		    (int)((Yg - cielab->display.d_Y0G) / cielab->gstep));
 	*g = TIFFrint(cielab->Yg2g[i]);
 
 	i = TIFFmin(cielab->range,
-		    (Yb - cielab->display.d_Y0B) / cielab->bstep);
+		    (int)((Yb - cielab->display.d_Y0B) / cielab->bstep));
 	*b = TIFFrint(cielab->Yb2b[i]);
 
 	/* Clip output. */
@@ -118,8 +118,6 @@ int
 TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab,
 		    TIFFDisplay *display, float *refWhite)
 {
-	static char module[] = "TIFFCIELabToRGBInit";
-
 	int i;
 	float gamma;
 
@@ -128,30 +126,30 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab,
 	_TIFFmemcpy(&cielab->display, display, sizeof(TIFFDisplay));
 
 	/* Red */
-	gamma = 1.0 / cielab->display.d_gammaR ;
+	gamma = 1.0F / cielab->display.d_gammaR ;
 	cielab->rstep =
 		(cielab->display.d_YCR - cielab->display.d_Y0R)	/ cielab->range;
 	for(i = 0; i <= cielab->range; i++) {
 		cielab->Yr2r[i] = cielab->display.d_Vrwr
-		    * (pow((double)i / cielab->range, gamma));
+		    * ((float)pow((double)i / cielab->range, gamma));
 	}
 
 	/* Green */
-	gamma = 1.0 / cielab->display.d_gammaG ;
+	gamma = 1.0F / cielab->display.d_gammaG ;
 	cielab->gstep =
 	    (cielab->display.d_YCR - cielab->display.d_Y0R) / cielab->range;
 	for(i = 0; i <= cielab->range; i++) {
 		cielab->Yg2g[i] = cielab->display.d_Vrwg
-		    * (pow((double)i / cielab->range, gamma));
+		    * ((float)pow((double)i / cielab->range, gamma));
 	}
 
 	/* Blue */
-	gamma = 1.0 / cielab->display.d_gammaB ;
+	gamma = 1.0F / cielab->display.d_gammaB ;
 	cielab->bstep =
 	    (cielab->display.d_YCR - cielab->display.d_Y0R) / cielab->range;
 	for(i = 0; i <= cielab->range; i++) {
 		cielab->Yb2b[i] = cielab->display.d_Vrwb
-		    * (pow((double)i / cielab->range, gamma));
+		    * ((float)pow((double)i / cielab->range, gamma));
 	}
 
 	/* Init reference white point */
@@ -170,7 +168,7 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab,
 #define	SHIFT			16
 #define	FIX(x)			((int32)((x) * (1L<<SHIFT) + 0.5))
 #define	ONE_HALF		((int32)(1<<(SHIFT-1)))
-#define	Code2V(c, RB, RW, CR)	((((c)-(int)(RB))*(float)(CR))/(float)((RW)-(RB)))
+#define	Code2V(c, RB, RW, CR)	((((c)-(int32)(RB))*(float)(CR))/(float)((RW)-(RB)))
 
 void
 TIFFYCbCrtoRGB(TIFFYCbCrToRGB *ycbcr, uint32 Y, int32 Cb, int32 Cr,
@@ -240,17 +238,17 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, float *luma, float *refBlackWhite)
        * constructing tables indexed by the raw pixel data.
        */
       for (i = 0, x = -128; i < 256; i++, x++) {
-	    int Cr = Code2V(x, refBlackWhite[4] - 128.0,
-			    refBlackWhite[5] - 128.0, 127);
-	    int Cb = Code2V(x, refBlackWhite[2] - 128.0,
-			    refBlackWhite[3] - 128.0, 127);
+	    int32 Cr = (int32)Code2V(x, refBlackWhite[4] - 128.0F,
+			    refBlackWhite[5] - 128.0F, 127);
+	    int32 Cb = (int32)Code2V(x, refBlackWhite[2] - 128.0F,
+			    refBlackWhite[3] - 128.0F, 127);
 
-	    ycbcr->Cr_r_tab[i] = (int)((D1*Cr + ONE_HALF)>>SHIFT);
-	    ycbcr->Cb_b_tab[i] = (int)((D3*Cb + ONE_HALF)>>SHIFT);
+	    ycbcr->Cr_r_tab[i] = (int32)((D1*Cr + ONE_HALF)>>SHIFT);
+	    ycbcr->Cb_b_tab[i] = (int32)((D3*Cb + ONE_HALF)>>SHIFT);
 	    ycbcr->Cr_g_tab[i] = D2*Cr;
 	    ycbcr->Cb_g_tab[i] = D4*Cb + ONE_HALF;
 	    ycbcr->Y_tab[i] =
-		    Code2V(x + 128, refBlackWhite[0], refBlackWhite[1], 255);
+		    (int32)Code2V(x + 128, refBlackWhite[0], refBlackWhite[1], 255);
       }
     }
 
