@@ -26,7 +26,7 @@
 /*
  * TIFF Library
  *
- * Module to test LONG tags read/write functions.
+ * Module to test SHORT tags read/write functions.
  */
 
 #include "tif_config.h"
@@ -44,7 +44,7 @@ const char	*filename = "short_test.tiff";
 #define	SPP	3		/* Samples per pixel */
 const uint16	width = 1;
 const uint16	length = 1;
-const uint16	bpp = 8;
+const uint16	bps = 8;
 const uint16	photometric = PHOTOMETRIC_RGB;
 const uint16	rows_per_strip = 1;
 const uint16	planarconfig = PLANARCONFIG_CONTIG;
@@ -56,7 +56,6 @@ static struct SingleTags {
 	{ TIFFTAG_COMPRESSION, COMPRESSION_NONE },
 	{ TIFFTAG_FILLORDER, FILLORDER_MSB2LSB },
 	{ TIFFTAG_ORIENTATION, ORIENTATION_BOTRIGHT },
-	/* { TIFFTAG_GRAYRESPONSEUNIT, 3 }, */
 	{ TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH },
 	{ TIFFTAG_INKSET, INKSET_MULTIINK },
 	{ TIFFTAG_MINSAMPLEVALUE, 23 },
@@ -66,27 +65,15 @@ static struct SingleTags {
 	{ TIFFTAG_IMAGEDEPTH, 1 },
 	{ TIFFTAG_TILEDEPTH, 1 }
 };
-#define NSINGLETAGS   (sizeof (short_single_tags) / sizeof (short_single_tags[0]))
-
-/*static struct SPPTags {
-	ttag_t		tag;
-	uint16		value[SPP];
-} short_spp_tags[] = {
-	{ TIFFTAG_MINSAMPLEVALUE, { 23, 41, 77 } },
-	{ TIFFTAG_MAXSAMPLEVALUE, { 115, 168, 241 } }
-	{ TIFFTAG_SAMPLEFORMAT,
-		{ SAMPLEFORMAT_UINT, SAMPLEFORMAT_UINT, SAMPLEFORMAT_UINT } }
-};
-#define NSPPTAGS   (sizeof (short_spp_tags) / sizeof (short_spp_tags[0]))*/
+#define NSINGLETAGS   (sizeof(short_single_tags) / sizeof(short_single_tags[0]))
 
 int
 main(int argc, char **argv)
 {
 	TIFF		*tif;
-	int		i, j;
+	int		i;
 	unsigned char	buf[3] = { 0, 127, 255 };
 	uint16		value;
-	uint16		*array = NULL;
 
 	/* Test whether we can write tags. */
 	tif = TIFFOpen(filename, "w");
@@ -103,7 +90,7 @@ main(int argc, char **argv)
 		fprintf (stderr, "Can't set ImageLength tag.\n");
 		goto failure;
 	}
-	if (!TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bpp)) {
+	if (!TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps)) {
 		fprintf (stderr, "Can't set BitsPerSample tag.\n");
 		goto failure;
 	}
@@ -133,15 +120,6 @@ main(int argc, char **argv)
 		}
 	}
 
-	/*for (i = 0; i < NSPPTAGS; i++) {
-		if (!TIFFSetField(tif, short_spp_tags[i].tag,
-				  short_spp_tags[i].value)) {
-			fprintf(stderr, "Can't set tag %d.\n",
-				(int)short_spp_tags[i].tag);
-			goto failure;
-		}
-	}*/
-
 	/* Write dummy pixel data. */
 	if (!TIFFWriteScanline(tif, buf, 0, 0) < 0) {
 		fprintf (stderr, "Can't write image data.\n");
@@ -167,7 +145,7 @@ main(int argc, char **argv)
 		goto failure;
 	}
 	if (!TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &value)
-	    || value != bpp) {
+	    || value != bps) {
 		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_BITSPERSAMPLE);
 		goto failure;
 	}
@@ -200,30 +178,6 @@ main(int argc, char **argv)
 			goto failure;
 		}
 	}
-
-	/*for (i = 0; i < NSPPTAGS; i++) {
-		array = (uint16 *)_TIFFmalloc(SPP * sizeof(uint16));
-		if (!array) {
-			fprintf(stderr, "Can't allocate space for "
-				"tag array when reading tag %d.\n",
-				(int)short_spp_tags[i].tag);
-			goto failure;
-		}
-		if (!TIFFGetField(tif, short_spp_tags[i].tag, array)) {
-			fprintf(stderr, "Can't get tag %d.\n",
-				(int)short_spp_tags[i].tag);
-			goto failure;
-		}
-		for (j = 0; j < SPP; j++){
-			if (array[j] != short_spp_tags[i].value[j]) {
-				fprintf(stderr,
-					"Wrong value read for tag %d.\n",
-					(int)short_spp_tags[i].tag);
-				goto failure;
-			}
-		}
-		_TIFFfree(array);
-	}*/
 
 	TIFFClose(tif);
 	
