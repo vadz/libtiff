@@ -349,19 +349,7 @@ TIFFWriteDirectory(TIFF* tif)
                 if( fip->field_bit != FIELD_CUSTOM )
                     ResetFieldBit(fields, fip->field_bit);
 	}
-#ifdef notdef        
-        /*
-        ** Write custom tags.
-        */
-	for (fi = 0, nfi = td->td_customValueCount; fi < nfi; fi++) {
-            TIFFTagValue *tv = td->td_customValues + fi;
-            
-            if (!TIFFWriteNormalTag(tif, dir, tv->info))
-                goto bad;
 
-            dir++;
-        }
-#endif                
 	/*
 	 * Write directory.
 	 */
