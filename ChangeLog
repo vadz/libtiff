@@ -1,3 +1,11 @@
+2004-01-11  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dir.c: Incomplete cleanup in TIFFFreeDirectory(),
+	patch from Gerben Koopmans.
+
+	* libtiff/tif_dirread.c: Check field_passcount value before setting
+	the value of undefined type, patch from Gerben Koopmans.
+
 2004-01-02  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Fixed problem with wrong Photometric setting for
