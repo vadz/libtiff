@@ -410,7 +410,6 @@ bad:
 	tif->tif_mode = O_RDONLY;	/* XXX avoid flush */
         TIFFCleanup(tif);
 bad2:
-	(void) (*closeproc)(clientdata);
 	return ((TIFF*)0);
 }
 
