@@ -460,7 +460,8 @@ _TIFFFieldWithTag(TIFF* tif, ttag_t tag)
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	if (!fip) {
 		TIFFError("TIFFFieldWithTag",
-			  "Internal error, unknown tag 0x%x", (u_int) tag);
+			  "Internal error, unknown tag 0x%x",
+                          (unsigned int) tag);
 		assert(fip != NULL);
 		/*NOTREACHED*/
 	}
@@ -521,3 +522,5 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
 
     return fld;    
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

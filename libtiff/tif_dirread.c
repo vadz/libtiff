@@ -298,7 +298,7 @@ TIFFReadDirectory(TIFF* tif)
 		 * Check data type.
 		 */
 		fip = tif->tif_fieldinfo[fix];
-		while (dp->tdir_type != (u_short) fip->field_type
+		while (dp->tdir_type != (unsigned short) fip->field_type
                        && fix < tif->tif_nfields) {
 			if (fip->field_type == TIFF_ANY)	/* wildcard */
 				break;

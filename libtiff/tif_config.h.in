@@ -121,23 +121,8 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type `u_char'. */
-#undef HAVE_U_CHAR
-
-/* Define to 1 if the system has the type `u_int'. */
-#undef HAVE_U_INT
-
-/* Define to 1 if the system has the type `u_long'. */
-#undef HAVE_U_LONG
-
-/* Define to 1 if the system has the type `u_short'. */
-#undef HAVE_U_SHORT
-
 /* Define to 1 if you have the <windows.h> header file. */
 #undef HAVE_WINDOWS_H
-
-/* Define to 1 if you have the <winsock.h> header file. */
-#undef HAVE_WINSOCK_H
 
 /* Native cpu byte order: 1 if big-endian (Motorola) or 0 if little-endian
    (Intel) */
@@ -193,10 +178,10 @@
    your system. */
 #undef PTHREAD_CREATE_JOINABLE
 
-/* The size of `int', as computed by sizeof. */
+/* The size of a `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
-/* The size of `long', as computed by sizeof. */
+/* The size of a `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
 /* Define to 1 if you have the ANSI C header files. */
@@ -246,8 +231,8 @@
 #undef inline
 #endif
 
-/* Define to `long int' if <sys/types.h> does not define. */
+/* Define to `long' if <sys/types.h> does not define. */
 #undef off_t
 
-/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t

@@ -45,7 +45,7 @@ TIFFComputeStrip(TIFF* tif, uint32 row, tsample_t sample)
 		if (sample >= td->td_samplesperpixel) {
 			TIFFError(tif->tif_name,
 			    "%lu: Sample out of range, max %lu",
-			    (u_long) sample, (u_long) td->td_samplesperpixel);
+			    (unsigned long) sample, (unsigned long) td->td_samplesperpixel);
 			return ((tstrip_t) 0);
 		}
 		strip += sample*td->td_stripsperimage;
@@ -123,7 +123,7 @@ TIFFRawStripSize(TIFF* tif, tstrip_t strip)
 	if (bytecount <= 0) {
 		TIFFError(tif->tif_name,
 			  "%lu: Invalid strip byte count, strip %lu",
-			  (u_long) bytecount, (u_long) strip);
+			  (unsigned long) bytecount, (unsigned long) strip);
 		bytecount = (tsize_t) -1;
 	}
 
@@ -214,3 +214,5 @@ TIFFRasterScanlineSize(TIFF* tif)
 		return ((tsize_t)
 		    TIFFhowmany(scanline, 8)*td->td_samplesperpixel);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

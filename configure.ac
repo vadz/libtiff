@@ -76,7 +76,7 @@ case "$target_os" in
 esac
 
 dnl Checks for header files.
-AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h])
+AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -88,17 +88,6 @@ AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 AC_HEADER_TIME
 AC_STRUCT_TM
-dnl Check for BSDTYPES. winsock.h defines those types, so avoid redefinition
-dnl in Cygwin and MinGW environments
-AC_CHECK_TYPES([u_char, u_short, u_int, u_long],,,
-[
-#if HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-#if HAVE_WINSOCK_H
-#include <winsock.h>
-#endif
-])
 dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
 AC_CHECK_TYPES([int8, int16, int32],,,
 [
