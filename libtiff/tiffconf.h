@@ -138,6 +138,11 @@
  *                      no EXTRASAMPLE_ value as being ASSOCALPHA.  Many
  *                      packages produce RGBA files but don't mark the alpha
  *                      properly.
+ * CHECK_JPEG_YCBCR_SUBSAMPLING
+ *                      Enable picking up YCbCr subsampling info from the
+ *                      JPEG data stream to support files lacking the tag.
+ *                      See Bug 168 in Bugzilla, and JPEGFixupTestSubsampling()
+ *                      for details. 
  */
 #ifndef STRIPCHOP_DEFAULT
 #define	STRIPCHOP_DEFAULT	TIFF_STRIPCHOP	/* default is to enable */
@@ -147,6 +152,9 @@
 #endif
 #ifndef DEFAULT_EXTRASAMPLE_AS_ALPHA
 #define DEFAULT_EXTRASAMPLE_AS_ALPHA 1
+#endif
+#ifndef CHECK_JPEG_YCBCR_SUBSAMPLING
+#define CHECK_JPEG_YCBCR_SUBSAMPLING 1
 #endif
 
 #endif /* _TIFFCONF_ */
