@@ -1,3 +1,7 @@
+Mon Nov 29 11:43:42 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Added TIFFWriteTile.3t man page.
+
 Sun Nov 28 20:36:18 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Added notes on use of makefile.vc in build.html, and fixed 
