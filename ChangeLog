@@ -1,3 +1,8 @@
+2000-06-15  Frank Warmerdam  <warmerda@rommel.atlsci.com>
+
+	* Modified tiffio.h logic with regard to including windows.h.  It
+	won't include it when building with __CYGWIN__.
+
 2000-05-11  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* README: update to mention www.libtiff.org, don't list Sam's old
