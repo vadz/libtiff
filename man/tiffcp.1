@@ -60,6 +60,12 @@ in a file, but it is explicitly intended to not alter or convert
 the image data content in any way.
 .SH OPTIONS
 .TP
+.B \-b image
+subtract the following monochrome image from all others
+processed.  This can be used to remove a noise bias
+from a set of images.  This bias image is typlically an
+image of noise the camera saw with its shutter closed.
+.TP
 .B \-B
 Force output to be written with Big-Endian byte order.
 This option only has an effect when the output file is created or
@@ -195,12 +201,6 @@ that no more than 8 kilobytes of data appear in a tile.
 .I tiffcp
 attempts to set the tile dimensions so
 that no more than 8 kilobytes of data appear in a tile.
-.TP
-.B \-b image
-subtract the following monochrome image from all others
-processed.  This can be used to remove a noise bias
-from a set of images.  This bias image is typlically an
-image of noise the camera saw with its shutter closed.
 .TP
 .B \-,={character}
 substitute {character} for ',' in parsing image directory indices
