@@ -1,5 +1,7 @@
 2001-04-02  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* VERSION: update to 3.5.7 beta in preparation for release.
+
 	* configure/config.site: modified to check if -lm is needed for
 	MACHDEPLIBS if not supplied by config.site.  Needed for Darwin.
 
