@@ -260,11 +260,12 @@ ${OBJS}: ${SRCDIR}/tiffcomp.h ${SRCDIR}/tiffiop.h ${SRCDIR}/tiffconf.h
 ${OBJS}: ${SRCDIR}/tiffvers.h
 
 VERSION	= @VERSIONFILE@
+RELEASE_DATE = @RELEASE_DATE_FILE@
 
 ${SRCDIR}/tiffvers.h: ${VERSION} ${SRCDIR}/mkversion.c
 	${CC} -o mkversion ${CFLAGS} ${SRCDIR}/mkversion.c
 	rm -f ${SRCDIR}/tiffvers.h
-	./mkversion -v ${VERSION} ${SRCDIR}/tiffvers.h
+	./mkversion -v ${VERSION} -r ${RELEASE_DATE} ${SRCDIR}/tiffvers.h
 
 tiffvers.h:	${SRCDIR}/tiffvers.h
 
