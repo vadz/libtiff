@@ -1,6 +1,11 @@
 2003-12-19  Andrey Kiselev  <dron@remotesensing.org>
 
-	* tools/tiff2ps.c: Added support for alfa channel. Fixes
+	* libtiff/{tif_extension.c, tif_dirinfo.c, tiff.h}: Warnings fixed as
+	per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=357
+
+	* tools/tiff2ps.c: Added support for alpha channel. Fixes
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=428
 
