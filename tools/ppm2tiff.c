@@ -91,6 +91,11 @@ main(int argc, char* argv[])
 			/*NOTREACHED*/
 		}
 
+	if ( optind + 2 < argc ) {
+	    fprintf(stderr, "%s: Too many arguments\n", argv[0]);
+	    usage();
+	}
+
 	/*
 	 * If only one file is specified, read input from
 	 * stdin; otherwise usage is: ppm2tiff input output.
