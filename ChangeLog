@@ -1,3 +1,8 @@
+2004-11-10  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_aux.c: Set the appropriate ReferenceBlackWhite array for
+	YCbCr image which lacks that tag (noted by Hans Petter Selasky).
+
 2004-11-09  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_color.c: Division by zero fixed (Hans Petter Selasky).
