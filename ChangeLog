@@ -1,3 +1,7 @@
+2004-10-15  Andrey Kiselev  <dron@remotesensing.org>
+
+	* man/bmp2tiff.1: Added manual page for bmp2tiff utility.
+
 2004-10-13  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcmp.c (leof): Renamed from 'eof' in order to avoid

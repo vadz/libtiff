@@ -43,8 +43,8 @@ utilities to release a package.
     be created in the top level package directory.
 
 11. Copy to ftp.remotesensing.org ftp site. 
-    scp tiff-*.tar.gz remotesensing.org:/ftp/remotesensing/pub/libtiff
-    scp tiff-*.zip remotesensing.org:/ftp/remotesensing/pub/libtiff
+    scp tiff-*.tar.gz ftp.remotesensing.org:/ftp/remotesensing/pub/libtiff
+    scp tiff-*.zip ftp.remotesensing.org:/ftp/remotesensing/pub/libtiff
 
 12. Announce to list, tiff@remotesensing.org]
 
