@@ -140,8 +140,8 @@ main(int argc, char* argv[])
 
     sprintf( tiffLibVersion, "#define TIFFLIB_VERSION %4.4s%2.2s%2.2s",
              rawReleaseDate+6, 
-             rawReleaseDate+3,
-             rawReleaseDate+0 );
+             rawReleaseDate+0,
+             rawReleaseDate+3 );
     
     /*
      * Emit the version.h file.
