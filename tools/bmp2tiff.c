@@ -436,6 +436,8 @@ main(int argc, char* argv[])
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, depth);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
+        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
+                     TIFFDefaultStripSize(out, rowsperstrip));
 	
 	if (red_tbl && green_tbl && blue_tbl)
 		TIFFSetField(out, TIFFTAG_COLORMAP, red_tbl, green_tbl, blue_tbl);
@@ -464,7 +466,7 @@ main(int argc, char* argv[])
 
         if (info_hdr.iCompression == BMPC_RGB) {
                 uint32  offset, size;
-                char    *scanbuf;
+                char *scanbuf;
 
                 size = ((width * info_hdr.iBitCount + 31) & ~31) / 8;
                 scanbuf = (char *) _TIFFmalloc(size);
@@ -628,8 +630,8 @@ main(int argc, char* argv[])
 static void
 rearrangePixels(char *buf, uint32 width, uint32 bit_count)
 {
-	char    tmp;
-	int	i;
+	char tmp;
+	uint32 i;
 
         switch(bit_count) {
 		case 16:    /* FIXME: need a sample file */
