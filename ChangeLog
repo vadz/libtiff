@@ -1,3 +1,8 @@
+2003-11-11  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/raw2tiff.c: Implemented image size guessing using
+	correlation coefficient calculation between two neighbour lines.
+
 2003-11-09  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_tile.c: remove spurious use of "s" (sample) in the 
