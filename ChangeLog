@@ -1,3 +1,9 @@
+2004-10-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirwrite.c: Fixed problem with passing count variable of
+	wrong type when writing the TIFF_BYTE/TIFF_SBYTE tags in
+	TIFFWriteNormalTag().
+
 2004-10-28  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2ps.c: Fixed wrong variable data type when read Resolution
