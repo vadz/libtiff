@@ -74,6 +74,9 @@ all:	libtiff.lib libtiff.dll
 tif_config.h:
 	copy tif_config.h.vc tif_config.h
 
+tiffconf.h:
+	copy tiffconf.h.vc tiffconf.h
+
 libtiff.lib:	tif_config.h $(OBJ)
 	$(AR) /out:libtiff.lib $(OBJ) $(LIBS)
 
