@@ -1,3 +1,7 @@
+2003-10-16  Andrey Kiselev  <dron@remotesensing.org>
+
+	* Makefile.in: Add an absolute path to the test_pics.sh call.
+
 2003-10-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tiffcomp.h: #define _BSDTYPES_DEFINED when defining BSD
