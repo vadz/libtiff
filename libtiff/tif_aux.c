@@ -120,7 +120,7 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_PREDICTOR:
                 {
 			TIFFPredictorState* sp = (TIFFPredictorState*) tif->tif_data;
-			*va_arg(ap, uint16*) = sp->predictor;
+			*va_arg(ap, uint16*) = (uint16) sp->predictor;
 			return (1);
                 }
 #ifdef CMYK_SUPPORT
