@@ -1,5 +1,10 @@
 2001-04-02  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tiff.h: Applied hac to try and resolve the problem
+	with the inttypes.h include file on AIX.
+
+	See http://bugzilla.remotesensing.org/show_bug.cgi?id=39
+	
 	* VERSION: update to 3.5.7 beta in preparation for release.
 
 	* configure/config.site: modified to check if -lm is needed for
