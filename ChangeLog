@@ -1,5 +1,10 @@
 2004-10-29  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/tif_fax3.c: Fixed case with the wrong decode routines
+	choosing when the incorrect Group4Options tag set. As per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=323
+
 	* libtiff/tif_dirwrite.c: Fixed problem with passing count variable of
 	wrong type when writing the TIFF_BYTE/TIFF_SBYTE tags in
 	TIFFWriteNormalTag().
