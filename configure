@@ -44,10 +44,8 @@ SRCDIR=					# dir where source is located
 #
 # Setup general configuration parameters.
 #
-DIR_BIN=/usr/local/bin			# destination for applications
-DIR_LIB=/usr/local/lib			# destination for library
-DIR_INC=/usr/local/include		# destination for include files
-DIR_HTML=/var/httpd/htdocs/tiff		# destination for HTML files
+PREFIX=/usr/local                       # root of installation 
+EPREFIX=${PREFIX}
 DIRS_LIBINC=				# dirs to search for ancillary includes
 DIR_JPEGLIB=				# dir for IJG -ljpeg
 DIR_GZLIB=				# dir for zlib -lgz
@@ -99,6 +97,8 @@ Options: [defaults in brackets after descriptions]
   --verbose		  opposite of --quiet
   --noninteractive        don't ask any questions
   --version               print the version of autoconf that created configure
+  --prefix=PREFIX         root of installation [PREFIX=/usr/local]
+  --exec-prefix=EPREFIX   root of installation [EPREFIX=PREFIX]
   --target=TARGET         configure for TARGET [TARGET=HOST]
   --srcdir=DIR            find the sources in DIR [configure dir or ..]
   --with-PARAM[=ARG]      set configuration PARAM [ARG=yes]
@@ -144,6 +144,11 @@ do
     -site=*|--site=*)		SITE="$ac_optarg";;
     -srcdir|--srcdir)		ac_prev=SRCDIR;;
     -srcdir=*|--srcdir=*)	SRCDIR="$ac_optarg";;
+    --exec-prefix)		ac_prev=EPREFIX;;
+    --exec-prefix=*)		EPREFIX="$ac_optarg" ;;
+    --prefix)			ac_prev=PREFIX;;
+    --prefix=*)			PREFIX="$ac_optarg";
+                                EPREFIX=${PREFIX} ;;
     -target|--target)		ac_prev=TARGET;;
     -target=*|--target=*)	TARGET="$ac_optarg" ;;
     -version|--version)
@@ -164,6 +169,11 @@ do
 	;;
     esac
 done
+
+DIR_BIN=${EPREFIX}/bin		# destination for applications
+DIR_LIB=${EPREFIX}/lib		# destination for library
+DIR_INC=${PREFIX}/include		# destination for include files
+DIR_HTML=${PREFIX}/doc/libtiff		# destination for HTML files
 
 if [ -n "$ac_prev" ]; then
     bitch "configure: missing argument to --`echo $ac_prev | sed 's/_/-/g'`"
@@ -1322,7 +1332,7 @@ if [ -z "${DIR_MAN-}" ]; then
     for i in $MANPATH; do
 	test -d $i && { DIR_MAN=$i; break; }
     done
-    test -z "$DIR_MAN" && DIR_MAN=/usr/local/man
+    test -z "$DIR_MAN" && DIR_MAN=${PREFIX}/man
 fi
 Note "Looks like manual pages go in $DIR_MAN."
 if [ -z "${MANSCHEME-}" ]; then

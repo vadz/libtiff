@@ -1,3 +1,9 @@
+2000-11-22  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* I have applied a patch from Steffen Moeller <moeller@ebi.ac.uk> to
+	the configure script so that it now accepts the --prefix, and 
+	--exec-prefix directives. 
+
 2000-11-13  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* I have made a variety of modifications in an effort to ensure the 
