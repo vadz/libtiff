@@ -1,5 +1,6 @@
 HDRS = \
 	tiff.h \
+        tiffconf.h \
 	tiffio.h \
 	tiffvers.h
 

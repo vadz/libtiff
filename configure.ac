@@ -54,12 +54,13 @@ AC_SUBST(LIBTIFF_RELEASE_DATE)
 
 dnl Checks for programs.
 AC_PROG_CC
+
+dnl We want warnings. As many warnings as possible.
+#VL_PROG_CC_WARNINGS()
+
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_LIBTOOL
-
-dnl We want warnings. As many warnings as possible.
-VL_PROG_CC_WARNINGS(ANSI)
 
 dnl Checks for libraries.
 AC_CHECK_LIB([c], [main])
@@ -129,13 +130,23 @@ case "$target_cpu" in
 	AC_MSG_RESULT([msb2lsb])
         ;;
 esac
-AC_DEFINE_UNQUOTED(HOST_FILLORDER, $HOST_FILLORDER, [Set the native cpu bit order])
+AC_DEFINE_UNQUOTED(HOST_FILLORDER, $HOST_FILLORDER, [Set the native cpu bit order (FILLORDER_LSB2MSB or FILLORDER_MSB2LSB)])
+
+dnl ---------------------------------------------------------------------------
+dnl Configure legacy tifconf.h HOST_BIGENDIAN.
+dnl ---------------------------------------------------------------------------
+if test "$ac_cv_c_bigendian" = yes ; then
+    HOST_BIGENDIAN=1
+else
+    HOST_BIGENDIAN=0
+fi
+AC_DEFINE_UNQUOTED(HOST_BIGENDIAN,$HOST_BIGENDIAN,[Native cpu byte order: 1 if big-endian (Motorola) or 0 if little-endian (Intel)])
 
 dnl ---------------------------------------------------------------------------
 dnl Make the POSIX.2 features available.
 dnl ---------------------------------------------------------------------------
-_POSIX_C_SOURCE=2
-AC_DEFINE_UNQUOTED(_POSIX_C_SOURCE, $_POSIX_C_SOURCE, [Define this macro to a positive integer to control which POSIX functionality is made available.])
+#_POSIX_C_SOURCE=2
+#AC_DEFINE_UNQUOTED(_POSIX_C_SOURCE, $_POSIX_C_SOURCE, [Define this macro to a positive integer to control which POSIX functionality is made available.])
 
 dnl ---------------------------------------------------------------------------
 dnl Set the floating point format.
@@ -153,7 +164,7 @@ HAVE_CCITT=yes
 AC_ARG_ENABLE(ccitt, AS_HELP_STRING([--disable-ccitt], [disable support for CCITT Group 3 & 4 algorithms]), [HAVE_CCITT=no], [HAVE_CCITT=yes])
 
 if test "$HAVE_CCITT" = "yes" ; then
-  CPPFLAGS="-DCCITT_SUPPORT $CPPFLAGS"
+  AC_DEFINE(CCITT_SUPPORT,1,[Support CCITT Group 3 & 4 algorithms])
 fi
 
 HAVE_PACKBITS=yes
@@ -161,7 +172,7 @@ HAVE_PACKBITS=yes
 AC_ARG_ENABLE(packbits, AS_HELP_STRING([--disable-packbits], [disable support for Macintosh PackBits algorithm]), [HAVE_PACKBITS=no], [HAVE_PACKBITS=yes])
 
 if test "$HAVE_PACKBITS" = "yes" ; then
-  CPPFLAGS="-DPACKBITS_SUPPORT $CPPFLAGS"
+  AC_DEFINE(PACKBITS_SUPPORT,1,[Support Macintosh PackBits algorithm])
 fi
 
 HAVE_LZW=yes
@@ -169,7 +180,7 @@ HAVE_LZW=yes
 AC_ARG_ENABLE(lzw, AS_HELP_STRING([--disable-lzw], [disable support for LZW algorithm]), [HAVE_LZW=no], [HAVE_LZW=yes])
 
 if test "$HAVE_LZW" = "yes" ; then
-  CPPFLAGS="-DLZW_SUPPORT $CPPFLAGS"
+  AC_DEFINE(LZW_SUPPORT,1,[Support LZW algorithm])
 fi
 
 HAVE_THUNDER=yes
@@ -177,7 +188,7 @@ HAVE_THUNDER=yes
 AC_ARG_ENABLE(thunder, AS_HELP_STRING([--disable-thunder], [disable support for ThunderScan 4-bit RLE algorithm]), [HAVE_THUNDER=no], [HAVE_THUNDER=yes])
 
 if test "$HAVE_THUNDER" = "yes" ; then
-  CPPFLAGS="-DTHUNDER_SUPPORT $CPPFLAGS"
+  AC_DEFINE(THUNDER_SUPPORT,1,[Support ThunderScan 4-bit RLE algorithm])
 fi
 
 HAVE_NEXT=yes
@@ -185,7 +196,7 @@ HAVE_NEXT=yes
 AC_ARG_ENABLE(next, AS_HELP_STRING([--disable-next], [disable support for NeXT 2-bit RLE algorithm]), [HAVE_NEXT=no], [HAVE_NEXT=yes])
 
 if test "$HAVE_NEXT" = "yes" ; then
-  CPPFLAGS="-DNEXT_SUPPORT $CPPFLAGS"
+  AC_DEFINE(NEXT_SUPPORT,1,[Support NeXT 2-bit RLE algorithm])
 fi
 
 HAVE_LOGLUV=yes
@@ -193,7 +204,7 @@ HAVE_LOGLUV=yes
 AC_ARG_ENABLE(logluv, AS_HELP_STRING([--disable-logluv], [disable support for LogLuv high dynamic range encoding]), [HAVE_LOGLUV=no], [HAVE_LOGLUV=yes])
 
 if test "$HAVE_LOGLUV" = "yes" ; then
-  CPPFLAGS="-DLOGLUV_SUPPORT $CPPFLAGS"
+  AC_DEFINE(LOGLUV_SUPPORT,1,[Support LogLuv high dynamic range encoding])
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -231,7 +242,7 @@ if test "x$enable_zlib" != "xno" ; then
 fi
 
 if test "$HAVE_ZLIB" = "yes" ; then
-  CPPFLAGS="-DZIP_SUPPORT $CPPFLAGS"
+  AC_DEFINE(ZIP_SUPPORT,1,[Support Deflate compression])
   LIBS="-lz $LIBS"
 fi
 
@@ -242,7 +253,7 @@ dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(pixarlog, AS_HELP_STRING([--disable-pixarlog], [disable support for Pixar log-format algorithm (requires Zlib)]), [HAVE_PIXARLOG=no], [HAVE_PIXARLOG=yes])
 
 if test "$HAVE_ZLIB" = "yes" -a "$HAVE_PIXARLOG" = "yes" ; then
-  CPPFLAGS="-DPIXARLOG_SUPPORT $CPPFLAGS"
+  AC_DEFINE(PIXARLOG_SUPPORT,1,[Support Pixar log-format algorithm (requires Zlib)])
 else
   HAVE_PIXARLOG=no
 fi
@@ -282,7 +293,7 @@ if test "x$enable_jpeg" != "xno" ; then
 fi
 
 if test "$HAVE_JPEG" = "yes" ; then
-  CPPFLAGS="-DJPEG_SUPPORT $CPPFLAGS"
+  AC_DEFINE(JPEG_SUPPORT,1,[Support JPEG compression (requires IJG JPEG library)])
   LIBS="-ljpeg $LIBS"
 fi
 
@@ -293,7 +304,7 @@ dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(old-jpeg, AS_HELP_STRING([--enable-old-jpeg], [enable support for Old JPEG compresson (read contrib/ojpeg/README first! Compilation fails with unpatched IJG JPEG library)]), [HAVE_OJPEG=yes], [HAVE_OJPEG=no])
 
 if test "$HAVE_JPEG" = "yes" -a "$HAVE_OJPEG" = "yes" ; then
-  CPPFLAGS="-DOJPEG_SUPPORT $CPPFLAGS"
+  AC_DEFINE(OJPEG_SUPPORT,1,[Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation fails with unpatched IJG JPEG library)])
 else
   HAVE_OJPEG=no
 fi
@@ -369,8 +380,13 @@ HAVE_STRIPCHOP=yes
 AC_ARG_ENABLE(strip-chopping, AS_HELP_STRING([--disable-strip-chopping], [disable support for strip chopping (whether or not to convert single-strip uncompressed images to mutiple strips of ~8Kb to reduce memory usage)]), [HAVE_STRIPCHOP=no], [HAVE_STRIPCHOP=yes])
 
 if test "$HAVE_STRIPCHOP" = "yes" ; then
-  CPPFLAGS="-DSTRIPCHOP_DEFAULT=TIFF_STRIPCHOP $CPPFLAGS"
+  AC_DEFINE(STRIPCHOP_DEFAULT,TIFF_STRIPCHOP,[Support strip chopping (whether or not to convert single-strip uncompressed images to mutiple strips of ~8Kb to reduce memory usage)])
 fi
+
+dnl ---------------------------------------------------------------------------
+dnl Default subifd support.
+dnl ---------------------------------------------------------------------------
+AC_DEFINE(SUBIFD_SUPPORT,1,[Enable SubIFD tag (330) support])
 
 dnl ---------------------------------------------------------------------------
 dnl Default handling of ASSOCALPHA support.
@@ -381,7 +397,7 @@ HAVE_EXTRASAMPLE_AS_ALPHA=yes
 AC_ARG_ENABLE(extrasample-as-alpha, AS_HELP_STRING([--disable-extrasample-as-alpha], [the RGBA interface will treat a fourth sample with no EXTRASAMPLE_ value as being ASSOCALPHA. Many packages produce RGBA files but don't mark the alpha properly]), [HAVE_EXTRASAMPLE_AS_ALPHA=no], [HAVE_EXTRASAMPLE_AS_ALPHA=yes])
 
 if test "$HAVE_EXTRASAMPLE_AS_ALPHA" = "yes" ; then
-  CPPFLAGS="-DDEFAULT_EXTRASAMPLE_AS_ALPHA $CPPFLAGS"
+  AC_DEFINE(DEFAULT_EXTRASAMPLE_AS_ALPHA,1,[Treat extra sample as alpha (default enabled). The RGBA interface will treat a fourth sample with no EXTRASAMPLE_ value as being ASSOCALPHA. Many packages produce RGBA files but don't mark the alpha properly.])
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -394,13 +410,12 @@ CHECK_JPEG_YCBCR_SUBSAMPLING=yes
 AC_ARG_ENABLE(check-ycbcr-subsampling, AS_HELP_STRING([--disable-check-ycbcr-subsampling], [disable picking up YCbCr subsampling info from the JPEG data stream to support files lacking the tag]), [CHECK_JPEG_YCBCR_SUBSAMPLING=no], [CHECK_JPEG_YCBCR_SUBSAMPLING=yes])
 
 if test "$CHECK_JPEG_YCBCR_SUBSAMPLING" = "yes" ; then
-  CPPFLAGS="-DCHECK_JPEG_YCBCR_SUBSAMPLING $CPPFLAGS"
+  AC_DEFINE(CHECK_JPEG_YCBCR_SUBSAMPLING,1,[Pick up YCbCr subsampling info from the JPEG data stream to support files lacking the tag (default enabled).])
 fi
 
 dnl ---------------------------------------------------------------------------
 
-AC_CONFIG_SRCDIR(libtiff/tif_config.h.in)
-AM_CONFIG_HEADER(libtiff/tif_config.h)
+AC_CONFIG_HEADERS([libtiff/tif_config.h libtiff/tiffconf.h])
 
 AC_CONFIG_FILES([Makefile \
 		 contrib/Makefile \

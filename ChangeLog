@@ -1,3 +1,17 @@
+2004-09-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Pass library configuration defines via
+	tif_config.h rather than extending CPPFLAGS. Configure a
+	libtiff/tiffconf.h in order to satisfy application requirements
+	(not used by library build). Do not define _POSIX_C_SOURCE=2 since
+	this causes failure to build on systems which properly respect
+	this request.
+
+	* libtiff/tiffconf.h.in: New file to act as the template for the
+	configured tiffconf.h
+
+	* libtiff/files.lst (HDRS): Install the configured tiffconf.h.
+
 2004-09-10  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* html/internals.html: Split off a discussion of adding new tags

@@ -1,5 +1,17 @@
 /* libtiff/tif_config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Support CCITT Group 3 & 4 algorithms */
+#undef CCITT_SUPPORT
+
+/* Pick up YCbCr subsampling info from the JPEG data stream to support files
+   lacking the tag (default enabled). */
+#undef CHECK_JPEG_YCBCR_SUBSAMPLING
+
+/* Treat extra sample as alpha (default enabled). The RGBA interface will
+   treat a fourth sample with no EXTRASAMPLE_ value as being ASSOCALPHA. Many
+   packages produce RGBA files but don't mark the alpha properly. */
+#undef DEFAULT_EXTRASAMPLE_AS_ALPHA
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -118,8 +130,28 @@
 /* Define to 1 if you have the <winsock.h> header file. */
 #undef HAVE_WINSOCK_H
 
-/* Set the native cpu bit order */
+/* Native cpu byte order: 1 if big-endian (Motorola) or 0 if little-endian
+   (Intel) */
+#undef HOST_BIGENDIAN
+
+/* Set the native cpu bit order (FILLORDER_LSB2MSB or FILLORDER_MSB2LSB) */
 #undef HOST_FILLORDER
+
+/* Support JPEG compression (requires IJG JPEG library) */
+#undef JPEG_SUPPORT
+
+/* Support LogLuv high dynamic range encoding */
+#undef LOGLUV_SUPPORT
+
+/* Support LZW algorithm */
+#undef LZW_SUPPORT
+
+/* Support NeXT 2-bit RLE algorithm */
+#undef NEXT_SUPPORT
+
+/* Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation
+   fails with unpatched IJG JPEG library) */
+#undef OJPEG_SUPPORT
 
 /* Name of package */
 #undef PACKAGE
@@ -139,14 +171,30 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of a `int', as computed by sizeof. */
+/* Support Macintosh PackBits algorithm */
+#undef PACKBITS_SUPPORT
+
+/* Support Pixar log-format algorithm (requires Zlib) */
+#undef PIXARLOG_SUPPORT
+
+/* The size of `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
-/* The size of a `long', as computed by sizeof. */
+/* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Support strip chopping (whether or not to convert single-strip uncompressed
+   images to mutiple strips of ~8Kb to reduce memory usage) */
+#undef STRIPCHOP_DEFAULT
+
+/* Enable SubIFD tag (330) support */
+#undef SUBIFD_SUPPORT
+
+/* Support ThunderScan 4-bit RLE algorithm */
+#undef THUNDER_SUPPORT
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
@@ -161,15 +209,14 @@
    first (like Motorola and SPARC, unlike Intel and VAX). */
 #undef WORDS_BIGENDIAN
 
+/* Support Deflate compression */
+#undef ZIP_SUPPORT
+
 /* Number of bits in a file offset, on hosts where this is settable. */
 #undef _FILE_OFFSET_BITS
 
 /* Define for large files, on AIX-style hosts. */
 #undef _LARGE_FILES
-
-/* Define this macro to a positive integer to control which POSIX
-   functionality is made available. */
-#undef _POSIX_C_SOURCE
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
@@ -180,8 +227,8 @@
 #undef inline
 #endif
 
-/* Define to `long' if <sys/types.h> does not define. */
+/* Define to `long int' if <sys/types.h> does not define. */
 #undef off_t
 
-/* Define to `unsigned' if <sys/types.h> does not define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
