@@ -32,6 +32,7 @@ OBJ	= \
 	fax3sm_winnt.obj \
 	tif_getimage.obj \
 	tif_jpeg.obj \
+	tif_ojpeg.obj \
 	tif_flush.obj \
 	tif_luv.obj \
 	tif_lzw.obj \
