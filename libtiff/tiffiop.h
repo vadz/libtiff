@@ -46,6 +46,8 @@
 
 #if HAVE_ASSERT_H
 # include <assert.h>
+#else
+# define assert(x) 
 #endif
 
 #include "tiffio.h"
