@@ -381,7 +381,7 @@ TIFFDataWidth(TIFFDataType type)
 	case 12: /* TIFF_DOUBLE */
 		return 8;
 	default:
-		return 1; /* will return safe value for unknown sizes */
+		return 1; /* will return safe value for unknown types */
 	}
 }
 
