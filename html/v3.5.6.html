@@ -32,6 +32,7 @@ The following information is located here:
 <LI><A HREF="#configure">Changes in the software configuration</A>
 <LI><A HREF="#libtiff">Changes in libtiff</A>
 <LI><A HREF="#tools">Changes in the tools</A>
+<LI><A HREF="#contrib">Changes in contrib</A>
 <LI><A HREF="#lzwkit">Changes in the LZW compression kit</A>
 </UL>
 <p> 
@@ -41,9 +42,11 @@ The following information is located here:
 
 <UL>
 
-	<LI> Added GNULDdso target an`d switched linux and freebsd to use it. 
+	<LI> Added GNULDdso target and switched linux and freebsd to use it. 
 	<LI> tools/Makefile.in: Modified to install properly on SGI.
-	<LI> configure:  Fixed stupid mistake in libc6 test on Linux
+	<LI> configure: Fixed DSO test for Linux as per patch from
+	  Jan Van Buggenhout <chipzz@Ace.ULYSSIS.Student.KULeuven.Ac.Be>.
+
 </UL>
 
 <P><HR WIDTH=65% ALIGN=left>
@@ -52,9 +55,6 @@ The following information is located here:
 
 
 <UL> 
-
-	<LI> tools/rgb2ycbcr.c: fixed output strip size to account for vertical 
-	roundup if rows_per_strip not a multiple of vertical sample size.
 
 	<LI> tif_dir.c: Clear TIFF_ISTILED flag in TIFFDefaultDirectory
 	as per http://bugzilla.remotesensing.org/show_bug.cgi?id=18
@@ -89,12 +89,6 @@ The following information is located here:
 	we are done access data thanks to bug report from:
 	Michael Eckstein <eckstein@gepro.cz>.
 
-	<LI> tif_flush.c: Changed so that TIFFFlushData() doesn't return an
-	error when TIFF_BEENWRITING is not set.  This ensures that the
-	directory contents can still be flushed by TIFFFlush().
-
-	<LI> Reverted tif_flush change.
-
 	<LI> tif_open.c: Don't set MMAP for O_RDWR files.
 
 	<LI> tif_open.c: Set STRIPCHOP_DEFAULT for O_RDWR as well as O_RDONLY
@@ -121,16 +115,9 @@ The following information is located here:
 	<LI> README: update to mention www.libtiff.org, don't list Sam's old
 	email address.
 
-	<LI> configure: Fixed DSO test for Linux as per patch from
-	  Jan Van Buggenhout <chipzz@Ace.ULYSSIS.Student.KULeuven.Ac.Be>.
-
 	<LI> libtiff/tif_dirread.c: Don't use estimate strip byte count for
 	one tile/strip images with an offset, and byte count of zero. These
 	could be "unpopulated" images. 
-
-	<LI> contrib/addtiffo: Added "averaging" resampling option.
-
-	<LI> tools/tiffsplit.c: Copy TIFFTAG_SAMPLEFORMAT.
 
 	<LI> tif_win32.c:  Applied patch to fix overreads and ovverwrites
 	  caught by BoundsChecker.  From Arvan Pritchard 
@@ -142,6 +129,9 @@ The following information is located here:
 	<LI> tif_lzw.c:  Applied patch to silence VC6 warnings.  From 
 	  Arvan Pritchard <arvan.pritchard@informatix.co.uk>
 
+	<LI> libtiff/tif_apple.c: Applied "Carbon" support patches supplied by
+	Leonard Rosenthol <leonardr@lazerware.com>.  May interfere
+	with correct building on older systems.  If so, please let me know.
 
 
 </UL>
@@ -152,10 +142,25 @@ The following information is located here:
 
 <UL>
 
+	<LI> tools/rgb2ycbcr.c: fixed output strip size to account for vertical 
+	roundup if rows_per_strip not a multiple of vertical sample size.
+
+	<LI> tools/tiffsplit.c: Copy TIFFTAG_SAMPLEFORMAT.
+
 	<LI>  Modified tiff2bw to ensure portions add to 100%, and that
 	 white is properly recovered.  See bug
 	 http://bugzilla.remotesensing.org/show_bug.cgi?id=15 Patch
 	 c/o Stanislav Brabec <utx@penguin.cz>
+
+</UL>
+
+<P><HR WIDTH=65% ALIGN=left>
+
+<A NAME="contrib"><B><FONT SIZE=+3>C</FONT>HANGES IN CONTRIB:</B></A>
+
+<UL>
+
+	<LI> contrib/addtiffo: Added "averaging" resampling option.
 
 	<LI> Added contrib/stream (stream io) code submitted by Avi Bleiweiss.
 
