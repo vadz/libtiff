@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.6  2004-04-20 14:24:31  dron
+ * Revision 1.7  2004-04-20 14:54:05  dron
+ * Fixed problem with unaligned access as per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=555
+ *
+ * Revision 1.6  2004/04/20 14:24:31  dron
  * Obsoleted configuration switches removed.
  *
  * Revision 1.5  2004/01/26 17:00:56  dron
@@ -1036,6 +1040,8 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	}
 	_TIFFmemset( t2p->tiff_tiles, 0x00, directorycount * sizeof(T2P_TILES));
 	for(i=0;i<directorycount;i++){
+		uint32 subfiletype = 0;
+		
 		if(!TIFFSetDirectory(input, i)){
 			TIFFError(
 				TIFF2PDF_MODULE, 
@@ -1054,17 +1060,18 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			}
 			goto ispage2;
 		}
-		if(TIFFGetField(input, TIFFTAG_SUBFILETYPE, &xuint16)){
-			if ( ((xuint16 & FILETYPE_PAGE) != 0) || (xuint16 == 0)){
+		if(TIFFGetField(input, TIFFTAG_SUBFILETYPE, &subfiletype)){
+			if ( ((subfiletype & FILETYPE_PAGE) != 0)
+                             || (subfiletype == 0)){
 				goto ispage;
 			} else {
 				goto isnotpage;
 			}
 		}
-		if(TIFFGetField(input, TIFFTAG_OSUBFILETYPE, &xuint16)){
-			if ((xuint16==OFILETYPE_IMAGE) 
-				|| (xuint16==OFILETYPE_PAGE)
-				|| (xuint16==0) ){
+		if(TIFFGetField(input, TIFFTAG_OSUBFILETYPE, &subfiletype)){
+			if ((subfiletype == OFILETYPE_IMAGE) 
+				|| (subfiletype == OFILETYPE_PAGE)
+				|| (subfiletype == 0) ){
 				goto ispage;
 			} else {
 				goto isnotpage;
@@ -1088,7 +1095,8 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	for(i=0;i<t2p->tiff_pagecount;i++){
 		t2p->pdf_xrefcount += 5;
 		TIFFSetDirectory(input, t2p->tiff_pages[i].page_directory );
-		if( (TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &xuint16) && (xuint16==PHOTOMETRIC_PALETTE))
+		if( (TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &xuint16)
+                     && (xuint16==PHOTOMETRIC_PALETTE))
 			|| TIFFGetField(input, TIFFTAG_INDEXED, &xuint16) ){
 			t2p->tiff_pages[i].page_extra++;
 			t2p->pdf_xrefcount++;
@@ -2580,7 +2588,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -2600,7 +2609,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -2619,7 +2629,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 		if(t2p->tiff_compression == COMPRESSION_OJPEG){
 			if(! t2p->pdf_ojpegdata){
 				TIFFError(TIFF2PDF_MODULE, 
-					"No support for OJPEG image %s with bad tables", 
+					"No support for OJPEG image %s with "
+                                        "bad tables", 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2627,7 +2638,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer=(unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -2665,7 +2677,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -2707,7 +2720,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 		buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+				"Can't allocate %u bytes of memory for "
+                                "t2p_readwrite_pdf_image_tile, %s", 
 				t2p->tiff_datasize, 
 				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
@@ -2739,7 +2753,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -2748,7 +2763,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			samplebuffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(samplebuffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -2786,7 +2802,8 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image_tile, %s", 
+					"Can't allocate %u bytes of memory "
+                                        "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
