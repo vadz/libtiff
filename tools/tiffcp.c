@@ -4,6 +4,20 @@
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
  *
+ *  Revised:  2/18/01 BAR -- added syntax for extracting single images from
+ *                          multi-image TIFF files.
+ *
+ *    New syntax is:  sourceFileName,image#
+ *
+ * image# ranges from 0..<n-1> where n is the # of images in the file.
+ * There may be no white space between the comma and the filename or
+ * image number.
+ *
+ *    Example:   tiffcp source.tif,1 destination.tif
+ *
+ * Copies the 2nd image in source.tif to the destination.
+ *
+ *****
  * Permission to use, copy, modify, distribute, and sell this software and 
  * its documentation for any purpose is hereby granted without fee, provided
  * that (i) the above copyright notices and this permission notice appear in
@@ -64,6 +78,65 @@ static	int tiffcp(TIFF*, TIFF*);
 static	int processCompressOptions(char*);
 static	void usage(void);
 
+static char comma = ',';  /* (default) comma separator character */
+static TIFF* bias = NULL;
+
+static int nextSrcImage (TIFF *tif, char **imageSpec)
+/*
+  seek to the next image specified in *imageSpec
+  returns 1 if success, 0 if no more images to process
+  *imageSpec=NULL if subsequent images should be processed in sequence
+*/
+{
+  if (**imageSpec == comma) {  /* if not @comma, we've done all images */
+    char *start = *imageSpec + 1;
+    unsigned long nextImage = strtol (start, imageSpec, 0);
+    if (start == *imageSpec) nextImage = TIFFCurrentDirectory (tif);
+    if (**imageSpec)
+      if (**imageSpec == comma) {  
+        /* a trailing comma denotes remaining images in sequence */
+        if ((*imageSpec)[1] == '\0') *imageSpec == NULL;
+      }else{
+        fprintf (stderr, 
+          "Expected a %c separated image # list after %s\n",
+          comma, TIFFFileName (tif));
+        exit (-4);   /* syntax error */
+      }
+    if (TIFFSetDirectory (tif, nextImage)) return 1;  
+    fprintf (stderr, "%s%c%d not found!\n", TIFFFileName(tif),comma,nextImage); 
+  }
+  return 0;
+}
+
+  
+static TIFF* openSrcImage (char **imageSpec)
+/*
+  imageSpec points to a pointer to a filename followed by optional ,image#'s
+  Open the TIFF file and assign *imageSpec to either NULL if there are
+  no images specified, or a pointer to the next image number text
+*/
+{
+    TIFF *tif;
+    char *fn = *imageSpec;
+    *imageSpec = strchr (fn, comma);
+    if (*imageSpec) {  /* there is at least one image number specifier */
+        **imageSpec = '\0'; 
+        tif = TIFFOpen (fn, "r");
+        /* but, ignore any single trailing comma */
+        if (!(*imageSpec)[1]) {*imageSpec = NULL; return tif;}
+        if (tif) { 
+            **imageSpec = comma;  /* replace the comma */
+            if (!nextSrcImage(tif, imageSpec)) {
+              TIFFClose (tif);
+              tif = NULL;
+            }
+        }
+    }else
+        tif = TIFFOpen (fn, "r");
+    return tif;
+}
+
+
 int
 main(int argc, char* argv[])
 {
@@ -72,7 +145,7 @@ main(int argc, char* argv[])
 	uint32 deftilewidth = (uint32) -1;
 	uint32 deftilelength = (uint32) -1;
 	uint32 defrowsperstrip = (uint32) -1;
-	uint32 diroff = 0, p_diroff = 0;
+	uint32 diroff = 0;
 	TIFF* in;
 	TIFF* out;
 	char mode[10];
@@ -83,8 +156,33 @@ main(int argc, char* argv[])
 
 	*mp++ = 'w';
 	*mp = '\0';
-	while ((c = getopt(argc, argv, "c:f:l:o:z:p:r:w:aistBLMC")) != -1)
+	while ((c = getopt(argc, argv, ",:b:c:f:l:o:z:p:r:w:aistBLMC")) != -1)
 		switch (c) {
+                case ',':
+                        if (optarg[0] != '=') usage();
+                        comma = optarg[1];
+                        break;
+                case 'b':   /* this file is bias image subtracted from others */
+                        if (bias) {
+                          fputs ("Only 1 bias image may be specified\n", stderr);
+                          exit (-2);
+                        }
+                        {
+                          uint16    samples = -1;
+                          char **biasFn = &optarg;
+                          bias = openSrcImage (biasFn);
+                          if (!bias) exit (-5);
+                          if (TIFFIsTiled (bias)) {
+                     fputs ("Bias image must be organized in strips\n", stderr);
+                            exit (-7);
+                          }
+		          TIFFGetField(bias, TIFFTAG_SAMPLESPERPIXEL, &samples);
+                          if (samples != 1) {
+                     fputs ("Bias image must be monochrome\n", stderr);
+                            exit (-7);
+                          }
+                        }
+                        break;
 		case 'a':		/* append to output */
 			mode[0] = 'a';
 			break;
@@ -109,9 +207,6 @@ main(int argc, char* argv[])
 			break;
 		case 'o':		/* initial directory offset */
 			diroff = strtoul(optarg, NULL, 0);
-			break;
-		case 'z':		/* initial directory offset */
-			p_diroff = strtoul(optarg, NULL, 0);
 			break;
 		case 'p':		/* planar configuration */
 			if (streq(optarg, "separate"))
@@ -155,9 +250,9 @@ main(int argc, char* argv[])
 	out = TIFFOpen(argv[argc-1], mode);
 	if (out == NULL)
 		return (-2);
-	mode[0] = 'r';
 	for (; optind < argc-1 ; optind++) {
-		in = TIFFOpen(argv[optind], mode);
+                char *imageCursor = argv[optind];
+		in = openSrcImage (&imageCursor);
 		if (in == NULL)
 			return (-3);
 		if (diroff != 0 && !TIFFSetSubDirectory(in, diroff)) {
@@ -166,31 +261,28 @@ main(int argc, char* argv[])
 			(void) TIFFClose(out);
 			return (1);
 		}
-		if (p_diroff != 0 && !TIFFSetDirectory(in, p_diroff)) {
-			TIFFError(TIFFFileName(in),
-			    "Error, setting subdirectory at %#x", diroff);
-			(void) TIFFClose(out);
-			return (1);
+                for (;;) {
+                   config = defconfig;
+                   compression = defcompression;
+                   predictor = defpredictor;
+                   fillorder = deffillorder;
+                   rowsperstrip = defrowsperstrip;
+                   tilewidth = deftilewidth;
+                   tilelength = deftilelength;
+                   g3opts = defg3opts;
+                   if (!tiffcp(in, out) || !TIFFWriteDirectory(out)) {
+                        TIFFClose(out);
+                        return (1);
+                   }
+                   if (imageCursor) { /* seek next image directory */
+                        if (!nextSrcImage(in, &imageCursor)) break;
+                   }else
+                        if (!TIFFReadDirectory(in)) break;
 		}
-		do {
-			config = defconfig;
-			compression = defcompression;
-			predictor = defpredictor;
-			fillorder = deffillorder;
-			rowsperstrip = defrowsperstrip;
-			tilewidth = deftilewidth;
-			tilelength = deftilelength;
-			g3opts = defg3opts;
-			if (!tiffcp(in, out) || !TIFFWriteDirectory(out)) {
-				(void) TIFFClose(out);
-				return (1);
-			}
-		} while (TIFFReadDirectory(in) && p_diroff == 0 );
-		(void) TIFFClose(in);
+		TIFFClose(in);
 	}
-	(void) TIFFClose(out);
-	return (0);
 }
+
 
 static void
 processG3Options(char* cp)
@@ -256,6 +348,8 @@ char* stuff[] = {
 " -s		write output in strips",
 " -t		write output in tiles",
 " -i		ignore read errors",
+" -b file[,#]	bias (dark) monochrome image to be subtracted from all others",
+" -,=%	    	use % rather than , to separate image #'s (per Note below)",           
 "",
 " -r #		make each strip have no more than # rows",
 " -w #		set output tile width (pixels)",
@@ -267,7 +361,7 @@ char* stuff[] = {
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
 "               (no longer supported by default due to Unisys patent enforcement)", 
 " -c zip[:opts]	compress output with deflate encoding",
-" -c jpeg[:opts]compress output with JPEG encoding",
+" -c jpeg[:opts]	compress output with JPEG encoding",
 " -c packbits	compress output with packbits encoding",
 " -c g3[:opts]	compress output with CCITT Group 3 encoding",
 " -c g4		compress output with CCITT Group 4 encoding",
@@ -287,6 +381,11 @@ char* stuff[] = {
 "LZW and deflate options:",
 " #		set predictor value",
 "For example, -c lzw:2 to get LZW-encoded data with horizontal differencing",
+"",
+"Note that input filenames may be of the form filename,x,y,z",
+"where x, y, and z specify image numbers in the filename to copy.",
+"example:  tiffcp -c none -b esp.tif,1 esp.tif,0 test.tif",
+"  subtract 2nd image in esp.tif from 1st yielding uncompressed result test.tif",
 NULL
 };
 
@@ -580,6 +679,88 @@ bad:
 	_TIFFfree(buf);
 	return (FALSE);
 }
+
+
+typedef void biasFn (void *image, void *bias, uint32 pixels);
+
+#define subtract(bits) \
+static void subtract##bits (void *i, void *b, uint32 pixels)\
+{\
+   uint##bits *image = i;\
+   uint##bits *bias = b;\
+   while (pixels--) {\
+     *image = *image > *bias ? *image-*bias : 0;\
+     image++, bias++; \
+   } \
+}
+
+subtract(8)
+subtract(16)
+subtract(32)
+
+static biasFn *lineSubtractFn (unsigned bits)
+{
+    switch (bits) {
+      case  8:  return subtract8;
+      case 16:  return subtract16;
+      case 32:  return subtract32;
+    }
+    return NULL;
+}
+
+/*
+ * Contig -> contig by scanline while subtracting a bias image.
+ */
+DECLAREcpFunc(cpBiasedContig2Contig)
+{
+  if (spp == 1) {
+    tsize_t biasSize = TIFFScanlineSize(bias);
+    tsize_t bufSize = TIFFScanlineSize(in);
+    tdata_t buf, biasBuf;
+    uint32 biasWidth = 0, biasLength = 0;
+    TIFFGetField(bias, TIFFTAG_IMAGEWIDTH, &biasWidth);
+    TIFFGetField(bias, TIFFTAG_IMAGELENGTH, &biasLength);
+    if (biasSize == bufSize && 
+        imagelength == biasLength && imagewidth == biasWidth) {
+      uint16 sampleBits = 0;
+      biasFn *subtractLine;
+      TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &sampleBits);
+      subtractLine = lineSubtractFn (sampleBits);
+      if (subtractLine) {
+        uint32 row;
+        buf = _TIFFmalloc(bufSize);
+        biasBuf = _TIFFmalloc(bufSize);
+       	for (row = 0; row < imagelength; row++) {
+	  if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore)
+		break;
+	  if (TIFFReadScanline(bias, biasBuf, row, 0) < 0 && !ignore)
+		break;
+          subtractLine (buf, biasBuf, imagewidth);
+	  if (TIFFWriteScanline(out, buf, row, 0) < 0) {
+            _TIFFfree(buf); _TIFFfree(biasBuf);
+            return FALSE;
+	  }
+	}
+	_TIFFfree(buf); _TIFFfree(biasBuf);
+        TIFFSetDirectory (bias, TIFFCurrentDirectory(bias)); /* rewind */
+	return TRUE;
+        
+      }else{
+        fprintf (stderr, "No support for biasing %d bit pixels\n", sampleBits);
+        return FALSE;
+      }
+    }
+    fprintf (stderr,"Bias image %s,%d\nis not the same size as %s,%d\n",
+             TIFFFileName(bias), TIFFCurrentDirectory(bias),
+             TIFFFileName(in), TIFFCurrentDirectory(in));
+    return FALSE;
+  }else{
+    fprintf (stderr, "Can't bias %s,%d as it has >1 Sample/Pixel\n",
+             TIFFFileName(in), TIFFCurrentDirectory(in));
+    return FALSE;
+  }
+}
+
 
 /*
  * Strip -> strip for change in encoding.
@@ -1226,26 +1407,35 @@ pickCopyFunc(TIFF* in, TIFF* out, uint16 bitspersample, uint16 samplesperpixel)
 	(void) TIFFGetField(in, TIFFTAG_PLANARCONFIG, &shortv);
 	if (shortv != config && bitspersample != 8 && samplesperpixel > 1) {
 		fprintf(stderr,
-"%s: Can not handle different planar configuration w/ bits/sample != 8\n",
+"%s: Cannot handle different planar configuration w/ bits/sample != 8\n",
 		    TIFFFileName(in));
 		return (NULL);
 	}
 	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &w);
 	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &l);
-	if (TIFFIsTiled(out)) {
+        if (!(TIFFIsTiled(out) || TIFFIsTiled(in))) {
+	    uint32 irps = (uint32) -1L;
+	    TIFFGetField(in, TIFFTAG_ROWSPERSTRIP, &irps);
+            /* if biased, force decoded copying to allow image subtraction */
+ 	    bychunk = !bias && (rowsperstrip == irps);
+	}else{  /* either in or out is tiled */
+            if (bias) {
+                  fprintf(stderr,
+"%s: Cannot handle tiled configuration w/bias image\n",
+                  TIFFFileName(in));
+                  return (NULL);
+            }
+	    if (TIFFIsTiled(out)) {
 		if (!TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw))
 			tw = w;
 		if (!TIFFGetField(in, TIFFTAG_TILELENGTH, &tl))
 			tl = l;
 		bychunk = (tw == tilewidth && tl == tilelength);
-	} else if (TIFFIsTiled(in)) {
+	    } else {  /* out's not, so in must be tiled */
 		TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
 		TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
 		bychunk = (tw == w && tl == rowsperstrip);
-	} else {
-		uint32 irps = (uint32) -1L;
-		TIFFGetField(in, TIFFTAG_ROWSPERSTRIP, &irps);
-		bychunk = (rowsperstrip == irps);
+            }
 	}
 #define	T 1
 #define	F 0
@@ -1292,7 +1482,7 @@ pickCopyFunc(TIFF* in, TIFF* out, uint16 bitspersample, uint16 samplesperpixel)
 		return cpSeparateTiles2SeparateStrips;
 /* Strips -> Strips */
 	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   F,F,F):
-		return cpContig2ContigByRow;
+		return bias ? cpBiasedContig2Contig : cpContig2ContigByRow;
 	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   F,F,T):
 		return cpDecodedStrips;
 	case pack(PLANARCONFIG_CONTIG, PLANARCONFIG_SEPARATE,   F,F,F):

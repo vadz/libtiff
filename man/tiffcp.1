@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFCP 1 "January 9, 1996"
+.TH TIFFCP 1 "February 18, 2001"
 .SH NAME
 tiffcp \- copy (and possibly convert) a
 .SM TIFF
@@ -192,6 +192,21 @@ Specify the width of a tile (in pixels).
 .I tiffcp
 attempts to set the tile dimensions so
 that no more than 8 kilobytes of data appear in a tile.
+.I tiffcp
+attempts to set the tile dimensions so
+that no more than 8 kilobytes of data appear in a tile.
+.TP
+.B \-b image
+subtract the following monochrome image from all others
+processed.  This can be used to remove a noise bias
+from a set of images.  This bias image is typlically an
+image of noise the camera saw with its shutter closed.
+.TP
+.B \-,={character}
+substitute {character} for ',' in parsing image directory indices
+in files.  This is necessary if filenames contain commas.
+Note that ',=' with whitespace immediately following will disable
+the special meaning of the ',' entirely.  See examples.
 .SH EXAMPLES
 The following concatenates two files and writes the result using 
 .SM LZW
@@ -212,6 +227,34 @@ tiffcp -c g4 -r 10000 g3.tif g4.tif
 .RE
 (1000 is just a number that is larger than the number of rows in
 the source file.)
+
+To extract a selected set of images from a multi-image
+TIFF file, the file name may be immediately followed by a ',' 
+separated list of image directory indices.  The first image
+is always in directory 0.  Thus, to copy the 1st and 3rd
+images of image file "album.tif" to "result.tif":
+.RS
+.nf
+tiffcp album.tif,0,2 result.tif
+.fi
+.RE
+
+Given file "CCD.tif" whose first image is a noise bias
+followed by images which include that bias,
+subtract the noise from all those images following it
+(while decompressing) with the command:
+.RS
+.nf
+tiffcp -c none -b CCD.tif CCD.tif,1, result.tif
+.fi
+.RE
+
+If the file above were named "CCD,X.tif", the "-,=" option would
+be required to correctly parse this filename with image numbers,
+as follows:
+.RS
+.nf
+tiffcp -c none -,=% -b CCD,X.tif CCD,X%1%.tif result.tif
 .SH "SEE ALSO"
 .IR pal2rgb (1),
 .IR tiffinfo (1),
