@@ -243,6 +243,7 @@ extern	int TIFFSetCompressionScheme(TIFF*, int);
 extern	int TIFFSetDefaultCompressionState(TIFF*);
 extern	uint32 _TIFFDefaultStripSize(TIFF*, uint32);
 extern	void _TIFFDefaultTileSize(TIFF*, uint32*, uint32*);
+extern	int _TIFFDataSize(TIFFDataType);
 
 extern	void _TIFFsetByteArray(void**, void*, long);
 extern	void _TIFFsetString(char**, char*);
