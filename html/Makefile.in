@@ -68,8 +68,8 @@ subdir = html
 DIST_COMMON = $(dist_doc_DATA) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/libtool.m4 \
+	$(top_srcdir)/acinclude.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -264,7 +264,8 @@ docfiles = \
 	v3.7.0alpha.html \
 	v3.7.0beta.html \
 	v3.7.0beta2.html \
-	v3.7.0.html
+	v3.7.0.html \
+	v3.7.1.html
 
 dist_doc_DATA = $(docfiles)
 SUBDIRS = images man

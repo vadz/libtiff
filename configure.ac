@@ -25,7 +25,7 @@ dnl OF THIS SOFTWARE.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([LibTIFF Software], 3.7.0, [tiff@remotesensing.org], tiff)
+AC_INIT([LibTIFF Software], 3.7.1, [tiff@remotesensing.org], tiff)
 AC_LANG(C)
 
 dnl Compute the canonical target-system type variable
@@ -40,7 +40,7 @@ dnl Versioning.
 dnl Don't fill the ALPHA_VERSION field, if not applicable.
 LIBTIFF_MAJOR_VERSION=3
 LIBTIFF_MINOR_VERSION=7
-LIBTIFF_MICRO_VERSION=0
+LIBTIFF_MICRO_VERSION=1
 LIBTIFF_ALPHA_VERSION=
 LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
 dnl This will be used with the 'make release' target
