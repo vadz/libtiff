@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.7  2004-04-20 14:54:05  dron
+ * Revision 1.8  2004-05-26 09:24:07  dron
+ * Get rid of __T() macro; avoid warnings.
+ *
+ * Revision 1.7  2004/04/20 14:54:05  dron
  * Fixed problem with unaligned access as per bug
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=555
  *
@@ -530,21 +533,21 @@ int main(int argc, char** argv){
 				break;
 			case 'x': 
 				t2p->pdf_defaultxres = 
-					atof(optarg) / (t2p->pdf_centimeters?2.54:1.0);
+					(float)atof(optarg) / (t2p->pdf_centimeters?2.54F:1.0F);
 				break;
 			case 'y': 
 				t2p->pdf_defaultyres = 
-					atof(optarg) / (t2p->pdf_centimeters?2.54:1.0);
+					(float)atof(optarg) / (t2p->pdf_centimeters?2.54F:1.0F);
 				break;
 			case 'w': 
 				t2p->pdf_overridepagesize=1;
 				t2p->pdf_defaultpagewidth = 
-					(atof(optarg) * 72) / (t2p->pdf_centimeters?2.54:1.0);
+					((float)atof(optarg) * 72.0F) / (t2p->pdf_centimeters?2.54F:1.0F);
 				break;
 			case 'l': 
 				t2p->pdf_overridepagesize=1;
 				t2p->pdf_defaultpagelength = 
-					(atof(optarg) * 72) / (t2p->pdf_centimeters?2.54:1.0);
+					((float)atof(optarg) * 72.0F) / (t2p->pdf_centimeters?2.54F:1.0F);
 				break;
 			case 'r': 
 				if(optarg[0]=='o'){
@@ -691,7 +694,7 @@ int main(int argc, char** argv){
 			TCHAR temppath[MAX_PATH];
 			TCHAR tempfile[MAX_PATH];
 			GetTempPath((DWORD)MAX_PATH, (LPTSTR)temppath);
-			GetTempFileName((LPCTSTR)temppath, (LPTSTR) __T("t2p"), 0, (LPTSTR)tempfile);
+			GetTempFileName((LPCTSTR)temppath, (LPTSTR) "t2p", 0, (LPTSTR)tempfile);
 			output = TIFFFdOpen( (int)CreateFile(
 				(LPCTSTR)tempfile, 
 				GENERIC_WRITE, 
@@ -1589,11 +1592,11 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 	TIFFGetField(input, TIFFTAG_YRESOLUTION, &(t2p->tiff_yres) );
 	TIFFGetField(input, TIFFTAG_RESOLUTIONUNIT, &(t2p->tiff_resunit) );
 	if(t2p->tiff_resunit==RESUNIT_CENTIMETER){
-		t2p->tiff_xres*=2.54;
-		t2p->tiff_yres*=2.54;
+		t2p->tiff_xres*=2.54F;
+		t2p->tiff_yres*=2.54F;
 	} else if (t2p->tiff_resunit!=RESUNIT_INCH && t2p->pdf_centimeters!=0){
-		t2p->tiff_xres*=2.54;
-		t2p->tiff_yres*=2.54;
+		t2p->tiff_xres*=2.54F;
+		t2p->tiff_yres*=2.54F;
 	}
 
 	t2p_compose_pdf_page(t2p);
@@ -1711,8 +1714,8 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			t2p->tiff_whitechromaticities[0]=xfloatp[0];
 			t2p->tiff_whitechromaticities[1]=xfloatp[1];
 		} else {
-			t2p->tiff_whitechromaticities[0]=0.3457; /* 0.3127; */
-			t2p->tiff_whitechromaticities[1]=0.3585; /* 0.3290; */
+			t2p->tiff_whitechromaticities[0]=0.3457F; /* 0.3127F; */
+			t2p->tiff_whitechromaticities[1]=0.3585F; /* 0.3290F; */
 		}
 	}
 	if(TIFFGetField(input, 
@@ -3415,8 +3418,8 @@ tsize_t t2p_sample_realize_palette(T2P* t2p, unsigned char* buffer){
 }
 
 /*
-	This functions converts in place a buffer of ABGR interleaved data into RGB interleaved 
-	data, discarding A.
+	This functions converts in place a buffer of ABGR interleaved data
+	into RGB interleaved data, discarding A.
 */
 
 tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
@@ -3437,8 +3440,8 @@ tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
 }
 
 /*
-	This functions converts in place a buffer of RGBA interleaved data into RGB interleaved 
-	data, discarding A.
+	This functions converts in place a buffer of RGBA interleaved data
+	into RGB interleaved data, discarding A.
 */
 
 tsize_t t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount){
@@ -4042,7 +4045,7 @@ tsize_t t2p_write_pdf_pages(T2P* t2p,
 
 tsize_t t2p_write_pdf_page(uint32 object, T2P* t2p, TIFF* output){
 
-	int i=0;
+	unsigned int i=0;
 	tsize_t written=0;
 	char buffer[16];
 	int buflen=0;
@@ -4160,8 +4163,8 @@ void t2p_compose_pdf_page(T2P* t2p){
 	if(t2p->pdf_yres==0.0){
 		t2p->pdf_yres = t2p->pdf_defaultyres;
 	}
-	t2p->pdf_imagewidth=((float)(t2p->tiff_width)) *72.0 / t2p->pdf_xres;
-	t2p->pdf_imagelength=((float)(t2p->tiff_length)) *72.0 / t2p->pdf_yres;
+	t2p->pdf_imagewidth=((float)(t2p->tiff_width)) *72.0F / t2p->pdf_xres;
+	t2p->pdf_imagelength=((float)(t2p->tiff_length)) *72.0F / t2p->pdf_yres;
 	if(t2p->pdf_overridepagesize != 0){
 		t2p->pdf_pagewidth = t2p->pdf_defaultpagewidth;
 		t2p->pdf_pagelength = t2p->pdf_defaultpagelength;
@@ -4178,10 +4181,10 @@ void t2p_compose_pdf_page(T2P* t2p){
 	t2p->pdf_imagebox.x2=t2p->pdf_imagewidth;
 	t2p->pdf_imagebox.y2=t2p->pdf_imagelength;
 	if(t2p->pdf_overridepagesize!=0){
-		t2p->pdf_imagebox.x1+=((t2p->pdf_pagewidth-t2p->pdf_imagewidth)/2.0);
-		t2p->pdf_imagebox.y1+=((t2p->pdf_pagelength-t2p->pdf_imagelength)/2.0);
-		t2p->pdf_imagebox.x2+=((t2p->pdf_pagewidth-t2p->pdf_imagewidth)/2.0);
-		t2p->pdf_imagebox.y2+=((t2p->pdf_pagelength-t2p->pdf_imagelength)/2.0);
+		t2p->pdf_imagebox.x1+=((t2p->pdf_pagewidth-t2p->pdf_imagewidth)/2.0F);
+		t2p->pdf_imagebox.y1+=((t2p->pdf_pagelength-t2p->pdf_imagelength)/2.0F);
+		t2p->pdf_imagebox.x2+=((t2p->pdf_pagewidth-t2p->pdf_imagewidth)/2.0F);
+		t2p->pdf_imagebox.y2+=((t2p->pdf_pagelength-t2p->pdf_imagelength)/2.0F);
 	}
 	if(t2p->tiff_orientation > 4){
 		f=t2p->pdf_mediabox.x2;
@@ -4345,45 +4348,45 @@ void t2p_compose_pdf_page_orient(T2P_BOX* boxp, uint16 orientation){
 		case 1:
 			break;
 		case 2:
-			boxp->mat[0]=0.0-m1[0];
+			boxp->mat[0]=0.0F-m1[0];
 			boxp->mat[6]+=m1[0];
 			break;
 		case 3:
-			boxp->mat[0]=0.0-m1[0];
-			boxp->mat[4]=0.0-m1[4];
+			boxp->mat[0]=0.0F-m1[0];
+			boxp->mat[4]=0.0F-m1[4];
 			boxp->mat[6]+=m1[0];
 			boxp->mat[7]+=m1[4];
 			break;
 		case 4:
-			boxp->mat[4]=0.0-m1[4];
+			boxp->mat[4]=0.0F-m1[4];
 			boxp->mat[7]+=m1[4];
 			break;
 		case 5:
-			boxp->mat[0]=0.0;
-			boxp->mat[1]=0.0-m1[0];
-			boxp->mat[3]=0.0-m1[4];
-			boxp->mat[4]=0.0;
+			boxp->mat[0]=0.0F;
+			boxp->mat[1]=0.0F-m1[0];
+			boxp->mat[3]=0.0F-m1[4];
+			boxp->mat[4]=0.0F;
 			boxp->mat[6]+=m1[4];
 			boxp->mat[7]+=m1[0];
 			break;
 		case 6:
-			boxp->mat[0]=0.0;
-			boxp->mat[1]=0.0-m1[0];
+			boxp->mat[0]=0.0F;
+			boxp->mat[1]=0.0F-m1[0];
 			boxp->mat[3]=m1[4];
-			boxp->mat[4]=0.0;
+			boxp->mat[4]=0.0F;
 			boxp->mat[7]+=m1[0];
 			break;
 		case 7:
-			boxp->mat[0]=0.0;
+			boxp->mat[0]=0.0F;
 			boxp->mat[1]=m1[0];
 			boxp->mat[3]=m1[4];
-			boxp->mat[4]=0.0;
+			boxp->mat[4]=0.0F;
 			break;
 		case 8:
-			boxp->mat[0]=0.0;
+			boxp->mat[0]=0.0F;
 			boxp->mat[1]=m1[0];
-			boxp->mat[3]=0.0-m1[4];
-			boxp->mat[4]=0.0;
+			boxp->mat[3]=0.0F-m1[4];
+			boxp->mat[4]=0.0F;
 			boxp->mat[6]+=m1[4];
 			break;
 	}
@@ -4407,41 +4410,41 @@ void t2p_compose_pdf_page_orient_flip(T2P_BOX* boxp, uint16 orientation){
 		boxp->y2 = f;
 	}
 	boxp->mat[0]=m1[0]=boxp->x2-boxp->x1;
-	boxp->mat[1]=m1[1]=0.0;
-	boxp->mat[2]=m1[2]=0.0;
-	boxp->mat[3]=m1[3]=0.0;
+	boxp->mat[1]=m1[1]=0.0F;
+	boxp->mat[2]=m1[2]=0.0F;
+	boxp->mat[3]=m1[3]=0.0F;
 	boxp->mat[4]=m1[4]=boxp->y2-boxp->y1;
-	boxp->mat[5]=m1[5]=0.0;
+	boxp->mat[5]=m1[5]=0.0F;
 	boxp->mat[6]=m1[6]=boxp->x1;
 	boxp->mat[7]=m1[7]=boxp->y1;
-	boxp->mat[8]=m1[8]=1.0;
+	boxp->mat[8]=m1[8]=1.0F;
 	switch(orientation){
 		case 5:
-			boxp->mat[0]=0.0;
-			boxp->mat[1]=0.0-m1[4];
-			boxp->mat[3]=0.0-m1[0];
-			boxp->mat[4]=0.0;
+			boxp->mat[0]=0.0F;
+			boxp->mat[1]=0.0F-m1[4];
+			boxp->mat[3]=0.0F-m1[0];
+			boxp->mat[4]=0.0F;
 			boxp->mat[6]+=m1[0];
 			boxp->mat[7]+=m1[4];
 			break;
 		case 6:
-			boxp->mat[0]=0.0;
-			boxp->mat[1]=0.0-m1[4];
+			boxp->mat[0]=0.0F;
+			boxp->mat[1]=0.0F-m1[4];
 			boxp->mat[3]=m1[0];
-			boxp->mat[4]=0.0;
+			boxp->mat[4]=0.0F;
 			boxp->mat[7]+=m1[4];
 			break;
 		case 7:
-			boxp->mat[0]=0.0;
+			boxp->mat[0]=0.0F;
 			boxp->mat[1]=m1[4];
 			boxp->mat[3]=m1[0];
-			boxp->mat[4]=0.0;
+			boxp->mat[4]=0.0F;
 			break;
 		case 8:
-			boxp->mat[0]=0.0;
+			boxp->mat[0]=0.0F;
 			boxp->mat[1]=m1[4];
-			boxp->mat[3]=0.0-m1[0];
-			boxp->mat[4]=0.0;
+			boxp->mat[3]=0.0F-m1[0];
+			boxp->mat[4]=0.0F;
 			boxp->mat[6]+=m1[0];
 			break;
 	}
@@ -4630,18 +4633,18 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 			written += TIFFWriteFile(output, (tdata_t) "/WhitePoint ", 12);
 			X_W = t2p->tiff_whitechromaticities[0];
 			Y_W = t2p->tiff_whitechromaticities[1];
-			Z_W = 1.0 - (X_W + Y_W);
+			Z_W = 1.0F - (X_W + Y_W);
 			X_W /= Y_W;
 			Z_W /= Y_W;
-			Y_W = 1.0;
+			Y_W = 1.0F;
 			buflen=sprintf(buffer, "[%.4f %.4f %.4f] \r", X_W, Y_W, Z_W);
 			written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
-			X_W = 0.3457; /* 0.3127; */ /* D50, commented D65 */
-			Y_W = 0.3585; /* 0.3290; */
-			Z_W = 1.0 - (X_W + Y_W);
+			X_W = 0.3457F; /* 0.3127F; */ /* D50, commented D65 */
+			Y_W = 0.3585F; /* 0.3290F; */
+			Z_W = 1.0F - (X_W + Y_W);
 			X_W /= Y_W;
 			Z_W /= Y_W;
-			Y_W = 1.0;
+			Y_W = 1.0F;
 			buflen=sprintf(buffer, "[%.4f %.4f %.4f] \r", X_W, Y_W, Z_W);
 			written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
 			written += TIFFWriteFile(output, (tdata_t) "/Range ", 7);
@@ -4757,10 +4760,10 @@ tsize_t t2p_write_pdf_xobject_calcs(T2P* t2p, TIFF* output){
 		written += TIFFWriteFile(output, (tdata_t) "/CalGray ", 9);
 		X_W = t2p->tiff_whitechromaticities[0];
 		Y_W = t2p->tiff_whitechromaticities[1];
-		Z_W = 1.0 - (X_W + Y_W);
+		Z_W = 1.0F - (X_W + Y_W);
 		X_W /= Y_W;
 		Z_W /= Y_W;
-		Y_W = 1.0;
+		Y_W = 1.0F;
 	}
 	if(t2p->pdf_colorspace & T2P_CS_CALRGB){
 		written += TIFFWriteFile(output, (tdata_t) "/CalRGB ", 8);
