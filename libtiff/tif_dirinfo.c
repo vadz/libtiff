@@ -304,6 +304,8 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 	TIFFFieldInfo** tp;
 	int i;
 
+        tif->tif_foundfield = NULL;
+
 	if (tif->tif_nfields > 0) {
 		tif->tif_fieldinfo = (TIFFFieldInfo**)
 		    _TIFFrealloc(tif->tif_fieldinfo,
