@@ -1,3 +1,10 @@
+2004-10-28  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiff2pdf.c: added casts to avoid warnings.
+
+	* libtiff/libtiff.def: Added several more entry points required
+	to link fax2tiff.c against the DLL on windows. 
+
 2004-10-27  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure, configure.ac: Added --enable-rpath option to embed linker
