@@ -1,5 +1,9 @@
 2004-10-09  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/tif_dir.c: Initialize td_tilewidth and td_tilelength fields
+	of the TIFFDirectory structure with the 0 instead of -1 to avoid
+	confusing integer overflows in TIFFTileRowSize() for striped images.
+
 	* tools/tiff2pdf.c: Fixed TransferFunction tag handling reported
 	by Ross A. Finlayson.
 

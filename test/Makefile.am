@@ -37,7 +37,7 @@ long_tag_SOURCES = long_tag.c check_tag.c
 long_tag_LDADD = $(LIBTIFF)
 short_tag_SOURCES = short_tag.c check_tag.c
 short_tag_LDADD = $(LIBTIFF)
-strip_rw_SOURCES = strip_rw.c test_arrays.c test_arrays.h
+strip_rw_SOURCES = strip_rw.c strip.c test_arrays.c test_arrays.h
 strip_rw_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
