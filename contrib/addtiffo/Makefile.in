@@ -66,7 +66,8 @@ noinst_PROGRAMS = addtiffo$(EXEEXT)
 subdir = contrib/addtiffo
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -76,7 +77,7 @@ PROGRAMS = $(noinst_PROGRAMS)
 am_addtiffo_OBJECTS = addtiffo.$(OBJEXT) tif_overview.$(OBJEXT) \
 	tif_ovrcache.$(OBJEXT)
 addtiffo_OBJECTS = $(am_addtiffo_OBJECTS)
-am__DEPENDENCIES_1 = $(top_srcdir)/libtiff/libtiff.la
+am__DEPENDENCIES_1 = $(top_builddir)/libtiff/libtiff.la
 addtiffo_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/libtiff
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -203,7 +204,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
+LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 EXTRA_DIST = README Makefile.vc
 addtiffo_SOURCES = addtiffo.c tif_overview.c tif_ovrcache.c tif_ovrcache.h
 addtiffo_LDADD = $(LIBTIFF)

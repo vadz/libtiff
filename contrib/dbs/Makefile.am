@@ -25,7 +25,7 @@
 
 SUBDIRS = xtiff
 
-LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
+LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 EXTRA_DIST = README Makefile.vc
 

@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
+LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 EXTRA_DIST = test.iptc test.txt
 
