@@ -48,8 +48,5 @@ Notes on releasing.  <mike@bangstate.com>
 14. Announce to list, tiff@olympiakos.com
 
 
-
-
-
-
-
+NOTES: Check that tiffvers.h is getting updated with the date each release.
+       Remove step 5, no longer needed.
