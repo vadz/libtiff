@@ -1,3 +1,8 @@
+2004-09-10  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* html/internals.html: Split off a discussion of adding new tags
+	into addingtags.html.
+
 2004-09-10  Andrey Kiselev  <dron@remotesensing.org>
 
 	* test/{ascii_tag.c, long_tag.c}: Preliminary test suite added.
