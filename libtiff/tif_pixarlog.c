@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * Copyright (c) 1996-1997 Sam Leffler
  * Copyright (c) 1996 Pixar
@@ -1255,7 +1257,7 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	if (tif->tif_data == NULL)
 		goto bad;
 	sp = (PixarLogState*) tif->tif_data;
-	memset(sp, 0, sizeof (*sp));
+	_TIFFmemset(sp, 0, sizeof (*sp));
 	sp->stream.data_type = Z_BINARY;
 	sp->user_datafmt = PIXARLOGDATAFMT_UNKNOWN;
 
@@ -1303,3 +1305,5 @@ bad:
 	return (0);
 }
 #endif /* PIXARLOG_SUPPORT */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

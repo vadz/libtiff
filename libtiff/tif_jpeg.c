@@ -1628,7 +1628,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 		TIFFError("TIFFInitJPEG", "No space for JPEG state block");
 		return (0);
 	}
-        memset( tif->tif_data, 0, sizeof(JPEGState));
+        _TIFFmemset( tif->tif_data, 0, sizeof(JPEGState));
 
 	sp = JState(tif);
 	sp->tif = tif;				/* back link */
