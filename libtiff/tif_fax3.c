@@ -60,8 +60,7 @@ typedef struct {
 	uint32	recvparams;		/* encoded Class 2 session params */
 	char*	subaddress;		/* subaddress string */
 	uint32	recvtime;		/* time spent receiving (secs) */
-	uint32	faxdcsLength;		/* length of faxdcsData */
-	void*	faxdcsData;		/* encoded fax parameters (DCS, Table 2/T.30) */
+	char*	faxdcs;			/* Table 2/T.30 encoded session params */
 	TIFFVGetMethod vgetparent;	/* super-class method */
 	TIFFVSetMethod vsetparent;	/* super-class method */
 } Fax3BaseState;
@@ -1118,8 +1117,8 @@ static const TIFFFieldInfo faxFieldInfo[] = {
       TRUE,	FALSE,	"FaxSubAddress" },
     { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	FIELD_RECVTIME,
       TRUE,	FALSE,	"FaxRecvTime" },
-    { TIFFTAG_FAXDCS,		-3,-3, TIFF_UNDEFINED,	FIELD_FAXDCS,
-      FALSE,	TRUE,	"FaxDcs" },
+    { TIFFTAG_FAXDCS,		-1,-1, TIFF_ASCII,	FIELD_FAXDCS,
+      TRUE,	FALSE,	"FaxDcs" },
 };
 static const TIFFFieldInfo fax3FieldInfo[] = {
     { TIFFTAG_GROUP3OPTIONS,	 1, 1,	TIFF_LONG,	FIELD_OPTIONS,
@@ -1172,10 +1171,7 @@ Fax3VSetField(TIFF* tif, ttag_t tag, va_list ap)
 		sp->recvtime = va_arg(ap, uint32);
 		break;
 	case TIFFTAG_FAXDCS:
-		sp->faxdcsLength = (uint32) va_arg(ap, uint32);
-		_TIFFsetByteArray (&sp->faxdcsData, va_arg(ap, void*),
-			sp->faxdcsLength);
-		TIFFSetFieldBit(tif, FIELD_FAXDCS);
+		_TIFFsetString(&sp->faxdcs, va_arg(ap, char*));
 		break;
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
@@ -1220,8 +1216,7 @@ Fax3VGetField(TIFF* tif, ttag_t tag, va_list ap)
 		*va_arg(ap, uint32*) = sp->recvtime;
 		break;
 	case TIFFTAG_FAXDCS:
-		*va_arg(ap, uint32*) = sp->faxdcsLength;
-		*va_arg(ap, void**) = sp->faxdcsData;
+		*va_arg(ap, char**) = sp->faxdcs;
 		break;
 	default:
 		return (*sp->vgetparent)(tif, tag, ap);
@@ -1286,8 +1281,7 @@ Fax3PrintDir(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd, "  Fax Receive Time: %lu secs\n",
 		    (unsigned long) sp->recvtime);
 	if (TIFFFieldSet(tif,FIELD_FAXDCS))
-		fprintf(fd, "  Fax DCS Data: %lu bytes\n",
-		    (unsigned long) sp->faxdcsLength);
+		fprintf(fd, "  Fax DCS: %s\n", sp->faxdcs);
 }
 
 static int
@@ -1323,8 +1317,7 @@ InitCCITTFax3(TIFF* tif)
 	sp->groupoptions = 0;	
 	sp->recvparams = 0;
 	sp->subaddress = NULL;
-	sp->faxdcsLength = 0;
-	sp->faxdcsData = NULL;
+	sp->faxdcs = NULL;
 
 	if (sp->rw_mode == O_RDONLY) /* FIXME: improve for in place update */
 		tif->tif_flags |= TIFF_NOBITREV; /* decoder does bit reversal */

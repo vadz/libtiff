@@ -152,8 +152,7 @@ typedef	struct {
 	uint32		recvparams;	/* encoded Class 2 session params */
 	char*		subaddress;	/* subaddress string */
 	uint32		recvtime;	/* time spent receiving (secs) */
-	uint32		faxdcsLength;	/* length of faxdcsData */
-	void*		faxdcsData;	/* encoded fax parameters (DCS, Table 2/T.30) */
+	char*		faxdcs;		/* encoded fax parameters (DCS, Table 2/T.30) */
 } JPEGState;
 
 #define	JState(tif)	((JPEGState*)(tif)->tif_data)
@@ -186,8 +185,8 @@ static const TIFFFieldInfo jpegFieldInfo[] = {
       TRUE,	FALSE,	"FaxSubAddress" },
     { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	FIELD_RECVTIME,
       TRUE,	FALSE,	"FaxRecvTime" },
-    { TIFFTAG_FAXDCS,		-3, -3, TIFF_UNDEFINED,	FIELD_FAXDCS,
-      FALSE,	TRUE,	"FaxDcs" },
+    { TIFFTAG_FAXDCS,		-1, -1, TIFF_ASCII,	FIELD_FAXDCS,
+      TRUE,	FALSE,	"FaxDcs" },
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
@@ -1443,14 +1442,12 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		sp->recvtime = va_arg(ap, uint32);
 		break;
 	case TIFFTAG_FAXDCS:
-		sp->faxdcsLength = (uint32) va_arg(ap, uint32);
-		_TIFFsetByteArray (&sp->faxdcsData, va_arg(ap, void*),
-			sp->faxdcsLength);
-		TIFFSetFieldBit(tif, FIELD_FAXDCS);
+		_TIFFsetString(&sp->faxdcs, va_arg(ap, char*));
 		break;
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
+	TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
 	tif->tif_flags |= TIFF_DIRTYDIRECT;
 	return (1);
 }
@@ -1555,10 +1552,9 @@ JPEGVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 *va_arg(ap, uint32*) = sp->recvtime;
                 break;
         case TIFFTAG_FAXDCS:
-                *va_arg(ap, uint32*) = sp->faxdcsLength;
-                *va_arg(ap, void**) = sp->faxdcsData;
+                *va_arg(ap, char**) = sp->faxdcs;
                 break;
-	default:
+default:
 		return (*sp->vgetparent)(tif, tag, ap);
 	}
 	return (1);
@@ -1582,8 +1578,7 @@ JPEGPrintDir(TIFF* tif, FILE* fd, long flags)
                 fprintf(fd, "  Fax Receive Time: %lu secs\n",
                     (unsigned long) sp->recvtime);
         if (TIFFFieldSet(tif,FIELD_FAXDCS))
-                fprintf(fd, "  Fax DCS Data: %lu bytes\n",
-                    (unsigned long) sp->faxdcsLength);
+                fprintf(fd, "  Fax DCS: %s\n", sp->faxdcs);
 }
 
 static uint32
@@ -1716,8 +1711,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 
         sp->recvparams = 0;
         sp->subaddress = NULL;
-        sp->faxdcsLength = 0;
-        sp->faxdcsData = NULL;
+        sp->faxdcs = NULL;
 
         sp->ycbcrsampling_fetched = 0;
 
