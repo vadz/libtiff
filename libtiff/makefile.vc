@@ -1,3 +1,9 @@
+#
+#	Simple MS VC++ Makefile
+#
+#	To build:
+#       C:\libtiff\libtiff> nmake /f makefile.vc all
+#
 
 # 
 # Select _CONSOLE to build a library which reports errors to stderr, or
