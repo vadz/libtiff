@@ -23,19 +23,25 @@
 
 # Process this file with automake to produce Makefile.in.
 
+docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)
+
 AUTOMAKE_OPTIONS = dist-zip foreign
 
-EXTRA_DIST = \
+docfiles = \
 	COPYRIGHT \
 	ChangeLog \
-	HOWTO-RELEASE \
-	Makefile.vc \
 	README \
 	RELEASE-DATE \
 	TODO \
-	VERSION \
+	VERSION
+
+EXTRA_DIST = \
+	HOWTO-RELEASE \
+	Makefile.vc \
 	autogen.sh \
 	nmake.opt
+
+dist_doc_DATA = $(docfiles)
 
 SUBDIRS = port libtiff tools contrib test man html
 

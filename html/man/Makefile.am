@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -25,7 +23,9 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = \
+docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html/man
+
+docfiles = \
 	fax2ps.1.html \
 	fax2ps.1.html \
 	fax2tiff.1.html \
@@ -151,3 +151,4 @@ EXTRA_DIST = \
 	TIFFWriteTile.3t.html \
 	TIFFWriteTile.3t.html
 
+dist_doc_DATA = $(docfiles)

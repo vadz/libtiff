@@ -68,9 +68,7 @@ docfiles = \
 	v3.7.0beta2.html \
 	v3.7.0.html
 
-EXTRA_DIST = $(docfiles)
-
-doc_DATA = $(docfiles)
+dist_doc_DATA = $(docfiles)
 
 SUBDIRS = images man
 
