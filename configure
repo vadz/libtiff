@@ -23031,7 +23031,7 @@ fi
 
 
 
-LIBTIFF_DOCDIR=${ac_default_prefix}/share/doc/${PACKAGE}-${LIBTIFF_VERSION}/html
+LIBTIFF_DOCDIR=${ac_default_prefix}/share/doc/${PACKAGE}-${LIBTIFF_VERSION}
 
 
 # Check whether --with-docdir or --without-docdir was given.

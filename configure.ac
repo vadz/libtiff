@@ -162,7 +162,7 @@ dnl ---------------------------------------------------------------------------
 dnl Point to path where we should install documentation.
 dnl ---------------------------------------------------------------------------
 
-LIBTIFF_DOCDIR=${ac_default_prefix}/share/doc/${PACKAGE}-${LIBTIFF_VERSION}/html
+LIBTIFF_DOCDIR=${ac_default_prefix}/share/doc/${PACKAGE}-${LIBTIFF_VERSION}
 
 AC_ARG_WITH(docdir,
 	    AS_HELP_STRING([--with-docdir=DIR],

@@ -214,7 +214,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-docdir = $(LIBTIFF_DOCDIR)
+docdir = $(LIBTIFF_DOCDIR)/html/man
 docfiles = \
 	fax2ps.1.html \
 	fax2ps.1.html \

@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html/images
+docdir = $(LIBTIFF_DOCDIR)/html/images
 
 docfiles = \
 	back.gif \

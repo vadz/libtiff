@@ -225,7 +225,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-docdir = $(LIBTIFF_DOCDIR)
+docdir = $(LIBTIFF_DOCDIR)/html
 docfiles = \
 	addingtags.html \
 	bugs.html \
