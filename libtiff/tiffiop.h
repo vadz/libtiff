@@ -65,7 +65,7 @@ typedef double dblparam_t;
 
 #define GLOBALDATA(TYPE,NAME)	extern TYPE NAME
 
-#define    streq(a,b)      (strcasecmp(a,b) == 0)
+#define    streq(a,b)      (strcmp(a,b) == 0)
 
 #ifndef TRUE
 #define	TRUE	1

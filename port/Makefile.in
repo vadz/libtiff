@@ -75,13 +75,13 @@ CONFIG_HEADER = $(top_builddir)/libtiff/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libport_la_DEPENDENCIES = @LTLIBOBJS@
-am_libport_la_OBJECTS =
+am_libport_la_OBJECTS = dummy.lo
 libport_la_OBJECTS = $(am_libport_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/libtiff
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = $(DEPDIR)/getopt.Plo $(DEPDIR)/strcasecmp.Plo \
-@AMDEP_TRUE@	$(DEPDIR)/strtoul.Plo
+@AMDEP_TRUE@	$(DEPDIR)/strtoul.Plo ./$(DEPDIR)/dummy.Plo
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
@@ -207,7 +207,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 EXTRA_DIST = Makefile.vc
 noinst_LTLIBRARIES = libport.la
-libport_la_SOURCES = 
+libport_la_SOURCES = dummy.c
 libport_la_LIBADD = @LTLIBOBJS@
 all: all-am
 
@@ -263,6 +263,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoul.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dummy.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -407,7 +408,7 @@ clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf $(DEPDIR)
+	-rm -rf $(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
@@ -433,7 +434,7 @@ install-man:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf $(DEPDIR)
+	-rm -rf $(DEPDIR) ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
