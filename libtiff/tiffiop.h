@@ -30,11 +30,7 @@
  * ``Library-private'' definitions.
  */
 
-#if defined(_MSC_VER)
-# include "config.h.vc"
-#else
-# include "config.h"
-#endif
+#include "config.h"
 
 #if HAVE_FCNTL_H
 # include <fcntl.h>

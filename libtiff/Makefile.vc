@@ -71,10 +71,13 @@ OBJ	= \
 
 all:	libtiff.lib libtiff.dll
 
-libtiff.lib:	$(OBJ)
+config.h:
+	copy config.h.vc config.h
+
+libtiff.lib:	config.h $(OBJ)
 	lib /nologo /out:libtiff.lib $(OBJ)
 
-libtiff.dll:	$(OBJ)
+libtiff.dll:	config.h $(OBJ)
 	link /nologo /dll /def:libtiff.def /out:libtiff.dll \
 	/implib:libtiff_i.lib $(OBJ) $(LIBS)
 	
