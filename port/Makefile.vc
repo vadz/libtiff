@@ -22,38 +22,21 @@
 # OF THIS SOFTWARE.
 #
 # Makefile for MS Visual C and Watcom C compilers.
-# Edit nmake.opt file if you want to ajust building options.
 #
 # To build:
-# C:\libtiff> nmake /f makefile.vc 
+# C:\libtiff\port> nmake /f makefile.vc 
 
-!INCLUDE nmake.opt
+!INCLUDE ..\nmake.opt
 
-all:	port lib tools
+OBJ	= \
+	strcasecmp.obj \
+	getopt.obj
 
-port::
-	cd port
-	$(MAKE) /f Makefile.vc
-	cd..
+all:	libport.lib
 
-lib:	port
-	cd libtiff
-	$(MAKE) /f Makefile.vc
-	cd..
-
-tools:	lib
-	cd tools
-	$(MAKE) /f Makefile.vc
-	cd ..
+libport.lib:	$(OBJ)
+	lib /nologo /out:libport.lib $(OBJ)
 
 clean:
-	cd port
-	$(MAKE) /f Makefile.vc clean
-	cd..
-	cd libtiff
-	$(MAKE) /f Makefile.vc clean
-	cd..
-	cd tools
-	$(MAKE) /f Makefile.vc clean
-	cd ..
+	-del *.obj *.lib
 

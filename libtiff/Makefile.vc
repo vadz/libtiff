@@ -21,7 +21,7 @@
 # LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
 #
-# Simple MS VC++ Makefile
+# Makefile for MS Visual C and Watcom C compilers.
 #
 # To build:
 # C:\libtiff\libtiff> nmake /f makefile.vc all
@@ -30,6 +30,7 @@
 !INCLUDE ..\nmake.opt
 
 INCL	= -I. $(JPEG_INCLUDE) $(ZLIB_INCLUDE)
+LIBS	= $(LIBS) ..\port\libport.lib
 
 OBJ	= \
 	tif_aux.obj \
@@ -75,7 +76,7 @@ config.h:
 	copy config.h.vc config.h
 
 libtiff.lib:	config.h $(OBJ)
-	lib /nologo /out:libtiff.lib $(OBJ)
+	lib /nologo /out:libtiff.lib $(OBJ) $(LIBS)
 
 libtiff.dll:	config.h $(OBJ)
 	link /nologo /dll /def:libtiff.def /out:libtiff.dll \

@@ -23,6 +23,8 @@
 
 # Process this file with automake to produce Makefile.in.
 
+EXTRA_DIST = Makefile.vc
+
 noinst_LTLIBRARIES	= libport.la
 libport_la_SOURCES	= 
 libport_la_LIBADD	= @LTLIBOBJS@
