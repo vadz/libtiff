@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)
+docdir = $(LIBTIFF_DOCDIR)
 
 AUTOMAKE_OPTIONS = dist-zip foreign
 

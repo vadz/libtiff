@@ -25,7 +25,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html
+docdir = $(LIBTIFF_DOCDIR)
 
 docfiles = \
 	addingtags.html \

@@ -1,3 +1,23 @@
+2005-01-15  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac: Make the documentation directory location configurable
+	via the --with-docdir option (as suggested by Jeremy C. Reed).
+
+	* libtiff/tif_color.c: Use double as the second argument of pow()
+	function in TIFFCIELabToRGBInit(). As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=741
+
+	* libtiff/tif_pixarlog.c: Avoid warnings when converting float to
+	integer as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=740
+
+	* libtiff/tif_getimage.c: Always fill the error message buffer in
+	TIFFRGBAImageBegin() as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=739
+	
 2005-01-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_jpeg.c: Added ability to read/write the fax specific

@@ -159,6 +159,21 @@ dnl ---------------------------------------------------------------------------
 AC_SYS_LARGEFILE
 
 dnl ---------------------------------------------------------------------------
+dnl Point to path where we should install documentation.
+dnl ---------------------------------------------------------------------------
+
+LIBTIFF_DOCDIR=${ac_default_prefix}/share/doc/${PACKAGE}-${LIBTIFF_VERSION}/html
+
+AC_ARG_WITH(docdir,
+	    AS_HELP_STRING([--with-docdir=DIR],
+			   [directory where documentation should be installed]),,)
+if test "x$with_docdir" != "x" ; then
+  LIBTIFF_DOCDIR=$with_docdir
+fi
+ 
+AC_SUBST(LIBTIFF_DOCDIR)
+
+dnl ---------------------------------------------------------------------------
 dnl Switch on/off internal codecs.
 dnl ---------------------------------------------------------------------------
 
@@ -479,6 +494,7 @@ LOC_MSG()
 LOC_MSG([Libtiff is now configured for ${host}])
 LOC_MSG()
 LOC_MSG([  Installation directory:            ${prefix}])
+LOC_MSG([  Documentation directory:           ${LIBTIFF_DOCDIR}])
 LOC_MSG([  C compiler:                        ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler:                      ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Enable runtime linker paths:       ${HAVE_RPATH}])

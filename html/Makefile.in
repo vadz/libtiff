@@ -144,6 +144,7 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTIFF_ALPHA_VERSION = @LIBTIFF_ALPHA_VERSION@
+LIBTIFF_DOCDIR = @LIBTIFF_DOCDIR@
 LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
 LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
 LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
@@ -224,7 +225,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html
+docdir = $(LIBTIFF_DOCDIR)
 docfiles = \
 	addingtags.html \
 	bugs.html \

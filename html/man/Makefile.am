@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html/man
+docdir = $(LIBTIFF_DOCDIR)
 
 docfiles = \
 	fax2ps.1.html \
