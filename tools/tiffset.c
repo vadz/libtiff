@@ -40,7 +40,7 @@
 static char* usageMsg[] = {
 "usage: tiffset [options] filename",
 "where options are:",
-" -s <tagname> <value>...   set the tag value",
+" -s <tagname> [count] <value>...   set the tag value",
 " -sf <tagname> <filename>  read the tag value from file (for ASCII tags only)",
 NULL
 };
@@ -64,8 +64,7 @@ GetField(TIFF *tiff, const char *tagname)
     else
         fip = TIFFFieldWithName(tiff, tagname);
 
-    if (!fip)
-    {
+    if (!fip) {
         fprintf( stderr, "Field name %s not recognised.\n", tagname );
         return (TIFFFieldInfo *)NULL;
     }
@@ -84,12 +83,10 @@ main(int argc, char* argv[])
 
     tiff = TIFFOpen(argv[argc-1], "r+");
     if (tiff == NULL)
-        return -2;
+        return 2;
 
-    for( arg_index = 1; arg_index < argc-1; arg_index++ )
-    {
-        if( strcmp(argv[arg_index],"-s") == 0 && arg_index < argc-3 )
-        {
+    for( arg_index = 1; arg_index < argc-1; arg_index++ ) {
+        if (strcmp(argv[arg_index],"-s") == 0 && arg_index < argc-3) {
             const TIFFFieldInfo *fip;
             const char *tagname;
 
@@ -98,90 +95,159 @@ main(int argc, char* argv[])
             fip = GetField(tiff, tagname);
 
             if (!fip)
-                return -3;
+                return 3;
 
             arg_index++;
-            if (fip->field_type == TIFF_ASCII)
-            {
+            if (fip->field_type == TIFF_ASCII) {
                 if (TIFFSetField(tiff, fip->field_tag, argv[arg_index]) != 1)
                     fprintf( stderr, "Failed to set %s=%s\n",
                              fip->field_name, argv[arg_index] );
-            }
+            } else if (fip->field_writecount > 0) {
+                int     ret;
+                short   wc;
 
-            else if (fip->field_writecount > 0)
-            {
-                int     i;
-                void    *array;
+                if (fip->field_writecount == TIFF_VARIABLE)
+                        wc = argv[arg_index++];
+                else
+                        wc = fip->field_writecount;
 
-                if (argc - arg_index < fip->field_writecount)
-                {
+                if (argc - arg_index < wc) {
                     fprintf( stderr,
-                             "Too few tag values: %d. "
-                             "Expected %d values for %s tag\n",
-                             argc - arg_index, fip->field_writecount,
-                             fip->field_name );
-                    return -4;
+                             "Number of tag values is not enough. "
+                             "Expected %d values for %s tag, got %d\n",
+                             wc, fip->field_name, argc - arg_index);
+                    return 4;
                 }
                     
+                if (wc > 1) {
+                        int     i, size;
+                        void    *array;
 
-                array = _TIFFmalloc(fip->field_writecount
-                               * TIFFDataWidth(fip->field_type));
-                if (!array)
-                {
-                    fprintf( stderr, "No space for %s tag\n", tagname);
-                    return -4;
+                        switch (fip->field_type) {
+                                /*
+                                 * XXX: We can't use TIFFDataWidth()
+                                 * to determine the space needed to store
+                                 * the value. For TIFF_RATIONAL values
+                                 * TIFFDataWidth() returns 8, but we use 4-byte
+                                 * float to represent rationals.
+                                 */
+                                case TIFF_BYTE:
+                                case TIFF_ASCII:
+                                case TIFF_SBYTE:
+                                case TIFF_UNDEFINED:
+                                    size = 1;
+                                    break;
+
+                                case TIFF_SHORT:
+                                case TIFF_SSHORT:
+                                    size = 2;
+                                    break;
+
+                                case TIFF_LONG:
+                                case TIFF_SLONG:
+                                case TIFF_FLOAT:
+                                case TIFF_IFD:
+                                case TIFF_RATIONAL:
+                                case TIFF_SRATIONAL:
+                                    size = 4;
+                                    break;
+
+                                case TIFF_DOUBLE:
+                                    size = 8;
+                                    break;
+                        }
+
+                        array = _TIFFmalloc(wc * size);
+                        if (!array) {
+                                fprintf(stderr, "No space for %s tag\n",
+                                        tagname);
+                                return 4;
+                        }
+
+                        switch (fip->field_type) {
+                            case TIFF_BYTE:
+                                for (i = 0; i < wc; i++)
+                                    ((uint8 *)array)[i] = atoi(argv[arg_index+i]);
+                                break;
+                            case TIFF_SHORT:
+                                for (i = 0; i < wc; i++)
+                                    ((uint16 *)array)[i] = atoi(argv[arg_index+i]);
+                                break;
+                            case TIFF_SBYTE:
+                                for (i = 0; i < wc; i++)
+                                    ((int8 *)array)[i] = atoi(argv[arg_index+i]);
+                                break;
+                            case TIFF_SSHORT:
+                                for (i = 0; i < wc; i++)
+                                    ((int16 *)array)[i] = atoi(argv[arg_index+i]);
+                                break;
+                            case TIFF_LONG:
+                                for (i = 0; i < wc; i++)
+                                    ((uint32 *)array)[i] = atol(argv[arg_index+i]);
+                                break;
+                            case TIFF_SLONG:
+                            case TIFF_IFD:
+                                for (i = 0; i < wc; i++)
+                                    ((uint32 *)array)[i] = atol(argv[arg_index+i]);
+                                break;
+                            case TIFF_DOUBLE:
+                                for (i = 0; i < wc; i++)
+                                    ((double *)array)[i] = atof(argv[arg_index+i]);
+                                break;
+                            case TIFF_RATIONAL:
+                            case TIFF_SRATIONAL:
+                            case TIFF_FLOAT:
+                                for (i = 0; i < wc; i++)
+                                    ((float *)array)[i] = (float)atof(argv[arg_index+i]);
+                                break;
+                            default:
+                                break;
+                        }
+                
+                        if (fip->field_passcount) {
+                                ret = TIFFSetField(tiff, fip->field_tag,
+                                                   wc, array);
+                        } else {
+                                ret = TIFFSetField(tiff, fip->field_tag,
+                                                   array);
+                        }
+
+                        _TIFFfree(array);
+                } else {
+                        switch (fip->field_type) {
+                            case TIFF_BYTE:
+                            case TIFF_SHORT:
+                            case TIFF_SBYTE:
+                            case TIFF_SSHORT:
+                                ret = TIFFSetField(tiff, fip->field_tag,
+                                                   atoi(argv[arg_index++]));
+                                break;
+                            case TIFF_LONG:
+                            case TIFF_SLONG:
+                            case TIFF_IFD:
+                                ret = TIFFSetField(tiff, fip->field_tag,
+                                                   atol(argv[arg_index++]));
+                                break;
+                            case TIFF_DOUBLE:
+                                ret = TIFFSetField(tiff, fip->field_tag,
+                                                   atof(argv[arg_index++]));
+                                break;
+                            case TIFF_RATIONAL:
+                            case TIFF_SRATIONAL:
+                            case TIFF_FLOAT:
+                                ret = TIFFSetField(tiff, fip->field_tag,
+                                                   (float)atof(argv[arg_index++]));
+                                break;
+                            default:
+                                break;
+                        }
                 }
 
-                switch (fip->field_type)
-                {
-                    case TIFF_BYTE:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((uint8 *)array)[i] = atoi(argv[arg_index+i]);
-                        break;
-                    case TIFF_SHORT:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((uint16 *)array)[i] = atoi(argv[arg_index+i]);
-                        break;
-                    case TIFF_SBYTE:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((int8 *)array)[i] = atoi(argv[arg_index+i]);
-                        break;
-                    case TIFF_SSHORT:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((int16 *)array)[i] = atoi(argv[arg_index+i]);
-                        break;
-                    case TIFF_LONG:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((uint32 *)array)[i] = atol(argv[arg_index+i]);
-                        break;
-                    case TIFF_SLONG:
-                    case TIFF_IFD:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((uint32 *)array)[i] = atol(argv[arg_index+i]);
-                        break;
-                    case TIFF_RATIONAL:
-                    case TIFF_SRATIONAL:
-                    case TIFF_DOUBLE:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((double *)array)[i] = atof(argv[arg_index+i]);
-                        break;
-                    case TIFF_FLOAT:
-                        for (i = 0; i < fip->field_writecount; i++)
-                            ((float *)array)[i] = (float)atof(argv[arg_index+i]);
-                        break;
-                    default:
-                        break;
-                }
-                
-                if( TIFFSetField(tiff, fip->field_tag, array) != 1 )
-                    fprintf( stderr, "Failed to set %s\n", fip->field_name );
-                arg_index += fip->field_writecount;
-                
-                _TIFFfree(array);
+                if (ret != 1)
+                    fprintf(stderr, "Failed to set %s\n", fip->field_name);
+                arg_index += wc;
             }
-        }
-        else if( strcmp(argv[arg_index],"-sf") == 0 && arg_index < argc-3 )
-        {
+        } else if (strcmp(argv[arg_index],"-sf") == 0 && arg_index < argc-3) {
             FILE    *fp;
             const TIFFFieldInfo *fip;
             char    *text;
@@ -191,20 +257,18 @@ main(int argc, char* argv[])
             fip = GetField(tiff, argv[arg_index]);
 
             if (!fip)
-                return -3;
+                return 3;
 
-            if (fip->field_type != TIFF_ASCII)
-            {
+            if (fip->field_type != TIFF_ASCII) {
                 fprintf( stderr,
                          "Only ASCII tags can be set from file. "
                          "%s is not ASCII tag.\n", fip->field_name );
-                return -5;
+                return 5;
             }
 
             arg_index++;
             fp = fopen( argv[arg_index], "rt" );
-            if( fp == NULL )
-            {
+            if(fp == NULL) {
                 perror( argv[arg_index] );
                 continue;
             }
@@ -215,25 +279,23 @@ main(int argc, char* argv[])
 
             fclose( fp );
 
-            if( TIFFSetField( tiff, fip->field_tag, text ) != 1 )
-            {
-                fprintf( stderr, "Failed to set %s from file %s\n", 
-                         fip->field_name, argv[arg_index] );
+            if(TIFFSetField( tiff, fip->field_tag, text ) != 1) {
+                fprintf(stderr, "Failed to set %s from file %s\n", 
+                        fip->field_name, argv[arg_index]);
             }
 
             _TIFFfree( text );
             arg_index++;
-        }
-        else
-        {
-            fprintf( stderr, "Unrecognised option: %s\n",
-                     argv[arg_index] );
+        } else {
+            fprintf(stderr, "Unrecognised option: %s\n",
+                    argv[arg_index]);
             usage();
         }
     }
 
     TIFFRewriteDirectory(tiff);
     TIFFClose(tiff);
-    return (0);
+    return 0;
 }
 
+/* vim: set ts=8 sts=8 sw=8 noet: */
