@@ -384,6 +384,14 @@ or for other purposes.
 The default value is a pointer to a builtin function that images
 packed bilevel data.
 .TP
+.B TIFFTAG_IPTCNEWSPHOTO
+Tag contaings image metadata per the IPTC newsphoto spec: Headline, 
+captioning, credit, etc... Used by most wire services. 
+.TP
+.B TIFFTAG_PHOTOSHOP
+Tag contains Photoshop captioning information and metadata. Photoshop 
+uses in parallel and redundantly alongside IPTCNEWSPHOTO information. 
+.TP
 .B TIFFTAG_JPEGQUALITY
 Control the compression quality level used in the baseline algorithm.
 Note that quality levels are in the range 0-100 with a default value of 75.
