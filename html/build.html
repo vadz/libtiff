@@ -191,16 +191,22 @@ parameters.
 	<P> Add library directories (see other options below) to the TIFF
 	library	run-time linker path.
 
-<P>
-<DT><I>JPEG Support</I>
-<DD>The <TT>JPEG</TT> package enables support for the handling
-of TIFF images with JPEG-encoded data.
-Support for JPEG-encoded data requires the Independent JPEG Group (IJG)
-<TT>libjpeg</TT> distribution; this software is available at
-<A HREF=ftp://ftp.uu.net/graphics/jpeg/>ftp.uu.net:/graphics/jpeg/</A>.
-If JPEG support is enabled the <TT>DIRS_LIBINC</TT> and <TT>DIR_JPEGLIB</TT>
-parameters should also be set (see below).
-By default JPEG support is not configured.
+	<P><DT><I>JPEG Support</I>
+
+	<DD><TT>
+		--disable-jpeg&nbsp;&nbsp;&nbsp;&nbsp;disable IJG JPEG library usage (required for JPEG compression, enabled by default)
+		--with-jpeg-include-dir=DIR&nbsp;&nbsp;&nbsp;&nbsp;location of IJG JPEG library headers
+		--with-jpeg-lib-dir=DIR&nbsp;&nbsp;&nbsp;&nbsp;location of IJG JPEG library binary)
+	</TT>
+	<DD>The <TT>JPEG</TT> package enables support for the handling of TIFF
+	images with JPEG-encoded data. Support for JPEG-encoded data requires
+	the Independent JPEG Group (IJG) <TT>libjpeg</TT> distribution; this
+	software is available at
+	<A HREF=ftp://ftp.uu.net/graphics/jpeg/>ftp.uu.net:/graphics/jpeg/</A>.
+	<B>configure</B> script automatically tries to search the working IJG
+	JPEG installation. If it fails to find library, JPEG support will be
+	automatically disabled.If you want specify the exact paths to library
+	binary and headers, use above switches for that.
 
 <P>
 <DT><I>ZIP Support</I>
