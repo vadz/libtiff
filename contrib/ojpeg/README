@@ -4,15 +4,12 @@ necessary:
 
  o Ensure you are able to build with JPEG support (see config.site).
 
- o Uncomment OJPEG="yes" statement in config.site or #define OJPEG_SUPPORT
-   somewhere (if you don't use configure logic). This can be put in
-   tiffconf.h for instance.
+ o Uncomment OJPEG="yes" statement in config.site file or
+   #define OJPEG_SUPPORT somewhere.  This can be put in tiffconf.h for
+   instance.
 
- o Compile ojpeg.c module and link it with libtiff library. If you are using
-   configure script for building library it should be done automatically.
-   As an another option you can append the jdhuff_add.c code to the end
-   of jdhuff.c within the IJG JPEG libraries jdhuff.c file and recompile
-   libjpeg (jpeg-6b tested).
+ o Append the jdhuff_add.c code to the end of jdhuff.c within the IJG JPEG
+   libraries jdhuff.c file and recompile libjpeg (jpeg-6b tested).
 
  o Rebuild cleanly.
 
