@@ -1046,7 +1046,11 @@ TIFFRewriteDirectory( TIFF *tif )
         tif->tif_header.tiff_diroff = 0;
         tif->tif_diroff = 0;
 
+#if defined(__hpux) && defined(__LP64__)
+#define HDROFF(f) ((toff_t)(unsigned long) &(((TIFFHeader*) 0)->f))
+#else
 #define	HDROFF(f)	((toff_t) &(((TIFFHeader*) 0)->f))
+#endif
         TIFFSeekFile(tif, HDROFF(tiff_diroff), SEEK_SET);
         if (!WriteOK(tif, &(tif->tif_header.tiff_diroff), 
                      sizeof (tif->tif_diroff))) 

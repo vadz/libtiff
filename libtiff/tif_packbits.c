@@ -188,31 +188,40 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 static int
 PackBitsEncodeChunk(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 {
-    tsize_t rowsize = (tsize_t) tif->tif_data;
-
-    assert(rowsize > 0);
-    
-#ifdef YCBCR_SUPPORT
-    /* 
-     * YCBCR data isn't really separable into rows, so we
-     * might as well encode the whole tile/strip as one chunk.
-     */
-    if( tif->tif_dir.td_photometric == PHOTOMETRIC_YCBCR )
-        rowsize = (tsize_t) tif->tif_data;
+#if defined(__hpux) && defined(__LP64__)
+	tsize_t rowsize = (tsize_t)(unsigned long) tif->tif_data;
+#else
+	tsize_t rowsize = (tsize_t) tif->tif_data;
 #endif
 
-    while ((long)cc > 0) {
-        int	chunk = rowsize;
-        
-        if( cc < chunk )
-            chunk = cc;
+	assert(rowsize > 0);
+    
+#ifdef YCBCR_SUPPORT
+	/* 
+	 * YCBCR data isn't really separable into rows, so we
+	 * might as well encode the whole tile/strip as one chunk.
+	 */
+	if( tif->tif_dir.td_photometric == PHOTOMETRIC_YCBCR ) {
+#if defined(__hpux) && defined(__LP64__)
+		rowsize = (tsize_t)(unsigned long) tif->tif_data;
+#else
+		rowsize = (tsize_t) tif->tif_data;
+#endif
+	}
+#endif
 
-        if (PackBitsEncode(tif, bp, chunk, s) < 0)
-            return (-1);
-        bp += chunk;
-        cc -= chunk;
-    }
-    return (1);
+	while ((long)cc > 0) {
+		int	chunk = rowsize;
+		
+		if( cc < chunk )
+		    chunk = cc;
+
+		if (PackBitsEncode(tif, bp, chunk, s) < 0)
+		    return (-1);
+		bp += chunk;
+		cc -= chunk;
+	}
+	return (1);
 }
 
 static int
