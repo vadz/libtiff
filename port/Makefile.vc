@@ -35,7 +35,7 @@ OBJ	= \
 all:	libport.lib
 
 libport.lib:	$(OBJ)
-	lib /nologo /out:libport.lib $(OBJ)
+	$(AR) /out:libport.lib $(OBJ)
 
 clean:
 	-del *.obj *.lib

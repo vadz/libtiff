@@ -30,7 +30,6 @@
 !INCLUDE ..\nmake.opt
 
 INCL	= -I. $(JPEG_INCLUDE) $(ZLIB_INCLUDE)
-LIBS	= $(LIBS) ..\port\libport.lib
 
 OBJ	= \
 	tif_aux.obj \
@@ -76,10 +75,10 @@ config.h:
 	copy config.h.vc config.h
 
 libtiff.lib:	config.h $(OBJ)
-	lib /nologo /out:libtiff.lib $(OBJ) $(LIBS)
+	$(AR) /out:libtiff.lib $(OBJ) $(LIBS)
 
 libtiff.dll:	config.h $(OBJ)
-	link /nologo /dll /def:libtiff.def /out:libtiff.dll \
+	$(LD) /dll /def:libtiff.def /out:libtiff.dll \
 	/implib:libtiff_i.lib $(OBJ) $(LIBS)
 	
 clean:

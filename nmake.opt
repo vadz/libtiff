@@ -103,10 +103,12 @@ CHECK_JPEG_YCBCR_SUBSAMPLING = 1
 
 MAKE	=	nmake /nologo
 CC	=	cl /nologo
+AR	=	lib /nologo
+LD	=	link /nologo
 
-CFLAGS  = /W3 $(INCL) $(WINMODE) $(EXTRAFLAGS)
+CFLAGS  =	/W3 $(INCL) $(WINMODE) $(EXTRAFLAGS)
 EXTRAFLAGS	=
-LIBS		=
+LIBS	=
 
 # Set the native cpu bit order
 EXTRAFLAGS	= -DFILLODER_LSB2MSB $(EXTRAFLAGS)
