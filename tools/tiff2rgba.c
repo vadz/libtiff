@@ -39,7 +39,7 @@
 #endif
 #define	roundup(x, y)	(howmany(x,y)*((uint32)(y)))
 
-uint16	compression = COMPRESSION_LZW;
+uint16	compression = COMPRESSION_PACKBITS;
 uint32	rowsperstrip = (uint32) -1;
 int	process_by_block = 0; /* default is whole image at once */
 
