@@ -20,7 +20,7 @@ addtiffo.obj:	addtiffo.c
 tif_overview.obj:	tif_overview.c
 	$(CPPC) -c $(CFLAGS) tif_overview.c
 
-tif_ovrcache.obj:	tif_ovrcache.obj
+tif_ovrcache.obj:	tif_ovrcache.c
 	$(CPPC) -c $(CFLAGS) tif_ovrcache.c
 
 clean:
