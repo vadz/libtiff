@@ -41,7 +41,7 @@ extern	void TIFFCvtIEEEFloatToNative(TIFF*, uint32, float*);
 extern	void TIFFCvtIEEEDoubleToNative(TIFF*, uint32, double*);
 #endif
 
-static	void EstimateStripByteCounts(TIFF*, TIFFDirEntry*, uint16);
+static	int EstimateStripByteCounts(TIFF*, TIFFDirEntry*, uint16);
 static	void MissingRequired(TIFF*, const char*);
 static	int CheckDirCount(TIFF*, TIFFDirEntry*, uint32);
 static	tsize_t TIFFFetchData(TIFF*, TIFFDirEntry*, char*);
@@ -511,7 +511,8 @@ TIFFReadDirectory(TIFF* tif)
 		TIFFWarning(tif->tif_name,
 "TIFF directory is missing required \"%s\" field, calculating from imagelength",
 		    _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
-		EstimateStripByteCounts(tif, dir, dircount);
+		if (EstimateStripByteCounts(tif, dir, dircount) < 0)
+		    goto bad;
 #define	BYTECOUNTLOOKSBAD \
     ((td->td_stripbytecount[0] == 0 && td->td_stripoffset[0] != 0) || \
     (td->td_compression == COMPRESSION_NONE && \
@@ -527,7 +528,8 @@ TIFFReadDirectory(TIFF* tif)
 		TIFFWarning(tif->tif_name,
 	    "Bogus \"%s\" field, ignoring and calculating from imagelength",
 		    _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
-		EstimateStripByteCounts(tif, dir, dircount);
+		if(EstimateStripByteCounts(tif, dir, dircount) < 0)
+		    goto bad;
 	}
 	if (dir)
 		_TIFFfree((char *)dir);
@@ -566,7 +568,7 @@ bad:
 	return (0);
 }
 
-static void
+static int
 EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 {
 	register TIFFDirEntry *dp;
@@ -587,10 +589,18 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		uint16 n;
 
 		/* calculate amount of space used by indirect values */
-		for (dp = dir, n = dircount; n > 0; n--, dp++) {
-			uint32 cc = dp->tdir_count*tiffDataWidth[dp->tdir_type];
-			if (cc > sizeof (uint32))
-				space += cc;
+		for (dp = dir, n = dircount; n > 0; n--, dp++)
+		{
+		    uint32 cc;
+		    if(dp->tdir_tag == IGNORE)
+		    {
+		        TIFFError(tif->tif_name,
+		        "Cannot determine StripByteCounts values, because of tags with unknown sizes");
+			return -1;
+		    }
+		    cc = dp->tdir_count*TIFFDataWidth(dp->tdir_type);
+		    if (cc > sizeof (uint32))
+			space += cc;
 		}
 		space = filesize - space;
 		if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
@@ -618,6 +628,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 	TIFFSetFieldBit(tif, FIELD_STRIPBYTECOUNTS);
 	if (!TIFFFieldSet(tif, FIELD_ROWSPERSTRIP))
 		td->td_rowsperstrip = td->td_imagelength;
+	return 1;
 }
 
 static void
@@ -652,7 +663,7 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 static tsize_t
 TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 {
-	int w = tiffDataWidth[dir->tdir_type];
+	int w = TIFFDataWidth(dir->tdir_type);
 	tsize_t cc = dir->tdir_count * w;
 
 	if (!isMapped(tif)) {
@@ -857,7 +868,7 @@ TIFFFetchRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 	uint32* l;
 
 	l = (uint32*)CheckMalloc(tif,
-	    dir->tdir_count*tiffDataWidth[dir->tdir_type],
+	    dir->tdir_count*TIFFDataWidth(dir->tdir_type),
 	    "to fetch array of rationals");
 	if (l) {
 		if (TIFFFetchData(tif, dir, (char *)l)) {
@@ -988,7 +999,7 @@ TIFFFetchAnyArray(TIFF* tif, TIFFDirEntry* dir, double* v)
 		/* TIFF_ASCII */
 		/* TIFF_UNDEFINED */
 		TIFFError(tif->tif_name,
-		    "Cannot read TIFF_ANY type %d for field \"%s\"",
+		    "cannot read TIFF_ANY type %d for field \"%s\"",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
 		return (0);
 	}

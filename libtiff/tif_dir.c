@@ -517,7 +517,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 td->td_customValues = (TIFFTagValue *)
                     _TIFFmalloc(sizeof(TIFFTagValue));
 
-            tv_size = tiffDataWidth[fip->field_type];
+            tv_size = TIFFDataWidth(fip->field_type);
             tv = td->td_customValues + (td->td_customValueCount - 1);
             tv->info = fip;
             if( fip->field_passcount )

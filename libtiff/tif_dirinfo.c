@@ -340,21 +340,35 @@ _TIFFPrintFieldInfo(TIFF* tif, FILE* fd)
 	}
 }
 
-const int tiffDataWidth[] = {
-    1,	/* nothing */
-    1,	/* TIFF_BYTE */
-    1,	/* TIFF_ASCII */
-    2,	/* TIFF_SHORT */
-    4,	/* TIFF_LONG */
-    8,	/* TIFF_RATIONAL */
-    1,	/* TIFF_SBYTE */
-    1,	/* TIFF_UNDEFINED */
-    2,	/* TIFF_SSHORT */
-    4,	/* TIFF_SLONG */
-    8,	/* TIFF_SRATIONAL */
-    4,	/* TIFF_FLOAT */
-    8,	/* TIFF_DOUBLE */
-};
+/*
+ * Return size of TIFFDataType in bytes
+ */
+int
+TIFFDataWidth(TIFFDataType type)
+{
+	switch(type)
+	{
+	case 0:  /* nothing */
+	case 1:  /* TIFF_BYTE */
+	case 2:  /* TIFF_ASCII */
+	case 6:  /* TIFF_SBYTE */
+	case 7:  /* TIFF_UNDEFINED */
+		return 1;
+	case 3:  /* TIFF_SHORT */
+	case 8:  /* TIFF_SSHORT */
+		return 2;
+	case 4:  /* TIFF_LONG */
+	case 9:  /* TIFF_SLONG */
+	case 11: /* TIFF_FLOAT */
+		return 4;
+	case 5:  /* TIFF_RATIONAL */
+	case 10: /* TIFF_SRATIONAL */
+	case 12: /* TIFF_DOUBLE */
+		return 8;
+	default:
+		return 1; /* will return safe value for unknown sizes */
+	}
+}
 
 /*
  * Return nearest TIFFDataType to the sample type of an image.
