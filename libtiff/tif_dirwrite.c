@@ -451,7 +451,8 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 	case TIFF_SSHORT:
 		if (wc > 1) {
 			uint16* wp;
-			if (wc == (u_short) TIFF_VARIABLE)
+			if (wc == (u_short) TIFF_VARIABLE
+			    || fip->field_passcount)
 				TIFFGetField(tif, fip->field_tag, &wc, &wp);
 			else
 				TIFFGetField(tif, fip->field_tag, &wp);
@@ -475,7 +476,8 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 	case TIFF_SLONG:
 		if (wc > 1) {
 			uint32* lp;
-			if (wc == (u_short) TIFF_VARIABLE)
+			if (wc == (u_short) TIFF_VARIABLE
+			    || fip->field_passcount)
 				TIFFGetField(tif, fip->field_tag, &wc, &lp);
 			else
 				TIFFGetField(tif, fip->field_tag, &lp);
@@ -498,7 +500,8 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 	case TIFF_SRATIONAL:
 		if (wc > 1) {
 			float* fp;
-			if (wc == (u_short) TIFF_VARIABLE)
+			if (wc == (u_short) TIFF_VARIABLE
+			    || fip->field_passcount)
 				TIFFGetField(tif, fip->field_tag, &wc, &fp);
 			else
 				TIFFGetField(tif, fip->field_tag, &fp);
@@ -521,7 +524,8 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 	case TIFF_FLOAT:
 		if (wc > 1) {
 			float* fp;
-			if (wc == (u_short) TIFF_VARIABLE)
+			if (wc == (u_short) TIFF_VARIABLE
+			    || fip->field_passcount)
 				TIFFGetField(tif, fip->field_tag, &wc, &fp);
 			else
 				TIFFGetField(tif, fip->field_tag, &fp);
@@ -544,7 +548,8 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 	case TIFF_DOUBLE:
 		if (wc > 1) {
 			double* dp;
-			if (wc == (u_short) TIFF_VARIABLE)
+			if (wc == (u_short) TIFF_VARIABLE
+			    || fip->field_passcount)
 				TIFFGetField(tif, fip->field_tag, &wc, &dp);
 			else
 				TIFFGetField(tif, fip->field_tag, &dp);
@@ -579,7 +584,8 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
         case TIFF_SBYTE:          
 		if (wc > 1) {
 			char* cp;
-			if (wc == (u_short) TIFF_VARIABLE) {
+			if (wc == (u_short) TIFF_VARIABLE
+			    || fip->field_passcount) {
 				TIFFGetField(tif, fip->field_tag, &wc, &cp);
 				dir->tdir_count = wc;
 			} else if (wc == (u_short) TIFF_VARIABLE2) {
