@@ -24,43 +24,22 @@
 # Process this file with automake to produce Makefile.in.
 
 docdir = $(LIBTIFF_DOCDIR)/html/man
-MANSRCDIR = $(top_builddir)/man
+MANSRCDIR = $(top_srcdir)/man
 
 GROFF = groff -Thtml -mandoc
 ECHO = echo
 
+indexfile = index.html
 docfiles = \
-	fax2ps.1.html \
-	fax2tiff.1.html \
-	gif2tiff.1.html \
-	index.html \
 	libtiff.3tiff.html \
-	pal2rgb.1.html \
-	ppm2tiff.1.html \
-	ras2tiff.1.html \
-	raw2tiff.1.html \
-	rgb2ycbcr.1.html \
-	sgi2tiff.1.html \
-	thumbnail.1.html \
-	tiff2bw.1.html \
-	tiff2pdf.1.html \
-	tiff2ps.1.html \
-	tiff2rgba.1.html \
 	TIFFbuffer.3tiff.html \
 	TIFFClose.3tiff.html \
-	tiffcmp.1.html \
 	TIFFcodec.3tiff.html \
 	TIFFcolor.3tiff.html \
-	tiffcp.1.html \
 	TIFFDataWidth.3tiff.html \
-	tiffdither.1.html \
-	tiffdump.1.html \
 	TIFFError.3tiff.html \
 	TIFFFlush.3tiff.html \
 	TIFFGetField.3tiff.html \
-	tiffgt.1.html \
-	tiffinfo.1.html \
-	tiffmedian.1.html \
 	TIFFmemory.3tiff.html \
 	TIFFOpen.3tiff.html \
 	TIFFPrintDirectory.3tiff.html \
@@ -78,11 +57,8 @@ docfiles = \
 	TIFFRGBAImage.3tiff.html \
 	TIFFSetDirectory.3tiff.html \
 	TIFFSetField.3tiff.html \
-	tiffset.1.html \
 	TIFFsize.3tiff.html \
-	tiffsplit.1.html \
 	TIFFstrip.3tiff.html \
-	tiffsv.1.html \
 	TIFFswab.3tiff.html \
 	TIFFtile.3tiff.html \
 	TIFFWarning.3tiff.html \
@@ -92,22 +68,46 @@ docfiles = \
 	TIFFWriteRawStrip.3tiff.html \
 	TIFFWriteRawTile.3tiff.html \
 	TIFFWriteScanline.3tiff.html \
-	TIFFWriteTile.3tiff.html
+	TIFFWriteTile.3tiff.html \
+	fax2ps.1.html \
+	fax2tiff.1.html \
+	gif2tiff.1.html \
+	pal2rgb.1.html \
+	ppm2tiff.1.html \
+	ras2tiff.1.html \
+	raw2tiff.1.html \
+	rgb2ycbcr.1.html \
+	sgi2tiff.1.html \
+	thumbnail.1.html \
+	tiff2bw.1.html \
+	tiff2pdf.1.html \
+	tiff2ps.1.html \
+	tiff2rgba.1.html \
+	tiffcmp.1.html \
+	tiffcp.1.html \
+	tiffdither.1.html \
+	tiffdump.1.html \
+	tiffgt.1.html \
+	tiffinfo.1.html \
+	tiffmedian.1.html \
+	tiffset.1.html \
+	tiffsplit.1.html \
+	tiffsv.1.html
 
-dist_doc_DATA = $(docfiles)
+dist_doc_DATA = $(indexfile) $(docfiles)
 
 INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY BGCOLOR=white><ul><H2>Man Pages</h2><p>'
 INDEXEND = '</ul></BODY></HTML>'
 
-html:
-	${ECHO} ${INDEXSTART} > index.html
-	for i in ${MANSRCDIR}/*.3tiff; do			\
-		${GROFF} $$i > `basename $$i`.html;       	\
-		${ECHO} '<li><A HREF='`basename $$i`'.html>'`basename $$i`'</a>' >> index.html;   \
+VPATH = $(MANSRCDIR)
+index.html: $(docfiles)
+	${ECHO} ${INDEXSTART} > $(indexfile)
+	for i in $^; do							\
+		${ECHO} '<li><A HREF='$$i'>'$$i'</a>' >> $(indexfile);  \
 	done
-	for i in ${MANSRCDIR}/*.1; do			\
-		${GROFF} $$i > `basename $$i`.html;       	\
-		${ECHO} '<li><A HREF='`basename $$i`'.html>'`basename $$i`'</a>' >> index.html;   \
-	done
-	${ECHO} ${INDEXEND} >> index.html
+	${ECHO} ${INDEXEND} >> $(indexfile)
 
+%.html: %
+	${GROFF} $< > $@
+
+html: $(docfiles) $(indexfile)
