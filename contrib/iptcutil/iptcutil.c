@@ -1,14 +1,24 @@
 /* $Id$ */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#ifdef  WIN32
-#include <io.h>
-#endif
 #include <string.h>
 #include <memory.h>
 #include <ctype.h>
+
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif
+
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
 
 #ifdef WIN32
 #define STRNICMP strnicmp
@@ -456,8 +466,8 @@ int main(int argc, char *argv[])
         next;
 
       unsigned char
-        recnum,
-        dataset;
+        recnum = 0,
+        dataset = 0;
 
       int
         inputlen = BUFFER_SZ;
