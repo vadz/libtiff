@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -24,10 +24,16 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -58,13 +64,13 @@ BadPPM(char* file)
 int
 main(int argc, char* argv[])
 {
-	uint16 photometric;
+	uint16 photometric = 0;
 	uint32 rowsperstrip = (uint32) -1;
 	double resolution = -1;
 	unsigned char *buf = NULL;
 	uint32 row;
 	tsize_t linebytes;
-	uint16 spp;
+	uint16 spp = 1;
 	TIFF *out;
 	FILE *in;
 	uint32 w, h;
@@ -154,7 +160,7 @@ main(int argc, char* argv[])
 		ungetc(c, in);
 		break;
 	}
-	if (fscanf(in, " %ld %ld %d", &w, &h, &prec) != 3)
+	if (fscanf(in, " %lu %lu %d", &w, &h, &prec) != 3)
 		BadPPM(infile);
 	if (fgetc(in) != '\n' || w <= 0 || h <= 0 || prec != 255)
 		BadPPM(infile);
@@ -270,3 +276,5 @@ usage(void)
 		fprintf(stderr, "%s\n", stuff[i]);
 	exit(-1);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
