@@ -801,12 +801,6 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 			if (TIFFjpeg_read_raw_data(sp, sp->ds_buffer, n) != n)
 				return (0);
 			sp->scancount = 0;
-			/* Close down the decompressor if done. */
-			if (sp->cinfo.d.output_scanline >=
-			    sp->cinfo.d.output_height) {
-				if (TIFFjpeg_finish_decompress(sp) != TRUE)
-					return (0);
-			}
 		}
 		/*
 		 * Fastest way to unseparate the data is to make one pass
@@ -843,6 +837,13 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 			tif->tif_row++;
 		buf += sp->bytesperline;
 	}
+
+        /* Close down the decompressor if done. */
+        if (sp->cinfo.d.output_scanline >= sp->cinfo.d.output_height) {
+            if (TIFFjpeg_finish_decompress(sp) != TRUE)
+                return (0);
+        }
+
 	return (1);
 }
 
