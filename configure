@@ -464,7 +464,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LIBTIFF_MAJOR_VERSION LIBTIFF_MINOR_VERSION LIBTIFF_MICRO_VERSION LIBTIFF_ALPHA_VERSION LIBTIFF_VERSION LIBTIFF_RELEASE_DATE LN_S EGREP ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBOBJS LIBTIFF_DOCDIR HAVE_CXX_TRUE HAVE_CXX_FALSE X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS acx_pthread_config PTHREAD_CC PTHREAD_LIBS PTHREAD_CFLAGS GL_CFLAGS GL_LIBS GLU_CFLAGS GLU_LIBS GLUT_CFLAGS GLUT_LIBS HAVE_OPENGL_TRUE HAVE_OPENGL_FALSE LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LIBTIFF_MAJOR_VERSION LIBTIFF_MINOR_VERSION LIBTIFF_MICRO_VERSION LIBTIFF_ALPHA_VERSION LIBTIFF_VERSION LIBTIFF_RELEASE_DATE LN_S EGREP ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBOBJS HAVE_RPATH_TRUE HAVE_RPATH_FALSE LIBTIFF_DOCDIR HAVE_CXX_TRUE HAVE_CXX_FALSE X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS acx_pthread_config PTHREAD_CC PTHREAD_LIBS PTHREAD_CFLAGS GL_CFLAGS GL_LIBS GLU_CFLAGS GLU_LIBS GLUT_CFLAGS GLUT_LIBS HAVE_OPENGL_TRUE HAVE_OPENGL_FALSE LIBDIR LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -22671,6 +22671,16 @@ else
 fi;
 
 
+if test "$HAVE_RPATH" = "yes"; then
+  HAVE_RPATH_TRUE=
+  HAVE_RPATH_FALSE='#'
+else
+  HAVE_RPATH_TRUE='#'
+  HAVE_RPATH_FALSE=
+fi
+
+
+
 # Check whether --enable-largefile or --disable-largefile was given.
 if test "${enable_largefile+set}" = set; then
   enableval="$enable_largefile"
@@ -23169,11 +23179,6 @@ if test "x$enable_zlib" != "xno" ; then
 
   if test "x$with_zlib_lib_dir" != "x" ; then
     LDFLAGS="-L$with_zlib_lib_dir $LDFLAGS"
-
-    if test "$HAVE_RPATH" = "yes"; then
-      LDFLAGS="-rpath$with_zlib_lib_dir $LDFLAGS"
-    fi
-
   fi
 
   echo "$as_me:$LINENO: checking for inflateEnd in -lz" >&5
@@ -23416,6 +23421,11 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   LIBS="-lz $LIBS"
+
+  if test "$HAVE_RPATH" = "yes"; then
+    LIBDIR="-R $with_zlib_lib_dir $LIBDIR"
+  fi
+
 fi
 
 
@@ -23462,10 +23472,6 @@ if test "x$enable_jpeg" != "xno" ; then
 
   if test "x$with_jpeg_lib_dir" != "x" ; then
     LDFLAGS="-L$with_jpeg_lib_dir $LDFLAGS"
-
-    if test "$HAVE_RPATH" = "yes"; then
-      LDFLAGS="-rpath$with_jpeg_lib_dir $LDFLAGS"
-    fi
 
   fi
 
@@ -23709,6 +23715,11 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   LIBS="-ljpeg $LIBS"
+
+  if test "$HAVE_RPATH" = "yes"; then
+    LIBDIR="-R $with_jpeg_lib_dir $LIBDIR"
+  fi
+
 fi
 
 
@@ -26198,6 +26209,8 @@ _ACEOF
 fi
 
 
+
+
                     ac_config_headers="$ac_config_headers libtiff/tif_config.h libtiff/tiffconf.h"
 
 
@@ -26326,6 +26339,13 @@ if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"am__fastdepCXX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${HAVE_RPATH_TRUE}" && test -z "${HAVE_RPATH_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"HAVE_RPATH\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"HAVE_RPATH\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -26978,6 +26998,8 @@ s,@FFLAGS@,$FFLAGS,;t t
 s,@ac_ct_F77@,$ac_ct_F77,;t t
 s,@LIBTOOL@,$LIBTOOL,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
+s,@HAVE_RPATH_TRUE@,$HAVE_RPATH_TRUE,;t t
+s,@HAVE_RPATH_FALSE@,$HAVE_RPATH_FALSE,;t t
 s,@LIBTIFF_DOCDIR@,$LIBTIFF_DOCDIR,;t t
 s,@HAVE_CXX_TRUE@,$HAVE_CXX_TRUE,;t t
 s,@HAVE_CXX_FALSE@,$HAVE_CXX_FALSE,;t t
@@ -26997,6 +27019,7 @@ s,@GLUT_CFLAGS@,$GLUT_CFLAGS,;t t
 s,@GLUT_LIBS@,$GLUT_LIBS,;t t
 s,@HAVE_OPENGL_TRUE@,$HAVE_OPENGL_TRUE,;t t
 s,@HAVE_OPENGL_FALSE@,$HAVE_OPENGL_FALSE,;t t
+s,@LIBDIR@,$LIBDIR,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
 
@@ -27719,28 +27742,28 @@ fi
 echo ""
 echo "Libtiff is now configured for ${host}"
 echo ""
-echo "  Installation directory:            ${prefix}"
-echo "  Documentation directory:           ${LIBTIFF_DOCDIR}"
-echo "  C compiler:                        ${CC} ${CFLAGS}"
-echo "  C++ compiler:                      ${CXX} ${CXXFLAGS}"
-echo "  Enable runtime linker paths:       ${HAVE_RPATH}"
+echo "  Installation directory:             ${prefix}"
+echo "  Documentation directory:            ${LIBTIFF_DOCDIR}"
+echo "  C compiler:                         ${CC} ${CFLAGS}"
+echo "  C++ compiler:                       ${CXX} ${CXXFLAGS}"
+echo "  Enable runtime linker paths:        ${HAVE_RPATH}"
 echo ""
 echo " Support for internal codecs:"
-echo "  CCITT Group 3 & 4 algorithms:      ${HAVE_CCITT}"
-echo "  Macintosh PackBits algorithm:      ${HAVE_PACKBITS}"
-echo "  LZW algorithm:                     ${HAVE_LZW}"
-echo "  ThunderScan 4-bit RLE algorithm:   ${HAVE_THUNDER}"
-echo "  NeXT 2-bit RLE algorithm:          ${HAVE_NEXT}"
-echo "  LogLuv high dynamic range encoding:${HAVE_LOGLUV}"
+echo "  CCITT Group 3 & 4 algorithms:       ${HAVE_CCITT}"
+echo "  Macintosh PackBits algorithm:       ${HAVE_PACKBITS}"
+echo "  LZW algorithm:                      ${HAVE_LZW}"
+echo "  ThunderScan 4-bit RLE algorithm:    ${HAVE_THUNDER}"
+echo "  NeXT 2-bit RLE algorithm:           ${HAVE_NEXT}"
+echo "  LogLuv high dynamic range encoding: ${HAVE_LOGLUV}"
 echo ""
 echo " Support for external codecs:"
-echo "  ZLIB support:                      ${HAVE_ZLIB}"
-echo "  Pixar log-format algorithm:        ${HAVE_PIXARLOG}"
-echo "  JPEG support:                      ${HAVE_JPEG}"
-echo "  Old JPEG support:                  ${HAVE_OJPEG}"
+echo "  ZLIB support:                       ${HAVE_ZLIB}"
+echo "  Pixar log-format algorithm:         ${HAVE_PIXARLOG}"
+echo "  JPEG support:                       ${HAVE_JPEG}"
+echo "  Old JPEG support:                   ${HAVE_OJPEG}"
 echo ""
-echo "  C++ support:                       ${HAVE_CXX}"
+echo "  C++ support:                        ${HAVE_CXX}"
 echo ""
-echo "  OpenGL support:                    ${HAVE_OPENGL}"
+echo "  OpenGL support:                     ${HAVE_OPENGL}"
 echo ""
 

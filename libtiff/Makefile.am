@@ -109,11 +109,17 @@ libtiff_la_SOURCES = $(SRCS)
 libtiff_la_LDFLAGS = \
 	-no-undefined \
 	-version-number $(LIBTIFF_MAJOR_VERSION):$(LIBTIFF_MINOR_VERSION):$(LIBTIFF_MICRO_VERSION)
+if HAVE_RPATH
+libtiff_la_LDFLAGS += $(LIBDIR)
+endif
 
 libtiffxx_la_SOURCES = $(SRCSXX)
 libtiffxx_la_LDFLAGS = \
 	-no-undefined \
 	-version-number $(LIBTIFF_MAJOR_VERSION):$(LIBTIFF_MINOR_VERSION):$(LIBTIFF_MICRO_VERSION)
+if HAVE_RPATH
+libtiffxx_la_LDFLAGS += $(LIBDIR)
+endif
 libtiffxx_la_LIBADD = $(LIBTIFF)
 
 #
