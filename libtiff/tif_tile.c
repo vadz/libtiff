@@ -31,6 +31,32 @@
  */
 #include "tiffiop.h"
 
+static uint32
+summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)
+{
+	uint32	bytes = summand1 + summand2;
+
+	if (bytes - summand1 != summand2) {
+		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		bytes = 0;
+	}
+
+	return (bytes);
+}
+
+static uint32
+multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)
+{
+	uint32	bytes = nmemb * elem_size;
+
+	if (elem_size && bytes / elem_size != nmemb) {
+		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		bytes = 0;
+	}
+
+	return (bytes);
+}
+
 /*
  * Compute which tile an (x,y,z,s) value is in.
  */
@@ -119,11 +145,13 @@ TIFFNumberOfTiles(TIFF* tif)
 	if (dz == (uint32) -1)
 		dz = td->td_imagedepth;
 	ntiles = (dx == 0 || dy == 0 || dz == 0) ? 0 :
-	    (TIFFhowmany(td->td_imagewidth, dx) *
-	     TIFFhowmany(td->td_imagelength, dy) *
-	     TIFFhowmany(td->td_imagedepth, dz));
+	    multiply(tif, multiply(tif, TIFFhowmany(td->td_imagewidth, dx),
+				   TIFFhowmany(td->td_imagelength, dy),
+				   "TIFFNumberOfTiles"),
+		     TIFFhowmany(td->td_imagedepth, dz), "TIFFNumberOfTiles");
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
-		ntiles *= td->td_samplesperpixel;
+		ntiles = multiply(tif, ntiles, td->td_samplesperpixel,
+				  "TIFFNumberOfTiles");
 	return (ntiles);
 }
 
@@ -138,9 +166,11 @@ TIFFTileRowSize(TIFF* tif)
 	
 	if (td->td_tilelength == 0 || td->td_tilewidth == 0)
 		return ((tsize_t) 0);
-	rowsize = td->td_bitspersample * td->td_tilewidth;
+	rowsize = multiply(tif, td->td_bitspersample, td->td_tilewidth,
+			   "TIFFTileRowSize");
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
-		rowsize *= td->td_samplesperpixel;
+		rowsize = multiply(tif, rowsize, td->td_samplesperpixel,
+				   "TIFFTileRowSize");
 	return ((tsize_t) TIFFhowmany8(rowsize));
 }
 
@@ -169,15 +199,23 @@ TIFFVTileSize(TIFF* tif, uint32 nrows)
 		 */
 		tsize_t w =
 		    TIFFroundup(td->td_tilewidth, td->td_ycbcrsubsampling[0]);
-		tsize_t rowsize = TIFFhowmany8(w*td->td_bitspersample);
+		tsize_t rowsize =
+		    TIFFhowmany8(multiply(tif, w, td->td_bitspersample,
+					  "TIFFVTileSize"));
 		tsize_t samplingarea =
 		    td->td_ycbcrsubsampling[0]*td->td_ycbcrsubsampling[1];
 		nrows = TIFFroundup(nrows, td->td_ycbcrsubsampling[1]);
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
-		tilesize = nrows*rowsize + 2*(nrows*rowsize / samplingarea);
+		tilesize = multiply(tif, nrows, rowsize, "TIFFVTileSize");
+		tilesize = summarize(tif, tilesize,
+				     multiply(tif, 2, tilesize / samplingarea,
+					      "TIFFVTileSize"),
+				     "TIFFVTileSize");
 	} else
-		tilesize = nrows * TIFFTileRowSize(tif);
-	return ((tsize_t)(tilesize * td->td_tiledepth));
+		tilesize = multiply(tif, nrows, TIFFTileRowSize(tif),
+				    "TIFFVTileSize");
+	return ((tsize_t)
+	    multiply(tif, tilesize, td->td_tiledepth, "TIFFVTileSize"));
 }
 
 /*

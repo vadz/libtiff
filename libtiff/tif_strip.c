@@ -32,6 +32,19 @@
 #include "tiffiop.h"
 
 static uint32
+summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)
+{
+	uint32	bytes = summand1 + summand2;
+
+	if (bytes - summand1 != summand2) {
+		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		bytes = 0;
+	}
+
+	return (bytes);
+}
+
+static uint32
 multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)
 {
 	uint32	bytes = nmemb * elem_size;
@@ -78,7 +91,8 @@ TIFFNumberOfStrips(TIFF* tif)
 	nstrips = (td->td_rowsperstrip == (uint32) -1 ? 1 :
 	     TIFFhowmany(td->td_imagelength, td->td_rowsperstrip));
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
-		nstrips *= td->td_samplesperpixel;
+		nstrips = multiply(tif, nstrips, td->td_samplesperpixel,
+				   "TIFFNumberOfStrips");
 	return (nstrips);
 }
 
@@ -111,14 +125,19 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
                               ycbcrsubsampling + 1 );
 
 		w = TIFFroundup(td->td_imagewidth, ycbcrsubsampling[0]);
-		scanline = TIFFhowmany8(w*td->td_bitspersample);
+		scanline = TIFFhowmany8(multiply(tif, w, td->td_bitspersample,
+						 "TIFFVStripSize"));
 		samplingarea = ycbcrsubsampling[0]*ycbcrsubsampling[1];
 		nrows = TIFFroundup(nrows, ycbcrsubsampling[1]);
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
+		scanline = multiply(tif, nrows, scanline, "TIFFVStripSize");
 		return ((tsize_t)
-		    (nrows*scanline + 2*(nrows*scanline / samplingarea)));
+		    summarize(tif, scanline,
+			      multiply(tif, 2, scanline / samplingarea,
+				       "TIFFVStripSize"), "TIFFVStripSize"));
 	} else
-		return ((tsize_t)(nrows * TIFFScanlineSize(tif)));
+		return ((tsize_t) multiply(tif, nrows, TIFFScanlineSize(tif),
+					   "TIFFVStripSize"));
 }
 
 

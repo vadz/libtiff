@@ -151,7 +151,9 @@ TIFFReadDirectory(TIFF* tif)
 		if (tif->tif_flags & TIFF_SWAB)
 			TIFFSwabShort(&dircount);
 		dir = (TIFFDirEntry *)CheckMalloc(tif,
-		    dircount, sizeof (TIFFDirEntry), "to read TIFF directory");
+						  dircount,
+						  sizeof (TIFFDirEntry),
+						  "to read TIFF directory");
 		if (dir == NULL)
 			return (0);
 		if (!ReadOK(tif, dir, dircount*sizeof (TIFFDirEntry))) {
@@ -186,9 +188,10 @@ TIFFReadDirectory(TIFF* tif)
                                   "%s: Can not read TIFF directory",
                                   tif->tif_name);
 			goto bad;
-		} else
+		} else {
 			_TIFFmemcpy(dir, tif->tif_base + off,
-			    dircount*sizeof (TIFFDirEntry));
+				    dircount*sizeof (TIFFDirEntry));
+		}
 		off += dircount* sizeof (TIFFDirEntry);
 		if (off + sizeof (uint32) <= tif->tif_size)
 			_TIFFmemcpy(&nextdiroff, tif->tif_base+off, sizeof (uint32));
@@ -403,6 +406,11 @@ TIFFReadDirectory(TIFF* tif)
 		td->td_nstrips = TIFFNumberOfTiles(tif);
 		tif->tif_flags |= TIFF_ISTILED;
 	}
+	if (!td->td_nstrips) {
+		TIFFError(module, "%s: cannot handle zero number of %s",
+			  tif->tif_name, isTiled(tif) ? "tiles" : "strips");
+		goto bad;
+	}
 	td->td_stripsperimage = td->td_nstrips;
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 		td->td_stripsperimage /= td->td_samplesperpixel;
@@ -586,8 +594,10 @@ TIFFReadDirectory(TIFF* tif)
 		if(EstimateStripByteCounts(tif, dir, dircount) < 0)
 		    goto bad;
 	}
-	if (dir)
+	if (dir) {
 		_TIFFfree((char *)dir);
+		dir = NULL;
+	}
 	if (!TIFFFieldSet(tif, FIELD_MAXSAMPLEVALUE))
 		td->td_maxsamplevalue = (uint16)((1L<<td->td_bitspersample)-1);
 	/*
@@ -637,10 +647,15 @@ TIFFReadDirectory(TIFF* tif)
 	tif->tif_tilesize = TIFFTileSize(tif);
 	tif->tif_scanlinesize = TIFFScanlineSize(tif);
 
+	if (!tif->tif_tilesize) {
+		TIFFError(module, "%s: cannot handle zero tile size",
+			  tif->tif_name);
+		return (0);
+	}
 	if (!tif->tif_scanlinesize) {
 		TIFFError(module, "%s: cannot handle zero scanline size",
 			  tif->tif_name);
-		goto bad;
+		return (0);
 	}
 	return (1);
 bad:
@@ -856,7 +871,7 @@ TIFFFetchFloat(TIFF* tif, TIFFDirEntry* dir)
 {
 	float v;
 	int32 l = TIFFExtractData(tif, dir->tdir_type, dir->tdir_offset);
-        memcpy(&v, &l, sizeof(float));
+        _TIFFmemcpy(&v, &l, sizeof(float));
 	TIFFCvtIEEEFloatToNative(tif, 1, &v);
 	return (v);
 }
@@ -1353,7 +1368,7 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, long nstrips, uint32** lpp)
 	      nstrips, sizeof (uint32), "for strip array")) == NULL)
 		return (0);
 	lp = *lpp;
-        memset( lp, 0, sizeof(uint32) * nstrips );
+        _TIFFmemset( lp, 0, sizeof(uint32) * nstrips );
 
 	if (dir->tdir_type == (int)TIFF_SHORT) {
 		/*
