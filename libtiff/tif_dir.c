@@ -1041,6 +1041,14 @@ TIFFDefaultDirectory(TIFF* tif)
 	 * (i.e. TIFFSetField).
 	 */
 	tif->tif_flags &= ~TIFF_DIRTYDIRECT;
+
+        /*
+         * As per http://bugzilla.remotesensing.org/show_bug.cgi?id=19
+         * we clear the ISTILED flag when setting up a new directory.
+         * Should we also be clearing stuff like INSUBIFD?
+         */
+        tif->tif_flags &= ~TIFF_ISTILED;
+
 	return (1);
 }
 

@@ -1,5 +1,9 @@
 2000-10-16  Frank Warmerdam  <warmerda@cs46980-c>
 
+	* tif_dir.c: Clear TIFF_ISTILED flag in TIFFDefaultDirectory
+	as per http://bugzilla.remotesensing.org/show_bug.cgi?id=18
+	from vandrove@vc.cvut.cz.
+
 	* Modified tif_packbits.c decoding to avoid overrunning the
 	output buffer, and to issue a warning if data needs to be
 	discarded.  See http://bugzilla.remotesensing.org/show_bug.cgi?id=18
