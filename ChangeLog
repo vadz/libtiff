@@ -1,3 +1,14 @@
+
+2002-04-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirwrite.c: Removed some dead code.
+
+	* libtiff/*: Cleanup some warnings.
+
+	* libtiff/tif_dir.c: Fixed bug with count returned by TIFFGetField()
+	for variable length FIELD_CUSTOM values.  Was int * but should be
+	u_short *.
+
 2002-04-01  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/: tifcp.c: Added support for 'Orientation' tag in tiffcp
