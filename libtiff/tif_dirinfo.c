@@ -37,6 +37,12 @@
  *     If a tag can have both LONG and SHORT types
  *     then the LONG must be placed before the SHORT for
  *     writing to work properly.
+ *
+ * NOTE: The second field (field_readcount) and third field (field_writecount)
+ *       sometimes use the values TIFF_VARIABLE (-1), TIFF_VARIABLE2 (-3)
+ *       and TIFFTAG_SPP (-2). The macros should be used but would throw off 
+ *       the formatting of the code, so please interprete the -1, -2 and -3 
+ *       values accordingly.
  */
 #ifndef VMS
 static 
@@ -229,7 +235,7 @@ const TIFFFieldInfo tiffFieldInfo[] = {
 #endif
 #endif
 #ifdef PHOTOSHOP_SUPPORT
-    { TIFFTAG_PHOTOSHOP,    -1,-1, TIFF_BYTE,   FIELD_PHOTOSHOP, 
+    { TIFFTAG_PHOTOSHOP,    -1,-3, TIFF_BYTE,   FIELD_PHOTOSHOP, 
       FALSE,    TRUE,   "Photoshop" },
 #endif
 #ifdef ICC_SUPPORT

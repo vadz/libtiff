@@ -481,6 +481,9 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
                     if (wc == (u_short) TIFF_VARIABLE) {
                         TIFFGetField(tif, fip->field_tag, &wc, &cp);
                         dir->tdir_count = wc;
+                    } else if (wc == (u_short) TIFF_VARIABLE2) {
+			TIFFGetField(tif, fip->field_tag, &wc2, &cp);
+			dir->tdir_count = wc2;
                     } else
                         TIFFGetField(tif, fip->field_tag, &cp);
                     if (!TIFFWriteByteArray(tif, dir, cp))
