@@ -1,4 +1,16 @@
 Mon Aug 16 13:18:41 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
+	* pre-remove so link before softlink in LINUXdso action in 
+	libtiff/Makefile.in to avoid failure on LINUXdso builds other than
+	the first.
+
+	* Fixed problem with cvtcmap() in tif_getimage.c modifying the
+	colormaps owned by the TIFF handle itself when trying to fixup wrong
+	(eight bit) colormaps.  Corrected by maintaining a private copy of
+	the colormap. 
+
+	* Added TIFFReadRGBATile()/TIFFReadRGBAStrip() support in 
+	tif_getimage.c.
+
 	* CVS Repository placed at remotesensing.org.  ChangeLog added.
 
