@@ -1,5 +1,12 @@
 2003-07-25  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_open.c: avoid signed/unsigned casting warning
+	initializing typemask as per patch from J.A. Strother.
+
+	* tools/tiffcp.c: fixed signed/unsigned casting warning.
+
+	* libtiff/tif_print.c: dos2unix conversion.
+
 	* tools/tiffsplit.c: increased the maximum number of pages that
 	can be split.  Patch provided by Andrew J. Montalenti.
 
