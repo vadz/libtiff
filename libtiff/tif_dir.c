@@ -1172,8 +1172,8 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_orientation = ORIENTATION_TOPLEFT;
 	td->td_samplesperpixel = 1;
 	td->td_rowsperstrip = (uint32) -1;
-	td->td_tilewidth = (uint32) -1;
-	td->td_tilelength = (uint32) -1;
+	td->td_tilewidth = 0;
+	td->td_tilelength = 0;
 	td->td_tiledepth = 1;
 	td->td_stripbytecountsorted = 1; /* Our own arrays always sorted. */
 	td->td_resolutionunit = RESUNIT_INCH;
