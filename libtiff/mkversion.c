@@ -31,7 +31,7 @@
  *
  * This was written by Peter Greenham for Acorn systems.
  *
- * Syntax: mkversion [-v version-file] [-a alpha-file] [<outfile>]
+ * Syntax: mkversion [-v version-file] [<outfile>]
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +41,7 @@ static void
 usage(void)
 {
     fprintf(stderr,
-            "usage: mkversion [-v version-file] [-a alpha-file]\n"
+            "usage: mkversion [-v version-file]\n"
             "                 [-r releasedate-file] [outfile]\n");
     exit(-1);
 }
@@ -63,11 +63,9 @@ main(int argc, char* argv[])
 {
     char* versionFile = "../VERSION";
     char* releaseDateFile = "../RELEASE-DATE";
-    char* alphaFile = "../dist/tiff.alpha";
     char version[128];
     char rawReleaseDate[128];
     char tiffLibVersion[128];
-    char alpha[128];
     FILE* fd;
     char* cp;
 
@@ -78,11 +76,6 @@ main(int argc, char* argv[])
 		usage();
 	    argc--, argv++;
 	    versionFile = argv[0];
-	} else if (strcmp(argv[0], "-a") == 0) {
-	    if (argc < 1)
-		usage();
-	    argc--, argv++;
-	    alphaFile = argv[0];
 	} else if (strcmp(argv[0], "-r") == 0) {
 	    if (argc < 1)
 		usage();
@@ -106,26 +99,6 @@ main(int argc, char* argv[])
     if (cp)
 	*cp = '\0';
     fclose(fd);
-    fd = openFile(alphaFile);
-    if (fgets(alpha, sizeof (alpha)-1, fd) == NULL) {
-	fprintf(stderr, "mkversion: No alpha information in %s.\n", alphaFile);
-	exit(-1);
-    }
-    fclose(fd);
-    cp = strchr(alpha, ' ');		/* skip to 3rd blank-separated field */
-    if (cp)
-	cp = strchr(cp+1, ' ');
-    if (cp) {				/* append alpha to version */
-	char* tp;
-	for (tp = strchr(version, '\0'), cp++; (*tp = *cp) != 0; tp++, cp++)
-	    ;
-	if (tp[-1] == '\n')
-	    tp[-1] = '\0';
-    } else {
-	fprintf(stderr, "mkversion: Malformed alpha information in %s.\n",
-	    alphaFile);
-	exit(-1);
-    }
 
     /*
      * Read the RELEASE-DATE, and translate format to emit TIFFLIB_VERSION.
