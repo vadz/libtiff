@@ -1,3 +1,8 @@
+Sun Nov 28 20:36:18 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Added notes on use of makefile.vc in build.html, and fixed 
+	email subscription address.
+
 199-11-28  Mike Welles <mike@onshore.com> 
 
 	*  Fixed apocalypse-inducing y2k bug in contrib/ras/ras2tiff.c 
