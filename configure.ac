@@ -87,6 +87,8 @@ AC_FUNC_REALLOC
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor gettimeofday isascii memmove memset munmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol strtoul])
 
+AC_SUBST(LIBTIFF,../libtiff/libtiff.la)
+
 AC_CONFIG_FILES([Makefile \
                  html/Makefile \
                  libtiff/Makefile \

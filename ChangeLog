@@ -1,3 +1,8 @@
+2004-03-26  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiffcp.c: Don't emit warnings when Orientation tag does not
+	present in the input image.
+
 2004-03-19  Andrey Kiselev  <dron@remotesensing.org>
 
 	* {many}: The first attempt to switch to autotools.
