@@ -1,3 +1,17 @@
+2005-01-30  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac: Fixes for --with-docdir option as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=759
+
+	* libtiff/tif_open.c: Remove unnesessary TIFFSeekFile() call as per
+	bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=756
+
+	* libtiff/tif_stream.cxx: Fixes for C++ stream interface from
+	Michael Rinne and Edward Lam.
+
 2005-01-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure.ac: Make the documentation directory location configurable
