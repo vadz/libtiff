@@ -128,7 +128,7 @@ objext="o"
 libext="a"
 
 # Shared library suffix (normally ".so").
-shrext='.so'
+shrext_cmds='.so'
 
 # Executable file suffix (normally "").
 exeext=""
@@ -313,21 +313,13 @@ hardcode_automatic=no
 variables_saved_for_relink="PATH  LD_RUN_PATH GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=unknown
+link_all_deplibs=no
 
 # Compile-time system search path for libraries
 sys_lib_search_path_spec=" /usr/lib/gcc-lib/i386-linux/2.95.4/ /usr/lib/gcc/i386-linux/2.95.4/ /usr/i386-linux/lib/i386-linux/2.95.4/ /usr/i386-linux/lib/ /usr/lib/i386-linux/2.95.4/ /usr/lib/ /lib/i386-linux/2.95.4/ /lib/ /usr/lib/i386-linux/2.95.4/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/GNUstep/Libraries/ix86/linux-gnu/gnu-gnu-gnu-xgps
-/usr/local/lib
-/usr/X11R6/lib
-/usr/lib/3dnow/atlas
-/usr/lib/3dnow
-/usr/lib/root
-/usr/lib/libc5-compat
-/lib/libc5-compat
-/usr/i486-linuxlibc1/lib"
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/GNUstep/Libraries/ix86/linux-gnu/gnu-gnu-gnu-xgps /usr/local/lib /usr/X11R6/lib /usr/lib/3dnow/atlas /usr/lib/3dnow /usr/lib/root /usr/lib/libc5-compat /lib/libc5-compat /usr/i486-linuxlibc1/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -6860,7 +6852,7 @@ objext="o"
 libext="a"
 
 # Shared library suffix (normally ".so").
-shrext='.so'
+shrext_cmds='.so'
 
 # Executable file suffix (normally "").
 exeext=""
@@ -7042,21 +7034,13 @@ hardcode_automatic=no
 variables_saved_for_relink="PATH LD_LIBRARY_PATH LD_RUN_PATH GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=unknown
+link_all_deplibs=no
 
 # Compile-time system search path for libraries
 sys_lib_search_path_spec=" /usr/lib/gcc-lib/i386-linux/2.95.4/ /usr/lib/gcc/i386-linux/2.95.4/ /usr/i386-linux/lib/i386-linux/2.95.4/ /usr/i386-linux/lib/ /usr/lib/i386-linux/2.95.4/ /usr/lib/ /lib/i386-linux/2.95.4/ /lib/ /usr/lib/i386-linux/2.95.4/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/GNUstep/Libraries/ix86/linux-gnu/gnu-gnu-gnu-xgps
-/usr/local/lib
-/usr/X11R6/lib
-/usr/lib/3dnow/atlas
-/usr/lib/3dnow
-/usr/lib/root
-/usr/lib/libc5-compat
-/lib/libc5-compat
-/usr/i486-linuxlibc1/lib"
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/GNUstep/Libraries/ix86/linux-gnu/gnu-gnu-gnu-xgps /usr/local/lib /usr/X11R6/lib /usr/lib/3dnow/atlas /usr/lib/3dnow /usr/lib/root /usr/lib/libc5-compat /lib/libc5-compat /usr/i486-linuxlibc1/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -7164,7 +7148,7 @@ objext="o"
 libext="a"
 
 # Shared library suffix (normally ".so").
-shrext='.so'
+shrext_cmds='.so'
 
 # Executable file suffix (normally "").
 exeext=""
@@ -7349,21 +7333,13 @@ hardcode_automatic=no
 variables_saved_for_relink="PATH LD_LIBRARY_PATH LD_RUN_PATH GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=unknown
+link_all_deplibs=no
 
 # Compile-time system search path for libraries
 sys_lib_search_path_spec=" /usr/lib/gcc-lib/i386-linux/2.95.4/ /usr/lib/gcc/i386-linux/2.95.4/ /usr/i386-linux/lib/i386-linux/2.95.4/ /usr/i386-linux/lib/ /usr/lib/i386-linux/2.95.4/ /usr/lib/ /lib/i386-linux/2.95.4/ /lib/ /usr/lib/i386-linux/2.95.4/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/GNUstep/Libraries/ix86/linux-gnu/gnu-gnu-gnu-xgps
-/usr/local/lib
-/usr/X11R6/lib
-/usr/lib/3dnow/atlas
-/usr/lib/3dnow
-/usr/lib/root
-/usr/lib/libc5-compat
-/lib/libc5-compat
-/usr/i486-linuxlibc1/lib"
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/GNUstep/Libraries/ix86/linux-gnu/gnu-gnu-gnu-xgps /usr/local/lib /usr/X11R6/lib /usr/lib/3dnow/atlas /usr/lib/3dnow /usr/lib/root /usr/lib/libc5-compat /lib/libc5-compat /usr/i486-linuxlibc1/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
