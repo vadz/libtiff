@@ -1,3 +1,14 @@
+2004-11-09  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_color.c: Division by zero fixed (Hans Petter Selasky).
+
+2004-11-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_stream.cxx, tiffio.h}: Added C++ stream interface
+	contributed by Edward Lam (see
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=654 for details).
+	Though no changes in any makefiles yet.
+
 2004-11-05  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_open.c: Removed close() in TIFFClientOpen() if file
