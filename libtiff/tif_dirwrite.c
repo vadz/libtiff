@@ -478,6 +478,7 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
         /* added based on patch request from MARTIN.MCBRIDE.MM@agfa.co.uk,
            correctness not verified (FW, 99/08) */
         case TIFF_BYTE:
+        case TIFF_SBYTE:          
                 if (wc > 1) {
                     char* cp;
                     if (wc == (u_short) TIFF_VARIABLE) {
@@ -509,6 +510,9 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 			return (0);
 		}
 		break;
+
+        case TIFF_NOTYPE:
+                break;
 	}
 	return (1);
 }

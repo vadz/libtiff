@@ -1043,7 +1043,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			 * NULL byte, so always append one just in case.
 			 */
 			cp = CheckMalloc(tif, dp->tdir_count+1, mesg);
-			if (ok = (cp && TIFFFetchString(tif, dp, cp)))
+			if( (ok = (cp && TIFFFetchString(tif, dp, cp))) != 0 )
 				cp[dp->tdir_count] = '\0';	/* XXX */
 			break;
 		}
@@ -1116,7 +1116,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 		case TIFF_ASCII:
 		case TIFF_UNDEFINED:		/* bit of a cheat... */
 			{ char c[2];
-			  if (ok = (TIFFFetchString(tif, dp, c) != 0)) {
+			  if( (ok = (TIFFFetchString(tif, dp, c) != 0)) != 0 ){
 				c[1] = '\0';		/* XXX paranoid */
 				ok = TIFFSetField(tif, dp->tdir_tag, c);
 			  }
@@ -1230,7 +1230,7 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, long nstrips, uint32** lpp)
 		    dir->tdir_count* sizeof (uint16), "to fetch strip tag");
 		if (dp == NULL)
 			return (0);
-		if (status = TIFFFetchShortArray(tif, dir, dp)) {
+		if( (status = TIFFFetchShortArray(tif, dir, dp)) != 0 ) {
 			register uint16* wp = dp;
 			while (nstrips-- > 0)
 				*lp++ = *wp++;
@@ -1283,10 +1283,10 @@ TIFFFetchRefBlackWhite(TIFF* tif, TIFFDirEntry* dir)
 	 * Handle LONG's for backward compatibility.
 	 */
 	cp = CheckMalloc(tif, dir->tdir_count * sizeof (uint32), mesg);
-	if (ok = (cp && TIFFFetchLongArray(tif, dir, (uint32*) cp))) {
+	if( (ok = (cp && TIFFFetchLongArray(tif, dir, (uint32*) cp))) != 0) {
 		float* fp = (float*)
 		    CheckMalloc(tif, dir->tdir_count * sizeof (float), mesg);
-		if (ok = (fp != NULL)) {
+		if( (ok = (fp != NULL)) != 0 ) {
 			uint32 i;
 			for (i = 0; i < dir->tdir_count; i++)
 				fp[i] = (float)((uint32*) cp)[i];

@@ -185,7 +185,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     uint16 compress;
     int colorchannels;
     uint16	*red_orig, *green_orig, *blue_orig;
-    int		n_color, i_color;
+    int		n_color;
 
     /* Initialize to normal values */
     img->row_offset = 0;

@@ -167,7 +167,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		/*
 		 * Setup new compression routine state.
 		 */
-		if (status = TIFFSetCompressionScheme(tif, v))
+		if( (status = TIFFSetCompressionScheme(tif, v)) != 0 )
 			td->td_compression = v;
 		break;
 	case TIFFTAG_PHOTOMETRIC:
@@ -405,7 +405,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		i = va_arg(ap, int);
 		s = va_arg(ap, char*);
 		i = checkInkNamesString(tif, i, s);
-		if (status = (i > 0)) {
+                status = i > 0;
+		if( i > 0 ) {
 			_TIFFsetNString(&td->td_inknames, s, i);
 			td->td_inknameslen = i;
 		}

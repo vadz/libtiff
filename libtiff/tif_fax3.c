@@ -382,7 +382,7 @@ _TIFFFax3fillruns(u_char* buf, uint16* runs, uint16* erun, uint32 lastx)
 			*cp++ &= 0xff << (8-bx);
 			run -= 8-bx;
 		    }
-		    if (n = run >> 3) {		/* multiple bytes to fill */
+		    if( (n = run >> 3) != 0 ) {	/* multiple bytes to fill */
 			if ((n/sizeof (long)) > 1) {
 			    /*
 			     * Align to longword boundary and fill.
@@ -421,7 +421,7 @@ _TIFFFax3fillruns(u_char* buf, uint16* runs, uint16* erun, uint32 lastx)
 			*cp++ |= 0xff >> bx;
 			run -= 8-bx;
 		    }
-		    if (n = run>>3) {		/* multiple bytes to fill */
+		    if( (n = run>>3) != 0 ) {	/* multiple bytes to fill */
 			if ((n/sizeof (long)) > 1) {
 			    /*
 			     * Align to longword boundary and fill.

@@ -612,7 +612,7 @@ LZWDecodeCompat(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 			tp = op;
 			do {
 				*--tp = codep->value;
-			} while (codep = codep->next);
+			} while( (codep = codep->next) != NULL);
 		} else
 			*op++ = code, occ--;
 	}
