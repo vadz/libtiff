@@ -98,6 +98,42 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			    (u_long) td->td_imagedepth);
 		fprintf(fd, "\n");
 	}
+
+ 	/* Begin Pixar */
+ 	if (TIFFFieldSet(tif,FIELD_IMAGEFULLWIDTH) ||
+ 	    TIFFFieldSet(tif,FIELD_IMAGEFULLLENGTH)) {
+	  fprintf(fd, "  Pixar Full Image Width: %lu Full Image Length: %lu\n",
+		  (u_long) td->td_imagefullwidth,
+		  (u_long) td->td_imagefulllength);
+ 	}
+ 	if (TIFFFieldSet(tif,FIELD_TEXTUREFORMAT))
+	  _TIFFprintAsciiTag(fd, "Texture Format", td->td_textureformat);
+ 	if (TIFFFieldSet(tif,FIELD_WRAPMODES))
+	  _TIFFprintAsciiTag(fd, "Texture Wrap Modes", td->td_wrapmodes);
+ 	if (TIFFFieldSet(tif,FIELD_FOVCOT))
+	  fprintf(fd, "  Field of View Cotangent: %g\n", td->td_fovcot);
+	if (TIFFFieldSet(tif,FIELD_MATRIX_WORLDTOSCREEN)) {
+	  typedef float	Matrix[4][4];
+	  Matrix*		m = (Matrix*)td->td_matrixWorldToScreen;
+	  
+	  fprintf(fd, "  Matrix NP:\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n",
+		  (*m)[0][0], (*m)[0][1], (*m)[0][2], (*m)[0][3],
+		  (*m)[1][0], (*m)[1][1], (*m)[1][2], (*m)[1][3],
+		  (*m)[2][0], (*m)[2][1], (*m)[2][2], (*m)[2][3],
+		  (*m)[3][0], (*m)[3][1], (*m)[3][2], (*m)[3][3]);
+ 	}
+ 	if (TIFFFieldSet(tif,FIELD_MATRIX_WORLDTOCAMERA)) {
+	  typedef float	Matrix[4][4];
+	  Matrix*		m = (Matrix*)td->td_matrixWorldToCamera;
+	  
+	  fprintf(fd, "  Matrix Nl:\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n",
+		  (*m)[0][0], (*m)[0][1], (*m)[0][2], (*m)[0][3],
+		  (*m)[1][0], (*m)[1][1], (*m)[1][2], (*m)[1][3],
+		  (*m)[2][0], (*m)[2][1], (*m)[2][2], (*m)[2][3],
+		  (*m)[3][0], (*m)[3][1], (*m)[3][2], (*m)[3][3]);
+ 	}
+ 	/* End Pixar */
+	
 	if (TIFFFieldSet(tif,FIELD_TILEDIMENSIONS)) {
 		fprintf(fd, "  Tile Width: %lu Tile Length: %lu",
 		    (u_long) td->td_tilewidth, (u_long) td->td_tilelength);

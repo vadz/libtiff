@@ -1,5 +1,6 @@
 #	$Header$
 
+o gif2tiff segaulting on selected images
 o tiffcmp read data by strip/tile instead of scanline
 o YCbCr sampling support
 o extracate colorspace conversion support

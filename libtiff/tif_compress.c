@@ -39,7 +39,7 @@ TIFFNoEncode(TIFF* tif, char* method)
 	if (c) { 
 	  if (! strncmp(c->name, "LZW", 3) ){ 
 	    TIFFError(tif->tif_name, 
-		      "%s %s encoding is no longer implemented due to Unisys patent enforcement.", 
+		      "%s %s encoding is no longer implemented due to Unisys patent enforcement", 
 		      c->name, method); 
 	  } else { 
 	    TIFFError(tif->tif_name, "%s %s encoding is not implemented",

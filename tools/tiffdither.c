@@ -128,7 +128,7 @@ fsdither(TIFF* in, TIFF* out)
 	_TIFFfree(outline);
 }
 
-static	uint16 compression = COMPRESSION_LZW;
+static	uint16 compression = COMPRESSION_PACKBITS;
 static	uint16 predictor = 0;
 static	uint32 group3options = 0;
 
@@ -282,6 +282,7 @@ char* stuff[] = {
 " -f lsb2msb	force lsb-to-msb FillOrder for output",
 " -f msb2lsb	force msb-to-lsb FillOrder for output",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
+"               (no longer supported due to Unisys patent enforcement)", 
 " -c zip[:opts]	compress output with deflate encoding",
 " -c packbits	compress output with packbits encoding",
 " -c g3[:opts]	compress output with CCITT Group 3 encoding",

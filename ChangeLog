@@ -1,9 +1,19 @@
+Tue Dec 21 11:04:45 EST 1999  Mike Welles <mike@onshore.com> 
+	
+	* Aadded Pixar tag support.  Contributed by Phil Beffery <phil@pixar.com> 
+
+	* Made one more change to tif_dir.c for removal of LZW compression. Also added notice 
+	  when LZW compression invoked. 
+
+	* Changed default compression in tools to TIFF_PACKBITS, and changed usage descriptions
+	  in tools to reflect removal of LZW compression
+	  
 Mon Dec 20 18:39:02 EST 1999  Mike Welles  <mike@onshore.com>
 
         * Fixed bug that caused LZW (non) compression to segfault. Added 
 	  warning about LZW compression removed being removed, and why. 
 
-	* added nostrip to install in tools/Makefile.in so that debugging 
+	* Added nostrip to install in tools/Makefile.in so that debugging 
 	  symbols are kept. 
 	
 Tue Dec  7 12:04:47 EST 1999  Mike Welles  <mike@onshore.com>

@@ -151,7 +151,7 @@ typedef	enum {
 #define	    COMPRESSION_CCITTRLE	2	/* CCITT modified Huffman RLE */
 #define	    COMPRESSION_CCITTFAX3	3	/* CCITT Group 3 fax encoding */
 #define	    COMPRESSION_CCITTFAX4	4	/* CCITT Group 4 fax encoding */
-#define	    COMPRESSION_LZW		5	/* Lempel-Ziv  & Welch */
+#define	    COMPRESSION_LZW		5       /* Lempel-Ziv  & Welch */
 #define	    COMPRESSION_OJPEG		6	/* !6.0 JPEG */
 #define	    COMPRESSION_JPEG		7	/* %JPEG DCT compression */
 #define	    COMPRESSION_NEXT		32766	/* NeXT 2-bit RLE */
@@ -326,6 +326,14 @@ typedef	enum {
  */
 #define TIFFTAG_PIXAR_IMAGEFULLWIDTH    33300   /* full image size in x */
 #define TIFFTAG_PIXAR_IMAGEFULLLENGTH   33301   /* full image size in y */
+ /* Tags 33302-33306 are used to identify special image modes and data
+  * used by Pixar's texture formats.
+  */
+#define TIFFTAG_PIXAR_TEXTUREFORMAT	33302	/* texture map format */
+#define TIFFTAG_PIXAR_WRAPMODES		33303	/* s & t wrap modes */
+#define TIFFTAG_PIXAR_FOVCOT		33304	/* cotan(fov) for env. maps */
+#define TIFFTAG_PIXAR_MATRIX_WORLDTOSCREEN 33305
+#define TIFFTAG_PIXAR_MATRIX_WORLDTOCAMERA 33306
 /* tag 33405 is a private tag registered to Eastman Kodak */
 #define TIFFTAG_WRITERSERIALNUMBER      33405   /* device serial number */
 /* tag 33432 is listed in the 6.0 spec w/ unknown ownership */

@@ -167,8 +167,16 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		/*
 		 * Setup new compression routine state.
 		 */
+		if ( ! tif->tif_mode == O_RDONLY ) { 
+		  /* Handle removal of LZW compression */ 
+		  if ( v == COMPRESSION_LZW ) { 
+		    TIFFError(tif->tif_name, 
+			      "LZW compression no longer supported due to Unisys patent enforcement"); 
+		    v=COMPRESSION_NONE;
+		  }
+		}
 		if( (status = TIFFSetCompressionScheme(tif, v)) != 0 )
-			td->td_compression = v;
+		  td->td_compression = v;
 		break;
 	case TIFFTAG_PHOTOMETRIC:
 		td->td_photometric = (uint16) va_arg(ap, int);
@@ -350,6 +358,33 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			goto badvaluedbl;
 		td->td_stonits = d;
 		break;
+
+	/* Begin Pixar Tags */
+ 	case TIFFTAG_PIXAR_IMAGEFULLWIDTH:
+ 		td->td_imagefullwidth = va_arg(ap, uint32);
+ 		break;
+ 	case TIFFTAG_PIXAR_IMAGEFULLLENGTH:
+ 		td->td_imagefulllength = va_arg(ap, uint32);
+ 		break;
+ 	case TIFFTAG_PIXAR_TEXTUREFORMAT:
+ 		_TIFFsetString(&td->td_textureformat, va_arg(ap, char*));
+ 		break;
+ 	case TIFFTAG_PIXAR_WRAPMODES:
+ 		_TIFFsetString(&td->td_wrapmodes, va_arg(ap, char*));
+ 		break;
+ 	case TIFFTAG_PIXAR_FOVCOT:
+ 		td->td_fovcot = (float) va_arg(ap, dblparam_t);
+ 		break;
+ 	case TIFFTAG_PIXAR_MATRIX_WORLDTOSCREEN:
+ 		_TIFFsetFloatArray(&td->td_matrixWorldToScreen,
+ 			va_arg(ap, float*), 16);
+ 		break;
+ 	case TIFFTAG_PIXAR_MATRIX_WORLDTOCAMERA:
+ 		_TIFFsetFloatArray(&td->td_matrixWorldToCamera,
+ 			va_arg(ap, float*), 16);
+ 		break;
+ 	/* End Pixar Tags */	       
+
 #if SUBIFD_SUPPORT
 	case TIFFTAG_SUBIFD:
 		if ((tif->tif_flags & TIFF_INSUBIFD) == 0) {
@@ -784,6 +819,30 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
  		*va_arg(ap, void**) = td->td_richtiffiptcData;
  		break;
 #endif
+ 	/* Begin Pixar Tags */
+ 	case TIFFTAG_PIXAR_IMAGEFULLWIDTH:
+ 		*va_arg(ap, uint32*) = td->td_imagefullwidth;
+ 		break;
+ 	case TIFFTAG_PIXAR_IMAGEFULLLENGTH:
+ 		*va_arg(ap, uint32*) = td->td_imagefulllength;
+ 		break;
+ 	case TIFFTAG_PIXAR_TEXTUREFORMAT:
+ 		*va_arg(ap, char**) = td->td_textureformat;
+ 		break;
+ 	case TIFFTAG_PIXAR_WRAPMODES:
+ 		*va_arg(ap, char**) = td->td_wrapmodes;
+ 		break;
+ 	case TIFFTAG_PIXAR_FOVCOT:
+ 		*va_arg(ap, float*) = td->td_fovcot;
+ 		break;
+ 	case TIFFTAG_PIXAR_MATRIX_WORLDTOSCREEN:
+ 		*va_arg(ap, float**) = td->td_matrixWorldToScreen;
+ 		break;
+ 	case TIFFTAG_PIXAR_MATRIX_WORLDTOCAMERA:
+ 		*va_arg(ap, float**) = td->td_matrixWorldToCamera;
+ 		break;
+ 	/* End Pixar Tags */
+
 	default:
 		/*
 		 * This can happen if multiple images are open with
@@ -889,6 +948,12 @@ TIFFFreeDirectory(TIFF* tif)
 #endif
 	CleanupField(td_stripoffset);
 	CleanupField(td_stripbytecount);
+ 	/* Begin Pixar Tags */
+ 	CleanupField(td_textureformat);
+ 	CleanupField(td_wrapmodes);
+ 	CleanupField(td_matrixWorldToScreen);
+ 	CleanupField(td_matrixWorldToCamera);
+ 	/* End Pixar Tags */
 }
 #undef CleanupField
 

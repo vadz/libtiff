@@ -43,7 +43,7 @@
 #define	LumaGreen	ycbcrCoeffs[1]
 #define	LumaBlue	ycbcrCoeffs[2]
 
-uint16	compression = COMPRESSION_LZW;
+uint16	compression = COMPRESSION_PACKBITS;
 uint32	rowsperstrip = (uint32) -1;
 
 uint16	horizSubSampling = 2;		/* YCbCr horizontal subsampling */
@@ -321,6 +321,7 @@ static char* usageMsg[] = {
     "where comp is one of the following compression algorithms:\n",
     " jpeg\t\tJPEG encoding\n",
     " lzw\t\tLempel-Ziv & Welch encoding\n",
+    " (lzw no longer supported due to Unisys patent enforcement)", 
     " packbits\tPackBits encoding\n",
     " none\t\tno compression\n",
     "and the other options are:\n",

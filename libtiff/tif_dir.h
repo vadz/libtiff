@@ -110,6 +110,14 @@ typedef	struct {
 	uint32	td_richtiffiptcLength;
 	void	*td_richtiffiptcData;
 #endif
+        /* Begin Pixar Tag values. */
+        uint32	td_imagefullwidth, td_imagefulllength;
+ 	char*	td_textureformat;
+ 	char*	td_wrapmodes;
+ 	float	td_fovcot;
+ 	float*	td_matrixWorldToScreen;
+ 	float*	td_matrixWorldToCamera;
+ 	/* End Pixar Tag Values. */
 } TIFFDirectory;
 
 /*
@@ -185,8 +193,16 @@ typedef	struct {
 #define FIELD_PHOTOSHOP			52
 #define FIELD_RICHTIFFIPTC		53
 #define FIELD_STONITS			54
+/* Begin PIXAR */
+#define	FIELD_IMAGEFULLWIDTH		55
+#define	FIELD_IMAGEFULLLENGTH		56
+#define FIELD_TEXTUREFORMAT		57
+#define FIELD_WRAPMODES			58
+#define FIELD_FOVCOT			59
+#define FIELD_MATRIX_WORLDTOSCREEN	60
+#define FIELD_MATRIX_WORLDTOCAMERA	61
 /* end of support for well-known tags; codec-private tags follow */
-#define	FIELD_CODEC			55	/* base of codec-private tags */
+#define	FIELD_CODEC			62	/* base of codec-private tags */
 /*
  * Pseudo-tags don't normally need field bits since they
  * are not written to an output file (by definition).
