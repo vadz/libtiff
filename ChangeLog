@@ -1,3 +1,20 @@
+2000-11-24  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/Makefile.in: Added an installPrivateHdrs and install-private
+	target so that the private headers required by libgeotiff can be
+	installed with the others.  They are not installed by default.
+
+	* libtiff/Makefile.in: Added @MACHLIBDEPS@ to LINUXdso and GNULDdso
+	targets so libtiff.so will be built with an explicit dependency
+	on libm.so.
+
+	* libtiff/Makefile.in: Use softlinks to link libtiff.so.3 to 
+	libtiff.so.3.5.5.  
+
+	* libtiff/Makefile.in & configure: Remove all references to the ALPHA 
+	file, or ALPHA version logic.  Added stuff about DIST_POINT in 
+	place of DIST_TYPE and the alpha release number stuff.
+
 2000-11-22  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* I have applied a patch from Steffen Moeller <moeller@ebi.ac.uk> to
