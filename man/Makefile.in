@@ -233,6 +233,7 @@ man_MANS = \
 	tiffgt.1 \
 	tiffinfo.1 \
 	tiffmedian.1 \
+	tiffset.1 \
 	tiffsplit.1 \
 	tiffsv.1 \
 	TIFFcodec.3tiff \
