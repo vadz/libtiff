@@ -83,7 +83,6 @@ _tiffSizeProc(thandle_t fd)
 	return ((toff_t)GetFileSize(fd, NULL));
 }
 
-#pragma argsused
 static int
 _tiffDummyMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
 {
@@ -120,7 +119,6 @@ _tiffMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
 	return(1);
 }
 
-#pragma argsused
 static void
 _tiffDummyUnmapProc(thandle_t fd, tdata_t base, toff_t size)
 {
@@ -250,6 +248,7 @@ _TIFFmemcmp(const tdata_t p1, const tdata_t p2, tsize_t c)
 static void
 Win32WarningHandler(const char* module, const char* fmt, va_list ap)
 {
+#ifndef TIF_PLATFORM_CONSOLE
 	LPTSTR szTitle;
 	LPTSTR szTmp;
 	LPCTSTR szTitleText = "%s Warning";
@@ -264,12 +263,20 @@ Win32WarningHandler(const char* module, const char* fmt, va_list ap)
 	MessageBox(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONINFORMATION);
 	LocalFree(szTitle);
 	return;
+#else
+	if (module != NULL)
+		fprintf(stderr, "%s: ", module);
+	fprintf(stderr, "Warning, ");
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, ".\n");
+#endif        
 }
 TIFFErrorHandler _TIFFwarningHandler = Win32WarningHandler;
 
 static void
 Win32ErrorHandler(const char* module, const char* fmt, va_list ap)
 {
+#ifndef TIF_PLATFORM_CONSOLE
 	LPTSTR szTitle;
 	LPTSTR szTmp;
 	LPCTSTR szTitleText = "%s Error";
@@ -284,5 +291,11 @@ Win32ErrorHandler(const char* module, const char* fmt, va_list ap)
 	MessageBox(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONEXCLAMATION);
 	LocalFree(szTitle);
 	return;
+#else
+	if (module != NULL)
+		fprintf(stderr, "%s: ", module);
+	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, ".\n");
+#endif        
 }
 TIFFErrorHandler _TIFFerrorHandler = Win32ErrorHandler;
