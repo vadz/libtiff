@@ -168,16 +168,6 @@ typedef struct {				/* CIE Lab 1976->RGB support */
 	float	Yb2b[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yb to b */
 } TIFFCIELabToRGB;
 
-extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *, float*);
-extern void TIFFCIELabToXYZ(TIFFCIELabToRGB *, uint32, int32, int32,
-			    float *, float *, float *);
-extern void TIFFXYZToRGB(TIFFCIELabToRGB *, float, float, float,
-			 uint32 *, uint32 *, uint32 *);
-
-extern int TIFFYCbCrToRGBInit(TIFFYCbCrToRGB*, float*, float*);
-extern void TIFFYCbCrtoRGB(TIFFYCbCrToRGB *, uint32, int32, int32,
-			   uint32 *, uint32 *, uint32 *);
-
 /*
  * RGBA-style image support.
  */
@@ -490,6 +480,16 @@ extern  TIFFTagMethods *TIFFAccessTagMethods( TIFF * );
 extern  void *TIFFGetClientInfo( TIFF *, const char * );
 extern  void TIFFSetClientInfo( TIFF *, void *, const char * );
     
+extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *, float*);
+extern void TIFFCIELabToXYZ(TIFFCIELabToRGB *, uint32, int32, int32,
+			    float *, float *, float *);
+extern void TIFFXYZToRGB(TIFFCIELabToRGB *, float, float, float,
+			 uint32 *, uint32 *, uint32 *);
+
+extern int TIFFYCbCrToRGBInit(TIFFYCbCrToRGB*, float*, float*);
+extern void TIFFYCbCrtoRGB(TIFFYCbCrToRGB *, uint32, int32, int32,
+			   uint32 *, uint32 *, uint32 *);
+
 #if defined(c_plusplus) || defined(__cplusplus)
 }
 #endif
