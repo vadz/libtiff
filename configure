@@ -774,11 +774,11 @@ CheckForFunc()
 
 if [ -z "${MACHDEPLIBS-}" ]; then
     MACHDEPLIBS=""
-    if ! CheckForFunc cos ; then
+    if CheckForFunc cos ; then
+        echo "Leaving MACHDEPLIBS empty, apparently you don't need -lm."
+    else
         MACHDEPLIBS="-lm"
         echo "Defaulting MACHDEPLIBS to -lm."
-    else
-        echo "Leaving MACHDEPLIBS empty, apparently you don't need -lm."
     fi
 fi
 
