@@ -201,6 +201,10 @@ struct tiff {
 #define	TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
 #define	TIFFroundup(x, y) (TIFFhowmany(x,y)*((uint32)(y)))
 
+#define TIFFmax(A,B) ((A)>(B)?(A):(B))
+#define TIFFmin(A,B) ((A)<(B)?(A):(B))
+#define TIFFrint( R ) ((int)((R)>0?((R)+0.5):((R)-0.5)))
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
