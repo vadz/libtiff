@@ -164,6 +164,9 @@ struct _TIFFRGBAImage {
 	uint32** BWmap;				/* black&white map */
 	uint32** PALmap;			/* palette image map */
 	TIFFYCbCrToRGB* ycbcr;			/* YCbCr conversion state */
+
+        int	row_offset;
+        int     col_offset;
 };
 
 /*
@@ -266,6 +269,9 @@ extern	int TIFFReadScanline(TIFF*, tdata_t, uint32, tsample_t);
 extern	int TIFFWriteScanline(TIFF*, tdata_t, uint32, tsample_t);
 extern	int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int);
 #endif
+
+extern	int TIFFReadRGBAStrip(TIFF*, tstrip_t, uint32 * );
+extern	int TIFFReadRGBATile(TIFF*, uint32, uint32, uint32 * );
 extern	int TIFFRGBAImageOK(TIFF*, char [1024]);
 extern	int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
 extern	int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
