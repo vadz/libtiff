@@ -78,9 +78,9 @@ typedef struct {
 	int	bit;			/* current i/o bit in byte */
 	int	EOLcnt;			/* count of EOL codes recognized */
 	TIFFFaxFillFunc fill;		/* fill routine */
-	uint16*	runs;			/* b&w runs for current/previous row */
-	uint16*	refruns;		/* runs for reference line */
-	uint16*	curruns;		/* runs for current line */
+	uint32*	runs;			/* b&w runs for current/previous row */
+	uint32*	refruns;		/* runs for reference line */
+	uint32*	curruns;		/* runs for current line */
 } Fax3DecodeState;
 #define	DecoderState(tif)	((Fax3DecodeState*) Fax3State(tif))
 
@@ -117,15 +117,15 @@ typedef struct {
     int RunLength;			/* length of current run */	\
     u_char* cp;				/* next byte of input data */	\
     u_char* ep;				/* end of input data */		\
-    uint16* pa;				/* place to stuff next run */	\
-    uint16* thisrun;			/* current row's run array */	\
+    uint32* pa;				/* place to stuff next run */	\
+    uint32* thisrun;			/* current row's run array */	\
     int EOLcnt;				/* # EOL codes recognized */	\
     const u_char* bitmap = sp->bitmap;	/* input data bit reverser */	\
     const TIFFFaxTabEnt* TabEnt
 #define	DECLARE_STATE_2D(tif, sp, mod)					\
     DECLARE_STATE(tif, sp, mod);					\
     int b1;				/* next change on prev line */	\
-    uint16* pb				/* next run in reference line */\
+    uint32* pb				/* next run in reference line */\
 /*
  * Load any state that may be changed during decoding.
  */
@@ -295,7 +295,7 @@ Fax3Decode2D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 			EXPAND2D(EOF2Da);
 		(*sp->fill)(buf, thisrun, pa, lastx);
 		SETVAL(0);		/* imaginary change for reference */
-		SWAP(uint16*, sp->curruns, sp->refruns);
+		SWAP(uint32*, sp->curruns, sp->refruns);
 		buf += sp->b.rowbytes;
 		occ -= sp->b.rowbytes;
 		if (occ != 0)
@@ -358,7 +358,7 @@ Fax3Decode2D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
  * runs generated during G3/G4 decoding.
  */
 void
-_TIFFFax3fillruns(u_char* buf, uint16* runs, uint16* erun, uint32 lastx)
+_TIFFFax3fillruns(u_char* buf, uint32* runs, uint32* erun, uint32 lastx)
 {
 	static const unsigned char _fillmasks[] =
 	    { 0x00, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
@@ -499,7 +499,7 @@ Fax3SetupState(TIFF* tif)
 		uint32 nruns = needsRefLine ?
 		     2*TIFFroundup(rowpixels,32) : rowpixels;
 
-		dsp->runs = (uint16*) _TIFFmalloc(nruns*sizeof (uint16));
+		dsp->runs = (uint32*) _TIFFmalloc(nruns*sizeof (uint16));
 		if (dsp->runs == NULL) {
 			TIFFError("Fax3SetupState",
 			    "%s: No space for Group 3/4 run arrays",
@@ -1375,7 +1375,7 @@ Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		EXPAND2D(EOFG4);
 		(*sp->fill)(buf, thisrun, pa, lastx);
 		SETVAL(0);		/* imaginary change for reference */
-		SWAP(uint16*, sp->curruns, sp->refruns);
+		SWAP(uint32*, sp->curruns, sp->refruns);
 		buf += sp->b.rowbytes;
 		occ -= sp->b.rowbytes;
 		if (occ != 0)

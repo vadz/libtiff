@@ -1,3 +1,7 @@
+Fri Sep 17 00:13:51 CEST 1999  Mike Welles <mike@onshore.com> 
+	* Applied Francois Dagand's patch to handle fax decompression bug. 
+	  (sizes >= 65536 were failing) 
+	
 Tue Sep 14 21:31:43 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Applied "a" mode fix to tif_win32.c/TIFFOpen() as suggested 
