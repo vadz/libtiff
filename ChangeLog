@@ -1,5 +1,7 @@
 2000-04-18  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
+	* contrib/addtiffo: Added "averaging" resampling option.
+
 	* tools/tiffsplit.c: Copy TIFFTAG_SAMPLEFORMAT.
 
 Tue Apr 18 16:18:08 2000  Frank Warmerdam  <warmerda@esabot.atlsci.com>
