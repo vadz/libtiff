@@ -32,6 +32,10 @@
 #include <stdio.h>
 #include <stdlib.h>		/* should have atof & getopt */
 
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 #if HAVE_FCNTL_H
 # include <fcntl.h>
 #endif

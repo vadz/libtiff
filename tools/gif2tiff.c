@@ -38,6 +38,10 @@
 #include <string.h>
 #include <math.h>
 
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 #include "tiffio.h"
 
 #define	GIFGAMMA	(1.5)		/* smaller makes output img brighter */
@@ -284,7 +288,7 @@ readgifimage(char* mode)
     } else if (global) {
         initcolors(globalmap, 1<<globalbits);
     }
-    if (status = readraster())
+    if ((status = readraster()))
 	rasterize(interleaved, mode);
     _TIFFfree(raster);
     return status;
@@ -302,7 +306,7 @@ readextension(void)
     char buf[255];
 
     (void) getc(infile);
-    while (count = getc(infile))
+    while ((count = getc(infile)))
         fread(buf, 1, count, infile);
 }
 
@@ -504,4 +508,6 @@ rasterize(int interleaved, char* mode)
     TIFFClose(tif);
 
     _TIFFfree(newras);
-} 
+}
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

@@ -35,6 +35,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 #include "tif_fax3.h"
 
 #define	streq(a,b)	(strcmp(a,b) == 0)
