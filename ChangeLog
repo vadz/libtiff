@@ -1,3 +1,14 @@
+2003-01-31  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_write.c: TIFFWriteCheck() now fails if the image is
+	a pre-existing compressed image.  That is, image writing to 
+	pre-existing compressed images is not allowed.
+
+	* libtiff/tif_open.c: Removed error if opening a compressed file
+	in update mode. 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=198
+
 2003-01-31  Andrey Kiselev  <dron@remotesensing.org>
 
 	* config.guess, config.sub: Updated to recent upstream versions.
