@@ -351,8 +351,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		_TIFFprintAsciiTag(fd, "Date & Time", td->td_datetime);
 	if (TIFFFieldSet(tif,FIELD_HOSTCOMPUTER))
 		_TIFFprintAsciiTag(fd, "Host Computer", td->td_hostcomputer);
-	if (TIFFFieldSet(tif,FIELD_SOFTWARE))
-		_TIFFprintAsciiTag(fd, "Software", td->td_software);
 	if (TIFFFieldSet(tif,FIELD_COPYRIGHT))
 		_TIFFprintAsciiTag(fd, "Copyright", td->td_copyright);
 	if (TIFFFieldSet(tif,FIELD_DOCUMENTNAME))
@@ -538,6 +536,14 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
                             fprintf( fd, "," );
                     }
                     fprintf( fd, "\n" );
+                } 
+                else if( !fld->field_passcount
+                         && fld->field_type == TIFF_ASCII )
+                {
+                    char *data;
+                    
+                    if( TIFFGetField( tif, tag, &data ) )
+                        fprintf(fd, "  %s: %s\n", fld->field_name, data );
                 }
             }
         }
