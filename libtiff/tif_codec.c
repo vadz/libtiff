@@ -37,7 +37,7 @@ static	int NotConfigured(TIFF*, int);
 #define	TIFFInitLZW		NotConfigured
 #endif
 #ifndef	PACKBITS_SUPPORT
-#define	TIFFInitPackbits	NotConfigured
+#define	TIFFInitPackBits	NotConfigured
 #endif
 #ifndef	THUNDER_SUPPORT
 #define	TIFFInitThunderScan	NotConfigured
