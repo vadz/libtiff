@@ -1,3 +1,9 @@
+2004-10-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dirread.c, tif_jpeg.c, tif_luv.c, tif_ojpeg.c,
+	tif_pixarlog.c, tif_write.c}: Handle the zero strip/tile sizes
+	properly (Dmitry V. Levin, Marcus Meissner).
+
 2004-10-11  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirinfo.c: Type of the TIFFTAG_SUBIFD field changed
