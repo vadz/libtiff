@@ -103,26 +103,6 @@ typedef	struct {
 } TIFFHeader;
 
 /*
- * TIFF Image File Directories are comprised of
- * a table of field descriptors of the form shown
- * below.  The table is sorted in ascending order
- * by tag.  The values associated with each entry
- * are disjoint and may appear anywhere in the file
- * (so long as they are placed on a word boundary).
- *
- * If the value is 4 bytes or less, then it is placed
- * in the offset field to save space.  If the value
- * is less than 4 bytes, it is left-justified in the
- * offset field.
- */
-typedef	struct {
-	uint16	tdir_tag;	/* see below */
-	uint16	tdir_type;	/* data type; see below */
-	uint32  tdir_count;	/* number of items; length in spec */
-	uint32  tdir_offset;	/* byte offset to field data */
-} TIFFDirEntry;
-
-/*
  * NB: In the comments below,
  *  - items marked with a + are obsoleted by revision 5.0,
  *  - items marked with a ! are introduced in revision 6.0.
@@ -151,6 +131,26 @@ typedef	enum {
 	TIFF_DOUBLE	= 12,	/* !64-bit IEEE floating point */
 	TIFF_IFD	= 13	/* %32-bit unsigned integer (offset) */
 } TIFFDataType;
+
+/*
+ * TIFF Image File Directories are comprised of
+ * a table of field descriptors of the form shown
+ * below.  The table is sorted in ascending order
+ * by tag.  The values associated with each entry
+ * are disjoint and may appear anywhere in the file
+ * (so long as they are placed on a word boundary).
+ *
+ * If the value is 4 bytes or less, then it is placed
+ * in the offset field to save space.  If the value
+ * is less than 4 bytes, it is left-justified in the
+ * offset field.
+ */
+typedef	struct {
+	uint16		tdir_tag;	/* see below */
+	TIFFDataType	tdir_type;	/* data type; see below */
+	uint32		tdir_count;	/* number of items; length in spec */
+	uint32		tdir_offset;	/* byte offset to field data */
+} TIFFDirEntry;
 
 /*
  * TIFF Tag Definitions.

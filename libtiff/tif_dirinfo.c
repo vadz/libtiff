@@ -459,7 +459,7 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
 {
     TIFFFieldInfo *fld;
 
-    fld = _TIFFmalloc(sizeof (TIFFFieldInfo));
+    fld = (TIFFFieldInfo *) _TIFFmalloc(sizeof (TIFFFieldInfo));
     _TIFFmemset( fld, 0, sizeof(TIFFFieldInfo) );
 
     fld->field_tag = tag;
