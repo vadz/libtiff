@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.11  2004-08-21 08:09:49  dron
+ * Revision 1.12  2004-08-23 12:00:30  dron
+ * Fixed a bunch of problems as per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=590
+ *
+ * Revision 1.11  2004/08/21 08:09:49  dron
  * More fixes from Ross.
  *
  * Revision 1.10  2004/08/20 19:23:25  dron
@@ -1017,9 +1021,10 @@ void t2p_validate(T2P* t2p){
 
 
 /*
-	This function scans the input TIFF file for pages.  It attempts to determine which IFD's of 
-	the TIFF file contain image document pages.  For each, it gathers some information that has 
-	to do with the output of the PDF document as a whole.  
+	This function scans the input TIFF file for pages.  It attempts
+        to determine which IFD's of the TIFF file contain image document
+        pages.  For each, it gathers some information that has to do
+        with the output of the PDF document as a whole.  
 */
 
 void t2p_read_tiff_init(T2P* t2p, TIFF* input){
@@ -1035,7 +1040,7 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	if(t2p->tiff_pages==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %u bytes of memory for t2p_read_tiff_init, %s", 
+			"Can't allocate %u bytes of memory for tiff_pages array, %s", 
 			directorycount * sizeof(T2P_PAGE), 
 			TIFFFileName(input));
 		t2p->t2p_error = T2P_ERR_ERROR;
@@ -1043,10 +1048,10 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	}
 	_TIFFmemset( t2p->tiff_pages, 0x00, directorycount * sizeof(T2P_PAGE));
 	t2p->tiff_tiles = (T2P_TILES*) _TIFFmalloc(directorycount * sizeof(T2P_TILES));
-	if(t2p->tiff_pages==NULL){
+	if(t2p->tiff_tiles==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %u bytes of memory for t2p_read_tiff_init, %s", 
+			"Can't allocate %u bytes of memory for tiff_tiles array, %s", 
 			directorycount * sizeof(T2P_TILES), 
 			TIFFFileName(input));
 		t2p->t2p_error = T2P_ERR_ERROR;
@@ -1104,26 +1109,28 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 		(void)0;
 	}
 	
-	qsort( (void*) t2p->tiff_pages, t2p->tiff_pagecount, sizeof(T2P_PAGE), t2p_cmp_t2p_page);
+	qsort((void*) t2p->tiff_pages, t2p->tiff_pagecount,
+              sizeof(T2P_PAGE), t2p_cmp_t2p_page);
 
 	for(i=0;i<t2p->tiff_pagecount;i++){
 		t2p->pdf_xrefcount += 5;
 		TIFFSetDirectory(input, t2p->tiff_pages[i].page_directory );
-		if( (TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &xuint16)
-                     && (xuint16==PHOTOMETRIC_PALETTE))
-			|| TIFFGetField(input, TIFFTAG_INDEXED, &xuint16) ){
+		if((TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &xuint16)
+                    && (xuint16==PHOTOMETRIC_PALETTE))
+		   || TIFFGetField(input, TIFFTAG_INDEXED, &xuint16)) {
 			t2p->tiff_pages[i].page_extra++;
 			t2p->pdf_xrefcount++;
 		}
 #ifdef ZIP_SUPPORT
-		TIFFGetField(input, TIFFTAG_COMPRESSION, &xuint16);
-		if( (xuint16== COMPRESSION_DEFLATE ||
-			xuint16== COMPRESSION_ADOBE_DEFLATE) && 
-			((t2p->tiff_pages[t2p->tiff_pagecount].page_tilecount != 0) 
-			|| TIFFNumberOfStrips(input)==1) &&
-			(t2p->pdf_nopassthrough==0)	){
-			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
-		}
+		if (TIFFGetField(input, TIFFTAG_COMPRESSION, &xuint16)) {
+                        if( (xuint16== COMPRESSION_DEFLATE ||
+                             xuint16== COMPRESSION_ADOBE_DEFLATE) && 
+                            ((t2p->tiff_pages[i].page_tilecount != 0) 
+                             || TIFFNumberOfStrips(input)==1) &&
+                            (t2p->pdf_nopassthrough==0)	){
+                                if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
+                        }
+                }
 #endif
 		t2p->tiff_transferfunctioncount=TIFFGetField(
 			input, 
@@ -1195,17 +1202,15 @@ int t2p_cmp_t2p_page(const void* e1, const void* e2){
 }
 
 /*
-	This function sets the input directory to the directory of a given page and determines 
-	information about the image.  
+	This function sets the input directory to the directory of a given
+	page and determines information about the image.  It checks
+	the image characteristics to determine if it is possible to convert
+	the image data into a page of PDF output, setting values of the T2P
+	struct for this page.  It determines what color space is used in
+	the output PDF to represent the image.
 	
-	It checks the image characteristics to determine if it is possible to convert the image 
-	data into a page of PDF output, setting values of the T2P struct for this page.
-	
-	It determines what color space is used in the output PDF to represent the image.
-	
-	It determines if the image can be converted as raw data without requiring transcoding of 
-	the image data.
-	
+	It determines if the image can be converted as raw data without
+	requiring transcoding of the image data.
 */
 
 void t2p_read_tiff_data(T2P* t2p, TIFF* input){
@@ -1221,6 +1226,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 
 	t2p->pdf_transcode = T2P_TRANSCODE_ENCODE;
 	t2p->pdf_sample = T2P_SAMPLE_NOTHING;
+	t2p->pdf_switchdecode = 0;
 	
 	TIFFSetDirectory(input, t2p->tiff_pages[t2p->pdf_page].page_directory);
 
@@ -1325,7 +1331,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		}
 	}
 	
-	TIFFGetField(input, TIFFTAG_FILLORDER, &(t2p->tiff_fillorder));
+	TIFFGetFieldDefaulted(input, TIFFTAG_FILLORDER, &(t2p->tiff_fillorder));
 	
         if(TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &(t2p->tiff_photometric)) == 0){
                 TIFFError(
@@ -1607,16 +1613,12 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		}
 	}
 
-        if(TIFFGetField(input, TIFFTAG_ORIENTATION, &(t2p->tiff_orientation) ) != 0){
-                if(t2p->tiff_orientation>8){
-                        TIFFWarning(
-                                TIFF2PDF_MODULE, 
-                                "Image %s has orientation %u, assuming 0", 
-                                TIFFFileName(input),
-                                t2p->tiff_orientation);
-                        t2p->tiff_orientation=0;
-                }
-        } else {
+        TIFFGetFieldDefaulted(input, TIFFTAG_ORIENTATION,
+                              &(t2p->tiff_orientation));
+        if(t2p->tiff_orientation>8){
+                TIFFWarning(TIFF2PDF_MODULE,
+                            "Image %s has orientation %u, assuming 0",
+                            TIFFFileName(input), t2p->tiff_orientation);
                 t2p->tiff_orientation=0;
         }
 
