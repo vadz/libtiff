@@ -66,7 +66,7 @@ int TIFFFillTile(TIFF*, ttile_t);
 */
 
 /* Define "boolean" as unsigned char, not int, per Windows custom. */
-#if defined(__WIN32__)
+#if defined(WIN32)
 # ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
    typedef unsigned char boolean;
 # endif
@@ -705,22 +705,32 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 		/* Component 0 should have expected sampling factors */
 		if (sp->cinfo.d.comp_info[0].h_samp_factor != sp->h_sampling ||
 		    sp->cinfo.d.comp_info[0].v_samp_factor != sp->v_sampling) {
-			TIFFWarning(module, 
+			    TIFFWarning(module, 
                                     "Improper JPEG sampling factors %d,%d\n"
-                                    "Apparently should be %d,%d, "
-                                    "decompressor will try reading with "
-                                    "sampling %d,%d",
+                                    "Apparently should be %d,%d.",
                                     sp->cinfo.d.comp_info[0].h_samp_factor,
                                     sp->cinfo.d.comp_info[0].v_samp_factor,
-                                    sp->h_sampling, 
-                                    sp->v_sampling,
-                                    sp->cinfo.d.comp_info[0].h_samp_factor,
-                                    sp->cinfo.d.comp_info[0].v_samp_factor );
+                                    sp->h_sampling, sp->v_sampling);
 
-                        sp->h_sampling = (uint16)
-                            sp->cinfo.d.comp_info[0].h_samp_factor;
-                        sp->v_sampling = (uint16)
-                            sp->cinfo.d.comp_info[0].v_samp_factor;
+			    /*
+			     * XXX: Files written by the Intergraph software
+			     * has different sampling factors stored in the
+			     * TIFF tags and in the JPEG structures. We will
+			     * try to deduce Intergraph files by the presense
+			     * of the tag 33918.
+			     */
+			    if (!_TIFFFindFieldInfo(tif, 33918, TIFF_ANY)) {
+				    TIFFWarning(module, 
+					"Decompressor will try reading with "
+					"sampling %d,%d.",
+					sp->cinfo.d.comp_info[0].h_samp_factor,
+					sp->cinfo.d.comp_info[0].v_samp_factor);
+
+				    sp->h_sampling = (uint16)
+					sp->cinfo.d.comp_info[0].h_samp_factor;
+				    sp->v_sampling = (uint16)
+					sp->cinfo.d.comp_info[0].v_samp_factor;
+			    }
 		}
 		/* Rest should have sampling factors 1,1 */
 		for (ci = 1; ci < sp->cinfo.d.num_components; ci++) {
@@ -742,7 +752,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG &&
 	    sp->photometric == PHOTOMETRIC_YCBCR &&
 	    sp->jpegcolormode == JPEGCOLORMODE_RGB) {
-    	/* Convert YCbCr to RGB */
+	/* Convert YCbCr to RGB */
 		sp->cinfo.d.jpeg_color_space = JCS_YCbCr;
 		sp->cinfo.d.out_color_space = JCS_RGB;
 	} else {
@@ -889,7 +899,7 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 
         /* Close down the decompressor if done. */
         return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
-       	    || TIFFjpeg_finish_decompress(sp);
+	    || TIFFjpeg_finish_decompress(sp);
 }
 
 
