@@ -23,9 +23,8 @@
  * OF THIS SOFTWARE.
  */
 #include "tiffiop.h"
-#include "version.h"
 
-static const char TIFFVersion[] = VERSION;
+static const char TIFFVersion[] = TIFFLIB_VERSION_STR;
 
 const char*
 TIFFGetVersion(void)

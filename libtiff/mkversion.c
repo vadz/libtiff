@@ -41,7 +41,8 @@ static void
 usage(void)
 {
     fprintf(stderr,
-	"usage: mkversion [-v version-file] [-a alpha-file] [outfile]\n");
+            "usage: mkversion [-v version-file] [-a alpha-file]\n"
+            "                 [-r releasedate-file] [outfile]\n");
     exit(-1);
 }
 
@@ -61,8 +62,11 @@ int
 main(int argc, char* argv[])
 {
     char* versionFile = "../VERSION";
+    char* releaseDateFile = "../RELEASE-DATE";
     char* alphaFile = "../dist/tiff.alpha";
     char version[128];
+    char rawReleaseDate[128];
+    char tiffLibVersion[128];
     char alpha[128];
     FILE* fd;
     char* cp;
@@ -79,10 +83,19 @@ main(int argc, char* argv[])
 		usage();
 	    argc--, argv++;
 	    alphaFile = argv[0];
+	} else if (strcmp(argv[0], "-r") == 0) {
+	    if (argc < 1)
+		usage();
+	    argc--, argv++;
+	    releaseDateFile = argv[0];
 	} else
 	    usage();
 	argc--, argv++;
     }
+
+    /*
+     * Read the VERSION file.
+     */
     fd = openFile(versionFile);
     if (fgets(version, sizeof (version)-1, fd) == NULL) {
 	fprintf(stderr, "mkversion: No version information in %s.\n",
@@ -113,6 +126,26 @@ main(int argc, char* argv[])
 	    alphaFile);
 	exit(-1);
     }
+
+    /*
+     * Read the RELEASE-DATE, and translate format to emit TIFFLIB_VERSION.
+     */
+    fd = openFile(releaseDateFile);
+    if (fgets(rawReleaseDate, sizeof (version)-1, fd) == NULL) {
+	fprintf(stderr, "mkversion: No release date information in %s.\n",
+                releaseDateFile);
+	exit(-1);
+    }
+    fclose(fd);
+
+    sprintf( tiffLibVersion, "#define TIFFLIB_VERSION %4.4s%2.2s%2.2s",
+             rawReleaseDate+6, 
+             rawReleaseDate+3,
+             rawReleaseDate+0 );
+    
+    /*
+     * Emit the version.h file.
+     */
     if (argc > 0) {
 	fd = fopen(argv[0], "w");
 	if (fd == NULL) {
@@ -122,9 +155,19 @@ main(int argc, char* argv[])
 	}
     } else
 	fd = stdout;
-    fprintf(fd, "#define VERSION \"LIBTIFF, Version %s\\n", version);
+    fprintf(fd, "#define TIFFLIB_VERSION_STR \"LIBTIFF, Version %s\\n", version);
     fprintf(fd, "Copyright (c) 1988-1996 Sam Leffler\\n");
     fprintf(fd, "Copyright (c) 1991-1996 Silicon Graphics, Inc.\"\n");
+
+    fprintf( fd, 
+             "/*\n"
+             " * This define can be used in code that requires\n"
+             " * compilation-related definitions specific to a\n"
+             " * version or versions of the library.  Runtime\n"
+             " * version checking should be done based on the\n"
+             " * string returned by TIFFGetVersion.\n" 
+             " */\n" );
+    fprintf(fd, "%s\n", tiffLibVersion );
 
     if (fd != stdout)
 	fclose(fd);

@@ -1,5 +1,17 @@
 2000-11-13  Frank Warmerdam  <warmerda@cs46980-c>
 
+	* I have made a variety of modifications in an effort to ensure the 
+	TIFFLIB_VERSION macro is automatically generated from the RELEASE-DATE
+	file which seems to be updated regularly.  
+
+	 o mkversion.c now reads RELEASE-DATE and emits TIFFLIB_VERSION in 
+	   version include file. 
+	 o renamed version.h to tiffvers.h because we now have to install it 
+	   with the public libtiff include files.  
+	 o include tiffvers.h in tiffio.h. 
+	 o updated tif_version.c to use tiffvers.h.
+	 o Updated Makefile.in accordingly.
+
 	* As per http://bugzilla.remotesensing.org/show_bug.cgi?id=25
 	I have updated the win32 detection rules in tiffcomp.h.
 
