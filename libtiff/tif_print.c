@@ -481,8 +481,69 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		fputc('\n', fd);
 	}
 #endif
-	if (tif->tif_printdir)
-		(*tif->tif_printdir)(tif, fd, flags);
+        /*
+        ** Custom tag support.
+        */
+        {
+            int  i, count;
+
+            count = TIFFGetTagListCount( tif );
+            for( i = 0; i < count; i++ )
+            {
+                ttag_t  tag = TIFFGetTagListEntry( tif, i );
+                const TIFFFieldInfo *fld;
+
+                fld = TIFFFieldWithTag( tif, tag );
+                if( fld == NULL )
+                    continue;
+
+                if( fld->field_passcount )
+                {
+                    int count, i;
+                    void *raw_data;
+                    
+                    if( TIFFGetField( tif, tag, &count, &raw_data ) != 1 )
+                        continue;
+
+                    fprintf(fd, "  %s: ", fld->field_name );
+
+                    for( i = 0; i < count; i++ )
+                    {
+                        if( fld->field_type == TIFF_SHORT )
+                            fprintf( fd, "%d",
+                                     (int) ((short *) raw_data)[i] );
+                        else if( fld->field_type == TIFF_ASCII )
+                        {
+                            fprintf( fd, "%s",
+                                     (char *) raw_data );
+                            break;
+                        }
+                        else if( fld->field_type == TIFF_DOUBLE )
+                            fprintf( fd, "%f",
+                                     ((double *) raw_data)[i] );
+                        else if( fld->field_type == TIFF_FLOAT )
+                            fprintf( fd, "%f",
+                                     (float) ((double *) raw_data)[i] );
+                        else if( fld->field_type == TIFF_LONG )
+                            fprintf( fd, "%d",
+                                     (int) ((long *) raw_data)[i] );
+                        else
+                        {
+                            fprintf( fd,
+                                     "<unsupported data type in TIFFPrint>" );
+                            break;
+                        }
+
+                        if( i < count-1 )
+                            fprintf( fd, "," );
+                    }
+                    fprintf( fd, "\n" );
+                }
+            }
+        }
+        
+	if (tif->tif_tagmethods.printdir)
+		(*tif->tif_tagmethods.printdir)(tif, fd, flags);
 	if ((flags & TIFFPRINT_STRIPS) &&
 	    TIFFFieldSet(tif,FIELD_STRIPOFFSETS)) {
 		tstrip_t s;
