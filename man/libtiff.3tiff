@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH INTRO 3TIFF "August 21, 1997" "libtiff"
+.TH INTRO 3TIFF "November 24, 2004" "libtiff"
 .SH NAME
 libtiff \- introduction to
 .IR libtiff ,
@@ -39,12 +39,10 @@ cc file.c
 .I libtiff
 is a library for reading and writing data files encoded with the
 .I "Tag Image File"
-format, Revision 6.0 (or revision 5.0 or revision 4.0).
-This file format is suitable for archiving multi-color and
-monochromatic image data.
+format, Revision 6.0 (or revision 5.0 or revision 4.0). This file format is
+suitable for archiving multi-color and monochromatic image data.
 .PP
-The library supports several compression algorithms, as indicated
-by the
+The library supports several compression algorithms, as indicated by the
 .I Compression
 field, including:
 no compression (1),
@@ -59,18 +57,16 @@ baseline JPEG compression (7),
 word-aligned 1D Huffman compression (32771),
 and
 PackBits compression (32773).
-In addition, several nonstandard compression algorithms are supported:
-the 4-bit compression algorithm used
-by the
+In addition, several nonstandard compression algorithms are supported: the
+4-bit compression algorithm used by the
 .I ThunderScan
-program (32809) (decompression only),
-NeXT's 2-bit compression algorithm (32766) (decompression only),
-an experimental LZ-style algorithm known as Deflate (32946), and
-an experimental CIE LogLuv compression scheme designed for images
-with high dynamic range (32845 for LogL and 32845 for LogLuv).
-Directory information may be in either little- or big-endian byte
-order\-byte swapping is automatically done by the library.
-Data bit ordering may be either Most Significant Bit (\c
+program (32809) (decompression only), NeXT's 2-bit compression algorithm
+(32766) (decompression only), an experimental LZ-style algorithm known as
+Deflate (32946), and an experimental CIE LogLuv compression scheme designed
+for images with high dynamic range (32845 for LogL and 32845 for LogLuv).
+Directory information may be in either little- or big-endian byte order\-byte
+swapping is automatically done by the library. Data bit ordering may be either
+Most Significant Bit (\c
 .SM MSB\c
 ) to Least Significant Bit (\c
 .SM LSB\c
@@ -94,9 +90,8 @@ Two sets of typedefs are used, one for communication with clients
 of the library and one for internal data structures and parsing of the
 .SM TIFF
 format.
-The following typedefs are exposed to users either through
-function definitions or through parameters passed through the
-varargs interfaces.
+The following typedefs are exposed to users either through function
+definitions or through parameters passed through the varargs interfaces.
 .in +.5i
 .sp 5p
 .ta +\w'typedef unsigned <\fIthing\fP> uint32;    'u
@@ -121,8 +116,8 @@ Note that
 .IR ttile_t ,
 and
 .I tsize_t
-are constrained to be no more than 32-bit quantities by
-32-bit fields they are stored in in the
+are constrained to be no more than 32-bit quantities by 32-bit fields they are
+stored in in the
 .SM TIFF
 image.
 Likewise
@@ -135,106 +130,112 @@ constrains the maximum number of
 .SM IFDs
 that may appear in an image and may be an arbitrary size (w/o penalty). 
 .I ttag_t
-must be either int, unsigned int, pointer, or double because
-the library uses a varargs interface and
+must be either int, unsigned int, pointer, or double because the library uses
+a varargs interface and
 .SM "ANSI C"
-restricts the type of the parameter before an ellipsis to be a
-promoted type.
+restricts the type of the parameter before an ellipsis to be a promoted type.
 .I toff_t
 is defined as int32 because TIFF file offsets are (unsigned) 32-bit
-quantities.
-A signed value is used because some interfaces return \-1 on error.
-Finally, note that user-specified data references are
-passed as opaque handles and only cast at the lowest layers where
-their type is presumed.
+quantities. A signed value is used because some interfaces return \-1 on
+error. Finally, note that user-specified data references are passed as opaque
+handles and only cast at the lowest layers where their type is presumed.
 .SH "LIST OF ROUTINES"
-The following routines are part of the library.
-Consult specific manual pages for details on their operation.
-The manual page names listed below are for systems
-where the full function names can not be encoded in the filesystem;
-on most systems doing ``man function-name'' will work.
-.sp 5p
+The following routines are part of the library. Consult specific manual pages
+for details on their operation; on most systems doing ``man function-name''
+will work.
+.sp
 .nf
-.ta \w'TIFFWriteEncodedStrip'u+2n +\w'Appears on Page'u+2n
-\fIName\fP	\fIAppears on Page\fP	\fIDescription\fP
+.ta \w'TIFFCheckpointDirectory'u+2n
+\fIName\fP	\fIDescription\fP
 .sp 5p
-TIFFCheckpointDirectory writedir.3t	writes the current state of the directory
-TIFFCheckTile	tile.3t	very x,y,z,sample is within image
-TIFFCIELabToRGBInit	color.3t	initialize CIE L*a*b* 1976 to RGB conversion state
-TIFFCIELabToXYZ	color.3t	perform CIE L*a*b* 1976 to CIE XYZ conversion
-TIFFClientOpen	open.3t	open a file for reading or writing
-TIFFClose	close.3t	close an open file
-TIFFComputeStrip	strip.3t	return strip containing y,sample
-TIFFComputeTile	tile.3t	return tile containing x,y,z,sample
-TIFFCurrentDirectory	query.3t	return index of current directory
-TIFFCurrentRow	query.3t	return index of current scanline
-TIFFCurrentStrip	query.3t	return index of current strip
-TIFFCurrentTile	query.3t	return index of current tile
-TIFFDataWidth 	width.3t	return the size of TIFF data types
-TIFFError	error.3t	library error handler
-TIFFFdOpen	open.3t	open a file for reading or writing
-TIFFFileName	query.3t	return name of open file
-TIFFFileno	query.3t	return open file descriptor
-TIFFFindCODEC	codec.3t	find standard codec for the specific scheme
-TIFFFlush	flush.3t	flush all pending writes
-TIFFFlushData	flush.3t	flush pending data writes
-TIFFGetBitRevTable	swab.3t	return bit reversal table
-TIFFGetField	getfield.3t	return tag value in current directory
-TIFFGetFieldDefaulted	getfield.3t	return tag value in current directory
-TIFFGetMode	query.3t	return open file mode
-TIFFGetVersion	query.3t	return library version string
-TIFFIsCODECConfigured	codec.3t	check, whether we have working codec
-TIFFIsTiled	query.3t	return true if image data is tiled
-TIFFIsByteSwapped	query.3t	return true if image data is byte-swapped
-TIFFNumberOfStrips	strip.3t	return number of strips in an image
-TIFFNumberOfTiles	tile.3t	return number of tiles in an image
-TIFFOpen	open.3t	open a file for reading or writing
-TIFFPrintDirectory	print.3t	print description of the current directory
-TIFFReadBufferSetup	rdbuf.3t	specify i/o buffer for reading
-TIFFReadDirectory	readdir.3t	read the next directory
-TIFFReadEncodedStrip	rdestrip.3t	read and decode a strip of data
-TIFFReadEncodedTile	rdetile.3t	read and decode a tile of data
-TIFFReadRawStrip	rdrstrip.3t	read a raw strip of data
-TIFFReadRawTile	rdrtile.3t	read a raw tile of data
-TIFFReadRGBAImage	rdimage.3t	read an image into a fixed format raster
-TIFFReadScanline	readline.3t	read and decode a row of data
-TIFFReadTile	readtile.3t	read and decode a tile of data
-TIFFRegisterCODEC	codec.3t	override standard codec for the specific scheme
-TIFFReverseBits	swab.3t	reverse bits in an array of bytes
-TIFFRGBAImageBegin	rgbaimage.3t	setup decoder state for TIFFRGBAImageGet
-TIFFRGBAImageEnd	rgbaimage.3t	release TIFFRGBAImage decoder state
-TIFFRGBAImageGet	rgbaimage.3t	read and decode an image
-TIFFRGBAImageOK	rgbaimage.3t	is image readable by TIFFRGBAImageGet
-TIFFScanlineSize	size.3t	return size of a scanline
-TIFFSetDirectory	setdir.3t	set the current directory
-TIFFSetSubDirectory	setdir.3t	set the current directory
-TIFFSetErrorHandler	error.3t	set error handler function
-TIFFSetField	setfield.3t	set a tag's value in the current directory
-TIFFSetWarningHandler	error.3t	set warning handler function
-TIFFStripSize	strip.3t	returns size of a strip
-TIFFRawStripSize	strip.3t	returns the number of bytes in a raw strip
-TIFFSwabShort	swab.3t	swap bytes of short
-TIFFSwabLong	swab.3t	swap bytes of long
-TIFFSwabArrayOfShort	swab.3t	swap bytes of an array of shorts
-TIFFSwabArrayOfLong	swab.3t	swap bytes of an array of longs
-TIFFTileRowSize	size.3t	return size of a row in a tile
-TIFFTileSize	size.3t	return size of a tile
-TIFFUnRegisterCODEC	codec.3t	unregisters the codec
-TIFFVGetField	getfield.3t	return tag value in current directory
-TIFFVGetFieldDefaulted	getfield.3t	return tag value in current directory
-TIFFVSetField	setfield.3t	set a tag's value in the current directory
-TIFFVStripSize	strip.3t	returns the number of bytes in a strip
-TIFFWarning	warning.3t	library warning handler
-TIFFWriteDirectory	writedir.3t	write the current directory
-TIFFWriteEncodedStrip	wrestrip.3t	compress and write a strip of data
-TIFFWriteEncodedTile	wretile.3t	compress and write a tile of data
-TIFFWriteRawStrip	wrrstrip.3t	write a raw strip of data
-TIFFWriteRawTile	wrrtile.3t	write a raw tile of data
-TIFFWriteScanline	writeline.3t	write a scanline of data
-TIFFWriteTile	wrrtile.3t	compress and write a tile of data
-TIFFXYZToRGB	color.3t	perform CIE XYZ to RGB conversion
-TIFFYCbCrToRGBInit	color.3t	initialize YCbCr to RGB conversion state
-TIFFYCbCrtoRGB	color.3t	perform YCbCr to RGB conversion
+TIFFCheckpointDirectory	writes the current state of the directory
+TIFFCheckTile		very x,y,z,sample is within image
+TIFFCIELabToRGBInit	initialize CIE L*a*b* 1976 to RGB conversion state
+TIFFCIELabToXYZ		perform CIE L*a*b* 1976 to CIE XYZ conversion
+TIFFClientOpen		open a file for reading or writing
+TIFFClose		close an open file
+TIFFComputeStrip	return strip containing y,sample
+TIFFComputeTile		return tile containing x,y,z,sample
+TIFFCurrentDirectory	return index of current directory
+TIFFCurrentRow		return index of current scanline
+TIFFCurrentStrip	return index of current strip
+TIFFCurrentTile		return index of current tile
+TIFFDataWidth 		return the size of TIFF data types
+TIFFError		library error handler
+TIFFFdOpen		open a file for reading or writing
+TIFFFileName		return name of open file
+TIFFFileno		return open file descriptor
+TIFFFindCODEC		find standard codec for the specific scheme
+TIFFFlush		flush all pending writes
+TIFFFlushData		flush pending data writes
+TIFFGetBitRevTable	return bit reversal table
+TIFFGetField		return tag value in current directory
+TIFFGetFieldDefaulted	return tag value in current directory
+TIFFGetMode		return open file mode
+TIFFGetVersion		return library version string
+TIFFIsCODECConfigured	check, whether we have working codec
+TIFFIsMSB2LSB		return true if image data is being returned
+			with bit 0 as the most significant bit 
+TIFFIsTiled		return true if image data is tiled
+TIFFIsByteSwapped	return true if image data is byte-swapped
+TIFFNumberOfStrips	return number of strips in an image
+TIFFNumberOfTiles	return number of tiles in an image
+TIFFOpen		open a file for reading or writing
+TIFFPrintDirectory	print description of the current directory
+TIFFReadBufferSetup	specify i/o buffer for reading
+TIFFReadDirectory	read the next directory
+TIFFReadEncodedStrip	read and decode a strip of data
+TIFFReadEncodedTile	read and decode a tile of data
+TIFFReadRawStrip	read a raw strip of data
+TIFFReadRawTile		read a raw tile of data
+TIFFReadRGBAImage	read an image into a fixed format raster
+TIFFReadScanline	read and decode a row of data
+TIFFReadTile		read and decode a tile of data
+TIFFRegisterCODEC	override standard codec for the specific scheme
+TIFFReverseBits		reverse bits in an array of bytes
+TIFFRGBAImageBegin	setup decoder state for TIFFRGBAImageGet
+TIFFRGBAImageEnd	release TIFFRGBAImage decoder state
+TIFFRGBAImageGet	read and decode an image
+TIFFRGBAImageOK		is image readable by TIFFRGBAImageGet
+TIFFScanlineSize	return size of a scanline
+TIFFSetDirectory	set the current directory
+TIFFSetSubDirectory	set the current directory
+TIFFSetErrorHandler	set error handler function
+TIFFSetField		set a tag's value in the current directory
+TIFFSetWarningHandler	set warning handler function
+TIFFStripSize		returns size of a strip
+TIFFRawStripSize	returns the number of bytes in a raw strip
+TIFFSwabShort		swap bytes of short
+TIFFSwabLong		swap bytes of long
+TIFFSwabArrayOfShort	swap bytes of an array of shorts
+TIFFSwabArrayOfLong	swap bytes of an array of longs
+TIFFTileRowSize		return size of a row in a tile
+TIFFTileSize		return size of a tile
+TIFFUnRegisterCODEC	unregisters the codec
+TIFFVGetField		return tag value in current directory
+TIFFVGetFieldDefaulted	return tag value in current directory
+TIFFVSetField		set a tag's value in the current directory
+TIFFVStripSize		returns the number of bytes in a strip
+TIFFWarning		library warning handler
+TIFFWriteDirectory	write the current directory
+TIFFWriteEncodedStrip	compress and write a strip of data
+TIFFWriteEncodedTile	compress and write a tile of data
+TIFFWriteRawStrip	write a raw strip of data
+TIFFWriteRawTile	write a raw tile of data
+TIFFWriteScanline	write a scanline of data
+TIFFWriteTile		compress and write a tile of data
+TIFFXYZToRGB		perform CIE XYZ to RGB conversion
+TIFFYCbCrToRGBInit	initialize YCbCr to RGB conversion state
+TIFFYCbCrtoRGB		perform YCbCr to RGB conversion
+.sp
+Auxiliary functions:
+_TIFFfree		free memory buffer
+_TIFFmalloc		dynamically allocate memory buffer
+_TIFFmemcmp		compare contents of the memory buffers
+_TIFFmemcpy		copy contents of the one buffer to another
+_TIFFmemset		fill memory buffer with a constant byte
+_TIFFrealloc		dynamically reallocate memory buffer
+
 .fi
 .SH "TAG USAGE"
 The table below lists the
@@ -255,7 +256,7 @@ Tags of this sort are considered
 tags and the library does not recognize them except when the
 .I Compression
 tag has been previously set to the relevant compression scheme.
-.sp 5p
+.sp
 .nf
 .ta \w'TIFFTAG_JPEGTABLESMODE'u+2n +\w'Value'u+2n +\w'R/W'u+2n
 \fITag Name\fP	\fIValue\fP	\fIR/W\fP	\fILibrary Use/Notes\fP
@@ -348,7 +349,7 @@ These tags are termed
 .I pseud-tags
 and are used to control various codec-specific functions within the library.
 The table below summarizes the defined pseudo-tags.
-.sp 5p
+.sp
 .nf
 .ta \w'TIFFTAG_JPEGTABLESMODE'u+2n +\w'Codec'u+2n +\w'R/W'u+2n
 \fITag Name\fP	\fICodec\fP	\fIR/W\fP	\fILibrary Use/Notes\fP
