@@ -181,7 +181,7 @@ main(int argc, char* argv[])
                      fputs ("Bias image must be organized in strips\n", stderr);
                             exit (-7);
                           }
-		          TIFFGetField(bias, TIFFTAG_SAMPLESPERPIXEL, &samples);
+			  TIFFGetField(bias, TIFFTAG_SAMPLESPERPIXEL, &samples);
                           if (samples != 1) {
                      fputs ("Bias image must be monochrome\n", stderr);
                             exit (-7);
@@ -358,7 +358,7 @@ char* stuff[] = {
 " -t		write output in tiles",
 " -i		ignore read errors",
 " -b file[,#]	bias (dark) monochrome image to be subtracted from all others",
-" -,=%	    	use % rather than , to separate image #'s (per Note below)",           
+" -,=%		use % rather than , to separate image #'s (per Note below)",           
 "",
 " -r #		make each strip have no more than # rows",
 " -w #		set output tile width (pixels)",
@@ -500,8 +500,6 @@ static struct cpTag {
 	{ TIFFTAG_PRIMARYCHROMATICITIES,(uint16) -1,TIFF_RATIONAL },
 	{ TIFFTAG_HALFTONEHINTS,	2, TIFF_SHORT },
 	{ TIFFTAG_INKSET,		1, TIFF_SHORT },
-	{ TIFFTAG_INKNAMES,		1, TIFF_ASCII },
-	{ TIFFTAG_NUMBEROFINKS,		1, TIFF_SHORT },
 	{ TIFFTAG_DOTRANGE,		2, TIFF_SHORT },
 	{ TIFFTAG_TARGETPRINTER,	1, TIFF_ASCII },
 	{ TIFFTAG_SAMPLEFORMAT,		1, TIFF_SHORT },
@@ -667,13 +665,33 @@ tiffcp(TIFF* in, TIFF* out)
 	  if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &len32, &data))
 		TIFFSetField(out, TIFFTAG_ICCPROFILE, len32, data);
 	}
+	{ uint16 ninks;
+	  const char* inknames;
+	  if (TIFFGetField(in, TIFFTAG_NUMBEROFINKS, &ninks)) {
+		TIFFSetField(out, TIFFTAG_NUMBEROFINKS, ninks);
+		if (TIFFGetField(in, TIFFTAG_INKNAMES, &inknames)) {
+		    int inknameslen = strlen(inknames) + 1;
+		    const char* cp = inknames;
+		    while (ninks > 1) {
+			    cp = strchr(cp, '\0');
+			    if (cp) {
+				    cp++;
+				    inknameslen += (strlen(cp) + 1);
+			    }
+			    ninks--;
+		    }
+		    TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
+		}
+	  }
+	}
 	{
 	  unsigned short pg0, pg1;
-	  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1))
+	  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1)) {
 		if (pageNum < 0) /* only one input file */
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
 		else 
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
+	  }
 	}
         {
             int  i;
@@ -713,9 +731,11 @@ tiffcp(TIFF* in, TIFF* out)
                        TIFFSetField(out, fld->field_tag, data);
                 }
             }
+
+	    _TIFFfree(xtiffFieldInfo);
         }
-/*	for (p = tags; p < &tags[NTAGS]; p++)
-		CopyTag(p->tag, p->count, p->type);*/
+	for (p = tags; p < &tags[NTAGS]; p++)
+		CopyTag(p->tag, p->count, p->type);
 
 	cf = pickCopyFunc(in, out, bitspersample, samplesperpixel);
 	return (cf ? (*cf)(in, out, length, width, samplesperpixel) : FALSE);
@@ -811,7 +831,7 @@ DECLAREcpFunc(cpBiasedContig2Contig)
         uint32 row;
         buf = _TIFFmalloc(bufSize);
         biasBuf = _TIFFmalloc(bufSize);
-       	for (row = 0; row < imagelength; row++) {
+	for (row = 0; row < imagelength; row++) {
 	  if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore)
 		break;
 	  if (TIFFReadScanline(bias, biasBuf, row, 0) < 0 && !ignore)
@@ -1044,7 +1064,7 @@ cpImage(TIFF* in, TIFF* out, readFunc fin, writeFunc fout,
 DECLAREreadFunc(readContigStripsIntoBuffer)
 {
 	tsize_t scanlinesize = TIFFScanlineSize(in);
-     	uint8* bufp = buf;
+	uint8* bufp = buf;
 	uint32 row;
 
 	(void) imagewidth; (void) spp;
@@ -1498,7 +1518,7 @@ pickCopyFunc(TIFF* in, TIFF* out, uint16 bitspersample, uint16 samplesperpixel)
 	    uint32 irps = (uint32) -1L;
 	    TIFFGetField(in, TIFFTAG_ROWSPERSTRIP, &irps);
             /* if biased, force decoded copying to allow image subtraction */
- 	    bychunk = !bias && (rowsperstrip == irps);
+	    bychunk = !bias && (rowsperstrip == irps);
 	}else{  /* either in or out is tiled */
             if (bias) {
                   fprintf(stderr,
