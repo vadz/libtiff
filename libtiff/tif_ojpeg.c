@@ -16,11 +16,13 @@
    the latest approved JPEG-in-TIFF encapsulation method, implemented by the
    "tif_jpeg.c" file elsewhere in this library.
 
-   This file interfaces with Release 5 (or later) of the "libjpeg" library,
-   written by the Independent JPEG Group, which you can find on the Internet at:
+   This file interfaces with Release 6B of the JPEG Library written by theu
+   Independent JPEG Group, which you can find on the Internet at:
    ftp.uu.net:/graphics/jpeg/.
 
-   Contributed by Scott Marovich <marovich@hpl.hp.com>.
+   Contributed by Scott Marovich <marovich@hpl.hp.com> with considerable help
+   from Charles Auer <Bumble731@msn.com> to unravel the mysteries of image files
+   created by Microsoft's Wang Imaging application.
 */
 #include <setjmp.h>
 #include <stdio.h>
@@ -97,7 +99,8 @@ typedef struct             /* This module's private, per-image state variable */
     TIFFStripMethod defsparent;
     TIFFTileMethod deftparent;
     void *jpegtables;           /* ->"New" JPEG tables, if we synthesized any */
-    uint32 jpegtables_length;   /* Length of "new" JPEG tables, if they exist */
+    uint32 is_WANG,    /* <=> Microsoft Wang Imaging for Windows output file? */
+           jpegtables_length;   /* Length of "new" JPEG tables, if they exist */
     tsize_t bytesperline;          /* No. of decompressed Bytes per scan line */
     int jpegquality,                             /* Compression quality level */
         jpegtablesmode,                          /* What to put in JPEGTables */
@@ -106,15 +109,13 @@ typedef struct             /* This module's private, per-image state variable */
     uint16 h_sampling,                          /* Luminance sampling factors */
            v_sampling,
            photometric;      /* Copy of "PhotometricInterpretation" tag value */
-    u_char is_WANG,    /* <=> Microsoft Wang Imaging for Windows output file? */
-
-           jpegcolormode;           /* Who performs RGB <-> YCbCr conversion? */
+    u_char jpegcolormode;           /* Who performs RGB <-> YCbCr conversion? */
         /* JPEGCOLORMODE_RAW <=> TIFF Library does conversion */
         /* JPEGCOLORMODE_RGB <=> JPEG Library does conversion */
   } OJPEGState;
 #define OJState(tif)((OJPEGState*)(tif)->tif_data)
 
-static const TIFFFieldInfo ojpegFieldInfo[]= /* JPEG-specific TIFF-record tags */
+static const TIFFFieldInfo ojpegFieldInfo[]=/* JPEG-specific TIFF-record tags */
   {
 
  /* This is the current JPEG-in-TIFF metadata-encapsulation tag, and its
@@ -172,7 +173,7 @@ static const TIFFFieldInfo ojpegFieldInfo[]= /* JPEG-specific TIFF-record tags *
       TIFF_LONG     ,FIELD_JPEGACTABLES          ,FALSE,TRUE ,"JPEGACTables"
     },
     {
-      TIFFTAG_WANG_PAGECONTROL      ,1            ,1            ,
+      TIFFTAG_WANG_PAGECONTROL      ,TIFF_VARIABLE,1            ,
       TIFF_LONG     ,FIELD_WANG_PAGECONTROL      ,FALSE,FALSE,"WANG PageControl"
     },
 
@@ -958,10 +959,9 @@ OJPEGSetupDecode(register TIFF *tif)
 
 /*ARGSUSED*/ static int
 OJPEGDecode(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
-  { tsize_t nrows;
+  { static float zeroes[6];
+    tsize_t nrows;
     register OJPEGState *sp = OJState(tif);
-#   ifndef COLORIMETRY_SUPPORT
-    static float zeroes[6];
 
  /* BEWARE OF KLUDGE:  If our input file was produced by Microsoft's Wang
                        Imaging for Windows application, the DC coefficients of
@@ -972,10 +972,6 @@ OJPEGDecode(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
     Version 6, and we invoke that interface here before decoding each "strip".
  */
     if (sp->is_WANG) jpeg_reset_huff_decode(&sp->cinfo.d,zeroes);
-#   else /* COLORIMETRY_SUPPORT */
-    if (sp->is_WANG)
-      jpeg_reset_huff_decode(&sp->cinfo.d,tif->tif_dir.td_refblackwhite);
-#   endif
 
  /* Decode a chunk of pixels, where returned data is NOT down-sampled (the
     standard case).  The data is expected to be read in scan-line multiples.
@@ -1003,17 +999,16 @@ OJPEGDecode(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
             ++tif->tif_row;
           }
         while ((cc -= bytesperline) > 0 && --nrows > 0);
-      }
+      };
     return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
         || TIFFojpeg_finish_decompress(sp);
   }
 
 /*ARGSUSED*/ static int
 OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
-  { tsize_t nrows;
+  { static float zeroes[6];
+    tsize_t nrows;
     register OJPEGState *sp = OJState(tif);
-#   ifndef COLORIMETRY_SUPPORT
-    static float zeroes[6];
 
  /* BEWARE OF KLUDGE:  If our input file was produced by Microsoft's Wang
                        Imaging for Windows application, the DC coefficients of
@@ -1024,10 +1019,6 @@ OJPEGDecodeRaw(register TIFF *tif,tidata_t buf,tsize_t cc,tsample_t s)
     Version 6, and we invoke that interface here before decoding each "strip".
  */
     if (sp->is_WANG) jpeg_reset_huff_decode(&sp->cinfo.d,zeroes);
-#   else /* COLORIMETRY_SUPPORT */
-    if (sp->is_WANG)
-      jpeg_reset_huff_decode(&sp->cinfo.d,tif->tif_dir.td_refblackwhite);
-#   endif
 
  /* Decode a chunk of pixels, where returned data is down-sampled as per the
     sampling factors.  The data is expected to be read in scan-line multiples.
@@ -1512,8 +1503,7 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
         i = TIFFojpeg_read_header(sp,!sp->is_WANG);
         sp->cinfo.d.marker->read_markers = save; /* Restore input method */
         if (sp->is_WANG) /* Microsoft Wang Imaging for Windows file */
-          { float *refbw;
-
+          {
             if (i != JPEG_SUSPENDED) return 0;
 
          /* BOGOSITY ALERT!  Files generated by Microsoft's Wang Imaging
@@ -1526,41 +1516,6 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
             sp->src.next_input_byte = tif->tif_base + td->td_stripoffset[0];
             sp->src.bytes_in_buffer = td->td_stripoffset[i] -
               td->td_stripoffset[0] + td->td_stripbytecount[i];
-
-         /* We need reference black levels for our "jpeg_reset_huff_decode()"
-            hook into the JPEG Library, so create a default array of reference
-            black and white levels in case our input file doesn't define them.
-
-            BOGOSITY ALERT!  Microsoft's Wang Imaging application seems to alter
-                             the intensity and hue of JPEG images when it
-            encapsulates them in TIFF files, and the exact reason/algorithm is
-            currently unknown to this author (is it a bug?), but we try to
-            correct them by debiassing, using the DC coefficient of each image
-            component (the 0th element of each JPEG quantization table)
-            weighted by the corresponding CCIR 601-1 luminance coefficient
-            (this is strictly a wild-ass guess at what Microsoft might have
-            screwed up).  Experiments with a few test images indicate that this
-            does not produce an exact correction, but it is reasonably close.
-            Can someone else figure out a better algorithm?
-         */
-            if (!TIFFGetFieldDefaulted(tif,TIFFTAG_REFERENCEBLACKWHITE,&refbw))
-              {
-                TIFFError(tif->tif_name,"Can't extract reference black and white levels");
-                return 0;
-              };
-            if (refbw[0] == 0.0 && refbw[2] == 0.0 && refbw[4] == 0.0)
-              { /* default reference black levels */
-                refbw[2] =
-                  sp->cinfo.d.quant_tbl_ptrs[sp->cinfo.d.comp_info[1].quant_tbl_no]
-                    ->quantval[0] * 1.402;
-                refbw[4] =
-                  sp->cinfo.d.quant_tbl_ptrs[sp->cinfo.d.comp_info[2].quant_tbl_no]
-                    ->quantval[0] * 1.772;
-                refbw[0] =
-                  refbw[2] + refbw[4] -
-                  sp->cinfo.d.quant_tbl_ptrs[sp->cinfo.d.comp_info[0].quant_tbl_no]
-                    ->quantval[0];
-              };
             i = TIFFojpeg_read_header(sp,TRUE);
           };
         if (i != JPEG_HEADER_OK) return 0;
@@ -1599,6 +1554,55 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
       {
         default                            : return
                                                (*sp->vsetparent)(tif,tag,ap);
+#       ifdef COLORIMETRY_SUPPORT
+
+     /* BEWARE OF KLUDGE:  Some old-format JPEG-in-TIFF files, including those
+                           created by Microsoft's Wang Imaging application,
+        illegally omit a "ReferenceBlackWhite" TIFF tag, even though the TIFF
+        specification's default is intended for the RGB color space and is in-
+        appropriate for the YCbCr color space ordinarily used for JPEG images.
+        Since many TIFF client applications request the value of this tag
+        immediately after a TIFF image directory is parsed, and before any other
+        code in this module receives control, we are forced to fix this problem
+        very early in image-file processing.  Fortunately, legal TIFF files are
+        supposed to store their tags in numeric order, so a mandatory
+        "PhotometricInterpretation" tag should always appear before an optional
+        "ReferenceBlackWhite" tag.  So, we slyly peek ahead when we discover the
+        desired photometry, by installing modified black and white reference
+        levels.  We install a pointer to a statically-allocated array, which
+        lets it be overridden without "dangling" memory references, and which
+        should be reasonably safe since most client applications treat this data
+        as "read only".
+     */
+        case TIFFTAG_PHOTOMETRIC: 
+          if (   (v32 = (*sp->vsetparent)(tif,tag,ap))
+                 &&    td->td_photometric == PHOTOMETRIC_YCBCR )
+          { 
+              static float refbw[6]={0,255,128,255,128,255};
+
+              td->td_refblackwhite = _TIFFmalloc(sizeof(float)*6);
+              _TIFFmemcpy( td->td_refblackwhite, refbw, sizeof(float)*6 );
+          };
+          return v32;
+#       endif /* COLORIMETRY_SUPPORT */
+
+     /* BEWARE OF KLUDGE:  According to Charles Auer <Bumble731@msn.com>, if our
+                           input is a multi-image (multi-directory) JPEG-in-TIFF
+        file created by Microsoft's Wang Imaging application, for some reason
+        the first directory excludes the vendor-specific "WANG PageControl" tag
+        (32934) that we check below, so the only other way to identify these
+        directories is apparently to look for a software-identification tag with
+        the substring, "Wang Labs".  Single-image files can apparently pass both
+        tests, which causes no harm here, but what a mess this is!
+     */
+        case TIFFTAG_SOFTWARE              : if (   (v32 = (*sp->vsetparent)
+                                                             (tif,tag,ap)
+                                                    )
+                                                 && strstr( td->td_software
+                                                          , "Wang Labs"
+                                                          )
+                                                ) sp->is_WANG = 1;
+                                             return v32;
         case TIFFTAG_JPEGPROC              :
         case TIFFTAG_JPEGIFOFFSET          :
         case TIFFTAG_JPEGIFBYTECOUNT       :
@@ -1624,6 +1628,7 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
  */
     switch (tag)
       { JHUFF_TBL **h;
+        float *refbw;
 
      /* Validate the JPEG-process code. */
 
@@ -1758,12 +1763,8 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
         we make a feeble effort to handle.
      */
         case TIFFTAG_WANG_PAGECONTROL      :
-          if (v32)
-            {
-              TIFFError(tif->tif_name,"Multi-page Wang image not supported");
-              return 0;
-            };
-          sp->is_WANG = 1;
+          if (v32 == 0) v32 = -1;
+          sp->is_WANG = v32;
           tag = TIFFTAG_JPEGPROC+FIELD_WANG_PAGECONTROL-FIELD_JPEGPROC;
           break;
 
