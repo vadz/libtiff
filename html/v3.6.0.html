@@ -102,16 +102,23 @@ with externally defined tags is the primary reason for the shift to the
 <A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
 
 <UL>
+<li> configure, config.site: Fix for large files (>2GiB) support. New
+option in the config.site: LARGEFILE="yes". Should be enougth for the large
+files I/O.
+
 <li> configure: Set -DPIXARLOG_SUPPORT option along with -DZIP_SUPPORT.
+
 <li> html/Makefile.in: Updated to use groffhtml for generating html pages
 from man pages.
+
 <li> configure, libtiff/Makefile.in: Added SCO OpenServer 5.0.6 support
 from John H. DuBois III.  
+
 <li> libtiff/{Makefile.vc, libtiff.def}: Missed declarations added.
 
-<li> libtiff/Makefile.in, tools/Makefile.in: Shared library will not
-be stripped when installing, utility binaries will do be stripped.  As per bug
-93.
+<li> libtiff/Makefile.in, tools/Makefile.in: Shared library will not be
+stripped when installing, utility binaries will do be stripped. As per bug 93.
+
 <li> man/Makefile.in: Patch DESTDIR handling as per bug 95.
 
 <li> configure: OpenBSD changes for Sparc64 and DSO version as per bug 96.
@@ -139,24 +146,48 @@ as per bug 94.
 <A NAME="libtiff"><B><FONT SIZE=+3>C</FONT>HANGES IN LIBTIFF:</B></A>
 
 
-<UL> 
-<li> html/man/*.html: Web pages regenerated from man pages. 
+<UL>
+<li> libtiff/tif_jpeg.c: modified segment_height calculation to always
+be a full height tile for tiled images.  Also changed error to just
+be a warning.
+
+<li> libtiff/tif_lzw.c: fixed so that decoder state isn't allocated till
+LZWSetupDecode().  Needed to read LZW files in "r+" mode.
+	
+<li> libtiff/tif_dir.c: fixed up the tif_postdecode settings responsible
+for byte swapping complex image data.
+	
+<li> libtiff/tif_open.c: Removed error if opening a compressed file
+in update mode bug (198).
+
+<li> libtiff/tif_write.c: TIFFWriteCheck() now fails if the image is
+a pre-existing compressed image.  That is, image writing to pre-existing
+compressed images is not allowed.
+
+<li> html/man/*.html: Web pages regenerated from man pages.
+
 <li> libtiff/tif_jpeg.c: Hack to ensure that "boolean" is defined properly
 on Windows so as to avoid the structure size mismatch error from libjpeg
 (bug 188).
+
 <li> libtiff/tiff.h: #ifdef USING_VISUALAGE around previous Visual Age
 AIX porting hack as it screwed up gcc. (bug 39)
+
 <li> libtiff/tiff.h: added COMPRESSION_JP2000 (34712) for LEAD tools
 custom compression.
+
 <li> libtiff/tif_dirread.c: Another fix for the fetching SBYTE arrays
 by the TIFFFetchByteArray() function. (bug 52)
+
 <li> libtiff/tif_dirread.c: Expand v[2] to v[4] in TIFFFetchShortPair()
 as per bug 196.
+
 <li> libtiff/tif_lzw.c: Additional consistency checking added in
 LZWDecode() and LZWDecodeCompat() fixing bugs 190 and 100.
-<li> libtiff/tif_lzw.c:
-Added check for valid code lengths in LZWDecode() and
-LZWDecodeCompat(). Fixes bug 115.
+
+<li> libtiff/tif_lzw.c: Added check for valid code lengths in LZWDecode()
+and LZWDecodeCompat(). Fixes bug 115.
+
 <li> tif_getimage.c: Ensure that TIFFRGBAImageBegin() returns the
 return code from the underlying pick function as per bug 177.
 
@@ -249,6 +280,35 @@ ImageGear generated files.
 <A NAME="tools"><B><FONT SIZE=+3>C</FONT>HANGES IN THE TOOLS:</B></A>
 
 <UL>
+<li> <a href=./man/tiffcmp.1.html>tiffcmp</a>: Fixed problem with unused data
+comparing (bug 349). `-z' option now can be used to set the number of reported
+different bytes.
+
+<li> <a href=./man/tiffcp.1.html>tiffcp</a>: Added possibility to specify
+value -1 to -r option to get the entire image as one strip (bug 343).
+
+<li> <a href=./man/tiffcp.1.html>tiffcp</a>: Set the correct RowsPerStrip
+and PageNumber values (bug 343).
+	
+<li> <a href=./man/fax2tiff.1.html>fax2tiff</a>: Page numbering fixed (bug
+341).
+
+<li> <a href=./man/ppm2tiff.1.html>ppm2tiff</a>: PPM header parser improved:
+now able to skip comments.
+
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Force deadzone printing when
+EPS output specified (bug 325).
+
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Add ability to generate
+PS Level 3. It basically allows one to use the /flateDecode filter for ZIP
+compressed TIFF images. Patch supplied by Tom Kacvinsky (bug 328).
+	
+<li> <a href=./man/tiffcp.1.html>tiffcp</a>: Fixed problem with colorspace
+conversion for JPEG encoded images (bugs 23 and 275)
+
+<li> <a href=./man/fax2tiff.1.html>fax2tiff</a>: Applied patch from
+Julien Gaulmin. More switches for fax2tiff tool for better control
+of input and output (bugs 272 and 293).
 
 <li> <a href=./man/raw2tiff.1.html>raw2tiff</a>:
 New utility for turning raw raster images into TIFF files

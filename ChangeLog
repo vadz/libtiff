@@ -1,5 +1,7 @@
 2003-06-18  Andrey Kiselev  <dron@remotesensing.org>
 
+	* 3.6.0 Beta2 released.
+
 	* tools/tiffcmp.c, man/tiffcmp.1: Fixed problem with unused data
 	comparing as per bug
 	
@@ -224,7 +226,7 @@
 	
 	* configure, config.site, libtiff/{tif_unix.c, Makefile.in}: Fix for
 	large files (>2GiB) supporting. New option in the config.site:
-	LARGEFILE="yes". Should be enougth for I/O of the large files.
+	LARGEFILE="yes". Should be enough for I/O of the large files.
 
 2002-10-10  Frank Warmerdam  <warmerdam@pobox.com>
 
