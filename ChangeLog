@@ -9,6 +9,11 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=23
 
+	* libtiff/tif_dirread.c: Additional check for StripByteCounts
+	correctness. Fixes
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=320
+
 2003-03-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/{fax2ps.c, fax2tiff.c, gif2tiff.c, pal2rgb.c, ppm2tiff.c,
