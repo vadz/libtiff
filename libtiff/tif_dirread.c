@@ -67,6 +67,9 @@ CheckMalloc(TIFF* tif, size_t nmemb, size_t elem_size, const char* what)
 	char *cp = NULL;
 	size_t bytes = nmemb * elem_size;
 
+	/*
+	 * XXX: Check for integer overflow.
+	 */
 	if (elem_size && bytes / elem_size == nmemb)
 		cp = (char*)_TIFFmalloc(bytes);
 
