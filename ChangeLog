@@ -1,3 +1,8 @@
+2003-10-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiffcomp.h: #define _BSDTYPES_DEFINED when defining BSD
+	typedefs.
+
 2003-10-09  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure, libtiff/{Makefile.in, mkversion.c}:
