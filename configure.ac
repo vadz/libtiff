@@ -376,6 +376,11 @@ AC_CONFIG_FILES([Makefile \
 		 contrib/addtiffo/Makefile \
 		 contrib/dbs/Makefile \
 		 contrib/dbs/xtiff/Makefile \
+		 contrib/iptcutil/Makefile \
+		 contrib/mac-cw/Makefile \
+		 contrib/mac-mpw/Makefile \
+		 contrib/mfs/Makefile \
+		 contrib/ojpeg/Makefile \
                  html/Makefile \
 		 html/images/Makefile \
 		 html/man/Makefile \

@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -25,7 +23,14 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = README
+LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
 
-SUBDIRS = acorn addtiffo dbs iptcutil mac-cw mac-mpw mfs ojpeg
+EXTRA_DIST = test.iptc test.txt
+
+noinst_PROGRAMS = iptcutil
+
+iptcutil_SOURCES = iptcutil.c
+iptcutil_LDADD = $(LIBTIFF)
+
+INCLUDES = -I$(top_srcdir)/libtiff
 

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -24,58 +26,58 @@ typedef struct _tag_spec
 } tag_spec;
 
 static tag_spec tags[] = {
-  5,"Image Name",
-  7,"Edit Status",
-  10,"Priority",
-  15,"Category",
-  20,"Supplemental Category",
-  22,"Fixture Identifier",
-  25,"Keyword",
-  30,"Release Date",
-  35,"Release Time",
-  40,"Special Instructions",
-  45,"Reference Service",
-  47,"Reference Date",
-  50,"Reference Number",
-  55,"Created Date",
-  60,"Created Time",
-  65,"Originating Program",
-  70,"Program Version",
-  75,"Object Cycle",
-  80,"Byline",
-  85,"Byline Title",
-  90,"City",
-  95,"Province State",
-  100,"Country Code",
-  101,"Country",
-  103,"Original Transmission Reference",
-  105,"Headline",
-  110,"Credit",
-  115,"Source",
-  116,"Copyright String",
-  120,"Caption",
-  121,"Local Caption",
-  122,"Caption Writer",
-  200,"Custom Field 1",
-  201,"Custom Field 2",
-  202,"Custom Field 3",
-  203,"Custom Field 4",
-  204,"Custom Field 5",
-  205,"Custom Field 6",
-  206,"Custom Field 7",
-  207,"Custom Field 8",
-  208,"Custom Field 9",
-  209,"Custom Field 10",
-  210,"Custom Field 11",
-  211,"Custom Field 12",
-  212,"Custom Field 13",
-  213,"Custom Field 14",
-  214,"Custom Field 15",
-  215,"Custom Field 16",
-  216,"Custom Field 17",
-  217,"Custom Field 18",
-  218,"Custom Field 19",
-  219,"Custom Field 20"
+    { 5,"Image Name" },
+    { 7,"Edit Status" },
+    { 10,"Priority" },
+    { 15,"Category" },
+    { 20,"Supplemental Category" },
+    { 22,"Fixture Identifier" },
+    { 25,"Keyword" },
+    { 30,"Release Date" },
+    { 35,"Release Time" },
+    { 40,"Special Instructions" },
+    { 45,"Reference Service" },
+    { 47,"Reference Date" },
+    { 50,"Reference Number" },
+    { 55,"Created Date" },
+    { 60,"Created Time" },
+    { 65,"Originating Program" },
+    { 70,"Program Version" },
+    { 75,"Object Cycle" },
+    { 80,"Byline" },
+    { 85,"Byline Title" },
+    { 90,"City" },
+    { 95,"Province State" },
+    { 100,"Country Code" },
+    { 101,"Country" },
+    { 103,"Original Transmission Reference" },
+    { 105,"Headline" },
+    { 110,"Credit" },
+    { 115,"Source" },
+    { 116,"Copyright String" },
+    { 120,"Caption" },
+    { 121,"Local Caption" },
+    { 122,"Caption Writer" },
+    { 200,"Custom Field 1" },
+    { 201,"Custom Field 2" },
+    { 202,"Custom Field 3" },
+    { 203,"Custom Field 4" },
+    { 204,"Custom Field 5" },
+    { 205,"Custom Field 6" },
+    { 206,"Custom Field 7" },
+    { 207,"Custom Field 8" },
+    { 208,"Custom Field 9" },
+    { 209,"Custom Field 10" },
+    { 210,"Custom Field 11" },
+    { 211,"Custom Field 12" },
+    { 212,"Custom Field 13" },
+    { 213,"Custom Field 14" },
+    { 214,"Custom Field 15" },
+    { 215,"Custom Field 16" },
+    { 216,"Custom Field 17" },
+    { 217,"Custom Field 18" },
+    { 218,"Custom Field 19" },
+    { 219,"Custom Field 20" }
 };
 
 /*
@@ -124,11 +126,11 @@ typedef struct _html_code
 
 static html_code html_codes[] = {
 #ifdef HANDLE_GT_LT
-  4,"&lt;",'<',
-  4,"&gt;",'>',
+    { 4,"&lt;",'<' },
+    { 4,"&gt;",'>' },
 #endif
-  5,"&amp;",'&',
-  6,"&quot;",'"'
+    { 5,"&amp;",'&' },
+    { 6,"&quot;",'"' }
 };
 
 /*
@@ -177,6 +179,8 @@ int convertHTMLcodes(char *s, int len)
             }
       }
     }
+
+  return 0;
 }
 
 int formatIPTC(FILE *ifile, FILE *ofile)
@@ -189,7 +193,7 @@ int formatIPTC(FILE *ifile, FILE *ofile)
     recnum,
     dataset;
 
-  unsigned char
+  char
     *readable,
     *str;
 
@@ -270,8 +274,8 @@ int formatIPTC(FILE *ifile, FILE *ofile)
         taglen |= (long) x;
 	    }
     /* make a buffer to hold the tag data and snag it from the input stream */
-    str=(unsigned char *) malloc((unsigned int) (taglen+1));
-    if (str == (unsigned char *) NULL)
+    str = (char *) malloc((unsigned int) (taglen+1));
+    if (str == (char *) NULL)
       {
         printf("Memory allocation failed");
         return 0;
@@ -309,7 +313,7 @@ char *super_fgets(char *b, int *blen, FILE *file)
     c,
     len;
 
-  unsigned char
+  char
     *q;
 
   len=*blen;
@@ -325,8 +329,8 @@ char *super_fgets(char *b, int *blen, FILE *file)
 
         tlen=(int)q-(int)b;
         len<<=1;
-        b=(unsigned char *) realloc((char *) b,(len+2));
-        if ((unsigned char *) b == (unsigned char *) NULL)
+        b=(char *) realloc((char *) b,(len+2));
+        if ((char *) b == (char *) NULL)
           break;
         q=b+tlen;
       }
@@ -807,7 +811,7 @@ int tokenizer(unsigned inflag,char *token,int tokmax,char *line,
   _p_curquote=0;	   /* initialize previous quote char */
   _p_flag=inflag;	   /* set option flag */
 
-  for(_p_tokpos=0;c=line[*next];++(*next))	/* main loop */
+  for(_p_tokpos=0;(c=line[*next]);++(*next))	/* main loop */
   {
     if((qp=sindex(c,brkchar))>=0)  /* break */
     {
