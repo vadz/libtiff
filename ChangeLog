@@ -1,3 +1,21 @@
+2005-03-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiff.h, tif_fax3.tif, tif_jpeg.c}: Applied patch from Lee
+	Howard to support a new tag TIFFTAG_FAXDCS (34911) used in HylaFax
+	software. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=771
+
+	* nmake.opt, html/build.html: Add more comments, change the config
+	file organization a bit as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=764
+
+	* tools/tiffcmp.c: Use properly sized buffer in short arrays comparison
+	as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=785
+
 2005-03-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: More logic to guess missed strip size as per
