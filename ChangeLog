@@ -1,5 +1,9 @@
 2002-01-18  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_read.c: Fixed TIFFReadEncodedStrip() to fail if the
+	decodestrip function returns anything not greater than zero as per
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=97
+
 	* configure: Modify CheckForBigEndian so it can work in a cross
 	compiled situation.
 

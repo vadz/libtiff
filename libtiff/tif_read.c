@@ -153,8 +153,9 @@ TIFFReadEncodedStrip(TIFF* tif, tstrip_t strip, tdata_t buf, tsize_t size)
 		size = stripsize;
 	else if (size > stripsize)
 		size = stripsize;
-	if (TIFFFillStrip(tif, strip) && (*tif->tif_decodestrip)(tif,
-	    (tidata_t) buf, size, (tsample_t)(strip / td->td_stripsperimage))) {
+	if (TIFFFillStrip(tif, strip) 
+            && (*tif->tif_decodestrip)(tif, (tidata_t) buf, size, 
+                         (tsample_t)(strip / td->td_stripsperimage)) > 0 ) {
 		(*tif->tif_postdecode)(tif, (tidata_t) buf, size);
 		return (size);
 	} else
