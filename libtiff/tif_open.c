@@ -170,7 +170,7 @@ TIFFClientOpen(
 	 * a file is opened read-only.
 	 */
 	tif->tif_flags = FILLORDER_MSB2LSB;
-	if (m == O_RDONLY)
+	if (m == O_RDONLY || m == O_RDWR)
 #ifdef STRIPCHOP_DEFAULT
 		tif->tif_flags |= TIFF_MAPPED|STRIPCHOP_DEFAULT;
 #else
