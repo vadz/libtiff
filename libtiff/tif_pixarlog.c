@@ -489,8 +489,7 @@ PixarLogMakeTables(PixarLogState *sp)
 
     int  nlin, lt2size;
     int  i, j;
-    double  b, c, linstep, max;
-    double  k, v, dv, r, lr2, r2;
+    double  b, c, linstep, v;
     float *ToLinearF;
     uint16 *ToLinear16;
     unsigned char *ToLinear8;
@@ -674,7 +673,6 @@ PixarLogSetupDecode(TIFF* tif)
 static int
 PixarLogPreDecode(TIFF* tif, tsample_t s)
 {
-	TIFFDirectory *td = &tif->tif_dir;
 	PixarLogState* sp = DecoderState(tif);
 
 	(void) s;
@@ -832,7 +830,6 @@ PixarLogSetupEncode(TIFF* tif)
 static int
 PixarLogPreEncode(TIFF* tif, tsample_t s)
 {
-	TIFFDirectory *td = &tif->tif_dir;
 	PixarLogState *sp = EncoderState(tif);
 
 	(void) s;
