@@ -272,4 +272,6 @@ not handled correctly.
 .SH "SEE ALSO"
 .IR libtiff (3T),
 .IR TIFFOpen (3T),
-.IR TIFFReadRGBAImage (3T)
+.IR TIFFReadRGBAImage (3T),
+.IR TIFFReadRGBAStrip (3T),
+.IR TIFFReadRGBATile (3T)
