@@ -2,10 +2,10 @@
  *
  * Project:  libtiff tools
  * Purpose:  Convert raw byte sequences in TIFF images
- * Author:   Andrey Kiselev, a_kissel@eudoramail.com
+ * Author:   Andrey Kiselev, dron@remotesensing.org
  *
  ******************************************************************************
- * Copyright (c) 2002, Andrey Kiselev <a_kissel@eudoramail.com>
+ * Copyright (c) 2002, Andrey Kiselev <dron@remotesensing.org>
  *
  * Permission to use, copy, modify, distribute, and sell this software and 
  * its documentation for any purpose is hereby granted without fee, provided
@@ -63,7 +63,7 @@ main(int argc, char* argv[])
 	
 	uint32 row, col, band;
 	int	c;
-	unsigned char *buf, *buf1;
+	unsigned char *buf = NULL, *buf1 = NULL;
 	extern int optind;
 	extern char* optarg;
 	
@@ -263,7 +263,11 @@ main(int argc, char* argv[])
 			break;
 		}
 	}
-	(void) TIFFClose(out);
+	if (buf)
+		_TIFFfree(buf);
+	if (buf1)
+		_TIFFfree(buf1);
+	TIFFClose(out);
 	return (0);
 }
 

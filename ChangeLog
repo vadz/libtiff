@@ -1,3 +1,7 @@
+2003-02-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/raw2tiff.c: Memory leak fixed.
+
 2003-02-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/fax2tiff.c, man/fax2tiff.1: Applied patch from Julien Gaulmin
