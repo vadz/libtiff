@@ -1,5 +1,10 @@
 2004-01-28  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/{libtiff.def, tif_close.c, tiffio.h, tif_open.c}: Separate
+	TIFFCleanup() from the TIFFClose() in order to fix the bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=468
+
 	* tools/tiffcp.c: Fixed problem with wrong interpretation of the
 	InkNames tag as per bug
 
