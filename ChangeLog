@@ -1,3 +1,11 @@
+2003-11-13  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_color.c, tif_getimage.c, tiffio.h, Makefile.in}:
+	New color space conversion code: CIE L*a*b* 1976 images now supported
+	by the TIFFRGBAImage interface. All introduced routines go to new
+	module tif_color.c. Eventually all color conversion functions should
+	be moved there.
+
 2003-11-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/{ras2tiff.c, rasterfile.h}: Properly determine SUN Rasterfiles
