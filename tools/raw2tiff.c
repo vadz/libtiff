@@ -55,6 +55,10 @@
 
 #include "tiffio.h"
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 #ifndef O_BINARY
 # define O_BINARY 0
 #endif
@@ -276,7 +280,7 @@ main(int argc, char* argv[])
 				lseek(fd,
 				      hdr_size + (length*band+row)*linebytes,
 				      SEEK_SET);
-				if (read(fd, buf, linebytes) != linebytes) {
+				if (read(fd, buf, linebytes) < 0) {
 					fprintf(stderr,
 					"%s: %s: scanline %lu: Read error.\n",
 					argv[0], argv[optind],
@@ -292,7 +296,7 @@ main(int argc, char* argv[])
 			break;
 		case PIXEL:			/* pixel interleaved data */
 		default:
-			if (read(fd, buf1, bufsize) != bufsize) {
+			if (read(fd, buf1, bufsize) < 0) {
 				fprintf(stderr,
 					"%s: %s: scanline %lu: Read error.\n",
 					argv[0], argv[optind],
@@ -415,7 +419,7 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		return 1;
 	} else {
-		if (filestat.st_size<hdr_size+(*width)*(*length)*nbands*depth) {
+		if (filestat.st_size<(off_t)(hdr_size+(*width)*(*length)*nbands*depth)) {
 			fprintf(stderr, "Input file too small.\n");
 		return -1;
 		}

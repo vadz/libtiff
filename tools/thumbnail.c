@@ -95,16 +95,19 @@ main(int argc, char* argv[])
     }
     if (argc-optind != 2)
 	usage();
+
+    out = TIFFOpen(argv[optind+1], "w");
+    if (out == NULL)
+	return 2;
+    in = TIFFOpen(argv[optind], "r");
+
     thumbnail = (uint8*) _TIFFmalloc(tnw * tnh);
     if (!thumbnail) {
 	    TIFFError(TIFFFileName(in),
 		      "Can't allocate space for thumbnail buffer.");
 	    return 1;
     }
-    out = TIFFOpen(argv[optind+1], "w");
-    if (out == NULL)
-	return 2;
-    in = TIFFOpen(argv[optind], "r");
+
     if (in != NULL) {
 	initScale();
 	do {
