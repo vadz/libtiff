@@ -1,3 +1,8 @@
+2000-03-28  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* fax2ps: Fixed mixup of width and height in bounding box statement
+	as per submission by Nalin Dahyabhai <nalin@redhat.com>.
+
 2000-03-27  Mike Welles	     <mike@onshore.com> 
 
 	* fax2ps:  Modified printruns to take uint32 instead of uint16.  
