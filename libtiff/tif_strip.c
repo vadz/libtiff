@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -62,8 +62,7 @@ TIFFNumberOfStrips(TIFF* tif)
 	TIFFDirectory *td = &tif->tif_dir;
 	tstrip_t nstrips;
 
-	nstrips = (td->td_rowsperstrip == (uint32) -1 ?
-	     (td->td_imagelength != 0 ? 1 : 0) :
+	nstrips = (td->td_rowsperstrip == (uint32) -1 ? 1 :
 	     TIFFhowmany(td->td_imagelength, td->td_rowsperstrip));
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 		nstrips *= td->td_samplesperpixel;
