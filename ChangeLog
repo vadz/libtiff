@@ -1,3 +1,8 @@
+2001-07-27  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* man/Makefile.in: add TIFFClientOpen link as per debian submitted
+	bug 66.
+
 2001-07-20  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Define HAVE_BOOLEAN on windows if RPCNDR.H 
