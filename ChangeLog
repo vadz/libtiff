@@ -7,6 +7,11 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=358
 
+	* libtiff/{tif_dirwrite.c, tif_packbits.c}: Fixed compilation on
+	64-bit architectures as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=357
+	
 2003-06-19  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_print.c: fixed some serious bugs when printing
