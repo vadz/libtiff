@@ -31,7 +31,7 @@
 SRCDIR	= .
 
 #
-# VERSION:	v3.5.1
+# VERSION:	v3.5.2
 # DATE:		Wed Aug 25 15:30:36 EST 1999
 # TARGET:	i586-unknown-linux
 # CCOMPILER:	/usr/bin/gcc

@@ -94,8 +94,8 @@
 # JPEG support requires release 5 or later of the IJG code,
 # which you can find on the Internet at ftp.uu.net:/graphics/jpeg/.
 #
-#DIRS_LIBINC="$DIRS_LIBINC ../src/jpeg-5a" # directory for jpeg include files
-#DIR_JPEGLIB=../src/jpeg-5a		# directory for libjpeg
+#DIRS_LIBINC="$DIRS_LIBINC ../src/jpeg-6b" # directory for jpeg include files
+#DIR_JPEGLIB=../src/jpeg-6b		# directory for libjpeg
 
 #
 # Deflate-specific parameters; used when Deflate support is enabled (see above).

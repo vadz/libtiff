@@ -401,51 +401,6 @@ CONFIG=\
 rcsclean:
 	rcsclean ${TIFFFILES} && co ${TIFFFILES}
 
-alpha:
-	(cd ${SRCDIR}/dist; sh newversion)
-	-${MAKE} clean
-	${MAKE} alpha.stamp
-	${SRCDIR}/configure ${CONFIG}
-	${MAKE} product
-	${MAKE} alpha.tar
-
-# stamp relevant files according to current alpha
-alpha.stamp:
-	VERSION="Alpha@DIST_ALPHA@";					\
-	NOW=`date`;							\
-	for i in ${TIFFFILES}; do					\
-	    REV=`rlog -h -d"$$NOW" ${SRCDIR}/$$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" ${SRCDIR}/$$i && co -sExp ${SRCDIR}/$$i;	\
-	done
-
-purge-old-alphas:
-	VERSIONS=`awk 'BEGIN {						\
-		for (i=1; i<=@DIST_ALPHA@; i++) printf " -nAlpha%03d",i;\
-		exit							\
-	    }'`;							\
-	for i in ${TIFFFILES}; do					\
-	    echo rcs $$VERSIONS ${SRCDIR}/$$i;				\
-	    rcs $$VERSIONS ${SRCDIR}/$$i && co ${SRCDIR}/$$i;		\
-	done
-
-alphadiff:
-	-@for i in ${TIFFFILES}; do					\
-	    rcsdiff -r${ALPHA} ${SRCDIR}/$$i;				\
-	done
-
-# create alpha distribution archive
-alpha.tar:
-	VERSION="@VERSION@";						\
-	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
-	ln -s ${SRCDIR} tiff-$$VERSION;					\
-	(for i in ${DISTFILES}; do					\
-	   echo $$i;							\
-	done) | sed "s;.*;tiff-$$VERSION/&;" >$$VERSION;		\
-	tar cvf $$VERSION-tar `cat $$VERSION`;				\
-	rm -f tiff-$$VERSION-tar.${ZIPSUF};				\
-	cat $$VERSION-tar | ${COMPRESS} >tiff-$$VERSION-tar.${ZIPSUF};	\
-	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;
-
 release:
 	(cd ${SRCDIR}/dist; sh newversion)
 	-${MAKE} clean
@@ -454,11 +409,15 @@ release:
 	${MAKE} product
 	${MAKE} release.tar
 
+# stamp relevant files according to current alpha
 release.stamp:
-	NOW=`date`;							\
-	for i in ${TIFFFILES}; do					\
-	    REV=`rlog -h -d"$$NOW" ${SRCDIR}/$$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-NRelease@DIST_MAJOR@_@DIST_MINOR@_@DIST_TYPE@:$$REV" "-sRel:$$REV" ${SRCDIR}/$$i && co -sRel ${SRCDIR}/$$i;	\
+	cvs tag -R "Release" 
+	date "+%m/%d/%Y" > RELEASE-DATE
+
+#diffs since last release
+releasediff:
+	-@for i in ${TIFFFILES}; do					\
+	    cvs diff -D`cat RELEASE-DATE` ${SRCDIR}/$$i;				\
 	done
 
 # create release distribution archive
