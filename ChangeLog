@@ -1,3 +1,8 @@
+Sat Dec  4 15:47:11 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Made Packbits the default compression in tools/tiff2rgba.c instead
+	of LZW.
+
 Tue Nov 30 14:41:43 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>    ***3.5.3. release***
 
 	* Added tif_luv to contrib/djgpp/Makefile.lib.
