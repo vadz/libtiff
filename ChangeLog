@@ -1,3 +1,9 @@
+2004-01-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_open.c: More fixes for
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=468
+
 2004-01-28  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{libtiff.def, tif_close.c, tiffio.h, tif_open.c}: Separate
