@@ -1,3 +1,7 @@
+2003-01-15  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* cut 3.6.0 Beta release.
+
 2002-12-20  Andrey Kiselev  <dron@remotesensing.org>
 	
 	* tools/fax2ps.c, man/fax2ps.1: Page size was determined
