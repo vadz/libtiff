@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.12  2004-08-23 12:00:30  dron
+ * Revision 1.13  2004-08-24 07:48:36  dron
+ * More fixes for bug http://bugzilla.remotesensing.org/show_bug.cgi?id=590
+ * from Ross Finlayson.
+ *
+ * Revision 1.12  2004/08/23 12:00:30  dron
  * Fixed a bunch of problems as per bug
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=590
  *
@@ -1069,7 +1073,7 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 				TIFFFileName(input));
 			return;
 		}
-		if(TIFFGetField(input, TIFFTAG_PAGENUMBER, &pagen, &paged)==2){
+		if(TIFFGetField(input, TIFFTAG_PAGENUMBER, &pagen, &paged)){
 			if((pagen>paged) && (paged != 0)){
 				t2p->tiff_pages[t2p->tiff_pagecount].page_number = 
 					paged;
@@ -1138,6 +1142,9 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			&(t2p->tiff_transferfunction[0]), 
 			&(t2p->tiff_transferfunction[1]), 
 			&(t2p->tiff_transferfunction[2]));
+                if(t2p->tiff_transferfunction[1]!=t2p->tiff_transferfunction[0]){
+                        t2p->tiff_transferfunctioncount=3;
+                }
 		if(t2p->tiff_transferfunctioncount==1){
 			t2p->tiff_pages[i].page_extra+=2;
 			t2p->pdf_xrefcount+=2;
@@ -1226,7 +1233,8 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 
 	t2p->pdf_transcode = T2P_TRANSCODE_ENCODE;
 	t2p->pdf_sample = T2P_SAMPLE_NOTHING;
-	t2p->pdf_switchdecode = 0;
+        t2p->pdf_switchdecode = t2p->pdf_colorspace_invert;
+        
 	
 	TIFFSetDirectory(input, t2p->tiff_pages[t2p->pdf_page].page_directory);
 
@@ -1342,18 +1350,19 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
                 return;
 
         }
+        
 	switch(t2p->tiff_photometric){
 		case PHOTOMETRIC_MINISWHITE:
 		case PHOTOMETRIC_MINISBLACK: 
 			if (t2p->tiff_bitspersample==1){
 				t2p->pdf_colorspace=T2P_CS_BILEVEL;
 				if(t2p->tiff_photometric==PHOTOMETRIC_MINISWHITE){
-					t2p->pdf_switchdecode=1;
+					t2p->pdf_switchdecode ^= 1;
 				}
 			} else {
 				t2p->pdf_colorspace=T2P_CS_GRAY;
 				if(t2p->tiff_photometric==PHOTOMETRIC_MINISWHITE){
-					t2p->pdf_switchdecode=1;
+					t2p->pdf_switchdecode ^= 1;
 				} 
 			}
 			break;
@@ -1386,7 +1395,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 							break;
 					}
 					t2p->pdf_colorspace=T2P_CS_CMYK;
-					t2p->pdf_switchdecode=1;
+					t2p->pdf_switchdecode ^= 1;
 					TIFFWarning(
 						TIFF2PDF_MODULE, 
 						"RGB image %s has 4 samples per pixel, assuming inverse CMYK",
@@ -1726,6 +1735,9 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		&(t2p->tiff_transferfunction[0]),
 		&(t2p->tiff_transferfunction[1]),
 		&(t2p->tiff_transferfunction[2]));
+        if(t2p->tiff_transferfunction[1]!=t2p->tiff_transferfunction[0]){
+                t2p->tiff_transferfunctioncount=3;
+        }
 	if(TIFFGetField(input, TIFFTAG_WHITEPOINT, &xfloatp)!=0){
 		t2p->tiff_whitechromaticities[0]=xfloatp[0];
 		t2p->tiff_whitechromaticities[1]=xfloatp[1];
@@ -1766,10 +1778,6 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		t2p->tiff_iccprofile=NULL;
 	}
 	
-	if(t2p->pdf_colorspace_invert != 0){
-		(t2p->pdf_switchdecode==0) ? (t2p->pdf_switchdecode=1) : (t2p->pdf_switchdecode=0);
-	}
-
 #ifdef CCITT_SUPPORT
 	if( t2p->tiff_bitspersample==1 &&
 		t2p->tiff_samplesperpixel==1){
