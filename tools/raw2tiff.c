@@ -47,7 +47,7 @@ static	int quality = 75;		/* JPEG quality */
 static	uint16 predictor = 0;
 
 static void swapBytesInScanline(void *, uint32, TIFFDataType);
-static int guessSize(FILE *, TIFFDataType, uint32, int, int,
+static int guessSize(FILE *, TIFFDataType, off_t, uint32, int,
 		     uint32 *, uint32 *);
 static double correlation(void *, void *, uint32, TIFFDataType);
 static void usage(void);
@@ -56,8 +56,9 @@ static	int processCompressOptions(char*);
 int
 main(int argc, char* argv[])
 {
-	uint32	width = 0, length = 0, hdr_size = 0, linebytes, bufsize;
-	int	nbands = 1;		    /* number of bands in input image*/
+	uint32	width = 0, length = 0, linebytes, bufsize;
+	uint32	nbands = 1;		    /* number of bands in input image*/
+	off_t	hdr_size = 0;		    /* size of the header to skip */
 	TIFFDataType dtype = TIFF_BYTE;
 	int	depth = 1;		    /* bytes per pixel in input image */
 	int	swab = 0;		    /* byte swapping flag */
@@ -314,14 +315,14 @@ swapBytesInScanline(void *buf, uint32 width, TIFFDataType dtype)
 }
 
 static int
-guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands, int swab,
-	  uint32 *width, uint32 *length)
+guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
+	  int swab, uint32 *width, uint32 *length)
 {
 	const float longt = 40.0;    /* maximum possible height/width ratio */
 	char	    *buf1, *buf2;
 	struct stat filestat;
 	uint32	    w, h, scanlinesize, imagesize;
-	int	    depth = TIFFDataWidth(dtype);
+	uint32	    depth = TIFFDataWidth(dtype);
 	float	    cor_coef = 0, tmp;
 
 	fstat(fileno(fp), &filestat);
@@ -352,7 +353,7 @@ guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands, int swab,
 	} else if (*width == 0 && *length == 0) {
 		fprintf(stderr,	"Image width and height are not specified.\n");
 
-		for (w = sqrt(imagesize / longt);
+		for (w = (uint32) sqrt(imagesize / longt);
 		     w < sqrt(imagesize * longt);
 		     w++) {
 			if (imagesize % w == 0) {
@@ -368,7 +369,8 @@ guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands, int swab,
 					swapBytesInScanline(buf1, w, dtype);
 					swapBytesInScanline(buf2, w, dtype);
 				}
-				tmp = fabs(correlation(buf1, buf2, w, dtype));
+				tmp = (float) fabs(correlation(buf1, buf2,
+							       w, dtype));
 				if (tmp > cor_coef) {
 					cor_coef = tmp;
 					*width = w, *length = h;
@@ -398,8 +400,8 @@ guessSize(FILE *fp, TIFFDataType dtype, uint32 hdr_size, int nbands, int swab,
 static double
 correlation(void *buf1, void *buf2, uint32 n_elem, TIFFDataType dtype)
 {
-	float	X, Y, M1 = 0.0, M2 = 0.0, D1 = 0.0, D2 = 0.0, K = 0.0;
-	int	i;
+	double	X, Y, M1 = 0.0, M2 = 0.0, D1 = 0.0, D2 = 0.0, K = 0.0;
+	uint32	i;
 
 	switch (dtype) {
 		case TIFF_BYTE:

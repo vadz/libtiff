@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.8  2004-05-26 09:24:07  dron
+ * Revision 1.9  2004-06-04 13:46:25  dron
+ * Avoid warnings.
+ *
+ * Revision 1.8  2004/05/26 09:24:07  dron
  * Get rid of __T() macro; avoid warnings.
  *
  * Revision 1.7  2004/04/20 14:54:05  dron
@@ -3431,9 +3434,9 @@ tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
 	for(i=0;i<samplecount;i++){
 		sample=((uint32*)data)[i];
 		itimes3=i*3;
-		((char*)data)[i*3]= sample & 0xff;
-		((char*)data)[i*3+1]= (sample>>8) & 0xff;
-		((char*)data)[i*3+2]= (sample>>16) & 0xff;
+		((char*)data)[i*3]= (char) (sample & 0xff);
+		((char*)data)[i*3+1]= (char) ((sample>>8) & 0xff);
+		((char*)data)[i*3+2]= (char) ((sample>>16) & 0xff);
 	}
 
 	return(i*3);
@@ -3453,9 +3456,9 @@ tsize_t t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount){
 	for(i=0;i<samplecount;i++){
 		sample=((uint32*)data)[i];
 		itimes3=i*3;
-		((char*)data)[i*3]= (sample>>24) & 0xff;
-		((char*)data)[i*3+1]= (sample>>16) & 0xff;
-		((char*)data)[i*3+2]= (sample>>8) & 0xff;
+		((char*)data)[i*3]= (char) ((sample>>24) & 0xff);
+		((char*)data)[i*3+1]= (char) ((sample>>16) & 0xff);
+		((char*)data)[i*3+2]= (char) ((sample>>8) & 0xff);
 	}
 
 	return(i*3);
@@ -3476,10 +3479,13 @@ tsize_t t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount){
 	for(i=0;i<samplecount;i++){
 		sample=((uint32*)data)[i];
 		itimes3=i*3;
-		alpha=((255-(sample & 0xff)));
-		((unsigned char*)data)[i*3]= (sample>>24) & 0xff;
-		((unsigned char*)data)[i*3+1]= (sample>>16) & 0xff;
-		((unsigned char*)data)[i*3+2]= (sample>>8) & 0xff;
+		alpha=(unsigned char)((255-(sample & 0xff)));
+		((unsigned char*)data)[i*3] =
+			(unsigned char) ((sample>>24) & 0xff);
+		((unsigned char*)data)[i*3+1] =
+			(unsigned char) ((sample>>16) & 0xff);
+		((unsigned char*)data)[i*3+2] =
+			(unsigned char) ((sample>>8) & 0xff);
 		((unsigned char*)data)[i*3]+=alpha;
 		((unsigned char*)data)[i*3+1]+=alpha;
 		((unsigned char*)data)[i*3+2]+=alpha;
@@ -4779,7 +4785,7 @@ tsize_t t2p_write_pdf_xobject_calcs(T2P* t2p, TIFF* output){
 		Y_R = (y_r/R) * ((x_g-x_b)*y_w - (x_w-x_b)*y_g + (x_w-x_g)*y_b) / z_w;
 		X_R = Y_R * x_r / y_r;
 		Z_R = Y_R * (((1-x_r)/y_r)-1);
-		Y_G = ((0.0-(y_g))/G) * ((x_r-x_b)*y_w - (x_w-x_b)*y_r + (x_w-x_r)*y_b) / z_w;
+		Y_G = ((0.0F-(y_g))/G) * ((x_r-x_b)*y_w - (x_w-x_b)*y_r + (x_w-x_r)*y_b) / z_w;
 		X_G = Y_G * x_g / y_g;
 		Z_G = Y_G * (((1-x_g)/y_g)-1);
 		Y_B = (y_b/B) * ((x_r-x_g)*y_w - (x_w-x_g)*y_r + (x_w-x_r)*y_g) / z_w;
