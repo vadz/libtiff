@@ -1,9 +1,16 @@
+2004-04-06  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_jpeg.c: Workaround for wrong sampling factors used
+	in the Intergarph JPEG compressed TIFF images as per bug:
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=532
+
 2004-04-04  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_open.c: close clientdata if TIFFClientOpen() fails
 	via bad2. 
 
-2004-03-26  Frank Warmerdam  <warmerdam@pobox.com>
+2004-03-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Properly set Photometric Interpretation in case of
 	JPEG compression of grayscale images.
