@@ -456,17 +456,17 @@ tiffcvt(TIFF* in, TIFF* out)
 }
 
 static char* stuff[] = {
-    "usage: tiff2rgba [-c comp] [-r rows] [-b] input... output\n",
-    "where comp is one of the following compression algorithms:\n",
-    " jpeg\t\tJPEG encoding\n",
-    " zip\t\tLempel-Ziv & Welch encoding\n",
-    " lzw\t\tLempel-Ziv & Welch encoding\n",
-    " packbits\tPackBits encoding\n",
-    " none\t\tno compression\n",
-    "and the other options are:\n",
-    " -r\trows/strip\n",
-    " -b (progress by block rather than as a whole image)\n",
-    " -n don't emit alpha component.\n",
+    "usage: tiff2rgba [-c comp] [-r rows] [-b] input... output",
+    "where comp is one of the following compression algorithms:",
+    " jpeg\t\tJPEG encoding",
+    " zip\t\tLempel-Ziv & Welch encoding",
+    " lzw\t\tLempel-Ziv & Welch encoding",
+    " packbits\tPackBits encoding",
+    " none\t\tno compression",
+    "and the other options are:",
+    " -r\trows/strip",
+    " -b (progress by block rather than as a whole image)",
+    " -n don't emit alpha component.",
     NULL
 };
 
