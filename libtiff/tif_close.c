@@ -32,8 +32,6 @@
 void
 TIFFClose(TIFF* tif)
 {
-    int i;
-    
     if (tif->tif_mode != O_RDONLY)
         /*
          * Flush buffered data and directory (if dirty).
