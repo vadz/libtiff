@@ -1,3 +1,14 @@
+2004-12-25  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_getimage.c: More fixes for multiple-alpha-channelled
+	RGB-images as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=713
+
+
+	* tools/tiffset.c: Convert character option to integer value as per
+	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=725
+
 2004-12-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff 3.7.1 released.
