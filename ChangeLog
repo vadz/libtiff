@@ -1,3 +1,15 @@
+2003-08-04  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_write.c: modified tif_write.c so that the various
+	encoded write functions use tif_postdecode() to apply byte order
+	swapping (swab) to the application passed data buffer if the same
+	would be done when reading.  This allows us to write pixel data with
+	more than 8 bits per sample to existing files of a non-native byte 
+	order.  One side effect of this change is the applications buffer
+	itself is altered in this case by the act of writing. 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=171
+
 2003-07-25  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_open.c: avoid signed/unsigned casting warning
