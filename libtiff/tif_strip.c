@@ -191,7 +191,7 @@ TIFFScanlineSize(TIFF* tif)
 	scanline = td->td_bitspersample * td->td_imagewidth;
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
 		scanline *= td->td_samplesperpixel;
-	return ((tsize_t) TIFFhowmany(scanline, 8));
+	return ((tsize_t) TIFFhowmany8(scanline));
 }
 
 /*
@@ -209,10 +209,10 @@ TIFFRasterScanlineSize(TIFF* tif)
 	scanline = td->td_bitspersample * td->td_imagewidth;
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG) {
 		scanline *= td->td_samplesperpixel;
-		return ((tsize_t) TIFFhowmany(scanline, 8));
+		return ((tsize_t) TIFFhowmany8(scanline));
 	} else
 		return ((tsize_t)
-		    TIFFhowmany(scanline, 8)*td->td_samplesperpixel);
+		    TIFFhowmany8(scanline)*td->td_samplesperpixel);
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
