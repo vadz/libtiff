@@ -22,15 +22,13 @@ want to do is:
     % su
     # make install
 
-If that doesn't do what you want, or something isn't clear then
-sorry, but you're SOL.
-
-    Sam Leffler	(sam@engr.sgi.com)
+More information, email contacts, and mailing list information can be 
+found online at http://www.libtiff.org/.
 
 
 Use and Copyright
 -----------------
-Silicon Graphics has seen fit to allow me to give this work away.  It
+Silicon Graphics has seen fit to allow us to give this work away.  It
 is free.  There is no support or guarantee of any sort as to its
 operations, correctness, or whatever.  If you do anything useful with
 all or parts of it you need to honor the copyright notices.   I would
