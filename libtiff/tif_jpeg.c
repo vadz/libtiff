@@ -764,23 +764,32 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 /*ARGSUSED*/ static int
 JPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 {
-	JPEGState *sp = JState(tif);
-	tsize_t nrows;
+    JPEGState *sp = JState(tif);
+    tsize_t nrows;
 
-	/* data is expected to be read in multiples of a scanline */
-	if (nrows = sp->cinfo.d.image_height)
-		do {
-			JSAMPROW bufptr = (JSAMPROW)buf;
+    nrows = cc / sp->bytesperline;
+    if (cc % sp->bytesperline)
+        TIFFWarning(tif->tif_name, "fractional scanline not read");
 
-			if (TIFFjpeg_read_scanlines(sp, &bufptr, 1) != 1)
-				return (0);
-			++tif->tif_row;
-			buf += sp->bytesperline;
-			cc -= sp->bytesperline;
-		} while (--nrows > 0);
-	/* Close down the decompressor if we've finished the strip or tile. */
-	return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
-	    || TIFFjpeg_finish_decompress(sp);
+    if( nrows > sp->cinfo.d.image_height )
+        nrows = sp->cinfo.d.image_height;
+
+    /* data is expected to be read in multiples of a scanline */
+    if (nrows)
+    {
+        do {
+            JSAMPROW bufptr = (JSAMPROW)buf;
+
+            if (TIFFjpeg_read_scanlines(sp, &bufptr, 1) != 1)
+                return (0);
+            ++tif->tif_row;
+            buf += sp->bytesperline;
+            cc -= sp->bytesperline;
+        } while (--nrows > 0);
+    }
+    /* Close down the decompressor if we've finished the strip or tile. */
+    return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
+        || TIFFjpeg_finish_decompress(sp);
 }
 
 /*
@@ -1403,6 +1412,7 @@ JPEGFixupTestSubsampling( TIFF * tif )
 {
 #if CHECK_JPEG_YCBCR_SUBSAMPLING == 1
     JPEGState *sp = JState(tif);
+    TIFFDirectory *td = &tif->tif_dir;
 
     /*
      * Some JPEG-in-TIFF files don't provide the ycbcrsampling tags, 
@@ -1412,7 +1422,7 @@ JPEGFixupTestSubsampling( TIFF * tif )
      */
     if( !sp->cinfo.comm.is_decompressor 
         || sp->ycbcrsampling_fetched  
-        || sp->photometric != PHOTOMETRIC_YCBCR )
+        || td->td_photometric != PHOTOMETRIC_YCBCR )
         return;
 
     sp->ycbcrsampling_fetched = 1;
