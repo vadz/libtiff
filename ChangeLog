@@ -1,5 +1,7 @@
 2003-10-07  Andrey Kiselev  <dron@remotesensing.org>
 
+	* Makefile.in: Added missed v3.6.0.html.
+
 	* libtiff/tiffio.h: Typo fixed: ORIENTATION_BOTTOMLEFT replaced with
 	ORIENTATION_BOTLEFT.
 
