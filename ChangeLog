@@ -11,6 +11,8 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=200
 
+	* html/man/*.html: Updated from actual manual pages.
+
 2002-10-06  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: fixed problem with boolean defined with wrong
