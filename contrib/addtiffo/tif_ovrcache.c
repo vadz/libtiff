@@ -29,7 +29,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.1  2000-01-28 15:03:44  warmerda
+ * Revision 1.2  2000-01-28 15:42:25  warmerda
+ * Avoid warnings on Windows.
+ *
+ * Revision 1.1  2000/01/28 15:03:44  warmerda
  * New
  *
  */
@@ -180,7 +183,7 @@ static void TIFFWriteOvrRow( TIFFOvrCache * psCache )
                     TIFFComputeTile(psCache->hTIFF,
                                     iTileX * psCache->nBlockXSize,
                                     iTileY * psCache->nBlockYSize,
-                                    0, iSample );
+                                    0, (tsample_t) iSample );
                 TIFFWriteEncodedTile( psCache->hTIFF, nTileID, 
                                       pabyData,
                                       TIFFTileSize(psCache->hTIFF) );
@@ -190,7 +193,7 @@ static void TIFFWriteOvrRow( TIFFOvrCache * psCache )
                 nTileID =
                     TIFFComputeStrip(psCache->hTIFF,
                                      iTileY * psCache->nBlockYSize,
-                                     iSample);
+                                     (tsample_t) iSample);
 
                 TIFFWriteEncodedStrip( psCache->hTIFF, nTileID,
                                        pabyData,
