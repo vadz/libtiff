@@ -1,3 +1,8 @@
+2000-03-17  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* tif_fax3.c: Fixed serious bug introduced during the uint16->uint32
+	conversion for the run arrays.  
+
 2000-03-03  Frank Warmerdam  <warmerda@cs46980-c.mtnk1.on.wave.home.com>
 
 	* Set td_sampleformat default to SAMPLEFORMAT_UINT instead of 
