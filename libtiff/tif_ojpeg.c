@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #include "tiffiop.h"
 #ifdef OJPEG_SUPPORT
 
@@ -326,13 +328,20 @@ static const char JPEGLib_name[]={"JPEG Library"},
 */
 static void
 TIFFojpeg_error_exit(register j_common_ptr cinfo)
-  { char buffer[JMSG_LENGTH_MAX];
+{
+    char buffer[JMSG_LENGTH_MAX];
+    int code = cinfo->err->msg_code;
+
+    if (((OJPEGState *)cinfo)->is_WANG) {
+	if (code == JERR_SOF_DUPLICATE || code == JERR_SOI_DUPLICATE)
+	    return;	    /* ignore it */
+    }
 
     (*cinfo->err->format_message)(cinfo,buffer);
     TIFFError(JPEGLib_name,buffer); /* Display error message */
     jpeg_abort(cinfo); /* Clean up JPEG Library state */
     LONGJMP(((OJPEGState *)cinfo)->exit_jmpbuf,1); /* Return to TIFF client */
-  }
+}
 
 static void
 TIFFojpeg_output_message(register j_common_ptr cinfo)
