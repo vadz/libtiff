@@ -314,7 +314,9 @@ EXTRA_SRCS = \
 
 # Read list of source files and headers from the external file,
 # shared with other makefiles
-EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc files.lst $(EXTRA_SRCS)
+EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc files.lst libtiff.def \
+	     $(EXTRA_SRCS)
+
 libtiffincludedir = $(includedir)
 libtiffinclude_HEADERS = $(HDRS)
 noinst_HEADERS = $(EXTRA_HDRS)
@@ -340,9 +342,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/fi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  libtiff/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  libtiff/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  libtiff/Makefile
+	  $(AUTOMAKE) --gnu  libtiff/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

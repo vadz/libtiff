@@ -1,4 +1,7 @@
-2004-09-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-25  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2bw.c: Write ImageWidth/Height tags to output file, as
+	noted by Gennady Khokhorin.
 
 	* libtiff/tif_dirread.c: Always check the return values, returned
 	by the _TIFFmalloc() (Dmitry V. Levin).

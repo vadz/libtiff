@@ -29,7 +29,8 @@ LIBPORT = -L$(top_builddir)/port -lport
 # shared with other makefiles
 include files.lst
 
-EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc files.lst $(EXTRA_SRCS)
+EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc files.lst libtiff.def \
+	     $(EXTRA_SRCS)
 
 libtiffincludedir = $(includedir)
 libtiffinclude_HEADERS = $(HDRS)
