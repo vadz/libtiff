@@ -1,3 +1,8 @@
+2004-08-25  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2ps.c: Avoid zero division in setupPageState() function;
+	properly initialize array in PSDataBW().
+
 2004-08-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2pdf.c: More fixes for bug
