@@ -1,5 +1,6 @@
 #	$Header$
 
+o remove lzw compression flags from tools, update man pages
 o gif2tiff segaulting on selected images
 o tiffcmp read data by strip/tile instead of scanline
 o YCbCr sampling support
