@@ -27,6 +27,8 @@
 
 if HAVE_OPENGL
 BIN_TIFFGT = tiffgt
+else
+BIN_TIFFGT =
 endif
 
 bin_PROGRAMS = \
@@ -44,15 +46,16 @@ bin_PROGRAMS = \
 	tiff2ps \
 	tiff2rgba \
 	tiffcmp \
-	tiffcp \ 
+	tiffcp \
 	tiffdither \
-	tiffdump \ 
+	tiffdump \
 	tiffgt \
 	tiffinfo \
 	tiffmedian \
 	tiffset \
 	tiffsplit \
 	$(BIN_TIFFGT)
+EXTRA_PROGRAMS = $(BIN_TIFFGT) sgi2tiff.c sgisv.c ycbcr.c
 
 fax2ps_SOURCES = fax2ps.c
 fax2ps_LDADD = @LIBTIFF@
