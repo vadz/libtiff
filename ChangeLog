@@ -1,3 +1,12 @@
+2004-10-09  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2pdf.c: Fixed TransferFunction tag handling reported
+	by Ross A. Finlayson.
+
+	* libtiff/tif_dir.c: Fixed custom tags handling as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=629
+
 2004-10-08  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirinfo.c: Fix bug with tif_foundfield and reallocation
