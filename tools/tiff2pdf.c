@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.5  2004-01-26 17:00:56  dron
+ * Revision 1.6  2004-04-20 14:24:31  dron
+ * Obsoleted configuration switches removed.
+ *
+ * Revision 1.5  2004/01/26 17:00:56  dron
  * Get rid of C++ style comments.
  *
  * Revision 1.4  2003/12/01 10:51:39  rossf
@@ -75,18 +78,12 @@ typedef enum{
 	T2P_CS_BILEVEL=0x01, /* Bilevel, black and white */
 	T2P_CS_GRAY=0x02, /* Single channel */
 	T2P_CS_RGB=0x04, /* Three channel tristimulus RGB */
-#ifdef CMYK_SUPPORT
 	T2P_CS_CMYK=0x08, /* Four channel CMYK print inkset */
-#endif
 	T2P_CS_LAB=0x10, /* Three channel L*a*b* color space */
 	T2P_CS_PALETTE=0x1000 /* One of the above with a color map */
-#ifdef COLORIMETRY_SUPPORT
 	, T2P_CS_CALGRAY=0x20 /* Calibrated single channel */
 	, T2P_CS_CALRGB=0x40 /* Calibrated three channel tristimulus RGB */
-#endif
-#ifdef ICC_SUPPORT
 	, T2P_CS_ICCBASED=0x80 /* ICC profile color specification */
-#endif
 } t2p_cs_t;
 
 /* This type is of PDF compression types.  */
@@ -237,18 +234,14 @@ typedef struct {
 	uint32 pdf_ojpegdatalength;
 	uint32 pdf_ojpegiflength;
 #endif
-#ifdef COLORIMETRY_SUPPORT
 	float tiff_whitechromaticities[2];
 	float tiff_primarychromaticities[6];
 	float tiff_referenceblackwhite[2];
 	float* tiff_transferfunction[3];
 	uint16 tiff_transferfunctioncount;
-#endif
-#ifdef ICC_SUPPORT
 	uint32 pdf_icccs;
 	uint32 tiff_iccprofilelength;
 	tdata_t tiff_iccprofile;
-#endif
 } T2P;
 
 /* These functions are called by main. */
@@ -324,17 +317,13 @@ void t2p_compose_pdf_page_orient_flip(T2P_BOX*, uint16);
 tsize_t t2p_write_pdf_page_content(T2P*, TIFF*);
 tsize_t t2p_write_pdf_xobject_stream_dict(ttile_t, T2P*, TIFF*);
 tsize_t t2p_write_pdf_xobject_cs(T2P*, TIFF*);
-#ifdef COLORIMETRY_SUPPORT
 tsize_t t2p_write_pdf_transfer(T2P*, TIFF*);
 tsize_t t2p_write_pdf_transfer_dict(T2P*, TIFF*, uint16);
 tsize_t t2p_write_pdf_transfer_stream(T2P*, TIFF*, uint16);
 tsize_t t2p_write_pdf_xobject_calcs(T2P*, TIFF*);
-#endif
-#ifdef ICC_SUPPORT
 tsize_t t2p_write_pdf_xobject_icccs(T2P*, TIFF*);
 tsize_t t2p_write_pdf_xobject_icccs_dict(T2P*, TIFF*);
 tsize_t t2p_write_pdf_xobject_icccs_stream(T2P*, TIFF*);
-#endif
 tsize_t t2p_write_pdf_xobject_cs_stream(T2P*, TIFF*);
 tsize_t t2p_write_pdf_xobject_decode(T2P*, TIFF*);
 tsize_t t2p_write_pdf_xobject_stream_filter(ttile_t, T2P*, TIFF*);
@@ -1114,7 +1103,6 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
 		}
 #endif
-#ifdef COLORIMETRY_SUPPORT
 		t2p->tiff_transferfunctioncount=TIFFGetField(
 			input, 
 			TIFFTAG_TRANSFERFUNCTION, 
@@ -1131,8 +1119,6 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			t2p->pdf_xrefcount+=4;
 			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
 		}
-#endif
-#ifdef ICC_SUPPORT
 		if( TIFFGetField(
 			input, 
 			TIFFTAG_ICCPROFILE, 
@@ -1142,7 +1128,6 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			t2p->pdf_xrefcount++;
 			if(t2p->pdf_minorversion<3){t2p->pdf_minorversion=3;}
 		}
-#endif
 		t2p->tiff_tiles[i].tiles_tilecount=
 			t2p->tiff_pages[i].page_tilecount;
 		if( (TIFFGetField(input, TIFFTAG_PLANARCONFIG, &xuint16) != 0)
@@ -1210,9 +1195,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 	uint16* a;
 	uint16 xuint16;
 	uint16* xuint16p;
-#ifdef COLORIMETRY_SUPPORT
 	float* xfloatp;
-#endif
 
 	t2p->pdf_transcode = T2P_TRANSCODE_ENCODE;
 	t2p->pdf_sample = T2P_SAMPLE_NOTHING;
@@ -1425,7 +1408,6 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			}
 			t2p->pdf_palettesize *= 3;
 			break;
-#ifdef CMYK_SUPPORT
 		case PHOTOMETRIC_SEPARATED:
 			if(TIFFGetField(input, TIFFTAG_INDEXED, &xuint16)){
 				if(xuint16==1){
@@ -1496,8 +1478,6 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			}
 			t2p->pdf_palettesize *= 4;
 			break;
-#endif
-#ifdef YCBCR_SUPPORT
 		case PHOTOMETRIC_YCBCR:
 			t2p->pdf_colorspace=T2P_CS_RGB;
 			if(t2p->tiff_samplesperpixel==1){
@@ -1512,7 +1492,6 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			}
 #endif
 			break;
-#endif
 		case PHOTOMETRIC_CIELAB:
 			t2p->pdf_labrange[0]= -127;
 			t2p->pdf_labrange[1]= 127;
@@ -1684,20 +1663,15 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 #endif
 
 	if(t2p->pdf_sample & T2P_SAMPLE_REALIZE_PALETTE){
-#ifdef CMYK_SUPPORT	
 		if(t2p->pdf_colorspace & T2P_CS_CMYK){
 			t2p->tiff_samplesperpixel=4;
 			t2p->tiff_photometric=PHOTOMETRIC_SEPARATED;
 		} else {
-#endif
 			t2p->tiff_samplesperpixel=3;
 			t2p->tiff_photometric=PHOTOMETRIC_RGB;
-#ifdef CMYK_SUPPORT
 		}
-#endif
 	}
 
-#ifdef COLORIMETRY_SUPPORT
 	t2p->tiff_transferfunctioncount=TIFFGetField(input, 
 		TIFFTAG_TRANSFERFUNCTION, 
 		&(t2p->tiff_transferfunction[0]),
@@ -1733,8 +1707,6 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			t2p->tiff_whitechromaticities[1]=0.3585; /* 0.3290; */
 		}
 	}
-#endif
-#ifdef ICC_SUPPORT
 	if(TIFFGetField(input, 
 		TIFFTAG_ICCPROFILE, 
 		&(t2p->tiff_iccprofilelength), 
@@ -1744,7 +1716,6 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		t2p->tiff_iccprofilelength=0;
 		t2p->tiff_iccprofile=NULL;
 	}
-#endif
 	
 	if(t2p->pdf_colorspace_invert != 0){
 		(t2p->pdf_switchdecode==0) ? (t2p->pdf_switchdecode=1) : (t2p->pdf_switchdecode=0);
@@ -2511,11 +2482,9 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		if(t2p->pdf_colorspace & T2P_CS_GRAY){
 			(void)0;
 		}
-#ifdef CMYK_SUPPORT
 		if(t2p->pdf_colorspace & T2P_CS_CMYK){
 			(void)0;
 		}
-#endif
 		if(t2p->pdf_defaultcompressionquality != 0){
 			TIFFSetField(output, 
 				TIFFTAG_JPEGQUALITY, 
@@ -2952,11 +2921,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 		if(t2p->pdf_colorspace & T2P_CS_GRAY){
 			(void)0;
 		}
-#ifdef CMYK_SUPPORT
 		if(t2p->pdf_colorspace & T2P_CS_CMYK){
 			(void)0;
 		}
-#endif
 		if(t2p->pdf_defaultcompressionquality != 0){
 			TIFFSetField(output, 
 				TIFFTAG_JPEGQUALITY, 
@@ -4603,12 +4570,10 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 	float Y_W=1.0;
 	float Z_W=1.0;
 	
-#ifdef ICC_SUPPORT
 	if( (t2p->pdf_colorspace & T2P_CS_ICCBASED) != 0){
 		written += t2p_write_pdf_xobject_icccs(t2p, output);
 		return(written);
 	}
-#endif
 	if( (t2p->pdf_colorspace & T2P_CS_PALETTE) != 0){
 		written += TIFFWriteFile(output, (tdata_t) "[ /Indexed ", 11);
 		t2p->pdf_colorspace ^= T2P_CS_PALETTE;
@@ -4627,36 +4592,25 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 			written += TIFFWriteFile(output, (tdata_t) "/DeviceGray \r", 13);
 	}
 	if(t2p->pdf_colorspace & T2P_CS_GRAY){
-#ifdef COLORIMETRY_SUPPORT
 			if(t2p->pdf_colorspace & T2P_CS_CALGRAY){
 				written += t2p_write_pdf_xobject_calcs(t2p, output);
 			} else {
-#endif
 				written += TIFFWriteFile(output, (tdata_t) "/DeviceGray \r", 13);
-#ifdef COLORIMETRY_SUPPORT
 			}
-#endif
 	}
 	if(t2p->pdf_colorspace & T2P_CS_RGB){
-#ifdef COLORIMETRY_SUPPORT	
 			if(t2p->pdf_colorspace & T2P_CS_CALRGB){
 				written += t2p_write_pdf_xobject_calcs(t2p, output);
 			} else {
-#endif
 				written += TIFFWriteFile(output, (tdata_t) "/DeviceRGB \r", 12);
-#ifdef COLORIMETRY_SUPPORT
 			}
-#endif
 	}
-#ifdef CMYK_SUPPORT
 	if(t2p->pdf_colorspace & T2P_CS_CMYK){
 			written += TIFFWriteFile(output, (tdata_t) "/DeviceCMYK \r", 13);
 	}
-#endif
 	if(t2p->pdf_colorspace & T2P_CS_LAB){
 			written += TIFFWriteFile(output, (tdata_t) "[/Lab << \r", 10);
 			written += TIFFWriteFile(output, (tdata_t) "/WhitePoint ", 12);
-#ifdef COLORIMETRY_SUPPORT
 			X_W = t2p->tiff_whitechromaticities[0];
 			Y_W = t2p->tiff_whitechromaticities[1];
 			Z_W = 1.0 - (X_W + Y_W);
@@ -4665,8 +4619,6 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 			Y_W = 1.0;
 			buflen=sprintf(buffer, "[%.4f %.4f %.4f] \r", X_W, Y_W, Z_W);
 			written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
-#endif
-#ifndef COLORIMETRY_SUPPORT
 			X_W = 0.3457; /* 0.3127; */ /* D50, commented D65 */
 			Y_W = 0.3585; /* 0.3290; */
 			Z_W = 1.0 - (X_W + Y_W);
@@ -4675,7 +4627,6 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 			Y_W = 1.0;
 			buflen=sprintf(buffer, "[%.4f %.4f %.4f] \r", X_W, Y_W, Z_W);
 			written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
-#endif
 			written += TIFFWriteFile(output, (tdata_t) "/Range ", 7);
 			buflen=sprintf(buffer, "[%d %d %d %d] \r", 
 				t2p->pdf_labrange[0], 
@@ -4689,8 +4640,6 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 	
 	return(written);
 }
-
-#ifdef COLORIMETRY_SUPPORT
 
 tsize_t t2p_write_pdf_transfer(T2P* t2p, TIFF* output){
 
@@ -4846,9 +4795,7 @@ tsize_t t2p_write_pdf_xobject_calcs(T2P* t2p, TIFF* output){
 
 	return(written);
 }
-#endif
 
-#ifdef ICC_SUPPORT
 /*
 	This function writes a PDF Image XObject Colorspace array to output.
 */
@@ -4896,7 +4843,6 @@ tsize_t t2p_write_pdf_xobject_icccs_stream(T2P* t2p, TIFF* output){
 	
 	return(written);
 }
-#endif
 
 /*
 	This function writes a palette stream for an indexed color space to output.
@@ -5157,9 +5103,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 	tsize_t written=0;
 	ttile_t i2=0;
 	tsize_t streamlen=0;
-#ifdef COLORIMETRY_SUPPORT
 	uint16 i=0;
-#endif
 
 	t2p_read_tiff_init(t2p, input);
 	if(t2p->t2p_error!=T2P_ERR_OK){return(0);}
@@ -5213,7 +5157,6 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 		written += t2p_write_pdf_obj_start(t2p->pdf_xrefcount, output);
 		written += t2p_write_pdf_stream_length(streamlen, output);
 		written += t2p_write_pdf_obj_end(output);
-#ifdef COLORIMETRY_SUPPORT
 		if(t2p->tiff_transferfunctioncount != 0){
 			t2p->pdf_xrefoffsets[t2p->pdf_xrefcount++]=written;
 			written += t2p_write_pdf_obj_start(t2p->pdf_xrefcount, output);
@@ -5233,7 +5176,6 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 				written += t2p_write_pdf_obj_end(output);
 			}
 		}
-#endif
 		if( (t2p->pdf_colorspace & T2P_CS_PALETTE) != 0){
 			t2p->pdf_xrefoffsets[t2p->pdf_xrefcount++]=written;
 			t2p->pdf_palettecs=t2p->pdf_xrefcount;
@@ -5248,7 +5190,6 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 			written += t2p_write_pdf_stream_end(output);
 			written += t2p_write_pdf_obj_end(output);
 		}
-#ifdef ICC_SUPPORT
 		if( (t2p->pdf_colorspace & T2P_CS_ICCBASED) != 0){
 			t2p->pdf_xrefoffsets[t2p->pdf_xrefcount++]=written;
 			t2p->pdf_icccs=t2p->pdf_xrefcount;
@@ -5263,7 +5204,6 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 			written += t2p_write_pdf_stream_end(output);
 			written += t2p_write_pdf_obj_end(output);
 		}
-#endif		
 		if(t2p->tiff_tiles[t2p->pdf_page].tiles_tilecount !=0){
 			for(i2=0;i2<t2p->tiff_tiles[t2p->pdf_page].tiles_tilecount;i2++){
 				t2p->pdf_xrefoffsets[t2p->pdf_xrefcount++]=written;
