@@ -1,3 +1,10 @@
+2001-05-08  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/libtiff.def: added TIFFCreateDirectory and 
+	TIFFDefaultStripSize as per:
+
+	  http://bugzilla.remotesensing.org/show_bug.cgi?id=46
+
 2001-05-02  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirinfo.c: Modified the TIFF_BYTE definition for
