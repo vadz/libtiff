@@ -70,6 +70,7 @@ DIST_COMMON = $(libtiffinclude_HEADERS) $(noinst_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/files.lst $(srcdir)/tif_config.h.in \
 	$(srcdir)/tiffconf.h.in
+@HAVE_CXX_TRUE@am__append_1 = tif_stream.cxx
 noinst_PROGRAMS = mkg3states$(EXEEXT)
 subdir = libtiff
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -91,7 +92,17 @@ am__installdirs = "$(DESTDIR)$(libdir)" \
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libtiff_la_LIBADD =
-am__objects_1 = tif_aux.lo tif_close.lo tif_codec.lo tif_color.lo \
+am__libtiff_la_SOURCES_DIST = tif_aux.c tif_close.c tif_codec.c \
+	tif_color.c tif_compress.c tif_dir.c tif_dirinfo.c \
+	tif_dirread.c tif_dirwrite.c tif_dumpmode.c tif_error.c \
+	tif_extension.c tif_fax3.c tif_fax3sm.c tif_flush.c \
+	tif_getimage.c tif_jpeg.c tif_luv.c tif_lzw.c tif_next.c \
+	tif_ojpeg.c tif_open.c tif_packbits.c tif_pixarlog.c \
+	tif_predict.c tif_print.c tif_read.c tif_strip.c tif_swab.c \
+	tif_thunder.c tif_tile.c tif_unix.c tif_version.c \
+	tif_warning.c tif_write.c tif_zip.c tif_stream.cxx
+@HAVE_CXX_TRUE@am__objects_1 = tif_stream.lo
+am__objects_2 = tif_aux.lo tif_close.lo tif_codec.lo tif_color.lo \
 	tif_compress.lo tif_dir.lo tif_dirinfo.lo tif_dirread.lo \
 	tif_dirwrite.lo tif_dumpmode.lo tif_error.lo tif_extension.lo \
 	tif_fax3.lo tif_fax3sm.lo tif_flush.lo tif_getimage.lo \
@@ -99,8 +110,8 @@ am__objects_1 = tif_aux.lo tif_close.lo tif_codec.lo tif_color.lo \
 	tif_open.lo tif_packbits.lo tif_pixarlog.lo tif_predict.lo \
 	tif_print.lo tif_read.lo tif_strip.lo tif_swab.lo \
 	tif_thunder.lo tif_tile.lo tif_unix.lo tif_version.lo \
-	tif_warning.lo tif_write.lo tif_zip.lo
-am_libtiff_la_OBJECTS = $(am__objects_1)
+	tif_warning.lo tif_write.lo tif_zip.lo $(am__objects_1)
+am_libtiff_la_OBJECTS = $(am__objects_2)
 libtiff_la_OBJECTS = $(am_libtiff_la_OBJECTS)
 PROGRAMS = $(noinst_PROGRAMS)
 am_mkg3states_OBJECTS = mkg3states.$(OBJEXT)
@@ -118,8 +129,16 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libtiff_la_SOURCES) $(mkg3states_SOURCES)
-DIST_SOURCES = $(libtiff_la_SOURCES) $(mkg3states_SOURCES)
+DIST_SOURCES = $(am__libtiff_la_SOURCES_DIST) $(mkg3states_SOURCES)
 libtiffincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(libtiffinclude_HEADERS) $(noinst_HEADERS)
 ETAGS = etags
@@ -160,6 +179,8 @@ GLU_CFLAGS = @GLU_CFLAGS@
 GLU_LIBS = @GLU_LIBS@
 GL_CFLAGS = @GL_CFLAGS@
 GL_LIBS = @GL_LIBS@
+HAVE_CXX_FALSE = @HAVE_CXX_FALSE@
+HAVE_CXX_TRUE = @HAVE_CXX_TRUE@
 HAVE_OPENGL_FALSE = @HAVE_OPENGL_FALSE@
 HAVE_OPENGL_TRUE = @HAVE_OPENGL_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
@@ -264,44 +285,15 @@ EXTRA_HDRS = \
 	tiffiop.h \
 	uvcode.h
 
-SRCS = \
-	tif_aux.c \
-	tif_close.c \
-	tif_codec.c \
-	tif_color.c \
-	tif_compress.c \
-	tif_dir.c \
-	tif_dirinfo.c \
-	tif_dirread.c \
-	tif_dirwrite.c \
-	tif_dumpmode.c \
-	tif_error.c \
-	tif_extension.c \
-	tif_fax3.c \
-	tif_fax3sm.c \
-	tif_flush.c \
-	tif_getimage.c \
-	tif_jpeg.c \
-	tif_luv.c \
-	tif_lzw.c \
-	tif_next.c \
-	tif_ojpeg.c \
-	tif_open.c \
-	tif_packbits.c \
-	tif_pixarlog.c \
-	tif_predict.c \
-	tif_print.c \
-	tif_read.c \
-	tif_strip.c \
-	tif_swab.c \
-	tif_thunder.c \
-	tif_tile.c \
-	tif_unix.c \
-	tif_version.c \
-	tif_warning.c \
-	tif_write.c \
-	tif_zip.c
-
+SRCS = tif_aux.c tif_close.c tif_codec.c tif_color.c tif_compress.c \
+	tif_dir.c tif_dirinfo.c tif_dirread.c tif_dirwrite.c \
+	tif_dumpmode.c tif_error.c tif_extension.c tif_fax3.c \
+	tif_fax3sm.c tif_flush.c tif_getimage.c tif_jpeg.c tif_luv.c \
+	tif_lzw.c tif_next.c tif_ojpeg.c tif_open.c tif_packbits.c \
+	tif_pixarlog.c tif_predict.c tif_print.c tif_read.c \
+	tif_strip.c tif_swab.c tif_thunder.c tif_tile.c tif_unix.c \
+	tif_version.c tif_warning.c tif_write.c tif_zip.c \
+	$(am__append_1)
 EXTRA_SRCS = \
 	tif_acorn.c \
 	tif_apple.c \
@@ -332,7 +324,7 @@ all: tif_config.h tiffconf.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cxx .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/files.lst $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -342,9 +334,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/fi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  libtiff/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  libtiff/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  libtiff/Makefile
+	  $(AUTOMAKE) --gnu  libtiff/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -417,7 +409,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libtiff.la: $(libtiff_la_OBJECTS) $(libtiff_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libtiff_la_LDFLAGS) $(libtiff_la_OBJECTS) $(libtiff_la_LIBADD) $(LIBS)
+	$(CXXLINK) -rpath $(libdir) $(libtiff_la_LDFLAGS) $(libtiff_la_OBJECTS) $(libtiff_la_LIBADD) $(LIBS)
 
 clean-noinstPROGRAMS:
 	@list='$(noinst_PROGRAMS)'; for p in $$list; do \
@@ -463,6 +455,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_predict.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_print.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_read.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_stream.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_strip.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_swab.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tif_thunder.Plo@am__quote@
@@ -493,6 +486,27 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+.cxx.o:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cxx.obj:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ `$(CYGPATH_W) '$<'`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cxx.lo:
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo

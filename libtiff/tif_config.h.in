@@ -7,6 +7,9 @@
    lacking the tag (default enabled). */
 #undef CHECK_JPEG_YCBCR_SUBSAMPLING
 
+/* Support C++ stream API (requires C++ compiler) */
+#undef CXX_SUPPORT
+
 /* Treat extra sample as alpha (default enabled). The RGBA interface will
    treat a fourth sample with no EXTRASAMPLE_ value as being ASSOCALPHA. Many
    packages produce RGBA files but don't mark the alpha properly. */

@@ -353,6 +353,23 @@ else
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl Check for C++.
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(c++,
+	      AS_HELP_STRING([--enable-c++],
+			     [enable C++ stream API building (requires C++ compiler)]),
+	      [HAVE_CXX=$enableval], [HAVE_CXX=yes])
+
+if test "$HAVE_CXX" = "yes" ; then
+  AC_DEFINE(CXX_SUPPORT, 1, [Support C++ stream API (requires C++ compiler)])
+else
+  HAVE_CXX=no
+fi
+
+AM_CONDITIONAL(HAVE_CXX, test "$HAVE_CXX" = "yes")
+
+dnl ---------------------------------------------------------------------------
 dnl Check for OpenGL and GLUT.
 dnl ---------------------------------------------------------------------------
 
@@ -463,6 +480,7 @@ LOC_MSG([Libtiff is now configured for ${host}])
 LOC_MSG()
 LOC_MSG([  Installation directory:            ${prefix}])
 LOC_MSG([  C compiler:                        ${CC} ${CFLAGS}])
+LOC_MSG([  C++ compiler:                      ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Enable runtime linker paths:       ${HAVE_RPATH}])
 LOC_MSG()
 LOC_MSG([ Support for internal codecs:])
@@ -478,6 +496,8 @@ LOC_MSG([  ZLIB support:                      ${HAVE_ZLIB}])
 LOC_MSG([  Pixar log-format algorithm:        ${HAVE_PIXARLOG}])
 LOC_MSG([  JPEG support:                      ${HAVE_JPEG}])
 LOC_MSG([  Old JPEG support:                  ${HAVE_OJPEG}])
+LOC_MSG()
+LOC_MSG([  C++ support:                       ${HAVE_CXX}])
 LOC_MSG()
 LOC_MSG([  OpenGL support:                    ${HAVE_OPENGL}])
 LOC_MSG()
