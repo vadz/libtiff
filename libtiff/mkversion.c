@@ -104,7 +104,7 @@ main(int argc, char* argv[])
 	cp = strchr(cp+1, ' ');
     if (cp) {				/* append alpha to version */
 	char* tp;
-	for (tp = strchr(version, '\0'), cp++; *tp = *cp; tp++, cp++)
+	for (tp = strchr(version, '\0'), cp++; (*tp = *cp) != 0; tp++, cp++)
 	    ;
 	if (tp[-1] == '\n')
 	    tp[-1] = '\0';
