@@ -98,6 +98,12 @@ EXTRASAMPLE_AS_ALPHA_SUPPORT = 1
 CHECK_JPEG_YCBCR_SUBSAMPLING = 1
 
 #
+# Pick debug or optimized build flags.  We default to an optimized build
+# with no debugging information.
+#
+OPTFLAGS =	/Ox
+#OPTFLAGS = 	/Zi 
+
 # Compiler specific options. You may probably want to adjust compilation
 # parameters in CFLAGS variable. Refer to your compiler documentation
 # for the option reference.
@@ -107,7 +113,8 @@ CC	=	cl /nologo
 AR	=	lib /nologo
 LD	=	link /nologo
 
-CFLAGS  =	/W3 /MD $(INCL) $(WINMODE) $(EXTRAFLAGS)
+
+CFLAGS  =	/W3 /MD $(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
 EXTRAFLAGS	=
 LIBS	=
 
