@@ -485,7 +485,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
         default: {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
             TIFFTagValue *tv;
-            int           tv_size, iCustom;
+            int tv_size, iCustom;
 
             /*
              * This can happen if multiple images are open with
@@ -553,45 +553,81 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             /*
              * Set custom value ... save a copy of the custom tag value.
              */
-            tv_size = TIFFDataWidth(fip->field_type);
-            if( fip->field_passcount )
+	    switch (fip->field_type) {
+		    /*
+		     * XXX: We can't use TIFFDataWidth() to determine the
+		     * space needed to store the value. For TIFF_RATIONAL
+		     * values TIFFDataWidth() returns 8, but we use 4-byte
+		     * float to represent rationals.
+		     */
+		    case TIFF_BYTE:
+		    case TIFF_ASCII:
+		    case TIFF_SBYTE:
+		    case TIFF_UNDEFINED:
+			tv_size = 1;
+			break;
+
+		    case TIFF_SHORT:
+		    case TIFF_SSHORT:
+			tv_size = 2;
+			break;
+
+		    case TIFF_LONG:
+		    case TIFF_SLONG:
+		    case TIFF_FLOAT:
+		    case TIFF_IFD:
+		    case TIFF_RATIONAL:
+		    case TIFF_SRATIONAL:
+			tv_size = 4;
+			break;
+
+		    case TIFF_DOUBLE:
+			tv_size = 8;
+			break;
+
+		    default:
+			status = 0;
+			TIFFError(module, "%s: Bad field type %d for \"%s\"",
+				  tif->tif_name, fip->field_type,
+				  fip->field_name);
+			goto end;
+		    
+	    }
+            
+            if(fip->field_passcount)
                 tv->count = (int) va_arg(ap, int);
             else
                 tv->count = 1;
-            if( fip->field_passcount )
-            {
+            
+	    if (fip->field_passcount) {
                 tv->value = _TIFFmalloc(tv_size * tv->count);
 		if ( !tv->value ) {
-			va_end(ap);
-			return 0;
+			status = 0;
+			goto end;
 		}
-                _TIFFmemcpy( tv->value, (void *) va_arg(ap,void*),
-                             tv->count * tv_size );
-            }
-            else if( fip->field_type == TIFF_ASCII )
-            {
+                _TIFFmemcpy(tv->value, (void *) va_arg(ap,void*),
+                            tv->count * tv_size);
+            } else if (fip->field_type == TIFF_ASCII) {
                 const char *value = (const char *) va_arg(ap,const char *);
                 tv->count = strlen(value)+1;
                 tv->value = _TIFFmalloc(tv->count);
-		if ( !tv->value ) {
-			va_end(ap);
-			return 0;
+		if (!tv->value) {
+			status = 0;
+			goto end;
 		}
-                strcpy( tv->value, value );
-            }
-            else
-            {
+                strcpy(tv->value, value);
+            } else {
                 /* not supporting "pass by value" types yet */
 		TIFFError(module,
 			  "%s: Pass by value is not implemented.",
 			  tif->tif_name);
 
                 tv->value = _TIFFmalloc(tv_size * tv->count);
-		if ( !tv->value ) {
-			va_end(ap);
-			return 0;
+		if (!tv->value) {
+			status = 0;
+			goto end;
 		}
-                _TIFFmemset( tv->value, 0, tv->count * tv_size );
+                _TIFFmemset(tv->value, 0, tv->count * tv_size);
                 status = 0;
             }
           }
