@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -93,11 +93,11 @@ DECLARE_HANDLE(thandle_t);	/* Win32 file handle */
 typedef	HFILE thandle_t;	/* client data handle */
 #endif
 #else
-typedef	void* thandle_t;	/* client data handle */
+typedef	int thandle_t;		/* client data handle */
 #endif
 
 #ifndef NULL
-#define	NULL	0
+# define NULL	(void *)0
 #endif
 
 /*
