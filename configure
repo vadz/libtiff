@@ -634,18 +634,22 @@ EOF
     boom
 fi
 
+# Find sh (likely /bin/sh or /usr/bin/sh), and put in SCRIPT_SH
+
+test -z "${SCRIPT_SH-}" && SCRIPT_SH=`findAppDef sh $PATH sh`
+
 #
 # Check whether or not $MAKE automatically sets MAKE
 # in the Makefiles.  If not, we add an explicit define
 # for places where recursive calls are made.
 #
 if [ -z "${SETMAKE-}" ]; then
-    if (cat<<'EOF'
-SHELL=/bin/sh
+    if (sed "s;@SHELL@;$SCRIPT_SH;" <<'EOF'
+SHELL=@SHELL@
 all:
 	@if [ -n "${MAKE}" ] ; then echo "make sets make"  ; fi
 EOF
-) | $MAKE -f - | grep "make sets make" > /dev/null ; then
+) | tee out.sh | $MAKE -f - | grep "make sets make" > /dev/null ; then
 	SETMAKE=
     else
 	Note "Looks like $MAKE does not setup MAKE in Makefiles, will compensate."
@@ -921,7 +925,7 @@ main()
     *(buf1 + j) = rand();
   fd = open("conftestmmap", O_CREAT | O_RDWR, 0666);
   write(fd, buf1, i2);
-  mmap(buf2, i, PROT_READ | PROT_WRITE, MAP_VARIABLE | MAP_PRIVATE, fd, 0);
+  buf2 = mmap(NULL, i, PROT_READ|PROT_WRITE, MAP_VARIABLE|MAP_PRIVATE, fd, 0);
   for (j = 0; j < i; ++j)
     if (*(buf1 + j) != *(buf2 + j))
       exit(1);
@@ -1249,7 +1253,6 @@ Note "Selecting programs used during installation."
 #
 test -z "${CHMOD-}"	&& CHMOD=`findAppDef chmod $PATH chmod`
 test -z "${LN-}"	&& LN=`findAppDef ln $PATH ln`
-test -z "${SCRIPT_SH-}" && SCRIPT_SH=`findAppDef sh $PATH sh`
 test -z "${SED-}"	&& SED=`findAppDef sed $PATH sed`
 test -z "${STRIP-}"	&& STRIP=`findAppDef strip $PATH strip`
 
@@ -1287,7 +1290,7 @@ fi
 if [ -z "${INSTALL-}" ]; then
     case $TARGET in
     *-irix*)	INSTALL=`findApp install /sbin:$PATH`;;
-    *)		INSTALL='${SHELL} ../port/install.sh';;
+    *)		INSTALL='${SCRIPT_SH} ../port/install.sh';;
     esac
 fi
 

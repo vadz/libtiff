@@ -38,6 +38,7 @@ SRCDIR	= @SRCDIR@
 #
 @SETMAKE@
 SHELL	= @SCRIPT_SH@
+SCRIPT_SH = @SCRIPT_SH@
 NULL	=
 ECHO	= echo
 GENDIST	= ${TOOLROOT}/usr/sbin/gendist
