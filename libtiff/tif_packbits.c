@@ -244,6 +244,7 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
                                         "PackBitsDecode: discarding %d bytes "
                                         "to avoid buffer overrun",
                                         n - occ);
+                            n = occ;
                         }
 			occ -= n;
 			b = *bp++, cc--;
