@@ -665,12 +665,12 @@ TIFFInitLZW(TIFF* tif, int scheme)
 	/*
 	 * Allocate state block so tag methods have storage to record values.
 	 */
+	tif->tif_data = (tidata_t) _TIFFmalloc(sizeof (LZWDecodeState));
+	if (tif->tif_data == NULL)
+	  goto bad;
 	if (tif->tif_mode == O_RDONLY) {
-		tif->tif_data = (tidata_t) _TIFFmalloc(sizeof (LZWDecodeState));
-		if (tif->tif_data == NULL)
-			goto bad;
-		DecoderState(tif)->dec_codetab = NULL;
-		DecoderState(tif)->dec_decode = NULL;
+	  DecoderState(tif)->dec_codetab = NULL;
+	  DecoderState(tif)->dec_decode = NULL;
 	} 
 	/*
 	 * Install codec methods.

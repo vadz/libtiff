@@ -108,8 +108,8 @@ all:	${TARGETS}
 	    true; \
 	fi
 install: all
-	${INSTALL} -idb tiff.sw.tools -m 755 -dir @DIR_BIN@
-	${INSTALL} -idb tiff.sw.tools -m 755 -F @DIR_BIN@ -O ${TARGETS}
+	${INSTALL} -idb nostrip tiff.sw.tools -m 755 -dir @DIR_BIN@
+	${INSTALL} -idb nostrip tiff.sw.tools -m 755 -F @DIR_BIN@ -O ${TARGETS}
 	@if [ "@LIBIMAGE@" = yes ]; then \
 	    ${INSTALL} -idb tiff.sw.tools -m 755 -F @DIR_BIN@ -O sgi2tiff; \
 	else \

@@ -36,13 +36,21 @@ TIFFNoEncode(TIFF* tif, char* method)
 {
 	const TIFFCodec* c = TIFFFindCODEC(tif->tif_dir.td_compression);
 
-	if (c)
-		TIFFError(tif->tif_name, "%s %s encoding is not implemented",
-		    c->name, method);
-	else
+	if (c) { 
+	  if (! strncmp(c->name, "LZW", 3) ){ 
+	    TIFFError(tif->tif_name, 
+		      "%s %s encoding is no longer implemented due to Unisys patent enforcement.", 
+		      c->name, method); 
+	  } else { 
+	    TIFFError(tif->tif_name, "%s %s encoding is not implemented",
+		      c->name, method);
+	  }
+	}
+	else { 
 		TIFFError(tif->tif_name,
-		    "Compression scheme %u %s encoding is not implemented",
+			  "Compression scheme %u %s encoding is not implemented",
 		    tif->tif_dir.td_compression, method);
+	}
 	return (-1);
 }
 
