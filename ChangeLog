@@ -1,5 +1,13 @@
 2002-02-11  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/{tiff.h,tif_fax3.c}: Add support for __arch64__.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=94
+
+	* man/Makefile.in: Patch DESTDIR handling 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=95
+
 	* configure: OpenBSD changes for Sparc64 and DSO version.
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=96
