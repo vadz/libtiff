@@ -38,7 +38,7 @@
 # OF THIS SOFTWARE.
 
 # Process this file with automake to produce Makefile.in.
-SOURCES = $(ascii_tag_SOURCES)
+SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -61,7 +61,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
-check_PROGRAMS = ascii_tag$(EXEEXT)
+check_PROGRAMS = ascii_tag$(EXEEXT) long_tag$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -76,10 +76,14 @@ am_ascii_tag_OBJECTS = ascii_tag.$(OBJEXT)
 ascii_tag_OBJECTS = $(am_ascii_tag_OBJECTS)
 am__DEPENDENCIES_1 =
 ascii_tag_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_long_tag_OBJECTS = long_tag.$(OBJEXT)
+long_tag_OBJECTS = $(am_long_tag_OBJECTS)
+long_tag_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/libtiff
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ascii_tag.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ascii_tag.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/long_tag.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
@@ -88,8 +92,8 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(ascii_tag_SOURCES)
-DIST_SOURCES = $(ascii_tag_SOURCES)
+SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES)
+DIST_SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -209,6 +213,8 @@ LIBTIFF = -L$(top_builddir)/libtiff -ltiff
 TESTS = $(check_PROGRAMS)
 ascii_tag_SOURCES = ascii_tag.c
 ascii_tag_LDADD = $(LIBTIFF)
+long_tag_SOURCES = long_tag.c
+long_tag_LDADD = $(LIBTIFF)
 INCLUDES = -I$(top_srcdir)/libtiff
 all: all-am
 
@@ -253,6 +259,9 @@ clean-checkPROGRAMS:
 ascii_tag$(EXEEXT): $(ascii_tag_OBJECTS) $(ascii_tag_DEPENDENCIES) 
 	@rm -f ascii_tag$(EXEEXT)
 	$(LINK) $(ascii_tag_LDFLAGS) $(ascii_tag_OBJECTS) $(ascii_tag_LDADD) $(LIBS)
+long_tag$(EXEEXT): $(long_tag_OBJECTS) $(long_tag_DEPENDENCIES) 
+	@rm -f long_tag$(EXEEXT)
+	$(LINK) $(long_tag_LDFLAGS) $(long_tag_OBJECTS) $(long_tag_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -261,6 +270,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ascii_tag.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/long_tag.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

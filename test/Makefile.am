@@ -29,10 +29,12 @@ LIBTIFF = -L$(top_builddir)/libtiff -ltiff
 
 TESTS = $(check_PROGRAMS)
 
-check_PROGRAMS = ascii_tag
+check_PROGRAMS = ascii_tag long_tag
 
 ascii_tag_SOURCES = ascii_tag.c
 ascii_tag_LDADD = $(LIBTIFF)
+long_tag_SOURCES = long_tag.c
+long_tag_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
