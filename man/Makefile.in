@@ -344,7 +344,7 @@ apps/Makefile:
 	 for i in *.1; do						\
 	    f=${MANAPPNAME};						\
 	    ${ECHO} '	cd ..; ${INSTALL} -m 444 			\
-		-F ${DESTDIR}${MAN}/${MANAPPS}				\
+		-F $${DESTDIR}${MAN}/${MANAPPS}				\
 		-idb tiff.man.tools -src' apps/"$$i" '-O' "$$f";	\
 	 done								\
 	)>apps/Makefile
@@ -357,7 +357,7 @@ lib/Makefile:
 	 for i in *.3t; do						\
 	    f=${MANLIBNAME};						\
 	    ${ECHO} '	cd ..; ${INSTALL} -m 444 			\
-		-F ${DESTDIR}${MAN}/${MANLIB}				\
+		-F $${DESTDIR}${MAN}/${MANLIB}				\
 		-idb tiff.man.dev -src' lib/"$$i" '-O' "$$f";		\
 	 done								\
 	)>lib/Makefile
