@@ -1,3 +1,14 @@
+2003-04-16  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcp.c: Fixed problem with colorspace conversion for JPEG
+	encoded images. See bug entries
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=275
+
+	and
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=23
+
 2003-03-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/{fax2ps.c, fax2tiff.c, gif2tiff.c, pal2rgb.c, ppm2tiff.c,
