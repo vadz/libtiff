@@ -7,7 +7,7 @@
  *     -C n		- set colortable size.  Default is 256.
  *     -f		- use Floyd-Steinberg dithering.
  *     -c lzw		- compress output with LZW 
- *                        (no longer supported due to unisys patent enforcement) 
+ *                        (no longer supported by default due to unisys patent enforcement) 
  *     -c none		- use no compression on output
  *     -c packbits	- use packbits compression on output
  *     -r n		- create output with n rows/strip of data
@@ -314,7 +314,7 @@ char* stuff[] = {
 " -C #		create a colormap with # entries",
 " -f		use Floyd-Steinberg dithering",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
-"               (no longer supported due to Unisys patent enforcement)", 
+"               (no longer supported by default due to Unisys patent enforcement)", 
 " -c zip[:opts]	compress output with deflate encoding",
 " -c packbits	compress output with packbits encoding",
 " -c none	use no compression algorithm on output",

@@ -321,7 +321,7 @@ static char* usageMsg[] = {
     "where comp is one of the following compression algorithms:\n",
     " jpeg\t\tJPEG encoding\n",
     " lzw\t\tLempel-Ziv & Welch encoding\n",
-    " (lzw no longer supported due to Unisys patent enforcement)", 
+    " (lzw no longer supported by default due to Unisys patent enforcement)", 
     " packbits\tPackBits encoding\n",
     " none\t\tno compression\n",
     "and the other options are:\n",

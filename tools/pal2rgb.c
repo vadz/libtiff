@@ -362,7 +362,7 @@ char* stuff[] = {
 " -C 16		assume 16-bit colormap values",
 "",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
-"               (no longer supported due to Unisys patent enforcement)",
+"               (no longer supported by default due to Unisys patent enforcement)",
 " -c zip[:opts]	compress output with deflate encoding",
 " -c packbits	compress output with packbits encoding",
 " -c none	use no compression algorithm on output",
