@@ -30,7 +30,7 @@ float	D3, D4;
 float	D5, D6;
 
 int
-main(int argc, char* argv)
+main(int argc, char** argv)
 {
     int R, G, B;
 
