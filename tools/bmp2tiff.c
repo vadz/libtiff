@@ -224,8 +224,8 @@ int
 main(int argc, char* argv[])
 {
 	uint32	width, length;
-	uint32	nbands = 1;		/* number of bands in input image */
-        int16	depth = 8;		/* bits per pixel in input image */
+	uint16	nbands = 1;		/* number of bands in input image */
+        uint16	depth = 8;		/* bits per pixel in input image */
 	uint32	rowsperstrip = (uint32) -1;
         uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	int	fd;
@@ -393,7 +393,7 @@ main(int argc, char* argv[])
                         photometric = PHOTOMETRIC_PALETTE;
                         /* Allocate memory for colour table and read it. */
                         if (info_hdr.iClrUsed)
-                            clr_tbl_size = (1 << depth < info_hdr.iClrUsed) ?
+                            clr_tbl_size = ((uint32)(1 << depth) < info_hdr.iClrUsed) ?
 				    1 << depth : info_hdr.iClrUsed;
                         else
                             clr_tbl_size = 1 << depth;
@@ -414,7 +414,7 @@ main(int argc, char* argv[])
 				TIFFError(infilename,
 				"Can't allocate space for red component table");
 				_TIFFfree(clr_tbl);
-				goto bad;
+				goto bad1;
 			}
 			green_tbl = (unsigned short*)
 				_TIFFmalloc(1<<depth * sizeof(unsigned short));
@@ -505,7 +505,7 @@ main(int argc, char* argv[])
 /* -------------------------------------------------------------------- */
 
         if (info_hdr.iCompression == BMPC_RGB) {
-                uint32  offset, size;
+                uint32 offset, size;
                 char *scanbuf;
 
                 size = ((width * info_hdr.iBitCount + 31) & ~31) / 8;
@@ -527,7 +527,7 @@ main(int argc, char* argv[])
 					  (unsigned long) row);
                         }
 
-			if (read(fd, scanbuf, size) != size) {
+			if (read(fd, scanbuf, size) < 0) {
 				TIFFError(infilename,
 					  "scanline %lu: Read error",
 					  (unsigned long) row);
