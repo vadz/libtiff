@@ -204,6 +204,7 @@ NETBSDdso FREEBSDdso: ${OBJS}
 LINUXdso:  ${OBJS}
 	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
 	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} @LIBJPEG@ @LIBGZ@ 
+	rm -f libtiff.@DSOSUF@
 	@LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@
 	touch $@
 # OSF/1 3.2 shared lib rule
