@@ -1,3 +1,14 @@
+2004-12-10  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirwrite.c: Always write TIFFTAG_SUBIFD using LONG type
+	as per bugs
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=703
+
+	and
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=704
+
 2004-12-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* nmake.opt: Link with the user32.lib in windowed mode. As per bug
