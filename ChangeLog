@@ -1,12 +1,17 @@
+2003-05-05  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/ppm2tiff.c: PPM header parser improved: now able to skip
+	comments.
+
 2003-04-29  Andrey Kiselev  <dron@remotesensing.org>
 
-	* tools/tiffcp.c, man/tiffcp.1: Add ability to generate PS Level 3.
+	* tools/tiff2ps.c, man/tiff2ps.1: Add ability to generate PS Level 3.
 	It basically allows one to use the /flateDecode filter for ZIP
 	compressed TIFF images. Patch supplied by Tom Kacvinsky. Fixes
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=328
 
-	* tools/tiffcp.c: Force deadzone printing when EPS output specified
+	* tools/tiff2ps.c: Force deadzone printing when EPS output specified
 	as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=325
