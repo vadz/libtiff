@@ -1,4 +1,15 @@
-2004-10-28  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dir.c: Properly handle tags, which have the uint32
+	counts. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=693
+
+	* tools/fax2ps.c: Be able to extract the first page (#0). As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=690
+
+2004-11-28  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_unix.c: Make UNIX module compilable (and usable)
 	on Windows.
