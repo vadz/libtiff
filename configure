@@ -946,6 +946,21 @@ EOF
 
 CheckForBigEndian()
 {
+    cat>t.c<<EOF
+#include <endian.h>
+#ifdef __BYTE_ORDER
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+little;
+#elif __BYTE_ORDER == __BIG_ENDIAN
+big;
+#endif
+#endif
+EOF
+    capture cat t.c
+    runMakeX t "t:; ${CCOMPILER} ${ENVOPTS} -E t.c" | grep little >&5 && \
+       return 1
+    runMakeX t "t:; ${CCOMPILER} ${ENVOPTS} -E t.c" | grep big >&5 && \
+       return 0
     echo 'main() { int one = 1; char* cp = (char*)&one; exit(*cp!=0); }'>t.c
     capture cat t.c
     runMake t "t:; ${CCOMPILER} ${ENVOPTS} t.c" && ./a.out

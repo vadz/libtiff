@@ -1,3 +1,8 @@
+2002-01-18  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* configure: Modify CheckForBigEndian so it can work in a cross
+	compiled situation.
+
 2002-01-16  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiffdump.c: include TIFFTAG_JPEGTABLES in tag list.
