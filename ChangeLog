@@ -1,4 +1,4 @@
-2002-05-10  Andrey Kiselev  <dron@remotesensing.org>
+2002-06-21  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2ps, man/tiff2ps.1: New functionality for tiff2ps utility:
 	splitting long images in several pages. See
