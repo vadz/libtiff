@@ -40,8 +40,7 @@
 #include <math.h>
 
 /*
- * Convert color value from the CIE L*a*b* 1976 space to CIE XYZ. Different
- * reference white tristimuli can be specified.
+ * Convert color value from the CIE L*a*b* 1976 space to CIE XYZ.
  */
 void
 TIFFCIELabToXYZ(TIFFCIELabToRGB *cielab, uint32 l, int32 a, int32 b,
@@ -203,15 +202,28 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab, TIFFDisplay *display,
 /* 
  * Free TIFFYCbCrToRGB structure.
  */
-int
+void
 TIFFCIELabToRGBEnd(TIFFCIELabToRGB* cielab)
 {
-	static char module[] = "TIFFCIELabToRGBEnd";
-
 	_TIFFfree(cielab->Yr2r);
 	_TIFFfree(cielab->Yg2g);
 	_TIFFfree(cielab->Yb2b);
 	_TIFFfree(cielab->display);
+}
+
+/* 
+ * Convert color value from the YCbCr space to CIE XYZ.
+ * The colorspace conversion algorithm comes from the IJG v5a code;
+ * see below for more information on how it works.
+ */
+void
+TIFFYCbCrtoRGB(TIFFYCbCrToRGB *ycbcr, uint32 Y, int32 Cb, int32 Cr,
+	       uint32 *r, uint32 *g, uint32 *b)
+{
+	*r = ycbcr->clamptab[Y + ycbcr->Cr_r_tab[Cr]];
+	*g = ycbcr->clamptab[Y
+	    + (int)((ycbcr->Cb_g_tab[Cb] + ycbcr->Cr_g_tab[Cr]) >> 16)];
+	*b = ycbcr->clamptab[Y + ycbcr->Cb_b_tab[Cb]];
 }
 
 #define	SHIFT			16

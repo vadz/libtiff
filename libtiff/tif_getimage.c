@@ -1571,25 +1571,14 @@ DECLAREContigPutFunc(putcontig8bitCIELab)
 }
 
 /*
- * YCbCr -> RGB conversion and packing routines.  The colorspace
- * conversion algorithm comes from the IJG v5a code; see below
- * for more information on how it works.
+ * YCbCr -> RGB conversion and packing routines.
  */
 
-#define	YCbCrtoRGB(dst, yc) {						\
-    int Y = (yc);							\
-    dst = PACK(								\
-	clamptab[Y+Crrtab[Cr]],						\
-	clamptab[Y + (int)((Cbgtab[Cb]+Crgtab[Cr])>>16)],		\
-	clamptab[Y+Cbbtab[Cb]]);					\
+#define	YCbCrtoRGB(dst, Y) {						\
+	uint32 r, g, b;							\
+	TIFFYCbCrtoRGB(img->ycbcr, (Y), Cb, Cr, &r, &g, &b);		\
+	dst = PACK(r, g, b);						\
 }
-#define	YCbCrSetup							\
-    TIFFYCbCrToRGB* ycbcr = img->ycbcr;					\
-    int* Crrtab = ycbcr->Cr_r_tab;					\
-    int* Cbbtab = ycbcr->Cb_b_tab;					\
-    int32* Crgtab = ycbcr->Cr_g_tab;					\
-    int32* Cbgtab = ycbcr->Cb_g_tab;					\
-    TIFFRGBValue* clamptab = ycbcr->clamptab
 
 /*
  * 8-bit packed YCbCr samples => RGB 
@@ -1611,13 +1600,11 @@ static void putcontig8bitYCbCrGenericTile(
     int v_group )
 
 {
-    YCbCrSetup;
-    
     uint32* cp1 = cp+w+toskew;
     uint32* cp2 = cp1+w+toskew;
     uint32* cp3 = cp2+w+toskew;
     int32 incr = 3*w+4*toskew;
-    int     Cb, Cr;
+    int32   Cb, Cr;
     int     group_size = v_group * h_group + 2;
 
     (void) y;
@@ -1674,7 +1661,6 @@ static void putcontig8bitYCbCrGenericTile(
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr44tile)
 {
-    YCbCrSetup;
     uint32* cp1 = cp+w+toskew;
     uint32* cp2 = cp1+w+toskew;
     uint32* cp3 = cp2+w+toskew;
@@ -1687,8 +1673,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr44tile)
         for (; h >= 4; h -= 4) {
             x = w>>2;
             do {
-                int Cb = pp[16];
-                int Cr = pp[17];
+                int32 Cb = pp[16];
+                int32 Cr = pp[17];
 
                 YCbCrtoRGB(cp [0], pp[ 0]);
                 YCbCrtoRGB(cp [1], pp[ 1]);
@@ -1716,8 +1702,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr44tile)
     } else {
         while (h > 0) {
             for (x = w; x > 0;) {
-                int Cb = pp[16];
-                int Cr = pp[17];
+                int32 Cb = pp[16];
+                int32 Cr = pp[17];
                 switch (x) {
                 default:
                     switch (h) {
@@ -1772,7 +1758,6 @@ DECLAREContigPutFunc(putcontig8bitYCbCr44tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr42tile)
 {
-    YCbCrSetup;
     uint32* cp1 = cp+w+toskew;
     int32 incr = 2*toskew+w;
 
@@ -1782,8 +1767,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr42tile)
         for (; h >= 2; h -= 2) {
             x = w>>2;
             do {
-                int Cb = pp[8];
-                int Cr = pp[9];
+                int32 Cb = pp[8];
+                int32 Cr = pp[9];
                 
                 YCbCrtoRGB(cp [0], pp[0]);
                 YCbCrtoRGB(cp [1], pp[1]);
@@ -1803,8 +1788,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr42tile)
     } else {
         while (h > 0) {
             for (x = w; x > 0;) {
-                int Cb = pp[8];
-                int Cr = pp[9];
+                int32 Cb = pp[8];
+                int32 Cr = pp[9];
                 switch (x) {
                 default:
                     switch (h) {
@@ -1851,15 +1836,13 @@ DECLAREContigPutFunc(putcontig8bitYCbCr42tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr41tile)
 {
-    YCbCrSetup;
-
     (void) y;
     /* XXX adjust fromskew */
     do {
 	x = w>>2;
 	do {
-	    int Cb = pp[4];
-	    int Cr = pp[5];
+	    int32 Cb = pp[4];
+	    int32 Cr = pp[5];
 
 	    YCbCrtoRGB(cp [0], pp[0]);
 	    YCbCrtoRGB(cp [1], pp[1]);
@@ -1872,8 +1855,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr41tile)
 
         if( (w&3) != 0 )
         {
-	    int Cb = pp[4];
-	    int Cr = pp[5];
+	    int32 Cb = pp[4];
+	    int32 Cr = pp[5];
 
             switch( (w&3) ) {
               case 3: YCbCrtoRGB(cp [2], pp[2]);
@@ -1897,7 +1880,6 @@ DECLAREContigPutFunc(putcontig8bitYCbCr41tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
 {
-    YCbCrSetup;
     uint32* cp1 = cp+w+toskew;
     int32 incr = 2*toskew+w;
 
@@ -1907,8 +1889,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
         for (; h >= 2; h -= 2) {
             x = w>>1;
             do {
-                int Cb = pp[4];
-                int Cr = pp[5];
+                int32 Cb = pp[4];
+                int32 Cr = pp[5];
 
                 YCbCrtoRGB(cp [0], pp[0]);
                 YCbCrtoRGB(cp [1], pp[1]);
@@ -1924,8 +1906,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
     } else {
         while (h > 0) {
             for (x = w; x > 0;) {
-                int Cb = pp[4];
-                int Cr = pp[5];
+                int32 Cb = pp[4];
+                int32 Cr = pp[5];
                 switch (x) {
                 default:
                     switch (h) {
@@ -1962,15 +1944,13 @@ DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
 {
-    YCbCrSetup;
-
     (void) y;
     fromskew = (fromskew * 4) / 2;
     do {
 	x = w>>1;
 	do {
-	    int Cb = pp[2];
-	    int Cr = pp[3];
+	    int32 Cb = pp[2];
+	    int32 Cr = pp[3];
 
 	    YCbCrtoRGB(cp[0], pp[0]); 
 	    YCbCrtoRGB(cp[1], pp[1]);
@@ -1981,8 +1961,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
 
         if( (w&1) != 0 )
         {
-	    int Cb = pp[2];
-	    int Cr = pp[3];
+	    int32 Cb = pp[2];
+	    int32 Cr = pp[3];
             
             YCbCrtoRGB(cp [0], pp[0]);
 
@@ -2000,15 +1980,13 @@ DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 {
-    YCbCrSetup;
-
     (void) y;
     fromskew *= 3;
     do {
         x = w; /* was x = w>>1; patched 2000/09/25 warmerda@home.com */ 
 	do {
-	    int Cb = pp[1];
-	    int Cr = pp[2];
+	    int32 Cb = pp[1];
+	    int32 Cr = pp[2];
 
 	    YCbCrtoRGB(*cp++, pp[0]);
 
@@ -2018,7 +1996,6 @@ DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 	pp += fromskew;
     } while (--h);
 }
-#undef	YCbCrSetup
 #undef	YCbCrtoRGB
 
 static tileContigRoutine
