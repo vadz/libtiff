@@ -113,10 +113,22 @@ Force the generation of Encapsulated \*(Ps.
 .B \-h
 Specify the vertical size of the printed area (in inches).
 .TP
+.B \-H
+Specify the maximum height of image (in inches). Images with larger sizes will
+be splitted in several pages. Option
+.B \-L
+may be used for specifying size of splitted images overlapping.
+.TP
 .B \-i
 Enable/disable pixel interpolation.  This option requires a
 single numeric value: zero to disable pixel interpolation and
 non-zero to enable.  The default is enabled.
+.TP
+.B \-L
+Specify the size of overlapping for splitted images (in inches). Used in
+conjuction with
+.B \-H
+option.
 .TP
 .B \-m
 Where possible render using the
@@ -179,6 +191,24 @@ tiff2ps -d 1 foo.tif
 .fi
 .RE
 (notice that directories are numbered starting at zero.)
+.PP
+If you have a long image, it may be splitted in several pages:
+.RS
+.nf
+tiff2ps -h11 -w8.5 -H14 -L.5 foo.tif > foo.ps
+.fi
+.RE
+The page size is set to 8.5x11 by
+.B \-w
+and
+.B \-h
+options. We will accept a small amount of vertical compression, so
+.B \-H
+set to 14. Any pages between 11 and 14 inches will be fit onto one page.
+Pages longer than 14 inches are cut off at 11 and continued on the next
+page. The
+.B \-L.5
+option says to repeat a half inch on the next page (to improve readability).
 .SH BUGS
 Because \*(Ps does not support the notion of a colormap,
 8-bit palette images produce 24-bit \*(Ps images.

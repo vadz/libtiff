@@ -107,6 +107,8 @@ int	generateEPSF = TRUE;		/* generate Encapsulated PostScript */
 int 	PSduplex = FALSE;		/* enable duplex printing */
 int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
+float	maxPageHeight = 0;		/* maximum size to fit on page */
+float	splitOverlap = 0;		/* amount for split pages to overlag */
 char	*filename;			/* input filename */
 int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
 uint16	res_unit = 0;			/* Resolution units: 1 - inches, 2 - cm*/
@@ -150,7 +152,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	FILE* output = stdout;
 
-	while ((c = getopt(argc, argv, "h:i:w:d:o:O:acemnzps128DT")) != -1)
+	while ((c = getopt(argc, argv, "h:H:L:i:w:d:o:O:acemnzps128DT")) != -1)
 		switch (c) {
 		case 'd':
 			dirnum = atoi(optarg);
@@ -169,6 +171,13 @@ main(int argc, char* argv[])
 			break;
 		case 'h':
 			pageHeight = atof(optarg);
+			break;
+		case 'H':
+			maxPageHeight = atof(optarg);
+			if (pageHeight==0) pageHeight = maxPageHeight;
+			break;
+		case 'L':
+			splitOverlap = atof(optarg);
 			break;
 		case 'm':
 			useImagemask = TRUE;
@@ -362,6 +371,12 @@ PhotoshopBanner(FILE* fd, uint32 w, uint32 h, int bs, int nc, char* startline)
 	fprintf(fd, "\"\n");
 }
 
+/*
+ *   pw : image width in pixels
+ *   ph : image height in pixels
+ * pprw : image width in PS units (72 dpi)
+ * pprh : image height in PS units (72 dpi)
+ */
 static void
 setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
 {
@@ -410,6 +425,75 @@ static 	tsize_t	tf_rowsperstrip;
 static	tsize_t	tf_numberstrips;
 static	char *hex = "0123456789abcdef";
 
+/*
+ * imagewidth & imageheight are 1/72 inches
+ * pagewidth & pageheight are inches
+ */
+int
+PlaceImage(FILE *fp, float pagewidth, float pageheight,
+	float imagewidth, float imageheight, int splitpage)
+{
+	float xtran = 0;
+	float ytran = 0;
+	float xscale = 1;
+	float yscale = 1;
+	float subimageheight;
+	float splitheight;
+	float overlap;
+
+	pagewidth *= PS_UNIT_SIZE;
+	pageheight *= PS_UNIT_SIZE;
+
+	if (maxPageHeight==0)
+		splitheight = 0;
+	else
+		splitheight = maxPageHeight * PS_UNIT_SIZE;
+	overlap = splitOverlap * PS_UNIT_SIZE;
+
+	/*
+	 * WIDTH:
+	 *      if too wide, scrunch to fit
+	 *      else leave it alone
+	 */
+	if (imagewidth <= pagewidth) {
+		xscale = imagewidth;
+	} else {
+		xscale = pagewidth;
+	}
+
+	/* HEIGHT:
+	 *      if too long, scrunch to fit
+	 *      if too short, move to top of page
+	 */
+	if (imageheight <= pageheight) {
+		yscale = imageheight;
+		ytran = pageheight - imageheight;
+	} else if (imageheight > pageheight &&
+		(splitheight == 0 || imageheight <= splitheight)) {
+		yscale = pageheight;
+	} else /* imageheight > splitheight */ {
+		subimageheight = imageheight - (pageheight-overlap)*splitpage;
+		if (subimageheight <= pageheight) {
+			yscale = imageheight;
+			ytran = pageheight - subimageheight;
+			splitpage = 0;
+		} else if ( subimageheight > pageheight && subimageheight <= splitheight) {
+			yscale = imageheight * pageheight / subimageheight;
+			ytran = 0;
+			splitpage = 0;
+		} else /* sumimageheight > splitheight */ {
+			yscale = imageheight;
+			ytran = pageheight - subimageheight;
+			splitpage++;
+		}
+	}
+
+	fprintf(fp,"%f %f translate\n",xtran,ytran);
+	fprintf(fp,"%f %f scale\n",xscale,yscale);
+
+	return splitpage;
+}
+
 
 /* returns the sequence number of the page processed */
 int
@@ -421,6 +505,7 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
 	uint32 subfiletype;
 	uint16* sampleinfo;
 	static int npages = 0;
+	int split;
 
 	if (!TIFFGetField(tif, TIFFTAG_XPOSITION, &ox))
 		ox = 0;
@@ -469,14 +554,30 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
 			fprintf(fd, "gsave\n");
 			fprintf(fd, "100 dict begin\n");
 			if (pw != 0 && ph != 0) {
-				/* NB: maintain image aspect ratio */
-				scale = (pw*PS_UNIT_SIZE/prw) < (ph*PS_UNIT_SIZE/prh) ?
-				    (pw*PS_UNIT_SIZE/prw) :
-				    (ph*PS_UNIT_SIZE/prh);
-				if (scale > 1.0)
-					scale = 1.0;
-				fprintf(fd, "0 %f translate\n", ph*PS_UNIT_SIZE-prh*scale);
-				fprintf(fd, "%f %f scale\n", prw*scale, prh*scale);
+				if (maxPageHeight) { /* used -H option */
+					split = PlaceImage(fd,pw,ph,prw,prh,0);
+					while( split ) {
+					    PSpage(fd, tif, w, h);
+					    fprintf(fd, "end\n");
+					    fprintf(fd, "grestore\n");
+					    fprintf(fd, "showpage\n");
+					    npages++;
+					    fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
+					    fprintf(fd, "gsave\n");
+					    fprintf(fd, "100 dict begin\n");
+					    split = PlaceImage(fd,pw,ph,prw,prh,split);
+					}
+				} else {
+					/* NB: maintain image aspect ratio */
+					scale = (pw*PS_UNIT_SIZE/prw) < (ph*PS_UNIT_SIZE/prh) ?
+					    (pw*PS_UNIT_SIZE/prw) :
+					    (ph*PS_UNIT_SIZE/prh);
+					if (scale > 1.0)
+						scale = 1.0;
+					fprintf(fd, "0 %f translate\n",
+						ph*PS_UNIT_SIZE-prh*scale);
+					fprintf(fd, "%f %f scale\n", prw*scale, prh*scale);
+				}
 			} else
 				fprintf(fd, "%f %f scale\n", prw, prh);
 			PSpage(fd, tif, w, h);
@@ -961,8 +1062,8 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	tsize_t chunk_size, byte_count;
 
 #if defined( EXP_ASCII85ENCODER )
-	int			ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
-	uint8		*	ascii85_p = 0;		/* Holds ASCII85 encoded data */
+	int			ascii85_l;	/* Length, in bytes, of ascii85_p[] data */
+	uint8		*	ascii85_p = 0;	/* Holds ASCII85 encoded data */
 #endif
 
 	PS_Lvl2colorspace(fd, tif);
@@ -1370,8 +1471,8 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	tstrip_t s;
 
 #if defined( EXP_ASCII85ENCODER )
-	int			ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
-	uint8		*	ascii85_p = 0;		/* Holds ASCII85 encoded data */
+	int	ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
+	uint8	*ascii85_p = 0;		/* Holds ASCII85 encoded data */
 #endif
 
 	(void) w; (void) h;
@@ -1772,21 +1873,23 @@ char* stuff[] = {
 " -1            generate PostScript Level I (default)",
 " -2            generate PostScript Level II",
 " -8            disable use of ASCII85 encoding with PostScript Level II",
+" -a            convert all directories in file (default is first)",
 " -n		override resolution units as inches",
 " -c		override resolution units as centimeters",
 " -d #          convert directory number #",
 " -D            enable duplex printing (two pages per sheet of paper)",
 " -e            generate Encapsulated PostScript (EPS)",
 " -h #          assume printed page height is # inches (default 11)",
+" -w #          assume printed page width is # inches (default 8.5)",
+" -H #          split image if height is more than # inches",
+" -L #          overLap split images by # inches",
 " -i #          enable/disable (Nz/0) pixel interpolation (default: enable)",
 " -m            use \"imagemask\" operator instead of \"image\"",
 " -o #          convert directory at file offset #",
 " -O file       write PostScript to file instead of standard output",
-" -a            convert all directories in file (default is first)",
 " -p            generate regular PostScript",
 " -s            generate PostScript for a single image",
 " -T            print pages for top edge binding",
-" -w #          assume printed page width is # inches (default 8.5)",
 " -z            enable printing in the deadzone (only for PostScript Level II)",
 NULL
 };
