@@ -526,7 +526,6 @@ static int
 tiffcp(TIFF* in, TIFF* out)
 {
 	uint16 bitspersample, samplesperpixel;
-        uint16 input_compression;
 	copyFunc cf;
 	uint32 width, length;
 	struct cpTag* p;
@@ -540,16 +539,22 @@ tiffcp(TIFF* in, TIFF* out)
 	else
 		CopyField(TIFFTAG_COMPRESSION, compression);
 	if (compression == COMPRESSION_JPEG) {
+	    uint16 input_compression, input_photometric;
+
             if ( TIFFGetField( in, TIFFTAG_COMPRESSION, &input_compression )
                  && input_compression == COMPRESSION_JPEG ) {
                 TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
             }
-            if (jpegcolormode == JPEGCOLORMODE_RGB)
-		TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
-            else
-                TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric)
+		&& input_photometric == PHOTOMETRIC_RGB) {
+		if (jpegcolormode == JPEGCOLORMODE_RGB)
+		    TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
+		else
+		    TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	    }
         }
-	else if (compression == COMPRESSION_SGILOG || compression == COMPRESSION_SGILOG24)
+	else if (compression == COMPRESSION_SGILOG
+		 || compression == COMPRESSION_SGILOG24)
 		TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
 		    samplesperpixel == 1 ?
 			PHOTOMETRIC_LOGL : PHOTOMETRIC_LOGLUV);
@@ -670,8 +675,47 @@ tiffcp(TIFF* in, TIFF* out)
 		else 
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
 	}
-	for (p = tags; p < &tags[NTAGS]; p++)
-		CopyTag(p->tag, p->count, p->type);
+        {
+            int  i;
+            short count;
+	    TIFFFieldInfo *xtiffFieldInfo;
+
+            count = (short) TIFFGetTagListCount(in);
+	    xtiffFieldInfo = _TIFFmalloc(count * sizeof(TIFFFieldInfo));
+            for(i = 0; i < count; i++)
+            {
+                ttag_t  tag = TIFFGetTagListEntry(in, i);
+                const TIFFFieldInfo *fld = TIFFFieldWithTag(in, tag);
+
+                if(fld == NULL)
+			continue;
+
+                _TIFFmemcpy(&xtiffFieldInfo[i], (void *)fld, sizeof(TIFFFieldInfo));
+	    }
+	    TIFFMergeFieldInfo( out, xtiffFieldInfo, count );
+	    for(i = 0; i < count; i++)
+            {
+		const TIFFFieldInfo *fld = &xtiffFieldInfo[i];
+                if(fld->field_passcount)
+                {
+			short value_count;
+			void *raw_data;
+                    
+			if(TIFFGetField(in, fld->field_tag, &value_count, &raw_data))
+				TIFFSetField(out, fld->field_tag, value_count, raw_data);
+                } 
+                else if(!fld->field_passcount
+                        && fld->field_type == TIFF_ASCII)
+                {
+                    char *data;
+                    
+                    if(TIFFGetField(in, fld->field_tag, &data))
+                       TIFFSetField(out, fld->field_tag, data);
+                }
+            }
+        }
+/*	for (p = tags; p < &tags[NTAGS]; p++)
+		CopyTag(p->tag, p->count, p->type);*/
 
 	cf = pickCopyFunc(in, out, bitspersample, samplesperpixel);
 	return (cf ? (*cf)(in, out, length, width, samplesperpixel) : FALSE);
