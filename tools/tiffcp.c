@@ -289,6 +289,7 @@ main(int argc, char* argv[])
 		TIFFClose(in);
 	}
 
+        TIFFClose( out );
         exit( 0 );
 }
 
