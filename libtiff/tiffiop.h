@@ -29,13 +29,30 @@
 /*
  * ``Library-private'' definitions.
  */
+
+#include <sys/types.h>
+#define HOST_FILLORDER FILLORDER_MSB2LSB
+#define WORDS_BIGENDIAN	0
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+typedef double dblparam_t;
+#ifdef __STRICT_ANSI__
+#define	INLINE	__inline__
+#else
+#define	INLINE	inline
+#endif
+#define GLOBALDATA(TYPE,NAME)	extern TYPE NAME
+
 /*
  * UNIX systems should run the configure script to generate
  * a port.h file that reflects the system capabilities.
  * Doing this obviates all the dreck done in tiffcomp.h.
  */
 #if defined(unix) || defined(__unix)
-#include "port.h"
+#include "config.h"
 #include "tiffconf.h"
 #else
 #include "tiffconf.h"

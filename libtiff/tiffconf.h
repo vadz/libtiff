@@ -48,7 +48,7 @@
  * HOST_FILLORDER	native cpu bit order: one of FILLORDER_MSB2LSB
  *			or FILLODER_LSB2MSB; this is typically set by the
  *			configure script
- * HOST_BIGENDIAN	native cpu byte order: 1 if big-endian (Motorola)
+ * WORDS_BIGENDIAN	native cpu byte order: 1 if big-endian (Motorola)
  *			or 0 if little-endian (Intel); this may be used
  *			in codecs to optimize code
  * USE_64BIT_API	set to 1 if tif_unix.c should use lseek64(),
@@ -60,8 +60,8 @@
 #ifndef HOST_FILLORDER
 #define	HOST_FILLORDER	FILLORDER_MSB2LSB
 #endif
-#ifndef	HOST_BIGENDIAN
-#define	HOST_BIGENDIAN	1
+#ifndef	WORDS_BIGENDIAN
+#define	WORDS_BIGENDIAN	1
 #endif
 
 #ifndef USE_64BIT_API
