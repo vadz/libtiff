@@ -25,7 +25,9 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = \
+docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html
+
+docfiles = \
 	addingtags.html \
 	bugs.html \
 	build.html \
@@ -65,6 +67,10 @@ EXTRA_DIST = \
 	v3.7.0beta.html \
 	v3.7.0beta2.html \
 	v3.7.0.html
+
+EXTRA_DIST = $(docfiles)
+
+doc_DATA = $(docfiles)
 
 SUBDIRS = images man
 

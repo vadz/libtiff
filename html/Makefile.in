@@ -40,6 +40,7 @@
 # OF THIS SOFTWARE.
 
 # Process this file with automake to produce Makefile.in.
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -82,6 +83,15 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-recursive installcheck-recursive installdirs-recursive \
 	pdf-recursive ps-recursive uninstall-info-recursive \
 	uninstall-recursive
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(docdir)"
+docDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(doc_DATA)
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = $(SUBDIRS)
@@ -211,7 +221,8 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-EXTRA_DIST = \
+docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)/html
+docfiles = \
 	addingtags.html \
 	bugs.html \
 	build.html \
@@ -252,6 +263,8 @@ EXTRA_DIST = \
 	v3.7.0beta2.html \
 	v3.7.0.html
 
+EXTRA_DIST = $(docfiles)
+doc_DATA = $(docfiles)
 SUBDIRS = images man
 all: all-recursive
 
@@ -265,9 +278,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  html/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  html/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  html/Makefile
+	  $(AUTOMAKE) --gnu  html/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -295,6 +308,23 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
+install-docDATA: $(doc_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(docdir)" || $(mkdir_p) "$(DESTDIR)$(docdir)"
+	@list='$(doc_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(docDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(docdir)/$$f'"; \
+	  $(docDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(docdir)/$$f"; \
+	done
+
+uninstall-docDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(doc_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(docdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(docdir)/$$f"; \
+	done
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -460,9 +490,12 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile
+all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
+	for dir in "$(DESTDIR)$(docdir)"; do \
+	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -506,7 +539,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-docDATA
 
 install-exec-am:
 
@@ -532,7 +565,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-info-am
+uninstall-am: uninstall-docDATA uninstall-info-am
 
 uninstall-info: uninstall-info-recursive
 
@@ -541,13 +574,14 @@ uninstall-info: uninstall-info-recursive
 	ctags-recursive distclean distclean-generic distclean-libtool \
 	distclean-recursive distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic maintainer-clean-recursive \
-	mostlyclean mostlyclean-generic mostlyclean-libtool \
-	mostlyclean-recursive pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-info-am
+	install-data-am install-docDATA install-exec install-exec-am \
+	install-info install-info-am install-man install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic \
+	maintainer-clean-recursive mostlyclean mostlyclean-generic \
+	mostlyclean-libtool mostlyclean-recursive pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am uninstall-docDATA \
+	uninstall-info-am
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
