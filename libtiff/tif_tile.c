@@ -141,7 +141,7 @@ TIFFTileRowSize(TIFF* tif)
 	rowsize = td->td_bitspersample * td->td_tilewidth;
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
 		rowsize *= td->td_samplesperpixel;
-	return ((tsize_t) TIFFhowmany(rowsize, 8));
+	return ((tsize_t) TIFFhowmany8(rowsize));
 }
 
 /*
@@ -156,7 +156,6 @@ TIFFVTileSize(TIFF* tif, uint32 nrows)
 	if (td->td_tilelength == 0 || td->td_tilewidth == 0 ||
 	    td->td_tiledepth == 0)
 		return ((tsize_t) 0);
-#ifdef YCBCR_SUPPORT
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG &&
 	    td->td_photometric == PHOTOMETRIC_YCBCR &&
 	    !isUpSampled(tif)) {
@@ -170,14 +169,13 @@ TIFFVTileSize(TIFF* tif, uint32 nrows)
 		 */
 		tsize_t w =
 		    TIFFroundup(td->td_tilewidth, td->td_ycbcrsubsampling[0]);
-		tsize_t rowsize = TIFFhowmany(w*td->td_bitspersample, 8);
+		tsize_t rowsize = TIFFhowmany8(w*td->td_bitspersample);
 		tsize_t samplingarea =
 		    td->td_ycbcrsubsampling[0]*td->td_ycbcrsubsampling[1];
 		nrows = TIFFroundup(nrows, td->td_ycbcrsubsampling[1]);
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
 		tilesize = nrows*rowsize + 2*(nrows*rowsize / samplingarea);
 	} else
-#endif
 		tilesize = nrows * TIFFTileRowSize(tif);
 	return ((tsize_t)(tilesize * td->td_tiledepth));
 }

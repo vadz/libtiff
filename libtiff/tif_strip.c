@@ -79,7 +79,6 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 
 	if (nrows == (uint32) -1)
 		nrows = td->td_imagelength;
-#ifdef YCBCR_SUPPORT
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG &&
 	    td->td_photometric == PHOTOMETRIC_YCBCR &&
 	    !isUpSampled(tif)) {
@@ -99,14 +98,13 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
                               ycbcrsubsampling + 1 );
 
 		w = TIFFroundup(td->td_imagewidth, ycbcrsubsampling[0]);
-		scanline = TIFFhowmany(w*td->td_bitspersample, 8);
+		scanline = TIFFhowmany8(w*td->td_bitspersample);
 		samplingarea = ycbcrsubsampling[0]*ycbcrsubsampling[1];
 		nrows = TIFFroundup(nrows, ycbcrsubsampling[1]);
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
 		return ((tsize_t)
 		    (nrows*scanline + 2*(nrows*scanline / samplingarea)));
 	} else
-#endif
 		return ((tsize_t)(nrows * TIFFScanlineSize(tif)));
 }
 

@@ -378,7 +378,7 @@ TIFFDataWidth(TIFFDataType type)
 TIFFDataType
 _TIFFSampleToTagType(TIFF* tif)
 {
-	int bps = (int) TIFFhowmany(tif->tif_dir.td_bitspersample, 8);
+	uint32 bps = TIFFhowmany8(tif->tif_dir.td_bitspersample);
 
 	switch (tif->tif_dir.td_sampleformat) {
 	case SAMPLEFORMAT_IEEEFP:
