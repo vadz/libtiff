@@ -1552,6 +1552,18 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
 
     switch (tag)
       {
+#       ifdef COLORIMETRY_SUPPORT
+
+     /* If a "ReferenceBlackWhite" TIFF tag appears in the file explicitly, undo
+        any modified default definition that we might have installed below, then
+        install the real one.
+     */
+        case TIFFTAG_REFERENCEBLACKWHITE   : if (td->td_refblackwhite)
+                                               {
+                                                 _TIFFfree(td->td_refblackwhite);
+                                                 td->td_refblackwhite = 0;
+                                               };
+#       endif /* COLORIMETRY_SUPPORT */
         default                            : return
                                                (*sp->vsetparent)(tif,tag,ap);
 #       ifdef COLORIMETRY_SUPPORT
@@ -1569,20 +1581,25 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
         "PhotometricInterpretation" tag should always appear before an optional
         "ReferenceBlackWhite" tag.  So, we slyly peek ahead when we discover the
         desired photometry, by installing modified black and white reference
-        levels.  We install a pointer to a statically-allocated array, which
-        lets it be overridden without "dangling" memory references, and which
-        should be reasonably safe since most client applications treat this data
-        as "read only".
+        levels.
      */
-        case TIFFTAG_PHOTOMETRIC: 
+        case TIFFTAG_PHOTOMETRIC           :
           if (   (v32 = (*sp->vsetparent)(tif,tag,ap))
-                 &&    td->td_photometric == PHOTOMETRIC_YCBCR )
-          { 
-              static float refbw[6]={0,255,128,255,128,255};
+              && td->td_photometric == PHOTOMETRIC_YCBCR
+             )
+            if (td->td_refblackwhite = _TIFFmalloc(6*sizeof(float)))
+              { register long top = 1 << td->td_bitspersample;
 
-              td->td_refblackwhite = _TIFFmalloc(sizeof(float)*6);
-              _TIFFmemcpy( td->td_refblackwhite, refbw, sizeof(float)*6 );
-          };
+                td->td_refblackwhite[0] = 0;
+                td->td_refblackwhite[1] = td->td_refblackwhite[3] =
+                td->td_refblackwhite[5] = top - 1;
+                td->td_refblackwhite[2] = td->td_refblackwhite[4] = top >> 1;
+              }
+            else
+              {
+                TIFFError(tif->tif_name,"Cannot define default reference black and white levels");
+                v32 = 0;
+              };
           return v32;
 #       endif /* COLORIMETRY_SUPPORT */
 
