@@ -44,6 +44,10 @@
 # include <string.h>
 #endif
 
+#if HAVE_ASSERT_H
+# include <assert.h>
+#endif
+
 #include "tiffio.h"
 #include "tif_dir.h"
 
