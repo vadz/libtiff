@@ -1611,14 +1611,17 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
         the substring, "Wang Labs".  Single-image files can apparently pass both
         tests, which causes no harm here, but what a mess this is!
      */
-        case TIFFTAG_SOFTWARE              : if (   (v32 = (*sp->vsetparent)
-                                                             (tif,tag,ap)
-                                                    )
-                                                 && strstr( td->td_software
-                                                          , "Wang Labs"
-                                                          )
-                                                ) sp->is_WANG = 1;
-                                             return v32;
+        case TIFFTAG_SOFTWARE              :
+        {
+            char *software;
+
+            v32 = (*sp->vsetparent)(tif,tag,ap);
+            if( TIFFGetField( tif, TIFFTAG_SOFTWARE, &software )
+                && strstr( software, "Wang Labs" ) )
+                sp->is_WANG = 1;
+            return v32;
+        }
+
         case TIFFTAG_JPEGPROC              :
         case TIFFTAG_JPEGIFOFFSET          :
         case TIFFTAG_JPEGIFBYTECOUNT       :
