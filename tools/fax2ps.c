@@ -187,7 +187,7 @@ emitFont(FILE* fd)
 }
 
 void
-printTIF(TIFF* tif, int pageNumber)
+printTIF(TIFF* tif, uint16 pageNumber)
 {
     uint32 w, h;
     uint16 unit;
@@ -236,7 +236,7 @@ printTIF(TIFF* tif, int pageNumber)
     printf("/s{show}d\n");
     printf("/p{showpage}d \n");	/* end page */
     printf("%%%%EndProlog\n");
-    printf("%%%%Page: \"%d\" %d\n", pageNumber, pageNumber);
+    printf("%%%%Page: \"%u\" %u\n", pageNumber, pageNumber);
     printf("/$pageTop save def gsave\n");
     if (scaleToPage)
         scale = pageHeight / (h/yres) < pageWidth / (w/xres) ?
@@ -260,7 +260,7 @@ printTIF(TIFF* tif, int pageNumber)
 TIFFGetField(tif, TIFFTAG_PAGENUMBER, &pn, &ptotal)
 
 int
-findPage(TIFF* tif, int pageNumber)
+findPage(TIFF* tif, uint16 pageNumber)
 {
     uint16 pn = (uint16) -1;
     uint16 ptotal = (uint16) -1;
@@ -273,7 +273,7 @@ findPage(TIFF* tif, int pageNumber)
 }
 
 void
-fax2ps(TIFF* tif, int npages, int* pages, char* filename)
+fax2ps(TIFF* tif, uint16 npages, uint16* pages, char* filename)
 {
     if (npages > 0) {
 	uint16 pn, ptotal;
@@ -289,7 +289,7 @@ fax2ps(TIFF* tif, int npages, int* pages, char* filename)
 		fprintf(stderr, "%s: No page number %d\n", filename, pages[i]);
 	}
     } else {
-	int pageNumber = 1;
+	uint16 pageNumber = 0;
 	do
 	    printTIF(tif, pageNumber++);
 	while (TIFFReadDirectory(tif));
@@ -313,9 +313,8 @@ main(int argc, char** argv)
 {
     extern int optind;
     extern char* optarg;
-    int c, pageNumber;
-    int* pages = 0, npages = 0;
-    int dowarnings = 0;		/* if 1, enable library warnings */
+    uint16 *pages = NULL, npages = 0, pageNumber;
+    int c, dowarnings = 0;		/* if 1, enable library warnings */
     TIFF* tif;
 
     while ((c = getopt(argc, argv, "l:p:x:y:W:H:wS")) != -1)
@@ -330,16 +329,11 @@ main(int argc, char** argv)
 	    pageWidth = (float)atof(optarg);
 	    break;
 	case 'p':		/* print specific page */
-	    pageNumber = atoi(optarg);
-	    if (pageNumber < 1) {
-		fprintf(stderr, "%s: Invalid page number (must be > 0).\n",
-		    optarg);
-		usage(-1);
-	    }
+	    pageNumber = (uint16)atoi(optarg);
 	    if (pages)
-		pages = (int*) realloc((char*)pages, (npages+1)*sizeof(int));
+		pages = (uint16*) realloc(pages, (npages+1)*sizeof(uint16));
 	    else
-		pages = (int*) malloc(sizeof(int));
+		pages = (uint16*) malloc(sizeof(uint16));
 	    pages[npages++] = pageNumber;
 	    break;
 	case 'w':
@@ -358,7 +352,7 @@ main(int argc, char** argv)
 	    usage(-1);
 	}
     if (npages > 0)
-	qsort(pages, npages, sizeof (int), pcompar);
+	qsort(pages, npages, sizeof(uint16), pcompar);
     if (!dowarnings)
 	TIFFSetWarningHandler(0);
     if (optind < argc) {
