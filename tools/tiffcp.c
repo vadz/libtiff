@@ -81,6 +81,7 @@ static	void usage(void);
 
 static char comma = ',';  /* (default) comma separator character */
 static TIFF* bias = NULL;
+static int pageNum = 0;
 
 static int nextSrcImage (TIFF *tif, char **imageSpec)
 /*
@@ -221,7 +222,7 @@ main(int argc, char* argv[])
 				usage();
 			break;
 		case 'r':		/* rows/strip */
-			defrowsperstrip = atoi(optarg);
+			defrowsperstrip = atol(optarg);
 			break;
 		case 's':		/* generate stripped output */
 			outtiled = FALSE;
@@ -254,6 +255,8 @@ main(int argc, char* argv[])
 	out = TIFFOpen(argv[argc-1], mode);
 	if (out == NULL)
 		return (-2);
+	if ((argc - optind) == 2)
+	  pageNum = -1;
 	for (; optind < argc-1 ; optind++) {
                 char *imageCursor = argv[optind];
 		in = openSrcImage (&imageCursor);
@@ -489,7 +492,6 @@ static struct cpTag {
 	{ TIFFTAG_XPOSITION,		1, TIFF_RATIONAL },
 	{ TIFFTAG_YPOSITION,		1, TIFF_RATIONAL },
 	{ TIFFTAG_RESOLUTIONUNIT,	1, TIFF_SHORT },
-	{ TIFFTAG_PAGENUMBER,		2, TIFF_SHORT },
 	{ TIFFTAG_SOFTWARE,		1, TIFF_ASCII },
 	{ TIFFTAG_DATETIME,		1, TIFF_ASCII },
 	{ TIFFTAG_ARTIST,		1, TIFF_ASCII },
@@ -608,9 +610,11 @@ tiffcp(TIFF* in, TIFF* out)
 		 * value from the input image or, if nothing is defined,
 		 * use the library default.
 		 */
-		if (rowsperstrip == (uint32) -1)
-			TIFFGetField(in, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
-		rowsperstrip = TIFFDefaultStripSize(out, rowsperstrip);
+		if (rowsperstrip == (uint32) -1) {
+			if (!TIFFGetField(in, TIFFTAG_ROWSPERSTRIP,&rowsperstrip))
+				rowsperstrip =
+					TIFFDefaultStripSize(out, rowsperstrip);
+		}
 		TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
 	}
 	if (config != (uint16) -1)
@@ -624,7 +628,7 @@ tiffcp(TIFF* in, TIFF* out)
 	switch (compression) {
 	case COMPRESSION_JPEG:
 		TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
-		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
+		//TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
 		break;
 	case COMPRESSION_LZW:
 	case COMPRESSION_DEFLATE:
@@ -655,6 +659,14 @@ tiffcp(TIFF* in, TIFF* out)
 	  void** data;
 	  if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &len32, &data))
 		TIFFSetField(out, TIFFTAG_ICCPROFILE, len32, data);
+	}
+	{
+	  unsigned short pg0, pg1;
+	  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1))
+		if (pageNum < 0) // only one input file
+			TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
+		else 
+			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
 	}
 	for (p = tags; p < &tags[NTAGS]; p++)
 		CopyTag(p->tag, p->count, p->type);
