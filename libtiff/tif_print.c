@@ -252,7 +252,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd, "  Sample to Nits conversion factor: %.4e\n",
 				td->td_stonits);
 	}
-#ifdef CMYK_SUPPORT
 	if (TIFFFieldSet(tif,FIELD_INKSET)) {
 		fprintf(fd, "  Ink Set: ");
 		switch (td->td_inkset) {
@@ -283,7 +282,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		    td->td_dotrange[0], td->td_dotrange[1]);
 	if (TIFFFieldSet(tif,FIELD_TARGETPRINTER))
 		_TIFFprintAsciiTag(fd, "Target Printer", td->td_targetprinter);
-#endif
 	if (TIFFFieldSet(tif,FIELD_THRESHHOLDING)) {
 		fprintf(fd, "  Thresholding: ");
 		switch (td->td_threshholding) {
@@ -317,7 +315,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			break;
 		}
 	}
-#ifdef YCBCR_SUPPORT
 	if (TIFFFieldSet(tif,FIELD_YCBCRSUBSAMPLING))
         {
             /*
@@ -352,7 +349,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		    td->td_ycbcrcoeffs[0],
 		    td->td_ycbcrcoeffs[1],
 		    td->td_ycbcrcoeffs[2]);
-#endif
 	if (TIFFFieldSet(tif,FIELD_HALFTONEHINTS))
 		fprintf(fd, "  Halftone Hints: light %u dark %u\n",
 		    td->td_halftonehints[0], td->td_halftonehints[1]);
@@ -433,7 +429,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		} else
 			fprintf(fd, "(present)\n");
 	}
-#ifdef COLORIMETRY_SUPPORT
 	if (TIFFFieldSet(tif,FIELD_WHITEPOINT))
 		fprintf(fd, "  White Point: %g-%g\n",
 		    td->td_whitepoint[0], td->td_whitepoint[1]);
@@ -466,30 +461,21 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		} else
 			fprintf(fd, "(present)\n");
 	}
-#endif
-#ifdef ICC_SUPPORT
 	if (TIFFFieldSet(tif,FIELD_ICCPROFILE))
 		fprintf(fd, "  ICC Profile: <present>, %lu bytes\n",
 		    (u_long) td->td_profileLength);
-#endif
-#ifdef PHOTOSHOP_SUPPORT
  	if (TIFFFieldSet(tif,FIELD_PHOTOSHOP))
  		fprintf(fd, "  Photoshop Data: <present>, %lu bytes\n",
  		    (u_long) td->td_photoshopLength);
-#endif
-#ifdef IPTC_SUPPORT
  	if (TIFFFieldSet(tif,FIELD_RICHTIFFIPTC))
  		fprintf(fd, "  RichTIFFIPTC Data: <present>, %lu bytes\n",
  		    (u_long) td->td_richtiffiptcLength);
-#endif
-#if SUBIFD_SUPPORT
 	if (TIFFFieldSet(tif, FIELD_SUBIFD)) {
 		fprintf(fd, "  SubIFD Offsets:");
 		for (i = 0; i < td->td_nsubifd; i++)
 			fprintf(fd, " %5lu", (long) td->td_subifd[i]);
 		fputc('\n', fd);
 	}
-#endif
         /*
         ** Custom tag support.
         */
