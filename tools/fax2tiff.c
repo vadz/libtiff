@@ -27,8 +27,19 @@
 /* 
  * Convert a CCITT Group 3 or 4 FAX file to TIFF Group 3 or 4 format.
  */
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>		/* should have atof & getopt */
+
+#if HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#if HAVE_IO_H
+# include <io.h>
+#endif
+
 #include "tiffiop.h"
 
 #ifndef BINMODE
@@ -60,7 +71,7 @@ main(int argc, char* argv[])
 {
 	FILE *in;
 	TIFF *out = NULL;
-	TIFFErrorHandler whandler;
+	TIFFErrorHandler whandler = NULL;
 	int compression_in = COMPRESSION_CCITTFAX3;
 	int compression_out = COMPRESSION_CCITTFAX3;
 	int fillorder_in = FILLORDER_LSB2MSB;
@@ -191,6 +202,8 @@ main(int argc, char* argv[])
 	if (npages < 1)
 		usage();
 
+/* NB: the uint32 casts are to silence certain ANSI-C compilers */
+#define	TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
 	rowbuf = _TIFFmalloc(TIFFhowmany(xsize,8));
 	refbuf = _TIFFmalloc(TIFFhowmany(xsize,8));
 	if (rowbuf == NULL || refbuf == NULL) {
@@ -209,17 +222,17 @@ main(int argc, char* argv[])
 		
 	faxTIFF = TIFFClientOpen("(FakeInput)", "w",
 	/* TIFFClientOpen() fails if we don't set existing value here */
-				 out->tif_clientdata,
-				 out->tif_readproc, out->tif_writeproc,
-				 out->tif_seekproc, out->tif_closeproc,
-				 out->tif_sizeproc,
-				 out->tif_mapproc, out->tif_unmapproc);
+				 TIFFClientdata(out),
+				 TIFFGetReadProc(out), TIFFGetWriteProc(out),
+				 TIFFGetSeekProc(out), TIFFGetCloseProc(out),
+				 TIFFGetSizeProc(out), TIFFGetMapFileProc(out),
+				 TIFFGetUnmapFileProc(out));
 	if (faxTIFF == NULL) {
 		fprintf(stderr, "%s: Can not create fake input file\n",
 		    argv[0]);
 		return (EXIT_FAILURE);
 	}
-	faxTIFF->tif_mode = O_RDONLY;
+	TIFFSetMode(faxTIFF, O_RDONLY);
 	TIFFSetField(faxTIFF, TIFFTAG_IMAGEWIDTH,	xsize);
 	TIFFSetField(faxTIFF, TIFFTAG_SAMPLESPERPIXEL,	1);
 	TIFFSetField(faxTIFF, TIFFTAG_BITSPERSAMPLE,	1);
@@ -242,9 +255,8 @@ main(int argc, char* argv[])
 			    "%s: %s: Can not open\n", argv[0], argv[optind]);
 			continue;
 		}
-		faxTIFF->tif_fd = fileno(in);
-		faxTIFF->tif_clientdata = (thandle_t) faxTIFF->tif_fd;
-		faxTIFF->tif_name = argv[optind];
+                TIFFSetClientdata(faxTIFF, (thandle_t)fileno(in));
+		TIFFSetFileName(faxTIFF, (const char*)argv[optind]);
 		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, xsize);
 		TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 1);
 		TIFFSetField(out, TIFFTAG_COMPRESSION, compression_out);
@@ -426,3 +438,5 @@ usage(void)
 		fprintf(stderr, "%s\n", stuff[i]);
 	exit(EXIT_FAILURE);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
