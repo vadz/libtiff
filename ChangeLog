@@ -2,8 +2,8 @@
 
 	* libtiff/tif_pixarlog.c: Unused variables removed.
 
-	* libtiff/tif_dirread.c: Fixed problem with EstimateStripByteCounts()
-	as per bug
+	* libtiff/{tif_dirread.c, tif_dir.c}: Fixed problem with
+	EstimateStripByteCounts() as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=358
 
@@ -11,6 +11,9 @@
 	64-bit architectures as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=357
+
+	* libtiff/tif_dirinfo.c: TIFFDataWidth() returns 0 in case of
+	unknown data type.
 	
 2003-06-19  Frank Warmerdam  <warmerdam@pobox.com>
 
