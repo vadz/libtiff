@@ -314,58 +314,19 @@ dnl Check for OpenGL and GLUT.
 dnl ---------------------------------------------------------------------------
 
 HAVE_OPENGL=no
-OPENGL_LIBS=""
 
-AC_ARG_ENABLE(opengl, AS_HELP_STRING([--disable-opengl], [disable building OpenGL viewer (enabled by default)]),,)
-AC_ARG_WITH(opengl-include-dir, AS_HELP_STRING([--with-opengl-include-dir=DIR], [location of OpenGL library headers]),,)
-AC_ARG_WITH(opengl-lib-dir,AS_HELP_STRING([--with-opengl-lib-dir=DIR], [location of OpenGL library binary]),,)
-AC_ARG_WITH(glut-include-dir, AS_HELP_STRING([--with-glut-include-dir=DIR], [location of GLUT library headers]),,)
-AC_ARG_WITH(glut-lib-dir, AS_HELP_STRING([--with-glut-lib-dir=DIR], [location of GLUT library binary]),,)
+AC_PATH_XTRA
 
-if test "x$enable_opengl" != "xno" ; then
+AX_CHECK_GL
+AX_CHECK_GLU
+AX_CHECK_GLUT
 
-  if test "x$with_opengl_lib_dir" != "x" ; then
-    LIBS="-L$with_opengl_lib_dir $LIBS"
-  fi
-  AC_CHECK_LIB(GL, glDrawPixels, [opengl_lib=yes], [opengl_lib=no],)
-  if test "$opengl_lib" = "no" -a "x$with_opengl_lib_dir" != "x" ; then
-    AC_MSG_ERROR([OpenGL library not found at $with_opengl_lib_dir])
-  fi
-    
-  if test "x$with_opengl_include_dir" != "x" ; then
-    CPPFLAGS"-I$with_opengl_include_dir $CPPFLAGS"
-  fi
-  AC_CHECK_HEADER(GL/gl.h, [opengl_h=yes], [opengl_h=no])
-  if test "$opengl_h" = "no" -a "x$with_opengl_include_dir" != "x" ; then
-    AC_MSG_ERROR([OpenGL library headers not found at $with_opengl_include_dir])
-  fi
-
-  if test "x$with_glut_lib_dir" != "x" ; then
-    LIBS="-L$with_glut_lib_dir $LIBS"
-  fi
-  AC_CHECK_LIB(glut, glutInit, [glut_lib=yes], [glut_lib=no],)
-  if test "$glut_lib" = "no" -a "x$with_glut_lib_dir" != "x" ; then
-    AC_MSG_ERROR([GLUT library not found at $with_glut_lib_dir])
-  fi
-    
-  if test "x$with_glut_include_dir" != "x" ; then
-    CPPFLAGS="-I$with_glut_include_dir $CPPFLAGS"
-  fi
-  AC_CHECK_HEADER(GL/glut.h, [glut_h=yes], [glut_h=no])
-  if test "$glut_h" = "no" -a "x$with_glut_include_dir" != "x" ; then
-    AC_MSG_ERROR([GLUT library headers not found at $with_glut_include_dir])
-  fi
-
-  if test "$opengl_lib" = "yes" -a "$opengl_h" = "yes" \
-          -a "$glut_lib" = "yes" -a "$glut_h" = "yes" ; then
-    HAVE_OPENGL=yes
-    OPENGL_LIBS="-lGL -lglut"
-  fi
-
+if test "$no_x" != "yes" -a "$no_gl" != "yes" \
+	-a "$no_glu" != "yes" -a "$no_glut" != "yes" ; then
+  HAVE_OPENGL=yes
 fi
 
 AM_CONDITIONAL(HAVE_OPENGL, test "$HAVE_OPENGL" = "yes")
-AC_SUBST(OPENGL_LIBS)
 
 dnl ===========================================================================
 dnl ``Orthogonal Features''

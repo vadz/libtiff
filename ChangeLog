@@ -1,3 +1,8 @@
+2004-09-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac, acinclude.m4, aclocal.m4: New macros to detect GLUT
+	libraries.
+
 2004-09-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Pass library configuration defines via
