@@ -169,7 +169,9 @@ typedef	enum {
 #define	    COMPRESSION_NONE		1	/* dump mode */
 #define	    COMPRESSION_CCITTRLE	2	/* CCITT modified Huffman RLE */
 #define	    COMPRESSION_CCITTFAX3	3	/* CCITT Group 3 fax encoding */
+#define     COMPRESSION_CCITT_T4        3       /* CCITT T.4 (TIFF 6 name) */
 #define	    COMPRESSION_CCITTFAX4	4	/* CCITT Group 4 fax encoding */
+#define     COMPRESSION_CCITT_T6        4       /* CCITT T.6 (TIFF 6 name) */
 #define	    COMPRESSION_LZW		5       /* Lempel-Ziv  & Welch */
 #define	    COMPRESSION_OJPEG		6	/* !6.0 JPEG */
 #define	    COMPRESSION_JPEG		7	/* %JPEG DCT compression */
@@ -249,10 +251,12 @@ typedef	enum {
 #define	    GRAYRESPONSEUNIT_100000S	5	/* hundred-thousandths */
 #define	TIFFTAG_GRAYRESPONSECURVE	291	/* $gray scale response curve */
 #define	TIFFTAG_GROUP3OPTIONS		292	/* 32 flag bits */
+#define	TIFFTAG_T4OPTIONS		292	/* TIFF 6.0 proper name alias */
 #define	    GROUP3OPT_2DENCODING	0x1	/* 2-dimensional coding */
 #define	    GROUP3OPT_UNCOMPRESSED	0x2	/* data not compressed */
 #define	    GROUP3OPT_FILLBITS		0x4	/* fill to byte boundary */
 #define	TIFFTAG_GROUP4OPTIONS		293	/* 32 flag bits */
+#define TIFFTAG_T6OPTIONS               293     /* TIFF 6.0 proper name */
 #define	    GROUP4OPT_UNCOMPRESSED	0x2	/* data not compressed */
 #define	TIFFTAG_RESOLUTIONUNIT		296	/* units of resolutions */
 #define	    RESUNIT_NONE		1	/* no meaningful units */
