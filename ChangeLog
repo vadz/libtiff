@@ -1,3 +1,22 @@
+2003-06-18  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcmp.c, man/tiffcmp.1: Fixed problem with unused data
+	comparing as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=349
+
+	`-z' option now can be used to set the number of reported different
+	bytes.
+	
+2003-06-09  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcp.c, man/tiffcp.1: Added possibility to specify value -1
+	to -r option to get the entire image as one strip. See
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=343
+
+	for details.
+
 2003-06-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Set the correct RowsPerStrip and PageNumber
