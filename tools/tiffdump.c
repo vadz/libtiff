@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 #if HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
@@ -255,7 +259,7 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 	TIFFDirEntry *dir = 0;
 	uint16 dircount;
 	int space;
-	off_t nextdiroff = 0;
+	uint32 nextdiroff = 0;
 
 	if (off == 0)			/* no more directories */
 		goto done;
@@ -287,8 +291,7 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 	if (swabflag)
 		TIFFSwabLong(&nextdiroff);
 	printf("Directory %u: offset %lu (%#lx) next %lu (%#lx)\n", ix,
-	    (unsigned long) off, (unsigned long) off,
-	    (unsigned long) nextdiroff, (unsigned long) nextdiroff);
+	    (unsigned long) off, (unsigned long) off, nextdiroff, nextdiroff);
 	for (dp = dir, n = dircount; n > 0; n--, dp++) {
 		if (swabflag) {
 			TIFFSwabArrayOfShort(&dp->tdir_tag, 2);
@@ -339,7 +342,7 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 		} else {
 			unsigned char *data = (unsigned char *)_TIFFmalloc(space);
 			if (data) {
-				if (TIFFFetchData(fd, dp, data))
+				if (TIFFFetchData(fd, dp, data)) {
 					if (dp->tdir_count > maxitems) {
 						PrintData(stdout, dp->tdir_type,
 						    maxitems, data);
@@ -347,6 +350,7 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 					} else
 						PrintData(stdout, dp->tdir_type,
 						    dp->tdir_count, data);
+                                }
 				_TIFFfree(data);
 			} else
 				Error("No space for data for tag %u",
@@ -742,3 +746,5 @@ Fatal(const char* fmt, ...)
 	va_end(ap);
 	exit(-1);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
