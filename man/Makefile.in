@@ -98,6 +98,7 @@ MANTOOLS=\
 	apps/thumbnail.1 \
 	apps/tiff2bw.1 \
 	apps/tiff2rgba.1 \
+	apps/tiff2pdf.1 \
 	apps/tiff2ps.1 \
 	apps/tiffcmp.1 \
 	apps/tiffcp.1 \
@@ -237,6 +238,7 @@ apps/sgi2tiff.1::	${SRCDIR}/sgi2tiff.1;	${MANCVT}
 apps/thumbnail.1::	${SRCDIR}/thumbnail.1;	${MANCVT}
 apps/tiff2bw.1::	${SRCDIR}/tiff2bw.1;	${MANCVT}
 apps/tiff2rgba.1::	${SRCDIR}/tiff2rgba.1;	${MANCVT}
+apps/tiff2pdf.1::	${SRCDIR}/tiff2pdf.1;	${MANCVT}
 apps/tiff2ps.1::	${SRCDIR}/tiff2ps.1;	${MANCVT}
 apps/tiffcmp.1::	${SRCDIR}/tiffcmp.1;	${MANCVT}
 apps/tiffcp.1::		${SRCDIR}/tiffcp.1;	${MANCVT}

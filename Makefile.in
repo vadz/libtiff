@@ -238,6 +238,7 @@ TIFFFILES=\
 	    man/thumbnail.1			\
 	    man/tiff2bw.1			\
 	    man/tiff2rgba.1			\
+	    man/tiff2pdf.1			\
 	    man/tiff2ps.1			\
 	    man/tiffcmp.1			\
 	    man/tiffcp.1			\
@@ -383,6 +384,7 @@ TIFFFILES=\
 	    html/man/sgi2tiff.1.html				\
 	    html/man/thumbnail.1.html				\
 	    html/man/tiff2bw.1.html				\
+	    html/man/tiff2pdf.1.html				\
 	    html/man/tiff2ps.1.html				\
 	    html/man/tiff2rgba.1.html				\
 	    html/man/tiffcmp.1.html				\

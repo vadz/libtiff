@@ -1,3 +1,13 @@
+2003-11-27  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_luv.c: Fixed bug in 48-bit to 24-bit conversion routine,
+	reported by Antonio Scuri.
+
+	* man/tiff2pdf.1: Few improvements in page layout.
+
+	* Makefile.in, /man/Makefile.in, /html/man/tiff2pdf.1.html:
+	 Added support fpr tiff2pdf manual page.
+
 2003-11-26 Ross Finlayson  <libtiff@apexinternetsoftware.com>
 
 	* /man/tiff2pdf.1:  File added to repository.
