@@ -433,9 +433,11 @@ CONTRIBFILES=\
 	contrib/win32/README			\
 	    contrib/win32/dllshell.c		\
 	    contrib/win32/libtiff.def		\
-	contrib/win95/README			\
-	    contrib/win95/Makefile.w95		\
-	    contrib/win95/tiff2dib.c		\
+	contrib/win_dib/README.tiff2dib		\
+	    contrib/win_dib/Makefile.w95	\
+	    contrib/win_dib/tiff2dib.c		\
+	    contrib/win_dib/README.Tiffile	\
+	    contrib/win_dib/Tiffile.cpp		\
 	contrib/winnt/README			\
 	    contrib/winnt/README.console	\
 	    contrib/winnt/fax3sm.c		\
