@@ -1,3 +1,8 @@
+2002-09-15  Andrey Kiselev  <dron@remotesensing.org>
+
+	* Makefile.in, /man/{raw2tiff.1, Makefile.in, libtiff.3}: Added
+	manual page for raw2tiff(1) tool.
+	
 2002-09-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* /libtiff/{tiffio.h, tif_dir.h}: TIFFDataWidth() declaration moved to

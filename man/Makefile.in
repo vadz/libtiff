@@ -92,6 +92,7 @@ MANTOOLS=\
 	apps/pal2rgb.1 \
 	apps/ppm2tiff.1 \
 	apps/ras2tiff.1 \
+	apps/raw2tiff.1 \
 	apps/rgb2ycbcr.1 \
 	apps/sgi2tiff.1 \
 	apps/thumbnail.1 \
@@ -227,6 +228,7 @@ apps/gif2tiff.1::	${SRCDIR}/gif2tiff.1;	${MANCVT}
 apps/pal2rgb.1::	${SRCDIR}/pal2rgb.1;	${MANCVT}
 apps/ppm2tiff.1::	${SRCDIR}/ppm2tiff.1;	${MANCVT}
 apps/ras2tiff.1::	${SRCDIR}/ras2tiff.1;	${MANCVT}
+apps/raw2tiff.1::	${SRCDIR}/raw2tiff.1;	${MANCVT}
 apps/rgb2ycbcr.1::	${SRCDIR}/rgb2ycbcr.1;	${MANCVT}
 apps/sgi2tiff.1::	${SRCDIR}/sgi2tiff.1;	${MANCVT}
 apps/thumbnail.1::	${SRCDIR}/thumbnail.1;	${MANCVT}

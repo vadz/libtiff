@@ -229,6 +229,7 @@ TIFFFILES=\
 	    man/pal2rgb.1			\
 	    man/ppm2tiff.1			\
 	    man/ras2tiff.1			\
+	    man/raw2tiff.1			\
 	    man/rgb2ycbcr.1			\
 	    man/sgi2tiff.1			\
 	    man/thumbnail.1			\
