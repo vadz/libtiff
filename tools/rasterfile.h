@@ -15,6 +15,7 @@ struct rasterfile {
 	/* color map follows for ras_maplength bytes, followed by image */
 };
 #define	RAS_MAGIC	0x59a66a95
+#define	RAS_MAGIC_INV	0x956aa659
 
 	/* Sun supported ras_type's */
 #define RT_OLD		0	/* Raw pixrect image in 68000 byte order */

@@ -90,7 +90,7 @@ main(int argc, char* argv[])
 		fprintf(stderr, "%s: Can not read header.\n", argv[optind]);
 		return (-2);
 	}
-	if (h.ras_magic != RAS_MAGIC) {
+	if (h.ras_magic != RAS_MAGIC && h.ras_magic != RAS_MAGIC_INV) {
 		fprintf(stderr, "%s: Not a rasterfile.\n", argv[optind]);
 		return (-3);
 	}
