@@ -1148,8 +1148,6 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
           downsampled_output = TRUE; /* Tentative default */
         switch (sp->photometric) /* default color-space translation */
           {
-            case PHOTOMETRIC_MINISBLACK: in_color_space = JCS_GRAYSCALE;
-                                         break;
             case PHOTOMETRIC_RGB       : in_color_space = JCS_RGB;
                                          break;
             case PHOTOMETRIC_SEPARATED : in_color_space = JCS_CMYK;
@@ -1383,15 +1381,16 @@ OJPEGPreDecode(register TIFF *tif,tsample_t s)
                 TIFFError(module,bad_factors);
                 return 0;
               };
-            ci = 1; /* The rest should have sampling factors 1,1 */
-            do if (   sp->cinfo.d.comp_info[ci].h_samp_factor != 1
-                   || sp->cinfo.d.comp_info[ci].v_samp_factor != 1
-                  )
-                 {
-                   TIFFError(module,bad_factors);
-                   return 0;
-                 }
-            while (++ci < sp->cinfo.d.num_components);
+            ci = 0; /* The rest should have sampling factors 1,1 */
+            while( ++ci < sp->cinfo.d.num_components)
+            {
+                if( sp->cinfo.d.comp_info[ci].h_samp_factor != 1
+                    || sp->cinfo.d.comp_info[ci].v_samp_factor != 1 )
+                {
+                    TIFFError(module,bad_factors);
+                    return 0;
+                }
+            }
           }
         else
 
