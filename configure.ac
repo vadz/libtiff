@@ -356,8 +356,8 @@ dnl ---------------------------------------------------------------------------
 dnl Check for C++.
 dnl ---------------------------------------------------------------------------
 
-AC_ARG_ENABLE(c++,
-	      AS_HELP_STRING([--enable-c++],
+AC_ARG_ENABLE(cxx,
+	      AS_HELP_STRING([--enable-cxx],
 			     [enable C++ stream API building (requires C++ compiler)]),
 	      [HAVE_CXX=$enableval], [HAVE_CXX=yes])
 

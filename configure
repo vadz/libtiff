@@ -1060,7 +1060,7 @@ Optional Features:
   --enable-old-jpeg       enable support for Old JPEG compresson (read
                           contrib/ojpeg/README first! Compilation fails with
                           unpatched IJG JPEG library)
-  --enable-c++            enable C++ stream API building (requires C++
+  --enable-cxx            enable C++ stream API building (requires C++
                           compiler)
   --disable-strip-chopping
                           disable support for strip chopping (whether or not
@@ -23715,9 +23715,9 @@ else
 fi
 
 
-# Check whether --enable-c++ or --disable-c++ was given.
-if test "${enable_c+++set}" = set; then
-  enableval="$enable_c++"
+# Check whether --enable-cxx or --disable-cxx was given.
+if test "${enable_cxx+set}" = set; then
+  enableval="$enable_cxx"
   HAVE_CXX=$enableval
 else
   HAVE_CXX=yes
