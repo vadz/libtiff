@@ -136,8 +136,12 @@ TIFFReadEncodedStrip(TIFF* tif, tstrip_t strip, tdata_t buf, tsize_t size)
 	 * rows in the strip (check for truncated last strip on any
          * of the separations).
 	 */
-        strips_per_sep = (td->td_imagelength+td->td_rowsperstrip-1)
-            / td->td_rowsperstrip;
+        if( td->td_rowsperstrip >= td->td_imagelength )
+            strips_per_sep = 1;
+        else
+            strips_per_sep = (td->td_imagelength+td->td_rowsperstrip-1)
+                / td->td_rowsperstrip;
+
         sep_strip = strip % strips_per_sep;
 
 	if (sep_strip != strips_per_sep-1 ||

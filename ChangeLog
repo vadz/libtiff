@@ -1,3 +1,8 @@
+2000-08-14  Frank Warmerdam  <warmerda@rommel.atlsci.com>
+
+	* tif_read.c: fixed up bug with files missing rowsperstrip and
+	the strips per separation fix done a few weeks ago.
+
 2000-07-17  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* Tentatively added support for SAMPLEFORMAT_COMPLEXIEEEFP, and
