@@ -57,6 +57,8 @@ EXPORTS TIFFOpen
 	TIFFReadRawStrip
 	TIFFReadEncodedTile
 	TIFFReadRawTile
+	TIFFReadRGBATile
+	TIFFReadRGBAStrip
 	TIFFWriteEncodedStrip
 	TIFFWriteRawStrip
 	TIFFWriteEncodedTile
@@ -66,12 +68,17 @@ EXPORTS TIFFOpen
 	TIFFSwabLong
 	TIFFSwabArrayOfShort
 	TIFFSwabArrayOfLong
+	TIFFSwabArrayOfDouble
 	TIFFReverseBits
 	TIFFGetBitRevTable
+	TIFFDefaultStripSize
+	TIFFDefaultTileSize
+	TIFFRasterScanlineSize
 	_TIFFmalloc
 	_TIFFrealloc
 	_TIFFfree
 	_TIFFmemset
 	_TIFFmemcpy
 	_TIFFmemcmp
+
 
