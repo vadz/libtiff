@@ -1,3 +1,8 @@
+2004-09-02  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Use memcpy() function instead of pointer
+	assigning magic in TIFFFetchFloat().
+
 2004-09-01  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tiffio.h, tif_open.c}: Applied patches from Joris Van Damme
