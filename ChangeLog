@@ -1,3 +1,7 @@
+2003-11-25  Ross Finlayson  <libtiff@apexinternetsoftware.com>
+
+	* /tools/tiff2pdf.c:  File added to repository.
+
 2003-11-22  Andrey Kiselev  <dron@remotesensing.org>
 
 	* /tools/raw2tiff.c: sqrtf() replaced with sqrt().
