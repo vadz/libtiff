@@ -62,7 +62,7 @@ TIFFComputeTile(TIFF* tif, uint32 x, uint32 y, uint32 z, tsample_t s)
 			     xpt*(y/dy) +
 			     x/dx;
 		else
-			tile = (xpt*ypt)*(z/dz) + xpt*(y/dy) + x/dx + s;
+			tile = (xpt*ypt)*(z/dz) + xpt*(y/dy) + x/dx;
 	}
 	return (tile);
 }
