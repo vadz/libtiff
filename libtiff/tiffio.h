@@ -284,7 +284,7 @@ extern	int TIFFReadScanline(TIFF*, tdata_t, uint32, tsample_t = 0);
 extern	int TIFFWriteScanline(TIFF*, tdata_t, uint32, tsample_t = 0);
 extern	int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int = 0);
 extern	int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*,
-				      int = ORIENTATION_BOTTOMLEFT, int = 0);
+				      int = ORIENTATION_BOTLEFT, int = 0);
 #else
 extern	void TIFFPrintDirectory(TIFF*, FILE*, long);
 extern	int TIFFReadScanline(TIFF*, tdata_t, uint32, tsample_t);
