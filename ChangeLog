@@ -1,3 +1,9 @@
+2004-09-13  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiff.h: Fix column tagging. Reference current Adobe XMP
+	specification. Reference libtiff bug tracking system to submit
+	private tag additions.
+
 2004-09-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffgt.c: Include "tif_config.h".
