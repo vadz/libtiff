@@ -137,7 +137,7 @@ newfilename(void)
 static int
 tiffcp(TIFF* in, TIFF* out)
 {
-	short bitspersample, samplesperpixel, shortv, *shortav;
+	uint16 bitspersample, samplesperpixel, compression, shortv, *shortav;
 	uint32 w, l;
 	float floatv;
 	char *stringv;
@@ -149,13 +149,18 @@ tiffcp(TIFF* in, TIFF* out)
 	CopyField(TIFFTAG_IMAGEWIDTH, w);
 	CopyField(TIFFTAG_IMAGELENGTH, l);
 	CopyField(TIFFTAG_BITSPERSAMPLE, bitspersample);
-	CopyField(TIFFTAG_COMPRESSION, shortv);
+	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
+	CopyField(TIFFTAG_COMPRESSION, compression);
+	if (compression == COMPRESSION_JPEG) {
+		uint16 count;
+		void *table;
+		TIFFGetField(in, TIFFTAG_JPEGTABLES, &count, &table);
+		TIFFSetField(out, TIFFTAG_JPEGTABLES, count, table);
+	}
 	CopyField(TIFFTAG_PREDICTOR, shortv);
-	CopyField(TIFFTAG_PHOTOMETRIC, shortv);
 	CopyField(TIFFTAG_THRESHHOLDING, shortv);
 	CopyField(TIFFTAG_FILLORDER, shortv);
 	CopyField(TIFFTAG_ORIENTATION, shortv);
-	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
 	CopyField(TIFFTAG_MINSAMPLEVALUE, shortv);
 	CopyField(TIFFTAG_MAXSAMPLEVALUE, shortv);
 	CopyField(TIFFTAG_XRESOLUTION, floatv);
