@@ -1,3 +1,13 @@
+2001-04-05  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tiffio.h: removed C++ style comment.
+
+	* configure: fixed up SCRIPT_SH/SHELL handling.
+
+	* Makefile.in: Fixed SCRIPT_SH/SHELL handling.
+
+	* config.guess: documented more variables as per bug 40.
+
 2001-04-03  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* configure, *Makefile.in: Various changes to improve configuration
