@@ -1357,6 +1357,10 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_JPEGTABLESMODE:
 		sp->jpegtablesmode = va_arg(ap, int);
 		return (1);			/* pseudo tag */
+	case TIFFTAG_YCBCRSUBSAMPLING:
+                /* mark the fact that we have a real ycbcrsubsampling! */
+		sp->ycbcrsampling_fetched = 1;
+		return (*sp->vsetparent)(tif, tag, ap);
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
@@ -1386,10 +1390,6 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
  *    loaded just to get the tags right, even if the imagery is never read.
  *    It would be more efficient to just load a bit of the header, and
  *    initialize things from that. 
- *  o This code doesn't know whether or not the tag actually did occur in
- *    the file.  If it knew this it could skip the hack but this is hard to
- *    know since we have already set the "field set" bit for the subsampling
- *    TIFFInitJPEG().
  *
  * See the bug in bugzilla for details:
  *
@@ -1411,7 +1411,8 @@ JPEGFixupTestSubsampling( TIFF * tif )
      * jpeg data to get the sampling.  
      */
     if( !sp->cinfo.comm.is_decompressor 
-        || sp->ycbcrsampling_fetched  )
+        || sp->ycbcrsampling_fetched  
+        || sp->photometric != PHOTOMETRIC_YCBCR )
         return;
 
     sp->ycbcrsampling_fetched = 1;
