@@ -29,7 +29,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.5  2004-06-05 09:05:26  dron
+ * Revision 1.6  2004-06-07 09:05:09  dron
+ * Forgotten debug output removed.
+ *
+ * Revision 1.5  2004/06/05 09:05:26  dron
  * tiffset now can set any libtiff supported tags. Tags can be supplied by the
  * mnemonic name or number.
  *
@@ -174,10 +177,7 @@ main(int argc, char* argv[])
                     case TIFF_SRATIONAL:
                     case TIFF_DOUBLE:
                         for (i = 0; i < fip->field_writecount; i++)
-                        {
                             ((double *)array)[i] = atof(argv[arg_index+i]);
-                            printf("%f\n", ((double *)array)[i]);
-                        }
                         break;
                     case TIFF_FLOAT:
                         for (i = 0; i < fip->field_writecount; i++)
