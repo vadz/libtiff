@@ -27,9 +27,12 @@ LIBTIFF = -L$(top_builddir)/libtiff -ltiff
 
 #EXTRA_DIST = Makefile.vc
 
-TESTS = $(bin_PROGRAMS)
+TESTS = $(check_PROGRAMS)
 
-bin_PROGRAMS =
+check_PROGRAMS = ascii_tag
+
+ascii_tag_SOURCES = ascii_tag.c
+ascii_tag_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
