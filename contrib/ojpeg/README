@@ -14,3 +14,10 @@ necessary:
 
 
 OJPEG support implemented by Scott Marovich at HP (marovich@hpl.hp.com).
+
+---
+
+For notes on further improved JPEG-in-TIFF support also see the following
+bug in bugzilla:
+
+  http://bugzilla.remotesensing.org/show_bug.cgi?id=156
