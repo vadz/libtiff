@@ -1,4 +1,9 @@
-2003-10-16  Andrey Kiselev  <dron@remotesensing.org>
+22003-10-18  Andrey Kiselev  <dron@remotesensing.org>
+
+	* /tools/tiff2ps.c: #include <strings.h> replaced with the
+	#include <string.h>.
+
+003-10-16  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in: Add an absolute path to the test_pics.sh call.
 
