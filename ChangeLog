@@ -1,3 +1,11 @@
+2000-01-28    <warmerda@CS46980-B>
+
+	* tentatively changed toff_t to be unsigned instead of signed to
+	  facilitate support for 2-4GB files. 
+
+	* Updated a variety of files to use toff_t.  Fixed some mixups
+	  between toff_t and tsize_t.
+
 Fri Jan 28 10:13:49 2000  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Largely reimplemented contrib/addtiffo to avoid temp files, 
