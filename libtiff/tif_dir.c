@@ -971,6 +971,24 @@ TIFFSetTagExtender(TIFFExtendProc extender)
 }
 
 /*
+ * Setup for a new directory.  Should we automatically call
+ * TIFFWriteDirectory() if the current one is dirty?
+ *
+ * The newly created directory will not exist on the file till
+ * TIFFWriteDirectory(), TIFFFlush() or TIFFClose() is called.
+ */
+int
+TIFFCreateDirectory(TIFF* tif)
+{
+	TIFFDefaultDirectory(tif);
+	tif->tif_diroff = 0;
+        tif->tif_nextdiroff = 0;
+	tif->tif_curoff = 0;
+	tif->tif_row = (uint32) -1;
+	tif->tif_curstrip = (tstrip_t) -1;
+}
+
+/*
  * Setup a default directory structure.
  */
 int
