@@ -6,12 +6,12 @@ pal2rgb
 ppm2tiff
 ras2tiff
 rgb2ycbcr
-thumbnail
+tumbnail
 tiff2bw
 tiff2ps
 tiff2rgba
 tiffcp
-tiffcmp
+tiffcp
 tiffdither
 tiffdump
 tiffinfo
