@@ -40,6 +40,14 @@ class tiffis_data
         long	myStreamStartPos;
 };
 
+class tiffos_data
+{
+  public:
+
+	ostream	*myOS;
+	long	myStreamStartPos;
+};
+
 static tsize_t
 _tiffosReadProc(thandle_t, tdata_t, tsize_t)
 {
@@ -59,8 +67,9 @@ _tiffisReadProc(thandle_t fd, tdata_t buf, tsize_t size)
 static tsize_t
 _tiffosWriteProc(thandle_t fd, tdata_t buf, tsize_t size)
 {
-	ostream	*os = (ostream *)fd;
-	int	pos = os->tellp();
+	tiffos_data	*data = (tiffos_data *)fd;
+	ostream		*os = data->myOS;
+	int		pos = os->tellp();
 
 	os->write((const char *)buf, size);
 
@@ -76,11 +85,16 @@ _tiffisWriteProc(thandle_t, tdata_t, tsize_t)
 static toff_t
 _tiffosSeekProc(thandle_t fd, toff_t off, int whence)
 {
-	ostream	*os = (ostream *)fd;
+	tiffos_data	*data = (tiffos_data *)fd;
+	ostream	*os = data->myOS;
+
+	// if the stream has already failed, don't do anything
+	if( os->fail() )
+		return os->tellp();
 
 	switch(whence) {
 	case SEEK_SET:
-		os->seekp(off, ios::beg);
+	    os->seekp(data->myStreamStartPos + off, ios::beg);
 		break;
 	case SEEK_CUR:
 		os->seekp(off, ios::cur);
@@ -88,6 +102,50 @@ _tiffosSeekProc(thandle_t fd, toff_t off, int whence)
 	case SEEK_END:
 		os->seekp(off, ios::end);
 		break;
+	}
+
+	// Attempt to workaround problems with seeking past the end of the
+	// stream.  ofstream doesn't have a problem with this but
+	// ostrstream/ostringstream does. In that situation, add intermediate
+	// '\0' characters.
+	if( os->fail() ) {
+		ios_base::iostate   old_state;
+		toff_t		    origin;
+
+		old_state = os->rdstate();
+		// reset the fail bit or else tellp() won't work below
+		os->clear(os->rdstate() & ~ios::failbit);
+		switch( whence ) {
+			case SEEK_SET:
+				origin = data->myStreamStartPos;
+				break;
+			case SEEK_CUR:
+				origin = os->tellp();
+				break;
+			case SEEK_END:
+				os->seekp(0, ios::end);
+				origin = os->tellp();
+				break;
+		}
+		// restore original stream state
+		os->clear(old_state);	
+
+		// only do something if desired seek position is valid
+		if( origin + off > data->myStreamStartPos ) {
+			toff_t	num_fill;
+
+			// clear the fail bit 
+			os->clear(os->rdstate() & ~ios::failbit);
+
+			// extend the stream to the expected size
+			os->seekp(0, ios::end);
+			num_fill = origin + off - (toff_t)os->tellp();
+			for( toff_t i = 0; i < num_fill; i++ )
+				os->put('\0');
+
+			// retry the seek
+			os->seekp(origin + off, ios::beg);
+		}
 	}
 
 	return os->tellp();
@@ -116,9 +174,10 @@ _tiffisSeekProc(thandle_t fd, toff_t off, int whence)
 static toff_t
 _tiffosSizeProc(thandle_t fd)
 {
-	ostream	*os = (ostream *)fd;
-	int	pos = os->tellp();
-	int	len;
+	tiffos_data	*data = (tiffos_data *)fd;
+	ostream		*os = data->myOS;
+	toff_t		pos = os->tellp();
+	toff_t		len;
 
 	os->seekp(0, ios::end);
 	len = os->tellp();
@@ -145,6 +204,7 @@ static int
 _tiffosCloseProc(thandle_t fd)
 {
 	// Our stream was not allocated by us, so it shouldn't be closed by us.
+	delete (tiffos_data *)fd;
 	return 0;
 }
 
@@ -176,22 +236,28 @@ _tiffStreamOpen(const char* name, const char* mode, void *fd)
 	TIFF*	tif;
 
 	if( strchr(mode, 'w') ) {
-	    // Open for writing.
-	    tif = TIFFClientOpen(name, mode,
-		(thandle_t) fd,
-		_tiffosReadProc, _tiffosWriteProc,
-		_tiffosSeekProc, _tiffosCloseProc, _tiffosSizeProc,
-		_tiffDummyMapProc, _tiffDummyUnmapProc);
+		tiffos_data	*data = new tiffos_data;
+		data->myOS = (ostream *)fd;
+		data->myStreamStartPos = data->myOS->tellp();
+
+		// Open for writing.
+		tif = TIFFClientOpen(name, mode,
+				(thandle_t) data,
+				_tiffosReadProc, _tiffosWriteProc,
+				_tiffosSeekProc, _tiffosCloseProc,
+				_tiffosSizeProc,
+				_tiffDummyMapProc, _tiffDummyUnmapProc);
 	} else {
-	    tiffis_data	*data = new tiffis_data;
-	    data->myIS = (istream *)fd;
-	    data->myStreamStartPos = data->myIS->tellg();
-	    // Open for reading.
-	    tif = TIFFClientOpen(name, mode,
-		(thandle_t) data,
-		_tiffisReadProc, _tiffisWriteProc,
-		_tiffisSeekProc, _tiffisCloseProc, _tiffisSizeProc,
-		_tiffDummyMapProc, _tiffDummyUnmapProc);
+		tiffis_data	*data = new tiffis_data;
+		data->myIS = (istream *)fd;
+		data->myStreamStartPos = data->myIS->tellg();
+		// Open for reading.
+		tif = TIFFClientOpen(name, mode,
+				(thandle_t) data,
+				_tiffisReadProc, _tiffisWriteProc,
+				_tiffisSeekProc, _tiffisCloseProc,
+				_tiffisSizeProc,
+				_tiffDummyMapProc, _tiffDummyUnmapProc);
 	}
 
 	return (tif);
@@ -200,14 +266,23 @@ _tiffStreamOpen(const char* name, const char* mode, void *fd)
 TIFF*
 TIFFStreamOpen(const char* name, ostream *os)
 {
-	// NB: We don't support mapped files with streams
+	// If os is either a ostrstream or ostringstream, and has no data
+	// written to it yet, then tellp() will return -1 which will break us.
+	// We workaround this by writing out a dummy character and
+	// then seek back to the beginning.
+	if( !os->fail() && (int)os->tellp() < 0 ) {
+		*os << '\0';
+		os->seekp(0);
+	}
+
+	// NB: We don't support mapped files with streams so add 'm'
 	return _tiffStreamOpen(name, "wm", os);
 }
 
 TIFF*
 TIFFStreamOpen(const char* name, istream *is)
 {
-	// NB: We don't support mapped files with streams
+	// NB: We don't support mapped files with streams so add 'm'
 	return _tiffStreamOpen(name, "rm", is);
 }
 
