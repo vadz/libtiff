@@ -3,7 +3,12 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.9  2004-06-04 13:46:25  dron
+ * Revision 1.10  2004-08-20 19:23:25  dron
+ * Applied patch from Ross Finlayson that checks that the input file has
+ * compression, photometric interpretation, etcetra, tags or if not than a more
+ * descriptive error is returned.
+ *
+ * Revision 1.9  2004/06/04 13:46:25  dron
  * Avoid warnings.
  *
  * Revision 1.8  2004/05/26 09:24:07  dron
@@ -1236,8 +1241,16 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		return;
 	}
 
-	TIFFGetField(input, TIFFTAG_COMPRESSION, &(t2p->tiff_compression));
-	if( TIFFIsCODECConfigured(t2p->tiff_compression) == 0){
+        if(TIFFGetField(input, TIFFTAG_COMPRESSION, &(t2p->tiff_photometric)) == 0){
+                TIFFError(
+                        TIFF2PDF_MODULE, 
+                        "No support for %s with no compression tag", 
+                        TIFFFileName(input)     );
+                t2p->t2p_error = T2P_ERR_ERROR;
+                return;
+
+        }
+        if( TIFFIsCODECConfigured(t2p->tiff_compression) == 0){
 		TIFFError(
 			TIFF2PDF_MODULE, 
 			"No support for %s with compression type %u:  not configured", 
@@ -1311,7 +1324,15 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 	
 	TIFFGetField(input, TIFFTAG_FILLORDER, &(t2p->tiff_fillorder));
 	
-	TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &(t2p->tiff_photometric));
+        if(TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &(t2p->tiff_photometric)) == 0){
+                TIFFError(
+                        TIFF2PDF_MODULE, 
+                        "No support for %s with no photometric interpretation tag", 
+                        TIFFFileName(input)     );
+                t2p->t2p_error = T2P_ERR_ERROR;
+                return;
+
+        }
 	switch(t2p->tiff_photometric){
 		case PHOTOMETRIC_MINISWHITE:
 		case PHOTOMETRIC_MINISBLACK: 
@@ -1405,7 +1426,8 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				_TIFFfree(t2p->pdf_palette);
 				t2p->pdf_palette=NULL;
 			}
-			t2p->pdf_palette = (char*) _TIFFmalloc(t2p->pdf_palettesize*3);
+			t2p->pdf_palette = (unsigned char*)
+				_TIFFmalloc(t2p->pdf_palettesize*3);
 			if(t2p->pdf_palette==NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
@@ -1474,7 +1496,8 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				_TIFFfree(t2p->pdf_palette);
 				t2p->pdf_palette=NULL;
 			}
-			t2p->pdf_palette = (char*) _TIFFmalloc(t2p->pdf_palettesize*4);
+			t2p->pdf_palette = (unsigned char*) 
+				_TIFFmalloc(t2p->pdf_palettesize*4);
 			if(t2p->pdf_palette==NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
@@ -1581,19 +1604,26 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		}
 	}
 
-	TIFFGetField(input, TIFFTAG_ORIENTATION, &(t2p->tiff_orientation) );
-	if(t2p->tiff_orientation>8){
-			TIFFWarning(
-				TIFF2PDF_MODULE, 
-				"Image %s has orientation %u, assuming 0", 
-				TIFFFileName(input),
-				t2p->tiff_orientation);
-			t2p->tiff_orientation=0;
-	}
+        if(TIFFGetField(input, TIFFTAG_ORIENTATION, &(t2p->tiff_orientation) ) != 0){
+                if(t2p->tiff_orientation>8){
+                        TIFFWarning(
+                                TIFF2PDF_MODULE, 
+                                "Image %s has orientation %u, assuming 0", 
+                                TIFFFileName(input),
+                                t2p->tiff_orientation);
+                        t2p->tiff_orientation=0;
+                }
+        } else {
+                t2p->tiff_orientation=0;
+        }
 
-	TIFFGetField(input, TIFFTAG_XRESOLUTION, &(t2p->tiff_xres) );
-	TIFFGetField(input, TIFFTAG_YRESOLUTION, &(t2p->tiff_yres) );
-	TIFFGetField(input, TIFFTAG_RESOLUTIONUNIT, &(t2p->tiff_resunit) );
+        if(TIFFGetField(input, TIFFTAG_XRESOLUTION, &(t2p->tiff_xres) ) == 0){
+                t2p->tiff_xres=0.0;
+        }
+        if(TIFFGetField(input, TIFFTAG_YRESOLUTION, &(t2p->tiff_yres) ) == 0){
+                t2p->tiff_yres=0.0;
+        }
+	TIFFGetFieldDefaulted(input, TIFFTAG_RESOLUTIONUNIT, &(t2p->tiff_resunit) );
 	if(t2p->tiff_resunit==RESUNIT_CENTIMETER){
 		t2p->tiff_xres*=2.54F;
 		t2p->tiff_yres*=2.54F;
@@ -1759,7 +1789,6 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 	uint16 xuint16=0;
 	tstrip_t i=0;
 	tstrip_t stripcount=0;
-	tsize_t k=0;
 #endif
 
 	if(t2p->pdf_transcode == T2P_TRANSCODE_RAW){
@@ -2045,7 +2074,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 	float* xfloatp;
 	uint32* sbc;
 	unsigned char* stripbuffer;
-	uint32 striplength=0;
+	tsize_t striplength=0;
 	uint32 max_striplength=0;
 #endif
 
@@ -2399,7 +2428,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		}
 
 		if(t2p->pdf_sample & T2P_SAMPLE_YCBCR_TO_RGB){
-			samplebuffer=(char*)_TIFFrealloc(
+			samplebuffer=(unsigned char*)_TIFFrealloc(
 				(tdata_t)buffer, 
 				t2p->tiff_width*t2p->tiff_length*4);
 			if(samplebuffer==NULL){
