@@ -174,7 +174,7 @@ TIFFOpen(const char* name, const char* mode)
 		dwMode = OPEN_ALWAYS;
 		break;
 	case O_RDWR|O_CREAT:
-		dwMode = CREATE_NEW;
+		dwMode = OPEN_ALWAYS;
 		break;
 	case O_RDWR|O_TRUNC:
 		dwMode = CREATE_ALWAYS;
