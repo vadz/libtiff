@@ -624,7 +624,8 @@ TIFFAppendToStrip(TIFF* tif, tstrip_t strip, tidata_t data, tsize_t cc)
 		/*
 		 * No current offset, set the current strip.
 		 */
-		if (td->td_nstrips || td->td_stripoffset[strip] != 0) {
+		assert(td->td_nstrips > 0);
+		if (td->td_stripoffset[strip] != 0) {
 			/*
 			 * Prevent overlapping of the data chunks. We need
                          * this to enable in place updating of the compressed
