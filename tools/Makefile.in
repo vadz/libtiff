@@ -130,7 +130,7 @@ install: all
 	    true; 							\
 	fi
 clean:
-	rm -f ${TARGETS} ${OBJS} sgigt.o tiffgt sgisv.o tiffsv 		\
+	rm -f ${TARGETS} ${OBJS} tiffgt.o tiffgt sgisv.o tiffsv 	\
 	    sgi2tiff.o sgi2tiff core a.out ycbcr 
 
 #
@@ -268,10 +268,10 @@ sgi2tiff.o: ${SRCDIR}/sgi2tiff.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/sgi2tiff.c
 
 # SGI versions of tiffgt & tiffsv that require -lgl
-tiffgt:	sgigt.o ${TIFFLIB}
-	${CC} -o tiffgt ${CFLAGS} sgigt.o -lgutil -lgl ${LIBS}
-sgigt.o: ${SRCDIR}/sgigt.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/sgigt.c
+tiffgt:	tiffgt.o ${TIFFLIB}
+	${CC} -o tiffgt ${CFLAGS} tiffgt.o -lGL -lglut ${LIBS}
+tiffgt.o: ${SRCDIR}/tiffgt.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tiffgt.c
 
 tiffsv:	sgisv.o ${TIFFLIB}
 	${CC} -o tiffsv ${CFLAGS} sgisv.o -lgutil -lgl ${LIBS}

@@ -1,11 +1,16 @@
 2003-11-21  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/{tiffio.h, tif_codec.c}, man/{libtiff.3t, TIFFcodec.3t}:
-	Added new function TIFFIsCODECConfigured(), suggested by Ross
-	Finlayson.
+	* tools/{Makefile.in, tiffgt.c}: Unmaintained and platform dependent
+	sgigt utility removed and replaced with the completely rewritten
+	portable tiffgt tool (depend on OpenGL and GLUT). Initial revision,
+	there is a lot of things to improve.
 
 	* libtiff/tif_ojpeg.c: TIFFVGetField() function now can properly
 	extract the fields from the OJPEG files. Patch supplied by Ross
+	Finlayson.
+
+	* libtiff/{tiffio.h, tif_codec.c}, man/{libtiff.3t, TIFFcodec.3t}:
+	Added new function TIFFIsCODECConfigured(), suggested by Ross
 	Finlayson.
 
 2003-11-18  Andrey Kiselev  <dron@remotesensing.org>

@@ -209,7 +209,7 @@ TIFFFILES=\
 	    tools/raw2tiff.c			\
 	    tools/rgb2ycbcr.c			\
 	    tools/sgi2tiff.c			\
-	    tools/sgigt.c			\
+	    tools/tiffgt.c			\
 	    tools/sgisv.c			\
 	    tools/thumbnail.c			\
 	    tools/tiff2bw.c			\
