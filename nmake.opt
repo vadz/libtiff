@@ -24,16 +24,16 @@
 # Compile time parameters for MS Visual C++ compiler.
 # You may edit this file to specify building options.
 
+#
+###### Edit the following lines to choose a feature set you need. #######
+#
+
 # 
 # Select WINMODE_CONSOLE to build a library which reports errors to stderr, or
 # WINMODE_WINDOWED to build such that errors are reported via MessageBox().
 #
 WINMODE_CONSOLE = 1
 #WINMODE_WINDOWED = 1
-
-# Uncomment following line to enable using Windows Common RunTime Library
-# instead of system calls. See notes on top of tif_unix.c module for details.
-#USE_WIN_CRT_LIB = 1
 
 #
 # Comment out the following lines to disable internal codecs.
@@ -102,12 +102,22 @@ EXTRASAMPLE_AS_ALPHA_SUPPORT = 1
 CHECK_JPEG_YCBCR_SUBSAMPLING = 1
 
 #
+####################### Compiler related options. #######################
+#
+
+#
 # Pick debug or optimized build flags.  We default to an optimized build
 # with no debugging information.
 # NOTE: /GX option required if you want to build the C++ stream API
 #
 OPTFLAGS =	/Ox /MD /GX /W3
 #OPTFLAGS = 	/Zi 
+
+#
+# Uncomment following line to enable using Windows Common RunTime Library
+# instead of system calls. See notes on top of tif_unix.c module for details.
+#
+#USE_WIN_CRT_LIB = 1
 
 # Compiler specific options. You may probably want to adjust compilation
 # parameters in CFLAGS variable. Refer to your compiler documentation
