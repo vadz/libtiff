@@ -1,3 +1,8 @@
+2004-10-30  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2ps.c: Fixed wrong variable data type when read Position
+	tags (Tristan Hill).
+
 2004-10-30  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tiffiop.h: added fallback definition of assert() if we
