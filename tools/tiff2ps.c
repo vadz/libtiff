@@ -584,6 +584,21 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 			tf_bytesperrow = TIFFScanlineSize(tif);
 			npages++;
 			fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
+			if (!generateEPSF && ( level2 || level3 )) {
+				float psw,psh;
+				if (pw!=0 && ph!=0) {
+					psw=pw;
+					psh=ph;
+			    
+				}
+				else {
+					psw=rotate ? prh:prw;
+				    psh=rotate ? prw:prh;		    
+				}
+				fprintf(fd,
+	"1 dict begin /PageSize [ %f %f ] def currentdict end setpagedevice\n",
+				        psw, psh);
+			}
 			fprintf(fd, "gsave\n");
 			fprintf(fd, "100 dict begin\n");
 			if (pw != 0 && ph != 0) {
@@ -1027,7 +1042,7 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		if ( level3 ) {
 			 TIFFGetFieldDefaulted(tif, TIFFTAG_PREDICTOR, &predictor);
 			 if (predictor > 1) {
-				fprintf(fd, "\t % PostScript Level 3 only.");
+				fprintf(fd, "\t %% PostScript Level 3 only.");
 				fputs("\n\t<<\n", fd);
 				fprintf(fd, "\t /Predictor %u\n", predictor);
 				fprintf(fd, "\t /Columns %lu\n",
