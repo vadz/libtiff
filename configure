@@ -1196,6 +1196,12 @@ if [ "$DSO" = auto ]; then
     *-openbsd*)
 	DSOSUF=so.${DIST_MAJOR}.${DIST_MINOR}
 	LIBCOPTS='-fpic'
+	DSOSUF=so.${DIST_MAJOR}${DIST_MINOR}.${DIST_POINT}
+	if [ "`uname -m`" = "sparc64" ]; then
+	  LIBCOPTS='-fPIC'
+	else
+	  LIBCOPTS='-fpic'
+	fi
 	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
 	case "$TARGET" in
 	   *-openbsd[01].* | *-openbsd2.[0-7] | *-openbsd2.[0-7].*)

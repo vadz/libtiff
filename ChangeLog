@@ -1,3 +1,14 @@
+2002-02-11  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* configure: OpenBSD changes for Sparc64 and DSO version.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=96
+
+2002-02-05  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* config.site/configure: added support for OJPEG=yes option to enable
+	OJPEG support from config.site.
+
 2002-01-27  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* html/document.html: fixed links for TIFf 6 docs.
