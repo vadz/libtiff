@@ -1,3 +1,8 @@
+2004-07-11  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_read.c, tif_tile.c, tif_strip.c}: Fixes in error
+	messages, as suggested by Bernd Herd.
+
 2004-07-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dir.c: Call TIFFError() instead of producing warnings
