@@ -31,15 +31,14 @@ bit of work it can easily be built and used on other non-UNIX platforms.
 
 <A NAME=UNIX><HR><H2>Building on a UNIX System</H2></A>
 
-To build the software on a UNIX system
-you need to first run the configure shell script
-that is located in the top level of the source directory.
-This script probes the target system for necessary tools and functions
-and constructs a build environment in which the software may be
-compiled.
-Once configuration is done, you simply run <TT>make</TT>
- to build the software
-and then <TT>make install</TT> to do the installation; for example:
+To build the software on a UNIX system you need to first run the configure
+shell script that is located in the top level of the source directory. This
+script probes the target system for necessary tools and functions and
+constructs a build environment in which the software may be compiled.
+
+Once configuration is done, you simply run <TT>make</TT> (or <TT>gmake</TT>)
+to build the software and then <TT>make install</TT> to do the installation;
+for example:
 
 <UL><PRE>
 hyla% <B>cd tiff-v3.4beta099</B>
@@ -49,6 +48,15 @@ hyla% <B>make</B>
     <I>...lots of messages...</I>
 hyla# <B>make install</B>
 </PRE></UL>
+
+Supplied makefiles are depend on GNU <TT>make</TT> utility, so you will need
+the one. Depending on your installation <B>make</B> command may invoke
+standard system <TT>make</TT> and <B>gmake</B> invoke GNU make. In this case
+you should use former. If you don't have <TT>make</TT> at all, but only
+<TT>gmake</TT>, you should export environment variable <TT>MAKE=gmake</TT>
+before <B>./configure</B>.
+
+<P>
 
 In general, the software is designed such that the following should
 be ``<I>make-able</I>'' in each directory:
@@ -63,7 +71,7 @@ make distclean	remove <EM>absolutely everything</EM> that can be recreated
 
 Note that after running "<TT>make clobber</TT>" or
 "<TT>make distclean</TT>" the <TT>configure</TT> script must
-be run again to create the Makefiles and other make-related files.
+be run again to create the Makefiles and other make-related files. 
 
 <A NAME="BuildTrees"><P><HR WIDTH=65% ALIGN=right><H3>Build Trees</H3></A>
 
@@ -810,9 +818,8 @@ $ YCBCR     :==$DISK:[TIFF.TOOLS]YCBCR
 </PRE>
 </OL>
 
-You will want to add these lines  to your <TT>LOGIN.COM</TT>
-file, after changing
-the name of the directory that you have used on your machine.
+You will want to add these lines  to your <TT>LOGIN.COM</TT> file, after
+changing the name of the directory that you have used on your machine.
 
 <P>
 This release has been tested on OpenVMS/VAX 5.5-2, using VAX C 3.2.
