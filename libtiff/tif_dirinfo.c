@@ -190,10 +190,10 @@ const TIFFFieldInfo tiffFieldInfo[] = {
     { TIFFTAG_TARGETPRINTER,	-1,-1, TIFF_ASCII,	FIELD_TARGETPRINTER,
       TRUE,	FALSE,	"TargetPrinter" },
     { TIFFTAG_EXTRASAMPLES,	-1,-1, TIFF_SHORT,	FIELD_EXTRASAMPLES,
-      FALSE,	FALSE,	"ExtraSamples" },
+      FALSE,	TRUE,	"ExtraSamples" },
 /* XXX for bogus Adobe Photoshop v2.5 files */
     { TIFFTAG_EXTRASAMPLES,	-1,-1, TIFF_BYTE,	FIELD_EXTRASAMPLES,
-      FALSE,	FALSE,	"ExtraSamples" },
+      FALSE,	TRUE,	"ExtraSamples" },
     { TIFFTAG_SAMPLEFORMAT,	-1,-1, TIFF_SHORT,	FIELD_SAMPLEFORMAT,
       FALSE,	FALSE,	"SampleFormat" },
     { TIFFTAG_SMINSAMPLEVALUE,	-2,-1, TIFF_ANY,	FIELD_SMINSAMPLEVALUE,
