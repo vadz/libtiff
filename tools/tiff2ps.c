@@ -28,6 +28,7 @@
 #include <stdlib.h>			/* for atof */
 #include <math.h>
 #include <time.h>
+#include <strings.h>
 
 #include "tiffio.h"
 
@@ -598,6 +599,9 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 				fprintf(fd,
 	"1 dict begin /PageSize [ %f %f ] def currentdict end setpagedevice\n",
 				        psw, psh);
+				fputs(
+	"<<\n  /Policies <<\n    /PageSize 3\n  >>\n>> setpagedevice\n",
+				      fd);
 			}
 			fprintf(fd, "gsave\n");
 			fprintf(fd, "100 dict begin\n");
