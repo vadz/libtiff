@@ -26,12 +26,12 @@
 # LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
 #
-DEPTH	= ..
+DEPTH		= ..
 
-SRCDIR	= ${DEPTH}/@SRCDIR@/html
-VPATH	= ../@SRCDIR@/html
+SRCDIR		= ${DEPTH}/@SRCDIR@/html
+VPATH		= ../@SRCDIR@/html
 
-PORT	= ${DEPTH}/port
+PORT		= ${DEPTH}/port
 
 #
 # VERSION:	@VERSION@
@@ -39,17 +39,22 @@ PORT	= ${DEPTH}/port
 # TARGET:	@TARGET@
 # CCOMPILER:	@CCOMPILER@
 #
-SHELL	= @SCRIPT_SH@
-SCRIPT_SH = @SCRIPT_SH@
-NULL	=
-ECHO	= echo
-MV	= mv
-RM	= rm -f
-INSTALL	= @INSTALL@
+SHELL		= @SCRIPT_SH@
+SCRIPT_SH 	= @SCRIPT_SH@
+NULL		=
+ECHO		= echo
+MV		= mv
+RM		= rm -f
+INSTALL		= @INSTALL@
+GROFF		= groff  -Thtml -mandoc
+NROFF		= nroff  -Tlatin1 -mandoc
+MAN2HTML	= man2html -cgiurl ./\$$title.\$$section\$$subsection.html
 
-HTML	= @DIR_HTML@
+MANSRCDIR	= @RELSRCDIR@/man
+HTML		= @DIR_HTML@
 
 HTMLFILES=\
+	TIFFTechNote2.html	\
 	bugs.html		\
 	build.html		\
 	contrib.html		\
@@ -79,6 +84,8 @@ HTMLFILES=\
 	v3.5.3.html		\
 	v3.5.4.html		\
 	v3.5.5.html		\
+	v3.5.6-beta.html	\
+	v3.5.7.html		\
 	${NULL}
 IMAGES=\
 	images/back.gif		\
@@ -110,3 +117,41 @@ install: all
 	done
 
 clean:;
+
+INDEXSTART	= '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY BGCOLOR=white><ul><H2>Man Pages</h2><p>'
+INDEXEND	= '</ul></BODY></HTML>'
+
+# Rebuild HTML representation of the manual pages using groff
+groffhtml:
+	test -d man || mkdir man
+	${ECHO} ${INDEXSTART} > ${SRCDIR}/man/index.html
+	# build function pages
+	for i in ${MANSRCDIR}/*.3t; do					\
+		${GROFF} $$i > ${SRCDIR}/man/`basename $$i`.html;	\
+		${ECHO} '<li><A HREF='`basename $$i`'.html>'`basename $$i`'</a>' >> ${SRCDIR}/man/index.html;	\
+	done
+	# build tools pages
+	for i in ${MANSRCDIR}/*.1; do					\
+		${GROFF} $$i > ${SRCDIR}/man/`basename $$i`.html;	\
+		${ECHO} '<li><A HREF='`basename $$i`'.html>'`basename $$i`'</a>' >> ${SRCDIR}/man/index.html;	\
+	done
+	${ECHO} ${INDEXEND} >> ${SRCDIR}/man/index.html
+
+# The same but using man2html
+# This approach has advantage of the crossreference links
+html:
+	test -d man || mkdir man
+	${ECHO} ${INDEXSTART} > ${SRCDIR}/man/index.html
+	# build function pages
+	for i in ${MANSRCDIR}/*.3t; do					\
+		${NROFF} $$i | ${MAN2HTML} > ${SRCDIR}/man/`basename $$i`.html;	\
+		${ECHO} '<li><A HREF='`basename $$i`'.html>'`basename $$i`'</a>' >> ${SRCDIR}/man/index.html;	\
+	done
+	# build tools pages
+	for i in ${MANSRCDIR}/*.1; do					\
+		${NROFF} $$i | ${MAN2HTML} > ${SRCDIR}/man/`basename $$i`.html;	\
+		${ECHO} '<li><A HREF='`basename $$i`'.html>'`basename $$i`'</a>' >> ${SRCDIR}/man/index.html;	\
+	done
+	${ECHO} ${INDEXEND} >> ${SRCDIR}/man/index.html
+
+
