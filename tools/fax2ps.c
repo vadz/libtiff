@@ -82,7 +82,7 @@ printruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
     (void) buf;
     printf("%d m(", row++);
     while (runs < erun) {
-	if (!runlength) {
+	if (runlength <= 0) {
 	    colormode ^= 1;
 	    runlength = *runs++;
 	    if (x+runlength > lastx)
