@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.10  2004-08-20 19:23:25  dron
+ * Revision 1.11  2004-08-21 08:09:49  dron
+ * More fixes from Ross.
+ *
+ * Revision 1.10  2004/08/20 19:23:25  dron
  * Applied patch from Ross Finlayson that checks that the input file has
  * compression, photometric interpretation, etcetra, tags or if not than a more
  * descriptive error is returned.
@@ -1241,7 +1244,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		return;
 	}
 
-        if(TIFFGetField(input, TIFFTAG_COMPRESSION, &(t2p->tiff_photometric)) == 0){
+        if(TIFFGetField(input, TIFFTAG_COMPRESSION, &(t2p->tiff_compression)) == 0){
                 TIFFError(
                         TIFF2PDF_MODULE, 
                         "No support for %s with no compression tag", 
@@ -1789,6 +1792,9 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 	uint16 xuint16=0;
 	tstrip_t i=0;
 	tstrip_t stripcount=0;
+#endif
+#ifdef OJPEG_SUPPORT
+        uint32 k=0;
 #endif
 
 	if(t2p->pdf_transcode == T2P_TRANSCODE_RAW){
