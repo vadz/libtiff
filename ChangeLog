@@ -1,5 +1,9 @@
 2000-07-12  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
+	* tif_read.c: fix subtle bug with determining the number of
+	rows for strips that are the last strip in a separation but
+	not the last strip of all in TIFFReadEncodedStrip().  
+
 	* Applied 16/32 bit fix to tif_fax3.c.  Fix supplied by
 	Peter Skarpetis <peters@serendipity-software.com.au>
 
