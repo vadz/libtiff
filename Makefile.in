@@ -150,7 +150,7 @@ TIFFFILES=\
 	    libtiff/tif_close.c			\
 	    libtiff/tif_codec.c			\
 	    libtiff/tif_compress.c		\
-	    libtiff/tif_color.c
+	    libtiff/tif_color.c			\
 	    libtiff/tif_dir.h			\
 	    libtiff/tif_dir.c			\
 	    libtiff/tif_dirinfo.c		\
