@@ -1,3 +1,13 @@
+2004-09-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dir.h, tif_dir.c, tif_dirread.c, tif_write.c}:
+	Optimize checking for the strip bounds. 
+
+	* libtiff/{tif_dirread.c, tif_strip.c}: TIFFScanlineSize() and
+	TIFFRasterScanlineSize() functions report zero in the case of integer
+	overflow now. Properly handle this case in TIFFReadDirectory()
+	(patches from Dmitry V. Levin).
+
 2004-09-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_dirinfo.c, tif_strip.c, tif_tile.c}: Use TIFFhowmany8()
