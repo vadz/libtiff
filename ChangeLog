@@ -1,12 +1,22 @@
+2002-04-09  Andrey Kiselev  <dron@remotesensing.org>
+	
+	* libtiff/: tif_dirwrite.c, tif_write.c, tiffio.h:
+	TIFFCheckpointDirectory() routine added.
+	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=124
+
+	* man/: TIFFWriteDirectory.3t,  Makefile.in: Added description
+	for the new function.
+
 2002-04-08  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/: tif_codec.c, tif_compress.c, tiffiop.h: Introduced additional
-	members tif->tif_decodestatus and tif->tif_encodestatus for correct
-	handling of unconfigured codecs (we should not try to read data or to
-	define data size without correct codecs).
+	* libtiff/: tif_codec.c, tif_compress.c, tiffiop.h: Introduced
+	additional members tif->tif_decodestatus and tif->tif_encodestatus
+	for correct handling of unconfigured codecs (we should not try to read
+	data or to define data size without correct codecs).
 
 	* libtiff/tif_getimage.c: The way of codecs checking in TIFFRGBAImageOK
-	changed. Now it has used tif->tif_decodestatus and tif->tif_encodestatus.
+	changed. Now it has used tif->tif_decodestatus and
+	tif->tif_encodestatus.
 	Should fix http://bugzilla.remotesensing.org/show_bug.cgi?id=119 (in
 	case of __cvs_8.tif test image).
 
@@ -17,7 +27,7 @@
 
 2002-04-04  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/: tif_lzw.c: Assertions in LXWDecode and LZWDecodeCompat
+	* libtiff/: tif_lzw.c: Assertions in LZWDecode and LZWDecodeCompat
 	replaced by warnings. Now libtiff should read corrupted LZW-compressed
 	files by skipping bad strips.
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=100
