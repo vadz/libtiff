@@ -504,35 +504,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
                 break;
             }
 	    
-            tile_row_size = TIFFTileRowSize(tif);
-            pos = ((row+img->row_offset) % th) * tile_row_size;
-
-	    if(orientation == ORIENTATION_BOTLEFT)
-	    /* Vertically mirror rows in tile according to `Orientation' tag */
-            {
-                u_char *wrk_line, *top_line, *bottom_line;
-                uint32 t_row;
-
-                wrk_line = (u_char*)_TIFFmalloc(tile_row_size);
-                if (wrk_line == 0)
-	        {
-                    TIFFError(TIFFFileName(tif), "No space for tile row buffer");
-                    return (0);
-                }
-    
-                for(t_row = 0; t_row < th / 2; t_row++)
-                {
-
-                    top_line = buf + tile_row_size * t_row;
-                    bottom_line = buf + tile_row_size * (th-t_row-1);
-
-                    _TIFFmemcpy(wrk_line, top_line, tile_row_size);
-                    _TIFFmemcpy(top_line, bottom_line, tile_row_size);
-                    _TIFFmemcpy(bottom_line, wrk_line, tile_row_size);
-                }
-
-                _TIFFfree(wrk_line);
-            }
+            pos = ((row+img->row_offset) % th) * TIFFTileRowSize(tif);
 
     	    if (col + tw > w) 
             {
@@ -549,6 +521,8 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
             {
                 (*put)(img, raster+y*w+col, col, y, tw, nrow, 0, toskew, buf + pos);
             }
+
+	    
         }
 
         y += (orientation == ORIENTATION_TOPLEFT ? -(int32) nrow : (int32) nrow);
