@@ -2301,7 +2301,7 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
 
           if ((tif->tif_flags ^ v32) & TIFF_UPSAMPLED)
             {
-              tif->tif_tilesize = TIFFTileSize(tif);
+              tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;
               tif->tif_flags |= TIFF_DIRTYDIRECT;
             };
           return 1;

@@ -644,18 +644,28 @@ TIFFReadDirectory(TIFF* tif)
 	tif->tif_curstrip = (tstrip_t) -1;
 	tif->tif_col = (uint32) -1;
 	tif->tif_curtile = (ttile_t) -1;
-	tif->tif_tilesize = TIFFTileSize(tif);
-	tif->tif_scanlinesize = TIFFScanlineSize(tif);
+	tif->tif_tilesize = (tsize_t) -1;
 
-	if (!tif->tif_tilesize) {
-		TIFFError(module, "%s: cannot handle zero tile size",
-			  tif->tif_name);
-		return (0);
-	}
+	tif->tif_scanlinesize = TIFFScanlineSize(tif);
 	if (!tif->tif_scanlinesize) {
 		TIFFError(module, "%s: cannot handle zero scanline size",
 			  tif->tif_name);
 		return (0);
+	}
+
+	if (isTiled(tif)) {
+		tif->tif_tilesize = TIFFTileSize(tif);
+		if (!tif->tif_tilesize) {
+			TIFFError(module, "%s: cannot handle zero tile size",
+				  tif->tif_name);
+			return (0);
+		}
+	} else {
+		if (!TIFFStripSize(tif)) {
+			TIFFError(module, "%s: cannot handle zero strip size",
+				  tif->tif_name);
+			return (0);
+		}
 	}
 	return (1);
 bad:
