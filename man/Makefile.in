@@ -119,6 +119,8 @@ MANDEV=\
 	lib/TIFFReadEncodedStrip.3t \
 	lib/TIFFReadEncodedTile.3t \
 	lib/TIFFReadRGBAImage.3t \
+	lib/TIFFReadRGBAStrip.3t \
+	lib/TIFFReadRGBATile.3t \
 	lib/TIFFReadRawStrip.3t \
 	lib/TIFFReadRawTile.3t \
 	lib/TIFFReadScanline.3t \
@@ -245,6 +247,8 @@ lib/TIFFReadDirectory.3t:: ${SRCDIR}/TIFFReadDirectory.3t;	${MANCVT}
 lib/TIFFReadEncodedStrip.3t:: ${SRCDIR}/TIFFReadEncodedStrip.3t;${MANCVT}
 lib/TIFFReadEncodedTile.3t:: ${SRCDIR}/TIFFReadEncodedTile.3t;	${MANCVT}
 lib/TIFFReadRGBAImage.3t:: ${SRCDIR}/TIFFReadRGBAImage.3t;	${MANCVT}
+lib/TIFFReadRGBATile.3t:: ${SRCDIR}/TIFFReadRGBATile.3t;	${MANCVT}
+lib/TIFFReadRGBAStrip.3t:: ${SRCDIR}/TIFFReadRGBAStrip.3t;	${MANCVT}
 lib/TIFFReadRawStrip.3t:: ${SRCDIR}/TIFFReadRawStrip.3t;	${MANCVT}
 lib/TIFFReadRawTile.3t:: ${SRCDIR}/TIFFReadRawTile.3t;		${MANCVT}
 lib/TIFFReadScanline.3t:: ${SRCDIR}/TIFFReadScanline.3t;	${MANCVT}
@@ -376,6 +380,8 @@ short:
 	${MV} TIFFReadRawTile.3t rdrtile.3t
 	${MV} TIFFReadDirectory.3t readdir.3t
 	${MV} TIFFReadRGBAImage.3t rdimage.3t
+	${MV} TIFFReadRGBAStrip.3t rdsimage.3t
+	${MV} TIFFReadRGBATile.3t rdtimage.3t
 	${MV} TIFFReadScanline.3t readline.3t
 	${MV} TIFFReadTile.3t readtile.3t
 	${MV} TIFFRGBAImage.3t rgbaimage.3t
