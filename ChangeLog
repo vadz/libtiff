@@ -1,5 +1,21 @@
 2001-03-28  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* fax2ps.c: Helge (libtiff at oldach.net) submitted fix:
+
+	Here's a fix for fax2ps that corrects behaviour for non-Letter paper
+	sizes. It fixes two problems:
+
+	Without	scaling (-S) the fax is now centered on the page size specified
+	with -H	and/or -W. Before, fax2ps was using an obscure and practially
+	useless algorithm to allocate the image relative to Letter sized paper
+	which sometime sled to useless whitespace on the paper, while at the
+	same time cutting of the faxes printable area at the opposite border.
+
+	Second, scaling now preserves aspect ratio, which makes unusual faxes
+	(in particular short ones) print properly.
+
+	See http://bugzilla.remotesensing.org/show_bug.cgi?id=35
+	
 	* tiff2ps.c/tiff2ps.1: Substantial changes to tiff2ps by
 	Bruce A. Mallett.  See check message for detailed information
 	on all the changes, including a faster encoder, fixes for level
