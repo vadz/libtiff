@@ -465,7 +465,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot LIBTIFF_MAJOR_VERSION LIBTIFF_MINOR_VERSION LIBTIFF_MICRO_VERSION LIBTIFF_VERSION build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBOBJS LIBTIFF LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot LIBTIFF_MAJOR_VERSION LIBTIFF_MINOR_VERSION LIBTIFF_MICRO_VERSION LIBTIFF_VERSION build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBOBJS HAVE_OPENGL_TRUE HAVE_OPENGL_FALSE OPENGL_LIBS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1044,6 +1044,7 @@ Optional Features:
   --enable-old-jpeg       enable support for Old JPEG compresson (read
                           contrib/ojpeg/README first! Compilation fails with
                           unpatched IJG JPEG library)
+  --disable-opengl        disable building OpenGL viewer (enabled by default)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1053,14 +1054,27 @@ Optional Packages:
                           both]
   --with-tags[=TAGS]
                           include additional configurations [automatic]
-  --with-zlib-inc=ARG     location of Zlib headers (specify, if not in
+  --with-zlib-include-dir=DIR
+                          location of Zlib headers (specify, if not in
                           standard place)
-  --with-zlib-lib=ARG     location of Zlib library binary (specify, if not in
+  --with-zlib-lib-dir=DIR location of Zlib library binary (specify, if not in
                           standard place)
-  --with-jpeg-inc=ARG     location of IJG JPEG library headers (specify, if
+  --with-jpeg-include-dir=DIR
+                          location of IJG JPEG library headers (specify, if
                           not in standard place)
-  --with-jpeg-lib=ARG     location of IJG JPEG library binary (specify, if not
+  --with-jpeg-lib-dir=DIR location of IJG JPEG library binary (specify, if not
                           in standard place)
+  --with-opengl-include-dir=DIR
+                          location of OpenGL library headers (specify, if not
+                          in standard place)
+  --with-opengl-lib-dir=DIR
+                          location of OpenGL library binary (specify, if not
+                          in standard place)
+  --with-glut-include-dir=DIR
+                          location of GLUT library headers (specify, if not in
+                          standard place)
+  --with-glut-lib-dir=DIR location of GLUT library binary (specify, if not in
+                          standard place)
 
 Some influential environment variables:
   CC          C compiler command
@@ -3656,7 +3670,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 3659 "configure"' > conftest.$ac_ext
+  echo '#line 3673 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -5215,7 +5229,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:5218:" \
+echo "$as_me:5232:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
@@ -6247,11 +6261,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6250: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6264: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6254: \$? = $ac_status" >&5
+   echo "$as_me:6268: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -6480,11 +6494,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6483: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6497: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6487: \$? = $ac_status" >&5
+   echo "$as_me:6501: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -6540,11 +6554,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6543: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6557: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:6547: \$? = $ac_status" >&5
+   echo "$as_me:6561: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8715,7 +8729,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 8718 "configure"
+#line 8732 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8813,7 +8827,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 8816 "configure"
+#line 8830 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10990,11 +11004,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10993: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:11007: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10997: \$? = $ac_status" >&5
+   echo "$as_me:11011: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -11050,11 +11064,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:11053: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:11067: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:11057: \$? = $ac_status" >&5
+   echo "$as_me:11071: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12404,7 +12418,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 12407 "configure"
+#line 12421 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12502,7 +12516,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 12505 "configure"
+#line 12519 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13329,11 +13343,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13332: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13346: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13336: \$? = $ac_status" >&5
+   echo "$as_me:13350: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -13389,11 +13403,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13392: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13406: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13396: \$? = $ac_status" >&5
+   echo "$as_me:13410: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15421,11 +15435,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15424: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15438: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:15428: \$? = $ac_status" >&5
+   echo "$as_me:15442: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -15654,11 +15668,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15657: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15671: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:15661: \$? = $ac_status" >&5
+   echo "$as_me:15675: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -15714,11 +15728,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15717: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15731: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:15721: \$? = $ac_status" >&5
+   echo "$as_me:15735: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17889,7 +17903,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17892 "configure"
+#line 17906 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17987,7 +18001,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17990 "configure"
+#line 18004 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -20000,73 +20014,6 @@ fi
 
 
 
-echo "$as_me:$LINENO: checking for main in -lGL" >&5
-echo $ECHO_N "checking for main in -lGL... $ECHO_C" >&6
-if test "${ac_cv_lib_GL_main+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lGL  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-
-int
-main ()
-{
-main ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_GL_main=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_GL_main=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_GL_main" >&5
-echo "${ECHO_T}$ac_cv_lib_GL_main" >&6
-if test $ac_cv_lib_GL_main = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGL 1
-_ACEOF
-
-  LIBS="-lGL $LIBS"
-
-fi
-
-
 echo "$as_me:$LINENO: checking for main in -lc" >&5
 echo $ECHO_N "checking for main in -lc... $ECHO_C" >&6
 if test "${ac_cv_lib_c_main+set}" = set; then
@@ -20130,140 +20077,6 @@ if test $ac_cv_lib_c_main = yes; then
 _ACEOF
 
   LIBS="-lc $LIBS"
-
-fi
-
-
-echo "$as_me:$LINENO: checking for main in -lgl" >&5
-echo $ECHO_N "checking for main in -lgl... $ECHO_C" >&6
-if test "${ac_cv_lib_gl_main+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgl  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-
-int
-main ()
-{
-main ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_gl_main=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_gl_main=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_gl_main" >&5
-echo "${ECHO_T}$ac_cv_lib_gl_main" >&6
-if test $ac_cv_lib_gl_main = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGL 1
-_ACEOF
-
-  LIBS="-lgl $LIBS"
-
-fi
-
-
-echo "$as_me:$LINENO: checking for main in -lglut" >&5
-echo $ECHO_N "checking for main in -lglut... $ECHO_C" >&6
-if test "${ac_cv_lib_glut_main+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lglut  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-
-int
-main ()
-{
-main ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_glut_main=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_glut_main=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_glut_main" >&5
-echo "${ECHO_T}$ac_cv_lib_glut_main" >&6
-if test $ac_cv_lib_glut_main = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGLUT 1
-_ACEOF
-
-  LIBS="-lglut $LIBS"
 
 fi
 
@@ -23124,15 +22937,15 @@ if test "${enable_zlib+set}" = set; then
 
 fi;
 
-# Check whether --with-zlib-inc or --without-zlib-inc was given.
-if test "${with_zlib_inc+set}" = set; then
-  withval="$with_zlib_inc"
+# Check whether --with-zlib-include-dir or --without-zlib-include-dir was given.
+if test "${with_zlib_include_dir+set}" = set; then
+  withval="$with_zlib_include_dir"
 
 fi;
 
-# Check whether --with-zlib-lib or --without-zlib-lib was given.
-if test "${with_zlib_lib+set}" = set; then
-  withval="$with_zlib_lib"
+# Check whether --with-zlib-lib-dir or --without-zlib-lib-dir was given.
+if test "${with_zlib_lib_dir+set}" = set; then
+  withval="$with_zlib_lib_dir"
 
 fi;
 
@@ -23280,8 +23093,8 @@ else
 fi
 
     if test "$zlib_lib" = "no" ; then
-      { { echo "$as_me:$LINENO: error: Zlib library not found in $with_zlib_lib" >&5
-echo "$as_me: error: Zlib library not found in $with_zlib_lib" >&2;}
+      { { echo "$as_me:$LINENO: error: Zlib library not found at $with_zlib_lib" >&5
+echo "$as_me: error: Zlib library not found at $with_zlib_lib" >&2;}
    { (exit 1); exit 1; }; }
     fi
   fi
@@ -23576,8 +23389,8 @@ fi
 
 
     if test "$zlib_h" = "no" ; then
-      { { echo "$as_me:$LINENO: error: Zlib headers not found in $with_zlib_h" >&5
-echo "$as_me: error: Zlib headers not found in $with_zlib_h" >&2;}
+      { { echo "$as_me:$LINENO: error: Zlib headers not found at $with_zlib_h" >&5
+echo "$as_me: error: Zlib headers not found at $with_zlib_h" >&2;}
    { (exit 1); exit 1; }; }
     fi
   fi
@@ -23602,15 +23415,15 @@ if test "${enable_jpeg+set}" = set; then
 
 fi;
 
-# Check whether --with-jpeg-inc or --without-jpeg-inc was given.
-if test "${with_jpeg_inc+set}" = set; then
-  withval="$with_jpeg_inc"
+# Check whether --with-jpeg-include-dir or --without-jpeg-include-dir was given.
+if test "${with_jpeg_include_dir+set}" = set; then
+  withval="$with_jpeg_include_dir"
 
 fi;
 
-# Check whether --with-jpeg-lib or --without-jpeg-lib was given.
-if test "${with_jpeg_lib+set}" = set; then
-  withval="$with_jpeg_lib"
+# Check whether --with-jpeg-lib-dir or --without-jpeg-lib-dir was given.
+if test "${with_jpeg_lib_dir+set}" = set; then
+  withval="$with_jpeg_lib_dir"
 
 fi;
 
@@ -23758,8 +23571,8 @@ else
 fi
 
     if test "$jpeg_lib" = "no" ; then
-      { { echo "$as_me:$LINENO: error: IJG JPEG library not found in $with_jpeg_lib" >&5
-echo "$as_me: error: IJG JPEG library not found in $with_jpeg_lib" >&2;}
+      { { echo "$as_me:$LINENO: error: IJG JPEG library not found at $with_jpeg_lib" >&5
+echo "$as_me: error: IJG JPEG library not found at $with_jpeg_lib" >&2;}
    { (exit 1); exit 1; }; }
     fi
   fi
@@ -24054,8 +23867,8 @@ fi
 
 
     if test "$jpeg_h" = "no" ; then
-      { { echo "$as_me:$LINENO: error: IJG JPEG library headers not found in $with_jpeg_h" >&5
-echo "$as_me: error: IJG JPEG library headers not found in $with_jpeg_h" >&2;}
+      { { echo "$as_me:$LINENO: error: IJG JPEG library headers not found at $with_jpeg_h" >&5
+echo "$as_me: error: IJG JPEG library headers not found at $with_jpeg_h" >&2;}
    { (exit 1); exit 1; }; }
     fi
   fi
@@ -24087,10 +23900,951 @@ if test "$HAVE_JPEG" = "yes" -a "$HAVE_OJPEG" = "yes" ; then
 fi
 
 
-LIBTIFF=../libtiff/libtiff.la
+HAVE_OPENGL=no
+OPENGL_LIBS=""
+
+# Check whether --enable-opengl or --disable-opengl was given.
+if test "${enable_opengl+set}" = set; then
+  enableval="$enable_opengl"
+
+fi;
+
+# Check whether --with-opengl-include-dir or --without-opengl-include-dir was given.
+if test "${with_opengl_include_dir+set}" = set; then
+  withval="$with_opengl_include_dir"
+
+fi;
+
+# Check whether --with-opengl-lib-dir or --without-opengl-lib-dir was given.
+if test "${with_opengl_lib_dir+set}" = set; then
+  withval="$with_opengl_lib_dir"
+
+fi;
+
+# Check whether --with-glut-include-dir or --without-glut-include-dir was given.
+if test "${with_glut_include_dir+set}" = set; then
+  withval="$with_glut_include_dir"
+
+fi;
+
+# Check whether --with-glut-lib-dir or --without-glut-lib-dir was given.
+if test "${with_glut_lib_dir+set}" = set; then
+  withval="$with_glut_lib_dir"
+
+fi;
+
+if test "x$enable_opengl" != "xno" ; then
+
+  if test "x$with_opengl_lib" = "xyes" ; then
+    echo "$as_me:$LINENO: checking for glDrawPixels in -lGL" >&5
+echo $ECHO_N "checking for glDrawPixels in -lGL... $ECHO_C" >&6
+if test "${ac_cv_lib_GL_glDrawPixels+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lGL  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char glDrawPixels ();
+int
+main ()
+{
+glDrawPixels ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_GL_glDrawPixels=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_GL_glDrawPixels=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_GL_glDrawPixels" >&5
+echo "${ECHO_T}$ac_cv_lib_GL_glDrawPixels" >&6
+if test $ac_cv_lib_GL_glDrawPixels = yes; then
+  opengl_lib=yes
+else
+  opengl_lib=no
+fi
+
+  elif test "x$with_opengl_lib" != "xno" ; then
+    LIBS="$with_opengl_lib $LIBS"
+    echo "$as_me:$LINENO: checking for glDrawPixels in -lGL" >&5
+echo $ECHO_N "checking for glDrawPixels in -lGL... $ECHO_C" >&6
+if test "${ac_cv_lib_GL_glDrawPixels+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lGL  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char glDrawPixels ();
+int
+main ()
+{
+glDrawPixels ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_GL_glDrawPixels=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_GL_glDrawPixels=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_GL_glDrawPixels" >&5
+echo "${ECHO_T}$ac_cv_lib_GL_glDrawPixels" >&6
+if test $ac_cv_lib_GL_glDrawPixels = yes; then
+  opengl_lib=yes
+else
+  opengl_lib=no
+fi
+
+    if test "$opengl_lib" = "no" ; then
+      { { echo "$as_me:$LINENO: error: OpenGL library not found at $with_opengl_lib" >&5
+echo "$as_me: error: OpenGL library not found at $with_opengl_lib" >&2;}
+   { (exit 1); exit 1; }; }
+    fi
+  fi
+
+  if test "x$with_opengl_h" = "xyes" ; then
+    if test "${ac_cv_header_GL_gl_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for GL/gl.h" >&5
+echo $ECHO_N "checking for GL/gl.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_gl_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_gl_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_gl_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking GL/gl.h usability" >&5
+echo $ECHO_N "checking GL/gl.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <GL/gl.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking GL/gl.h presence" >&5
+echo $ECHO_N "checking GL/gl.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <GL/gl.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: GL/gl.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: GL/gl.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: GL/gl.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: GL/gl.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: GL/gl.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: GL/gl.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: GL/gl.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: GL/gl.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ------------------------------------- ##
+## Report this to tiff@remotesensing.org ##
+## ------------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for GL/gl.h" >&5
+echo $ECHO_N "checking for GL/gl.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_gl_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_GL_gl_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_gl_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_gl_h" >&6
+
+fi
+if test $ac_cv_header_GL_gl_h = yes; then
+  opengl_h=yes
+else
+  opengl_h=no
+fi
 
 
-                                                                                ac_config_files="$ac_config_files Makefile html/Makefile html/images/Makefile html/man/Makefile libtiff/Makefile man/Makefile port/Makefile tools/Makefile"
+  elif test "x$with_opengl_h" != "xno" ; then
+    INCLUDE="$with_opengl_h $INCLUDE"
+    if test "${ac_cv_header_GL_gl_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for GL/gl.h" >&5
+echo $ECHO_N "checking for GL/gl.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_gl_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_gl_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_gl_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking GL/gl.h usability" >&5
+echo $ECHO_N "checking GL/gl.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <GL/gl.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking GL/gl.h presence" >&5
+echo $ECHO_N "checking GL/gl.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <GL/gl.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: GL/gl.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: GL/gl.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: GL/gl.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: GL/gl.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: GL/gl.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: GL/gl.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: GL/gl.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/gl.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: GL/gl.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ------------------------------------- ##
+## Report this to tiff@remotesensing.org ##
+## ------------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for GL/gl.h" >&5
+echo $ECHO_N "checking for GL/gl.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_gl_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_GL_gl_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_gl_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_gl_h" >&6
+
+fi
+if test $ac_cv_header_GL_gl_h = yes; then
+  opengl_h=yes
+else
+  opengl_h=no
+fi
+
+
+    if test "$opengl_h" = "no" ; then
+      { { echo "$as_me:$LINENO: error: OpenGL library headers not found at $with_opengl_h" >&5
+echo "$as_me: error: OpenGL library headers not found at $with_opengl_h" >&2;}
+   { (exit 1); exit 1; }; }
+    fi
+  fi
+
+  if test "x$with_glut_lib" = "xyes" ; then
+    echo "$as_me:$LINENO: checking for glutInit in -lglut" >&5
+echo $ECHO_N "checking for glutInit in -lglut... $ECHO_C" >&6
+if test "${ac_cv_lib_glut_glutInit+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lglut  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char glutInit ();
+int
+main ()
+{
+glutInit ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_glut_glutInit=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_glut_glutInit=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_glut_glutInit" >&5
+echo "${ECHO_T}$ac_cv_lib_glut_glutInit" >&6
+if test $ac_cv_lib_glut_glutInit = yes; then
+  glut_lib=yes
+else
+  glut_lib=no
+fi
+
+  elif test "x$with_glut_lib" != "xno" ; then
+    LIBS="$with_glut_lib $LIBS"
+    echo "$as_me:$LINENO: checking for glutInit in -lglut" >&5
+echo $ECHO_N "checking for glutInit in -lglut... $ECHO_C" >&6
+if test "${ac_cv_lib_glut_glutInit+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lglut  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char glutInit ();
+int
+main ()
+{
+glutInit ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_glut_glutInit=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_glut_glutInit=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_glut_glutInit" >&5
+echo "${ECHO_T}$ac_cv_lib_glut_glutInit" >&6
+if test $ac_cv_lib_glut_glutInit = yes; then
+  glut_lib=yes
+else
+  glut_lib=no
+fi
+
+    if test "$glut_lib" = "no" ; then
+      { { echo "$as_me:$LINENO: error: GLUT library not found at $with_glut_lib" >&5
+echo "$as_me: error: GLUT library not found at $with_glut_lib" >&2;}
+   { (exit 1); exit 1; }; }
+    fi
+  fi
+
+  if test "x$with_glut_h" = "xyes" ; then
+    if test "${ac_cv_header_GL_glut_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for GL/glut.h" >&5
+echo $ECHO_N "checking for GL/glut.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_glut_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_glut_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_glut_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking GL/glut.h usability" >&5
+echo $ECHO_N "checking GL/glut.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <GL/glut.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking GL/glut.h presence" >&5
+echo $ECHO_N "checking GL/glut.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <GL/glut.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: GL/glut.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: GL/glut.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: GL/glut.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: GL/glut.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: GL/glut.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: GL/glut.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: GL/glut.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: GL/glut.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ------------------------------------- ##
+## Report this to tiff@remotesensing.org ##
+## ------------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for GL/glut.h" >&5
+echo $ECHO_N "checking for GL/glut.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_glut_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_GL_glut_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_glut_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_glut_h" >&6
+
+fi
+if test $ac_cv_header_GL_glut_h = yes; then
+  glut_h=yes
+else
+  glut_h=no
+fi
+
+
+  elif test "x$with_glut_h" != "xno" ; then
+    INCLUDE="$with_glut_h $INCLUDE"
+    if test "${ac_cv_header_GL_glut_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for GL/glut.h" >&5
+echo $ECHO_N "checking for GL/glut.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_glut_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_glut_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_glut_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking GL/glut.h usability" >&5
+echo $ECHO_N "checking GL/glut.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <GL/glut.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking GL/glut.h presence" >&5
+echo $ECHO_N "checking GL/glut.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <GL/glut.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: GL/glut.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: GL/glut.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: GL/glut.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: GL/glut.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: GL/glut.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: GL/glut.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: GL/glut.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: GL/glut.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: GL/glut.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ------------------------------------- ##
+## Report this to tiff@remotesensing.org ##
+## ------------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for GL/glut.h" >&5
+echo $ECHO_N "checking for GL/glut.h... $ECHO_C" >&6
+if test "${ac_cv_header_GL_glut_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_GL_glut_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_GL_glut_h" >&5
+echo "${ECHO_T}$ac_cv_header_GL_glut_h" >&6
+
+fi
+if test $ac_cv_header_GL_glut_h = yes; then
+  glut_h=yes
+else
+  glut_h=no
+fi
+
+
+    if test "$glut_h" = "no" ; then
+      { { echo "$as_me:$LINENO: error: GLUT library headers not found at $with_glut_h" >&5
+echo "$as_me: error: GLUT library headers not found at $with_glut_h" >&2;}
+   { (exit 1); exit 1; }; }
+    fi
+  fi
+
+  if test "$opengl_lib" = "yes" -a "$opengl_h" = "yes" \
+          -a "$glut_lib" = "yes" -a "$glut_h" = "yes" ; then
+    HAVE_OPENGL=yes
+    OPENGL_LIBS="-lGL -lglut"
+  fi
+
+fi
+
+
+
+if test "$HAVE_OPENGL" = "yes"; then
+  HAVE_OPENGL_TRUE=
+  HAVE_OPENGL_FALSE='#'
+else
+  HAVE_OPENGL_TRUE='#'
+  HAVE_OPENGL_FALSE=
+fi
+
+
+
+
+                                                                                                    ac_config_files="$ac_config_files Makefile contrib/Makefile contrib/addtiffo/Makefile html/Makefile html/images/Makefile html/man/Makefile libtiff/Makefile man/Makefile port/Makefile tools/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -24208,6 +24962,13 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${HAVE_OPENGL_TRUE}" && test -z "${HAVE_OPENGL_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"HAVE_OPENGL\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"HAVE_OPENGL\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -24656,6 +25417,8 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "contrib/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/Makefile" ;;
+  "contrib/addtiffo/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/addtiffo/Makefile" ;;
   "html/Makefile" ) CONFIG_FILES="$CONFIG_FILES html/Makefile" ;;
   "html/images/Makefile" ) CONFIG_FILES="$CONFIG_FILES html/images/Makefile" ;;
   "html/man/Makefile" ) CONFIG_FILES="$CONFIG_FILES html/man/Makefile" ;;
@@ -24818,7 +25581,9 @@ s,@FFLAGS@,$FFLAGS,;t t
 s,@ac_ct_F77@,$ac_ct_F77,;t t
 s,@LIBTOOL@,$LIBTOOL,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
-s,@LIBTIFF@,$LIBTIFF,;t t
+s,@HAVE_OPENGL_TRUE@,$HAVE_OPENGL_TRUE,;t t
+s,@HAVE_OPENGL_FALSE@,$HAVE_OPENGL_FALSE,;t t
+s,@OPENGL_LIBS@,$OPENGL_LIBS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
 

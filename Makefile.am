@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -35,5 +33,5 @@ EXTRA_DIST = \
 	VERSION \
 	autogen.sh
 
-SUBDIRS = html libtiff man tools
+SUBDIRS = libtiff tools contrib man html
 

@@ -48,18 +48,12 @@
  * HOST_FILLORDER	native cpu bit order: one of FILLORDER_MSB2LSB
  *			or FILLODER_LSB2MSB; this is typically set by the
  *			configure script
- * USE_64BIT_API	set to 1 if tif_unix.c should use lseek64(),
- *                      fstat64() and stat64 allowing 2-4GB files.
  */
 #ifndef HAVE_IEEEFP
 #define	HAVE_IEEEFP	1
 #endif
 #ifndef HOST_FILLORDER
 #define	HOST_FILLORDER	FILLORDER_MSB2LSB
-#endif
-
-#ifndef USE_64BIT_API
-#  define USE_64BIT_API	0
 #endif
 
 #ifndef COMPRESSION_SUPPORT

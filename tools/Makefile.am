@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -24,6 +22,8 @@
 # OF THIS SOFTWARE.
 
 # Process this file with automake to produce Makefile.in.
+
+LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
 
 if HAVE_OPENGL
 BIN_TIFFGT = tiffgt
@@ -58,49 +58,49 @@ bin_PROGRAMS = \
 EXTRA_PROGRAMS = $(BIN_TIFFGT) sgi2tiff sgisv ycbcr
 
 fax2ps_SOURCES = fax2ps.c
-fax2ps_LDADD = @LIBTIFF@
+fax2ps_LDADD = $(LIBTIFF)
 fax2tiff_SOURCES = fax2tiff.c
-fax2tiff_LDADD = @LIBTIFF@
+fax2tiff_LDADD = $(LIBTIFF)
 gif2tiff_SOURCES = gif2tiff.c
-gif2tiff_LDADD = @LIBTIFF@
+gif2tiff_LDADD = $(LIBTIFF)
 pal2rgb_SOURCES = pal2rgb.c
-pal2rgb_LDADD = @LIBTIFF@
+pal2rgb_LDADD = $(LIBTIFF)
 ppm2tiff_SOURCES = ppm2tiff.c
-ppm2tiff_LDADD = @LIBTIFF@
+ppm2tiff_LDADD = $(LIBTIFF)
 ras2tiff_SOURCES = ras2tiff.c
-ras2tiff_LDADD = @LIBTIFF@
+ras2tiff_LDADD = $(LIBTIFF)
 raw2tiff_SOURCES = raw2tiff.c
-raw2tiff_LDADD = @LIBTIFF@
+raw2tiff_LDADD = $(LIBTIFF)
 rgb2ycbcr_SOURCES = rgb2ycbcr.c
-rgb2ycbcr_LDADD = @LIBTIFF@
+rgb2ycbcr_LDADD = $(LIBTIFF)
 thumbnail_SOURCES = thumbnail.c
-thumbnail_LDADD = @LIBTIFF@
+thumbnail_LDADD = $(LIBTIFF)
 tiff2bw_SOURCES = tiff2bw.c
-tiff2bw_LDADD = @LIBTIFF@
+tiff2bw_LDADD = $(LIBTIFF)
 tiff2pdf_SOURCES = tiff2pdf.c
-tiff2pdf_LDADD = @LIBTIFF@
+tiff2pdf_LDADD = $(LIBTIFF)
 tiff2ps_SOURCES = tiff2ps.c
-tiff2ps_LDADD = @LIBTIFF@
+tiff2ps_LDADD = $(LIBTIFF)
 tiff2rgba_SOURCES = tiff2rgba.c
-tiff2rgba_LDADD = @LIBTIFF@
+tiff2rgba_LDADD = $(LIBTIFF)
 tiffcmp_SOURCES = tiffcmp.c
-tiffcmp_LDADD = @LIBTIFF@
+tiffcmp_LDADD = $(LIBTIFF)
 tiffcp_SOURCES = tiffcp.c
-tiffcp_LDADD = @LIBTIFF@
+tiffcp_LDADD = $(LIBTIFF)
 tiffdither_SOURCES = tiffdither.c
-tiffdither_LDADD = @LIBTIFF@
+tiffdither_LDADD = $(LIBTIFF)
 tiffdump_SOURCES = tiffdump.c
-tiffdump_LDADD = @LIBTIFF@
+tiffdump_LDADD = $(LIBTIFF)
 tiffinfo_SOURCES = tiffinfo.c
-tiffinfo_LDADD = @LIBTIFF@
+tiffinfo_LDADD = $(LIBTIFF)
 tiffmedian_SOURCES = tiffmedian.c
-tiffmedian_LDADD = @LIBTIFF@
+tiffmedian_LDADD = $(LIBTIFF)
 tiffset_SOURCES = tiffset.c
-tiffset_LDADD = @LIBTIFF@
+tiffset_LDADD = $(LIBTIFF)
 tiffsplit_SOURCES = tiffsplit.c
-tiffsplit_LDADD = @LIBTIFF@
+tiffsplit_LDADD = $(LIBTIFF)
 tiffgt_SOURCES = tiffgt.c
-tiffgt_LDADD = @LIBTIFF@
+tiffgt_LDADD = $(LIBTIFF) $(OPENGL_LIBS)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
