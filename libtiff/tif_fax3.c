@@ -1379,6 +1379,8 @@ Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		fflush(stdout);
 #endif
 		EXPAND2D(EOFG4);
+                if (EOLcnt)
+                    goto EOFG4;
 		(*sp->fill)(buf, thisrun, pa, lastx);
 		SETVAL(0);		/* imaginary change for reference */
 		SWAP(uint32*, sp->curruns, sp->refruns);
@@ -1388,6 +1390,13 @@ Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 			tif->tif_row++;
 		continue;
 	EOFG4:
+                NeedBits16( 13, BADG4 );
+        BADG4:
+#ifdef FAX3_DEBUG
+                if( GetBits(13) != 0x1001 )
+                    fputs( "Bad RTC\n", stderr );
+#endif                
+                ClrBits( 13 );
 		(*sp->fill)(buf, thisrun, pa, lastx);
 		UNCACHE_STATE(tif, sp);
 		return (-1);

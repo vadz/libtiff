@@ -487,9 +487,10 @@ done1d:									\
 	    goto eol2d;							\
 	case S_EOL:							\
 	    *pa++ = lastx - a0;						\
-	    NeedBits8(5,eof2d);						\
-	    if (GetBits(5))						\
+	    NeedBits8(4,eof2d);						\
+	    if (GetBits(4))						\
 		unexpected("EOL", a0);					\
+            ClrBits(4);                                                 \
 	    EOLcnt = 1;							\
 	    goto eol2d;							\
 	default:							\

@@ -1,3 +1,9 @@
+2000-12-01  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* Added patches for EOFB support in tif_fax3.c and tif_fax3.h. 
+	Patches supplied by Frank Cringle <fdc@cliwe.ping.de>
+	Example file at: ftp://ftp.remotesensing.org/pub/libtiff/eofb_396.tif
+
 2000-11-24  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/Makefile.in: Added an installPrivateHdrs and install-private
