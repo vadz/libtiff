@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1995-1997 Sam Leffler
@@ -50,7 +50,6 @@
 #include "zlib.h"
 
 #include <stdio.h>
-#include <assert.h>
 
 /*
  * Sigh, ZLIB_VERSION is defined as a string so there's no
@@ -366,3 +365,5 @@ bad:
 	return (0);
 }
 #endif /* ZIP_SUPORT */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

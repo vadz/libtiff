@@ -30,7 +30,6 @@
  */
 #include "tiffiop.h"
 #include <stdio.h>
-#include <assert.h>
 
 	int TIFFFillStrip(TIFF*, tstrip_t);
 	int TIFFFillTile(TIFF*, ttile_t);

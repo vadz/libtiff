@@ -38,7 +38,6 @@
  */
 #include "tif_predict.h"
 
-#include <assert.h>
 #include <stdio.h>
 
 /*

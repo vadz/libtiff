@@ -32,8 +32,6 @@
 #include "tiffiop.h"
 #include "tif_predict.h"
 
-#include <assert.h>
-
 #define	PredictorState(tif)	((TIFFPredictorState*) (tif)->tif_data)
 
 static	void horAcc8(TIFF*, tidata_t, tsize_t);

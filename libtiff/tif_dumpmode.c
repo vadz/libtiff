@@ -30,7 +30,6 @@
  * "Null" Compression Algorithm Support.
  */
 #include "tiffiop.h"
-#include <assert.h>
 
 /*
  * Encode a hunk of pixels.

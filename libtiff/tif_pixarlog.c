@@ -90,7 +90,6 @@
 #include "zlib.h"
 
 #include <stdio.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -632,11 +631,23 @@ PixarLogGuessDataFmt(TIFFDirectory *td)
 	return guess;
 }
 
+static uint32
+multiply(size_t m1, size_t m2)
+{
+	uint32	bytes = m1 * m2;
+
+	if (m1 && bytes / m1 != m2)
+		bytes = 0;
+
+	return bytes;
+}
+
 static int
 PixarLogSetupDecode(TIFF* tif)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 	PixarLogState* sp = DecoderState(tif);
+	tsize_t tbuf_size;
 	static const char module[] = "PixarLogSetupDecode";
 
 	assert(sp != NULL);
@@ -649,8 +660,13 @@ PixarLogSetupDecode(TIFF* tif)
 
 	sp->stride = (td->td_planarconfig == PLANARCONFIG_CONTIG ?
 	    td->td_samplesperpixel : 1);
-	sp->tbuf = (uint16 *) _TIFFmalloc(sp->stride * 
-		td->td_imagewidth * td->td_rowsperstrip * sizeof(uint16));
+	tbuf_size = multiply(multiply(multiply(sp->stride, td->td_imagewidth),
+				      td->td_rowsperstrip), sizeof(uint16));
+	if (tbuf_size == 0)
+		return (0);
+	sp->tbuf = (uint16 *) _TIFFmalloc(tbuf_size);
+	if (sp->tbuf == NULL)
+		return (0);
 	if (sp->user_datafmt == PIXARLOGDATAFMT_UNKNOWN)
 		sp->user_datafmt = PixarLogGuessDataFmt(td);
 	if (sp->user_datafmt == PIXARLOGDATAFMT_UNKNOWN) {
@@ -800,6 +816,7 @@ PixarLogSetupEncode(TIFF* tif)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 	PixarLogState* sp = EncoderState(tif);
+	tsize_t tbuf_size;
 	static const char module[] = "PixarLogSetupEncode";
 
 	assert(sp != NULL);
@@ -808,8 +825,13 @@ PixarLogSetupEncode(TIFF* tif)
 
 	sp->stride = (td->td_planarconfig == PLANARCONFIG_CONTIG ?
 	    td->td_samplesperpixel : 1);
-	sp->tbuf = (uint16 *) _TIFFmalloc(sp->stride * 
-		td->td_imagewidth * td->td_rowsperstrip * sizeof(uint16));
+	tbuf_size = multiply(multiply(multiply(sp->stride, td->td_imagewidth),
+				      td->td_rowsperstrip), sizeof(uint16));
+	if (tbuf_size == 0)
+		return (0);
+	sp->tbuf = (uint16 *) _TIFFmalloc(tbuf_size);
+	if (sp->tbuf == NULL)
+		return (0);
 	if (sp->user_datafmt == PIXARLOGDATAFMT_UNKNOWN)
 		sp->user_datafmt = PixarLogGuessDataFmt(td);
 	if (sp->user_datafmt == PIXARLOGDATAFMT_UNKNOWN) {

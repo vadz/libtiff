@@ -31,6 +31,7 @@
  */
 #include "tiffiop.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /*
  * NB: NB: THIS ARRAY IS ASSUMED TO BE SORTED BY TAG.
@@ -311,6 +312,7 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 		tif->tif_fieldinfo = (TIFFFieldInfo**)
 		    _TIFFmalloc(n * sizeof (TIFFFieldInfo*));
 	}
+	assert(tif->tif_fieldinfo != NULL);
 	tp = &tif->tif_fieldinfo[tif->tif_nfields];
 	for (i = 0; i < n; i++)
 		tp[i] = (TIFFFieldInfo*) &info[i];	/* XXX */
@@ -451,9 +453,6 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	return ((const TIFFFieldInfo *)0);
 }
 
-#include <assert.h>
-#include <stdio.h>
-
 const TIFFFieldInfo*
 _TIFFFieldWithTag(TIFF* tif, ttag_t tag)
 {
@@ -504,6 +503,8 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
     TIFFFieldInfo *fld;
 
     fld = (TIFFFieldInfo *) _TIFFmalloc(sizeof (TIFFFieldInfo));
+    if (fld == NULL)
+	return NULL;
     _TIFFmemset( fld, 0, sizeof(TIFFFieldInfo) );
 
     fld->field_tag = tag;
@@ -514,6 +515,10 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
     fld->field_oktochange = TRUE;
     fld->field_passcount = TRUE;
     fld->field_name = (char *) _TIFFmalloc(32);
+    if (fld->field_name == NULL) {
+	_TIFFfree(fld);
+	return NULL;
+    }
 
     /* note that this name is a special sign to TIFFClose() and
      * _TIFFSetupFieldInfo() to free the field
