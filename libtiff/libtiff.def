@@ -25,6 +25,7 @@ EXPORTS TIFFOpen
 	TIFFCurrentDirectory
 	TIFFCurrentStrip
 	TIFFCurrentTile
+	TIFFDataWidth
 	TIFFReadBufferSetup
 	TIFFLastDirectory
 	TIFFSetDirectory

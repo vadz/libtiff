@@ -248,7 +248,6 @@ typedef	struct {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-extern	int TIFFDataWidth(TIFFDataType);	/* table of tag datatype widths */
 extern	void _TIFFSetupFieldInfo(TIFF*);
 extern	void _TIFFPrintFieldInfo(TIFF*, FILE*);
 extern	TIFFDataType _TIFFSampleToTagType(TIFF*);
