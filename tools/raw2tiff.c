@@ -32,7 +32,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <math.h>
-#include <getopt.h>
 #include <ctype.h>
 
 #include "tiffio.h"
