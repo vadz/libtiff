@@ -190,33 +190,9 @@ static int
 LZWSetupDecode(TIFF* tif)
 {
 	LZWDecodeState* sp = DecoderState(tif);
-	static const char module[] = " LZWSetupDecode";
+	static const char module[] = "LZWSetupDecode";
 	int code;
 
-        if( sp == NULL )
-        {
-            /*
-             * Allocate state block so tag methods have storage to record 
-             * values.
-             */
-            tif->tif_data = (tidata_t) _TIFFmalloc(sizeof(LZWDecodeState));
-            if (tif->tif_data == NULL)
-            {
-                TIFFError("LZWPreDecode", "No space for LZW state block");
-                return (0);
-            }
-
-            DecoderState(tif)->dec_codetab = NULL;
-            DecoderState(tif)->dec_decode = NULL;
-            
-            /*
-             * Setup predictor setup.
-             */
-            (void) TIFFPredictorInit(tif);
-
-            sp = DecoderState(tif);
-        }
-            
 	assert(sp != NULL);
 
 	if (sp->dec_codetab == NULL) {
@@ -730,6 +706,15 @@ TIFFInitLZW(TIFF* tif, int scheme)
 	assert(scheme == COMPRESSION_LZW);
 
 	/*
+	 * Allocate state block so tag methods have storage to record values.
+	 */
+	tif->tif_data = (tidata_t) _TIFFmalloc(sizeof (LZWDecodeState));
+	if (tif->tif_data == NULL)
+		goto bad;
+	DecoderState(tif)->dec_codetab = NULL;
+	DecoderState(tif)->dec_decode = NULL;
+
+	/*
 	 * Install codec methods.
 	 */
 	tif->tif_setupencode = LZWSetupEncode;
@@ -740,7 +725,16 @@ TIFFInitLZW(TIFF* tif, int scheme)
 	tif->tif_decodetile = LZWDecode;
 	tif->tif_cleanup = LZWCleanup;
 
-        return (1);
+	/*
+	 * Setup predictor setup.
+	 */
+	(void) TIFFPredictorInit(tif);
+
+	return (1);
+
+bad:
+	TIFFError("TIFFInitLZW", "No space for LZW state block");
+	return (0);
 }
 
 /*
