@@ -1,6 +1,11 @@
+2005-03-22  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac, libtiff/Makefile.am}: Use libtool machinery to pass
+	rpath option.
+
 2005-03-21  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/tif_dir.c, tif_print.c}: Handle all data types in custom
+	* libtiff/{tif_dir.c, tif_print.c}: Handle all data types in custom
 	tags.
 
 2005-03-18  Andrey Kiselev  <dron@remotesensing.org>
