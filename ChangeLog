@@ -1,3 +1,9 @@
+2004-11-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_jpeg.c: Added a work-around in order to allow
+	compilation with the heavily modified version of libjpeg delivered
+	with Cygwin.
+
 2004-11-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dir.c: Properly handle tags, which have the uint32
