@@ -30,6 +30,7 @@ EXPORTS TIFFOpen
 	TIFFUnlinkDirectory
 	TIFFSetField
 	TIFFVSetField
+	TIFFCheckpointDirectory
 	TIFFWriteDirectory
 	TIFFRewriteDirectory
 	TIFFPrintDirectory
@@ -54,6 +55,8 @@ EXPORTS TIFFOpen
 	TIFFWriteTile
 	TIFFComputeStrip
 	TIFFNumberOfStrips
+	TIFFRGBAImageBegin
+	TIFFRGBAImageEnd
 	TIFFReadEncodedStrip
 	TIFFReadRawStrip
 	TIFFReadEncodedTile
@@ -65,6 +68,7 @@ EXPORTS TIFFOpen
 	TIFFWriteEncodedTile
 	TIFFWriteRawTile
 	TIFFSetWriteOffset
+	TFFSwabDouble
 	TIFFSwabShort
 	TIFFSwabLong
 	TIFFSwabArrayOfShort
