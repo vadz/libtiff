@@ -374,6 +374,8 @@ AC_CONFIG_FILES([Makefile \
 		 contrib/Makefile \
 		 contrib/acorn/Makefile \
 		 contrib/addtiffo/Makefile \
+		 contrib/dbs/Makefile \
+		 contrib/dbs/xtiff/Makefile \
                  html/Makefile \
 		 html/images/Makefile \
 		 html/man/Makefile \

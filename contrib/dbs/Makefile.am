@@ -1,5 +1,3 @@
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -25,7 +23,22 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = README
+SUBDIRS = xtiff
 
-SUBDIRS = acorn addtiffo dbs
+LIBTIFF = $(top_srcdir)/libtiff/libtiff.la
+
+EXTRA_DIST = README Makefile.vc
+
+noinst_PROGRAMS = tiff-bi tiff-grayscale tiff-palette tiff-rgb
+
+tiff_bi_SOURCES = tiff-bi.c
+tiff_bi_LDADD = $(LIBTIFF)
+tiff_grayscale_SOURCES = tiff-grayscale.c
+tiff_grayscale_LDADD = $(LIBTIFF)
+tiff_palette_SOURCES = tiff-palette.c
+tiff_palette_LDADD = $(LIBTIFF)
+tiff_rgb_SOURCES = tiff-rgb.c
+tiff_rgb_LDADD = $(LIBTIFF)
+
+INCLUDES = -I$(top_srcdir)/libtiff
 

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * tiff-grayscale.c -- create a Class G (grayscale) TIFF file
  *      with a gray response curve in linear optical density
@@ -25,28 +27,23 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <tiffio.h>
+#include <stdlib.h>
+
+#include "tiffio.h"
 
 #define WIDTH       512
 #define HEIGHT      WIDTH
 
-typedef	unsigned char u_char;
-typedef	unsigned short u_short;
-typedef	unsigned long u_long;
-
 char *              programName;
 void                Usage();
 
-void
-main(argc, argv)
-    int             argc;
-    char **         argv;
+int main(int argc, char **argv)
 {
     int             bits_per_pixel, cmsize, i, j, k,
                     gray_index, chunk_size, nchunks;
-    u_char *        scan_line;
-    u_short *       gray;
-    u_long	    refblackwhite[2*1];
+    unsigned char * scan_line;
+    uint16 *        gray;
+    float           refblackwhite[2*1];
     TIFF *          tif;
 
     programName = argv[0];
@@ -77,18 +74,18 @@ main(argc, argv)
     }
 
     cmsize = nchunks * nchunks;
-    gray = (u_short *) malloc(cmsize * sizeof(u_short));
+    gray = (uint16 *) malloc(cmsize * sizeof(uint16));
 
     gray[0] = 3000;
     for (i = 1; i < cmsize; i++)
-        gray[i] = (u_short) (-log10((double) i / (cmsize - 1)) * 1000);
+        gray[i] = (uint16) (-log10((double) i / (cmsize - 1)) * 1000);
 
-    refblackwhite[0] = 0;
-    refblackwhite[0] = (1L<<bits_per_pixel) - 1;
+    refblackwhite[0] = 0.0;
+    refblackwhite[1] = (float)((1L<<bits_per_pixel) - 1);
 
     if ((tif = TIFFOpen(argv[3], "w")) == NULL) {
         fprintf(stderr, "can't open %s as a TIFF file\n", argv[3]);
-        exit(0);
+        return 0;
     }
 
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, WIDTH);
@@ -130,7 +127,7 @@ main(argc, argv)
 
     free(scan_line);
     TIFFClose(tif);
-    exit(0);
+    return 0;
 }
 
 void

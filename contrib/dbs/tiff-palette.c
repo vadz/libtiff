@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * tiff-palette.c -- create a Class P (palette) TIFF file
  *
@@ -23,27 +25,23 @@
  */
 
 #include <stdio.h>
-#include <tiffio.h>
+#include <stdlib.h>
+
+#include "tiffio.h"
 
 #define WIDTH       512
 #define HEIGHT      WIDTH
 #define SCALE(x)    ((x) * 257L)
 
-typedef	unsigned char u_char;
-typedef	unsigned short u_short;
-
 char *              programName;
 void                Usage();
 
-void
-main(argc, argv)
-    int             argc;
-    char **         argv;
+int main(int argc, char **argv)
 {
     int             bits_per_pixel, cmsize, i, j, k,
                     cmap_index, chunk_size, nchunks;
-    u_char *        scan_line;
-    u_short         *red, *green, *blue;
+    unsigned char * scan_line;
+    uint16          *red, *green, *blue;
     TIFF *          tif;
 
     programName = argv[0];
@@ -82,9 +80,9 @@ main(argc, argv)
     } else {
 	cmsize = 2;
     }
-    red = (u_short *) malloc(cmsize * sizeof(u_short));
-    green = (u_short *) malloc(cmsize * sizeof(u_short));
-    blue = (u_short *) malloc(cmsize * sizeof(u_short));
+    red = (uint16 *) malloc(cmsize * sizeof(uint16));
+    green = (uint16 *) malloc(cmsize * sizeof(uint16));
+    blue = (uint16 *) malloc(cmsize * sizeof(uint16));
 
     switch (bits_per_pixel) {
     case 8:
@@ -220,7 +218,7 @@ main(argc, argv)
 
     if ((tif = TIFFOpen(argv[3], "w")) == NULL) {
         fprintf(stderr, "can't open %s as a TIFF file\n", argv[3]);
-        exit(0);
+        return 0;
     }
 
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, WIDTH);
@@ -234,7 +232,7 @@ main(argc, argv)
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_NONE);
     TIFFSetField(tif, TIFFTAG_COLORMAP, red, green, blue);
 
-    scan_line = (u_char *) malloc(WIDTH / (8 / bits_per_pixel));
+    scan_line = (unsigned char *) malloc(WIDTH / (8 / bits_per_pixel));
 
     for (i = 0; i < HEIGHT; i++) {
         for (j = 0, k = 0; j < WIDTH;) {
@@ -266,7 +264,7 @@ main(argc, argv)
 
     free(scan_line);
     TIFFClose(tif);
-    exit(0);
+    return 0;
 }
 
 void

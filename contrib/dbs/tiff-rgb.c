@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * tiff-rgb.c -- create a 24-bit Class R (rgb) TIFF file
  *
@@ -24,33 +26,28 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <tiffio.h>
+#include <stdlib.h>
 
-#define ROUND(x)    (u_short) ((x) + 0.5)
+#include "tiffio.h"
+
+#define ROUND(x)    (uint16) ((x) + 0.5)
 #define CMSIZE      256
 #define WIDTH       525
 #define HEIGHT      512
 #define TIFF_GAMMA  2.2
 
-typedef	unsigned char u_char;
-typedef	unsigned short u_short;
-typedef	unsigned long u_long;
-
 void                Usage();
 char *              programName;
 
-void
-main(argc, argv)
-    int             argc;
-    char **         argv;
+int main(int argc, char **argv)
 {
     char *          input_file;
     double          image_gamma;
     int             i, j;
     TIFF *          tif;
-    u_char *        scan_line;
-    u_short         red[CMSIZE], green[CMSIZE], blue[CMSIZE];
-    u_long	    refblackwhite[2*3];
+    unsigned char * scan_line;
+    uint16          red[CMSIZE], green[CMSIZE], blue[CMSIZE];
+    float	    refblackwhite[2*3];
 
     programName = argv[0];
 
@@ -79,9 +76,9 @@ main(argc, argv)
             blue[i] = ROUND((pow(i / 255.0, 1.0 / image_gamma) * 65535.0));
         }
     }
-    refblackwhite[0] = 0; refblackwhite[1] = 255;
-    refblackwhite[2] = 0; refblackwhite[3] = 255;
-    refblackwhite[4] = 0; refblackwhite[5] = 255;
+    refblackwhite[0] = 0.0; refblackwhite[1] = 255.0;
+    refblackwhite[2] = 0.0; refblackwhite[3] = 255.0;
+    refblackwhite[4] = 0.0; refblackwhite[5] = 255.0;
 
     if ((tif = TIFFOpen(input_file, "w")) == NULL) {
         fprintf(stderr, "can't open %s as a TIFF file\n", input_file);
@@ -104,7 +101,7 @@ main(argc, argv)
     TIFFSetField(tif, TIFFTAG_REFERENCEBLACKWHITE, refblackwhite);
     TIFFSetField(tif, TIFFTAG_TRANSFERFUNCTION, red, green, blue);
 
-    scan_line = (u_char *) malloc(WIDTH * 3);
+    scan_line = (unsigned char *) malloc(WIDTH * 3);
 
     for (i = 0; i < 255; i++) {
         for (j = 0; j < 75; j++) {

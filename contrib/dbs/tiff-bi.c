@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * tiff-bi.c -- create a Class B (bilevel) TIFF file
  *
@@ -23,30 +25,27 @@
  */
 
 #include <stdio.h>
-#include <tiffio.h>
+#include <stdlib.h>
+
+#include "tiffio.h"
 
 #define WIDTH       512
 #define HEIGHT      WIDTH
 
-typedef	unsigned char u_char;
-
-void
-main(argc, argv)
-    int             argc;
-    char **         argv;
+int main(int argc, char **argv)
 {
     int             i;
-    u_char *        scan_line;
+    unsigned char * scan_line;
     TIFF *          tif;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s tiff-image\n", argv[0]);
-        exit(0);
+        return 0;
     }
 
     if ((tif = TIFFOpen(argv[1], "w")) == NULL) {
         fprintf(stderr, "can't open %s as a TIFF file\n", argv[1]);
-        exit(0);
+        return 0;
     }
 
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, WIDTH);
@@ -59,7 +58,7 @@ main(argc, argv)
     TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_NONE);
 
-    scan_line = (u_char *) malloc(WIDTH / 8);
+    scan_line = (unsigned char *) malloc(WIDTH / 8);
 
     for (i = 0; i < (WIDTH / 8) / 2; i++)
         scan_line[i] = 0;
@@ -81,5 +80,5 @@ main(argc, argv)
 
     free(scan_line);
     TIFFClose(tif);
-    exit(0);
+    return 0;
 }
