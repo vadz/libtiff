@@ -137,6 +137,18 @@ do
     shift
 done
 
+
+if [ "$ROOT" != "" ] ; then
+  ROOT_PREFIX=${ROOT}/
+else
+  ROOT_PREFIX=
+fi
+if [ "$DESTDIR" != "" ] ; then
+  DESTDIR_PREFIX=${DESTDIR}/
+else
+  DESTDIR_PREFIX=
+fi
+
 #
 # Install the specified target.
 #
@@ -149,8 +161,8 @@ install()
     fi
     if [ $SaveFirst = yes -a -f $target ]; then
 	bf=`echo $src | @SED@ 's;.*/;;'`
-	$VERBOSE "$MV $target $ROOT/$DESTDIR/OLD$bf"
-	$MV $target $ROOT/$DESTDIR/OLD$bf
+	$VERBOSE "$MV $target ${ROOT_PREFIX}${DESTDIR_PREFIX}OLD$bf"
+	$MV $target ${ROOT_PREFIX}${DESTDIR_PREFIX}OLD$bf
     fi
     if [ -z "$SRC" -a $HasSource = yes ]; then
 	$VERBOSE "$CMD $preopts $src $target $postopts"
@@ -166,7 +178,7 @@ install()
 	$CHGRP $target
 	$VERBOSE "$CHMOD $target"
 	$CHMOD $target
-	if [ $STRIP != ":" -a -x $ROOT/$DESTDIR/$f ]; then
+	if [ $STRIP != ":" -a -x ${ROOT_PREFIX}${DESTDIR_PREFIX}$f ]; then
 	    $STRIP $target >/dev/null 2>&1 || true
 	    $VERBOSE "$STRIP $target"
 	fi
@@ -184,7 +196,7 @@ if [ $Suggested = yes ]; then
     #     use test -f to see if the file exists.
     #
     for f in $TARGETS; do
-	t=$ROOT/$DESTDIR/$f
+	t=${ROOT_PREFIX}${DESTDIR_PREFIX}$f
 	if [ -f $t ]; then
 	    if [ -z "$SRC" -a $HasSource = yes ]; then
 		$CMP -s $f $t || {
@@ -213,7 +225,7 @@ elif [ $Updated = yes ]; then
     #     use test -f to see if the file exists.
     #
     for f in $TARGETS; do
-	t=$ROOT/$DESTDIR/$f
+	t=${ROOT_PREFIX}${DESTDIR_PREFIX}$f
 	if [ -f $t ]; then
 	    if [ -z "$SRC" -a $HasSource = yes ]; then
 		$CMP -s $f $t || $MV $t $t.O
@@ -232,7 +244,7 @@ elif [ $NoUpdate = yes ]; then
     #     use test -f to see if the file exists.
     #
     for f in $TARGETS; do
-	t=$ROOT/$DESTDIR/$f
+	t=${ROOT_PREFIX}${DESTDIR_PREFIX}$f
 	test -f $t || install $f $t
     done
 else
@@ -241,6 +253,6 @@ else
     # with the existing copy, optionally, saved first.
     #
     for f in $TARGETS; do
-	install $f $ROOT/$DESTDIR/$f
+	install $f ${ROOT_PREFIX}${DESTDIR_PREFIX}$f
     done
 fi
