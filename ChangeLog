@@ -1,3 +1,14 @@
+2005-03-17  Andrey Kiselev  <dron@remotesensing.org>
+
+	* nmake.opt: Build with Win32 CRT library by default.
+
+	* tools/tiff2ps.c: Fixed typo in page size handling code.
+
+	* libtiff/{tif_dir.c, tif_print.c}: Support for custom tags, passed
+	by value.
+
+	* libtiff/{tiff.h, tif_dirinfo.c, tiffiop.h}: Added EXIF related tags.
+
 2005-03-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff 3.7.2 released.
