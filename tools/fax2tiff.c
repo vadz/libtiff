@@ -288,7 +288,8 @@ copyFaxFile(TIFF* tifin, TIFF* tifout)
 	row = 0;
 	badrun = 0;		/* current run of bad lines */
 	while (tifin->tif_rawcc > 0) {
-		ok = (*tifin->tif_decoderow)(tifin, rowbuf, sizeof (rowbuf), 0);
+		ok = (*tifin->tif_decoderow)(tifin, (tdata_t) rowbuf, 
+					     sizeof (rowbuf), 0);
 		if (!ok) {
 			badfaxlines++;
 			badrun++;
