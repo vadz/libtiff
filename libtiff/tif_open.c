@@ -78,6 +78,20 @@ static const int litTypeshift[13] = {
 };
 
 /*
+ * Dummy functions to fill the omitted client procedures.
+ */
+static int
+_tiffDummyMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
+{
+	return (0);
+}
+
+static void
+_tiffDummyUnmapProc(thandle_t fd, tdata_t base, toff_t size)
+{
+}
+
+/*
  * Initialize the shift & mask tables, and the
  * byte swapping state according to the file
  * contents and the machine architecture.
@@ -156,9 +170,9 @@ TIFFClientOpen(
 	tif->tif_curstrip = (tstrip_t) -1;	/* invalid strip */
 	tif->tif_row = (uint32) -1;		/* read/write pre-increment */
 	tif->tif_clientdata = clientdata;
-	if (!readproc || !writeproc || !seekproc || !closeproc
-			|| !sizeproc || !mapproc || !unmapproc) {
-		TIFFError(module, "One of the client procedures are NULL pointer");
+	if (!readproc || !writeproc || !seekproc || !closeproc || !sizeproc) {
+		TIFFError(module,
+			  "One of the client procedures is NULL pointer.");
 		goto bad2;
 	}
 	tif->tif_readproc = readproc;
@@ -166,8 +180,14 @@ TIFFClientOpen(
 	tif->tif_seekproc = seekproc;
 	tif->tif_closeproc = closeproc;
 	tif->tif_sizeproc = sizeproc;
-	tif->tif_mapproc = mapproc;
-	tif->tif_unmapproc = unmapproc;
+        if (mapproc)
+		tif->tif_mapproc = mapproc;
+	else
+		tif->tif_mapproc = _tiffDummyMapProc;
+	if (unmapproc)
+		tif->tif_unmapproc = unmapproc;
+	else
+		tif->tif_unmapproc = _tiffDummyUnmapProc;
 	_TIFFSetDefaultCompressionState(tif);	/* setup default state */
 	/*
 	 * Default is to return data MSB2LSB and enable the
