@@ -1,5 +1,8 @@
 2004-03-26  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tools/tiffcp.c: Properly set Photometric Interpretation in case of
+	JPEG compression of grayscale images.
+
 	* tools/tiffcp.c: Don't emit warnings when Orientation tag does not
 	present in the input image.
 
