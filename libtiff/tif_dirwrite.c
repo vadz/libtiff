@@ -41,6 +41,7 @@ extern	void TIFFCvtNativeToIEEEDouble(TIFF*, uint32, double*);
 
 static	int TIFFWriteNormalTag(TIFF*, TIFFDirEntry*, const TIFFFieldInfo*);
 static	void TIFFSetupShortLong(TIFF*, ttag_t, TIFFDirEntry*, uint32);
+static	void TIFFSetupShort(TIFF*, ttag_t, TIFFDirEntry*, uint16);
 static	int TIFFSetupShortPair(TIFF*, ttag_t, TIFFDirEntry*);
 static	int TIFFWritePerSampleShorts(TIFF*, ttag_t, TIFFDirEntry*);
 static	int TIFFWritePerSampleAnys(TIFF*, TIFFDataType, ttag_t, TIFFDirEntry*);
@@ -258,6 +259,14 @@ TIFFWriteDirectory(TIFF* tif)
 			    dir++, td->td_tilewidth);
 			TIFFSetupShortLong(tif, TIFFTAG_TILELENGTH,
 			    dir, td->td_tilelength);
+			break;
+		case FIELD_COMPRESSION:
+			TIFFSetupShort(tif, TIFFTAG_COMPRESSION,
+			    dir, td->td_compression);
+			break;
+		case FIELD_PHOTOMETRIC:
+			TIFFSetupShort(tif, TIFFTAG_PHOTOMETRIC,
+			    dir, td->td_photometric);
 			break;
 		case FIELD_POSITION:
 			WriteRationalPair(TIFF_RATIONAL,
@@ -573,6 +582,18 @@ TIFFSetupShortLong(TIFF* tif, ttag_t tag, TIFFDirEntry* dir, uint32 v)
 		dir->tdir_type = (short) TIFF_SHORT;
 		dir->tdir_offset = TIFFInsertData(tif, (int) TIFF_SHORT, v);
 	}
+}
+
+/*
+ * Setup a SHORT directory entry
+ */
+static void
+TIFFSetupShort(TIFF* tif, ttag_t tag, TIFFDirEntry* dir, uint16 v)
+{
+	dir->tdir_tag = (uint16) tag;
+	dir->tdir_count = 1;
+	dir->tdir_type = (short) TIFF_SHORT;
+	dir->tdir_offset = TIFFInsertData(tif, (int) TIFF_SHORT, v);
 }
 #undef MakeShortDirent
 
