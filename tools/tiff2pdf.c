@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.18  2004-10-10 11:38:34  dron
+ * Revision 1.19  2004-10-28 13:32:28  fwarmerdam
+ * provide explicit unsigned char casts for a few values to avoid warnings
+ *
+ * Revision 1.18  2004/10/10 11:38:34  dron
  * Move _TIFFmemset() behind the pointer check in t2p_init().
  *
  * Revision 1.17  2004/10/09 14:15:07  dron
@@ -3352,8 +3355,10 @@ int t2p_process_jpeg_strip(
 					ri*=((( ((uint16)(buffer[*bufferoffset+7])<<8) | 
 					(uint16)(buffer[*bufferoffset+8]) )+h_samp-1)/ 
 					h_samp);
-					buffer[*bufferoffset+5]= (height>>8) & 0xff;
-					buffer[*bufferoffset+6]= height & 0xff;
+					buffer[*bufferoffset+5]=
+                                          (unsigned char) ((height>>8) & 0xff);
+					buffer[*bufferoffset+6]=
+                                            (unsigned char) (height & 0xff);
 					*bufferoffset+=strip[i+2]+2;
 					i+=strip[i+2]+2;
 
@@ -3380,7 +3385,8 @@ int t2p_process_jpeg_strip(
 					i+=strip[i+2]+2;
 				} else {
 					buffer[(*bufferoffset)++]=0xff;
-					buffer[(*bufferoffset)++]=0xd0 | ((no-1)%8);
+					buffer[(*bufferoffset)++]=
+                                            (unsigned char)(0xd0 | ((no-1)%8));
 					i+=strip[i+2]+2;
 				}
 				_TIFFmemcpy(&(buffer[*bufferoffset]), &(strip[i-1]), (*striplength)-i-1);
