@@ -112,6 +112,7 @@ MANDEV=\
 	lib/libtiff.3t \
 	\
 	lib/TIFFClose.3t \
+	lib/TIFFDataWidth.3t \
 	lib/TIFFError.3t \
 	lib/TIFFFlush.3t \
 	lib/TIFFGetField.3t \
@@ -244,6 +245,7 @@ apps/tiffsv.1::		${SRCDIR}/tiffsv.1;	${MANCVT}
 
 lib/libtiff.3t::	${SRCDIR}/libtiff.3t;			${MANCVT}
 lib/TIFFClose.3t::	${SRCDIR}/TIFFClose.3t;			${MANCVT}
+lib/TIFFDataWidth.3t::	${SRCDIR}/TIFFDataWidth.3t;		${MANCVT}
 lib/TIFFError.3t::	${SRCDIR}/TIFFError.3t;			${MANCVT}
 lib/TIFFFlush.3t::	${SRCDIR}/TIFFFlush.3t;			${MANCVT}
 lib/TIFFGetField.3t::	${SRCDIR}/TIFFGetField.3t;		${MANCVT}
@@ -381,6 +383,7 @@ links:	${MANDEVLINKS}
 
 short:
 	${MV} TIFFClose.3t close.3t
+	${MV} TIFFDataWidth.3t width.3t
 	${MV} TIFFError.3t error.3t
 	${MV} TIFFFlush.3t flush.3t
 	${MV} TIFFGetField.3t getfield.3t

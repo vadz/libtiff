@@ -158,6 +158,7 @@ on most systems doing ``man function-name'' will work.
 .ta \w'TIFFWriteEncodedStrip'u+2n +\w'Appears on Page'u+2n
 \fIName\fP	\fIAppears on Page\fP	\fIDescription\fP
 .sp 5p
+TIFFCheckpointDirectory writedir.3t	writes the current state of the directory
 TIFFCheckTile	tile.3t	very x,y,z,sample is within image
 TIFFClientOpen	open.3t	open a file for reading or writing
 TIFFClose	close.3t	close an open file
@@ -167,6 +168,7 @@ TIFFCurrentDirectory	query.3t	return index of current directory
 TIFFCurrentRow	query.3t	return index of current scanline
 TIFFCurrentStrip	query.3t	return index of current strip
 TIFFCurrentTile	query.3t	return index of current tile
+TIFFDataWidth 	width.3t	return the size of TIFF data types
 TIFFError	error.3t	library error handler
 TIFFFdOpen	open.3t	open a file for reading or writing
 TIFFFileName	query.3t	return name of open file
