@@ -515,7 +515,11 @@ releasediff:
 
 # create release or beta distribution archive
 release.tar.zip:
-	VERSIONREL="@VERSION@-@RELEASE@";				\
+	if test "@RELEASE@" = "" ; then					\
+	  VERSIONREL="@VERSION@";					\
+	else								\
+	  VERSIONREL="@VERSION@-@RELEASE@";				\
+	fi;								\
 	rm -f ../tiff-$$VERSIONREL $$VERSIONREL $$VERSIONREL-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSIONREL;					\
 	(for i in ${DISTFILES}; do					\
