@@ -139,6 +139,12 @@ TIFFOpen(const char* name, const char* mode)
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
 		return ((TIFF*)0);
+
+/* for cygwin */        
+#ifdef O_BINARY
+        m |= O_BINARY;
+#endif        
+        
 #ifdef _AM29K
 	fd = open(name, m);
 #else
