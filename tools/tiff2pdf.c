@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.19  2004-10-28 13:32:28  fwarmerdam
+ * Revision 1.20  2005-03-18 09:47:34  dron
+ * Fixed problem with alpha channel handling as per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=794
+ *
+ * Revision 1.19  2004/10/28 13:32:28  fwarmerdam
  * provide explicit unsigned char casts for a few values to avoid warnings
  *
  * Revision 1.18  2004/10/10 11:38:34  dron
@@ -1387,23 +1391,25 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			break;
 		case PHOTOMETRIC_RGB: 
 			t2p->pdf_colorspace=T2P_CS_RGB;
-			if(t2p->tiff_samplesperpixel==3){
+			if(t2p->tiff_samplesperpixel == 3){
 				break;
 			}
 			if(TIFFGetField(input, TIFFTAG_INDEXED, &xuint16)){
-				if(xuint16==1){
-						goto photometric_palette;
-				}
+				if(xuint16==1)
+					goto photometric_palette;
 			}
-			if(t2p->tiff_samplesperpixel>3){
-				if(t2p->tiff_samplesperpixel==4){
-					t2p->pdf_colorspace=T2P_CS_RGB;
-					if(TIFFGetField(input, TIFFTAG_EXTRASAMPLES, &xuint16, &xuint16p)){
-						if(xuint16==EXTRASAMPLE_ASSOCALPHA){
+			if(t2p->tiff_samplesperpixel > 3) {
+				if(t2p->tiff_samplesperpixel == 4) {
+					t2p->pdf_colorspace = T2P_CS_RGB;
+					if(TIFFGetField(input,
+							TIFFTAG_EXTRASAMPLES,
+							&xuint16, &xuint16p)
+					   && xuint16 == 1) {
+						if(xuint16p[0] == EXTRASAMPLE_ASSOCALPHA){
 							t2p->pdf_sample=T2P_SAMPLE_RGBAA_TO_RGB;
 							break;
 						}
-						if(xuint16==EXTRASAMPLE_UNASSALPHA){
+						if(xuint16p[0] == EXTRASAMPLE_UNASSALPHA){
 							t2p->pdf_sample=T2P_SAMPLE_RGBA_TO_RGB;
 							break;
 						}
@@ -3507,12 +3513,10 @@ tsize_t t2p_sample_realize_palette(T2P* t2p, unsigned char* buffer){
 tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
 
 	uint32 i=0;
-	uint32 itimes3=0;
 	uint32 sample=0;
 	
 	for(i=0;i<samplecount;i++){
 		sample=((uint32*)data)[i];
-		itimes3=i*3;
 		((char*)data)[i*3]= (char) (sample & 0xff);
 		((char*)data)[i*3+1]= (char) ((sample>>8) & 0xff);
 		((char*)data)[i*3+2]= (char) ((sample>>16) & 0xff);
@@ -3522,42 +3526,34 @@ tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
 }
 
 /*
-	This functions converts in place a buffer of RGBA interleaved data
-	into RGB interleaved data, discarding A.
-*/
+ * This functions converts in place a buffer of RGBA interleaved data
+ * into RGB interleaved data, discarding A.
+ */
 
-tsize_t t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount){
-
-	uint32 i=0;
-	uint32 itimes3=0;
-	uint32 sample=0;
+tsize_t
+t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
+{
+	uint32 i, sample;
 	
-	for(i=0;i<samplecount;i++){
-		sample=((uint32*)data)[i];
-		itimes3=i*3;
-		((char*)data)[i*3]= (char) ((sample>>24) & 0xff);
-		((char*)data)[i*3+1]= (char) ((sample>>16) & 0xff);
-		((char*)data)[i*3+2]= (char) ((sample>>8) & 0xff);
-	}
+	for(i = 0; i < samplecount; i++)
+		memcpy((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
 
-	return(i*3);
+	return(i * 3);
 }
 
 /*
-	This functions converts in place a buffer of RGBA interleaved data into RGB interleaved 
-	data, adding 255-A to each component sample.
+	This functions converts in place a buffer of RGBA interleaved data
+	into RGB interleaved data, adding 255-A to each component sample.
 */
 
 tsize_t t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount){
 
 	uint32 i=0;
-	uint32 itimes3=0;
 	uint32 sample=0;
 	unsigned char alpha=0;
 	
 	for(i=0;i<samplecount;i++){
 		sample=((uint32*)data)[i];
-		itimes3=i*3;
 		alpha=(unsigned char)((255-(sample & 0xff)));
 		((unsigned char*)data)[i*3] =
 			(unsigned char) ((sample>>24) & 0xff);
@@ -3575,7 +3571,8 @@ tsize_t t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount){
 }
 
 /*
-	This function converts the a and b samples of Lab data from signed to unsigned.
+	This function converts the a and b samples of Lab data from signed
+	to unsigned.
 */
 
 tsize_t t2p_sample_lab_signed_to_unsigned(tdata_t buffer, uint32 samplecount){
@@ -3584,12 +3581,14 @@ tsize_t t2p_sample_lab_signed_to_unsigned(tdata_t buffer, uint32 samplecount){
 
 	for(i=0;i<samplecount;i++){
 		if( (((unsigned char*)buffer)[(i*3)+1] & 0x80) !=0){
-			((unsigned char*)buffer)[(i*3)+1] = (unsigned char)(0x80 + ((char*)buffer)[(i*3)+1]);
+			((unsigned char*)buffer)[(i*3)+1] =
+				(unsigned char)(0x80 + ((char*)buffer)[(i*3)+1]);
 		} else {
 			((unsigned char*)buffer)[(i*3)+1] |= 0x80;
 		}
 		if( (((unsigned char*)buffer)[(i*3)+2] & 0x80) !=0){
-			((unsigned char*)buffer)[(i*3)+2] = (unsigned char)(0x80 + ((char*)buffer)[(i*3)+2]);
+			((unsigned char*)buffer)[(i*3)+2] =
+				(unsigned char)(0x80 + ((char*)buffer)[(i*3)+2]);
 		} else {
 			((unsigned char*)buffer)[(i*3)+2] |= 0x80;
 		}
