@@ -1,3 +1,11 @@
+2002-09-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* /libtiff/{tiffio.h, tif_dir.h}: TIFFDataWidth() declaration moved to
+	the tiffio.h header file.
+	
+	* Makefile.in, /man/{TIFFDataWidth.3t, Makefile.in, libtiff.3}: Added
+	manual page for TIFFDataWidth() function
+
 2002-09-08  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirread.c: Expand v[2] to v[4] in TIFFFetchShortPair()

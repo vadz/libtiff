@@ -245,6 +245,7 @@ TIFFFILES=\
 	    man/tiffsplit.1			\
 	    man/tiffsv.1			\
 	    man/TIFFClose.3t			\
+	    man/TIFFDataWidth.3t		\
 	    man/TIFFError.3t			\
 	    man/TIFFFlush.3t			\
 	    man/TIFFGetField.3t			\
@@ -326,8 +327,9 @@ TIFFFILES=\
 	    html/v3.5.2.html				\
 	    html/v3.5.3.html				\
 	    html/v3.5.7.html				\
-	    html/man				\
+	    html/man					\
 	    html/man/TIFFClose.3t.html				\
+	    html/man/TIFFDataWidth.3t.html		\
 	    html/man/TIFFError.3t.html				\
 	    html/man/TIFFFlush.3t.html				\
 	    html/man/TIFFGetField.3t.html				\
