@@ -1,5 +1,13 @@
 2005-03-18  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/dirinfo.c: Added DNG tags.
+
+	* libtiff/{tif_dir.c, tif_print.c}: More improvements in custom tag
+	handling code.
+
+	* libtiff/tiff.h: More comments; added missed DNG tag (LensInfo);
+	added DNG 1.1.0.0 tags.
+
 	* tools/tif2pdf.c: Fixed problem with alpha channel handling as per
 	bug
 
