@@ -173,7 +173,7 @@ main(int argc, char* argv[])
                           exit (-2);
                         }
                         {
-                          uint16    samples = -1;
+                          uint16    samples = (uint16) -1;
                           char **biasFn = &optarg;
                           bias = openSrcImage (biasFn);
                           if (!bias) exit (-5);
