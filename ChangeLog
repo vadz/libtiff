@@ -1,3 +1,8 @@
+2004-10-30  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tiffiop.h: added fallback definition of assert() if we
+	don't have assert.h.
+
 2004-10-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_fax3.c: Fixed case with the wrong decode routines
