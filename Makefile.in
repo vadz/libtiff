@@ -121,6 +121,7 @@ TIFFFILES=\
 	Makefile.in				\
 	README					\
 	VERSION					\
+	RELEASE-DATE				\
 	COPYRIGHT				\
 	TODO					\
 	test_pics.sh				\
