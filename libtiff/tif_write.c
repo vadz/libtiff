@@ -565,7 +565,7 @@ TIFFWriteBufferSetup(TIFF* tif, tdata_t bp, tsize_t size)
 	}
 	if (size == (tsize_t) -1) {
 		size = (isTiled(tif) ?
-		    tif->tif_tilesize : tif->tif_scanlinesize);
+		    tif->tif_tilesize : TIFFStripSize(tif));
 		/*
 		 * Make raw data buffer at least 8K
 		 */
