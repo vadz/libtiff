@@ -200,7 +200,8 @@ AIXdso: ${OBJS}
 # GNU linker shared libraries
 GNULDdso: ${OBJS}
 	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
-	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} @LIBJPEG@ @LIBGZ@ 
+	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
+		@LIBJPEG@ @LIBGZ@ @MACHLIBDEPS@
 	rm -f libtiff.@DSOSUF@
 	if [ @DSOSUB_VERSION != @DSOSUF ] ; then \
 	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
@@ -217,7 +218,8 @@ NETBSDdso FREEBSDdso: ${OBJS}
 # linux ELF shared lib rule
 LINUXdso:  ${OBJS}
 	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
-	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} @LIBJPEG@ @LIBGZ@ 
+	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
+		@LIBJPEG@ @LIBGZ@ @MACHLIBDEPS@
 	rm -f libtiff.@DSOSUF@
 	@LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@
 	touch $@
@@ -230,13 +232,12 @@ ${OBJS}: ${SRCDIR}/tiffio.h ${SRCDIR}/tiff.h ${SRCDIR}/tif_dir.h
 ${OBJS}: ${SRCDIR}/tiffcomp.h ${SRCDIR}/tiffiop.h ${SRCDIR}/tiffconf.h
 ${OBJS}: ${SRCDIR}/tiffvers.h
 
-ALPHA	= @ALPHAFILE@
 VERSION	= @VERSIONFILE@
 
-${SRCDIR}/tiffvers.h: ${VERSION} ${ALPHA} ${SRCDIR}/mkversion.c
+${SRCDIR}/tiffvers.h: ${VERSION} ${SRCDIR}/mkversion.c
 	${CC} -o mkversion ${CFLAGS} ${SRCDIR}/mkversion.c
 	rm -f ${SRCDIR}/tiffvers.h
-	./mkversion -v ${VERSION} -a ${ALPHA} ${SRCDIR}/tiffvers.h
+	./mkversion -v ${VERSION} ${SRCDIR}/tiffvers.h
 
 #
 # The finite state machine tables used by the G3/G4 decoders
@@ -326,6 +327,8 @@ tif_win3.o: ${SRCDIR}/tif_win3.c
 INCS	= ${SRCDIR}/tiff.h ${SRCDIR}/tiffio.h ${SRCDIR}/tiffconf.h \
 	${SRCDIR}/tiffvers.h
 
+INCS_PRIVATE = ${SRCDIR}/tiffiop.h ${SRCDIR}/tif_dir.h ${SRCDIR}/port.h
+
 installHdrs: ${INCS}
 	${INSTALL} -idb tiff.sw.dev -m 755 -dir @DIR_INC@
 	for i in ${INCS}; do						\
@@ -333,16 +336,26 @@ installHdrs: ${INCS}
 	    ${INSTALL} -idb tiff.sw.dev -m 444 -F @DIR_INC@		\
 		-src $$i -O $$f;					\
 	done
+
+installPrivateHdrs: ${INCS_PRIVATE}
+	${INSTALL} -idb tiff.sw.dev -m 755 -dir @DIR_INC@
+	for i in ${INCS_PRIVATE}; do					\
+	    f=`basename $$i`;						\
+	    ${INSTALL} -idb tiff.sw.dev -m 444 -F @DIR_INC@		\
+		-src $$i -O $$f;					\
+	done
+
 installDSO: @DSO@dso
 	if [ @DSOSUF_VERSION@ != @DSOSUF@ ]; then			\
 	    ${INSTALL} -idb tiff.sw.tools -m 555 -F @DIR_LIB@		\
 		-O libtiff.@DSOSUF_VERSION@;				\
 	    ${INSTALL} -idb tiff.sw.tools -F @DIR_LIB@			\
-		-ln libtiff.@DSOSUF_VERSION@ -O libtiff.@DSOSUF@;	\
+		-lns libtiff.@DSOSUF_VERSION@ -O libtiff.@DSOSUF@;	\
 	else								\
 	    ${INSTALL} -idb tiff.sw.tools -m 555 -F @DIR_LIB@		\
 		-O libtiff.@DSOSUF@;					\
 	fi
+
 install: all installHdrs
 	${INSTALL} -idb tiff.sw.dev -m 755 -dir @DIR_LIB@
 	${INSTALL} -idb tiff.sw.dev -m 444 -F @DIR_LIB@ -O libtiff.a
@@ -351,6 +364,8 @@ install: all installHdrs
 	else								\
 	    true;							\
 	fi
+
+install-private: install installPrivateHdrs
 
 clean:
 	rm -f ${TARGETS} ${OBJS} core a.out \
