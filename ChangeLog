@@ -1,3 +1,8 @@
+2002-04-01  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/: tifcp.c: Added support for 'Orientation' tag in tiffcp
+	utility (at cpStripToTile routine).
+
 2002-03-27  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_dirread.c: avoid div-by-zero if rowbytes is zero in chop func.
