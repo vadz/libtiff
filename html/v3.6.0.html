@@ -43,9 +43,10 @@ The following information is located here:
 <A NAME="highlights"><B><FONT SIZE=+3>M</FONT>AJOR CHANGES:</B></A>
 
 <ul>
-<li> New utility <b>raw2tiff</b> for converting raw rasters into TIFF files.
-<li> Lots of new <b>tiff2ps</b> options.
-<li> Lots of bug fixes for LZW, JPEG and OJPEG compression. 
+	<li> New utility <a href=./man/raw2tiff.1.html>raw2tiff</a>
+for converting raw rasters into TIFF files.
+	<li> Lots of new <a href=./man/tiff2ps.1.html>tiff2ps</a> options.
+	<li> Lots of bug fixes for LZW, JPEG and OJPEG compression. 
 </ul>
 
 <h3>Custom Tag Support</h3>
@@ -116,7 +117,7 @@ be stripped when installing, utility binaries will do be stripped.  As per bug
 <li> configure: OpenBSD changes for Sparc64 and DSO version as per bug 96.
 
 <li> config.site/configure: added support for OJPEG=yes option to enable
-	OJPEG support from config.site.
+OJPEG support from config.site.
 
 <li> config.guess, config.sub: Updated from ftp.gnu.org/pub/config.
 
@@ -149,15 +150,13 @@ AIX porting hack as it screwed up gcc. (bug 39)
 custom compression.
 <li> libtiff/tif_dirread.c: Another fix for the fetching SBYTE arrays
 by the TIFFFetchByteArray() function. (bug 52)
-<li> libtiff/{tiffio.h, tif_dir.h}: TIFFDataWidth() declaration moved to
-the tiffio.h header file, added man page.
 <li> libtiff/tif_dirread.c: Expand v[2] to v[4] in TIFFFetchShortPair()
 as per bug 196.
 <li> libtiff/tif_lzw.c: Additional consistency checking added in
-	LZWDecode() and LZWDecodeCompat() fixing bugs 190 and 100.
+LZWDecode() and LZWDecodeCompat() fixing bugs 190 and 100.
 <li> libtiff/tif_lzw.c:
-	Added check for valid code lengths in LZWDecode() and
-	LZWDecodeCompat(). Fixes bug 115.
+Added check for valid code lengths in LZWDecode() and
+LZWDecodeCompat(). Fixes bug 115.
 <li> tif_getimage.c: Ensure that TIFFRGBAImageBegin() returns the
 return code from the underlying pick function as per bug 177.
 
@@ -182,9 +181,11 @@ replaced by warnings. Now libtiff should read corrupted LZW-compressed
 files by skipping bad strips as per bug 100.
 	
 <li> libtiff/: tif_dirwrite.c, tif_write.c, tiffio.h:
-TIFFCheckpointDirectory() routine added as per bug 124.  The TIFFWriteDirectory
-man pages discusses this new function as well as the related 
-TIFFRewriteDirectory().
+<a href=./man/TIFFWriteDirectory.3t.html>TIFFCheckpointDirectory()</a>
+routine added as per bug 124.  The
+<a href=./man/TIFFWriteDirectory.3t.html>TIFFWriteDirectory</a>
+man page discusses this new function as well as the related 
+<a href=./man/TIFFWriteDirectory.3t.html>TIFFRewriteDirectory()</a>.
 
 <li> libtiff/: tif_codec.c, tif_compress.c, tiffiop.h, tif_getimage.c: 
 Introduced
@@ -198,7 +199,7 @@ per bug 111.
 <li> libtiff/: tiff.h, tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_dirread.c,
 tif_dirwrite.c: Dwight Kelly added get/put code for new tag XMLPACKET as 
 defined in Adobe XMP Technote. Added missing INKSET tag value from TIFF 6.0 
-spec 	INKSET_MULTIINK (=2). Added missing tags from Adobe TIFF technotes: 
+spec INKSET_MULTIINK (=2). Added missing tags from Adobe TIFF technotes: 
 CLIPPATH, XCLIPPATHUNITS, YCLIPPATHUNITS, OPIIMAGEID, OPIPROXY and
 INDEXED. Added PHOTOMETRIC tag value from TIFF technote 4 ICCLAB (=9).
 
@@ -207,17 +208,14 @@ TIFFRGBAImageOK, TIFFReadRGBAImage, TIFFReadRGBAStrip and TIFFReadRGBATile now
 use TIFFRGBAImageOK before reading a per bug 110.
 
 <li> libtiff/: tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_dirread.c,
-tif_dirwrite.c: Added routine TIFFDataWidth for detrmining
+tif_dirwrite.c: Added routine
+<a href=./man/TIFFDataWidth.3t.html>TIFFDataWidth</a> for determining
 TIFFDataType sizes instead of working with tiffDataWidth array
 directly as per bug 109.
 
-<li> libtiff/tif_getimage.c: Added support for correct handling
-`Orientation' tag in gtTileContig as per bug 23.  Should be added in other gt*
-functions as well, but I have not images for testing yet. 
-
 <li>libtiff/: tif_dirinfo.c, tif_dirwrite.c: Added possibility to
-	read broken TIFFs with LONG type used for TIFFTAG_COMPRESSION,
-	TIFFTAG_BITSPERSAMPLE, TIFFTAG_PHOTOMETRIC as per bug 99.
+read broken TIFFs with LONG type used for TIFFTAG_COMPRESSION,
+TIFFTAG_BITSPERSAMPLE, TIFFTAG_PHOTOMETRIC as per bug 99.
 
 <li> libtiff/{tiff.h,tif_fax3.c}: Add support for __arch64__ as per bug 94.
 
@@ -231,11 +229,11 @@ size.") for ITIFF files.  Apparently the problem was incorporated since
 3.5.5, presumably during the OJPEG/JPEG work recently.
 
 <li> libtiff/tif_getimage.c: If DEFAULT_EXTRASAMPLE_AS_ALPHA is 1 
-	(defined in tiffconf.h - 1 by default) then the RGBA interface
-	will assume that a fourth extra sample is ASSOCALPHA if the
-	EXTRASAMPLE value isn't set for it.  This changes the behaviour of
-	the library, but makes it work better with RGBA files produced by
-	lots of applications that don't mark the alpha values properly.
+(defined in tiffconf.h - 1 by default) then the RGBA interface
+will assume that a fourth extra sample is ASSOCALPHA if the
+EXTRASAMPLE value isn't set for it.  This changes the behaviour of
+the library, but makes it work better with RGBA files produced by
+lots of applications that don't mark the alpha values properly.
 As per bugs 93 and 65.
 
 <li> libtiff/tif_jpeg.c: allow jpeg data stream sampling values to 
@@ -247,16 +245,18 @@ ImageGear generated files.
 <P><HR WIDTH=65% ALIGN=left>
 
 <!-------------------------------------------------------------------------->
-
+	
 <A NAME="tools"><B><FONT SIZE=+3>C</FONT>HANGES IN THE TOOLS:</B></A>
 
 <UL>
 
-<li> raw2tiff.c: New utility for turning raw raster images into TIFF files
+<li> <a href=./man/raw2tiff.1.html>raw2tiff</a>:
+New utility for turning raw raster images into TIFF files
 written by Andrey Kiselev.
 
-<li> tiff2ps: Sebastian Eken provided patches (bug 200) to add new these new 
-  switches:
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>:
+Sebastian Eken provided patches (bug 200) to add new these new 
+switches:
   <ul>
     <li> <b>-b #</b>: for a bottom margin of # inches
     <li> <b>-c</b>: center image
@@ -265,34 +265,42 @@ written by Andrey Kiselev.
   </ul>
 
 Also, new features merged with code for shrinking/overlapping.
-Previously added -c and -n switches (for overriding PS units) renamed
-in -x and -y respectively.
 
-<li> tools/tiff2ps.c: Don't emit BeginData/EndData DSC comments
-since we are unable to properly include the amount to skip as per bug 80.
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Don't emit BeginData/EndData
+DSC comments since we are unable to properly include the amount to skip
+as per bug 80.
 
-<li> tools/tiff2ps.c: Added workaround for some software that may crash
-when last strip of image contains fewer number of scanlines than
-specified by the `/Height' variable as per bug 164.
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Added workaround for some
+software that may crash when last strip of image contains fewer number
+of scanlines than specified by the `/Height' variable as per bug 164.
 
-<li>  tools/tiff2ps, man/tiff2ps.1: Patch from John Williams to add new 
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Patch from John Williams to add new 
 functionality for tiff2ps utility splitting long images in several pages as
-per bug 142.
+per bug 142. New switches:
+	<ul>
+		<li> <b>-H #</b>: split image if height is more than # inches
+		<li> <b>-L #</b>: overLap split images by # inches
+	</ul>
 
-<li>  tools/tiff2ps: New commandline switches to override resolution
-	units obtained from the input file per bug 131.
+<li>  <a href=./man/tiff2ps.1.html>tiff2ps</a>: New commandline
+switches to override resolution units obtained from the input file per bug 131:
+	<ul>
+		<li> <b>-x</b>: override resolution units as centimeters
+		<li> <b>-y</b>: override resolution units as inches
+	</ul>
 
-<li> tools/fax2tiff.c: Updated to reflect latest changes in libtiff per bug 
-125.
+<li> <a href=./man/fax2tiff.1.html>fax2tiff</a>: Updated to reflect
+latest changes in libtiff per bug 125.
 
-<li> tools/tiff2ps: Division by zero fixed as per bug 88.
+<li> tiff2ps: Division by zero fixed as per bug 88.
 
-<li> tools/: tifcp.c: Added support for 'Orientation' tag in tiffcp
-utility (at cpStripToTile routine).
+<li> <a href=./man/tiffcp.1.html>tiffcp<a>:
+Added support for 'Orientation' tag.
 
-<li> tools/tiffdump.c: include TIFFTAG_JPEGTABLES in tag list.
+<li> <a href=./man/tiffdump.1.html>tiffdump</a>:
+include TIFFTAG_JPEGTABLES in tag list.
 
-<li> tools/tiffset.c: fix bug in error reporting.
+<li> tiffset: fix bug in error reporting.
 
 </UL>
 
