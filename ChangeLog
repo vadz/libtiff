@@ -1,3 +1,10 @@
+2004-05-27  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_ojpeg.c: Fixed problem with duplicated SOI and SOF
+	markers as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=581
+
 2004-05-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffsplit.c: Don't forget to copy Photometric
