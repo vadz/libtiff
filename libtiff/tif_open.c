@@ -360,6 +360,12 @@ TIFFClientOpen(
 	 * Note that this isn't actually a version number, it's a
 	 * magic number that doesn't change (stupid).
 	 */
+	if (tif->tif_header.tiff_version == TIFF_BIGTIFF_VERSION) {
+		TIFFError(name,
+                          "This is a BigTIFF file.  This format not supported\n"
+                          "by this version of libtiff." );
+		goto bad;
+	}
 	if (tif->tif_header.tiff_version != TIFF_VERSION) {
 		TIFFError(name,
 		    "Not a TIFF file, bad version number %d (0x%x)",
