@@ -12,6 +12,10 @@
 	* tools/tiff2rgba.c: Switched to use TIFFReadRGBAImageOriented()
 	instead of TIFFReadRGBAImage().
 
+	* tools/tiff2ps.c: Fixed possible endless loop as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=404
+
 2003-09-30  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Check field counter against number of field
