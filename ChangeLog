@@ -1,6 +1,7 @@
 2003-11-26  Andrey Kiselev  <dron@remotesensing.org>
 
-	* Makefile.in, /tools/Makefile.in: Added support fpr tiff2pdf utility.
+	* Makefile.in, /tools/{Makefile.in, makefile.vc}:
+	 Added support fpr tiff2pdf utility.
 
 2003-11-25  Ross Finlayson  <libtiff@apexinternetsoftware.com>
 
