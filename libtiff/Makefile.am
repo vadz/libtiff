@@ -23,7 +23,8 @@
 
 # Process this file with automake to produce Makefile.in.
 
-LIBPORT = -L$(top_builddir)/port -lport
+LIBPORT = $(top_builddir)/port/libport.la
+LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc libtiff.def \
 	     $(EXTRA_SRCS)
@@ -113,6 +114,7 @@ libtiffxx_la_SOURCES = $(SRCSXX)
 libtiffxx_la_LDFLAGS = \
 	-no-undefined \
 	-version-number $(LIBTIFF_MAJOR_VERSION):$(LIBTIFF_MINOR_VERSION):$(LIBTIFF_MICRO_VERSION)
+libtiffxx_la_LIBADD = $(LIBTIFF)
 
 #
 # The finite state machine tables used by the G3/G4 decoders
