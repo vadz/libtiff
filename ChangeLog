@@ -1,3 +1,7 @@
+2000-12-28  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* Fixed libtiff/makefile.vc to make tiffvers.h not version.h.
+
 2000-12-22  Mike Welles <mike@bangstate.com> 
         * added link to CVS mirror from index.html
 	
