@@ -1,3 +1,10 @@
+2004-04-25  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac, libtiff/{tiff.h, config.h.in}: Added tests for int8,
+	int16 and int32 types to avoid complains on some compilers. Details at
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=39
+
 2004-04-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2pdf.c: Fixed problem with unaligned access as per bug

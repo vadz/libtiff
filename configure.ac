@@ -79,6 +79,8 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
+dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
+AC_CHECK_TYPES([int8, int16, int32])
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS([floor isascii memmove memset mmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol])
