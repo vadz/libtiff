@@ -1,3 +1,8 @@
+2000-07-17  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Tentatively added support for SAMPLEFORMAT_COMPLEXIEEEFP, and
+	SAMPLEFORMAT_COMPLEXINT.
+
 2000-07-13  Mike Welles <mike@onshore.com> 
 
 	* index.html, bugs.html: added bugzilla info. 
