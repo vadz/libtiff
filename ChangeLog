@@ -1,3 +1,7 @@
+2000-07-13  Mike Welles <mike@onshore.com> 
+
+	* index.html, bugs.html: added bugzilla info. 
+	
 2000-07-12  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
 	* tif_read.c: fix subtle bug with determining the number of
@@ -35,6 +39,9 @@
 Tue Apr 18 16:18:08 2000  Frank Warmerdam  <warmerda@esabot.atlsci.com>
 
 	* tools/Makefile.in: Modified to install properly on SGI.
+
+2000-04-12  Mike Welles	     <mike@onshore.com>
+	* configure:  Fixed stupid mistake in libc6 test on Linux
 
 2000-04-04  Mike Welles	     <mike@onshore.com> 
 	* tif_win32.c:  Applied patch to fix overreads and ovverwrites

@@ -1156,6 +1156,7 @@ if [ "$DSO" = auto ]; then
 	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
 	;;
     *-linux*)
+sh
 	if [ -r /lib/libc.so.6 ] || [ -r /lib/libc.so.5 ]; then
 	    DSOSUF=so.${DIST_MAJOR}
 	    DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_ALPHA}
