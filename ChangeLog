@@ -1,3 +1,10 @@
+2003-08-21  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffmedian.c: int declaration replaced with the uint32 to
+	support large images as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=382
+
 2003-08-12  Andrey Kiselev  <dron@remotesensing.org>
 
  	* libtiff/Makefile.in: Fixed problem with building in different
