@@ -1,3 +1,8 @@
+2002-10-14  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* Makefile.in: added tif_extension.c to file list as per 
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=218.
+
 2002-10-11  Andrey Kiselev  <dron@remotesensing.org>
 	
 	* configure, config.site, libtiff/{tif_unix.c, Makefile.in}: Fix for
