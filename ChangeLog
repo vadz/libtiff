@@ -1,3 +1,9 @@
+2004-08-23  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2pdf.c: Fixed a bunch of problems as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=590
+
 2004-08-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2pdf.c: Applied patch from Ross Finlayson that checks
