@@ -36,7 +36,7 @@ The material presented in this chapter is a basic introduction
 to the capabilities of the library; it is not an attempt to describe
 everything a developer needs to know about the library or about TIFF.
 Detailed information on the interfaces to the library are given in
-the <A HREF="http://www-mipl.jpl.nasa.gov/~ndr/tiff/man/">
+the <A HREF="http://www.libtiff.org/man/index.html">
 UNIX manual pages</A> that accompany this software. 
 
 <P>
@@ -399,7 +399,7 @@ main(int argc, char* argv[])
 	    npixels = img.width * img.height;
 	    raster = (uint32*) _TIFFmalloc(npixels * sizeof (uint32));
 	    if (raster != NULL) {
-		if (TIFFRGBAImageGet(&img, raster, img.width, img.width)) {
+		if (TIFFRGBAImageGet(&img, raster, img.width, img.height)) {
 		    ...process raster data...
 		}
 		_TIFFfree(raster);
