@@ -56,7 +56,7 @@ and
 .B \-v
 options.
 Output data are compressed with the
-.SM LZW
+.SM PackBits
 compression scheme, by default; an alternate scheme can be
 selected with the
 .B \-c
@@ -75,12 +75,14 @@ Specify a compression scheme to use when writing image data:
 .B "\-c none"
 for no compression,
 .B "-c packbits"
-for the PackBits compression algorithm,
+for the PackBits compression algorithm (the default),
 .B "-c jpeg"
 for the JPEG compression algorithm,
+.B "-c zip"
+for the deflate compression algorithm,
 and
 .B "\-c lzw"
-for Lempel-Ziv & Welch (the default).
+for Lempel-Ziv & Welch.
 .TP
 .B \-h
 Set the horizontal sampling dimension to one of: 1, 2 (default), or 4.

@@ -75,6 +75,8 @@ main(int argc, char* argv[])
 			    compression = COMPRESSION_LZW;
 			else if (streq(optarg, "jpeg"))
 			    compression = COMPRESSION_JPEG;
+			else if (streq(optarg, "zip"))
+			    compression = COMPRESSION_ADOBE_DEFLATE;
 			else
 			    usage();
 			break;
@@ -322,8 +324,9 @@ static char* usageMsg[] = {
     "where comp is one of the following compression algorithms:\n",
     " jpeg\t\tJPEG encoding\n",
     " lzw\t\tLempel-Ziv & Welch encoding\n",
-    " (lzw no longer supported by default due to Unisys patent enforcement)", 
-    " packbits\tPackBits encoding\n",
+    " (lzw no longer supported by default due to Unisys patent enforcement)\n", 
+    " zip\t\tdeflate encoding\n",
+    " packbits\tPackBits encoding (default)\n",
     " none\t\tno compression\n",
     "and the other options are:\n",
     " -r\trows/strip\n",
