@@ -1,3 +1,19 @@
+2004-12-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* nmake.opt: Link with the user32.lib in windowed mode. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=697
+
+	* libtiff/tif_win32.c: Use char* strings instead of TCHAR in windowed
+	mode as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=697
+
+	* libtiff/tif_config.in.vc: Removed unneded definitions for
+	read/open/close/lseek functions to fix the
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=680
+	
 2004-12-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_dir.c, tif_dirread.c}: Remove TIFFReassignTagToIgnore()
