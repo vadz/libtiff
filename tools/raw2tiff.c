@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <math.h>
 #include <ctype.h>
 
@@ -63,7 +64,7 @@ main(int argc, char* argv[])
 	int	depth = 1;		    /* bytes per pixel in input image */
 	int	swab = 0;		    /* byte swapping flag */
 	InterleavingType interleaving = 0;  /* interleaving type flag */
-	uint32 rowsperstrip = (uint32) -1;
+	uint32  rowsperstrip = (uint32) -1;
 	uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	uint16	config = PLANARCONFIG_CONTIG;
 	uint16	fillorder = FILLORDER_LSB2MSB;
@@ -244,7 +245,7 @@ main(int argc, char* argv[])
 	bufsize = width * nbands * depth;
 	buf1 = (unsigned char *)_TIFFmalloc(bufsize);
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
-	    TIFFDefaultStripSize(out, rowsperstrip));
+		     TIFFDefaultStripSize(out, rowsperstrip));
 	fseek(in, hdr_size, SEEK_SET);		/* Skip the file header */
 	for (row = 0; row < length; row++) {
 		switch(interleaving) {
@@ -344,7 +345,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		*length = imagesize / *width;
 		
-		fprintf(stderr, "Height is guessed as %ld.\n", *length);
+		fprintf(stderr, "Height is guessed as %u.\n", *length);
 
 		return 1;
 	} else if (*width == 0 && *length != 0) {
@@ -352,7 +353,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		*width = imagesize / *length;
 		
-		fprintf(stderr,	"Width is guessed as %ld.\n", *width);
+		fprintf(stderr,	"Width is guessed as %u.\n", *width);
 
 		return 1;
 	} else if (*width == 0 && *length == 0) {
@@ -387,7 +388,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 		}
 
 		fprintf(stderr,
-			"Width is guessed as %ld, height is guessed as %ld.\n",
+			"Width is guessed as %u, height is guessed as %u.\n",
 			*width, *length);
 
 		return 1;
@@ -412,8 +413,8 @@ correlation(void *buf1, void *buf2, uint32 n_elem, TIFFDataType dtype)
 		case TIFF_BYTE:
 		default:
                         for (i = 0; i < n_elem; i++) {
-				X = ((u_char *)buf1)[i];
-				Y = ((u_char *)buf2)[i];
+				X = ((unsigned char *)buf1)[i];
+				Y = ((unsigned char *)buf2)[i];
 				M1 += X, M2 += Y;
 				D1 += X * X, D2 += Y * Y;
 				K += X * Y;
@@ -522,8 +523,8 @@ processCompressOptions(char* opt)
 	return (1);
 }
 
-char* stuff[] = {
-"raw2tiff --- tool to converting raw byte sequences in TIFF images",
+static char* stuff[] = {
+"raw2tiff --- tool for converting raw byte sequences in TIFF images",
 "usage: raw2tiff [options] input.raw output.tif",
 "where options are:",
 " -L		input data has LSB2MSB bit order (default)",
