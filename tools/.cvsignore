@@ -5,13 +5,14 @@ gif2tiff
 pal2rgb
 ppm2tiff
 ras2tiff
+raw2tiff
 rgb2ycbcr
-tumbnail
+thumbnail
 tiff2bw
 tiff2ps
 tiff2rgba
 tiffcp
-tiffcp
+tiffcmp
 tiffdither
 tiffdump
 tiffinfo
