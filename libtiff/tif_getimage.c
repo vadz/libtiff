@@ -42,6 +42,9 @@ static	int pickTileSeparateCase(TIFFRGBAImage*);
 
 static	const char photoTag[] = "PhotometricInterpretation";
 
+#define FLIP_VERTICALLY 0x01
+#define FLIP_HORIZONTALLY 0x02
+
 /*
  * Check the image to see if TIFFReadRGBAImage can deal with it.
  * 1/0 is returned according to whether or not the image can
@@ -117,7 +120,6 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 	    return (0);
 	}
 	break;
-#ifdef CMYK_SUPPORT
     case PHOTOMETRIC_SEPARATED:
 	if (td->td_inkset != INKSET_CMYK) {
 	    sprintf(emsg, "Sorry, can not handle separated image with %s=%d",
@@ -130,7 +132,6 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 	    return (0);
 	}
 	break;
-#endif
     case PHOTOMETRIC_LOGL:
 	if (td->td_compression != COMPRESSION_SGILOG) {
 	    sprintf(emsg, "Sorry, LogL data must have %s=%d",
@@ -215,6 +216,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     img->redcmap = NULL;
     img->greencmap = NULL;
     img->bluecmap = NULL;
+    img->req_orientation = ORIENTATION_BOTLEFT;	    /* It is the default */
     
     img->tif = tif;
     img->stoponerr = stop;
@@ -426,29 +428,9 @@ TIFFRGBAImageGet(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 }
 
 /*
- * Read the specified image into an ABGR-format raster.
+ * Read the specified image into an ABGR-format rastertaking in account
+ * specified orientation.
  */
-int
-TIFFReadRGBAImage(TIFF* tif,
-		  uint32 rwidth, uint32 rheight, uint32* raster, int stop)
-{
-    char emsg[1024];
-    TIFFRGBAImage img;
-    int ok;
-
-    if (TIFFRGBAImageOK(tif, emsg) &&
-	TIFFRGBAImageBegin(&img, tif, stop, emsg)) {
-	/* XXX verify rwidth and rheight against width and height */
-	ok = TIFFRGBAImageGet(&img, raster+(rheight-img.height)*rwidth,
-	    rwidth, img.height);
-	TIFFRGBAImageEnd(&img);
-    } else {
-	TIFFError(TIFFFileName(tif), emsg);
-	ok = 0;
-    }
-    return (ok);
-}
-
 int
 TIFFReadRGBAImageOriented(TIFF* tif,
 			  uint32 rwidth, uint32 rheight, uint32* raster,
@@ -460,85 +442,11 @@ TIFFReadRGBAImageOriented(TIFF* tif,
 
     if (TIFFRGBAImageOK(tif, emsg) &&
 	TIFFRGBAImageBegin(&img, tif, stop, emsg)) {
+	img.req_orientation = orientation;
 	/* XXX verify rwidth and rheight against width and height */
 	ok = TIFFRGBAImageGet(&img, raster+(rheight-img.height)*rwidth,
 	    rwidth, img.height);
 	TIFFRGBAImageEnd(&img);
-
-	/* 
-	 * TIFFRGBAImageGet() always returns bottom-left oriented raster.
-	 * Wi will rotate it accordingly with user request.
-	 */
-	if (orientation == ORIENTATION_TOPLEFT ||
-	    orientation == ORIENTATION_LEFTTOP) {
-		uint32 *linebuf = (uint32*)_TIFFmalloc(rwidth * sizeof(uint32));
-		uint32 *top, *bottom;
-
-		for (top = raster, bottom = raster + (rheight - 1) * rwidth;
-		     top < bottom;
-		     top+=rwidth, bottom-=rwidth) {
-			_TIFFmemcpy(linebuf, top, rwidth * sizeof(uint32));
-			_TIFFmemcpy(top, bottom, rwidth * sizeof(uint32));
-			_TIFFmemcpy(bottom, linebuf, rwidth * sizeof(uint32));
-		}
-
-		_TIFFfree(linebuf);
-	} else if (orientation == ORIENTATION_TOPRIGHT ||
-		   orientation == ORIENTATION_RIGHTTOP) {
-		uint32 *linebuf = (uint32*)_TIFFmalloc(rwidth * sizeof(uint32));
-		uint32 *top, *bottom;
-
-		for (top = raster, bottom = raster + (rheight - 1) * rwidth;
-		/* XXX: Use `<=' because we should revert center line too */
-		     top <= bottom;
-		     top+=rwidth, bottom-=rwidth) {
-			uint32 *left = top;
-			uint32 *right = left + rwidth - 1;
-			
-			while ( left < right ) {
-				uint32 temp = *left;
-				*left = *right;
-				*right = temp;
-				left++, right--;
-			}
-
-			/* 
-			 * XXX: check for center line, otherwise
-			 * it will be reverted back
-			 */
-			if (top != bottom) {
-				left = bottom;
-				right = left + rwidth - 1;
-				while ( left < right ) {
-					uint32 temp = *left;
-					*left = *right;
-					*right = temp;
-					left++, right--;
-				}
-			}
-
-			_TIFFmemcpy(linebuf, top, rwidth * sizeof(uint32));
-			_TIFFmemcpy(top, bottom, rwidth * sizeof(uint32));
-			_TIFFmemcpy(bottom, linebuf, rwidth * sizeof(uint32));
-		}
-
-		_TIFFfree(linebuf);
-	} else if (orientation == ORIENTATION_BOTRIGHT ||
-		   orientation == ORIENTATION_RIGHTBOT) {
-		uint32 line;
-
-		for (line = 0; line < rheight; line++) {
-			uint32 *left = raster + (line * rwidth);
-			uint32 *right = left + rwidth - 1;
-
-			while ( left < right ) {
-				uint32 temp = *left;
-				*left = *right;
-				*right = temp;
-				left++, right--;
-			}
-		}
-	}
     } else {
 	TIFFError(TIFFFileName(tif), emsg);
 	ok = 0;
@@ -546,34 +454,77 @@ TIFFReadRGBAImageOriented(TIFF* tif,
     return (ok);
 }
 
-static uint32
-setorientation(TIFFRGBAImage* img, uint32 h)
+/*
+ * Read the specified image into an ABGR-format raster. Use bottom left
+ * origin for raster by default.
+ */
+int
+TIFFReadRGBAImage(TIFF* tif,
+		  uint32 rwidth, uint32 rheight, uint32* raster, int stop)
 {
-    TIFF* tif = img->tif;
-    uint32 y;
+	return TIFFReadRGBAImageOriented(tif, rwidth, rheight, raster,
+					 ORIENTATION_BOTLEFT, stop);
+}
 
-    switch (img->orientation) {
-    case ORIENTATION_BOTRIGHT:
-    case ORIENTATION_RIGHTBOT:	/* XXX */
-    case ORIENTATION_LEFTBOT:	/* XXX */
-	TIFFWarning(TIFFFileName(tif), "using bottom-left orientation");
-	img->orientation = ORIENTATION_BOTLEFT;
-	/* fall thru... */
-    case ORIENTATION_BOTLEFT:
-	y = 0;
-	break;
-    case ORIENTATION_TOPRIGHT:
-    case ORIENTATION_RIGHTTOP:	/* XXX */
-    case ORIENTATION_LEFTTOP:	/* XXX */
-    default:
-	TIFFWarning(TIFFFileName(tif), "using top-left orientation");
-	img->orientation = ORIENTATION_TOPLEFT;
-	/* fall thru... */
-    case ORIENTATION_TOPLEFT:
-	y = h-1;
-	break;
-    }
-    return (y);
+static int 
+setorientation(TIFFRGBAImage* img)
+{
+	switch (img->orientation) {
+		case ORIENTATION_TOPLEFT:
+		case ORIENTATION_LEFTTOP:
+			if (img->req_orientation == ORIENTATION_TOPRIGHT ||
+			    img->req_orientation == ORIENTATION_RIGHTTOP)
+				return FLIP_HORIZONTALLY;
+			else if (img->req_orientation == ORIENTATION_BOTRIGHT ||
+			    img->req_orientation == ORIENTATION_RIGHTBOT)
+				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
+			else if (img->req_orientation == ORIENTATION_BOTLEFT ||
+			    img->req_orientation == ORIENTATION_LEFTBOT)
+				return FLIP_VERTICALLY;
+			else
+				return 0;
+		case ORIENTATION_TOPRIGHT:
+		case ORIENTATION_RIGHTTOP:
+			if (img->req_orientation == ORIENTATION_TOPLEFT ||
+			    img->req_orientation == ORIENTATION_LEFTTOP)
+				return FLIP_HORIZONTALLY;
+			else if (img->req_orientation == ORIENTATION_BOTRIGHT ||
+			    img->req_orientation == ORIENTATION_RIGHTBOT)
+				return FLIP_VERTICALLY;
+			else if (img->req_orientation == ORIENTATION_BOTLEFT ||
+			    img->req_orientation == ORIENTATION_LEFTBOT)
+				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
+			else
+				return 0;
+		case ORIENTATION_BOTRIGHT:
+		case ORIENTATION_RIGHTBOT:
+			if (img->req_orientation == ORIENTATION_TOPLEFT ||
+			    img->req_orientation == ORIENTATION_LEFTTOP)
+				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
+			else if (img->req_orientation == ORIENTATION_TOPRIGHT ||
+			    img->req_orientation == ORIENTATION_RIGHTTOP)
+				return FLIP_VERTICALLY;
+			else if (img->req_orientation == ORIENTATION_BOTLEFT ||
+			    img->req_orientation == ORIENTATION_LEFTBOT)
+				return FLIP_HORIZONTALLY;
+			else
+				return 0;
+		case ORIENTATION_BOTLEFT:
+		case ORIENTATION_LEFTBOT:
+			if (img->req_orientation == ORIENTATION_TOPLEFT ||
+			    img->req_orientation == ORIENTATION_LEFTTOP)
+				return FLIP_VERTICALLY;
+			else if (img->req_orientation == ORIENTATION_TOPRIGHT ||
+			    img->req_orientation == ORIENTATION_RIGHTTOP)
+				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
+			else if (img->req_orientation == ORIENTATION_BOTRIGHT ||
+			    img->req_orientation == ORIENTATION_RIGHTBOT)
+				return FLIP_HORIZONTALLY;
+			else
+				return 0;
+		default:	/* NOTREACHED */
+			return 0;
+	}
 }
 
 /*
@@ -587,13 +538,13 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 {
     TIFF* tif = img->tif;
     tileContigRoutine put = img->put.contig;
-    uint16 orientation;
-    uint32 col, row, y, rowstoread, ret = 1;
+    uint32 col, row, y, rowstoread;
     uint32 pos;
     uint32 tw, th;
     u_char* buf;
     int32 fromskew, toskew;
     uint32 nrow;
+    int ret = 1, flip;
 
     buf = (u_char*) _TIFFmalloc(TIFFTileSize(tif));
     if (buf == 0) {
@@ -602,9 +553,17 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     }
     TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tw);
     TIFFGetField(tif, TIFFTAG_TILELENGTH, &th);
-    y = setorientation(img, h);
-    orientation = img->orientation;
-    toskew = -(int32) (orientation == ORIENTATION_TOPLEFT ? tw+w : tw-w);
+
+    flip = setorientation(img);
+    if (flip & FLIP_VERTICALLY) {
+	    y = h - 1;
+	    toskew = -(int32)(tw + w);
+    }
+    else {
+	    y = 0;
+	    toskew = -(int32)(tw - w);
+    }
+     
     for (row = 0; row < h; row += nrow)
     {
         rowstoread = th - (row + img->row_offset) % th;
@@ -635,13 +594,28 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
             {
                 (*put)(img, raster+y*w+col, col, y, tw, nrow, 0, toskew, buf + pos);
             }
-
-	    
         }
 
-        y += (orientation == ORIENTATION_TOPLEFT ? -(int32) nrow : (int32) nrow);
+        y += (flip & FLIP_VERTICALLY ? -(int32) nrow : (int32) nrow);
     }
     _TIFFfree(buf);
+
+    if (flip & FLIP_HORIZONTALLY) {
+	    uint32 line;
+
+	    for (line = 0; line < h; line++) {
+		    uint32 *left = raster + (line * w);
+		    uint32 *right = left + w - 1;
+		    
+		    while ( left < right ) {
+			    uint32 temp = *left;
+			    *left = *right;
+			    *right = temp;
+			    left++, right--;
+		    }
+	    }
+    }
+
     return (ret);
 }
 
@@ -656,7 +630,6 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 {
     TIFF* tif = img->tif;
     tileSeparateRoutine put = img->put.separate;
-    uint16 orientation;
     uint32 col, row, y, rowstoread;
     uint32 pos;
     uint32 tw, th;
@@ -669,7 +642,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     int32 fromskew, toskew;
     int alpha = img->alpha;
     uint32 nrow;
-    int ret = 1;
+    int ret = 1, flip;
 
     tilesize = TIFFTileSize(tif);
     buf = (u_char*) _TIFFmalloc(4*tilesize);
@@ -685,9 +658,17 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	memset(a, 0xff, tilesize);
     TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tw);
     TIFFGetField(tif, TIFFTAG_TILELENGTH, &th);
-    y = setorientation(img, h);
-    orientation = img->orientation;
-    toskew = -(int32) (orientation == ORIENTATION_TOPLEFT ? tw+w : tw-w);
+
+    flip = setorientation(img);
+    if (flip & FLIP_VERTICALLY) {
+	    y = h - 1;
+	    toskew = -(int32)(tw + w);
+    }
+    else {
+	    y = 0;
+	    toskew = -(int32)(tw - w);
+    }
+
     for (row = 0; row < h; row += nrow) 
     {
         rowstoread = th - (row + img->row_offset) % th;
@@ -740,8 +721,25 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
             }
         }
 
-        y += (orientation == ORIENTATION_TOPLEFT ?-(int32) nrow : (int32) nrow);
+        y += (flip & FLIP_VERTICALLY ?-(int32) nrow : (int32) nrow);
     }
+
+    if (flip & FLIP_HORIZONTALLY) {
+	    uint32 line;
+
+	    for (line = 0; line < h; line++) {
+		    uint32 *left = raster + (line * w);
+		    uint32 *right = left + w - 1;
+		    
+		    while ( left < right ) {
+			    uint32 temp = *left;
+			    *left = *right;
+			    *right = temp;
+			    left++, right--;
+		    }
+	    }
+    }
+
     _TIFFfree(buf);
     return (ret);
 }
@@ -757,7 +755,6 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 {
     TIFF* tif = img->tif;
     tileContigRoutine put = img->put.contig;
-    uint16 orientation;
     uint32 row, y, nrow, rowstoread;
     uint32 pos;
     u_char* buf;
@@ -765,16 +762,24 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     uint32 imagewidth = img->width;
     tsize_t scanline;
     int32 fromskew, toskew;
-    int ret = 1;
+    int ret = 1, flip;
 
     buf = (u_char*) _TIFFmalloc(TIFFStripSize(tif));
     if (buf == 0) {
 	TIFFError(TIFFFileName(tif), "No space for strip buffer");
 	return (0);
     }
-    y = setorientation(img, h);
-    orientation = img->orientation;
-    toskew = -(int32) (orientation == ORIENTATION_TOPLEFT ? w+w : w-w);
+
+    flip = setorientation(img);
+    if (flip & FLIP_VERTICALLY) {
+	    y = h - 1;
+	    toskew = -(int32)(w + w);
+    }
+    else {
+	    y = 0;
+	    toskew = -(int32)(w - w);
+    }
+
     TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
     scanline = TIFFScanlineSize(tif);
     fromskew = (w < imagewidth ? imagewidth - w : 0);
@@ -794,8 +799,25 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
         pos = ((row + img->row_offset) % rowsperstrip) * scanline;
         (*put)(img, raster+y*w, 0, y, w, nrow, fromskew, toskew, buf + pos);
-        y += (orientation == ORIENTATION_TOPLEFT ?-(int32) nrow : (int32) nrow);
+        y += (flip & FLIP_VERTICALLY ? -(int32) nrow : (int32) nrow);
     }
+
+    if (flip & FLIP_HORIZONTALLY) {
+	    uint32 line;
+
+	    for (line = 0; line < h; line++) {
+		    uint32 *left = raster + (line * w);
+		    uint32 *right = left + w - 1;
+		    
+		    while ( left < right ) {
+			    uint32 temp = *left;
+			    *left = *right;
+			    *right = temp;
+			    left++, right--;
+		    }
+	    }
+    }
+
     _TIFFfree(buf);
     return (ret);
 }
@@ -811,7 +833,6 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 {
     TIFF* tif = img->tif;
     tileSeparateRoutine put = img->put.separate;
-    uint16 orientation;
     u_char *buf;
     u_char *r, *g, *b, *a;
     uint32 row, y, nrow, rowstoread;
@@ -822,7 +843,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     tsize_t stripsize;
     int32 fromskew, toskew;
     int alpha = img->alpha;
-    int	ret = 1;
+    int	ret = 1, flip;
 
     stripsize = TIFFStripSize(tif);
     r = buf = (u_char *)_TIFFmalloc(4*stripsize);
@@ -835,9 +856,17 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     a = b + stripsize;
     if (!alpha)
 	memset(a, 0xff, stripsize);
-    y = setorientation(img, h);
-    orientation = img->orientation;
-    toskew = -(int32) (orientation == ORIENTATION_TOPLEFT ? w+w : w-w);
+
+    flip = setorientation(img);
+    if (flip & FLIP_VERTICALLY) {
+	    y = h - 1;
+	    toskew = -(int32)(w + w);
+    }
+    else {
+	    y = 0;
+	    toskew = -(int32)(w - w);
+    }
+
     TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
     scanline = TIFFScanlineSize(tif);
     fromskew = (w < imagewidth ? imagewidth - w : 0);
@@ -879,8 +908,25 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
         pos = ((row + img->row_offset) % rowsperstrip) * scanline;
         (*put)(img, raster+y*w, 0, y, w, nrow, fromskew, toskew, r + pos, g + pos, 
                b + pos, a + pos);
-        y += (orientation == ORIENTATION_TOPLEFT ? -(int32) nrow : (int32) nrow);
+        y += (flip & FLIP_VERTICALLY ? -(int32) nrow : (int32) nrow);
     }
+
+    if (flip & FLIP_HORIZONTALLY) {
+	    uint32 line;
+
+	    for (line = 0; line < h; line++) {
+		    uint32 *left = raster + (line * w);
+		    uint32 *right = left + w - 1;
+		    
+		    while ( left < right ) {
+			    uint32 temp = *left;
+			    *left = *right;
+			    *right = temp;
+			    left++, right--;
+		    }
+	    }
+    }
+
     _TIFFfree(buf);
     return (ret);
 }

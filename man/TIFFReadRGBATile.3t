@@ -167,9 +167,6 @@ grayscale data to
 There was insufficient memory to allocate a table used to map
 data to 8-bit
 .SM RGB.
-.SH BUGS
-Orientations other than bottom-left, or top-left are
-not handled correctly.
 .SH "SEE ALSO"
 .IR libtiff (3T),
 .IR TIFFOpen (3T),
