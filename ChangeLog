@@ -1,3 +1,10 @@
+2004-01-20  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_write.c: Fixed reporting size of the buffer in case of
+	stripped image in TIFFWriteBufferSetup(). As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=460
+
 2004-01-11  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dir.c: Incomplete cleanup in TIFFFreeDirectory(),
