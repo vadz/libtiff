@@ -1,4 +1,6 @@
 2004-10-30  Andrey Kiselev  <dron@remotesensing.org>
+	
+	* libtiff/tif_dirwrite.c: Improvements in tag writing code.
 
 	* tools/tiff2ps.c: Fixed wrong variable data type when read Position
 	tags (Tristan Hill).
