@@ -203,6 +203,10 @@ typedef struct {
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifndef LOGLUV_PUBLIC
+#define LOGLUV_PUBLIC		1	// share internal LogLuv conversion routines
+#endif
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -328,6 +332,31 @@ extern	void TIFFSwabArrayOfLong(uint32*, unsigned long);
 extern	void TIFFSwabArrayOfDouble(double*, unsigned long);
 extern	void TIFFReverseBits(unsigned char *, unsigned long);
 extern	const unsigned char* TIFFGetBitRevTable(int);
+
+#if LOGLUV_PUBLIC
+#define U_NEU		0.210526316
+#define V_NEU		0.473684211
+#define UVSCALE		410.
+extern	double LogL16toY(int);
+extern	double LogL10toY(int);
+extern	void XYZtoRGB24(float*, uint8*);
+extern	int uv_decode(double*, double*, int);
+extern	void LogLuv24toXYZ(uint32, float*);
+extern	void LogLuv32toXYZ(uint32, float*);
+#if defined(c_plusplus) || defined(__cplusplus)
+extern	int LogL16fromY(double, int = SGILOGENCODE_NODITHER);
+extern	int LogL10fromY(double, int = SGILOGENCODE_NODITHER);
+extern	int uv_encode(double, double, int = SGILOGENCODE_NODITHER);
+extern	uint32 LogLuv24fromXYZ(float*, int = SGILOGENCODE_NODITHER);
+extern	uint32 LogLuv32fromXYZ(float*, int = SGILOGENCODE_NODITHER);
+#else
+extern	int LogL16fromY(double, int);
+extern	int LogL10fromY(double, int);
+extern	int uv_encode(double, double, int);
+extern	uint32 LogLuv24fromXYZ(float*, int);
+extern	uint32 LogLuv32fromXYZ(float*, int);
+#endif
+#endif /* LOGLUV_PUBLIC */
 #if defined(__cplusplus)
 }
 #endif
