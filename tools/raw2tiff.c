@@ -41,7 +41,23 @@
 # include <unistd.h>
 #endif
 
+#if HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
+#if HAVE_IO_H
+# include <io.h>
+#endif
+
 #include "tiffio.h"
+
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
 
 typedef enum {
 	PIXEL,
@@ -54,7 +70,7 @@ static	int quality = 75;		/* JPEG quality */
 static	uint16 predictor = 0;
 
 static void swapBytesInScanline(void *, uint32, TIFFDataType);
-static int guessSize(FILE *, TIFFDataType, off_t, uint32, int,
+static int guessSize(int, TIFFDataType, off_t, uint32, int,
 		     uint32 *, uint32 *);
 static double correlation(void *, void *, uint32, TIFFDataType);
 static void usage(void);
@@ -67,14 +83,14 @@ main(int argc, char* argv[])
 	uint32	nbands = 1;		    /* number of bands in input image*/
 	off_t	hdr_size = 0;		    /* size of the header to skip */
 	TIFFDataType dtype = TIFF_BYTE;
-	int	depth = 1;		    /* bytes per pixel in input image */
+	int16	depth = 1;		    /* bytes per pixel in input image */
 	int	swab = 0;		    /* byte swapping flag */
 	InterleavingType interleaving = 0;  /* interleaving type flag */
 	uint32  rowsperstrip = (uint32) -1;
 	uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	uint16	config = PLANARCONFIG_CONTIG;
 	uint16	fillorder = FILLORDER_LSB2MSB;
-	FILE	*in;
+	int	fd;
 	char	*outfilename = NULL;
 	TIFF	*out;
 
@@ -176,14 +192,14 @@ main(int argc, char* argv[])
         if (argc - optind < 2)
 		usage();
 
-        in = fopen(argv[optind], "rb");
-	if (in == NULL) {
+        fd = open(argv[optind], O_RDONLY|O_BINARY, 0);
+	if (fd < 0) {
 		fprintf(stderr, "%s: %s: Cannot open input file.\n",
 			argv[0], argv[optind]);
 		return (-1);
 	}
 
-	if (guessSize(in, dtype, hdr_size, nbands, swab, &width, &length) < 0)
+	if (guessSize(fd, dtype, hdr_size, nbands, swab, &width, &length) < 0)
 		return 1;
 
 	if (outfilename == NULL)
@@ -252,15 +268,15 @@ main(int argc, char* argv[])
 	buf1 = (unsigned char *)_TIFFmalloc(bufsize);
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
 		     TIFFDefaultStripSize(out, rowsperstrip));
-	fseek(in, hdr_size, SEEK_SET);		/* Skip the file header */
+	lseek(fd, hdr_size, SEEK_SET);		/* Skip the file header */
 	for (row = 0; row < length; row++) {
 		switch(interleaving) {
 		case BAND:			/* band interleaved data */
 			for (band = 0; band < nbands; band++) {
-				fseek(in,
+				lseek(fd,
 				      hdr_size + (length*band+row)*linebytes,
 				      SEEK_SET);
-				if (fread(buf, linebytes, 1, in) != 1) {
+				if (read(fd, buf, linebytes) != linebytes) {
 					fprintf(stderr,
 					"%s: %s: scanline %lu: Read error.\n",
 					argv[0], argv[optind],
@@ -276,7 +292,7 @@ main(int argc, char* argv[])
 			break;
 		case PIXEL:			/* pixel interleaved data */
 		default:
-			if (fread(buf1, bufsize, 1, in) != 1) {
+			if (read(fd, buf1, bufsize) != bufsize) {
 				fprintf(stderr,
 					"%s: %s: scanline %lu: Read error.\n",
 					argv[0], argv[optind],
@@ -327,7 +343,7 @@ swapBytesInScanline(void *buf, uint32 width, TIFFDataType dtype)
 }
 
 static int
-guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
+guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 	  int swab, uint32 *width, uint32 *length)
 {
 	const float longt = 40.0;    /* maximum possible height/width ratio */
@@ -337,7 +353,7 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 	uint32	    depth = TIFFDataWidth(dtype);
 	float	    cor_coef = 0, tmp;
 
-	fstat(fileno(fp), &filestat);
+	fstat(fd, &filestat);
 
 	if (filestat.st_size < hdr_size) {
 		fprintf(stderr, "Too large header size specified.\n");
@@ -373,10 +389,10 @@ guessSize(FILE *fp, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 				buf1 = _TIFFmalloc(scanlinesize);
 				buf2 = _TIFFmalloc(scanlinesize);
 				h = imagesize / w;
-				fseek(fp, hdr_size + (int)(h/2)*scanlinesize,
+				lseek(fd, hdr_size + (int)(h/2)*scanlinesize,
 				      SEEK_SET);
-				fread(buf1, scanlinesize, 1, fp);
-				fread(buf2, scanlinesize, 1, fp);
+				read(fd, buf1, scanlinesize);
+				read(fd, buf2, scanlinesize);
 				if (swab) {
 					swapBytesInScanline(buf1, w, dtype);
 					swapBytesInScanline(buf2, w, dtype);
