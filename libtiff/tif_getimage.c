@@ -455,7 +455,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     TIFF* tif = img->tif;
     tileContigRoutine put = img->put.contig;
     uint16 orientation;
-    uint32 col, row, y, rowstoread, ret = 0;
+    uint32 col, row, y, rowstoread, ret = 1;
     uint32 pos;
     uint32 tw, th;
     u_char* buf;
