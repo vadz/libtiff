@@ -98,7 +98,7 @@ void formatString(FILE *ofile, const char *s, int len)
 {
   putc('"', ofile);
   for (; len > 0; --len, ++s) {
-    char c = *s;
+    int c = *s;
     switch (c) {
     case '&':
       fputs("&amp;", ofile);
