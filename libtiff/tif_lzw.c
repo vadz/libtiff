@@ -161,7 +161,6 @@ static	int LZWDecode(TIFF*, tidata_t, tsize_t, tsample_t);
 #ifdef LZW_COMPAT
 static	int LZWDecodeCompat(TIFF*, tidata_t, tsize_t, tsample_t);
 #endif
-static	void cl_hash(LZWEncodeState*);
 
 /*
  * LZW Decoder.
