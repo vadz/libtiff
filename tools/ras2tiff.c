@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -91,7 +93,7 @@ main(int argc, char* argv[])
 		return (-2);
 	}
 	if (strcmp(h.ras_magic, RAS_MAGIC) == 0) {
-#if (HOST_BIGENDIAN == 0)
+#ifndef WORDS_BIGENDIAN
 			TIFFSwabLong(&h.ras_width);
 			TIFFSwabLong(&h.ras_height);
 			TIFFSwabLong(&h.ras_depth);
@@ -101,7 +103,7 @@ main(int argc, char* argv[])
 			TIFFSwabLong(&h.ras_maplength);
 #endif
 	} else if (strcmp(h.ras_magic, RAS_MAGIC_INV) == 0) {
-#if (HOST_BIGENDIAN == 1)
+#ifdef WORDS_BIGENDIAN
 			TIFFSwabLong(&h.ras_width);
 			TIFFSwabLong(&h.ras_height);
 			TIFFSwabLong(&h.ras_depth);
