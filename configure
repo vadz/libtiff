@@ -20259,7 +20259,8 @@ esac
 
 
 
-for ac_header in fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h
+
+for ac_header in fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h getopt.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then

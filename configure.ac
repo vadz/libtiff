@@ -72,7 +72,7 @@ case "$target_os" in
 esac
 
 dnl Checks for header files.
-AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h])
+AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h getopt.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

@@ -1,3 +1,8 @@
+2004-06-08  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/bmp2tiff.c: Added new utility to convert Windows BMP files
+	into TIFFs.
+
 2004-06-07  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff 3.7.0alpha released.
