@@ -72,6 +72,7 @@ SRCS	= \
 	tif_close.c \
 	tif_codec.c \
 	tif_compress.c \
+	tif_color.c \
 	tif_dir.c \
 	tif_dirinfo.c \
 	tif_dirread.c \
@@ -109,6 +110,7 @@ OBJS	= \
 	tif_close.o \
 	tif_codec.o \
 	tif_compress.o \
+	tif_color.o\
 	tif_dir.o \
 	tif_dirinfo.o \
 	tif_dirread.o \
@@ -286,6 +288,8 @@ tif_codec.o: ${SRCDIR}/tif_codec.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_codec.c
 tif_compress.o: ${SRCDIR}/tif_compress.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_compress.c
+tif_color.o: ${SRCDIR}/tif_color.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tif_color.c
 tif_dir.o: ${SRCDIR}/tif_dir.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dir.c
 tif_dirinfo.o: ${SRCDIR}/tif_dirinfo.c

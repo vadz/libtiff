@@ -114,10 +114,66 @@ typedef	void* thandle_t;	/* client data handle */
 #define	TIFFPRINT_JPEGACTABLES	0x200		/* JPEG AC tables */
 #define	TIFFPRINT_JPEGDCTABLES	0x200		/* JPEG DC tables */
 
+/* 
+ * Colour conversion stuff
+ */
+
+/* reference white */
+#define D65_X0 (95.0470)
+#define D65_Y0 (100.0)
+#define D65_Z0 (108.8827)
+
+#define D50_X0 (96.4250)
+#define D50_Y0 (100.0)
+#define D50_Z0 (82.4680)
+
+/* Structure for holding information about a display device. */
+
+typedef	unsigned char TIFFRGBValue;		/* 8-bit samples */
+
+typedef struct {
+	float d_mat[3][3]; 		/* XYZ -> luminance matrix */
+	float d_YCR;			/* Light o/p for reference white */
+	float d_YCG;
+	float d_YCB;
+	int d_Vrwr;			/* Pixel values for ref. white */
+	int d_Vrwg;
+	int d_Vrwb;
+	float d_Y0R;			/* Residual light for black pixel */
+	float d_Y0G;
+	float d_Y0B;
+	float d_gammaR;			/* Gamma values for the three guns */
+	float d_gammaG;
+	float d_gammaB;
+} TIFFDisplay;
+
+typedef struct {				/* YCbCr->RGB support */
+	TIFFRGBValue* clamptab;			/* range clamping table */
+	int*	Cr_r_tab;
+	int*	Cb_b_tab;
+	int32*	Cr_g_tab;
+	int32*	Cb_g_tab;
+	float	coeffs[3];			/* cached for repeated use */
+} TIFFYCbCrToRGB;
+
+typedef struct {				/* CIE Lab 1976->RGB support */
+        TIFFDisplay *display;
+	int	range;				/* Size of conversion table*/
+	float*	Yr2r;				/* Conversion of Yr to r */
+	float*	Yg2g;				/* Conversion of Yg to g */
+	float*	Yb2b;				/* Conversion of Yb to b */
+	float	rstep, gstep, bstep;
+} TIFFCIELabToRGB;
+
+extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB**);
+extern void TIFFCIELabToXYZ(uint32, int32, int32, float *, float *, float *,
+			    float, float, float);
+extern void TIFFXYZToRGB(TIFFCIELabToRGB *, float, float, float,
+			 uint32 *, uint32 *, uint32 *);
+
 /*
  * RGBA-style image support.
  */
-typedef	unsigned char TIFFRGBValue;		/* 8-bit samples */
 typedef struct _TIFFRGBAImage TIFFRGBAImage;
 /*
  * The image reading and conversion routines invoke
@@ -138,15 +194,6 @@ typedef void (*tileSeparateRoutine)
 /*
  * RGBA-reader state.
  */
-typedef struct {				/* YCbCr->RGB support */
-	TIFFRGBValue* clamptab;			/* range clamping table */
-	int*	Cr_r_tab;
-	int*	Cb_b_tab;
-	int32*	Cr_g_tab;
-	int32*	Cb_g_tab;
-	float	coeffs[3];			/* cached for repeated use */
-} TIFFYCbCrToRGB;
-
 struct _TIFFRGBAImage {
 	TIFF*	tif;				/* image handle */
 	int	stoponerr;			/* stop on read error */
@@ -172,6 +219,7 @@ struct _TIFFRGBAImage {
 	uint32** BWmap;				/* black&white map */
 	uint32** PALmap;			/* palette image map */
 	TIFFYCbCrToRGB* ycbcr;			/* YCbCr conversion state */
+        TIFFCIELabToRGB* cielab;		/* CIE L*a*b conversion state */
 
         int	row_offset;
         int     col_offset;

@@ -151,6 +151,8 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 	    return (0);
 	}
 	break;
+    case PHOTOMETRIC_CIELAB:
+	break;
     default:
 	sprintf(emsg, "Sorry, can not handle image with %s=%d",
 	    photoTag, photometric);
@@ -162,20 +164,27 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 void
 TIFFRGBAImageEnd(TIFFRGBAImage* img)
 {
-    if (img->Map)
-	_TIFFfree(img->Map), img->Map = NULL;
-    if (img->BWmap)
-	_TIFFfree(img->BWmap), img->BWmap = NULL;
-    if (img->PALmap)
-	_TIFFfree(img->PALmap), img->PALmap = NULL;
-    if (img->ycbcr)
-	_TIFFfree(img->ycbcr), img->ycbcr = NULL;
+	if (img->Map)
+		_TIFFfree(img->Map), img->Map = NULL;
+	if (img->BWmap)
+		_TIFFfree(img->BWmap), img->BWmap = NULL;
+	if (img->PALmap)
+		_TIFFfree(img->PALmap), img->PALmap = NULL;
+	if (img->ycbcr)
+		_TIFFfree(img->ycbcr), img->ycbcr = NULL;
+	if (img->cielab) {
+		_TIFFfree(img->cielab->Yr2r);
+		_TIFFfree(img->cielab->Yg2g);
+		_TIFFfree(img->cielab->Yb2b);
+		_TIFFfree(img->cielab->display);
+		_TIFFfree(img->cielab), img->cielab = NULL;
+	}
 
-    if( img->redcmap ) {
-        _TIFFfree( img->redcmap );
-        _TIFFfree( img->greencmap );
-        _TIFFfree( img->bluecmap );
-    }
+	if( img->redcmap ) {
+		_TIFFfree( img->redcmap );
+		_TIFFfree( img->greencmap );
+		_TIFFfree( img->bluecmap );
+	}
 }
 
 static int
@@ -375,6 +384,8 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	img->photometric = PHOTOMETRIC_RGB;		/* little white lie */
 	img->bitspersample = 8;
 	break;
+    case PHOTOMETRIC_CIELAB:
+	break;
     default:
 	sprintf(emsg, "Sorry, can not handle image with %s=%d",
 	    photoTag, img->photometric);
@@ -384,6 +395,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     img->BWmap = NULL;
     img->PALmap = NULL;
     img->ycbcr = NULL;
+    img->cielab = NULL;
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &img->width);
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &img->height);
     TIFFGetFieldDefaulted(tif, TIFFTAG_ORIENTATION, &img->orientation);
@@ -1472,6 +1484,31 @@ DECLARESepPutFunc(putRGBUAseparate16bittile)
 }
 
 /*
+ * 8-bit packed CIE L*a*b 1976 samples => RGB
+ */
+DECLAREContigPutFunc(putcontig8bitCIELab)
+{
+	float X, Y, Z;
+	uint32 r, g, b;
+	(void) y;
+	fromskew *= 3;
+	while (h-- > 0) {
+		for (x = w; x-- > 0;) {
+			TIFFCIELabToXYZ((u_char)pp[0],
+					(signed char)pp[1],
+					(signed char)pp[2],
+					&X, &Y, &Z,
+					D50_X0, D50_Y0, D50_Z0);
+			TIFFXYZToRGB(img->cielab, X, Y, Z, &r, &g, &b);
+			*cp++ = PACK(r, g, b);
+			pp += 3;
+		}
+		cp += toskew;
+		pp += fromskew;
+	}
+}
+
+/*
  * YCbCr -> RGB conversion and packing routines.  The colorspace
  * conversion algorithm comes from the IJG v5a code; see below
  * for more information on how it works.
@@ -2040,6 +2077,13 @@ initYCbCrConversion(TIFFRGBAImage* img)
     return (NULL);
 }
 
+static tileContigRoutine
+initCIELabToRGBConversion(TIFFRGBAImage* img)
+{
+	TIFFCIELabToRGBInit(&img->cielab);
+	return putcontig8bitCIELab;
+}
+
 /*
  * Greyscale images with less than 8 bits/sample are handled
  * with a table to avoid lots of shifts and masks.  The table
@@ -2338,6 +2382,10 @@ pickTileContigCase(TIFFRGBAImage* img)
 	    if (img->bitspersample == 8)
 		put = initYCbCrConversion(img);
 	    break;
+	case PHOTOMETRIC_CIELAB:
+	    if (img->bitspersample == 8)
+		put = initCIELabToRGBConversion(img);
+	    break;
 	}
     }
     return ((img->put.contig = put) != 0);
@@ -2481,9 +2529,10 @@ TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
      * Setup the RGBA reader.
      */
     
-    if (!TIFFRGBAImageOK(tif, emsg) || !TIFFRGBAImageBegin(&img, tif, 0, emsg)) {
-	TIFFError(TIFFFileName(tif), emsg);
-        return( 0 );
+    if (!TIFFRGBAImageOK(tif, emsg) 
+	|| !TIFFRGBAImageBegin(&img, tif, 0, emsg)) {
+	    TIFFError(TIFFFileName(tif), emsg);
+	    return( 0 );
     }
 
     /*
@@ -2525,8 +2574,7 @@ TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
     if( read_xsize == tile_xsize && read_ysize == tile_ysize )
         return( ok );
 
-    for( i_row = 0; i_row < read_ysize; i_row++ )
-    {
+    for( i_row = 0; i_row < read_ysize; i_row++ ) {
         memmove( raster + (tile_ysize - i_row - 1) * tile_xsize,
                  raster + (read_ysize - i_row - 1) * read_xsize,
                  read_xsize * sizeof(uint32) );
@@ -2534,8 +2582,7 @@ TIFFReadRGBATile(TIFF* tif, uint32 col, uint32 row, uint32 * raster)
                      0, sizeof(uint32) * (tile_xsize - read_xsize) );
     }
 
-    for( i_row = read_ysize; i_row < tile_ysize; i_row++ )
-    {
+    for( i_row = read_ysize; i_row < tile_ysize; i_row++ ) {
         _TIFFmemset( raster + (tile_ysize - i_row - 1) * tile_xsize,
                      0, sizeof(uint32) * tile_xsize );
     }
