@@ -825,7 +825,21 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	fputs(" <<\n", fd);
 	fputs("  /ImageType 1\n", fd);
 	fprintf(fd, "  /Width %lu\n", (unsigned long) tile_width);
-	fprintf(fd, "  /Height %lu\n", (unsigned long) tile_height);
+	/*
+	 * Workaround for some software that may crash when last strip
+	 * of image contains fewer number of scanlines than specified
+	 * by the `/Height' variable. So for stripped images with multiple
+	 * strips we will set `/Height' as `im_h', because one is 
+	 * recalculated for each strip - including the (smaller) final strip.
+	 * For tiled images and images with only one strip `/Height' will
+	 * contain number of scanlines in tile (or image height in case of
+	 * one-stripped image).
+	 */
+	if (TIFFIsTiled(tif) || tf_numberstrips == 1)
+		fprintf(fd, "  /Height %lu\n", (unsigned long) tile_height);
+	else
+		fprintf(fd, "  /Height im_h\n");
+	
 	if (planarconfiguration == PLANARCONFIG_SEPARATE && samplesperpixel > 1)
 		fputs("  /MultipleDataSources true\n", fd);
 	fprintf(fd, "  /ImageMatrix [ %lu 0 0 %ld %s %s ]\n",
