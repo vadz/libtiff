@@ -1,3 +1,10 @@
+2001-06-28  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tiffcmp.c: Fixed multi samples per pixel support for ContigCompare.  
+	Updated bug section of tiffcmp.1 to note tiled file issues.
+	
+	See http://bugzilla.remotesensing.org/show_bug.cgi?id=53
+
 2001-06-22  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* configure: Changes for DSO generation on AIX provided by
