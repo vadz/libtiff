@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.15  2004-08-25 18:34:55  dron
+ * Revision 1.16  2004-09-10 11:50:57  dron
+ * Fixed reading TransferFunction tag as per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=590
+ *
+ * Revision 1.15  2004/08/25 18:34:55  dron
  * Work out getopt problems.
  *
  * Revision 1.14  2004/08/25 13:43:14  dron
@@ -1142,25 +1146,23 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
                         }
                 }
 #endif
-		t2p->tiff_transferfunctioncount=TIFFGetField(
-			input, 
-			TIFFTAG_TRANSFERFUNCTION, 
-			&(t2p->tiff_transferfunction[0]), 
-			&(t2p->tiff_transferfunction[1]), 
-			&(t2p->tiff_transferfunction[2]));
-                if(t2p->tiff_transferfunction[1]!=t2p->tiff_transferfunction[0]){
-                        t2p->tiff_transferfunctioncount=3;
+		if (TIFFGetField(input, TIFFTAG_TRANSFERFUNCTION,
+                                 &(t2p->tiff_transferfunction[0]),
+                                 &(t2p->tiff_transferfunction[1]),
+                                 &(t2p->tiff_transferfunction[2]))) {
+			if(t2p->tiff_transferfunction[1] !=
+			   t2p->tiff_transferfunction[0]) {
+				t2p->tiff_transferfunctioncount = 3;
+				t2p->tiff_pages[i].page_extra += 4;
+				t2p->pdf_xrefcount += 4;
+			} else {
+				t2p->tiff_transferfunctioncount = 1;
+				t2p->tiff_pages[i].page_extra += 2;
+				t2p->pdf_xrefcount += 2;
+			}
+			if(t2p->pdf_minorversion < 2)
+				t2p->pdf_minorversion = 2;
                 }
-		if(t2p->tiff_transferfunctioncount==1){
-			t2p->tiff_pages[i].page_extra+=2;
-			t2p->pdf_xrefcount+=2;
-			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
-		}
-		if(t2p->tiff_transferfunctioncount==3){
-			t2p->tiff_pages[i].page_extra+=4;
-			t2p->pdf_xrefcount+=4;
-			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
-		}
 		if( TIFFGetField(
 			input, 
 			TIFFTAG_ICCPROFILE, 
@@ -1736,14 +1738,15 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		}
 	}
 
-	t2p->tiff_transferfunctioncount=TIFFGetField(input, 
-		TIFFTAG_TRANSFERFUNCTION, 
-		&(t2p->tiff_transferfunction[0]),
-		&(t2p->tiff_transferfunction[1]),
-		&(t2p->tiff_transferfunction[2]));
-        if(t2p->tiff_transferfunction[1]!=t2p->tiff_transferfunction[0]){
-                t2p->tiff_transferfunctioncount=3;
-        }
+	if (TIFFGetField(input, TIFFTAG_TRANSFERFUNCTION,
+			 &(t2p->tiff_transferfunction[0]),
+			 &(t2p->tiff_transferfunction[1]),
+			 &(t2p->tiff_transferfunction[2]))) {
+		if(t2p->tiff_transferfunction[1] !=
+		   t2p->tiff_transferfunction[0]) {
+			t2p->tiff_transferfunctioncount=3;
+		}
+	}
 	if(TIFFGetField(input, TIFFTAG_WHITEPOINT, &xfloatp)!=0){
 		t2p->tiff_whitechromaticities[0]=xfloatp[0];
 		t2p->tiff_whitechromaticities[1]=xfloatp[1];
@@ -4171,7 +4174,7 @@ tsize_t t2p_write_pdf_page(uint32 object, T2P* t2p, TIFF* output){
 			written += TIFFWriteFile(output, (tdata_t) " 0 R ", 5);
 		written += TIFFWriteFile(output, (tdata_t) ">>\r", 3);
 	}
-	if(t2p->tiff_transferfunctioncount !=0){
+	if(t2p->tiff_transferfunctioncount != 0) {
 		written += TIFFWriteFile(output, (tdata_t) "/ExtGState <<", 13);
 		TIFFWriteFile(output, (tdata_t) "/GS1 ", 5);
 		buflen = sprintf(
@@ -4732,7 +4735,7 @@ tsize_t t2p_write_pdf_transfer(T2P* t2p, TIFF* output){
 	int buflen=0;
 
 	written += TIFFWriteFile(output, (tdata_t) "<< /Type /ExtGState \r/TR ", 25);
-	if(t2p->tiff_transferfunctioncount==1){
+	if(t2p->tiff_transferfunctioncount == 1){
 		buflen=sprintf(buffer, "%lu", t2p->pdf_xrefcount+1);
 		written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
 		written += TIFFWriteFile(output, (tdata_t) " 0 R ", 5);
@@ -5246,7 +5249,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 			written += t2p_write_pdf_obj_start(t2p->pdf_xrefcount, output);
 			written += t2p_write_pdf_transfer(t2p, output);
 			written += t2p_write_pdf_obj_end(output);
-			for(i=0;i<t2p->tiff_transferfunctioncount;i++){
+			for(i=0; i < t2p->tiff_transferfunctioncount; i++){
 				t2p->pdf_xrefoffsets[t2p->pdf_xrefcount++]=written;
 				written += t2p_write_pdf_obj_start(t2p->pdf_xrefcount, output);
 				written += t2p_write_pdf_stream_dict_start(output);
@@ -5344,3 +5347,5 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 
 	return(written);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
