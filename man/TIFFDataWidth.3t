@@ -55,6 +55,8 @@ Currently following data types are supported:
 .br
 .I TIFF_FLOAT
 .br
+.I TIFF_IFD
+.br
 .I TIFF_RATIONAL
 .br
 .I TIFF_SRATIONAL
