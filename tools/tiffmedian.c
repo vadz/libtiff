@@ -40,9 +40,15 @@
  *	Siggraph '82 proceedings, pp. 297-307
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "tiffio.h"
 
@@ -401,7 +407,7 @@ static void
 splitbox(Colorbox* ptr)
 {
 	uint32		hist2[B_LEN];
-	int		first, last;
+	int		first=0, last=0;
 	register Colorbox	*new;
 	register uint32	*iptr, *histp;
 	register int	i, j;

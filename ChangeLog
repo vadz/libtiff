@@ -1,3 +1,8 @@
+2004-09-09  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiff2ps.c, tools/tiffmedian.c: fiddle with include files
+	to avoid compile warnings about getopt() and a few other things.
+
 2004-09-02  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Use memcpy() function instead of pointer
