@@ -1,5 +1,9 @@
 2004-08-20  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tools/tiff2pdf.c: Applied patch from Ross Finlayson that checks
+	that the input file has compression, photometric interpretation,
+	etcetra, tags or if not than a more descriptive error is returned.
+
 	* libtiff/tif_dirread.c: Fixed problem in TIFFReadDirectory() in the
 	code, responsible for tag data type checking.
 
