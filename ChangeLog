@@ -1,5 +1,10 @@
 2002-08-15  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tif_getimage.c: Ensure that TIFFRGBAImageBegin() returns the
+	return code from the underlying pick function.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=177
+
 	* tif_dir.h: changed FIELD_CODEC to 66 from 64 to avoid overlap 
 	with FIELD_CUSTOM as mentioned in bug 169.
 
