@@ -14,8 +14,6 @@
 
 @SET_MAKE@
 
-# $Id$
-#
 # Tag Image File Format (TIFF) Software
 #
 # Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
@@ -208,7 +206,7 @@ EXTRA_DIST = \
 	VERSION \
 	autogen.sh
 
-SUBDIRS = libtiff tools contrib man html
+SUBDIRS = port libtiff tools contrib man html
 all: all-recursive
 
 .SUFFIXES:

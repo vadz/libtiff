@@ -3,17 +3,14 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#undef HAVE_DOPRNT
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
 
-/* Define to 1 if you have the `getpagesize' function. */
-#undef HAVE_GETPAGESIZE
+/* Define to 1 if you have the `getopt' function. */
+#undef HAVE_GETOPT
 
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
@@ -33,10 +30,6 @@
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
-/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
-   to 0 otherwise. */
-#undef HAVE_MALLOC
-
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
@@ -49,18 +42,11 @@
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
 
-/* Define to 1 if you have a working `mmap' system call. */
-#undef HAVE_MMAP
-
 /* Define to 1 if you have the `munmap' function. */
 #undef HAVE_MUNMAP
 
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
-
-/* Define to 1 if your system has a GNU libc compatible `realloc' function,
-   and to 0 otherwise. */
-#undef HAVE_REALLOC
 
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
@@ -113,9 +99,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `vprintf' function. */
-#undef HAVE_VPRINTF
-
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
@@ -162,14 +145,8 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-/* Define to rpl_malloc if the replacement function should be used. */
-#undef malloc
-
 /* Define to `long' if <sys/types.h> does not define. */
 #undef off_t
-
-/* Define to rpl_realloc if the replacement function should be used. */
-#undef realloc
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t

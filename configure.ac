@@ -74,13 +74,12 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 
 dnl Checks for library functions.
-AC_FUNC_ERROR_AT_LINE
-AC_FUNC_MALLOC
-AC_FUNC_MEMCMP
-AC_FUNC_MMAP
-AC_FUNC_REALLOC
-AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor gettimeofday isascii memmove memset munmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol strtoul])
+
+dnl Will use local replacements for unavailable functions
+AC_REPLACE_FUNCS(getopt)
+AC_REPLACE_FUNCS(strcasecmp)
+AC_REPLACE_FUNCS(strtoul)
 
 AC_SYS_LARGEFILE
 
@@ -91,29 +90,25 @@ dnl ---------------------------------------------------------------------------
 HAVE_ZLIB=no
 
 AC_ARG_ENABLE(zlib, AS_HELP_STRING([--disable-zlib], [disable Zlib usage (required for Deflate compression, enabled by default)]),,)
-AC_ARG_WITH(zlib-include-dir, AS_HELP_STRING([--with-zlib-include-dir=DIR], [location of Zlib headers (specify, if not in standard place)]),,)
-AC_ARG_WITH(zlib-lib-dir, AS_HELP_STRING([--with-zlib-lib-dir=DIR], [location of Zlib library binary (specify, if not in standard place)]),,)
+AC_ARG_WITH(zlib-include-dir, AS_HELP_STRING([--with-zlib-include-dir=DIR], [location of Zlib headers]),,)
+AC_ARG_WITH(zlib-lib-dir, AS_HELP_STRING([--with-zlib-lib-dir=DIR], [location of Zlib library binary]),,)
 
 if test "x$enable_zlib" != "xno" ; then
 
-  if test "x$with_zlib_lib" = "xyes" ; then
-    AC_CHECK_LIB(z, inflateEnd, [zlib_lib=yes], [zlib_lib=no],)
-  elif test "x$with_zlib_lib" != "xno" ; then
-    LIBS="$with_zlib_lib $LIBS"
-    AC_CHECK_LIB(z, inflateEnd, [zlib_lib=yes], [zlib_lib=no],)
-    if test "$zlib_lib" = "no" ; then
-      AC_MSG_ERROR([Zlib library not found at $with_zlib_lib])
-    fi
+  if test "x$with_zlib_lib_dir" != "x" ; then
+    LIBS="-L$with_zlib_lib_dir $LIBS"
+  fi
+  AC_CHECK_LIB(z, inflateEnd, [zlib_lib=yes], [zlib_lib=no],)
+  if test "$zlib_lib" = "no" -a "x$with_zlib_lib_dir" != "x"; then
+    AC_MSG_ERROR([Zlib library not found at $with_zlib_lib_dir])
   fi
     
-  if test "x$with_zlib_h" = "xyes" ; then
-    AC_CHECK_HEADER(zlib.h, [zlib_h=yes], [zlib_h=no])
-  elif test "x$with_zlib_h" != "xno" ; then
-    INCLUDE="$with_zlib_h $INCLUDE"
-    AC_CHECK_HEADER(zlib.h, [zlib_h=yes], [zlib_h=no])
-    if test "$zlib_h" = "no" ; then
-      AC_MSG_ERROR([Zlib headers not found at $with_zlib_h])
-    fi
+  if test "x$with_zlib_include_dir" != "x" ; then
+    INCLUDE="-I$with_zlib_include_dir $INCLUDE"
+  fi
+  AC_CHECK_HEADER(zlib.h, [zlib_h=yes], [zlib_h=no])
+  if test "$zlib_h" = "no" -a "x$with_zlib_include_dir" != "x" ; then
+    AC_MSG_ERROR([Zlib headers not found at $with_zlib_include_dir])
   fi
 
   if test "$zlib_lib" = "yes" -a "$zlib_h" = "yes" ; then
@@ -134,29 +129,25 @@ dnl ---------------------------------------------------------------------------
 HAVE_JPEG=no
 
 AC_ARG_ENABLE(jpeg, AS_HELP_STRING([--disable-jpeg], [disable IJG JPEG library usage (required for JPEG compression, enabled by default)]),,)
-AC_ARG_WITH(jpeg-include-dir, AS_HELP_STRING([--with-jpeg-include-dir=DIR], [location of IJG JPEG library headers (specify, if not in standard place)]),,)
-AC_ARG_WITH(jpeg-lib-dir, AS_HELP_STRING([--with-jpeg-lib-dir=DIR], [location of IJG JPEG library binary (specify, if not in standard place)]),,)
+AC_ARG_WITH(jpeg-include-dir, AS_HELP_STRING([--with-jpeg-include-dir=DIR], [location of IJG JPEG library headers]),,)
+AC_ARG_WITH(jpeg-lib-dir, AS_HELP_STRING([--with-jpeg-lib-dir=DIR], [location of IJG JPEG library binary]),,)
 
 if test "x$enable_jpeg" != "xno" ; then
 
-  if test "x$with_jpeg_lib" = "xyes" ; then
-    AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [jpeg_lib=yes], [jpeg_lib=no],)
-  elif test "x$with_jpeg_lib" != "xno" ; then
-    LIBS="$with_jpeg_lib $LIBS"
-    AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [jpeg_lib=yes], [jpeg_lib=no],)
-    if test "$jpeg_lib" = "no" ; then
-      AC_MSG_ERROR([IJG JPEG library not found at $with_jpeg_lib])
-    fi
+  if test "x$with_jpeg_lib_dir" != "x" ; then
+    LIBS="-L$with_jpeg_lib_dir $LIBS"
+  fi
+  AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [jpeg_lib=yes], [jpeg_lib=no],)
+  if test "$jpeg_lib" = "no" -a "x$with_jpeg_lib_dir" != "x" ; then
+    AC_MSG_ERROR([IJG JPEG library not found at $with_jpeg_lib_dir])
   fi
     
-  if test "x$with_jpeg_h" = "xyes" ; then
-    AC_CHECK_HEADER(jpeglib.h, [jpeg_h=yes], [jpeg_h=no])
-  elif test "x$with_jpeg_h" != "xno" ; then
-    INCLUDE="$with_jpeg_h $INCLUDE"
-    AC_CHECK_HEADER(jpeglib.h, [jpeg_h=yes], [jpeg_h=no])
-    if test "$jpeg_h" = "no" ; then
-      AC_MSG_ERROR([IJG JPEG library headers not found at $with_jpeg_h])
-    fi
+  if test "x$with_jpeg_include_dir" != "x" ; then
+    INCLUDE="-I$with_jpeg_include_dir $INCLUDE"
+  fi
+  AC_CHECK_HEADER(jpeglib.h, [jpeg_h=yes], [jpeg_h=no])
+  if test "$jpeg_h" = "no" -a "x$with_jpeg_include_dir" != "x" ; then
+    AC_MSG_ERROR([IJG JPEG library headers not found at $with_jpeg_include_dir])
   fi
 
   if test "$jpeg_lib" = "yes" -a "$jpeg_h" = "yes" ; then
@@ -190,51 +181,43 @@ HAVE_OPENGL=no
 OPENGL_LIBS=""
 
 AC_ARG_ENABLE(opengl, AS_HELP_STRING([--disable-opengl], [disable building OpenGL viewer (enabled by default)]),,)
-AC_ARG_WITH(opengl-include-dir, AS_HELP_STRING([--with-opengl-include-dir=DIR], [location of OpenGL library headers (specify, if not in standard place)]),,)
-AC_ARG_WITH(opengl-lib-dir,AS_HELP_STRING([--with-opengl-lib-dir=DIR], [location of OpenGL library binary (specify, if not in standard place)]),,)
-AC_ARG_WITH(glut-include-dir, AS_HELP_STRING([--with-glut-include-dir=DIR], [location of GLUT library headers (specify, if not in standard place)]),,)
-AC_ARG_WITH(glut-lib-dir, AS_HELP_STRING([--with-glut-lib-dir=DIR], [location of GLUT library binary (specify, if not in standard place)]),,)
+AC_ARG_WITH(opengl-include-dir, AS_HELP_STRING([--with-opengl-include-dir=DIR], [location of OpenGL library headers]),,)
+AC_ARG_WITH(opengl-lib-dir,AS_HELP_STRING([--with-opengl-lib-dir=DIR], [location of OpenGL library binary]),,)
+AC_ARG_WITH(glut-include-dir, AS_HELP_STRING([--with-glut-include-dir=DIR], [location of GLUT library headers]),,)
+AC_ARG_WITH(glut-lib-dir, AS_HELP_STRING([--with-glut-lib-dir=DIR], [location of GLUT library binary]),,)
 
 if test "x$enable_opengl" != "xno" ; then
 
-  if test "x$with_opengl_lib" = "xyes" ; then
-    AC_CHECK_LIB(GL, glDrawPixels, [opengl_lib=yes], [opengl_lib=no],)
-  elif test "x$with_opengl_lib" != "xno" ; then
-    LIBS="$with_opengl_lib $LIBS"
-    AC_CHECK_LIB(GL, glDrawPixels, [opengl_lib=yes], [opengl_lib=no],)
-    if test "$opengl_lib" = "no" ; then
-      AC_MSG_ERROR([OpenGL library not found at $with_opengl_lib])
-    fi
+  if test "x$with_opengl_lib_dir" != "x" ; then
+    LIBS="-L$with_opengl_lib_dir $LIBS"
+  fi
+  AC_CHECK_LIB(GL, glDrawPixels, [opengl_lib=yes], [opengl_lib=no],)
+  if test "$opengl_lib" = "no" -a "x$with_opengl_lib_dir" != "x" ; then
+    AC_MSG_ERROR([OpenGL library not found at $with_opengl_lib_dir])
   fi
     
-  if test "x$with_opengl_h" = "xyes" ; then
-    AC_CHECK_HEADER(GL/gl.h, [opengl_h=yes], [opengl_h=no])
-  elif test "x$with_opengl_h" != "xno" ; then
-    INCLUDE="$with_opengl_h $INCLUDE"
-    AC_CHECK_HEADER(GL/gl.h, [opengl_h=yes], [opengl_h=no])
-    if test "$opengl_h" = "no" ; then
-      AC_MSG_ERROR([OpenGL library headers not found at $with_opengl_h])
-    fi
+  if test "x$with_opengl_include_dir" != "x" ; then
+    INCLUDE="-I$with_opengl_include_dir $INCLUDE"
+  fi
+  AC_CHECK_HEADER(GL/gl.h, [opengl_h=yes], [opengl_h=no])
+  if test "$opengl_h" = "no" -a "x$with_opengl_include_dir" != "x" ; then
+    AC_MSG_ERROR([OpenGL library headers not found at $with_opengl_include_dir])
   fi
 
-  if test "x$with_glut_lib" = "xyes" ; then
-    AC_CHECK_LIB(glut, glutInit, [glut_lib=yes], [glut_lib=no],)
-  elif test "x$with_glut_lib" != "xno" ; then
-    LIBS="$with_glut_lib $LIBS"
-    AC_CHECK_LIB(glut, glutInit, [glut_lib=yes], [glut_lib=no],)
-    if test "$glut_lib" = "no" ; then
-      AC_MSG_ERROR([GLUT library not found at $with_glut_lib])
-    fi
+  if test "x$with_glut_lib_dir" != "x" ; then
+    LIBS="-L$with_glut_lib_dir $LIBS"
+  fi
+  AC_CHECK_LIB(glut, glutInit, [glut_lib=yes], [glut_lib=no],)
+  if test "$glut_lib" = "no" -a "x$with_glut_lib_dir" != "x" ; then
+    AC_MSG_ERROR([GLUT library not found at $with_glut_lib_dir])
   fi
     
-  if test "x$with_glut_h" = "xyes" ; then
-    AC_CHECK_HEADER(GL/glut.h, [glut_h=yes], [glut_h=no])
-  elif test "x$with_glut_h" != "xno" ; then
-    INCLUDE="$with_glut_h $INCLUDE"
-    AC_CHECK_HEADER(GL/glut.h, [glut_h=yes], [glut_h=no])
-    if test "$glut_h" = "no" ; then
-      AC_MSG_ERROR([GLUT library headers not found at $with_glut_h])
-    fi
+  if test "x$with_glut_include_dir" != "x" ; then
+    INCLUDE="-I$with_glut_include_dir $INCLUDE"
+  fi
+  AC_CHECK_HEADER(GL/glut.h, [glut_h=yes], [glut_h=no])
+  if test "$glut_h" = "no" -a "x$with_glut_include_dir" != "x" ; then
+    AC_MSG_ERROR([GLUT library headers not found at $with_glut_include_dir])
   fi
 
   if test "$opengl_lib" = "yes" -a "$opengl_h" = "yes" \
@@ -262,4 +245,19 @@ AC_CONFIG_FILES([Makefile \
                  tools/Makefile])
 AC_OUTPUT
 
+dnl ---------------------------------------------------------------------------
+dnl Display configuration status
+dnl ---------------------------------------------------------------------------
+
+#LOC_MSG()
+#LOC_MSG([Libtiff is now configured for ${host}])
+#LOC_MSG()
+#LOC_MSG([  Installation directory:    ${prefix}])
+#LOC_MSG([  C compiler:                ${CC} ${CFLAGS}])
+#LOC_MSG()
+#LOC_MSG([  ZLIB support:              ${HAVE_ZLIB}])
+#LOC_MSG([  JPEG support:              ${HAVE_JPEG}])
+#LOC_MSG([  Old JPEG support:          ${HAVE_OJPEG}])
+#LOC_MSG([  OpenGL support:            ${HAVE_OPENGL}])
+#LOC_MSG()
 

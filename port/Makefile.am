@@ -25,8 +25,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = \
-	getopt.c \
-	strcasecmp.c \
-	strtoul.c
+noinst_LIBRARIES	= libport.a
+libport_a_SOURCES	=
+libport_a_LIBADD	= @LIBOBJS@
 
