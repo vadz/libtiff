@@ -197,7 +197,7 @@ TIFFOpen(const char* name, const char* mode)
 	default:
 		return ((TIFF*)0);
 	}
-	fd = (thandle_t)CreateFile(name,
+	fd = (thandle_t)CreateFileA(name,
 		(m == O_RDONLY)?GENERIC_READ:(GENERIC_READ | GENERIC_WRITE),
 		FILE_SHARE_READ, NULL, dwMode,
 		(m == O_RDONLY)?FILE_ATTRIBUTE_READONLY:FILE_ATTRIBUTE_NORMAL,
@@ -340,14 +340,14 @@ Win32WarningHandler(const char* module, const char* fmt, va_list ap)
 	LPTSTR szTmp;
 	LPCTSTR szTitleText = "%s Warning";
 	LPCTSTR szDefaultModule = "TIFFLIB";
-	szTmp = (module == NULL) ? (LPTSTR)szDefaultModule : (LPTSTR)module;
-	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, (lstrlen(szTmp) +
-			lstrlen(szTitleText) + lstrlen(fmt) + 128)*sizeof(TCHAR))) == NULL)
+	LPCTSTR szTmpModule = (module == NULL) ? szDefaultModule : module;
+	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, (strlen(szTmpModule) +
+			strlen(szTitleText) + strlen(fmt) + 128)*sizeof(char))) == NULL)
 		return;
-	wsprintf(szTitle, szTitleText, szTmp);
-	szTmp = szTitle + (lstrlen(szTitle)+2)*sizeof(TCHAR);
-	wvsprintf(szTmp, fmt, ap);
-	MessageBox(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONINFORMATION);
+	sprintf(szTitle, szTitleText, szTmp);
+	szTmp = szTitle + (strlen(szTitle)+2)*sizeof(char);
+	vsprintf(szTmp, fmt, ap);
+	MessageBoxA(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONINFORMATION);
 	LocalFree(szTitle);
 	return;
 #else
@@ -368,14 +368,14 @@ Win32ErrorHandler(const char* module, const char* fmt, va_list ap)
 	LPTSTR szTmp;
 	LPCTSTR szTitleText = "%s Error";
 	LPCTSTR szDefaultModule = "TIFFLIB";
-	szTmp = (module == NULL) ? (LPTSTR)szDefaultModule : (LPTSTR)module;
-	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, (lstrlen(szTmp) +
-			lstrlen(szTitleText) + lstrlen(fmt) + 128)*sizeof(TCHAR))) == NULL)
+	LPCTSTR szTmpModule = (module == NULL) ? szDefaultModule : module;
+	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, (strlen(szTmpModule) +
+			strlen(szTitleText) + strlen(fmt) + 128)*sizeof(char))) == NULL)
 		return;
-	wsprintf(szTitle, szTitleText, szTmp);
-	szTmp = szTitle + (lstrlen(szTitle)+2)*sizeof(TCHAR);
-	wvsprintf(szTmp, fmt, ap);
-	MessageBox(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONEXCLAMATION);
+	sprintf(szTitle, szTitleText, szTmp);
+	szTmp = szTitle + (strlen(szTitle)+2)*sizeof(char);
+	vsprintf(szTmp, fmt, ap);
+	MessageBoxA(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONEXCLAMATION);
 	LocalFree(szTitle);
 	return;
 #else
