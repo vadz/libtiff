@@ -497,7 +497,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             {
 		TIFFError("TIFFSetField",
 		    "%s: Invalid %stag \"%s\" (not supported by codec)",
-		    tif->tif_name, isPseudoTag(tag) ? "pseduo-" : "",
+		    tif->tif_name, isPseudoTag(tag) ? "pseudo-" : "",
 		    _TIFFFieldWithTag(tif, tag)->field_name);
 		status = 0;
 		break;
