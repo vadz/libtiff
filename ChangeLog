@@ -1,3 +1,11 @@
+2002-03-27  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_print.c: Fixed so that ASCII FIELD_CUSTOM values with 
+	passcount set FALSE can be printed (such as TIFFTAG_SOFTWARE).
+
+	* libtiff/tif_dir.c,tif_dirinfo.c,tif_dir.h,tif_ojpeg.c: modified so 
+	that TIFFTAG_SOFTWARE uses FIELD_CUSTOM as an example.
+
 2002-03-26  Dwight Kelly  <dbmalloc@remotesensing.org>
 
 	* libtiff/: tiff.h, tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_dirread.c,
