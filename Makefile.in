@@ -549,7 +549,7 @@ release.tar.zip:
 #	just below this one, and that .rpt files are available. 
 #
 test:
-	test_pics.sh pics/*.tif
+	${SRCDIR}/test_pics.sh pics/*.tif
 
 #
 # Create a package of the test images.
