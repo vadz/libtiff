@@ -1,3 +1,10 @@
+2001-07-16  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* configure, libtiff/Makefile.in: applied OpenBSD patches
+	as per:
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=61
+
 2001-06-28  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_getimage.c: Fixed so that failure is properly

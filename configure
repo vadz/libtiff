@@ -1178,6 +1178,21 @@ if [ "$DSO" = auto ]; then
 	DSOOPTS='-shared'
 	DSO=GNULD
 	;;
+    *-openbsd*)
+	DSOSUF=so.${DIST_MAJOR}.${DIST_MINOR}
+	LIBCOPTS='-fpic'
+	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
+	case "$TARGET" in
+	   *-openbsd[01].* | *-openbsd2.[0-7] | *-openbsd2.[0-7].*)
+	      DSO=oldOPENBSD
+	   ;;
+	   *)
+	      DSO=OPENBSD
+	      DSOLD="${CCOMPILER} ${ENVOPTS}"
+	      DSOOPTS='-shared ${LIBCOPTS}'
+	   ;;
+	esac
+	;;
     *-darwin*)
         DSOSUF=${DIST_MAJOR}.dylib
         DSOSUF_VERSION=${DIST_MAJOR}.${DIST_MINOR}.${DIST_POINT}.dylib
