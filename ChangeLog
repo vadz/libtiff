@@ -1,3 +1,26 @@
+2004-11-05  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffio.h, tif_win32.c, libtiff.def}: Added TIFFOpenW()
+	function to work with the double byte strings (used to represent
+	filenames in some locales). As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=625
+
+	* libtiff/tif_dirread.c: Fixed problem when fetching BitsPerSample and
+	Compression tags of type LONG from broken TIFFS as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=662
+
+	* libtiff/tif_dirinfo.c: Fixed definition for TIFFTAG_RICHTIFFIPTC,
+	the writecount should have uint32 type. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=662
+
+	* libtiff/tif_write.c: Fixed wrong if() statement in
+	TIFFAppendToStrip() function as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=660
+
 2004-11-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirinfo.c: Change definition for TIFFTAG_EXTRASAMPLES
