@@ -1,3 +1,33 @@
+2002-03-15  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/: tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_dirread.c,
+	tif_dirwrite.c: Added routine TIFFDataWidth for detrmining
+	TIFFDataType sizes instead of working with tiffDataWidth array
+	directly. Should prevent out-of-borders bugs in case of unknown or
+	broken data types.  EstimateStripByteCounts routine modified, so it
+	won't work when tags with uknown sizes founded.
+	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=109
+
+2002-03-13  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_getimage.c: Added support for correct handling
+	`Orientation' tag in gtTileContig. Should be added in other gt*
+	functions as well, but I have not images for testing yet. Partially
+	resolves http://bugzilla.remotesensing.org/show_bug.cgi?id=23
+
+2002-03-10  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/: tif_dirinfo.c, tif_dirwrite.c: Added possibility to
+	read broken TIFFs with LONG type used for TIFFTAG_COMPRESSION,
+	TIFFTAG_BITSPERSAMPLE, TIFFTAG_PHOTOMETRIC.  Closes
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=99
+
+2002-03-08  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/Makefile.in, tools/Makefile.in: Shared library will not
+	be stripped when installing, utility binaries will do.	Closes
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=93
+
 2002-02-28  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* man/TIFFGetField: fixed type of TIFFTAG_COPYRIGHT.
