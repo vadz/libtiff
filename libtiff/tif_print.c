@@ -511,11 +511,20 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
                                      (int) ((char *) raw_data)[j] );
 			else if( fld->field_type == TIFF_SHORT )
                             fprintf( fd, "%d",
+                                     (int) ((unsigned short *) raw_data)[j] );
+			else if( fld->field_type == TIFF_SSHORT )
+                            fprintf( fd, "%d",
                                      (int) ((short *) raw_data)[j] );
                         else if( fld->field_type == TIFF_LONG )
                             fprintf( fd, "%d",
+                                     (int) ((unsigned long *) raw_data)[j] );
+                        else if( fld->field_type == TIFF_SLONG )
+                            fprintf( fd, "%d",
                                      (int) ((long *) raw_data)[j] );
 			else if( fld->field_type == TIFF_RATIONAL )
+			    fprintf( fd, "%f",
+				     ((float *) raw_data)[j] );
+			else if( fld->field_type == TIFF_SRATIONAL )
 			    fprintf( fd, "%f",
 				     ((float *) raw_data)[j] );
                         else if( fld->field_type == TIFF_ASCII )
