@@ -1,3 +1,11 @@
+2003-06-19  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_print.c: fixed some serious bugs when printing
+	custom tags ... almost certain to crash. 
+
+	* libtiff/tif_dirread.c: Don't ignore custom fields that are
+	autodefined.  Not sure how this got to be like this.
+
 2003-06-18  Andrey Kiselev  <dron@remotesensing.org>
 
 	* 3.6.0 Beta2 released.
