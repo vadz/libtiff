@@ -250,7 +250,7 @@ static const TIFFFieldInfo ojpegFieldInfo[]=/* JPEG-specific TIFF-record tags */
     these records to us in order to filter them below.
  */
     {
-      TIFFTAG_JPEGTABLES            ,TIFF_VARIABLE,TIFF_VARIABLE,
+      TIFFTAG_JPEGTABLES            ,TIFF_VARIABLE2,TIFF_VARIABLE2,
       TIFF_UNDEFINED,FIELD_JPEGTABLES            ,FALSE,TRUE ,"JPEGTables"
     },
 
