@@ -1,3 +1,9 @@
+2003-09-23  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: More fixes for	EstimateStripByteCounts(). See
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=358
+
 2003-08-21  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffmedian.c: int declaration replaced with the uint32 to
