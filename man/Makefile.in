@@ -165,6 +165,7 @@ MANDEVLINKS=\
 	lib/TIFFCurrentStrip.3t \
 	lib/TIFFCurrentTile.3t \
 	lib/TIFFFdOpen.3t \
+	lib/TIFFClientOpen.3t \
 	lib/TIFFFileName.3t \
 	lib/TIFFFileno.3t \
 	lib/TIFFFindCODEC.3t \
@@ -287,6 +288,7 @@ lib/TIFFCurrentRow.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFCurrentStrip.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFCurrentTile.3t:;	${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFFdOpen.3t:;		${ECHO} ".so ${MANDIR}TIFFOpen.3t" > $@
+lib/TIFFClientOpen.3t:;		${ECHO} ".so ${MANDIR}TIFFOpen.3t" > $@
 lib/TIFFFileName.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFFileno.3t:;		${ECHO} ".so ${MANDIR}TIFFquery.3t" > $@
 lib/TIFFFlushData.3t:;		${ECHO} ".so ${MANDIR}TIFFFlush.3t" > $@
