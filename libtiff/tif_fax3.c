@@ -84,11 +84,12 @@ typedef struct {
 } Fax3DecodeState;
 #define	DecoderState(tif)	((Fax3DecodeState*) Fax3State(tif))
 
+typedef enum { G3_1D, G3_2D } Ttag;
 typedef struct {
 	Fax3BaseState b;
 	int	data;			/* current i/o byte */
 	int	bit;			/* current i/o bit in byte */
-	enum { G3_1D, G3_2D } tag;	/* encoding state */
+	Ttag    tag;	                /* encoding state */
 	u_char*	refline;		/* reference line for 2d decoding */
 	int	k;			/* #rows left that can be 2d encoded */
 	int	maxk;			/* max #rows that can be 2d encoded */
@@ -170,7 +171,7 @@ Fax3PreDecode(TIFF* tif, tsample_t s)
 	sp->bitmap =
 	    TIFFGetBitRevTable(tif->tif_dir.td_fillorder != FILLORDER_LSB2MSB);
 	if (sp->refruns) {		/* init reference line to white */
-		sp->refruns[0] = sp->b.rowpixels;
+		sp->refruns[0] = (uint16) sp->b.rowpixels;
 		sp->refruns[1] = 0;
 	}
 	return (1);
@@ -373,7 +374,7 @@ _TIFFFax3fillruns(u_char* buf, uint32* runs, uint32* erun, uint32 lastx)
 	for (; runs < erun; runs += 2) {
 	    run = runs[0];
 	    if (x+run > lastx)
-		run = runs[0] = lastx - x;
+		run = runs[0] = (uint16) (lastx - x);
 	    if (run) {
 		cp = buf + (x>>3);
 		bx = x&7;
@@ -578,7 +579,7 @@ static void
 Fax3PutBits(TIFF* tif, u_int bits, u_int length)
 {
 	Fax3EncodeState* sp = EncoderState(tif);
-	int bit = sp->bit;
+	u_int bit = sp->bit;
 	int data = sp->data;
 
 	_PutBits(tif, bits, length);
@@ -613,7 +614,7 @@ static void
 putspan(TIFF* tif, int32 span, const tableentry* tab)
 {
 	Fax3EncodeState* sp = EncoderState(tif);
-	int bit = sp->bit;
+	u_int bit = sp->bit;
 	int data = sp->data;
 	u_int code, length;
 
@@ -656,7 +657,7 @@ static void
 Fax3PutEOL(TIFF* tif)
 {
 	Fax3EncodeState* sp = EncoderState(tif);
-	int bit = sp->bit;
+	u_int bit = sp->bit;
 	int data = sp->data;
 	u_int code, length;
 
@@ -673,7 +674,7 @@ Fax3PutEOL(TIFF* tif)
 			else
 				align = sp->bit - align;
 			code = 0;
-			_PutBits(tif, 0, align);
+			_PutBits(tif, ((u_int)0), ((u_int)align));
 		}
 	}
 	code = EOL, length = 12;
@@ -920,7 +921,8 @@ static int
 Fax3Encode1DRow(TIFF* tif, u_char* bp, uint32 bits)
 {
 	Fax3EncodeState* sp = EncoderState(tif);
-	int32 bs = 0, span;
+	int32 span;
+        uint32 bs = 0;
 
 	for (;;) {
 		span = find0span(bp, bs, bits);		/* white span */
@@ -966,10 +968,10 @@ static int
 Fax3Encode2DRow(TIFF* tif, u_char* bp, u_char* rp, uint32 bits)
 {
 #define	PIXEL(buf,ix)	((((buf)[(ix)>>3]) >> (7-((ix)&7))) & 1)
-	int32 a0 = 0;
-	int32 a1 = (PIXEL(bp, 0) != 0 ? 0 : finddiff(bp, 0, bits, 0));
-	int32 b1 = (PIXEL(rp, 0) != 0 ? 0 : finddiff(rp, 0, bits, 0));
-	int32 a2, b2;
+        uint32 a0 = 0;
+	uint32 a1 = (PIXEL(bp, 0) != 0 ? 0 : finddiff(bp, 0, bits, 0));
+	uint32 b1 = (PIXEL(rp, 0) != 0 ? 0 : finddiff(rp, 0, bits, 0));
+	uint32 a2, b2;
 
 	for (;;) {
 		b2 = finddiff2(rp, b1, bits, PIXEL(rp,b1));
@@ -1280,9 +1282,12 @@ InitCCITTFax3(TIFF* tif)
 	 * Allocate state block so tag methods have storage to record values.
 	 */
 	if (tif->tif_mode == O_RDONLY)
-		tif->tif_data = _TIFFmalloc(sizeof (Fax3DecodeState));
+		tif->tif_data = (tidata_t)
+                    _TIFFmalloc(sizeof (Fax3DecodeState));
 	else
-		tif->tif_data = _TIFFmalloc(sizeof (Fax3EncodeState));
+		tif->tif_data = (tidata_t)
+                    _TIFFmalloc(sizeof (Fax3EncodeState));
+        
 	if (tif->tif_data == NULL) {
 		TIFFError("TIFFInitCCITTFax3",
 		    "%s: No space for state block", tif->tif_name);
