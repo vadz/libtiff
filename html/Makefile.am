@@ -59,7 +59,8 @@ EXTRA_DIST = \
 	v3.5.6-beta.html \
 	v3.5.7.html \
 	v3.6.0.html \
-	v3.6.1.html
+	v3.6.1.html \
+	v3.7.0alpha.html
 
 SUBDIRS = images man
 
