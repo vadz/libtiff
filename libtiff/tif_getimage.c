@@ -446,6 +446,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     u_char* buf;
     int32 fromskew, toskew;
     uint32 nrow;
+    int	ret = 1;
 
     buf = (u_char*) _TIFFmalloc(TIFFTileSize(tif));
     if (buf == 0) {
@@ -462,7 +463,10 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	for (col = 0; col < w; col += tw) {
 	    if (TIFFReadTile(tif, buf, col+img->col_offset,
                              row+img->row_offset, 0, 0) < 0 && img->stoponerr)
+            {
+                ret = 0;
 		break;
+            }
 	    if (col + tw > w) {
 		/*
 		 * Tile is clipped horizontally.  Calculate
@@ -480,7 +484,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	    -(int32) nrow : (int32) nrow);
     }
     _TIFFfree(buf);
-    return (1);
+    return (ret);
 }
 
 /*
@@ -506,6 +510,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     int32 fromskew, toskew;
     int alpha = img->alpha;
     uint32 nrow;
+    int	   ret = 1;
 
     tilesize = TIFFTileSize(tif);
     buf = (u_char*) _TIFFmalloc(4*tilesize);
@@ -529,16 +534,28 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	for (col = 0; col < w; col += tw) {
 	    if (TIFFReadTile(tif, r, col+img->col_offset,
                              row+img->row_offset,0,0) < 0 && img->stoponerr)
+            {
+                ret = 0;
 		break;
+            }
 	    if (TIFFReadTile(tif, g, col+img->col_offset,
                              row+img->row_offset,0,1) < 0 && img->stoponerr)
+            {
+                ret = 0;
 		break;
+            }
 	    if (TIFFReadTile(tif, b, col+img->col_offset,
                              row+img->row_offset,0,2) < 0 && img->stoponerr)
+            {
+                ret = 0;
 		break;
+            }
 	    if (alpha && TIFFReadTile(tif,a,col+img->col_offset,
                                row+img->row_offset,0,3) < 0 && img->stoponerr)
+            {
+                ret = 0;
 		break;
+            }
 	    if (col + tw > w) {
 		/*
 		 * Tile is clipped horizontally.  Calculate
@@ -557,7 +574,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	    -(int32) nrow : (int32) nrow);
     }
     _TIFFfree(buf);
-    return (1);
+    return (ret);
 }
 
 /*
@@ -578,6 +595,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     uint32 imagewidth = img->width;
     tsize_t scanline;
     int32 fromskew, toskew;
+    int	  ret = 1;
 
     buf = (u_char*) _TIFFmalloc(TIFFStripSize(tif));
     if (buf == 0) {
@@ -596,13 +614,16 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
                                  TIFFComputeStrip(tif,row+img->row_offset, 0),
                                  buf, nrow*scanline) < 0
             && img->stoponerr)
-		break;
+        {
+            ret = 0;
+            break;
+        }
 	(*put)(img, raster+y*w, 0, y, w, nrow, fromskew, toskew, buf);
 	y += (orientation == ORIENTATION_TOPLEFT ?
 	    -(int32) nrow : (int32) nrow);
     }
     _TIFFfree(buf);
-    return (1);
+    return (ret);
 }
 
 /*
@@ -626,6 +647,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     tsize_t stripsize;
     int32 fromskew, toskew;
     int alpha = img->alpha;
+    int	ret = 1;
 
     stripsize = TIFFStripSize(tif);
     r = buf = (u_char *)_TIFFmalloc(4*stripsize);
@@ -649,23 +671,35 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
         offset_row = row + img->row_offset;
 	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 0),
 	    r, nrow*scanline) < 0 && img->stoponerr)
+        {
+            ret = 0;
 	    break;
+        }
 	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 1),
 	    g, nrow*scanline) < 0 && img->stoponerr)
+        {
+            ret = 0;
 	    break;
+        }
 	if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 2),
 	    b, nrow*scanline) < 0 && img->stoponerr)
+        {
+            ret = 0;
 	    break;
+        }
 	if (alpha &&
 	    (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 3),
 	    a, nrow*scanline) < 0 && img->stoponerr))
+        {
+            ret = 0;
 	    break;
+        }
 	(*put)(img, raster+y*w, 0, y, w, nrow, fromskew, toskew, r, g, b, a);
 	y += (orientation == ORIENTATION_TOPLEFT ?
 	    -(int32) nrow : (int32) nrow);
     }
     _TIFFfree(buf);
-    return (1);
+    return (ret);
 }
 
 /*
