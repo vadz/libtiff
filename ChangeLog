@@ -1,3 +1,9 @@
+2005-02-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffgt.c: Fix problem on big-endian CPUs so that images
+	display more correctly.  Images display brighter than they should
+	on a Sun workstation.
+
 2005-02-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Estimate strip size in case of wrong or

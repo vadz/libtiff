@@ -222,6 +222,9 @@ initImage(void)
 	    height = h;
 	}
 	TIFFRGBAImageGet(&img, raster, img.width, img.height);
+#if HOST_BIGENDIAN
+        TIFFSwabArrayOfLong(raster,img.width*img.height);
+#endif
 }
 
 static int
@@ -263,7 +266,7 @@ setWindowSize(void)
 static void
 raster_draw(void)
 {
-	glDrawPixels(img.width, img.height, GL_RGBA, GL_UNSIGNED_BYTE, raster);
+  glDrawPixels(img.width, img.height, GL_RGBA, GL_UNSIGNED_BYTE, (const GLvoid *) raster);
 }
 
 static void
