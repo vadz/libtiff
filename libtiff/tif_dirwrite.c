@@ -425,7 +425,7 @@ TIFFCheckpointDirectory(TIFF* tif)
 static int
 TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 {
-	unsigned short wc = (unsigned short) fip->field_writecount;
+	uint16 wc = (uint16) fip->field_writecount;
 	uint32 wc2;
 
 	dir->tdir_tag = (uint16) fip->field_tag;
@@ -570,37 +570,32 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 		}
 		break;
 
-        /* added based on patch request from MARTIN.MCBRIDE.MM@agfa.co.uk,
-           correctness not verified (FW, 99/08) */
         case TIFF_BYTE:
         case TIFF_SBYTE:          
-		if (wc > 1) {
+		if (fip->field_passcount) {
 			char* cp;
-			if (wc == (unsigned short) TIFF_VARIABLE
-			    || fip->field_passcount) {
-				TIFFGetField(tif, fip->field_tag, &wc, &cp);
-				dir->tdir_count = wc;
-			} else if (wc == (unsigned short) TIFF_VARIABLE2) {
+			if (wc == (uint16) TIFF_VARIABLE2) {
 				TIFFGetField(tif, fip->field_tag, &wc2, &cp);
 				dir->tdir_count = wc2;
-			} else
-				TIFFGetField(tif, fip->field_tag, &cp);
-			if (!TIFFWriteByteArray(tif, dir, cp))
-				return (0);
-                } else {
-			if (fip->field_passcount) {
-				char* cp;
+			} else {
 				TIFFGetField(tif, fip->field_tag, &wc, &cp);
 				dir->tdir_count = wc;
-				if (!TIFFWriteByteArray(tif, dir, cp))
-					return 0;
-			} else {
+			}
+			if (!TIFFWriteByteArray(tif, dir, cp))
+				return 0;
+		} else {
+			if (wc == 1) {
 				char cv;
 				TIFFGetField(tif, fip->field_tag, &cv);
 				if (!TIFFWriteByteArray(tif, dir, &cv))
-					return (0);
+					return 0;
+			} else {
+				char* cp;
+				TIFFGetField(tif, fip->field_tag, &cp);
+				if (!TIFFWriteByteArray(tif, dir, cp))
+					return 0;
 			}
-                }
+		}
                 break;
 
 	case TIFF_UNDEFINED:
