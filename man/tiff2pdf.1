@@ -40,38 +40,48 @@ The program converts one TIFF file to one PDF file, including multiple page
 TIFF files, tiled TIFF files, black and white. grayscale, and color TIFF 
 files that contain data of TIFF photometric interpretations of bilevel, 
 grayscale, RGB, YCbCr, CMYK separation, and ICC L*a*b* as supported by 
-.B libtiff 
+.I libtiff 
 and PDF.
 .PP
 If you have multiple TIFF files to convert into one PDF file then use 
-.B tiffcp 
+.I tiffcp 
 or other program to concatenate the files into a multiple page TIFF file.  
 If the input TIFF file is of huge dimensions (greater than 10000 pixels height
 or width) convert the input image to a tiled TIFF if it is not already.
 .PP
 The standard output is standard output.  Set the output file name with the 
-"-o output.pdf" option.
+.BI -o output.pdf
+option.
 .PP
-All black and white files are compressed into a single strip CCITT G4 Fax 
-compressed PDF, unless tiled, where tiled black and white images are 
+All black and white files are compressed into a single strip CCITT G4 Fax
+compressed PDF, unless tiled, where tiled black and white images are
 compressed into tiled CCITT G4 Fax compressed PDF, 
-.B libtiff 
+.I libtiff 
 CCITT support is assumed.
 .PP
-Color and grayscale data can be compressed using either JPEG compression, 
-ITU-T T.81, or Zip/Deflate LZ77 compression.  Set 
-the compression type using the -j or -z options.  JPEG compression support 
+Color and grayscale data can be compressed using either JPEG compression,
+ITU-T T.81, or Zip/Deflate LZ77 compression.  Set the compression type using
+the 
+.B \-j
+or
+.B \-z
+options.  JPEG compression support 
 requires that 
-.B libtiff 
-be configured with JPEG support, and Zip/Deflate 
-compression support requires that 
-.B libtiff 
-be configured with Zip support, 
-in tiffconf.h.  Use only one or the other of -j and -z.
+.I libtiff 
+be configured with JPEG support, and Zip/Deflate compression support requires
+that 
+.I libtiff 
+be configured with Zip support, in tiffconf.h.  Use only one or the other of 
+.B \-j
+and
+.B \-z.
 .PP
 If the input TIFF contains single strip CCITT G4 Fax compressed information, 
 then that is written to the PDF file without transcoding, unless the options 
-of no compression and no passthrough are set, -d and -n.
+of no compression and no passthrough are set, 
+.B \-d
+and
+.B \-n.
 .PP
 If the input TIFF contains JPEG or single strip Zip/Deflate compressed 
 information, and they are configured, then that is written to the PDF file 
@@ -80,14 +90,31 @@ are set.
 .PP
 The default page size upon which the TIFF image is placed is determined by 
 the resolution and extent of the image data.  Default values for the TIFF 
-image resolution can be set using the -x and -y options.  The page size can 
-be set using the -p option for paper size, or -w and -l for paper width and 
-length, then each page of the TIFF image is centered on its page.  The 
-distance unit for default resolution and page width and length can be set 
-by the -u option, the default unit is inch.
+image resolution can be set using the
+.B \-x
+and
+.B \-y
+options.  The page size can be set using the
+.B \-p
+option for paper size, or
+.B \-w
+and
+.B \-l
+for paper width and length, then each page of the TIFF image is centered on
+its page.  The distance unit for default resolution and page width and
+length can be set by the
+.B \-u
+option, the default unit is inch.
 .PP
-Various items of the output document information can be set with the -e, -c, 
--a, -t, -s, and -k tags.  Setting the argument of the option to "" for these 
+Various items of the output document information can be set with the
+.B \-e,
+.B \-c, 
+.B \-a,
+.B \-t,
+.B \-s,
+and
+.B \-k
+options.  Setting the argument of the option to "" for these 
 tags causes the relevant document information field to be not written.  Some 
 of the document information values otherwise get their information from the 
 input TIFF image, the software, author, document name, and image description.
@@ -95,53 +122,85 @@ input TIFF image, the software, author, document name, and image description.
 The Portable Document Format (PDF) specification is copyrighted by Adobe 
 Systems, Incorporated.
 .SH OPTIONS
-.IP "-o output-file"
+.TP
+.BI \-o output-file
 Set the output to go to file 
-.B output-file
-.IP -j  
-Compress with JPEG (requires libjpeg configured with libtiff)
-.IP -z  
-Compress with Zip/Deflate (requires zlib configured with libtiff)
-.IP "-q quality" 
+.I output-file
+.TP
+.B \-j  
+Compress with JPEG (requires libjpeg configured with libtiff).
+.TP
+.B \-z  
+Compress with Zip/Deflate (requires zlib configured with libtiff).
+.TP
+.BI \-q quality
 Set the compression quality, 1-100 for JPEG.
-.IP -n  
-Do not allow data to be converted without uncompressing, no compressed data passthrough.
-.IP -d  
+.TP
+.B \-n
+Do not allow data to be converted without uncompressing, no compressed
+data passthrough.
+.TP
+.B \-d  
 Do not compress (decompress).
-.IP -i  
+.TP
+.B \-i  
 Invert colors.
-.IP "-p paper-size"
+.TP
+.BI \-p paper-size
 Set paper size, eg "letter", "legal", "A4".
-.IP "-u [i|m]"
-Set distance unit, 'i' for inch, 'm' for centimeter.
-.IP "-w width"
+.TP
+.BI \-u [i|m]
+Set distance unit,
+.I i
+for inch, 
+.I m
+for centimeter.
+.TP
+.BI \-w width
 Set width in units.
-.IP "-l length"
+.TP
+.BI \-l length
 Set length in units.
-.IP "-x xres"
+.TP
+.BI \-x xres
 Set x/width resolution default.
-.IP "-y yres"
+.TP
+.BI \-y yres
 Set y/length resolution default.
-.IP "-r [d|o]"
-Set 'd' for resolution default for images without resolution, 'o' for resolution override for 
-all images.
-.IP -f
+.TP
+.BI \-r [d|o]
+Set
+.I d
+for resolution default for images without resolution, 
+.I o for resolution override for all images.
+.TP
+.B \-f
 Set PDF "Fit Window" user preference
-.IP "-e YYYYMMDDHHMMSS"
-Set document information date, overrides image or current date/time default, YYYYMMDDHHMMSS.
-.IP "-c creator"
+.TP
+.BI \-e YYYYMMDDHHMMSS
+Set document information date, overrides image or current date/time default,
+.I YYYYMMDDHHMMSS.
+.TP
+.BI \-c creator
 Set document information creator, overrides image software default.
-.IP "-a author"
+.TP
+.BI \-a author
 Set document information author, overrides image artist default
-.IP "-t title"
+.TP
+.BI \-t title
 Set document information title, overrides image document name default
-.IP "-s subject"
+.TP
+.BI \-s subject
 Set document information subject, overrides image image description default
-.IP "-k keywords"
+.TP
+.BI \-k keywords
 Set document information keywords.
-.IP -h  
+.TP
+.B \-h  
 List usage reminder to stderr and exit.
+.TP
 .SH EXAMPLES
+.TP
 The following example would generate the file output.pdf from input.tiff.
 .PP
 .RS
@@ -171,8 +230,8 @@ tiff2pdf -p letter -j -q 75 -t "Document" -f -o output.pdf input.tiff
 .RE
 .SH BUGS
 Please report bugs via the web interface at 
-http://bugzilla.remotesensing.org/enter_bug.cgi?product=libtiff.
-.
+.IP
+\%http://bugzilla.remotesensing.org/enter_bug.cgi?product=libtiff
 .SH "SEE ALSO"
 .BR libtiff (3) ,
 .BR tiffcp (1) , 
