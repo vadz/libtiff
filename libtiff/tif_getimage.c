@@ -215,7 +215,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
     case 8: case 16:
 	break;
     default:
-	sprintf(emsg, "Sorry, can not image with %d-bit samples",
+	sprintf(emsg, "Sorry, can not handle images with %d-bit samples",
 	    img->bitspersample);
 	return (0);
     }
