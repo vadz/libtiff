@@ -463,6 +463,8 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
     fld->field_oktochange = TRUE;
     fld->field_passcount = TRUE;
     fld->field_name = (char *) _TIFFmalloc(32);
+
+    /* note that this name is a special sign to TIFFClose() to free the field*/
     sprintf(fld->field_name, "Tag %d", (int) tag);
 
     return fld;    
