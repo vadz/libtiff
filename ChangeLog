@@ -1,3 +1,24 @@
+2004-09-10  Andrey Kiselev  <dron@remotesensing.org>
+
+	* test/{ascii_tag.c, long_tag.c}: Preliminary test suite added.
+
+	* tools/tiff2pdf.c: Fixed reading TransferFunction tag as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=590
+
+	* libtiff/tif_print.c: Fixes in InkNames and NumberOfInks reporting.
+
+	* libtiff/tif_dirread.c: Don't reject to read tags of the
+	SamplesPerPixel size when the tag count is greater than number of
+	samples as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=576
+
+	* libtiff/tiff.h: Use _TIFF_DATA_TYPEDEFS_ guardian to switch off
+	defining int8/uint8/... etc. types. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=607
+
 2004-09-09  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2ps.c, tools/tiffmedian.c: fiddle with include files
