@@ -35,6 +35,7 @@ BIN_TIFFGT =
 endif
 
 bin_PROGRAMS = \
+	bmp2tiff \
 	fax2ps \
 	fax2tiff \
 	gif2tiff \
@@ -59,6 +60,8 @@ bin_PROGRAMS = \
 	$(BIN_TIFFGT)
 EXTRA_PROGRAMS = $(BIN_TIFFGT) sgi2tiff sgisv ycbcr
 
+bmp2tiff_SOURCES = bmp2tiff.c
+bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 fax2ps_SOURCES = fax2ps.c
 fax2ps_LDADD = $(LIBTIFF) $(LIBPORT)
 fax2tiff_SOURCES = fax2tiff.c

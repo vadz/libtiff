@@ -39,7 +39,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-SOURCES = $(fax2ps_SOURCES) $(fax2tiff_SOURCES) $(gif2tiff_SOURCES) $(pal2rgb_SOURCES) $(ppm2tiff_SOURCES) $(ras2tiff_SOURCES) $(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) sgi2tiff.c sgisv.c $(thumbnail_SOURCES) $(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) $(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) $(tiffcp_SOURCES) $(tiffdither_SOURCES) $(tiffdump_SOURCES) $(tiffgt_SOURCES) $(tiffinfo_SOURCES) $(tiffmedian_SOURCES) $(tiffset_SOURCES) $(tiffsplit_SOURCES) ycbcr.c
+SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) $(fax2tiff_SOURCES) $(gif2tiff_SOURCES) $(pal2rgb_SOURCES) $(ppm2tiff_SOURCES) $(ras2tiff_SOURCES) $(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) sgi2tiff.c sgisv.c $(thumbnail_SOURCES) $(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) $(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) $(tiffcp_SOURCES) $(tiffdither_SOURCES) $(tiffdump_SOURCES) $(tiffgt_SOURCES) $(tiffinfo_SOURCES) $(tiffmedian_SOURCES) $(tiffset_SOURCES) $(tiffsplit_SOURCES) ycbcr.c
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -62,14 +62,14 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
-bin_PROGRAMS = fax2ps$(EXEEXT) fax2tiff$(EXEEXT) gif2tiff$(EXEEXT) \
-	pal2rgb$(EXEEXT) ppm2tiff$(EXEEXT) ras2tiff$(EXEEXT) \
-	raw2tiff$(EXEEXT) rgb2ycbcr$(EXEEXT) thumbnail$(EXEEXT) \
-	tiff2bw$(EXEEXT) tiff2pdf$(EXEEXT) tiff2ps$(EXEEXT) \
-	tiff2rgba$(EXEEXT) tiffcmp$(EXEEXT) tiffcp$(EXEEXT) \
-	tiffdither$(EXEEXT) tiffdump$(EXEEXT) tiffinfo$(EXEEXT) \
-	tiffmedian$(EXEEXT) tiffset$(EXEEXT) tiffsplit$(EXEEXT) \
-	$(am__EXEEXT_1)
+bin_PROGRAMS = bmp2tiff$(EXEEXT) fax2ps$(EXEEXT) fax2tiff$(EXEEXT) \
+	gif2tiff$(EXEEXT) pal2rgb$(EXEEXT) ppm2tiff$(EXEEXT) \
+	ras2tiff$(EXEEXT) raw2tiff$(EXEEXT) rgb2ycbcr$(EXEEXT) \
+	thumbnail$(EXEEXT) tiff2bw$(EXEEXT) tiff2pdf$(EXEEXT) \
+	tiff2ps$(EXEEXT) tiff2rgba$(EXEEXT) tiffcmp$(EXEEXT) \
+	tiffcp$(EXEEXT) tiffdither$(EXEEXT) tiffdump$(EXEEXT) \
+	tiffinfo$(EXEEXT) tiffmedian$(EXEEXT) tiffset$(EXEEXT) \
+	tiffsplit$(EXEEXT) $(am__EXEEXT_1)
 EXTRA_PROGRAMS = $(am__EXEEXT_1) sgi2tiff$(EXEEXT) sgisv$(EXEEXT) \
 	ycbcr$(EXEEXT)
 subdir = tools
@@ -86,9 +86,12 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am_bmp2tiff_OBJECTS = bmp2tiff.$(OBJEXT)
+bmp2tiff_OBJECTS = $(am_bmp2tiff_OBJECTS)
+am__DEPENDENCIES_1 =
+bmp2tiff_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fax2ps_OBJECTS = fax2ps.$(OBJEXT)
 fax2ps_OBJECTS = $(am_fax2ps_OBJECTS)
-am__DEPENDENCIES_1 =
 fax2ps_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fax2tiff_OBJECTS = fax2tiff.$(OBJEXT)
 fax2tiff_OBJECTS = $(am_fax2tiff_OBJECTS)
@@ -165,19 +168,19 @@ ycbcr_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/libtiff
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/fax2ps.Po ./$(DEPDIR)/fax2tiff.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/gif2tiff.Po ./$(DEPDIR)/pal2rgb.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ppm2tiff.Po ./$(DEPDIR)/ras2tiff.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/raw2tiff.Po ./$(DEPDIR)/rgb2ycbcr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/sgi2tiff.Po ./$(DEPDIR)/sgisv.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/thumbnail.Po ./$(DEPDIR)/tiff2bw.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tiff2pdf.Po ./$(DEPDIR)/tiff2ps.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tiff2rgba.Po ./$(DEPDIR)/tiffcmp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tiffcp.Po ./$(DEPDIR)/tiffdither.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tiffdump.Po ./$(DEPDIR)/tiffgt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tiffinfo.Po ./$(DEPDIR)/tiffmedian.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tiffset.Po ./$(DEPDIR)/tiffsplit.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ycbcr.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bmp2tiff.Po ./$(DEPDIR)/fax2ps.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/fax2tiff.Po ./$(DEPDIR)/gif2tiff.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/pal2rgb.Po ./$(DEPDIR)/ppm2tiff.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/ras2tiff.Po ./$(DEPDIR)/raw2tiff.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rgb2ycbcr.Po ./$(DEPDIR)/sgi2tiff.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sgisv.Po ./$(DEPDIR)/thumbnail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiff2bw.Po ./$(DEPDIR)/tiff2pdf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiff2ps.Po ./$(DEPDIR)/tiff2rgba.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiffcmp.Po ./$(DEPDIR)/tiffcp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiffdither.Po ./$(DEPDIR)/tiffdump.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiffgt.Po ./$(DEPDIR)/tiffinfo.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiffmedian.Po ./$(DEPDIR)/tiffset.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tiffsplit.Po ./$(DEPDIR)/ycbcr.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
@@ -186,15 +189,7 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(fax2ps_SOURCES) $(fax2tiff_SOURCES) $(gif2tiff_SOURCES) \
-	$(pal2rgb_SOURCES) $(ppm2tiff_SOURCES) $(ras2tiff_SOURCES) \
-	$(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) sgi2tiff.c sgisv.c \
-	$(thumbnail_SOURCES) $(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) \
-	$(tiff2ps_SOURCES) $(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) \
-	$(tiffcp_SOURCES) $(tiffdither_SOURCES) $(tiffdump_SOURCES) \
-	$(tiffgt_SOURCES) $(tiffinfo_SOURCES) $(tiffmedian_SOURCES) \
-	$(tiffset_SOURCES) $(tiffsplit_SOURCES) ycbcr.c
-DIST_SOURCES = $(fax2ps_SOURCES) $(fax2tiff_SOURCES) \
+SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) $(fax2tiff_SOURCES) \
 	$(gif2tiff_SOURCES) $(pal2rgb_SOURCES) $(ppm2tiff_SOURCES) \
 	$(ras2tiff_SOURCES) $(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) \
 	sgi2tiff.c sgisv.c $(thumbnail_SOURCES) $(tiff2bw_SOURCES) \
@@ -203,6 +198,15 @@ DIST_SOURCES = $(fax2ps_SOURCES) $(fax2tiff_SOURCES) \
 	$(tiffdump_SOURCES) $(tiffgt_SOURCES) $(tiffinfo_SOURCES) \
 	$(tiffmedian_SOURCES) $(tiffset_SOURCES) $(tiffsplit_SOURCES) \
 	ycbcr.c
+DIST_SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) \
+	$(fax2tiff_SOURCES) $(gif2tiff_SOURCES) $(pal2rgb_SOURCES) \
+	$(ppm2tiff_SOURCES) $(ras2tiff_SOURCES) $(raw2tiff_SOURCES) \
+	$(rgb2ycbcr_SOURCES) sgi2tiff.c sgisv.c $(thumbnail_SOURCES) \
+	$(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) \
+	$(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) $(tiffcp_SOURCES) \
+	$(tiffdither_SOURCES) $(tiffdump_SOURCES) $(tiffgt_SOURCES) \
+	$(tiffinfo_SOURCES) $(tiffmedian_SOURCES) $(tiffset_SOURCES) \
+	$(tiffsplit_SOURCES) ycbcr.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -321,6 +325,8 @@ LIBTIFF = -L$(top_builddir)/libtiff -ltiff
 EXTRA_DIST = Makefile.vc
 @HAVE_OPENGL_FALSE@BIN_TIFFGT = 
 @HAVE_OPENGL_TRUE@BIN_TIFFGT = tiffgt
+bmp2tiff_SOURCES = bmp2tiff.c
+bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 fax2ps_SOURCES = fax2ps.c
 fax2ps_LDADD = $(LIBTIFF) $(LIBPORT)
 fax2tiff_SOURCES = fax2tiff.c
@@ -427,6 +433,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+bmp2tiff$(EXEEXT): $(bmp2tiff_OBJECTS) $(bmp2tiff_DEPENDENCIES) 
+	@rm -f bmp2tiff$(EXEEXT)
+	$(LINK) $(bmp2tiff_LDFLAGS) $(bmp2tiff_OBJECTS) $(bmp2tiff_LDADD) $(LIBS)
 fax2ps$(EXEEXT): $(fax2ps_OBJECTS) $(fax2ps_DEPENDENCIES) 
 	@rm -f fax2ps$(EXEEXT)
 	$(LINK) $(fax2ps_LDFLAGS) $(fax2ps_OBJECTS) $(fax2ps_LDADD) $(LIBS)
@@ -509,6 +518,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmp2tiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fax2ps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fax2tiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gif2tiff.Po@am__quote@
