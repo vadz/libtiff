@@ -138,7 +138,7 @@ The library is modeled after the normal UNIX stdio library.
 For example, to read from an existing TIFF image the
 file must first be opened:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -146,7 +146,7 @@ main()
     ... do stuff ...
     TIFFClose(tif);
 }
-</LISTING></UL>
+</PRE></UL>
 
 The handle returned by <TT>TIFFOpen</TT> is <I>opaque</I>, that is
 the application is not permitted to know about its contents.
@@ -157,7 +157,7 @@ as an argument.
 To create or overwrite a TIFF image the file is also opened, but with
 a <TT>"w"</TT> argument:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -165,7 +165,7 @@ main()
     ... do stuff ...
     TIFFClose(tif);
 }
-</LISTING></UL>
+</PRE></UL>
 
 If the file already exists it is first truncated to zero length.
 
@@ -215,7 +215,7 @@ be used for sequential access to directories.
 For example, to count the number of directories in a file the following
 code might be used:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main(int argc, char* argv[])
 {
@@ -230,7 +230,7 @@ main(int argc, char* argv[])
     }
     exit(0);
 }
-</LISTING></UL>
+</PRE></UL>
 
 <P>
 Finally, note that there are several routines for querying the
@@ -351,7 +351,7 @@ There are two ways to read image data using this interface.  If
 all the data is to be stored in memory and manipulated at once,
 then the routine <TT>TIFFReadRGBAImage</TT> can be used:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main(int argc, char* argv[])
 {
@@ -375,7 +375,7 @@ main(int argc, char* argv[])
     }
     exit(0);
 }
-</LISTING></UL>
+</PRE></UL>
 
 Note above that <TT>_TIFFmalloc</TT> is used to allocate memory for
 the raster passed to <TT>TIFFReadRGBAImage</TT>; this is important
@@ -388,7 +388,7 @@ more low-level interface that permits an application to have more
 control over this reading procedure.  The equivalent to the above
 is:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main(int argc, char* argv[])
 {
@@ -416,7 +416,7 @@ main(int argc, char* argv[])
     }
     exit(0);
 }
-</LISTING></UL>
+</PRE></UL>
 
 However this usage does not take advantage of the more fine-grained
 control that's possible.  That is, by using this interface it is
@@ -486,7 +486,7 @@ and
 For example, to read the contents of a file that
 is assumed to be organized in strips, the following might be used:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -504,7 +504,7 @@ main()
 	TIFFClose(tif);
     }
 }
-</LISTING></UL>
+</PRE></UL>
 
 <TT>TIFFScanlineSize</TT> returns the number of bytes in
 a decoded scanline, as returned by <TT>TIFFReadScanline</TT>.
@@ -513,7 +513,7 @@ written in separate planes, then the above code would only
 read data that contained the first sample of each pixel;
 to handle either case one might use the following instead:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -541,16 +541,16 @@ main()
 	TIFFClose(tif);
     }
 }
-</LISTING></UL>
+</PRE></UL>
 
 Beware however that if the following code were used instead to
 read data in the case <TT>PLANARCONFIG_SEPARATE</TT>,
 
-<UL><LISTING>
+<UL><PRE>
 	    for (row = 0; row < imagelength; row++)
 		for (s = 0; s < nsamples; s++)
 		    TIFFReadScanline(tif, buf, row, s);
-</LISTING></UL>
+</PRE></UL>
 
 then problems would arise if <TT>RowsPerStrip</TT> was not one
 because the order in which scanlines are requested would require
@@ -569,7 +569,7 @@ to data within strips.
 <P>
 A simple example of reading an image by strips is:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -585,7 +585,7 @@ main()
 	TIFFClose(tif);
     }
 }
-</LISTING></UL>
+</PRE></UL>
 
 Notice how a strip size of <TT>-1</TT> is used; <TT>TIFFReadEncodedStrip</TT>
 will calculate the appropriate size in this case.
@@ -607,7 +607,7 @@ set of rows in it.
 The following is an example of how to read raw strips of data from
 a file:
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -632,7 +632,7 @@ main()
 	TIFFClose(tif);
     }
 }
-</LISTING></UL>
+</PRE></UL>
 
 As above the strips are read in the order in which they are
 physically stored in the file; this may be different from the
@@ -663,7 +663,7 @@ There are actually two interfaces for tiles.
 One interface is similar to scanlines,  to read a tiled image,
 code of the following sort might be used:
 
-<UL><LISTING>
+<UL><PRE>
 main()
 {
     TIFF* tif = TIFFOpen("myfile.tif", "r");
@@ -685,7 +685,7 @@ main()
 	TIFFClose(tif);
     }
 }
-</LISTING></UL>
+</PRE></UL>
 
 (once again, we assume samples are packed contiguously.)
 
@@ -699,7 +699,7 @@ and written with
 <TT>TIFFWriteRawTile</TT>.
 For example, to read all the tiles in an image: 
 
-<UL><LISTING>
+<UL><PRE>
 #include "tiffio.h"
 main()
 {
@@ -715,7 +715,7 @@ main()
 	TIFFClose(tif);
     }
 }
-</LISTING></UL>
+</PRE></UL>
 
 
 
