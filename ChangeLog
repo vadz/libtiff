@@ -1,3 +1,16 @@
+2002-10-07  Andrey Kiselev  <dron@remotesensing.org>
+	* tools/tiff2ps.c, man/tiff2ps.1: Applied patch form Sebastian Eken (thanks,
+	Sebastian!). New switches:
+	-b # for a bottom margin of # inches
+	-c   center image
+	-l # for a left margin of # inches
+	-r   rotate the image by 180 degrees
+	New features merged with code for shrinking/overlapping.
+	Previously added -c and -n switches (for overriding PS units) renamed
+	in -x and -y respectively.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=200
+
 2002-10-06  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: fixed problem with boolean defined with wrong

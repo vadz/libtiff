@@ -99,6 +99,14 @@ Generate \*(Ps Level II.
 .B \-a
 Generate output for all IFDs (pages) in the input file.
 .TP
+.B \-b
+Specify the bottom margin for the output (in inches). This does not affect
+the height of the printed image.
+.TP
+.B \-c
+Center the image in the output. This option only shows an effect if both
+the -w and the -h option are given.
+.TP
 .B \-d
 Set the initial
 .SM TIFF
@@ -130,6 +138,10 @@ conjuction with
 .B \-H
 option.
 .TP
+.B \-l
+Specify the left margin for the output (in inches). This does not affect
+the width of the printed image.
+.TP
 .B \-m
 Where possible render using the
 .B imagemask
@@ -153,11 +165,20 @@ like which are hidden using the SubIFD tag.
 .B \-p
 Force the generation of (non-Encapsulated) \*(Ps.
 .TP
+.B \-r
+Rotate image by 180 degrees.
+.TP
 .B \-s
 Generate output for a single IFD (page) in the input file.
 .TP
 .B \-w
 Specify the horizontal size of the printed area (in inches).
+.TP
+.B \-x
+Override resolution units specified in the TIFF as centimeters.
+.TP
+.B \-y
+Override resolution units specified in the TIFF as inches.
 .TP
 .B \-z
 When generating \*(Ps Level II, data is scaled so that it does not
@@ -167,12 +188,6 @@ on a page (the outer margin that the printing device is unable to mark).
 This option suppresses this behaviour.
 When \*(Ps Level I is generated, data is imaged to the entire printed
 page and this option has no affect.
-.TP
-.B \-c
-Override resolution units specified in the TIFF as centimeters.
-.TP
-.B \-n
-Override resolution units specified in the TIFF as inches.
 .SH EXAMPLES
 The following generates \*(Ps Level II for all pages of a facsimile:
 .RS

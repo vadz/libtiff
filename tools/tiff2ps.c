@@ -109,6 +109,7 @@ int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
 float	maxPageHeight = 0;		/* maximum size to fit on page */
 float	splitOverlap = 0;		/* amount for split pages to overlag */
+int	rotate = FALSE;			/* rotate image by 180 degrees */
 char	*filename;			/* input filename */
 int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
 uint16	res_unit = 0;			/* Resolution units: 1 - inches, 2 - cm*/
@@ -120,7 +121,7 @@ unsigned char ascii85buf[10];
 int	ascii85count;
 int	ascii85breaklen;
 
-int	TIFF2PS(FILE*, TIFF*, float, float);
+int	TIFF2PS(FILE*, TIFF*, float, float, double, double, int);
 void	PSpage(FILE*, TIFF*, uint32, uint32);
 void	PSColorContigPreamble(FILE*, uint32, uint32, int);
 void	PSColorSeparatePreamble(FILE*, uint32, uint32, int);
@@ -145,6 +146,9 @@ int
 main(int argc, char* argv[])
 {
 	int dirnum = -1, c, np = 0;
+	int centered = 0;
+	float bottommargin = 0;
+	float leftmargin = 0;
 	float pageWidth = 0;
 	float pageHeight = 0;
 	uint32 diroff = 0;
@@ -152,8 +156,14 @@ main(int argc, char* argv[])
 	extern int optind;
 	FILE* output = stdout;
 
-	while ((c = getopt(argc, argv, "h:H:L:i:w:d:o:O:acemnzps128DT")) != -1)
+	while ((c = getopt(argc, argv, "b:d:h:H:L:i:w:l:o:O:acelmrxyzps128DT")) != -1)
 		switch (c) {
+ 		case 'b':
+ 			bottommargin = atof(optarg);
+ 			break;
+ 		case 'c':
+ 			centered = 1;
+ 			break;
 		case 'd':
 			dirnum = atoi(optarg);
 			break;
@@ -194,11 +204,17 @@ main(int argc, char* argv[])
 				exit(-2);
 			}
 			break;
+		case 'l':
+			leftmargin = atof(optarg);
+			break;
 		case 'a':
 			printAll = TRUE;
 			/* fall thru... */
 		case 'p':
 			generateEPSF = FALSE;
+			break;
+		case 'r':
+			rotate = TRUE;
 			break;
 		case 's':
 			printAll = FALSE;
@@ -220,10 +236,10 @@ main(int argc, char* argv[])
 		case '8':
 			ascii85 = FALSE;
 			break;
-		case 'c':
+		case 'x':
 			res_unit = RESUNIT_CENTIMETER;
 			break;
-		case 'n':
+		case 'y':
 			res_unit = RESUNIT_INCH;
 			break;
 		case '?':
@@ -237,7 +253,8 @@ main(int argc, char* argv[])
 			else if (diroff != 0 &&
 			    !TIFFSetSubDirectory(tif, diroff))
 				return (-1);
-			np = TIFF2PS(output, tif, pageWidth, pageHeight);
+			np = TIFF2PS(output, tif, pageWidth, pageHeight,
+				leftmargin, bottommargin, centered);
 			TIFFClose(tif);
 		}
 	}
@@ -431,12 +448,15 @@ static	char *hex = "0123456789abcdef";
  */
 int
 PlaceImage(FILE *fp, float pagewidth, float pageheight,
-	float imagewidth, float imageheight, int splitpage)
+	   float imagewidth, float imageheight, int splitpage,
+	   double lm, double bm, int cnt)
 {
 	float xtran = 0;
 	float ytran = 0;
 	float xscale = 1;
 	float yscale = 1;
+	float left_offset = lm * PS_UNIT_SIZE;
+	float bottom_offset = bm * PS_UNIT_SIZE;
 	float subimageheight;
 	float splitheight;
 	float overlap;
@@ -487,9 +507,14 @@ PlaceImage(FILE *fp, float pagewidth, float pageheight,
 			splitpage++;
 		}
 	}
-
-	fprintf(fp,"%f %f translate\n",xtran,ytran);
-	fprintf(fp,"%f %f scale\n",xscale,yscale);
+	
+	bottom_offset += ytran / (cnt?2:1);
+ 	if (cnt)
+	    left_offset += xtran / 2;
+	fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
+	fprintf(fp, "%f %f scale\n", xscale, yscale);
+	if (rotate)
+	    fputs ("1 1 translate 180 rotate\n", fp);
 
 	return splitpage;
 }
@@ -497,11 +522,13 @@ PlaceImage(FILE *fp, float pagewidth, float pageheight,
 
 /* returns the sequence number of the page processed */
 int
-TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
+TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph, double lm, double bm, int cnt)
 {
 	uint32 w, h;
 	float ox, oy, prw, prh;
-	float scale;
+	float scale = 1.0;
+	float left_offset = lm * PS_UNIT_SIZE;
+	float bottom_offset = bm * PS_UNIT_SIZE;
 	uint32 subfiletype;
 	uint16* sampleinfo;
 	static int npages = 0;
@@ -555,7 +582,7 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
 			fprintf(fd, "100 dict begin\n");
 			if (pw != 0 && ph != 0) {
 				if (maxPageHeight) { /* used -H option */
-					split = PlaceImage(fd,pw,ph,prw,prh,0);
+					split = PlaceImage(fd,pw,ph,prw,prh,0,lm,bm,cnt);
 					while( split ) {
 					    PSpage(fd, tif, w, h);
 					    fprintf(fd, "end\n");
@@ -565,7 +592,7 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
 					    fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
 					    fprintf(fd, "gsave\n");
 					    fprintf(fd, "100 dict begin\n");
-					    split = PlaceImage(fd,pw,ph,prw,prh,split);
+					    split = PlaceImage(fd,pw,ph,prw,prh,split,lm,bm,cnt);
 					}
 				} else {
 					/* NB: maintain image aspect ratio */
@@ -574,9 +601,15 @@ TIFF2PS(FILE* fd, TIFF* tif, float pw, float ph)
 					    (ph*PS_UNIT_SIZE/prh);
 					if (scale > 1.0)
 						scale = 1.0;
-					fprintf(fd, "0 %f translate\n",
-						ph*PS_UNIT_SIZE-prh*scale);
-					fprintf(fd, "%f %f scale\n", prw*scale, prh*scale);
+					bottom_offset +=
+					    (ph * PS_UNIT_SIZE - prh * scale) / (cnt?2:1);
+ 				        if (cnt)
+					    left_offset += (pw * PS_UNIT_SIZE - prw * scale) / 2;
+					fprintf(fd, "%f %f translate\n",
+						left_offset, bottom_offset);
+					fprintf(fd, "%f %f scale\n", prw * scale, prh * scale);
+					if (rotate)
+					    fputs ("1 1 translate 180 rotate\n", fd);
 				}
 			} else
 				fprintf(fd, "%f %f scale\n", prw, prh);
@@ -1893,8 +1926,8 @@ char* stuff[] = {
 " -2            generate PostScript Level II",
 " -8            disable use of ASCII85 encoding with PostScript Level II",
 " -a            convert all directories in file (default is first)",
-" -n		override resolution units as inches",
-" -c		override resolution units as centimeters",
+" -b #          set the bottom margin to # inches",
+" -c            center image (-b and -l still add to this)",
 " -d #          convert directory number #",
 " -D            enable duplex printing (two pages per sheet of paper)",
 " -e            generate Encapsulated PostScript (EPS)",
@@ -1903,12 +1936,16 @@ char* stuff[] = {
 " -H #          split image if height is more than # inches",
 " -L #          overLap split images by # inches",
 " -i #          enable/disable (Nz/0) pixel interpolation (default: enable)",
+" -l #          set the left margin to # inches",
 " -m            use \"imagemask\" operator instead of \"image\"",
 " -o #          convert directory at file offset #",
 " -O file       write PostScript to file instead of standard output",
 " -p            generate regular PostScript",
+" -r            rotate by 180 degrees",
 " -s            generate PostScript for a single image",
 " -T            print pages for top edge binding",
+" -x		override resolution units as centimeters",
+" -y		override resolution units as inches",
 " -z            enable printing in the deadzone (only for PostScript Level II)",
 NULL
 };
