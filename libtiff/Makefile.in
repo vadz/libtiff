@@ -201,7 +201,7 @@ AIXdso: ${OBJS}
 GNULDdso: ${OBJS}
 	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
 	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
-		@LIBJPEG@ @LIBGZ@ @MACHLIBDEPS@
+		@LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
 	rm -f libtiff.@DSOSUF@
 	if [ @DSOSUB_VERSION != @DSOSUF ] ; then \
 	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
@@ -351,6 +351,8 @@ installDSO: @DSO@dso
 		-O libtiff.@DSOSUF_VERSION@;				\
 	    ${INSTALL} -idb tiff.sw.tools -F @DIR_LIB@			\
 		-lns libtiff.@DSOSUF_VERSION@ -O libtiff.@DSOSUF@;	\
+	    ${INSTALL} -idb tiff.sw.tools -F @DIR_LIB@			\
+		-lns libtiff.@DSOSUF@ -O libtiff.so;			\
 	else								\
 	    ${INSTALL} -idb tiff.sw.tools -m 555 -F @DIR_LIB@		\
 		-O libtiff.@DSOSUF@;					\
