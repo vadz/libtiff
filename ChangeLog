@@ -1,3 +1,7 @@
+2003-12-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.6.1 released.
+
 2003-12-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* config.guess, config.sub: Updated from the recent upstream.
