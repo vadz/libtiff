@@ -1,3 +1,9 @@
+2003-05-24  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/fax2tiff.c: Number pages starting with zero as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=341
+
 2003-05-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* contrib/ojpeg/{Makefile.in, jdhuff.h, jinclude.h, ojpeg.c, README},
