@@ -205,9 +205,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_MODEL:
 		_TIFFsetString(&td->td_model, va_arg(ap, char*));
 		break;
-	case TIFFTAG_SOFTWARE:
-		_TIFFsetString(&td->td_software, va_arg(ap, char*));
-		break;
 	case TIFFTAG_COPYRIGHT:
 		_TIFFsetString(&td->td_copyright, va_arg(ap, char*));
 		break;
@@ -692,9 +689,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_MODEL:
             *va_arg(ap, char**) = td->td_model;
             break;
-	case TIFFTAG_SOFTWARE:
-            *va_arg(ap, char**) = td->td_software;
-            break;
 	case TIFFTAG_COPYRIGHT:
             *va_arg(ap, char**) = td->td_copyright;
             break;
@@ -1017,7 +1011,6 @@ TIFFFreeDirectory(TIFF* tif)
     CleanupField(td_imagedescription);
     CleanupField(td_make);
     CleanupField(td_model);
-    CleanupField(td_software);
     CleanupField(td_copyright);
     CleanupField(td_pagename);
     CleanupField(td_sampleinfo);

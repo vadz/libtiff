@@ -69,7 +69,6 @@ typedef	struct {
 	char*	td_imagedescription;
 	char*	td_make;
 	char*	td_model;
-	char*	td_software;
         char*   td_copyright;
 	char*	td_pagename;
 	tstrip_t td_stripsperimage;
@@ -173,7 +172,7 @@ typedef	struct {
 #define FIELD_ARTIST			27
 #define FIELD_DATETIME			28
 #define FIELD_HOSTCOMPUTER		29
-#define FIELD_SOFTWARE			30
+/* unused - was FIELD_SOFTWARE          30 */
 #define	FIELD_EXTRASAMPLES		31
 #define FIELD_SAMPLEFORMAT		32
 #define	FIELD_SMINSAMPLEVALUE		33
