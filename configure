@@ -464,7 +464,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_unique_file="libtiff/config.h.in"
+ac_unique_file="libtiff/tif_config.h.in"
 ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LIBTIFF_MAJOR_VERSION LIBTIFF_MINOR_VERSION LIBTIFF_MICRO_VERSION LIBTIFF_ALPHA_VERSION LIBTIFF_VERSION LIBTIFF_RELEASE_DATE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LIBOBJS HAVE_OPENGL_TRUE HAVE_OPENGL_FALSE OPENGL_LIBS LTLIBOBJS'
 ac_subst_files=''
 
@@ -20112,6 +20112,109 @@ fi
 
 
 
+  ansi=ANSI
+  if test -z "$ansi"; then
+    msg="for C compiler warning flags"
+  else
+    msg="for C compiler warning and ANSI conformance flags"
+  fi
+  echo "$as_me:$LINENO: checking $msg" >&5
+echo $ECHO_N "checking $msg... $ECHO_C" >&6
+if test "${vl_cv_prog_cc_warnings+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+    if test -n "$CC"; then
+      cat > conftest.c <<EOF
+int main(int argc, char **argv) { return 0; }
+EOF
+
+            if test "$GCC" = "yes"; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-Wall"
+        else
+          vl_cv_prog_cc_warnings="-Wall -ansi -pedantic"
+        fi
+
+
+            elif $CC -V 2>&1 | grep -i "WorkShop" > /dev/null 2>&1 &&
+           $CC -c -v -Xc conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-v"
+        else
+          vl_cv_prog_cc_warnings="-v -Xc"
+        fi
+
+            elif $CC -V 2>&1 | grep -i "Digital UNIX Compiler" > /dev/null 2>&1 &&
+           $CC -c -verbose -w0 -warnprotos -std1 conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-verbose -w0 -warnprotos"
+        else
+          vl_cv_prog_cc_warnings="-verbose -w0 -warnprotos -std1"
+        fi
+
+            elif $CC 2>&1 | grep -i "C for AIX Compiler" > /dev/null 2>&1 &&
+           $CC -c -qlanglvl=ansi -qinfo=all conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd"
+        else
+          vl_cv_prog_cc_warnings="-qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd -qlanglvl=ansi"
+        fi
+
+            elif $CC -version 2>&1 | grep -i "MIPSpro Compilers" > /dev/null 2>&1 &&
+           $CC -c -fullwarn -ansi -ansiE conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-fullwarn"
+        else
+          vl_cv_prog_cc_warnings="-fullwarn -ansi -ansiE"
+        fi
+
+            elif what $CC 2>&1 | grep -i "HP C Compiler" > /dev/null 2>&1 &&
+           $CC -c -Aa +w1 conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="+w1"
+        else
+          vl_cv_prog_cc_warnings="+w1 -Aa"
+        fi
+
+            elif $CC -V 2>&1 | grep "/SX" > /dev/null 2>&1 &&
+           $CC -c -pvctl,fullmsg -Xc conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-pvctl,fullmsg"
+        else
+          vl_cv_prog_cc_warnings="-pvctl,fullmsg -Xc"
+        fi
+
+            elif $CC -V 2>&1 | grep -i "Cray" > /dev/null 2>&1 &&
+           $CC -c -h msglevel 2 conftest.c > /dev/null 2>&1 &&
+           test -f conftest.o; then
+        if test -z "$ansi"; then
+          vl_cv_prog_cc_warnings="-h msglevel 2"
+        else
+          vl_cv_prog_cc_warnings="-h msglevel 2 -h conform"
+        fi
+
+      fi
+      rm -f conftest.*
+    fi
+    if test -n "$vl_cv_prog_cc_warnings"; then
+      CFLAGS="$CFLAGS $vl_cv_prog_cc_warnings"
+    else
+      vl_cv_prog_cc_warnings="unknown"
+    fi
+
+fi
+echo "$as_me:$LINENO: result: $vl_cv_prog_cc_warnings" >&5
+echo "${ECHO_T}$vl_cv_prog_cc_warnings" >&6
+
+
+
 echo "$as_me:$LINENO: checking for main in -lc" >&5
 echo $ECHO_N "checking for main in -lc... $ECHO_C" >&6
 if test "${ac_cv_lib_c_main+set}" = set; then
@@ -24410,10 +24513,10 @@ fi
 
 
 
-          ac_config_headers="$ac_config_headers libtiff/config.h"
+          ac_config_headers="$ac_config_headers libtiff/tif_config.h"
 
 
-                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile contrib/Makefile contrib/acorn/Makefile contrib/addtiffo/Makefile contrib/dbs/Makefile contrib/dbs/xtiff/Makefile contrib/iptcutil/Makefile contrib/mac-cw/Makefile contrib/mac-mpw/Makefile contrib/mfs/Makefile contrib/ojpeg/Makefile contrib/pds/Makefile contrib/ras/Makefile contrib/stream/Makefile contrib/tags/Makefile contrib/win_dib/Makefile html/Makefile html/images/Makefile html/man/Makefile libtiff/Makefile man/Makefile port/Makefile tools/Makefile"
+                                                                                                                                                                                                                                                ac_config_files="$ac_config_files Makefile contrib/Makefile contrib/acorn/Makefile contrib/addtiffo/Makefile contrib/dbs/Makefile contrib/dbs/xtiff/Makefile contrib/iptcutil/Makefile contrib/mac-cw/Makefile contrib/mac-mpw/Makefile contrib/mfs/Makefile contrib/ojpeg/Makefile contrib/pds/Makefile contrib/ras/Makefile contrib/stream/Makefile contrib/tags/Makefile contrib/win_dib/Makefile html/Makefile html/images/Makefile html/man/Makefile libtiff/Makefile man/Makefile port/Makefile test/Makefile tools/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -25014,9 +25117,10 @@ do
   "libtiff/Makefile" ) CONFIG_FILES="$CONFIG_FILES libtiff/Makefile" ;;
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "port/Makefile" ) CONFIG_FILES="$CONFIG_FILES port/Makefile" ;;
+  "test/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
   "tools/Makefile" ) CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-  "libtiff/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS libtiff/config.h" ;;
+  "libtiff/tif_config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS libtiff/tif_config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;

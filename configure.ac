@@ -59,6 +59,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_RANLIB
 
+dnl We want warnings. As many warnings as possible.
+VL_PROG_CC_WARNINGS(ANSI)
+
 dnl Checks for libraries.
 AC_CHECK_LIB([c], [main])
 
@@ -391,8 +394,8 @@ fi
 
 dnl ---------------------------------------------------------------------------
 
-AC_CONFIG_SRCDIR(libtiff/config.h.in)
-AM_CONFIG_HEADER(libtiff/config.h)
+AC_CONFIG_SRCDIR(libtiff/tif_config.h.in)
+AM_CONFIG_HEADER(libtiff/tif_config.h)
 
 AC_CONFIG_FILES([Makefile \
 		 contrib/Makefile \
@@ -416,6 +419,7 @@ AC_CONFIG_FILES([Makefile \
                  libtiff/Makefile \
                  man/Makefile \
 		 port/Makefile \
+		 test/Makefile \
                  tools/Makefile])
 AC_OUTPUT
 

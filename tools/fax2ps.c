@@ -23,7 +23,7 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#include "config.h"
+#include "tif_config.h"
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,3 +1,8 @@
+2004-08-01  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_config.h.in, tif_config.h.vc}: config.h.in and
+	config.h.vc files renamed in the tif_config.h.in and tif_config.h.vc.
+
 2004-07-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_lzw.c: LZW compression code is merged back from the

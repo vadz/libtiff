@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#include "tif_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
