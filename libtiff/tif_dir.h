@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -249,10 +249,12 @@ extern  const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo( TIFF *tif,
 extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo( TIFF *tif, ttag_t tag,
                                                  TIFFDataType dt );
 
-#define _TIFFMergeFieldInfo TIFFMergeFieldInfo
-#define _TIFFFindFieldInfo  TIFFFindFieldInfo
-#define _TIFFFieldWithTag   TIFFFieldWithTag
-    
+#define _TIFFMergeFieldInfo	    TIFFMergeFieldInfo
+#define _TIFFFindFieldInfo	    TIFFFindFieldInfo
+#define _TIFFFindFieldInfoByName    TIFFFindFieldInfoByName
+#define _TIFFFieldWithTag	    TIFFFieldWithTag
+#define _TIFFFieldWithName	    TIFFFieldWithName
+
 #if defined(__cplusplus)
 }
 #endif
