@@ -642,16 +642,32 @@ by default <TT>bin</TT> is used.</TD>
 </TABLE>
 
 
-<A NAME=PC><P><HR><H2>Building the Software under MS/DOS or Windows</H2></A>
+<A NAME=PC><P><HR><H2>Building the Software under Windows 95/98/NT/2000 with MS VC++</H2></A>
 
-<I>
-There is a Makefile for Microsoft C.
-There is OS support for MS-DOS and for Windows.
-Someone needs to fill this in, but no DOS-weenies seem to
-give a damn so this section is blank for now ....
-</I>
+With Microsoft Visual C++ installed, and properly configured for commandline
+use (you will likely need to source VCVARS32.BAT in AUTOEXEC.bAT or somewhere
+similar) you should be able to use the provided <tt>makefile.vc</tt>.<p>
 
+<pre>
+C:\LIBTIFF\LIBTIFF> nmake /f makefile.vc
+C:\LIBTIFF\LIBTIFF> cd ..\tools
+C:\LIBTIFF\TOOLS> nmake /f makefile.vc
+</pre>
 
+This will build the library file <tt>LIBTIFF\LIBTIFF\LIBTIFF.LIB</tt>.  This
+can be used in Win32 programs.  If used in a project using the /MD compiler
+switch (using the runtime C library), it may be necessary to modify the 
+CFLAGS macro in makefile.vc to correspond.<p>
+
+The makefile also builds a DLL (libtiff.dll) with an associated import
+library (libtiff_i.lib).  Any builds using libtiff will need to include
+the LIBTIFF\LIBTIFF directory in the include path.<p>
+
+The <tt>libtiff\tools\makefile.vc</tt> should build .exe's for all the
+standard TIFF tool programs.<p>
+
+NOTE: The contents of the contrib/win32 directory should no longer be
+needed, and are kept in the distribution temporarily.<p>
 
 <A NAME=DJGPP><P><HR><H2>Building the Software under MS/DOS with the DJGPP v2 compiler</H2></A>
 
