@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.3  2003-11-29 15:32:40  rossf
+ * Revision 1.4  2003-12-01 10:51:39  rossf
+ * Some bugs fixed.
+ *
+ * Revision 1.3  2003/11/29 15:32:40  rossf
  * Some bugs fixed.
  *
  *
@@ -42,7 +45,9 @@
 #ifdef __STDC__
 #include <unistd.h> /* getopt, unlink */
 #else
+#ifndef _WIN32
 #include <getopt.h> /* getopt in getopt.h, unlink in stdio.h */
+#endif
 #endif
 #include "tiffiop.h"
 
@@ -55,6 +60,7 @@
 #endif
 #if defined(_WIN32)
 #include <windows.h>
+#include <tchar.h>
 #define unlink DeleteFileA
 #endif
 
@@ -456,6 +462,8 @@ tsize_t t2p_write_pdf_trailer(T2P*, TIFF*);
 
 int main(int argc, char** argv){
 
+	extern int optind;
+	extern char* optarg;
 	T2P* t2p = NULL;
 	TIFF* input = NULL;
 	TIFF* output = NULL;
@@ -687,7 +695,7 @@ int main(int argc, char** argv){
 			TCHAR temppath[MAX_PATH];
 			TCHAR tempfile[MAX_PATH];
 			GetTempPath((DWORD)MAX_PATH, (LPTSTR)temppath);
-			GetTempFileName((LPCTSTR)temppath, _T("t2p"), 0, (LPTSTR)tempfile);
+			GetTempFileName((LPCTSTR)temppath, (LPTSTR) __T("t2p"), 0, (LPTSTR)tempfile);
 			output = TIFFFdOpen( (int)CreateFile(
 				(LPCTSTR)tempfile, 
 				GENERIC_WRITE, 
@@ -1046,10 +1054,10 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 		}
 		if(TIFFGetField(input, TIFFTAG_PAGENUMBER, &pagen, &paged)==2){
 			if((pagen>paged) && (paged != 0)){
-				((T2P_PAGE)(t2p->tiff_pages[t2p->tiff_pagecount])).page_number = 
+				t2p->tiff_pages[t2p->tiff_pagecount].page_number = 
 					paged;
 			} else {
-				((T2P_PAGE)(t2p->tiff_pages[t2p->tiff_pagecount])).page_number = 
+				t2p->tiff_pages[t2p->tiff_pagecount].page_number = 
 					pagen;
 			}
 			goto ispage2;
@@ -1071,11 +1079,11 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			}
 		}
 		ispage:
-		((T2P_PAGE)(t2p->tiff_pages[t2p->tiff_pagecount])).page_number=t2p->tiff_pagecount;
+		t2p->tiff_pages[t2p->tiff_pagecount].page_number=t2p->tiff_pagecount;
 		ispage2:
-		((T2P_PAGE)(t2p->tiff_pages[t2p->tiff_pagecount])).page_directory=i;
+		t2p->tiff_pages[t2p->tiff_pagecount].page_directory=i;
 		if(TIFFIsTiled(input)){
-			((T2P_PAGE)(t2p->tiff_pages[t2p->tiff_pagecount])).page_tilecount = 
+			t2p->tiff_pages[t2p->tiff_pagecount].page_tilecount = 
 				TIFFNumberOfTiles(input);
 		}
 		t2p->tiff_pagecount++;
@@ -1087,17 +1095,17 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 
 	for(i=0;i<t2p->tiff_pagecount;i++){
 		t2p->pdf_xrefcount += 5;
-		TIFFSetDirectory(input, ((T2P_PAGE)(t2p->tiff_pages[i])).page_directory );
+		TIFFSetDirectory(input, t2p->tiff_pages[i].page_directory );
 		if( (TIFFGetField(input, TIFFTAG_PHOTOMETRIC, &xuint16) && (xuint16==PHOTOMETRIC_PALETTE))
 			|| TIFFGetField(input, TIFFTAG_INDEXED, &xuint16) ){
-			((T2P_PAGE)(t2p->tiff_pages[i])).page_extra++;
+			t2p->tiff_pages[i].page_extra++;
 			t2p->pdf_xrefcount++;
 		}
 #ifdef ZIP_SUPPORT
 		TIFFGetField(input, TIFFTAG_COMPRESSION, &xuint16);
 		if( (xuint16== COMPRESSION_DEFLATE ||
 			xuint16== COMPRESSION_ADOBE_DEFLATE) && 
-			((((T2P_PAGE)(t2p->tiff_pages[t2p->tiff_pagecount])).page_tilecount != 0) 
+			((t2p->tiff_pages[t2p->tiff_pagecount].page_tilecount != 0) 
 			|| TIFFNumberOfStrips(input)==1) &&
 			(t2p->pdf_nopassthrough==0)	){
 			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
@@ -1111,12 +1119,12 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			&(t2p->tiff_transferfunction[1]), 
 			&(t2p->tiff_transferfunction[2]));
 		if(t2p->tiff_transferfunctioncount==1){
-			((T2P_PAGE)(t2p->tiff_pages[i])).page_extra+=2;
+			t2p->tiff_pages[i].page_extra+=2;
 			t2p->pdf_xrefcount+=2;
 			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
 		}
 		if(t2p->tiff_transferfunctioncount==3){
-			((T2P_PAGE)(t2p->tiff_pages[i])).page_extra+=4;
+			t2p->tiff_pages[i].page_extra+=4;
 			t2p->pdf_xrefcount+=4;
 			if(t2p->pdf_minorversion<2){t2p->pdf_minorversion=2;}
 		}
@@ -1127,36 +1135,36 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			TIFFTAG_ICCPROFILE, 
 			&(t2p->tiff_iccprofilelength), 
 			&(t2p->tiff_iccprofile)) != 0){
-			((T2P_PAGE)(t2p->tiff_pages[i])).page_extra++;
+			t2p->tiff_pages[i].page_extra++;
 			t2p->pdf_xrefcount++;
 			if(t2p->pdf_minorversion<3){t2p->pdf_minorversion=3;}
 		}
 #endif
-		((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tilecount=
-			((T2P_PAGE)(t2p->tiff_pages[i])).page_tilecount;
+		t2p->tiff_tiles[i].tiles_tilecount=
+			t2p->tiff_pages[i].page_tilecount;
 		if( (TIFFGetField(input, TIFFTAG_PLANARCONFIG, &xuint16) != 0)
 			&& (xuint16 == PLANARCONFIG_SEPARATE ) ){
 				TIFFGetField(input, TIFFTAG_SAMPLESPERPIXEL, &xuint16);
-				((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tilecount/= xuint16;
+				t2p->tiff_tiles[i].tiles_tilecount/= xuint16;
 		}
-		if( ((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tilecount > 0){
+		if( t2p->tiff_tiles[i].tiles_tilecount > 0){
 			t2p->pdf_xrefcount += 
-				(((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tilecount -1)*2;
+				(t2p->tiff_tiles[i].tiles_tilecount -1)*2;
 			TIFFGetField(input, 
 				TIFFTAG_TILEWIDTH, 
-				&( ((T2P_TILES)t2p->tiff_tiles[i]).tiles_tilewidth) );
+				&( t2p->tiff_tiles[i].tiles_tilewidth) );
 			TIFFGetField(input, 
 				TIFFTAG_TILELENGTH, 
-				&( ((T2P_TILES)t2p->tiff_tiles[i]).tiles_tilelength) );
-			((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tiles = 
+				&( t2p->tiff_tiles[i].tiles_tilelength) );
+			t2p->tiff_tiles[i].tiles_tiles = 
 			(T2P_TILE*) _TIFFmalloc(
-				((T2P_TILES)t2p->tiff_tiles[i]).tiles_tilecount 
+				t2p->tiff_tiles[i].tiles_tilecount 
 				* sizeof(T2P_TILE) );
-			if( ((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tiles == NULL){
+			if( t2p->tiff_tiles[i].tiles_tiles == NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"Can't allocate %u bytes of memory for t2p_read_tiff_init, %s", 
-					((T2P_TILES)(t2p->tiff_tiles[i])).tiles_tilecount * sizeof(T2P_TILE), 
+					t2p->tiff_tiles[i].tiles_tilecount * sizeof(T2P_TILE), 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
@@ -1645,7 +1653,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 		if(t2p->pdf_colorspace & T2P_CS_PALETTE){
 			t2p->pdf_sample|=T2P_SAMPLE_REALIZE_PALETTE;
 			t2p->pdf_colorspace ^= T2P_CS_PALETTE;
-			((T2P_PAGE)(t2p->tiff_pages[t2p->pdf_page])).page_extra--;
+			t2p->tiff_pages[t2p->pdf_page].page_extra--;
 		}
 	}
 	if(t2p->tiff_compression==COMPRESSION_JPEG){
@@ -4025,9 +4033,9 @@ tsize_t t2p_write_pdf_pages(T2P* t2p,
 			written += TIFFWriteFile(output, (tdata_t) "\r", 1);
 		}
 		page +=3;
-		page += ((T2P_PAGE)(t2p->tiff_pages[i])).page_extra;
-		if(((T2P_PAGE)(t2p->tiff_pages[i])).page_tilecount>0){
-			page += (2 * ((T2P_PAGE)(t2p->tiff_pages[i])).page_tilecount);
+		page += t2p->tiff_pages[i].page_extra;
+		if(t2p->tiff_pages[i].page_tilecount>0){
+			page += (2 * t2p->tiff_pages[i].page_tilecount);
 		} else {
 			page +=2;
 		}
@@ -4074,9 +4082,9 @@ tsize_t t2p_write_pdf_page(uint32 object, T2P* t2p, TIFF* output){
 	written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
 	written += TIFFWriteFile(output, (tdata_t) " 0 R \r", 6);
 	written += TIFFWriteFile(output, (tdata_t) "/Resources << \r", 15);
-	if( ((T2P_TILES)t2p->tiff_tiles[t2p->pdf_page]).tiles_tilecount != 0 ){
+	if( t2p->tiff_tiles[t2p->pdf_page].tiles_tilecount != 0 ){
 		written += TIFFWriteFile(output, (tdata_t) "/XObject <<\r", 12);
-		for(i=0;i<((T2P_TILES)t2p->tiff_tiles[t2p->pdf_page]).tiles_tilecount;i++){
+		for(i=0;i<t2p->tiff_tiles[t2p->pdf_page].tiles_tilecount;i++){
 			written += TIFFWriteFile(output, (tdata_t) "/Im", 3);
 			buflen = sprintf(buffer, "%u", t2p->pdf_page+1);
 			written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
