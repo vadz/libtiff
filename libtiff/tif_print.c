@@ -185,6 +185,12 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		case SAMPLEFORMAT_IEEEFP:
 			fprintf(fd, "IEEE floating point\n");
 			break;
+		case SAMPLEFORMAT_COMPLEXINT:
+			fprintf(fd, "complex signed integer\n");
+			break;
+		case SAMPLEFORMAT_COMPLEXIEEEFP:
+			fprintf(fd, "complex IEEE floating point\n");
+			break;
 		default:
 			fprintf(fd, "%u (0x%x)\n",
 			    td->td_sampleformat, td->td_sampleformat);

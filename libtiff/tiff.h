@@ -282,6 +282,8 @@ typedef	enum {
 #define	    SAMPLEFORMAT_INT		2	/* !signed integer data */
 #define	    SAMPLEFORMAT_IEEEFP		3	/* !IEEE floating point data */
 #define	    SAMPLEFORMAT_VOID		4	/* !untyped data */
+#define	    SAMPLEFORMAT_COMPLEXINT	5	/* !complex signed int */
+#define	    SAMPLEFORMAT_COMPLEXIEEEFP	6	/* !complex ieee floating */
 #define	TIFFTAG_SMINSAMPLEVALUE		340	/* !variable MinSampleValue */
 #define	TIFFTAG_SMAXSAMPLEVALUE		341	/* !variable MaxSampleValue */
 #define	TIFFTAG_JPEGTABLES		347	/* %JPEG table stream */
