@@ -45,7 +45,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.1  2000-01-28 15:04:03  warmerda
+ * Revision 1.2  2000-01-28 15:36:38  warmerda
+ * pass TIFF handle instead of filename to overview builder
+ *
+ * Revision 1.1  2000/01/28 15:04:03  warmerda
  * New
  *
  */
@@ -68,7 +71,7 @@
 #  define MAX(a,b)      ((a>b) ? a : b)
 #endif
 
-void TIFFBuildOverviews( const char *, int, int *, int );
+void TIFFBuildOverviews( TIFF *, int, int *, int );
 
 /************************************************************************/
 /*                         TIFF_WriteOverview()                         */
@@ -316,8 +319,7 @@ void TIFF_ProcessFullResBlock( TIFF *hTIFF, int nPlanarConfig,
 /*      overviews.                                                      */
 /************************************************************************/
 
-void TIFFBuildOverviews( const char * pszTIFFFilename,
-                         int nOverviews, int * panOvList,
+void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
                          int bUseSubIFDs )
 
 {
@@ -327,20 +329,12 @@ void TIFFBuildOverviews( const char * pszTIFFFilename,
                         nPlanarConfig, nSampleFormat;
     int			bTiled, nSXOff, nSYOff, i;
     unsigned char	*pabySrcTile;
-    TIFF		*hTIFF;
     uint16		*panRedMap, *panGreenMap, *panBlueMap;
     TIFFErrorHandler    pfnWarning;
 
 /* -------------------------------------------------------------------- */
 /*      Get the base raster size.                                       */
 /* -------------------------------------------------------------------- */
-    hTIFF = TIFFOpen( pszTIFFFilename, "r+" );
-    if( hTIFF == NULL )
-    {
-        fprintf( stderr, "TIFFOpen(%s) failed.\n", pszTIFFFilename );
-        exit( 1 );
-    }
-
     TIFFGetField( hTIFF, TIFFTAG_IMAGEWIDTH, &nXSize );
     TIFFGetField( hTIFF, TIFFTAG_IMAGELENGTH, &nYSize );
 
@@ -357,7 +351,7 @@ void TIFFBuildOverviews( const char * pszTIFFFilename,
         TIFFError( "TIFFBuildOverviews",
                    "File `%s' has samples of %d bits per sample.  Sample\n"
                    "sizes of less than 8 bits per sample are not supported.\n",
-                   pszTIFFFilename, nBitsPerPixel );
+                   TIFFFileName(hTIFF), nBitsPerPixel );
         return;
     }
     
@@ -490,8 +484,6 @@ void TIFFBuildOverviews( const char * pszTIFFFilename,
 
     if( papoRawBIs != NULL )
         _TIFFfree( papoRawBIs );
-
-    TIFFClose( hTIFF );
 
     TIFFSetWarningHandler( pfnWarning );
 }

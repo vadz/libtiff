@@ -28,7 +28,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.1  1999-08-17 01:47:59  warmerda
+ * Revision 1.2  2000-01-28 15:36:38  warmerda
+ * pass TIFF handle instead of filename to overview builder
+ *
+ * Revision 1.1  1999/08/17 01:47:59  warmerda
  * New
  *
  * Revision 1.1  1999/03/12 17:46:32  warmerda
@@ -45,7 +48,7 @@
 #include <stdlib.h>
 #include "tiffio.h"
 
-void TIFFBuildOverviews( const char *, int, int *, int );
+void TIFFBuildOverviews( TIFF *, int, int *, int );
 
 /************************************************************************/
 /*                                main()                                */
@@ -57,6 +60,7 @@ int main( int argc, char ** argv )
     int		anOverviews[100];
     int		nOverviewCount = 0;
     int		bUseSubIFD = 0;
+    TIFF	*hTIFF;
 
 /* -------------------------------------------------------------------- */
 /*      Usage:                                                          */
@@ -102,7 +106,16 @@ int main( int argc, char ** argv )
 /* -------------------------------------------------------------------- */
 /*      Build the overview.                                             */
 /* -------------------------------------------------------------------- */
-    TIFFBuildOverviews( argv[1], nOverviewCount, anOverviews, bUseSubIFD );
+    hTIFF = TIFFOpen( argv[1], "r+" );
+    if( hTIFF == NULL )
+    {
+        fprintf( stderr, "TIFFOpen(%s) failed.\n", argv[1] );
+        exit( 1 );
+    }
+
+    TIFFBuildOverviews( hTIFF, nOverviewCount, anOverviews, bUseSubIFD );
+
+    TIFFClose( hTIFF );
     
 /* -------------------------------------------------------------------- */
 /*      Optionally test for memory leaks.                               */
