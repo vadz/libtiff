@@ -111,7 +111,7 @@ NeXTDecode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 				n &= 0x3f;
 				while (n-- > 0)
 					SETPIXEL(op, grey);
-				if (npixels >= imagewidth)
+				if (npixels >= (int) imagewidth)
 					break;
 				if (cc == 0)
 					goto bad;
