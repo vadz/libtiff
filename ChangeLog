@@ -1,3 +1,11 @@
+2005-01-05  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffdump.c: Fixed problem when read broken TIFFs with the
+	wrong tag counts (Dmitry V. Levin, Martin Pitt).
+
+	* configure.ac: Replace --disable-c++ with the --disable-cxx option as
+	per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=730
+
 2004-12-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_getimage.c: More fixes for multiple-alpha-channelled
