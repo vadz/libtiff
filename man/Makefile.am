@@ -24,6 +24,7 @@
 # Process this file with automake to produce Makefile.in.
 
 man_MANS = \
+	bmp2tiff.1 \
 	fax2ps.1 \
 	fax2tiff.1 \
 	gif2tiff.1 \
