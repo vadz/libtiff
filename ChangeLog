@@ -1,3 +1,8 @@
+Tue Feb 15 22:01:05 2000  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Fixed tools/tiffcmp so that stopondiff testing works.
+	  Patch care of Joseph Orost <joe@sanskrit.lz.att.com>.
+
 2000-01-28    <warmerda@CS46980-B>
 
 	* Modified tif_unix.c to support 2-4GB seeks if USE_64BIT_API is
