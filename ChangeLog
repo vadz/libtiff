@@ -1,5 +1,14 @@
 2000-01-28    <warmerda@CS46980-B>
 
+	* Modified tif_unix.c to support 2-4GB seeks if USE_64BIT_API is
+	  set to 1, and added default (off) setting in tiffconf.h.  This
+	  should eventually be set by the configure script somehow.
+
+	  The original work on all these 2-4GB changes was done by 
+	  Peter Smith (psmith@creo.com).
+
+	* Modified tif_win32.c to support 2-4GB seeks.
+
 	* tentatively changed toff_t to be unsigned instead of signed to
 	  facilitate support for 2-4GB files. 
 
