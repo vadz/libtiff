@@ -808,8 +808,9 @@ TIFFFetchRational(TIFF* tif, TIFFDirEntry* dir)
 static float
 TIFFFetchFloat(TIFF* tif, TIFFDirEntry* dir)
 {
-	long l = TIFFExtractData(tif, dir->tdir_type, dir->tdir_offset);
-	float v = *(float*) &l;
+	float v;
+	int32 l = TIFFExtractData(tif, dir->tdir_type, dir->tdir_offset);
+        memcpy(&v, &l, sizeof(float));
 	TIFFCvtIEEEFloatToNative(tif, 1, &v);
 	return (v);
 }
@@ -1482,3 +1483,5 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	td->td_stripbytecount = newcounts;
 	td->td_stripoffset = newoffsets;
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
