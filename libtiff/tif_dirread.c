@@ -1344,10 +1344,13 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	if (rowbytes > 8192) {
 		stripbytes = rowbytes;
 		rowsperstrip = 1;
-	} else {
+	} else if (rowbytes > 0 ) {
 		rowsperstrip = 8192 / rowbytes;
 		stripbytes = rowbytes * rowsperstrip;
 	}
+        else
+            return;
+
 	/* never increase the number of strips in an image */
 	if (rowsperstrip >= td->td_rowsperstrip)
 		return;
