@@ -405,7 +405,7 @@ PhotoshopBanner(FILE* fd, uint32 w, uint32 h, int bs, int nc, char* startline)
 static void
 setupPageState(TIFF* tif, uint32* pw, uint32* ph, double* pprw, double* pprh)
 {
-	double xres, yres;
+	double xres = 0.0, yres = 0.0;
 
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, pw);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, ph);
