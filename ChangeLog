@@ -1,3 +1,8 @@
+2004-04-30  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_strip.c: Never return 0 from the
+	TIFFNumberOfStrips().
+
 2004-04-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Workaround for broken TIFF writers which
