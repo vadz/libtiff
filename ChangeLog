@@ -1,6 +1,11 @@
+2000-12-22  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* updated html/libtiff.html to not point at Niles' old JPL web site
+	for the man pages, point at www.libtiff.org.
+
 2000-12-21  Frank Warmerdam  <warmerdam@pobox.com>
 
-	* libtiff/tif_apple.c: Applied "Carbon" supplied by
+	* libtiff/tif_apple.c: Applied "Carbon" support patches supplied by
 	Leonard Rosenthol <leonardr@lazerware.com>.  May interfere
 	with correct building on older systems.  If so, please let me know.
 
