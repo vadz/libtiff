@@ -29,8 +29,21 @@
  */
 #include "tiffiop.h"
 
+/************************************************************************/
+/*                            _TIFFCleanup()                            */
+/************************************************************************/
+
+/**
+ * Auxiliary function to free the TIFF structure. Given structure will be
+ * completetly freed, so you should save opened file handle and pointer
+ * to the close procedure in external variables before calling
+ * _TIFFCleanup(), if you will need these ones to close the file.
+ * 
+ * @param tif A TIFF pointer.
+ */
+
 void
-TIFFCleanup(TIFF* tif)
+_TIFFCleanup(TIFF* tif)
 {
 	if (tif->tif_mode != O_RDONLY)
 	    /*
@@ -80,13 +93,27 @@ TIFFCleanup(TIFF* tif)
 	_TIFFfree(tif);
 }
 
+/************************************************************************/
+/*                            TIFFClose()                               */
+/************************************************************************/
+
+/**
+ * Close a previously opened TIFF file.
+ *
+ * TIFFClose closes a file that was previously opened with TIFFOpen().
+ * Any buffered data are flushed to the file, including the contents of
+ * the current directory (if modified); and all resources are reclaimed.
+ * 
+ * @param tif A TIFF pointer.
+ */
+
 void
 TIFFClose(TIFF* tif)
 {
 	TIFFCloseProc closeproc = tif->tif_closeproc;
-	int fd = (int)tif->tif_clientdata;
+	thandle_t fd = tif->tif_clientdata;
 
-	TIFFCleanup(tif);
+	_TIFFCleanup(tif);
 	(void) (*closeproc)(fd);
 }
 
