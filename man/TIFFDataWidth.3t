@@ -64,6 +64,7 @@ Currently following data types are supported:
 .SH "RETURN VALUES"
 .br
 .IR TIFFDataWidth
-returns a number of bytes occupied by the item of given type.
+returns a number of bytes occupied by the item of given type. 0 returned when
+uknown data type supplied.
 .SH "SEE ALSO"
 .IR libtiff (3T),
