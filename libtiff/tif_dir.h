@@ -251,8 +251,9 @@ extern "C" {
 extern	void _TIFFSetupFieldInfo(TIFF*);
 extern	void _TIFFPrintFieldInfo(TIFF*, FILE*);
 extern	TIFFDataType _TIFFSampleToTagType(TIFF*);
-extern  const TIFFFieldInfo* _TIFFFindOrRegisterInfo( TIFF *tif, ttag_t tag,
-                                                      TIFFDataType dt );
+extern  const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo( TIFF *tif,
+							   ttag_t tag,
+							   TIFFDataType dt );
 extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo( TIFF *tif, ttag_t tag,
                                                  TIFFDataType dt );
 
