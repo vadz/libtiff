@@ -2,7 +2,6 @@ HDRS = \
 	tiff.h \
         tiffconf.h \
 	tiffio.h \
-	tiffio.hxx \
 	tiffvers.h
 
 EXTRA_HDRS = \
@@ -51,6 +50,7 @@ SRCS = \
 	tif_zip.c
 
 if HAVE_CXX
+HDRS +=	tiffio.hxx
 SRCS += tif_stream.cxx
 endif
 
