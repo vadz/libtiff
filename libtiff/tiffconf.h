@@ -41,59 +41,12 @@
  *
  * HAVE_IEEEFP		define as 0 or 1 according to the floating point
  *			format suported by the machine
- * BSDTYPES		define this if your system does NOT define the
- *			usual 4BSD typedefs u_int et. al.
  * HAVE_MMAP		enable support for memory mapping read-only files;
  *			this is typically deduced by the configure script
- * HOST_FILLORDER	native cpu bit order: one of FILLORDER_MSB2LSB
- *			or FILLODER_LSB2MSB; this is typically set by the
- *			configure script
  */
 #ifndef HAVE_IEEEFP
 #define	HAVE_IEEEFP	1
 #endif
-#ifndef HOST_FILLORDER
-#define	HOST_FILLORDER	FILLORDER_MSB2LSB
-#endif
-
-#ifndef COMPRESSION_SUPPORT
-/*
- * Compression support defines:
- *
- *    CCITT_SUPPORT	enable support for CCITT Group 3 & 4 algorithms
- *    PACKBITS_SUPPORT	enable support for Macintosh PackBits algorithm
- *    LZW_SUPPORT	enable support for LZW algorithm
- *    THUNDER_SUPPORT	enable support for ThunderScan 4-bit RLE algorithm
- *    NEXT_SUPPORT	enable support for NeXT 2-bit RLE algorithm
- *    OJPEG_SUPPORT	enable support for 6.0-style JPEG DCT algorithms
- *			(requires IJG software)
- *    JPEG_SUPPORT	enable support for post-6.0-style JPEG DCT algorithms
- *			(requires freely available IJG software, see tif_jpeg.c)
- *    ZIP_SUPPORT	enable support for Deflate algorithm
- *			(requires freely available zlib software, see tif_zip.c)
- *    PIXARLOG_SUPPORT	enable support for Pixar log-format algorithm
- *    LOGLUV_SUPPORT	enable support for LogLuv high dynamic range encoding
- */
-#define	CCITT_SUPPORT
-#define	PACKBITS_SUPPORT
-#define	LZW_SUPPORT
-#define	THUNDER_SUPPORT
-#define	NEXT_SUPPORT
-#define LOGLUV_SUPPORT
-#endif /* COMPRESSION_SUPPORT */
-
-/*
- * If JPEG compression is enabled then we must also include
- * support for the colorimetry and YCbCr-related tags.
- */
-#ifdef JPEG_SUPPORT
-#ifndef YCBCR_SUPPORT
-#define	YCBCR_SUPPORT
-#endif
-#ifndef COLORIMETRY_SUPPORT
-#define	COLORIMETRY_SUPPORT
-#endif
-#endif /* JPEG_SUPPORT */
 
 /*
  * ``Orthogonal Features''
@@ -101,7 +54,6 @@
  * STRIPCHOP_DEFAULT	default handling of strip chopping support (whether
  *			or not to convert single-strip uncompressed images
  *			to mutiple strips of ~8Kb--to reduce memory use)
- * SUBIFD_SUPPORT	enable support for SubIFD tag (thumbnails and such)
  * DEFAULT_EXTRASAMPLE_AS_ALPHA
  *                      The RGBA interface will treat a fourth sample with
  *                      no EXTRASAMPLE_ value as being ASSOCALPHA.  Many
@@ -116,9 +68,6 @@
 #ifndef STRIPCHOP_DEFAULT
 #define	STRIPCHOP_DEFAULT	TIFF_STRIPCHOP	/* default is to enable */
 #endif
-#ifndef SUBIFD_SUPPORT
-#define	SUBIFD_SUPPORT		1	/* enable SubIFD tag (330) support */
-#endif
 #ifndef DEFAULT_EXTRASAMPLE_AS_ALPHA
 #define DEFAULT_EXTRASAMPLE_AS_ALPHA 1
 #endif
@@ -131,6 +80,7 @@
  * XXX: These macros are obsoleted. Don't use them in your apps!
  * Macros stays here for backward compatibility and should be always defined.
  */
+#define	SUBIFD_SUPPORT
 #define	COLORIMETRY_SUPPORT
 #define	YCBCR_SUPPORT
 #define	CMYK_SUPPORT

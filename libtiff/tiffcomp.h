@@ -193,13 +193,4 @@ extern int creat(const char *path, int mode);
 #endif /* __cplusplus */
 #endif /* __acornriscos */
 
-/* Bit and byte order, the default is MSB to LSB */
-#ifdef VMS
-#undef HOST_FILLORDER
-#undef WORDS_BIGENDIAN
-#define HOST_FILLORDER FILLORDER_LSB2MSB
-#define WORDS_BIGENDIAN	0
-#endif
-
-
 #endif /* _COMPAT_ */

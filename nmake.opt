@@ -1,3 +1,26 @@
+# $Id$
+#
+# Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
+#
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+
 # Compile time parameters for MS Visual C++ compiler.
 # You may edit this file to specify building options.
 
@@ -7,6 +30,22 @@
 #
 WINMODE = -DTIF_PLATFORM_CONSOLE
 #WINMODE = -DTIF_PLATFORM_WINDOWED
+
+#
+# Comment out the following lines to disable internal codecs.
+#
+# Support for CCITT Group 3 & 4 algorithms
+CCITT_SUPPORT	= 1
+# Support for Macintosh PackBits algorithm
+PACKBITS_SUPPORT = 1
+# Support for LZW algorithm
+LZW_SUPPORT	= 1
+# Support for ThunderScan 4-bit RLE algorithm
+THUNDER_SUPPORT	= 1
+# Support for NeXT 2-bit RLE algorithm
+NEXT_SUPPORT	= 1
+# Support for LogLuv high dynamic range encoding
+LOGLUV_SUPPORT	= 1
 
 #
 # Uncomment and edit following lines to enable JPEG support.
@@ -23,14 +62,20 @@ WINMODE = -DTIF_PLATFORM_CONSOLE
 
 #
 # Uncomment and edit following lines to enable ZIP support
-# (required for Deflate compression)
+# (required for Deflate compression and Pixar log-format)
 #
 #ZIP_SUPPORT	= 1
 #ZLIBDIR 	= d:/projects/zlib-1.2.1
 #ZLIB_LIB 	= $(ZLIBDIR)/zlib.lib
 
 #
-# There is nothing to edit below this line normally.
+# Uncomment following line to enable Pixar log-format algorithm
+# (Zlib required).
+#
+#PIXARLOG_SUPPORT = 1
+
+#
+########### There is nothing to edit below this line normally. ###########
 #
 
 MAKE	=	nmake /nologo
@@ -40,12 +85,47 @@ CFLAGS  = /W3 $(INCL) $(WINMODE) $(EXTRAFLAGS)
 EXTRAFLAGS	=
 LIBS		=
 
+# Set the native cpu bit order
+EXTRAFLAGS	= $(EXTRAFLAGS) -DFILLODER_LSB2MSB
+
+# Codec stuff
+!IFDEF CCITT_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DCCITT_SUPPORT
+!ENDIF
+
+!IFDEF PACKBITS_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DPACKBITS_SUPPORT
+!ENDIF
+
+!IFDEF LZW_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DLZW_SUPPORT
+!ENDIF
+
+!IFDEF THUNDER_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DTHUNDER_SUPPORT
+!ENDIF
+
+!IFDEF NEXT_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DNEXT_SUPPORT
+!ENDIF
+
+!IFDEF LOGLUV_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DLOGLUV_SUPPORT
+!ENDIF
+
 !IFDEF JPEG_SUPPORT
 LIBS		= $(LIBS) $(JPEG_LIB)
 EXTRAFLAGS	= $(EXTRAFLAGS) -DJPEG_SUPPORT
-
 !IFDEF OJPEG_SUPPORT
 EXTRAFLAGS	= $(EXTRAFLAGS) -DOJPEG_SUPPORT
+!ENDIF
+!ENDIF
+
+!IFDEF ZIP_SUPPORT
+LIBS		= $(LIBS) $(ZLIB_LIB)
+EXTRAFLAGS	= $(EXTRAFLAGS) -DZIP_SUPPORT
+!IFDEF PIXARLOG_SUPPORT
+EXTRAFLAGS	= $(EXTRAFLAGS) -DPIXARLOG_SUPPORT
 !ENDIF
 !ENDIF
 

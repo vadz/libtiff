@@ -26,6 +26,10 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 AC_INIT([LibTIFF Software], 3.7.0, [tiff@remotesensing.org], libtiff)
+
+dnl Compute the canonical target-system type variable
+AC_CANONICAL_TARGET
+
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(libtiff/config.h.in)
 AM_CONFIG_HEADER(libtiff/config.h)
@@ -74,7 +78,7 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor gettimeofday isascii memmove memset munmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol strtoul])
+AC_CHECK_FUNCS([floor gettimeofday isascii memmove memset munmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol])
 
 dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)
@@ -82,6 +86,74 @@ AC_REPLACE_FUNCS(strcasecmp)
 AC_REPLACE_FUNCS(strtoul)
 
 AC_SYS_LARGEFILE
+
+dnl ---------------------------------------------------------------------------
+dnl Check the native cpu bit order
+dnl ---------------------------------------------------------------------------
+AC_MSG_CHECKING([native cpu bit order])
+case "$target_cpu" in
+    i*86*)
+        HOST_FILLORDER=FILLODER_LSB2MSB
+	AC_MSG_RESULT([lsb2msb])
+	;;
+    *)
+	HOST_FILLORDER=FILLORDER_MSB2LSB
+	AC_MSG_RESULT([msb2lsb])
+        ;;
+esac
+AC_DEFINE_UNQUOTED(HOST_FILLORDER, $HOST_FILLORDER, [Set the native cpu bit order])
+
+dnl ---------------------------------------------------------------------------
+dnl Switch on/off internal codecs.
+dnl ---------------------------------------------------------------------------
+
+HAVE_CCITT=yes
+
+AC_ARG_ENABLE(ccitt, AS_HELP_STRING([--disable-ccitt], [disable support for CCITT Group 3 & 4 algorithms]), [HAVE_CCITT=no], [HAVE_CCITT=yes])
+
+if test "$HAVE_CCITT" = "yes" ; then
+  CPPFLAGS="-DCCITT_SUPPORT $CPPFLAGS"
+fi
+
+HAVE_PACKBITS=yes
+
+AC_ARG_ENABLE(packbits, AS_HELP_STRING([--disable-packbits], [disable support for Macintosh PackBits algorithm]), [HAVE_PACKBITS=no], [HAVE_PACKBITS=yes])
+
+if test "$HAVE_PACKBITS" = "yes" ; then
+  CPPFLAGS="-DPACKBITS_SUPPORT $CPPFLAGS"
+fi
+
+HAVE_LZW=yes
+
+AC_ARG_ENABLE(lzw, AS_HELP_STRING([--disable-lzw], [disable support for LZW algorithm]), [HAVE_LZW=no], [HAVE_LZW=yes])
+
+if test "$HAVE_LZW" = "yes" ; then
+  CPPFLAGS="-DLZW_SUPPORT $CPPFLAGS"
+fi
+
+HAVE_THUNDER=yes
+
+AC_ARG_ENABLE(thunder, AS_HELP_STRING([--disable-thunder], [disable support for ThunderScan 4-bit RLE algorithm]), [HAVE_THUNDER=no], [HAVE_THUNDER=yes])
+
+if test "$HAVE_THUNDER" = "yes" ; then
+  CPPFLAGS="-DTHUNDER_SUPPORT $CPPFLAGS"
+fi
+
+HAVE_NEXT=yes
+
+AC_ARG_ENABLE(next, AS_HELP_STRING([--disable-next], [disable support for NeXT 2-bit RLE algorithm]), [HAVE_NEXT=no], [HAVE_NEXT=yes])
+
+if test "$HAVE_NEXT" = "yes" ; then
+  CPPFLAGS="-DNEXT_SUPPORT $CPPFLAGS"
+fi
+
+HAVE_LOGLUV=yes
+
+AC_ARG_ENABLE(logluv, AS_HELP_STRING([--disable-logluv], [disable support for LogLuv high dynamic range encoding]), [HAVE_LOGLUV=no], [HAVE_LOGLUV=yes])
+
+if test "$HAVE_LOGLUV" = "yes" ; then
+  CPPFLAGS="-DLOGLUV_SUPPORT $CPPFLAGS"
+fi
 
 dnl ---------------------------------------------------------------------------
 dnl Check for ZLIB.
@@ -120,6 +192,18 @@ fi
 if test "$HAVE_ZLIB" = "yes" ; then
   CPPFLAGS="-DZIP_SUPPORT $CPPFLAGS"
   LIBS="-lz $LIBS"
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl Check for Pixar log-format algorithm.
+dnl ---------------------------------------------------------------------------
+
+HAVE_PIXARLOG=no
+
+AC_ARG_ENABLE(pixarlog, AS_HELP_STRING([--disable-pixarlog], [disable support for Pixar log-format algorithm (requires Zlib)]), [HAVE_PIXARLOG=no], [HAVE_PIXARLOG=yes])
+
+if test "$HAVE_ZLIB" = "yes" -a "$HAVE_PIXARLOG" = "yes" ; then
+  CPPFLAGS="-DPIXARLOG_SUPPORT $CPPFLAGS"
 fi
 
 dnl ---------------------------------------------------------------------------
