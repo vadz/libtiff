@@ -1,5 +1,10 @@
 2003-09-30  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/tif_dirread.c: Check field counter against number of field
+	in order to fix
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=366
+
 	* libtiff/tif_fax3.c: Fix wrong line numbering as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=342
