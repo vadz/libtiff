@@ -246,6 +246,13 @@ OPENBSDdso: ${OBJS}
 	${CC} -shared @LIBCOPTS@ -o libtiff.@DSOSUF_VERSION@ ${OBJS} @LIBJPEG@ @LIBGZ@ -lm
 	touch $@
 
+OPENSERVERdso:  ${OBJS}
+	${CC} -shared -fPIC \
+	  -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
+		@LIBJPEG@ @LIBGZ@
+	rm -f libtiff.@DSOSUF@
+	@LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@
+	touch $@
 
 ${OBJS}: ${SRCDIR}/tiffio.h ${SRCDIR}/tiff.h ${SRCDIR}/tif_dir.h
 ${OBJS}: ${SRCDIR}/tiffcomp.h ${SRCDIR}/tiffiop.h ${SRCDIR}/tiffconf.h

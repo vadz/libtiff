@@ -1234,6 +1234,13 @@ if [ "$DSO" = auto ]; then
 	DSOOPTS='-shared'
 	DSO=OSF
 	;;
+    *-sco3.2*)
+        DSOSUF=so.${DIST_MAJOR}
+        DSOSUF_VERSION=${DSOSUF}.${DIST_MINOR}.${DIST_POINT}
+        LIBCOPTS='-fPIC'
+        DSOOPTS='-shared'
+        DSO=OPENSERVER
+        ;;
 
     esac
 fi
