@@ -178,6 +178,7 @@ struct tiff {
 /* tag support */
 	TIFFFieldInfo**	tif_fieldinfo;	/* sorted table of registered tags */
 	int		tif_nfields;	/* # entries in registered tag table */
+	TIFFFieldInfo	*tif_foundfield;/* cache pointer to already found tag */
         TIFFTagMethods  tif_tagmethods; /* tag get/set/print routines */
         TIFFClientInfoLink *tif_clientinfo; /* extra client information. */
 };
