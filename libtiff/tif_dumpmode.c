@@ -30,6 +30,7 @@
  * "Null" Compression Algorithm Support.
  */
 #include "tiffiop.h"
+#include <assert.h>
 
 /*
  * Encode a hunk of pixels.
@@ -44,6 +45,9 @@ DumpModeEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
 		n = cc;
 		if (tif->tif_rawcc + n > tif->tif_rawdatasize)
 			n = tif->tif_rawdatasize - tif->tif_rawcc;
+
+                assert( n > 0 );
+                
 		/*
 		 * Avoid copy if client has setup raw
 		 * data buffer to avoid extra copy.
