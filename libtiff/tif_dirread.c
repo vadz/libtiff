@@ -1198,8 +1198,11 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 		case TIFF_ASCII:
 		case TIFF_UNDEFINED:		/* bit of a cheat... */
 			{ char c[2];
-			  if( (ok = (TIFFFetchString(tif, dp, c) != 0)) != 0 ){
+			  if( (ok = (TIFFFetchString(tif, dp, c) != 0)) != 0 ) {
 				c[1] = '\0';		/* XXX paranoid */
+				ok = (fip->field_passcount ?
+					TIFFSetField(tif, dp->tdir_tag, 1, c)
+				      : TIFFSetField(tif, dp->tdir_tag, c));
 				ok = TIFFSetField(tif, dp->tdir_tag, c);
 			  }
 			}
