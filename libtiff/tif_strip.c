@@ -31,6 +31,19 @@
  */
 #include "tiffiop.h"
 
+static uint32
+multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)
+{
+	uint32	bytes = nmemb * elem_size;
+
+	if (elem_size && bytes / elem_size != nmemb) {
+		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		bytes = 0;
+	}
+
+	return (bytes);
+}
+
 /*
  * Compute which strip a (row,sample) value is in.
  */
@@ -186,9 +199,11 @@ TIFFScanlineSize(TIFF* tif)
 	TIFFDirectory *td = &tif->tif_dir;
 	tsize_t scanline;
 	
-	scanline = td->td_bitspersample * td->td_imagewidth;
+	scanline = multiply (tif, td->td_bitspersample, td->td_imagewidth,
+			     "TIFFScanlineSize");
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
-		scanline *= td->td_samplesperpixel;
+		scanline = multiply (tif, scanline, td->td_samplesperpixel,
+				     "TIFFScanlineSize");
 	return ((tsize_t) TIFFhowmany8(scanline));
 }
 
@@ -204,13 +219,16 @@ TIFFRasterScanlineSize(TIFF* tif)
 	TIFFDirectory *td = &tif->tif_dir;
 	tsize_t scanline;
 	
-	scanline = td->td_bitspersample * td->td_imagewidth;
+	scanline = multiply (tif, td->td_bitspersample, td->td_imagewidth,
+			     "TIFFRasterScanlineSize");
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG) {
-		scanline *= td->td_samplesperpixel;
+		scanline = multiply (tif, scanline, td->td_samplesperpixel,
+				     "TIFFRasterScanlineSize");
 		return ((tsize_t) TIFFhowmany8(scanline));
 	} else
-		return ((tsize_t)
-		    TIFFhowmany8(scanline)*td->td_samplesperpixel);
+		return ((tsize_t) multiply (tif, TIFFhowmany8(scanline),
+					    td->td_samplesperpixel,
+					    "TIFFRasterScanlineSize"));
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
