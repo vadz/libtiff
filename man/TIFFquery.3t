@@ -107,10 +107,10 @@ Zero is returned if the image data is organized in strips.
 .IR TIFFIsByteSwapped
 returns a non-zero value if the image data was in a different
 byte-order than the host machine.
-Zero is returned if the image data and local host byte-orders
-are the same.
-Data samples that are more than 8 bits wide must be byte-swapped
-by the application.
+Zero is returned if the TIFF file and local host byte-orders
+are the same.  Note that TIFFReadTile(), TIFFReadStrip() and
+TIFFReadScanline() functions already normally perform byte
+swapping to local host order if needed.
 .PP
 .I TIFFIsUpSampled
 returns a non-zero value if image data returned through the
