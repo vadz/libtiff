@@ -674,8 +674,20 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 		/* Component 0 should have expected sampling factors */
 		if (sp->cinfo.d.comp_info[0].h_samp_factor != sp->h_sampling ||
 		    sp->cinfo.d.comp_info[0].v_samp_factor != sp->v_sampling) {
-			TIFFError(module, "Improper JPEG sampling factors");
-			return (0);
+			TIFFWarning(module, 
+                                    "Improper JPEG sampling factors %d,%d\n"
+                                    "Apparently should be %d,%d,"
+                                    "decompressor will try reading with "
+                                    "sampling %d,%d",
+                                    sp->cinfo.d.comp_info[0].h_samp_factor,
+                                    sp->cinfo.d.comp_info[0].v_samp_factor,
+                                    sp->h_sampling, 
+                                    sp->v_sampling,
+                                    sp->cinfo.d.comp_info[0].h_samp_factor,
+                                    sp->cinfo.d.comp_info[0].v_samp_factor );
+
+                        sp->h_sampling= sp->cinfo.d.comp_info[0].h_samp_factor;
+                        sp->v_sampling= sp->cinfo.d.comp_info[0].v_samp_factor;
 		}
 		/* Rest should have sampling factors 1,1 */
 		for (ci = 1; ci < sp->cinfo.d.num_components; ci++) {
