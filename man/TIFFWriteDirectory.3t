@@ -25,7 +25,8 @@
 .if n .po 0
 .TH TIFFWriteDirectory 3T "September 26, 2001"
 .SH NAME
-TIFFWriteDirectory, TIFFRewriteDirectory \- write the current directory in an open
+TIFFWriteDirectory, TIFFRewriteDirectory, TIFFCheckpointDirectory \- write
+the current directory in an open
 .SM TIFF
 file
 .SH SYNOPSIS
@@ -34,6 +35,8 @@ file
 .B "int TIFFWriteDirectory(TIFF* tif)"
 .br
 .B "int TIFFRewriteDirectory(TIFF* tif)"
+.br
+.B "int TIFFCheckpointDirectory(TIFF* tif)"
 .SH DESCRIPTION
 .IR TIFFWriteDirectory 
 will write the contents of the current directory to the file and setup
@@ -53,7 +56,7 @@ to write a modified directory if the file is open for writing.
 The 
 .IR TIFFRewriteDirectory
 function operates similarly to 
-.IR TIFFWriteDirectory
+.IR TIFFWriteDirectory,
 but can be called with directories previously read or written that already
 have an established location in the file.  It will rewrite the directory,
 but instead of place it at it's old location (as 
@@ -63,6 +66,21 @@ the preceeding directory or file header to point to it's new location.  This
 is particularly important in cases where the size of the directory and
 pointed to data has grown, so it won't fit in the space available at the
 old location.
+.PP
+The
+.IR TIFFCheckpointDirectory
+writes the current state of the tiff directory into the file to make what
+is currently in the file readable.  Unlike
+.IR TIFFWriteDirectory,
+.IR TIFFCheckpointDirectory
+does not free up the directory data structures in memory, so they can be
+updated (as strips/tiles are written) and written again.  Reading such
+a partial file you will at worst get a tiff read error for the first
+strip/tile encountered that is incomplete, but you will at least get
+all the valid data in the file before that.  When the file is complete,
+just use
+.IR TIFFWriteDirectory
+as usual to finish it off cleanly.
 .SH "RETURN VALUES"
 1 is returned when the contents are successfully
 written to the file.
