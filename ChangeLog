@@ -1,11 +1,15 @@
 2003-12-03  Andrey Kiselev  <dron@remotesensing.org>
 
+	* libtiff/{tif_getimage.c, tif_color.c, tiffio.h}: Improvements in
+	CIE Lab conversion code. Start moving YCbCr stuff to the tif_color.c
+	module.
+
 	* libtiff/{tif_getimage.c, tiffio.h}, man{TIFFReadRGBAImage.3t,
 	TIFFReadRGBAStrip.3t, TIFFReadRGBATile.3t, TIFFRGBAImage.3t}:
 	Finally resolved problems with orientation handling. TIFFRGBAImage
 	interface now properly supports all possible orientations, i.e. images
 	will be flipped both in horizontal and vertical directions if
-	required. 'Know bugs' section now removed from the appropriate manual
+	required. 'Known bugs' section now removed from the appropriate manual
 	pages. Closed bug entry:
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=322
