@@ -144,9 +144,10 @@ typedef struct
 				 * the size of the JPEG or PNG image buffer. */
     int32	iXPelsPerMeter; /* X resolution, pixels per meter (0 if not used) */
     int32	iYPelsPerMeter; /* Y resolution, pixels per meter (0 if not used) */
-    int32	iClrUsed;       /* Size of colour table. If 0, iBitCount should
+    uint32	iClrUsed;       /* Size of colour table. If 0, iBitCount should
 				 * be used to calculate this value
-				 * (1<<iBitCount) */
+				 * (1<<iBitCount). This value should be
+				 * unsigned for proper shifting. */
     int32	iClrImportant;  /* Number of important colours. If 0, all
 				 * colours are required */
 
@@ -213,8 +214,8 @@ main(int argc, char* argv[])
         uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	FILE	*in;
 	struct stat instat;
-	char	*outfilename = NULL;
-	TIFF	*out;
+	char	*outfilename = NULL, *infilename = NULL;
+	TIFF	*out = NULL;
 
 	BMPFileHeader file_hdr;
         BMPInfoHeader info_hdr;
@@ -250,19 +251,17 @@ main(int argc, char* argv[])
 	if (argc - optind < 2)
 		usage();
 
-	in = fopen(argv[optind], "rb");
+	infilename = argv[optind];
+	in = fopen(infilename, "rb");
 	if (in == NULL) {
-		fprintf(stderr, "%s: %s: Cannot open input file.\n",
-			argv[0], argv[optind]);
+		TIFFError(infilename, "Cannot open input file");
 		return -1;
 	}
 
 	fread(file_hdr.bType, 1, 2, in);
 	if(file_hdr.bType[0] != 'B' || file_hdr.bType[1] != 'M') {
-	        fprintf(stderr, "%s: %s: File is not BMP.\n",
-		        argv[0], argv[optind]);
-	        fclose(in);
-	        return 0;
+	        TIFFError(infilename, "File is not BMP");
+		goto bad;
 	}
 
 /* -------------------------------------------------------------------- */
@@ -359,9 +358,8 @@ main(int argc, char* argv[])
         if (info_hdr.iBitCount != 1  && info_hdr.iBitCount != 4  &&
             info_hdr.iBitCount != 8  && info_hdr.iBitCount != 16 &&
             info_hdr.iBitCount != 24 && info_hdr.iBitCount != 32) {
-            fprintf(stderr,
-                    "%s: %s: Cannot process BMP file with bit count %d.\n",
-                    argv[0], argv[optind], info_hdr.iBitCount);
+            TIFFError(infilename, "Cannot process BMP file with bit count %d",
+		      info_hdr.iBitCount);
             fclose(in);
             return 0;
         }
@@ -385,16 +383,39 @@ main(int argc, char* argv[])
                             clr_tbl_size = 1 << depth;
                         clr_tbl = (unsigned char *)
 				_TIFFmalloc(n_clr_elems * clr_tbl_size);
+			if (!clr_tbl) {
+				TIFFError(infilename,
+				"Can't allocate space for color table");
+				goto bad;
+			}
 
 			fseek(in, BFH_SIZE + info_hdr.iSize, SEEK_SET);
                         fread(clr_tbl, n_clr_elems, clr_tbl_size, in);
 
 			red_tbl = (unsigned short*)
 				_TIFFmalloc(1<<depth * sizeof(unsigned short));
+			if (!red_tbl) {
+				TIFFError(infilename,
+				"Can't allocate space for red component table");
+				_TIFFfree(clr_tbl);
+				goto bad;
+			}
 			green_tbl = (unsigned short*)
 				_TIFFmalloc(1<<depth * sizeof(unsigned short));
+			if (!green_tbl) {
+				TIFFError(infilename,
+			"Can't allocate space for green component table");
+				_TIFFfree(clr_tbl);
+				goto bad2;
+			}
 			blue_tbl = (unsigned short*)
 				_TIFFmalloc(1<<depth * sizeof(unsigned short));
+			if (!blue_tbl) {
+				TIFFError(infilename,
+			"Can't allocate space for blue component table");
+				_TIFFfree(clr_tbl);
+				goto bad3;
+			}
 
                         for(clr = 0; clr < clr_tbl_size; clr++) {
                             red_tbl[clr] = 257 * clr_tbl[clr*n_clr_elems+2];
@@ -427,11 +448,11 @@ main(int argc, char* argv[])
 		outfilename = argv[optind+1];
 	out = TIFFOpen(outfilename, "w");
 	if (out == NULL) {
-		fprintf(stderr, "%s: %s: Cannot open file for output.\n",
-			argv[0], outfilename);
-                fclose(in);
-		return -1;
+		TIFFError(infilename, "Cannot open file %s for output",
+			  outfilename);
+		goto bad3;
 	}
+	
 	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(out, TIFFTAG_IMAGELENGTH, length);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
@@ -473,6 +494,11 @@ main(int argc, char* argv[])
 
                 size = ((width * info_hdr.iBitCount + 31) & ~31) / 8;
                 scanbuf = (char *) _TIFFmalloc(size);
+		if (!scanbuf) {
+			TIFFError(infilename,
+				  "Can't allocate space for scanline buffer");
+			goto bad3;
+		}
 
                 for (row = 0; row < length; row++) {
                         if (info_hdr.iHeight > 0)
@@ -480,26 +506,23 @@ main(int argc, char* argv[])
                         else
                                 offset = file_hdr.iOffBits + row * size;
                         if (fseek(in, offset, SEEK_SET) == -1) {
-				fprintf(stderr,
-					"%s: %s: scanline %lu: Seek error.\n",
-					argv[0], argv[optind],
-					(unsigned long) row);
+				TIFFError(infilename,
+					  "scanline %lu: Seek error",
+					  (unsigned long) row);
                         }
 
 			if (fread(scanbuf, size, 1, in) != 1) {
-				fprintf(stderr,
-					"%s: %s: scanline %lu: Read error.\n",
-					argv[0], argv[optind],
-					(unsigned long) row);
+				TIFFError(infilename,
+					  "scanline %lu: Read error",
+					  (unsigned long) row);
                         }
 
                         rearrangePixels(scanbuf, width, info_hdr.iBitCount);
 
                         if (TIFFWriteScanline(out, scanbuf, row, 0) < 0) {
-			        fprintf(stderr,
-                                        "%s: %s: scanline %lu: Write error.\n",
-				        argv[0], outfilename,
-                                        (unsigned long) row);
+			        TIFFError(infilename,
+					  "scanline %lu: Write error",
+					  (unsigned long) row);
                         }
                 }
 
@@ -519,7 +542,17 @@ main(int argc, char* argv[])
 		compr_size = file_hdr.iSize - file_hdr.iOffBits;
 		uncompr_size = width * length;
 		comprbuf = (unsigned char *) _TIFFmalloc( compr_size );
+		if (!comprbuf) {
+			TIFFError(infilename,
+			"Can't allocate space for compressed scanline buffer");
+			goto bad3;
+		}
 		uncomprbuf = (unsigned char *) _TIFFmalloc( uncompr_size );
+		if (!uncomprbuf) {
+			TIFFError(infilename,
+		"Can't allocate space for uncompressed scanline buffer");
+			goto bad3;
+		}
 
 		fseek(in, file_hdr.iOffBits, SEEK_SET);
 		fread(comprbuf, 1, compr_size, in);
@@ -605,24 +638,29 @@ main(int argc, char* argv[])
 
 		for (row = 0; row < length; row++) {
                         if (TIFFWriteScanline(out, uncomprbuf + (length - row - 1) * width, row, 0) < 0) {
-			        fprintf(stderr,
-                                        "%s: %s: scanline %lu: Write error.\n",
-				        argv[0], outfilename,
-                                        (unsigned long) row);
+			        TIFFError(infilename,
+					  "scanline %lu: Write error.\n",
+					  (unsigned long) row);
                         }
 		}
 
 		_TIFFfree(uncomprbuf);
  	}
-	
-	if (red_tbl && green_tbl && blue_tbl) {
-		_TIFFfree(red_tbl);
-		_TIFFfree(green_tbl);
-		_TIFFfree(blue_tbl);
-	}
 
+bad3:
+	if (blue_tbl)
+		_TIFFfree(blue_tbl);
+bad2:
+	if (green_tbl)
+		_TIFFfree(green_tbl);
+bad1:
+	if (red_tbl)
+		_TIFFfree(red_tbl);
+bad:
         fclose(in);
-        TIFFClose(out);
+
+	if (out)
+		TIFFClose(out);
         return 0;
 }
 
