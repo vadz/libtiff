@@ -1,3 +1,10 @@
+2000-09-25  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Fixed tif_getimage.c to fix overrun bug with YCbCr images without
+	downsampling.  http://bugzilla.remotesensing.org/show_bug.cgi?id=10
+	Thanks to Nick Lamb <njl98r@ecs.soton.ac.uk> for reporting the
+	bug and proving the patch.
+	
 2000-09-18  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* Fixed tif_jpeg.c so avoid destroying the decompressor before
