@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFGetField 3TIFF "November 04, 2004" "libtiff"
+.TH TIFFGetField 3TIFF "March 18, 2005" "libtiff"
 .SH NAME
 TIFFGetField, TIFFVGetField \- get the value(s) of a tag in an open
 .SM TIFF
@@ -43,7 +43,7 @@ file
 .SH DESCRIPTION
 .IR TIFFGetField
 returns the value of a tag or pseudo-tag associated with the the current
-directory of the open
+directory of the opened
 .SM TIFF
 file
 .IR tif .
@@ -58,10 +58,9 @@ The tag is identified by
 .IR tag ,
 one of the values defined in the include file
 .B tiff.h
-(see also the table below).
-The type and number of values returned is dependent on the tag being
-requested. The programming interface uses a variable argument list as
-prescribed by the
+(see also the table below). The type and number of values returned is
+dependent on the tag being requested. The programming interface uses a
+variable argument list as prescribed by the
 .IR stdarg (3)
 interface. The returned values should only be interpreted if
 .IR TIFFGetField
@@ -86,7 +85,7 @@ except that if a tag is not defined in the current directory and it has a
 default value, then the default value is returned.
 .PP
 The tags understood by
-.IR libtiff ,
+.IR libtiff(3TIFF),
 the number of parameter values, and the types for the returned values are
 shown below. The data types are specified as in C and correspond to the types
 used to specify tag values to
@@ -179,16 +178,38 @@ TIFFTAG_ICCPROFILE	2	uint32*,void**	count, profile data\(dd
 .fi
 \(dg If
 .I SamplesPerPixel
-is one, then a single array is returned; otherwise three arrays are
-returned.
+is one, then a single array is returned; otherwise three arrays are returned.
 .fi
 \(dd The contents of this field are quite complex.  See 
 .IR "The ICC Profile Format Specification" ,
 Annex B.3 "Embedding ICC Profiles in TIFF Files" (available at
 http://www.color.org) for an explanation.
-.SH "RETURN VALUES"
+.SH AUTOREGISTERED TAGS
+If you can't find the tag in the table above that means this is unsupported
+tag. But you still be able to read it's value if you know the data type of
+that tag. For example, if you want to read the LONG value from the tag 33424
+and ASCII string from the tag 36867 you can use the following code:
+.PP
+.RS
+.nf
+uint16  count;
+void    *data;
+
+TIFFGetField(tiff, 33424, &count, &data);
+printf("Tag %d: %d, count %d\n", 33424, *(uint32 *)data, count);
+TIFFGetField(tiff, 36867, &count, &data);
+printf("Tag %d: %s, count %d\n", 36867, (char *)data, count);
+.fi
+.RE
+.PP
+
+
+is not supported by
+.IR libtiff(3TIFF),
+library
+.SH RETURN VALUES
 1 is returned if the tag is defined in the current directory; otherwise a 0 is
-  returned.
+returned.
 .SH DIAGNOSTICS
 All error messages are directed to the
 .IR TIFFError (3TIFF)
