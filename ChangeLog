@@ -1,5 +1,7 @@
 2001-11-28  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* Reissue 3.5.7 release.
+
 	* libtiff/mkversion.c: Fix output of TIFF_VERSION to be
 	YYYYMMDD so that it is increasing over time. 
 
