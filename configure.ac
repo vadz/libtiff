@@ -73,8 +73,7 @@ case "$target_os" in
 esac
 
 dnl Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -84,13 +83,27 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
-dnl Check for BSDTYPES
-AC_CHECK_TYPES([u_char, u_short, u_int, u_long])
+dnl Check for BSDTYPES. winsock.h defines those types, so avoid redefinition
+dnl in Cygwin and MinGW environments
+AC_CHECK_TYPES([u_char, u_short, u_int, u_long],,,
+[
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#if HAVE_WINSOCK_H
+#include <winsock.h>
+#endif
+])
 dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
-AC_CHECK_TYPES([int8, int16, int32])
+AC_CHECK_TYPES([int8, int16, int32],,,
+[
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor isascii memmove memset mmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol])
+AC_CHECK_FUNCS([floor isascii memmove memset mmap pow sqrt strchr strrchr strstr strtol])
 
 dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)

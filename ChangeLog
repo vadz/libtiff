@@ -1,3 +1,11 @@
+2004-06-05  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffset.c: tiffset now can set any libtiff supported tags.
+	Tags can be supplied by the mnemonic name or number.
+
+	* libtiff/{tiffio.h, tif_dir.h, tif_dirinfo.c,}: Added two new
+	functions TIFFFindFieldInfoByName() and TIFFFieldWithName().
+
 2004-05-27  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_ojpeg.c: Fixed problem with duplicated SOI and SOF
