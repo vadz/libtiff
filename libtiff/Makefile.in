@@ -85,6 +85,7 @@ SRCS	= \
 	tif_luv.c \
 	tif_lzw.c \
 	tif_next.c \
+	tif_ojpeg.c \
 	tif_open.c \
 	tif_packbits.c \
 	tif_pixarlog.c \
@@ -120,6 +121,7 @@ OBJS	= \
 	tif_luv.o \
 	tif_lzw.o \
 	tif_next.o \
+	tif_ojpeg.o \
 	tif_open.o \
 	tif_packbits.o \
 	tif_pixarlog.o \

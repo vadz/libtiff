@@ -276,12 +276,19 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	    return (0);
 	}
 	/* It would probably be nice to have a reality check here. */
-	if (compress == COMPRESSION_JPEG && planarconfig == PLANARCONFIG_CONTIG) {
+	if (planarconfig == PLANARCONFIG_CONTIG)
 	    /* can rely on libjpeg to convert to RGB */
 	    /* XXX should restore current state on exit */
-	    TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
-	    img->photometric = PHOTOMETRIC_RGB;
-	}
+	    switch (compress) {
+		case COMPRESSION_JPEG:
+		    TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
+		    img->photometric = PHOTOMETRIC_RGB;
+                    break;
+
+                default:
+                    /* do nothing */;
+                    break;
+	    }
 	break;
     case PHOTOMETRIC_RGB: 
 	if (colorchannels < 3) {

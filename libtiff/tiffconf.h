@@ -97,7 +97,7 @@
  *    THUNDER_SUPPORT	enable support for ThunderScan 4-bit RLE algorithm
  *    NEXT_SUPPORT	enable support for NeXT 2-bit RLE algorithm
  *    OJPEG_SUPPORT	enable support for 6.0-style JPEG DCT algorithms
- *			(no builtin support, only a codec hook)
+ *			(requires IJG software)
  *    JPEG_SUPPORT	enable support for post-6.0-style JPEG DCT algorithms
  *			(requires freely available IJG software, see tif_jpeg.c)
  *    ZIP_SUPPORT	enable support for Deflate algorithm
