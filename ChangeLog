@@ -1,3 +1,8 @@
+2003-05-11  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/mkversion.c: Fixed problem with wrong string size when
+	reading RELEASE-DATE file.
+
 2003-05-07  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2ps.c: Fixed bug in Ascii85EncodeBlock() function: array
