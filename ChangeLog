@@ -1,3 +1,10 @@
+2003-03-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/{fax2ps.c, fax2tiff.c, gif2tiff.c, pal2rgb.c, ppm2tiff.c,
+	ras2tiff.c, raw2tiff.c, rgb2ycbcr.c, thumbnail.c, tiff2bw.c,
+	tiff2ps.c, tiff2rgba.c, tiffcp.c, tiffdither.c, tiffinfo.c,
+	tiffmedian.c}: Added library version reporting facility to all tools.
+
 2003-03-06  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* port/install.sh.in: Fixed problems with install producing paths
