@@ -1,3 +1,8 @@
+2003-11-18  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dir.h: _TIFFFindOrRegisterdInfo declaration replaced
+	with _TIFFFindOrRegisterFieldInfo as reported by  Ross Finlayson.
+
 2003-11-17  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_dirread.c: do not mark all anonymously defined tags to be 
