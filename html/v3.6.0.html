@@ -17,8 +17,10 @@ Changes in TIFF v3.6.0
 <HR SIZE=4 WIDTH=65% ALIGN=left>
 <B>Current Version</B>: v3.6.0<BR>
 <B>Previous Version</B>: <A HREF=v3.5.7.html>v3.5.7</a><BR>
-<B>Master FTP Site</B>: <A HREF="ftp://ftp.remotesensing.org/pub/libtiff">ftp.remotesensing.org</a>, directory pub/libtiff</A><BR>
-<B>Master HTTP Site</B>: <A HREF="http://www.libtiff.org/">http://www.libtiff.org</a> 
+<B>Master FTP Site</B>: <A HREF="ftp://ftp.remotesensing.org/pub/libtiff">
+ftp.remotesensing.org</a>, directory pub/libtiff</A><BR>
+<B>Master HTTP Site</B>: <A HREF="http://www.remotesensing.org/libtiff">
+http://www.remotesensing.org/libtiff</a> 
 <HR SIZE=4 WIDTH=65% ALIGN=left>
 </UL>
 
@@ -147,8 +149,18 @@ as per bug 94.
 
 <A NAME="libtiff"><B><FONT SIZE=+3>C</FONT>HANGES IN LIBTIFF:</B></A>
 
-
 <UL>
+
+<li> libtiff/tif_getimage.c: New function <A
+HREF="./man/TIFFReadRGBAImage.3t.html">TIFFReadRGBAImageOriented()</A>
+implemented to retrieve raster array with user-specified origin position.
+
+<li> libtiff/tif_fax3.c: Fix wrong line numbering.
+
+<li> libtiff/tif_dirread.c: Check field counter against number of fields.
+
+<li> Store a list of opened IFD to prevent directory looping.
+
 <li> libtiff/tif_jpeg.c: modified segment_height calculation to always
 be a full height tile for tiled images.  Also changed error to just
 be a warning.
@@ -282,6 +294,28 @@ ImageGear generated files.
 <A NAME="tools"><B><FONT SIZE=+3>C</FONT>HANGES IN THE TOOLS:</B></A>
 
 <UL>
+	
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Added page size setting
+when creating PS Level 2.
+
+<li> <a href=./man/tiff2ps.1.html>tiff2ps</a>: Fixed PS comment emitted when
+FlateDecode is being used.
+
+<li> <a href=./man/tiffsplit.1.html>tiffsplit</a>: increased the maximum
+number of pages that can be split.
+
+<li> <a href=./man/raw2tiff.1.html>raw2tiff</a>: Added option `-p' to
+explicitly select color	space of input image data.
+
+<li> <a href=./man/tiffmedian.1.html>tiffmedian</a>: Suppiort for large
+(> 2GB) images.
+
+<li> <a href=./man/ppm2tiff.1.html>ppm2tiff</a>: Fixed possible endless loop.
+
+<li> <a href=./man/tiff2rgba.1.html>tiff2rgba</a>: Switched to use
+<A HREF="./man/TIFFReadRGBAImage.3t.html">TIFFReadRGBAImageOriented()</A>
+instead of <A HREF="./man/TIFFReadRGBAImage.3t.html">TIFFReadRGBAImage()</A>.
+
 <li> <a href=./man/tiffcmp.1.html>tiffcmp</a>: Fixed problem with unused data
 comparing (bug 349). `-z' option now can be used to set the number of reported
 different bytes.
