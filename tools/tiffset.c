@@ -3,7 +3,7 @@
  *
  * Project:  libtiff tools
  * Purpose:  Mainline for setting metadata in existing TIFF files.
- * Author:   Frank Warmerdam, warmerda@home.com
+ * Author:   Frank Warmerdam, warmerdam@pobox.com
  *
  ******************************************************************************
  * Copyright (c) 2000, Frank Warmerdam
@@ -27,6 +27,10 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  ******************************************************************************
+ *
+ * $Log$
+ * Revision 1.10  2005-02-24 14:47:11  fwarmerdam
+ * Updated header.
  *
  */
 
