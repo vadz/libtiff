@@ -333,9 +333,9 @@ main(int argc, char** argv)
 		usage(-1);
 	    }
 	    if (pages)
-		pages = (tdir_t*) realloc((char*)pages, (npages+1)*sizeof(int));
+		pages = (tdir_t*) realloc((char*)pages, (npages+1)*sizeof(tdir_t));
 	    else
-		pages = (tdir_t*) malloc(sizeof(int));
+		pages = (tdir_t*) malloc(sizeof(tdir_t));
 	    pages[npages++] = pageNumber;
 	    break;
 	case 'w':

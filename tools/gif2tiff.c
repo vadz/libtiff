@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1990-1997 Sam Leffler
@@ -40,12 +40,6 @@
 
 #include "tiffio.h"
 
-#if defined(_WINDOWS) || defined(MSDOS)
-#define BINMODE "b"
-#else
-#define	BINMODE
-#endif
-
 #define	GIFGAMMA	(1.5)		/* smaller makes output img brighter */
 #define	IMAX		0xffff		/* max intensity value */
 #define EXTRAFUDGE	128		/* some people write BAD .gif files */
@@ -61,7 +55,7 @@ makegamtab(float gam)
     int i;
 
     for(i=0; i<256; i++) 
-	gamtab[i] = IMAX*pow(i/255.0,gam)+0.5;
+	gamtab[i] = (unsigned short) (IMAX*pow(i/255.0,gam)+0.5);
 }
 
 char* stuff[] = {
@@ -156,7 +150,7 @@ main(int argc, char* argv[])
     makegamtab(GIFGAMMA);
     filename = argv[optind];
     imagename = argv[optind+1];
-    if ((infile = fopen(imagename, "r" BINMODE)) != NULL) {
+    if ((infile = fopen(imagename, "rb")) != NULL) {
 	int c;
 	fclose(infile);
 	printf("overwrite %s? ", imagename); fflush(stdout);
@@ -164,7 +158,7 @@ main(int argc, char* argv[])
 	if (c != 'y' && c != 'Y')
 	    return (1);
     }
-    if ((infile = fopen(filename, "r" BINMODE)) == NULL) {
+    if ((infile = fopen(filename, "rb")) == NULL) {
 	perror(filename);
 	return (1);
     }
@@ -451,7 +445,7 @@ initcolors(unsigned char colormap[COLSIZE][3], int ncolors)
 void
 rasterize(int interleaved, char* mode)
 {
-    register long row;
+    register unsigned long row;
     unsigned char *newras;
     unsigned char *ras;
     TIFF *tif;

@@ -180,9 +180,9 @@ main(int argc, char* argv[])
 				goto done;
 			pp = obuf;
 			for (x = 0; x < imagewidth; x++) {
-				*pp++ = rmap[ibuf[x]];
-				*pp++ = gmap[ibuf[x]];
-				*pp++ = bmap[ibuf[x]];
+				*pp++ = (unsigned char) rmap[ibuf[x]];
+				*pp++ = (unsigned char) gmap[ibuf[x]];
+				*pp++ = (unsigned char) bmap[ibuf[x]];
 			}
 			if (!TIFFWriteScanline(out, obuf, row, 0))
 				goto done;
@@ -193,15 +193,15 @@ main(int argc, char* argv[])
 			if (!TIFFReadScanline(in, ibuf, row, 0))
 				goto done;
 			for (pp = obuf, x = 0; x < imagewidth; x++)
-				*pp++ = rmap[ibuf[x]];
+				*pp++ = (unsigned char) rmap[ibuf[x]];
 			if (!TIFFWriteScanline(out, obuf, row, 0))
 				goto done;
 			for (pp = obuf, x = 0; x < imagewidth; x++)
-				*pp++ = gmap[ibuf[x]];
+				*pp++ = (unsigned char) gmap[ibuf[x]];
 			if (!TIFFWriteScanline(out, obuf, row, 0))
 				goto done;
 			for (pp = obuf, x = 0; x < imagewidth; x++)
-				*pp++ = bmap[ibuf[x]];
+				*pp++ = (unsigned char) bmap[ibuf[x]];
 			if (!TIFFWriteScanline(out, obuf, row, 0))
 				goto done;
 		}

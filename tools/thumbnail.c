@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1994-1997 Sam Leffler
@@ -30,7 +30,7 @@
 
 #include "tiffio.h"
 
-#define	streq(a,b)	(strcasecmp(a,b) == 0)
+#define	streq(a,b)	(strcmp(a,b) == 0)
 
 #ifndef howmany
 #define	howmany(x, y)	(((x)+((y)-1))/(y))
@@ -225,7 +225,7 @@ cpStrips(TIFF* in, TIFF* out)
 
     if (buf) {
 	tstrip_t s, ns = TIFFNumberOfStrips(in);
-	uint32 *bytecounts;
+	tsize_t *bytecounts;
 
 	TIFFGetField(in, TIFFTAG_STRIPBYTECOUNTS, &bytecounts);
 	for (s = 0; s < ns; s++) {
@@ -255,7 +255,7 @@ cpTiles(TIFF* in, TIFF* out)
 
     if (buf) {
 	ttile_t t, nt = TIFFNumberOfTiles(in);
-	uint32 *bytecounts;
+	tsize_t *bytecounts;
 
 	TIFFGetField(in, TIFFTAG_TILEBYTECOUNTS, &bytecounts);
 	for (t = 0; t < nt; t++) {
@@ -293,12 +293,12 @@ cpIFD(TIFF* in, TIFF* out)
 
 static	uint16	photometric;		/* current photometric of raster */
 static	uint16	filterWidth;		/* filter width in pixels */
-static	uint16	stepSrcWidth;		/* src image stepping width */
-static	uint16	stepDstWidth;		/* dest stepping width */
+static	uint32	stepSrcWidth;		/* src image stepping width */
+static	uint32	stepDstWidth;		/* dest stepping width */
 static	uint8* src0;			/* horizontal bit stepping (start) */
 static	uint8* src1;			/* horizontal bit stepping (middle) */
 static	uint8* src2;			/* horizontal bit stepping (end) */
-static	uint16* rowoff;			/* row offset for stepping */
+static	uint32* rowoff;			/* row offset for stepping */
 static	uint8 cmap[256];		/* colormap indexes */
 static	uint8 bits[256];		/* count of bits set */
 
@@ -333,7 +333,7 @@ expFill(float pct[], uint32 p, uint32 n)
     uint32 i;
     uint32 c = (p * n) / 100;
     for (i = 1; i < c; i++)
-	pct[i] = 1-exp(i/((double)(n-1)))/ M_E;
+	pct[i] = (float) (1-exp(i/((double)(n-1)))/ M_E);
     for (; i < n; i++)
 	pct[i] = 0.;
 }
@@ -374,7 +374,7 @@ initScale()
     src0 = (uint8*) _TIFFmalloc(sizeof (uint8) * tnw);
     src1 = (uint8*) _TIFFmalloc(sizeof (uint8) * tnw);
     src2 = (uint8*) _TIFFmalloc(sizeof (uint8) * tnw);
-    rowoff = (uint16*) _TIFFmalloc(sizeof (uint16) * tnw);
+    rowoff = (uint32*) _TIFFmalloc(sizeof (uint32) * tnw);
     filterWidth = 0;
     stepDstWidth = stepSrcWidth = 0;
     setupBitsTables();
@@ -385,7 +385,7 @@ initScale()
  * according to the widths of the src and dst images.
  */
 static void
-setupStepTables(uint16 sw)
+setupStepTables(uint32 sw)
 {
     if (stepSrcWidth != sw || stepDstWidth != tnw) {
 	int step = sw;
@@ -419,7 +419,7 @@ setupStepTables(uint16 sw)
 }
 
 static void
-setrow(uint8* row, int nrows, const uint8* rows[])
+setrow(uint8* row, uint32 nrows, const uint8* rows[])
 {
     uint32 x;
     uint32 area = nrows * filterWidth;
@@ -472,7 +472,7 @@ setImage1(const uint8* br, uint32 rw, uint32 rh)
     uint32 dy;
     for (dy = 0; dy < tnh; dy++) {
 	const uint8* rows[256];
-	int nrows = 1;
+	uint32 nrows = 1;
 	rows[0] = br + bpr*sy;
 	err += step;
 	while (err >= limit) {

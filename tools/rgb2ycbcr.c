@@ -48,9 +48,9 @@ uint32	rowsperstrip = (uint32) -1;
 
 uint16	horizSubSampling = 2;		/* YCbCr horizontal subsampling */
 uint16	vertSubSampling = 2;		/* YCbCr vertical subsampling */
-float	ycbcrCoeffs[3] = { .299, .587, .114 };
+float	ycbcrCoeffs[3] = { .299F, .587F, .114F };
 /* default coding range is CCIR Rec 601-1 with no headroom/footroom */
-float	refBlackWhite[6] = { 0., 255., 128., 255., 128., 255. };
+float	refBlackWhite[6] = { 0.F, 255.F, 128.F, 255.F, 128.F, 255.F };
 
 static	int tiffcvt(TIFF* in, TIFF* out);
 static	void usage(int code);
@@ -153,8 +153,8 @@ setupLumaTables(void)
 	lumaRed = setupLuma(LumaRed);
 	lumaGreen = setupLuma(LumaGreen);
 	lumaBlue = setupLuma(LumaBlue);
-	D1 = 1./(2 - 2*LumaBlue);
-	D2 = 1./(2 - 2*LumaRed);
+	D1 = 1.F/(2.F - 2.F*LumaBlue);
+	D2 = 1.F/(2.F - 2.F*LumaRed);
 	Yzero = V2Code(0, refBlackWhite[0], refBlackWhite[1], 255);
 }
 
@@ -162,7 +162,7 @@ static void
 cvtClump(unsigned char* op, uint32* raster, uint32 ch, uint32 cw, uint32 w)
 {
 	float Y, Cb = 0, Cr = 0;
-	int j, k;
+	uint32 j, k;
 	/*
 	 * Convert ch-by-cw block of RGB
 	 * to YCbCr and sample accordingly.
