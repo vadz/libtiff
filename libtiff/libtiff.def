@@ -98,5 +98,6 @@ EXPORTS TIFFOpen
 	TIFFCreateDirectory
 	TIFFDefaultStripSize
 	TIFFSetTagExtender
+	TIFFMergeFieldInfo
 
 
