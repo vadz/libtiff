@@ -63,6 +63,9 @@ install:
 	    true; \
 	fi
 
+install-private: install
+	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} installPrivateHdrs
+
 clean:
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} clean; \
