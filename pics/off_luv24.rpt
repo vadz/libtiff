@@ -1,0 +1,19 @@
+pics/off_luv24.tif:
+Magic: 0x4d4d <big-endian> Version: 0x2a
+Directory 0: offset 224784 (0x36e10) next 0 (0)
+ImageWidth (256) SHORT (3) 1<333>
+ImageLength (257) SHORT (3) 1<225>
+BitsPerSample (258) SHORT (3) 3<16 16 16>
+Compression (259) SHORT (3) 1<34677>
+Photometric (262) SHORT (3) 1<32845>
+StripOffsets (273) LONG (4) 29<8 8000 15992 23984 31976 39968 47960 55952 63944 71936 79928 87920 95912 103904 111896 119888 127880 135872 143864 151856 159848 167840 175832 183824 ...>
+Orientation (274) SHORT (3) 1<1>
+SamplesPerPixel (277) SHORT (3) 1<3>
+RowsPerStrip (278) SHORT (3) 1<8>
+StripByteCounts (279) LONG (4) 29<7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 7992 ...>
+XResolution (282) RATIONAL (5) 1<72>
+YResolution (283) RATIONAL (5) 1<72>
+PlanarConfig (284) SHORT (3) 1<1>
+ResolutionUnit (296) SHORT (3) 1<2>
+SampleFormat (339) SHORT (3) 3<2 2 2>
+StoNits (37439) DOUBLE (12) 1<179>

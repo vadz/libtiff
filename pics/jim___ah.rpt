@@ -1,0 +1,17 @@
+pics/jim___ah.tif:
+Magic: 0x4949 <little-endian> Version: 0x2a
+Directory 0: offset 24 (0x18) next 0 (0)
+SubFileType (254) LONG (4) 1<0>
+ImageWidth (256) SHORT (3) 1<664>
+ImageLength (257) SHORT (3) 1<813>
+BitsPerSample (258) SHORT (3) 1<1>
+Compression (259) SHORT (3) 1<1>
+Photometric (262) SHORT (3) 1<0>
+Threshholding (263) SHORT (3) 1<2>
+StripOffsets (273) LONG (4) 1<198>
+SamplesPerPixel (277) SHORT (3) 1<1>
+RowsPerStrip (278) LONG (4) 1<813>
+StripByteCounts (279) LONG (4) 1<67479>
+XResolution (282) RATIONAL (5) 1<300>
+YResolution (283) RATIONAL (5) 1<300>
+ResolutionUnit (296) SHORT (3) 1<2>

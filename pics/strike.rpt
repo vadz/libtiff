@@ -1,0 +1,19 @@
+pics/strike.tif:
+Magic: 0x4d4d <big-endian> Version: 0x2a
+Directory 0: offset 110206 (0x1ae7e) next 0 (0)
+ImageWidth (256) SHORT (3) 1<256>
+ImageLength (257) SHORT (3) 1<200>
+BitsPerSample (258) SHORT (3) 4<8 8 8 8>
+Compression (259) SHORT (3) 1<5>
+Photometric (262) SHORT (3) 1<2>
+StripOffsets (273) LONG (4) 25<8 155 302 1116 3750 7387 10841 14103 18198 22912 28138 33709 40342 46907 52989 58706 64590 70878 77006 82217 87120 92184 97384 102649 ...>
+SamplesPerPixel (277) SHORT (3) 1<4>
+RowsPerStrip (278) LONG (4) 1<8>
+StripByteCounts (279) LONG (4) 25<147 147 814 2634 3637 3454 3262 4095 4714 5226 5571 6633 6565 6082 5717 5884 6288 6128 5211 4903 5064 5200 5265 5398 ...>
+XResolution (282) RATIONAL (5) 1<1>
+YResolution (283) RATIONAL (5) 1<1>
+PlanarConfig (284) SHORT (3) 1<1>
+XPosition (286) RATIONAL (5) 1<0>
+YPosition (287) RATIONAL (5) 1<0>
+ResolutionUnit (296) SHORT (3) 1<1>
+ExtraSamples (338) SHORT (3) 1<1>

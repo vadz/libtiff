@@ -1,0 +1,19 @@
+pics/off_l16.tif:
+Magic: 0x4d4d <big-endian> Version: 0x2a
+Directory 0: offset 71782 (0x11866) next 0 (0)
+ImageWidth (256) SHORT (3) 1<333>
+ImageLength (257) SHORT (3) 1<225>
+BitsPerSample (258) SHORT (3) 1<16>
+Compression (259) SHORT (3) 1<34676>
+Photometric (262) SHORT (3) 1<32844>
+StripOffsets (273) LONG (4) 29<8 1430 2733 4261 6270 8751 11494 14352 17320 20396 23606 26866 30002 33144 36346 39546 42443 45199 47604 49702 51780 53908 55888 58059 ...>
+Orientation (274) SHORT (3) 1<1>
+SamplesPerPixel (277) SHORT (3) 1<1>
+RowsPerStrip (278) SHORT (3) 1<8>
+StripByteCounts (279) LONG (4) 29<1422 1303 1528 2009 2481 2743 2858 2968 3076 3210 3260 3136 3142 3202 3200 2897 2756 2405 2098 2078 2128 1980 2171 2451 ...>
+XResolution (282) RATIONAL (5) 1<72>
+YResolution (283) RATIONAL (5) 1<72>
+PlanarConfig (284) SHORT (3) 1<1>
+ResolutionUnit (296) SHORT (3) 1<2>
+SampleFormat (339) SHORT (3) 1<2>
+StoNits (37439) DOUBLE (12) 1<179>

@@ -1,0 +1,24 @@
+pics/fax2d.tif:
+Magic: 0x4d4d <big-endian> Version: 0x2a
+Directory 0: offset 32534 (0x7f16) next 0 (0)
+ImageWidth (256) SHORT (3) 1<1728>
+ImageLength (257) SHORT (3) 1<1082>
+BitsPerSample (258) SHORT (3) 1<1>
+Compression (259) SHORT (3) 1<3>
+Photometric (262) SHORT (3) 1<0>
+FillOrder (266) SHORT (3) 1<2>
+StripOffsets (273) LONG (4) 1<8>
+Orientation (274) SHORT (3) 1<1>
+SamplesPerPixel (277) SHORT (3) 1<1>
+RowsPerStrip (278) LONG (4) 1<4294967295>
+StripByteCounts (279) LONG (4) 1<32525>
+XResolution (282) RATIONAL (5) 1<204>
+YResolution (283) RATIONAL (5) 1<98>
+PlanarConfig (284) SHORT (3) 1<1>
+Group3Options (292) LONG (4) 1<4>
+ResolutionUnit (296) SHORT (3) 1<2>
+PageNumber (297) SHORT (3) 2<1 1>
+Software (305) ASCII (2) 9<fax2tiff\0>
+BadFaxLines (326) LONG (4) 1<0>
+CleanFaxData (327) SHORT (3) 1<0>
+ConsecutiveBadFaxLines (328) LONG (4) 1<0>

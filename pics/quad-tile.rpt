@@ -1,0 +1,21 @@
+pics/quad-tile.tif:
+Magic: 0x4d4d <big-endian> Version: 0x2a
+Directory 0: offset 208878 (0x32fee) next 0 (0)
+ImageWidth (256) SHORT (3) 1<512>
+ImageLength (257) SHORT (3) 1<384>
+BitsPerSample (258) SHORT (3) 3<8 8 8>
+Compression (259) SHORT (3) 1<5>
+Photometric (262) SHORT (3) 1<2>
+StripOffsets (273) LONG (4) 12<8 19252 38898 59606 76577 87844 98473 120431 137961 155530 174465 194632>
+Orientation (274) SHORT (3) 1<1>
+SamplesPerPixel (277) SHORT (3) 1<3>
+RowsPerStrip (278) LONG (4) 1<128>
+StripByteCounts (279) LONG (4) 12<19244 19646 20708 16971 11267 10629 21958 17530 17569 18935 20167 14246>
+MinSampleValue (280) SHORT (3) 3<0 0 0>
+MaxSampleValue (281) SHORT (3) 3<255 255 255>
+PlanarConfig (284) SHORT (3) 1<1>
+TileWidth (322) SHORT (3) 1<128>
+TileLength (323) SHORT (3) 1<128>
+OBSOLETE DataType (Silicon Graphics) (32996) SHORT (3) 3<0 0 0>
+ImageDepth (Silicon Graphics) (32997) SHORT (3) 1<1>
+TileDepth (Silicon Graphics) (32998) SHORT (3) 1<1>

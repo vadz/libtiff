@@ -1,0 +1,17 @@
+pics/quad-jpeg.tif:
+Magic: 0x4d4d <big-endian> Version: 0x2a
+Directory 0: offset 23406 (0x5b6e) next 0 (0)
+ImageWidth (256) SHORT (3) 1<512>
+ImageLength (257) SHORT (3) 1<384>
+BitsPerSample (258) SHORT (3) 3<8 8 8>
+Compression (259) SHORT (3) 1<7>
+Photometric (262) SHORT (3) 1<6>
+StripOffsets (273) LONG (4) 24<8 175 342 633 2227 3683 5112 6553 7667 7834 8409 10044 11615 13067 14514 15166 15333 16361 17924 19351 20755 22254 23072 23239>
+SamplesPerPixel (277) SHORT (3) 1<3>
+RowsPerStrip (278) SHORT (3) 1<16>
+StripByteCounts (279) LONG (4) 24<167 167 291 1594 1456 1429 1441 1114 167 575 1635 1571 1452 1447 652 167 1028 1563 1427 1404 1499 818 167 167>
+PlanarConfig (284) SHORT (3) 1<1>
+XPosition (286) RATIONAL (5) 1<0>
+YPosition (287) RATIONAL (5) 1<0>
+347 (0x15b) UNDEFINED (7) 574<0xff 0xd8 0xff 0xdb 00 0x43 00 0x8 0x6 0x6 0x7 0x6 0x5 0x8 0x7 0x7 0x7 0x9 0x9 0x8 0xa 0xc 0x14 0xd ...>
+ReferenceBlackWhite (532) RATIONAL (5) 6<0 255 128 255 128 255>
