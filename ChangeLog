@@ -1,3 +1,7 @@
+2002-10-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tiff.h: added COMPRESSION_JP2000.
+
 2002-10-02  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: Another fix for the fetching SBYTE arrays
@@ -11,6 +15,11 @@
 	producing HTML representations of the manual pages automatically.
 	html target uses man2html tool, groffhtml uses groff tool.
 	
+2002-09-29  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* configure, libtiff/Makefile.in: Added SCO OpenServer 5.0.6 support
+	from John H. DuBois III.  
+
 2002-09-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in, /man/{raw2tiff.1, Makefile.in, libtiff.3}: Added
