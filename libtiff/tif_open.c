@@ -382,7 +382,7 @@ TIFFClientOpen(
 	}
 bad:
 	tif->tif_mode = O_RDONLY;	/* XXX avoid flush */
-        _TIFFCleanup(tif);
+        TIFFCleanup(tif);
 bad2:
 	return ((TIFF*)0);
 	(void) (*closeproc)(clientdata);

@@ -207,7 +207,6 @@ struct tiff {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-extern	void _TIFFCleanup(TIFF*);
 extern	int _TIFFgetMode(const char*, const char*);
 extern	int _TIFFNoRowEncode(TIFF*, tidata_t, tsize_t, tsample_t);
 extern	int _TIFFNoStripEncode(TIFF*, tidata_t, tsize_t, tsample_t);

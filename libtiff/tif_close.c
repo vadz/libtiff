@@ -30,7 +30,7 @@
 #include "tiffiop.h"
 
 /************************************************************************/
-/*                            _TIFFCleanup()                            */
+/*                            TIFFCleanup()                             */
 /************************************************************************/
 
 /**
@@ -43,7 +43,7 @@
  */
 
 void
-_TIFFCleanup(TIFF* tif)
+TIFFCleanup(TIFF* tif)
 {
 	if (tif->tif_mode != O_RDONLY)
 	    /*
@@ -113,7 +113,7 @@ TIFFClose(TIFF* tif)
 	TIFFCloseProc closeproc = tif->tif_closeproc;
 	thandle_t fd = tif->tif_clientdata;
 
-	_TIFFCleanup(tif);
+	TIFFCleanup(tif);
 	(void) (*closeproc)(fd);
 }
 
