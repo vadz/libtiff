@@ -304,14 +304,10 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 	tp = &tif->tif_fieldinfo[tif->tif_nfields];
 	for (i = 0; i < n; i++)
 		tp[i] = (TIFFFieldInfo*) &info[i];	/* XXX */
-	/*
-	 * NB: the core tags are presumed sorted correctly.
-	 */
-	if (tif->tif_nfields > 0)
-		qsort(tif->tif_fieldinfo, (size_t) (tif->tif_nfields += n),
-		    sizeof (TIFFFieldInfo*), tagCompare);
-	else
-		tif->tif_nfields += n;
+
+        /* Sort the field info by tag number */
+        qsort(tif->tif_fieldinfo, (size_t) (tif->tif_nfields += n),
+              sizeof (TIFFFieldInfo*), tagCompare);
 }
 
 void
@@ -408,4 +404,42 @@ _TIFFFieldWithTag(TIFF* tif, ttag_t tag)
 		/*NOTREACHED*/
 	}
 	return (fip);
+}
+
+const TIFFFieldInfo*
+_TIFFFindOrRegisterFieldInfo( TIFF *tif, ttag_t tag, TIFFDataType dt )
+
+{
+    const TIFFFieldInfo *fld;
+
+    fld = _TIFFFindFieldInfo( tif, tag, dt );
+    if( fld == NULL )
+    {
+        fld = _TIFFCreateAnonFieldInfo( tif, tag, dt );
+        _TIFFMergeFieldInfo( tif, fld, 1 );
+    }
+
+    return fld;
+}
+
+TIFFFieldInfo*
+_TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
+{
+    TIFFFieldInfo *fld;
+    int            field_id;
+
+    fld = _TIFFmalloc(sizeof (TIFFFieldInfo));
+    _TIFFmemset( fld, 0, sizeof(TIFFFieldInfo) );
+
+    fld->field_tag = tag;
+    fld->field_readcount = TIFF_VARIABLE;
+    fld->field_writecount = TIFF_VARIABLE;
+    fld->field_type = field_type;
+    fld->field_bit = FIELD_CUSTOM;
+    fld->field_oktochange = TRUE;
+    fld->field_passcount = TRUE;
+    fld->field_name = (char *) _TIFFmalloc(32);
+    sprintf( fld->field_name, "Tag %d", tag );
+
+    return fld;    
 }
