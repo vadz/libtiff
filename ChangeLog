@@ -1,5 +1,8 @@
 2003-08-07  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tools/tiff2ps.c: Fixed PS comment emitted when FlateDecode is
+	being used. Reported by Tom Kacvinsky.
+
 	* libtiff/tif_dirwrite.c: Fixed problem with custom tags writing,
 	reported by Ashley Dreier.
 
