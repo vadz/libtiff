@@ -1,5 +1,8 @@
 2001-06-22  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* configure: Changes for DSO generation on AIX provided by
+	John Marquart <jomarqua@indiana.edu>.
+
 	* configure, libtiff/Makeifle.in: Modified to build DSOs properly
 	on Darwin thanks to Robert Krajewski (rpk@alum.mit.edu) and
 	Keisuke Fujii (fujiik@jlcuxf.kek.jp).

@@ -504,7 +504,7 @@ checkCompiler()
 	no-*-irix*)	C_ANSI="-ansi";;
 	no-*-hp*)	C_ANSI="-D_HPUX_SOURCE";;
 	no-*-apollo-*)	C_ANSI="-A nansi";;
-	no-*-aix*)	C_ANSI="-Dunix -qlanglvl=ansi -qsrcmsg";;
+	no-*-aix*)	C_ANSI="-Dunix -qlanglvl=ansi -qsrcmsg -qmaxmem=8192";;
 	*-sco*)		C_ANSI="-Dsco";;
 	esac
     else
@@ -1136,6 +1136,7 @@ if [ "$DSO" = auto ]; then
 	DSOOPTS='-r'
 	LIBCOPTS="-bM\:SRE"
 	DSO=AIX
+	TIFFLIBREF='-L${DEPTH}/libtiff -ltiff'
 	;;
     *-hpux*yes)
         DSOSUF=sl
