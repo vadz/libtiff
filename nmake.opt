@@ -61,7 +61,7 @@ LOGLUV_SUPPORT	= 1
 
 #
 # Uncomment following lines to enable Old JPEG support
-# (patched IJG JPEG library required, read the contrib\ojpeg\README first).
+# (modified IJG JPEG library required, read the contrib\ojpeg\README first).
 #
 #OJPEG_SUPPORT = 1
 
@@ -119,11 +119,13 @@ CXX	=	cl /nologo
 AR	=	lib /nologo
 LD	=	link /nologo
 
-
 CFLAGS  =	$(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
 CXXFLAGS =	$(OPTFLAGS) $(INCL) $(WINMODE) $(EXTRAFLAGS)
 EXTRAFLAGS =
 LIBS	=
+
+# Name of the output shared library
+DLLNAME	= libtiff.dll
 
 #
 ########### There is nothing to edit below this line normally. ###########
