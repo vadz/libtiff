@@ -345,7 +345,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		break;
 	case TIFFTAG_SAMPLEFORMAT:
 		v = va_arg(ap, int);
-		if (v < SAMPLEFORMAT_UINT || SAMPLEFORMAT_COMPLEX_IEEEFP < v)
+		if (v < SAMPLEFORMAT_UINT || SAMPLEFORMAT_COMPLEXIEEEFP < v)
 			goto badvalue;
 		td->td_sampleformat = (uint16) v;
 		break;
