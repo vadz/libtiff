@@ -52,23 +52,30 @@ _tiffWriteProc(thandle_t fd, tdata_t buf, tsize_t size)
 static toff_t
 _tiffSeekProc(thandle_t fd, toff_t off, int whence)
 {
-	DWORD dwMoveMethod;
+	DWORD dwMoveMethod, dwMoveHigh;
+
+        /* we use this as a special code, so avoid accepting it */
+        if( off == 0xFFFFFFFF )
+            return 0xFFFFFFFF;
+        
 	switch(whence)
 	{
-	case 0:
+	case SEEK_SET:
 		dwMoveMethod = FILE_BEGIN;
 		break;
-	case 1:
+	case SEEK_CUR:
 		dwMoveMethod = FILE_CURRENT;
 		break;
-	case 2:
+	case SEEK_END:
 		dwMoveMethod = FILE_END;
 		break;
 	default:
 		dwMoveMethod = FILE_BEGIN;
 		break;
 	}
-	return ((toff_t)SetFilePointer(fd, off, NULL, dwMoveMethod));
+        dwMoveHigh = 0;
+	return ((toff_t)SetFilePointer(fd, (LONG) off, (PLONG)&dwMoveHigh,
+                                       dwMoveMethod));
 }
 
 static int
@@ -109,7 +116,7 @@ _tiffMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
 	toff_t size;
 	HANDLE hMapFile;
 
-	if ((size = _tiffSizeProc(fd)) == (toff_t)-1)
+	if ((size = _tiffSizeProc(fd)) == 0xFFFFFFFF)
 		return (0);
 	hMapFile = CreateFileMapping(fd, NULL, PAGE_READONLY, 0, size, NULL);
 	if (hMapFile == NULL)
