@@ -1,3 +1,8 @@
+2004-01-02  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcp.c: Fixed problem with wrong Photometric setting for
+	non-RGB images.
+
 2003-12-31  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_win32.c: Fixed problem with _TIFFrealloc() when the NULL
