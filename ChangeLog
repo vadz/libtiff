@@ -1,3 +1,10 @@
+2003-11-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_lzw.c, tif_fax3.c}: Proper support for update mode as
+	per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=424
+
 2003-10-29  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/libtiff.def: Added TIFFReadRGBAImageOriented.
