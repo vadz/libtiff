@@ -1,3 +1,8 @@
+2003-12-31  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiff.h, tif_fax3.c}:Fixes for AMD 64 platform as
+	suggested by Jeremy C. Reed.
+
 2003-12-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff 3.6.1 released.
