@@ -5,12 +5,12 @@
 LIBTIFF_DIR =	../../libtiff
 #
 CC	=	gcc
-CPPC	=	gcc
+CXX	=	gcc
 CFLAGS	=	-O -I$(LIBTIFF_DIR)
 LIBS	=	$(LIBTIFF_DIR)/libtiff.a -lm
 
 addtiffo:	addtiffo.o tif_overview.o rawblockedimage.o
-	$(CC) $(CFLAGS) addtiffo.o tif_overview.o rawblockedimage.o \
+	$(CXX) $(CFLAGS) addtiffo.o tif_overview.o rawblockedimage.o \
 		$(LIBS) -o addtiffo 
 
 
@@ -18,10 +18,10 @@ addtiffo.o:	addtiffo.c
 	$(CC) -c $(CFLAGS) addtiffo.c
 
 tif_overview.o:	tif_overview.cpp
-	$(CPPC) -c $(CFLAGS) tif_overview.cpp
+	$(CXX) -c $(CFLAGS) tif_overview.cpp
 
 rawblockedimage.o:	rawblockedimage.cpp
-	$(CPPC) -c $(CFLAGS) rawblockedimage.cpp
+	$(CXX) -c $(CFLAGS) rawblockedimage.cpp
 
 clean:
 	rm *.o addtiffo
