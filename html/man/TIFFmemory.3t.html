@@ -1,104 +1,104 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of MEMORY</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>MEMORY</H1>
-Section: Misc. Reference Manual Pages (3T)<BR>Updated: October 15, 1995<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>MEMORY</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>MEMORY</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-_TIFFmalloc, _TIFFrealloc, _TIFFfree, _TIFFmemset, _TIFFmemcpy, _TIFFmemcmp, - memory management-related functions for use with
-<FONT SIZE="-1">TIFF</FONT>
-files
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:12 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>_TIFFmalloc, _TIFFrealloc, _TIFFfree, _TIFFmemset,
+_TIFFmemcpy, _TIFFmemcmp, &minus; memory management-related
+functions for use with <small>TIFF</small> files</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<pre><b>#include &lt;tiffio.h&gt;
+tdata_t _TIFFmalloc(tsize_t);
+tdata_t _TIFFrealloc(tdata_t, tsize_t);
+void _TIFFfree(tdata_t);
+void _TIFFmemset(tdata_t, int, tsize_t);
+void _TIFFmemcpy(tdata_t, const tdata_t, tsize_t);
+int _TIFFmemcmp(const tdata_t, const tdata_t, tsize_t);
+</b></pre>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
 
-<PRE>
-<B>#include &lt;<A HREF="file:/usr/include/tiffio.h">tiffio.h</A>&gt;</B>
-<B>tdata_t _TIFFmalloc(tsize_t);</B>
-<B>tdata_t _TIFFrealloc(tdata_t, tsize_t);</B>
-<B>void _TIFFfree(tdata_t);</B>
-<B>void _TIFFmemset(tdata_t, int, tsize_t);</B>
-<B>void _TIFFmemcpy(tdata_t, const tdata_t, tsize_t);</B>
-<B>int _TIFFmemcmp(const tdata_t, const tdata_t, tsize_t);</B>
-</PRE>
-
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-These routines are provided for writing portable software that uses 
-<I>libtiff</I>;
-
-they hide any memory-management related issues, such as dealing with
-segmented architectures found on 16-bit machines.
-<P>
-
-<I>_TIFFmalloc</I>
-
-and
-<I>_TIFFrealloc</I>
-
-are used to dynamically allocate and reallocate memory used by 
-<I>libtiff</I>;
-
-such as memory passed into the I/O routines.
-Memory allocated through these interfaces is released back to the
-system using the
-<I>_TIFFfree</I>
-
-routine.
-<P>
-
-Memory allocated through one of the above interfaces can be set to
-a known value using
-<I>_TIFFmemset</I>,
-
-copied to another memory location using
-<I>_TIFFmemcpy</I>,
-
-or compared for equality using 
-<I>_TIFFmemcmp</I>.
-
-These routines conform to the equivalent
-<FONT SIZE="-1">ANSI</FONT>
-C routines: 
-<I>memset</I>,
-
-<I>memcpy</I>,
-
-and
-<I>memcmp</I>,
-
-repsectively.
-<A NAME="lbAE">&nbsp;</A>
-<H2>DIAGNOSTICS</H2>
-
-None.
-<A NAME="lbAF">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="libtiff.3t.html">libtiff</A></I>(3T),
-
-<I><A HREF="malloc+3c">malloc</A></I>(3C),
-
-<I><A HREF="memory+3c">memory</A></I>(3C)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">DIAGNOSTICS</A><DD>
-<DT><A HREF="#lbAF">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:39 GMT, November 23, 1999
-</BODY>
-</HTML>
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>These routines are provided for writing portable software
+that uses <i>libtiff</i>; they hide any memory-management
+related issues, such as dealing with segmented architectures
+found on 16-bit machines.</p>
+<!-- INDENTATION -->
+<p><i>_TIFFmalloc</i> and <i>_TIFFrealloc</i> are used to
+dynamically allocate and reallocate memory used by
+<i>libtiff</i>; such as memory passed into the I/O routines.
+Memory allocated through these interfaces is released back
+to the system using the <i>_TIFFfree</i> routine.</p>
+<!-- INDENTATION -->
+<p>Memory allocated through one of the above interfaces can
+be set to a known value using <i>_TIFFmemset</i>, copied to
+another memory location using <i>_TIFFmemcpy</i>, or
+compared for equality using <i>_TIFFmemcmp</i>. These
+routines conform to the equivalent <small>ANSI</small> C
+routines: <i>memset</i>, <i>memcpy</i>, and <i>memcmp</i>,
+repsectively.</p>
+</td>
+</table></p>
+<a name="DIAGNOSTICS"></a>
+<h2>DIAGNOSTICS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>None.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>libtiff</i>(3T), <i>malloc</i>(3C),
+<i>memory</i>(3C)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

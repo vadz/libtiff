@@ -2,21 +2,20 @@
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
 <meta name="Content-Style" content="text/css">
-<title>TIFFReadRawTile</title>
+<title>TIFFDataWidth</title>
 </head>
 <body>
 
-<h1 align=center>TIFFReadRawTile</h1>
+<h1 align=center>TIFFDataWidth</h1>
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
 <a href="#RETURN VALUES">RETURN VALUES</a><br>
-<a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
 <!-- Creator     : groff version 1.18 -->
-<!-- CreationDate: Mon Oct  7 17:36:18 2002 -->
+<!-- CreationDate: Mon Oct  7 17:36:10 2002 -->
 <a name="NAME"></a>
 <h2>NAME</h2>
 <!-- INDENTATION -->
@@ -25,8 +24,7 @@
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p>TIFFReadRawTile &minus; return an undecoded tile of data
-from an open <small>TIFF</small> file</p>
+<p>TIFFDataWidth &minus; Get the size of TIFF data types</p>
 </td>
 </table></p>
 <a name="SYNOPSIS"></a>
@@ -38,8 +36,7 @@ from an open <small>TIFF</small> file</p>
 <td width="8%"></td>
 <td width="91%">
 <p><b>#include &lt;tiffio.h&gt;<br>
-tsize_t TIFFReadRawTile(TIFF* tif, ttile_t tile, tdata_t
-buf, tsize_t size)</b></p>
+int TIFFDataWidth(TIFFDataType type)</b></p>
 </td>
 </table></p>
 <a name="DESCRIPTION"></a>
@@ -50,16 +47,20 @@ buf, tsize_t size)</b></p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p>Read the contents of the specified tile into the (user
-supplied) data buffer. Note that the value of <i>tile</i> is
-a &lsquo;&lsquo;raw tile number.&rsquo;&rsquo; That is, the
-caller must take into account whether or not the data is
-organized in separate planes (<i>PlanarConfiguration</i>=2).
-<i>TIFFComputeTile</i> automatically does this when
-converting an (x,y,z,sample) coordinate quadruple to a tile
-number. To read a full tile of data the data buffer should
-typically be at least as large as the value returned by
-<i>TIFFTileSize</i>.</p>
+<p><i>TIFFDataWidth</i> returns a size of <i>type</i> in
+bytes. Currently following data types are supported:<i><br>
+TIFF_BYTE<br>
+TIFF_ASCII<br>
+TIFF_SBYTE<br>
+TIFF_UNDEFINED<br>
+TIFF_SHORT<br>
+TIFF_SSHORT<br>
+TIFF_LONG<br>
+TIFF_SLONG<br>
+TIFF_FLOAT<br>
+TIFF_RATIONAL<br>
+TIFF_SRATIONAL<br>
+TIFF_DOUBLE</i></p>
 </td>
 </table></p>
 <a name="RETURN VALUES"></a>
@@ -70,21 +71,8 @@ typically be at least as large as the value returned by
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p>The actual number of bytes of data that were placed in
-<i>buf</i> is returned; <i>TIFFReadEncodedTile</i> returns
-&minus;1 if an error was encountered.</p>
-</td>
-</table></p>
-<a name="DIAGNOSTICS"></a>
-<h2>DIAGNOSTICS</h2>
-<!-- INDENTATION -->
-<p><table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>All error messages are directed to the
-<i>TIFFError</i>(3T) routine.</p>
+<p><i>TIFFDataWidth</i> returns a number of bytes occupied
+by the item of given type.</p>
 </td>
 </table></p>
 <a name="SEE ALSO"></a>
@@ -95,9 +83,7 @@ typically be at least as large as the value returned by
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>libtiff</i>(3T), <i>TIFFOpen</i>(3T),
-<i>TIFFReadEncodedTile</i>(3T), <i>TIFFReadTile</i>(3T),
-<i>TIFFTileSize</i>(3T)</p>
+<p><i>libtiff</i>(3T),</p>
 </td>
 </table></p>
 <hr>

@@ -1,90 +1,99 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of TIFFCP</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>TIFFCP</H1>
-Section: User Commands  (1)<BR>Updated: September 26, 1994<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>TIFFCP</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>TIFFCP</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-tiffsplit - split a multi-image
-<FONT SIZE="-1">TIFF</FONT>
-into single-image
-<FONT SIZE="-1">TIFF</FONT>
-files
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
-
-<B>tiffsplit</B>
-
-<I>src.tif</I>
-
-[
-<I>prefix</I>
-
-]
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-<I>tiffsplit</I>
-
-takes a multi-directory (page)
-<FONT SIZE="-1">TIFF</FONT>
-file and creates one or more single-directory (page)
-<FONT SIZE="-1">TIFF</FONT>
-files from it.
-The output files are given names created by concatenating
-a prefix, a lexically ordered
-suffix in the range [<I>aa</I>-<I>zz</I>], the suffix
-<I>.tif </I>
-
-(e.g. 
-<I>xaa.tif</I>,
-
-<I>xab.tif</I>,
-
-...
-<I>xzz.tif</I>).
-
-If a prefix is not specified on the command line,
-the default prefix of
-<I>x</I>
-
-is used.
-<A NAME="lbAE">&nbsp;</A>
-<H2>OPTIONS</H2>
-
-None.
-<A NAME="lbAF">&nbsp;</A>
-<H2>BUGS</H2>
-
-Only a select set of ``known tags'' is copied when spliting.
-<A NAME="lbAG">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="tiffcp+1.html">tiffcp</A></I>(1),
-
-<I><A HREF="tiffinfo+1.html">tiffinfo</A></I>(1),
-
-<I><A HREF="libtiff+3">libtiff</A></I>(3)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">OPTIONS</A><DD>
-<DT><A HREF="#lbAF">BUGS</A><DD>
-<DT><A HREF="#lbAG">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:48 GMT, November 23, 1999
-</BODY>
-</HTML>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:43 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>tiffsplit &minus; split a multi-image <small>TIFF</small>
+into single-image <small>TIFF</small> files</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>tiffsplit</b> <i>src.tif</i> [ <i>prefix</i> ]</p>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>tiffsplit</i> takes a multi-directory (page)
+<small>TIFF</small> file and creates one or more
+single-directory (page) <small>TIFF</small> files from it.
+The output files are given names created by concatenating a
+prefix, a lexically ordered suffix in the range
+[<i>aa</i>-<i>zz</i>], the suffix <i>.tif</i> (e.g.
+<i>xaa.tif</i>, <i>xab.tif</i>, <i>xzz.tif</i>). If a prefix
+is not specified on the command line, the default prefix of
+<i>x</i> is used.</p>
+</td>
+</table></p>
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>None.</p>
+</td>
+</table></p>
+<a name="BUGS"></a>
+<h2>BUGS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Only a select set of &lsquo;&lsquo;known
+tags&rsquo;&rsquo; is copied when spliting.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>tiffcp</i>(1), <i>tiffinfo</i>(1),
+<i>libtiff</i>(3)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

@@ -1,192 +1,204 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of TIFFSV</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>TIFFSV</H1>
-Section: User Commands  (1)<BR>Updated: October 15, 1995<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>TIFFSV</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>TIFFSV</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#NOTE">NOTE</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-tiffsv - save an image from the framebuffer in a
-<FONT SIZE="-1">TIFF</FONT>
-file (Silicon Graphics version)
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:44 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>tiffsv &minus; save an image from the framebuffer in a
+<small>TIFF</small> file (Silicon Graphics version)</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>tiffsv</b> [ <i>options</i> ] <i>output.tif</i> [
+<i>x1 x2 y1 y2</i> ]</p>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>tiffsv</i> saves all or part of the framebuffer in a
+file using the Tag Image File Format, Revision 6.0. By
+default, the image is saved with data samples packed
+(<i>PlanarConfiguration</i>=1), compressed with the
+Lempel-Ziv &amp; Welch algorithm (<i>Compression</i>=5), and
+with each strip no more than 8 kilobytes. These
+characteristics can be overriden, or explicitly specified
+with the options described below.</p>
+</td>
+</table></p>
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+<!-- TABS -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="5" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<B>tiffsv</B>
+<p><b>&minus;b</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-[
-<I>options</I>
+<p>Save the image as a greyscale image as if it were
+processed by <i>tiff2bw</i>(1). This option is included for
+compatibility with the standard <i>scrsave</i>(6D)
+program.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-]
-<I>output.tif</I>
+<p><b>&minus;c</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-[
-<I>x1 x2 y1 y2</I>
-
-]
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-<I>tiffsv</I>
-
-saves all or part of the framebuffer in a file using the
-Tag Image File Format, Revision 6.0.
-By default, the image is saved with data samples packed (<I>PlanarConfiguration</I>=1),
-
-compressed with the Lempel-Ziv &amp; Welch algorithm (<I>Compression</I>=5),
-
-and with each strip no more than 8 kilobytes.
-These characteristics can be overriden, or explicitly specified
-with the options described below.
-<A NAME="lbAE">&nbsp;</A>
-<H2>OPTIONS</H2>
-
-<DL COMPACT>
-<DT><B>-b</B>
-
-<DD>
-Save the image as a greyscale image
-as if it were processed by 
-<I><A HREF="tiff2bw+1.html">tiff2bw</A></I>(1).
-
-This option is included for compatibility with the standard
-<I><A HREF="scrsave+6d">scrsave</A></I>(6D)
-
-program.
-<DT><B>-c</B>
-
-<DD>
-Specify the compression to use for data written to the output file:
-<B>none </B>
-
-for no compression,
-<B>packbits</B>
-
-for PackBits compression,
-<B>jpeg</B>
-
-for baseline JPEG compression,
-<B>zip</B>
-
-for Deflate compression,
-and
-<B>lzw</B>
-
-for Lempel-Ziv &amp; Welch compression (default).
-<DT><DD>
-<FONT SIZE="-1">LZW</FONT>
-compression can be specified together with a 
-<I>predictor</I>
-
-value.
-A predictor value of 2 causes
+<p>Specify the compression to use for data written to the
+output file: <b>none</b> for no compression, <b>packbits</b>
+for PackBits compression, <b>jpeg</b> for baseline JPEG
+compression, <b>zip</b> for Deflate compression, and
+<b>lzw</b> for Lempel-Ziv &amp; Welch compression
+(default).</p>
+</td>
+<td width="0%">
+</td>
+</table></p>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="17%"></td>
+<td width="82%">
+<p><small>LZW</small> compression can be specified together
+with a <i>predictor</i> value. A predictor value of 2 causes
 each scanline of the output image to undergo horizontal
-differencing before it is encoded; a value
-of 1 forces each scanline to be encoded without differencing.
-LZW-specific options are specified by appending a ``:''-separated
-list to the ``lzw'' option; e.g.
-<B>-c lzw:2</B>
+differencing before it is encoded; a value of 1 forces each
+scanline to be encoded without differencing. LZW-specific
+options are specified by appending a
+&lsquo;&lsquo;:&rsquo;&rsquo;-separated list to the
+&lsquo;&lsquo;lzw&rsquo;&rsquo; option; e.g. <b>&minus;c
+lzw:2</b> for <small>LZW</small> compression with horizontal
+differencing.</p>
+</td>
+</table></p>
+<!-- TABS -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="5" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-for
-<FONT SIZE="-1">LZW</FONT>
-compression with horizontal differencing.
-<DT><B>-p</B>
+<p><b>&minus;p</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-Specify the planar configuration to use in writing image data.
-By default,
-<I>tiffsv</I>
+<p>Specify the planar configuration to use in writing image
+data. By default, <i>tiffsv</i> will create a new file with
+the data samples packed contiguously. Specifying <b>&minus;p
+contig</b> will force data to be written with multi-sample
+data packed together, while <b>&minus;p separate</b> will
+force samples to be written in separate planes.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-will create a new file with the data samples packed contiguously.
-Specifying
-<B>-p contig</B>
+<p><b>&minus;r</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-will force data to be written with multi-sample data packed
-together, while
-<B>-p separate</B>
-
-will force samples to be written in separate planes.
-<DT><B>-r</B>
-
-<DD>
-Specify the number of rows (scanlines) in each strip of data
-written to the output file.
-By default,
-<I>tiffsv</I>
-
-attempts to set the rows/strip
-that no more than 8 kilobytes of data appear in a strip.
-</DL>
-<A NAME="lbAF">&nbsp;</A>
-<H2>NOTE</H2>
-
-Except for the use of
-<FONT SIZE="-1">TIFF,</FONT>
-this program is equivalent to the standard
-<I>scrsave</I>
-
-program.
-This means, for example, that you can use it in conjunction with
-the standard
-<I>icut</I>
-
-program simply by creating a link called
-<I>scrsave</I>,
-
-or by creating a shell script called
-<I>scrsave</I>
-
-that invokes
-<I>tiffgt</I>
-
-with the appropriate options.
-<A NAME="lbAG">&nbsp;</A>
-<H2>BUGS</H2>
-
-If data are saved compressed and in separate planes, then the
-rows in each strip is silently set to one to avoid limitations
-in the
-<I><A HREF="libtiff+3">libtiff</A></I>(3)
-
-library.
-<A NAME="lbAH">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="scrsave+6d">scrsave</A></I>(6D)
-
-<I><A HREF="pal2rgb+1.html">pal2rgb</A></I>(1),
-
-<I><A HREF="tiffdump+1.html">tiffdump</A></I>(1),
-
-<I><A HREF="tiffgt+1.html">tiffgt</A></I>(1),
-
-<I><A HREF="tiffinfo+1.html">tiffinfo</A></I>(1),
-
-<I><A HREF="tiffcp+1.html">tiffcp</A></I>(1),
-
-<I><A HREF="tiffmedian+1.html">tiffmedian</A></I>(1),
-
-<I><A HREF="libtiff+3">libtiff</A></I>(3)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">OPTIONS</A><DD>
-<DT><A HREF="#lbAF">NOTE</A><DD>
-<DT><A HREF="#lbAG">BUGS</A><DD>
-<DT><A HREF="#lbAH">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:48 GMT, November 23, 1999
-</BODY>
-</HTML>
+<p>Specify the number of rows (scanlines) in each strip of
+data written to the output file. By default, <i>tiffsv</i>
+attempts to set the rows/strip that no more than 8 kilobytes
+of data appear in a strip.</p>
+</td>
+<td width="0%">
+</td>
+</table></p>
+<a name="NOTE"></a>
+<h2>NOTE</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Except for the use of <small>TIFF,</small> this program
+is equivalent to the standard <i>scrsave</i> program. This
+means, for example, that you can use it in conjunction with
+the standard <i>icut</i> program simply by creating a link
+called <i>scrsave</i>, or by creating a shell script called
+<i>scrsave</i> that invokes <i>tiffgt</i> with the
+appropriate options.</p>
+</td>
+</table></p>
+<a name="BUGS"></a>
+<h2>BUGS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>If data are saved compressed and in separate planes, then
+the rows in each strip is silently set to one to avoid
+limitations in the <i>libtiff</i>(3) library.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>scrsave</i>(6D) <i>pal2rgb</i>(1), <i>tiffdump</i>(1),
+<i>tiffgt</i>(1), <i>tiffinfo</i>(1), <i>tiffcp</i>(1),
+<i>tiffmedian</i>(1), <i>libtiff</i>(3)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

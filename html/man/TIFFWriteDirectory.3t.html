@@ -1,148 +1,172 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of TIFFWriteDirectory</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>TIFFWriteDirectory</H1>
-Section: Misc. Reference Manual Pages (3T)<BR>Updated: December 16, 1991<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>TIFFWriteDirectory</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>TIFFWriteDirectory</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#RETURN VALUES">RETURN VALUES</a><br>
+<a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-TIFFWriteDirectory - write the current directory in an open
-<FONT SIZE="-1">TIFF</FONT>
-file
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
-
-<B>#include &lt;<A HREF="file:/usr/include/tiffio.h">tiffio.h</A>&gt;</B>
-
-<BR>
-
-<B>int TIFFWriteDirectory(TIFF* tif)</B>
-
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-Write the contents of the current directory to the file and setup
-to create a new subfile in the same file.
-Applications only need to call
-<I>TIFFWriteDirectory</I>
-
-when writing multiple subfiles to a single
-<FONT SIZE="-1">TIFF</FONT>
-file.
-<I>TIFFWriteDirectory</I>
-
-is automatically called by
-<I>TIFFClose</I>
-
-and
-<I>TIFFFlush</I>
-
-to write a modified directory if the file is open for writing.
-<A NAME="lbAE">&nbsp;</A>
-<H2>RETURN VALUES</H2>
-
-1 is returned when the contents are successfully
-written to the file.
-Otherwise, 0 is returned if an error was encountered when writing
-the directory contents.
-<A NAME="lbAF">&nbsp;</A>
-<H2>DIAGNOSTICS</H2>
-
-All error messages are directed to the
-<I><A HREF="TIFFError.3t.html">TIFFError</A></I>(3T)
-
-routine.
-<P>
-
-<B>Error post-encoding before directory write</B>.
-
-Before writing the contents of the current directory, any pending
-data are flushed.
-This message indicates that an error occurred while doing this.
-<P>
-
-<B>Error flushing data before directory write</B>.
-
-Before writing the contents of the current directory, any pending
-data are flushed.
-This message indicates that an error occurred while doing this.
-<P>
-
-<B>Cannot write directory, out of space</B>.
-
-There was not enough space to allocate a temporary area for
-the directory that was to be written.
-<P>
-
-<B>Error writing directory count</B>.
-
-A write error occurred when writing the count of fields in the directory.
-<P>
-
-<B>Error writing directory contents</B>.
-
-A write error occurred when writing the directory fields.
-<P>
-
-<B>Error writing directory link</B>.
-
-A write error occurred when writing the link to the next directory.
-<P>
-
-<B>Error writing data for field &quot;%s&quot;</B>.
-A write error occurred when writing indirect data for the specified field.
-<P>
-
-<B>Error writing TIFF header</B>.
-
-A write error occurred when re-writing header at the front of the file.
-<P>
-
-<B>Error fetching directory count</B>.
-
-A read error occurred when fetching the directory count field for
-a previous directory.
-This can occur when setting up a link to the directory that is being
-written.
-<P>
-
-<B>Error fetching directory link</B>.
-
-A read error occurred when fetching the directory link field for
-a previous directory.
-This can occur when setting up a link to the directory that is being
-written.
-<A NAME="lbAG">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="libtiff.3t.html">libtiff</A></I>(3T),
-
-<I><A HREF="TIFFOpen.3t.html">TIFFOpen</A></I>(3T),
-
-<I><A HREF="TIFFError.3t.html">TIFFError</A></I>(3T),
-
-<I><A HREF="TIFFReadDirectory.3t.html">TIFFReadDirectory</A></I>(3T),
-
-<I><A HREF="TIFFSetDirectory.3t.html">TIFFSetDirectory</A></I>(3T)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">RETURN VALUES</A><DD>
-<DT><A HREF="#lbAF">DIAGNOSTICS</A><DD>
-<DT><A HREF="#lbAG">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:38 GMT, November 23, 1999
-</BODY>
-</HTML>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:26 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>TIFFWriteDirectory, TIFFRewriteDirectory,
+TIFFCheckpointDirectory &minus; write the current directory
+in an open <small>TIFF</small> file</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>#include &lt;tiffio.h&gt;<br>
+int TIFFWriteDirectory(TIFF* tif)<br>
+int TIFFRewriteDirectory(TIFF* tif)<br>
+int TIFFCheckpointDirectory(TIFF* tif)</b></p>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>TIFFWriteDirectory</i> will write the contents of the
+current directory to the file and setup to create a new
+subfile in the same file. Applications only need to call
+<i>TIFFWriteDirectory</i> when writing multiple subfiles to
+a single <small>TIFF</small> file. <i>TIFFWriteDirectory</i>
+is automatically called by <i>TIFFClose</i> and
+<i>TIFFFlush</i> to write a modified directory if the file
+is open for writing.</p>
+<!-- INDENTATION -->
+<p>The <i>TIFFRewriteDirectory</i> function operates
+similarly to <i>TIFFWriteDirectory,</i> but can be called
+with directories previously read or written that already
+have an established location in the file. It will rewrite
+the directory, but instead of place it at it&rsquo;s old
+location (as <i>TIFFWriteDirectory</i> would) it will place
+them at the end of the file, correcting the pointer from the
+preceeding directory or file header to point to it&rsquo;s
+new location. This is particularly important in cases where
+the size of the directory and pointed to data has grown, so
+it won&rsquo;t fit in the space available at the old
+location.</p>
+<!-- INDENTATION -->
+<p>The <i>TIFFCheckpointDirectory</i> writes the current
+state of the tiff directory into the file to make what is
+currently in the file readable. Unlike
+<i>TIFFWriteDirectory, TIFFCheckpointDirectory</i> does not
+free up the directory data structures in memory, so they can
+be updated (as strips/tiles are written) and written again.
+Reading such a partial file you will at worst get a tiff
+read error for the first strip/tile encountered that is
+incomplete, but you will at least get all the valid data in
+the file before that. When the file is complete, just use
+<i>TIFFWriteDirectory</i> as usual to finish it off
+cleanly.</p>
+</td>
+</table></p>
+<a name="RETURN VALUES"></a>
+<h2>RETURN VALUES</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>1 is returned when the contents are successfully written
+to the file. Otherwise, 0 is returned if an error was
+encountered when writing the directory contents.</p>
+</td>
+</table></p>
+<a name="DIAGNOSTICS"></a>
+<h2>DIAGNOSTICS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>All error messages are directed to the
+<i>TIFFError</i>(3T) routine.</p>
+<!-- INDENTATION -->
+<p><b>Error post-encoding before directory write</b>. Before
+writing the contents of the current directory, any pending
+data are flushed. This message indicates that an error
+occurred while doing this.</p>
+<!-- INDENTATION -->
+<p><b>Error flushing data before directory write</b>. Before
+writing the contents of the current directory, any pending
+data are flushed. This message indicates that an error
+occurred while doing this.</p>
+<!-- INDENTATION -->
+<p><b>Cannot write directory, out of space</b>. There was
+not enough space to allocate a temporary area for the
+directory that was to be written.</p>
+<!-- INDENTATION -->
+<p><b>Error writing directory count</b>. A write error
+occurred when writing the count of fields in the
+directory.</p>
+<!-- INDENTATION -->
+<p><b>Error writing directory contents</b>. A write error
+occurred when writing the directory fields.</p>
+<!-- INDENTATION -->
+<p><b>Error writing directory link</b>. A write error
+occurred when writing the link to the next directory.</p>
+<!-- INDENTATION -->
+<p><b>Error writing data for field &quot;%s&quot;</b>. A
+write error occurred when writing indirect data for the
+specified field.</p>
+<!-- INDENTATION -->
+<p><b>Error writing TIFF header</b>. A write error occurred
+when re-writing header at the front of the file.</p>
+<!-- INDENTATION -->
+<p><b>Error fetching directory count</b>. A read error
+occurred when fetching the directory count field for a
+previous directory. This can occur when setting up a link to
+the directory that is being written.</p>
+<!-- INDENTATION -->
+<p><b>Error fetching directory link</b>. A read error
+occurred when fetching the directory link field for a
+previous directory. This can occur when setting up a link to
+the directory that is being written.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>libtiff</i>(3T), <i>TIFFOpen</i>(3T),
+<i>TIFFError</i>(3T), <i>TIFFReadDirectory</i>(3T),
+<i>TIFFSetDirectory</i>(3T)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

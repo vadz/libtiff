@@ -1,147 +1,145 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of TIFFWriteEncodedStrip</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>TIFFWriteEncodedStrip</H1>
-Section: Misc. Reference Manual Pages (3T)<BR>Updated: October 15, 1995<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>TIFFWriteEncodedStrip</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>TIFFWriteEncodedStrip</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#NOTES">NOTES</a><br>
+<a href="#RETURN VALUES">RETURN VALUES</a><br>
+<a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-TIFFWritedEncodedStrip - compress and write a strip of data to an open
-<FONT SIZE="-1">TIFF</FONT>
-file
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
-
-<B>#include &lt;<A HREF="file:/usr/include/tiffio.h">tiffio.h</A>&gt;</B>
-
-<BR>
-
-<B>tsize_t TIFFWriteEncodedStrip(TIFF* tif, tstrip_t strip, tdata_t buf, tsize_t size)</B>
-
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-Compress
-<I>size</I>
-
-bytes of raw data from
-<I>buf</I>
-
-and write the result to the specified strip; replacing
-any previously written data.
-Note that the value of
-<I>strip</I>
-
-is a ``raw strip number.''
-That is, the caller must take into account whether or not the
-data are organized in separate places (<I>PlanarConfiguration</I>=2).
-
-<A NAME="lbAE">&nbsp;</A>
-<H2>NOTES</H2>
-
-The library writes encoded data using the native machine byte order.
-Correctly implemented
-<FONT SIZE="-1">TIFF</FONT>
-readers are expected to do any necessary byte-swapping to
-correctly process image data with BitsPerSample greater than 8.
-<P>
-
-The strip number must be valid according to the current settings
-of the
-<I>ImageLength</I>
-
-and
-<I>RowsPerStrip</I>
-
-tags.
-An image may be dynamically grown by increasing the value of
-<I>ImageLength</I>
-
-prior to each call to
-<I>TIFFWriteEncodedStrip</I>.
-
-<A NAME="lbAF">&nbsp;</A>
-<H2>RETURN VALUES</H2>
-
--1 is returned if an error was encountered.
-Otherwise, the value of
-<I>size</I>
-
-is returned.
-<A NAME="lbAG">&nbsp;</A>
-<H2>DIAGNOSTICS</H2>
-
-All error messages are directed to the
-<I><A HREF="TIFFError.3t.html">TIFFError</A></I>(3T)
-
-routine.
-<P>
-
-<B>%s: File not open for writing</B>.
-The file was opened for reading, not writing.
-<P>
-
-<B>Can not write scanlines to a tiled image</B>.
-The image is assumed to be organized in tiles because the
-<I>TileWidth</I>
-
-and
-<I>TileLength</I>
-
-tags have been set with
-<I><A HREF="TIFFSetField.3t.html">TIFFSetField</A></I>(3T).
-
-<P>
-
-<B>%s: Must set &quot;ImageWidth&quot; before writing data</B>.
-The image's width has not be set before the first write.
-See
-<I><A HREF="TIFFSetField.3t.html">TIFFSetField</A></I>(3T)
-
-for information on how to do this.
-<P>
-
-<B>%s: Must set &quot;PlanarConfiguration&quot; before writing data</B>.
-The organization of data has not be defined before the first write.
-See
-<I><A HREF="TIFFSetField.3t.html">TIFFSetField</A></I>(3T)
-
-for information on how to do this.
-<P>
-
-<B>%s: No space for strip arrays&quot;</B>.
-There was not enough space for the arrays that hold strip
-offsets and byte counts.
-<A NAME="lbAH">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="libtiff.3t.html">libtiff</A></I>(3T),
-
-<I><A HREF="TIFFOpen.3t.html">TIFFOpen</A></I>(3T),
-
-<I><A HREF="TIFFWriteScanline.3t.html">TIFFWriteScanline</A></I>(3T),
-
-<I><A HREF="TIFFWriteRawStrip.3t.html">TIFFWriteRawStrip</A></I>(3T)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">NOTES</A><DD>
-<DT><A HREF="#lbAF">RETURN VALUES</A><DD>
-<DT><A HREF="#lbAG">DIAGNOSTICS</A><DD>
-<DT><A HREF="#lbAH">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:38 GMT, November 23, 1999
-</BODY>
-</HTML>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:27 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big>TIFFWritedEncodedStrip &minus; compress and write a
+strip of data to an open</big> TIFF <big>file</big></p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big><b>#include &lt;tiffio.h&gt;<br>
+tsize_t TIFFWriteEncodedStrip(TIFF* tif, tstrip_t strip,
+tdata_t buf, tsize_t size)</b></big></p>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big>Compress <i>size</i> bytes of raw data from
+<i>buf</i> and write the result to the specified strip;
+replacing any previously written data. Note that the value
+of <i>strip</i> is a &lsquo;&lsquo;raw strip
+number.&rsquo;&rsquo; That is, the caller must take into
+account whether or not the data are organized in separate
+places (<i>PlanarConfiguration</i>=2).</big></p>
+</td>
+</table></p>
+<a name="NOTES"></a>
+<h2>NOTES</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big>The library writes encoded data using the native
+machine byte order. Correctly implemented</big> TIFF
+<big>readers are expected to do any necessary byte-swapping
+to correctly process image data with BitsPerSample greater
+than 8.</big></p>
+<!-- INDENTATION -->
+<p><big>The strip number must be valid according to the
+current settings of the <i>ImageLength</i> and
+<i>RowsPerStrip</i> tags. An image may be dynamically grown
+by increasing the value of <i>ImageLength</i> prior to each
+call to <i>TIFFWriteEncodedStrip</i>.</big></p>
+</td>
+</table></p>
+<a name="RETURN VALUES"></a>
+<h2>RETURN VALUES</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big>&minus;1 is returned if an error was encountered.
+Otherwise, the value of <i>size</i> is returned.</big></p>
+</td>
+</table></p>
+<a name="DIAGNOSTICS"></a>
+<h2>DIAGNOSTICS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big>All error messages are directed to the
+<i>TIFFError</i>(3T) routine.</big></p>
+<!-- INDENTATION -->
+<p><big><b>%s: File not open for writing</b>. The file was
+opened for reading, not writing.</big></p>
+<!-- INDENTATION -->
+<p><big><b>Can not write scanlines to a tiled image</b>. The
+image is assumed to be organized in tiles because the
+<i>TileWidth</i> and <i>TileLength</i> tags have been set
+with <i>TIFFSetField</i>(3T).</big></p>
+<!-- INDENTATION -->
+<p><big><b>%s: Must set &quot;ImageWidth&quot; before
+writing data</b>. The image&rsquo;s width has not be set
+before the first write. See <i>TIFFSetField</i>(3T) for
+information on how to do this.</big></p>
+<!-- INDENTATION -->
+<p><big><b>%s: Must set &quot;PlanarConfiguration&quot;
+before writing data</b>. The organization of data has not be
+defined before the first write. See <i>TIFFSetField</i>(3T)
+for information on how to do this.</big></p>
+<!-- INDENTATION -->
+<p><big><b>%s: No space for strip arrays&quot;</b>. There
+was not enough space for the arrays that hold strip offsets
+and byte counts.</big></p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><big><i>libtiff</i>(3T), <i>TIFFOpen</i>(3T),
+<i>TIFFWriteScanline</i>(3T),
+<i>TIFFWriteRawStrip</i>(3T)</big></p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

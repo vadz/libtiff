@@ -1,237 +1,534 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of TIFF2PS</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>TIFF2PS</H1>
-Section: User Commands  (1)<BR>Updated: January 27, 1997<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>TIFF2PS</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>TIFF2PS</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#EXAMPLES">EXAMPLES</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-tiff2ps - convert a
-<FONT SIZE="-1">TIFF</FONT>
-image to P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT>tm
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:37 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>tiff2ps &minus; convert a <small>TIFF</small> image to P
+<small>OST</small> S <small>CRIPT</small> &trade;</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>tiff2ps</b> [ <i>options</i> ] <i>input.tif
+...</i></p>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>tiff2ps</i> reads <small>TIFF</small> images and
+writes P <small>OST</small> S <small>CRIPT</small> or
+Encapsulated P <small>OST</small> S <small>CRIPT</small>
+(EPS) on the standard output. By default, <i>tiff2ps</i>
+writes Encapsulated P <small>OST</small> S
+<small>CRIPT</small> for the first image in the specified
+<small>TIFF</small> image file.</p>
+<!-- INDENTATION -->
+<p>By default, <i>tiff2ps</i> will generate P
+<small>OST</small> S <small>CRIPT</small> that fills a
+printed area specified by the <small>TIFF</small> tags in
+the input file. If the file does not contain
+<i>XResolution</i> or <i>YResolution</i> tags, then the
+printed area is set according to the image dimensions. The
+<b>&minus;w</b> and <b>&minus;h</b> options (see below) can
+be used to set the dimensions of the printed area in inches;
+overriding any relevant <small>TIFF</small> tags.</p>
+<!-- INDENTATION -->
+<p>The P <small>OST</small> S <small>CRIPT</small> generated
+for <small>RGB,</small> palette, and <small>CMYK</small>
+images uses the <i>colorimage</i> operator. The P
+<small>OST</small> S <small>CRIPT</small> generated for
+greyscale and bilevel images uses the <i>image</i> operator.
+When the <i>colorimage</i> operator is used, P
+<small>OST</small> S <small>CRIPT</small> code to emulate
+this operator on older P <small>OST</small> S
+<small>CRIPT</small> printers is also generated. Note that
+this emulation code can be very slow.</p>
+<!-- INDENTATION -->
+<p>Color images with associated alpha data are composited
+over a white background.</p>
+</td>
+</table></p>
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+<!-- TABS -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="5" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<B>tiff2ps</B>
+<p><b>&minus;1</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-[
-<I>options</I>
+<p>Generate P <small>OST</small> S <small>CRIPT</small>
+Level I (the default).</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-]
-<I>input.tif ...</I>
+<p><b>&minus;2</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
+<p>Generate P <small>OST</small> S <small>CRIPT</small>
+Level II.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<I>tiff2ps</I>
+<p><b>&minus;a</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-reads
-<FONT SIZE="-1">TIFF</FONT>
-images and writes P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> or Encapsulated P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> (EPS)
-on the standard output.
-By default,
-<I>tiff2ps</I>
+<p>Generate output for all IFDs (pages) in the input
+file.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-writes Encapsulated P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> for the first image in the specified
-<FONT SIZE="-1">TIFF</FONT>
-image file.
-<P>
+<p><b>&minus;b</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-By default,
-<I>tiff2ps</I>
+<p>Specify the bottom margin for the output (in inches).
+This does not affect the height of the printed image.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-will generate P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> that fills a printed area specified
-by the 
-<FONT SIZE="-1">TIFF</FONT>
-tags in the input file.
-If the file does not contain
-<I>XResolution</I>
+<p><b>&minus;c</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-or
-<I>YResolution</I>
+<p>Center the image in the output. This option only shows
+an effect if both the -w and the -h option are given.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-tags, then the printed area is set according to the image dimensions.
-The
-<B>-w</B>
+<p><b>&minus;d</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-and
-<B>-h</B>
+<p>Set the initial <small>TIFF</small> directory to the
+specified directory number. (NB: directories are numbered
+starting at zero.) This option is useful for selecting
+individual pages in a multi-page (e.g. facsimile) file.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-options (see below)
-can be used to set the dimensions of the printed area in inches;
-overriding any relevant
-<FONT SIZE="-1">TIFF</FONT>
-tags.
-<P>
+<p><b>&minus;e</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-The P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> generated for
-<FONT SIZE="-1">RGB,</FONT>
-palette, and
-<FONT SIZE="-1">CMYK</FONT>
-images uses the
-<I>colorimage</I>
+<p>Force the generation of Encapsulated P
+<small>OST</small> S <small>CRIPT</small> .</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-operator.
-The P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> generated for
-greyscale and bilevel images
-uses the
-<I>image</I>
+<p><b>&minus;h</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-operator.
-When the
-<I>colorimage</I>
+<p>Specify the vertical size of the printed area (in
+inches).</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-operator is used, P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> code to emulate this operator
-on older P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> printers is also generated.
-Note that this emulation code can be very slow.
-<P>
+<p><b>&minus;H</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-Color images with associated alpha data are composited over
-a white background.
-<A NAME="lbAE">&nbsp;</A>
-<H2>OPTIONS</H2>
+<p>Specify the maximum height of image (in inches). Images
+with larger sizes will be splitted in several pages. Option
+<b>&minus;L</b> may be used for specifying size of splitted
+images overlapping.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<DL COMPACT>
-<DT><B>-1</B>
+<p><b>&minus;i</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-Generate P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> Level I (the default).
-<DT><B>-2</B>
+<p>Enable/disable pixel interpolation. This option requires
+a single numeric value: zero to disable pixel interpolation
+and non-zero to enable. The default is enabled.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<DD>
-Generate P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> Level II.
-<DT><B>-a</B>
+<p><b>&minus;L</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-Generate output for all IFDs (pages) in the input file.
-<DT><B>-d</B>
+<p>Specify the size of overlapping for splitted images (in
+inches). Used in conjuction with <b>&minus;H</b> option.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<DD>
-Set the initial
-<FONT SIZE="-1">TIFF</FONT>
-directory to the specified directory number.
-(NB: directories are numbered starting at zero.)
-This option is useful for selecting individual pages in a
-multi-page (e.g. facsimile) file.
-<DT><B>-e</B>
+<p><b>&minus;l</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-Force the generation of Encapsulated P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT>.
-<DT><B>-h</B>
+<p>Specify the left margin for the output (in inches). This
+does not affect the width of the printed image.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<DD>
-Specify the vertical size of the printed area (in inches).
-<DT><B>-o</B>
+<p><b>&minus;m</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-Set the initial
-<FONT SIZE="-1">TIFF</FONT>
-directory to the
-<FONT SIZE="-1">IFD</FONT>
-at the specified file offset.
-This option is useful for selecting thumbnail images and the
-like which are hidden using the SubIFD tag.
-<DT><B>-p</B>
+<p>Where possible render using the <b>imagemask</b> P
+<small>OST</small> S <small>CRIPT</small> operator instead
+of the image operator. When this option is specified
+<i>tiff2ps</i> will use <b>imagemask</b> for rendering 1 bit
+deep images. If this option is not specified or if the image
+depth is greater than 1 then the image operator is used.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<DD>
-Force the generation of (non-Encapsulated) P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT>.
-<DT><B>-s</B>
+<p><b>&minus;o</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-Generate output for a single IFD (page) in the input file.
-<DT><B>-w</B>
+<p>Set the initial <small>TIFF</small> directory to the
+<small>IFD</small> at the specified file offset. This option
+is useful for selecting thumbnail images and the like which
+are hidden using the SubIFD tag.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<DD>
-Specify the horizontal size of the printed area (in inches).
-<DT><B>-z</B>
+<p><b>&minus;p</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<DD>
-When generating P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> Level II, data is scaled so that it does not
-image into the 
-<I>deadzone</I>
+<p>Force the generation of (non-Encapsulated) P
+<small>OST</small> S <small>CRIPT</small> .</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-on a page (the outer margin that the printing device is unable to mark).
-This option suppresses this behaviour.
-When P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> Level I is generated, data is imaged to the entire printed
-page and this option has no affect.
-</DL>
-<A NAME="lbAF">&nbsp;</A>
-<H2>EXAMPLES</H2>
+<p><b>&minus;r</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-The following generates P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> Level II for all pages of a facsimile:
-<DL COMPACT><DT><DD>
-<PRE>
-tiff2ps -a2 fax.tif | lpr
-</PRE>
+<p>Rotate image by 180 degrees.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-</DL>
+<p><b>&minus;s</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-Note also that if you have version 2.6.1 or newer of Ghostscript then you
-can efficiently preview facsimile generated with the above command.
-<P>
+<p>Generate output for a single IFD (page) in the input
+file.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-To generate Encapsulated P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> for a the image at directory 2
-of an image use:
-<DL COMPACT><DT><DD>
-<PRE>
-tiff2ps -d 1 foo.tif
-</PRE>
+<p><b>&minus;w</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-</DL>
+<p>Specify the horizontal size of the printed area (in
+inches).</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-(notice that directories are numbered starting at zero.)
-<A NAME="lbAG">&nbsp;</A>
-<H2>BUGS</H2>
+<p><b>&minus;x</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-Because P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> does not support the notion of a colormap,
-8-bit palette images produce 24-bit P<FONT SIZE="-2">OST</FONT>S<FONT SIZE="-2">CRIPT</FONT> images.
-This conversion results in output that is six times
+<p>Override resolution units specified in the TIFF as
+centimeters.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
+
+<p><b>&minus;y</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
+
+<p>Override resolution units specified in the TIFF as
+inches.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
+
+<p><b>&minus;z</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
+
+<p>When generating P <small>OST</small> S
+<small>CRIPT</small> Level II, data is scaled so that it
+does not image into the <i>deadzone</i> on a page (the outer
+margin that the printing device is unable to mark). This
+option suppresses this behaviour. When P <small>OST</small>
+S <small>CRIPT</small> Level I is generated, data is imaged
+to the entire printed page and this option has no
+affect.</p>
+</td>
+<td width="0%">
+</td>
+</table></p>
+<a name="EXAMPLES"></a>
+<h2>EXAMPLES</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>The following generates P <small>OST</small> S
+<small>CRIPT</small> Level II for all pages of a
+facsimile:</p></td>
+</table></p>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="17%"></td>
+<td width="82%">
+<pre>tiff2ps -a2 fax.tif | lpr
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Note also that if you have version 2.6.1 or newer of
+Ghostscript then you can efficiently preview facsimile
+generated with the above command.</p>
+<!-- INDENTATION -->
+<p>To generate Encapsulated P <small>OST</small> S
+<small>CRIPT</small> for a the image at directory 2 of an
+image use:</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="17%"></td>
+<td width="82%">
+<pre>tiff2ps -d 1 foo.tif
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>(notice that directories are numbered starting at
+zero.)</p>
+<!-- INDENTATION -->
+<p>If you have a long image, it may be splitted in several
+pages:</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="17%"></td>
+<td width="82%">
+<pre>tiff2ps -h11 -w8.5 -H14 -L.5 foo.tif &gt; foo.ps
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>The page size is set to 8.5x11 by <b>&minus;w</b> and
+<b>&minus;h</b> options. We will accept a small amount of
+vertical compression, so <b>&minus;H</b> set to 14. Any
+pages between 11 and 14 inches will be fit onto one page.
+Pages longer than 14 inches are cut off at 11 and continued
+on the next page. The <b>&minus;L.5</b> option says to
+repeat a half inch on the next page (to improve
+readability).</p>
+</td>
+</table>
+<a name="BUGS"></a>
+<h2>BUGS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Because P <small>OST</small> S <small>CRIPT</small> does
+not support the notion of a colormap, 8-bit palette images
+produce 24-bit P <small>OST</small> S <small>CRIPT</small>
+images. This conversion results in output that is six times
 bigger than the original image and which takes a long time
-to send to a printer over a serial line.
-Matters are even worse for 4-, 2-, and 1-bit palette images.
-<A NAME="lbAH">&nbsp;</A>
-<H2>BUGS</H2>
-
-Does not handle tiled images when generating PS Level I output.
-<A NAME="lbAI">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="pal2rgb+1.html">pal2rgb</A></I>(1),
-
-<I><A HREF="tiffinfo+1.html">tiffinfo</A></I>(1),
-
-<I><A HREF="tiffcp+1.html">tiffcp</A></I>(1),
-
-<I><A HREF="tiffgt+1.html">tiffgt</A></I>(1),
-
-<I><A HREF="tiffmedian+1.html">tiffmedian</A></I>(1),
-
-<I><A HREF="tiff2bw+1.html">tiff2bw</A></I>(1),
-
-<I><A HREF="tiffsv+1.html">tiffsv</A></I>(1),
-
-<I><A HREF="libtiff+3">libtiff</A></I>(3)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">OPTIONS</A><DD>
-<DT><A HREF="#lbAF">EXAMPLES</A><DD>
-<DT><A HREF="#lbAG">BUGS</A><DD>
-<DT><A HREF="#lbAH">BUGS</A><DD>
-<DT><A HREF="#lbAI">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:47 GMT, November 23, 1999
-</BODY>
-</HTML>
+to send to a printer over a serial line. Matters are even
+worse for 4-, 2-, and 1-bit palette images.</p>
+</td>
+</table></p>
+<a name="BUGS"></a>
+<h2>BUGS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Does not handle tiled images when generating PS Level I
+output.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>pal2rgb</i>(1), <i>tiffinfo</i>(1), <i>tiffcp</i>(1),
+<i>tiffgt</i>(1), <i>tiffmedian</i>(1), <i>tiff2bw</i>(1),
+<i>tiffsv</i>(1), <i>libtiff</i>(3)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

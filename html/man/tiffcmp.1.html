@@ -1,106 +1,131 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of TIFFCMP</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>TIFFCMP</H1>
-Section: User Commands  (1)<BR>Updated: September 26, 1994<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>TIFFCMP</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>TIFFCMP</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-tiffcmp - compare two
-<FONT SIZE="-1">TIFF</FONT>
-files
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:39 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>tiffcmp &minus; compare two <small>TIFF</small> files</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>tiffcmp</b> [ <i>options</i> ] <i>file1.tif
+file2.tif</i></p>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>Tiffcmp</i> compares the tags and data in two files
+created according to the Tagged Image File Format, Revision
+6.0. The schemes used for compressing data in each file are
+immaterial when data are compared&minus;data are compared on
+a scanline-by-scanline basis after decompression. Most
+directory tags are checked; notable exceptions are:
+<i>GrayResponseCurve</i>, <i>ColorResponseCurve</i>, and
+<i>ColorMap</i> tags. Data will not be compared if any of
+the <i>BitsPerSample</i>, <i>SamplesPerPixel</i>, or
+<i>ImageWidth</i> values are not equal. By default,
+<i>tiffcmp</i> will terminate if it encounters any
+difference.</p>
+</td>
+</table></p>
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+<!-- TABS -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="5" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-<B>tiffcmp</B>
+<p><b>&minus;l</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-[
-<I>options</I>
+<p>List each byte of image data that differs between the
+files.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
 
-]
-<I>file1.tif file2.tif</I>
+<p><b>&minus;t</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
 
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-<I>Tiffcmp</I>
-
-compares the tags and data in two files created according
-to the Tagged Image File Format, Revision 6.0.
-The schemes used for compressing data in each file
-are immaterial when data are compared-data are compared on
-a scanline-by-scanline basis after decompression.
-Most directory tags are checked; notable exceptions are:
-<I>GrayResponseCurve</I>,
-
-<I>ColorResponseCurve</I>,
-
-and
-<I>ColorMap</I>
-
-tags.
-Data will not be compared if any of the
-<I>BitsPerSample</I>,
-
-<I>SamplesPerPixel</I>,
-
-or
-<I>ImageWidth</I>
-
-values are not equal.
-By default,
-<I>tiffcmp</I>
-
-will terminate if it encounters any difference.
-<A NAME="lbAE">&nbsp;</A>
-<H2>OPTIONS</H2>
-
-<DL COMPACT>
-<DT><B>-l</B>
-
-<DD>
-List each byte of image data that differs between the files.
-<DT><B>-t</B>
-
-<DD>
-Ignore any differences in directory tags.
-</DL>
-<A NAME="lbAF">&nbsp;</A>
-<H2>BUGS</H2>
-
-Tags that are not recognized by the library are not
-compared; they may also generate spurious diagnostics.
-<A NAME="lbAG">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="pal2rgb+1.html">pal2rgb</A></I>(1),
-
-<I><A HREF="tiffinfo+1.html">tiffinfo</A></I>(1),
-
-<I><A HREF="tiffcp+1.html">tiffcp</A></I>(1),
-
-<I><A HREF="tiffmedian+1.html">tiffmedian</A></I>(1),
-
-<I><A HREF="libtiff+3">libtiff</A></I>(3)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">OPTIONS</A><DD>
-<DT><A HREF="#lbAF">BUGS</A><DD>
-<DT><A HREF="#lbAG">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:47 GMT, November 23, 1999
-</BODY>
-</HTML>
+<p>Ignore any differences in directory tags.</p>
+</td>
+<td width="0%">
+</td>
+</table></p>
+<a name="BUGS"></a>
+<h2>BUGS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Tags that are not recognized by the library are not
+compared; they may also generate spurious diagnostics.</p>
+<!-- INDENTATION -->
+<p>The image data of tiled files is not compared, since the
+TIFFReadScanline() function is used. A error will be
+reported for tiled files.</p>
+<!-- INDENTATION -->
+<p>The pixel and/or sample number reported in differences
+may be off in some exotic cases.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>pal2rgb</i>(1), <i>tiffinfo</i>(1), <i>tiffcp</i>(1),
+<i>tiffmedian</i>(1), <i>libtiff</i>(3)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>

@@ -1,178 +1,148 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<HTML><HEAD><TITLE>Manpage of QUERY</TITLE>
-</HEAD><BODY BGCOLOR=WHITE><FONT FACE="helvetica, sans, arial">
-<H1>QUERY</H1>
-Section: Misc. Reference Manual Pages (3T)<BR>Updated: October 15, 1995<BR><A HREF="#index">Index</A>
-<BR><A HREF="index.html">Return to Main Contents</A>
-<HR>
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>QUERY</title>
+</head>
+<body>
 
-<A NAME="lbAB">&nbsp;</A>
-<H2>NAME</H2>
+<h1 align=center>QUERY</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
 
-TIFFCurrentRow,
-TIFFCurrentStrip,
-TIFFCurrentTile,
-TIFFCurrentDirectory,
-TIFFLastDirectory,
-TIFFFileno,
-TIFFFileName,
-TIFFGetMode,
-TIFFIsTiled,
-TIFFIsByteSwapped,
-TIFFIsUpSampled,
-TIFFIsMSB2LSB
-- query routines
-<A NAME="lbAC">&nbsp;</A>
-<H2>SYNOPSIS</H2>
+<hr>
+<!-- Creator     : groff version 1.18 -->
+<!-- CreationDate: Mon Oct  7 17:36:14 2002 -->
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>TIFFCurrentRow, TIFFCurrentStrip, TIFFCurrentTile,
+TIFFCurrentDirectory, TIFFLastDirectory, TIFFFileno,
+TIFFFileName, TIFFGetMode, TIFFIsTiled, TIFFIsByteSwapped,
+TIFFIsUpSampled, TIFFIsMSB2LSB &minus; query routines</p>
+</td>
+</table></p>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<pre><b>#include &lt;tiffio.h&gt;
+uint32 TIFFCurrentRow(TIFF* tif)
+tstrip_t TIFFCurrentStrip(TIFF* tif)
+ttile_t TIFFCurrentTile(TIFF* tif)
+tdir_t TIFFCurrentDirectory(TIFF* tif)
+int TIFFLastDirectory(TIFF* tif)
+int TIFFFileno(TIFF* tif)
+char* TIFFFileName(TIFF* tif)
+int TIFFGetMode(TIFF* tif)
+int TIFFIsTiled(TIFF* tif)
+int TIFFIsByteSwapped(TIFF* tif)
+int TIFFIsUpSampled(TIFF* tif)
+int TIFFIsMSB2LSB(TIFF* tif)
+const char* TIFFGetVersion(void)
+</b></pre>
+</td>
+</table></p>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
 
-<PRE>
-<B>#include &lt;<A HREF="file:/usr/include/tiffio.h">tiffio.h</A>&gt;</B>
-<B>uint32 TIFFCurrentRow(TIFF* tif)</B>
-<B>tstrip_t TIFFCurrentStrip(TIFF* tif)</B>
-<B>ttile_t TIFFCurrentTile(TIFF* tif)</B>
-<B>tdir_t TIFFCurrentDirectory(TIFF* tif)</B>
-<B>int TIFFLastDirectory(TIFF* tif)</B>
-<B>int TIFFFileno(TIFF* tif)</B>
-<B>char* TIFFFileName(TIFF* tif)</B>
-<B>int TIFFGetMode(TIFF* tif)</B>
-<B>int TIFFIsTiled(TIFF* tif)</B>
-<B>int TIFFIsByteSwapped(TIFF* tif)</B>
-<B>int TIFFIsUpSampled(TIFF* tif)</B>
-<B>int TIFFIsMSB2LSB(TIFF* tif)</B>
-<B>const char* TIFFGetVersion(void)</B>
-</PRE>
-
-<A NAME="lbAD">&nbsp;</A>
-<H2>DESCRIPTION</H2>
-
-The following routines return status information about an open
-<FONT SIZE="-1">TIFF</FONT>
-file.
-<P>
-
-<I>TIFFCurrentDirectory</I>
-
-returns the index of the current directory (directories
-are numbered starting at 0).
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>The following routines return status information about an
+open <small>TIFF</small> file.</p>
+<!-- INDENTATION -->
+<p><i>TIFFCurrentDirectory</i> returns the index of the
+current directory (directories are numbered starting at 0).
 This number is suitable for use with the
-<I>TIFFSetDirectory</I>
-
-routine.
-<P>
-
-<I>TIFFLastDirectory</I>
-
-returns a non-zero value if the current directory is the
-last directory in the file;
-otherwise zero is returned.
-<P>
-
-<I>TIFFCurrentRow</I>,
-
-<I>TIFFCurrentStrip</I>,
-
-and
-<I>TIFFCurrentTile</I>,
-
-return the current row, strip, and tile, respectively,
-that is being read or written.
-These values are updated each time a read or write is done.
-<P>
-
-<I>TIFFFileno</I>
-
-returns the underlying file descriptor used to access the 
-<FONT SIZE="-1">TIFF</FONT>
-image in the filesystem.
-<P>
-
-<I>TIFFFileName</I>
-
-returns the pathname argument passed to
-<I>TIFFOpen</I>
-
-or
-<I>TIFFFdOpen</I>.
-
-<P>
-
-<I>TIFFGetMode</I>
-
-returns the mode with which the underlying file was opened.
-On
-<FONT SIZE="-1">UNIX</FONT>
-systems, this is the value passed to the
-<I><A HREF="open+2">open</A></I>(2)
-
-system call.
-<P>
-
-<I>TIFFIsTiled</I>
-
-returns a non-zero value if the image data has
-a tiled organization.
-Zero is returned if the image data is organized in strips.
-<P>
-
-<I>TIFFIsByteSwapped</I>
-
-returns a non-zero value if the image data was in a different
-byte-order than the host machine.
-Zero is returned if the image data and local host byte-orders
-are the same.
-Data samples that are more than 8 bits wide must be byte-swapped
-by the application.
-<P>
-
-<I>TIFFIsUpSampled</I>
-
-returns a non-zero value if image data returned through the
-read interface routines is being up-sampled.
-This can be useful to applications that want to calculate
-I/O buffer sizes to reflect this usage (though the usual
-strip and tile size routines already do this).
-<P>
-
-<I>TIFFIsMSB2LSB</I>
-
-returns a non-zero value if the image data is being returned with
-bit 0 as the most significant bit.
-<P>
-
-<I>TIFFGetVersion</I>
-
-returns an
-<FONT SIZE="-1">ASCII</FONT>
-string that has a version stamp for the 
-<FONT SIZE="-1">TIFF</FONT>
-library software.
-<A NAME="lbAE">&nbsp;</A>
-<H2>DIAGNOSTICS</H2>
-
-None.
-<A NAME="lbAF">&nbsp;</A>
-<H2>SEE ALSO</H2>
-
-<I><A HREF="libtiff.3t.html">libtiff</A></I>(3T),
-
-<I><A HREF="TIFFOpen.3t.html">TIFFOpen</A></I>(3T),
-
-<I><A HREF="TIFFFdOpen.3t.html">TIFFFdOpen</A></I>(3T)
-
-
-<HR>
-<A NAME="index">&nbsp;</A><H2>Index</H2>
-<DL>
-<DT><A HREF="#lbAB">NAME</A><DD>
-<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
-<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
-<DT><A HREF="#lbAE">DIAGNOSTICS</A><DD>
-<DT><A HREF="#lbAF">SEE ALSO</A><DD>
-</DL>
-<HR>
-This document was created by
-<A HREF="index.html">man2html</A>,
-using the manual pages.<BR>
-Time: 01:31:39 GMT, November 23, 1999
-</BODY>
-</HTML>
+<i>TIFFSetDirectory</i> routine.</p>
+<!-- INDENTATION -->
+<p><i>TIFFLastDirectory</i> returns a non-zero value if the
+current directory is the last directory in the file;
+otherwise zero is returned.</p>
+<!-- INDENTATION -->
+<p><i>TIFFCurrentRow</i>, <i>TIFFCurrentStrip</i>, and
+<i>TIFFCurrentTile</i>, return the current row, strip, and
+tile, respectively, that is being read or written. These
+values are updated each time a read or write is done.</p>
+<!-- INDENTATION -->
+<p><i>TIFFFileno</i> returns the underlying file descriptor
+used to access the <small>TIFF</small> image in the
+filesystem.</p>
+<!-- INDENTATION -->
+<p><i>TIFFFileName</i> returns the pathname argument passed
+to <i>TIFFOpen</i> or <i>TIFFFdOpen</i>.</p>
+<!-- INDENTATION -->
+<p><i>TIFFGetMode</i> returns the mode with which the
+underlying file was opened. On <small>UNIX</small> systems,
+this is the value passed to the <i>open</i>(2) system
+call.</p>
+<!-- INDENTATION -->
+<p><i>TIFFIsTiled</i> returns a non-zero value if the image
+data has a tiled organization. Zero is returned if the image
+data is organized in strips.</p>
+<!-- INDENTATION -->
+<p><i>TIFFIsByteSwapped</i> returns a non-zero value if the
+image data was in a different byte-order than the host
+machine. Zero is returned if the TIFF file and local host
+byte-orders are the same. Note that TIFFReadTile(),
+TIFFReadStrip() and TIFFReadScanline() functions already
+normally perform byte swapping to local host order if
+needed.</p>
+<!-- INDENTATION -->
+<p><i>TIFFIsUpSampled</i> returns a non-zero value if image
+data returned through the read interface routines is being
+up-sampled. This can be useful to applications that want to
+calculate I/O buffer sizes to reflect this usage (though the
+usual strip and tile size routines already do this).</p>
+<!-- INDENTATION -->
+<p><i>TIFFIsMSB2LSB</i> returns a non-zero value if the
+image data is being returned with bit 0 as the most
+significant bit.</p>
+<!-- INDENTATION -->
+<p><i>TIFFGetVersion</i> returns an <small>ASCII</small>
+string that has a version stamp for the <small>TIFF</small>
+library software.</p>
+</td>
+</table></p>
+<a name="DIAGNOSTICS"></a>
+<h2>DIAGNOSTICS</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>None.</p>
+</td>
+</table></p>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<p><table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>libtiff</i>(3T), <i>TIFFOpen</i>(3T),
+<i>TIFFFdOpen</i>(3T)</p>
+</td>
+</table></p>
+<hr>
+</body>
+</html>
