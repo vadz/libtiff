@@ -418,7 +418,7 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		if (fip->field_tag == tag &&
 		    (dt == TIFF_ANY || fip->field_type == dt))
-			return (tif->tif_foundfield = (TIFFFieldInfo*)fip);
+			return (tif->tif_foundfield = fip);
 	}
 	return ((const TIFFFieldInfo *)0);
 }
@@ -446,7 +446,7 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		if (streq(fip->field_name, field_name) &&
 		    (dt == TIFF_ANY || fip->field_type == dt))
-			return (tif->tif_foundfield = (TIFFFieldInfo*)fip);
+			return (tif->tif_foundfield = fip);
 	}
 	return ((const TIFFFieldInfo *)0);
 }
