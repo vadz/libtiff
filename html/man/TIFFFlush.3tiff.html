@@ -1,19 +1,19 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Sun Mar  6 14:00:00 2005 -->
+<!-- CreationDate: Sun Mar  6 13:59:51 2005 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
 <meta name="Content-Style" content="text/css">
-<title>TIFFCP</title>
+<title>TIFFFlush</title>
 </head>
 <body>
 
-<h1 align=center>TIFFCP</h1>
+<h1 align=center>TIFFFlush</h1>
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
-<a href="#OPTIONS">OPTIONS</a><br>
-<a href="#BUGS">BUGS</a><br>
+<a href="#RETURN VALUES">RETURN VALUES</a><br>
+<a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
@@ -25,8 +25,8 @@
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p>tiffsplit &minus; split a multi-image <small>TIFF</small>
-into single-image <small>TIFF</small> files</p>
+<p>TIFFFlush, TIFFFlushData &minus; flush pending writes to
+an open <small>TIFF</small> file</p>
 </td>
 </table>
 <a name="SYNOPSIS"></a>
@@ -37,7 +37,10 @@ into single-image <small>TIFF</small> files</p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><b>tiffsplit</b> <i>src.tif</i> [ <i>prefix</i> ]</p>
+<p><b>#include &lt;tiffio.h&gt;</b></p>
+<!-- INDENTATION -->
+<p><b>int TIFFFlush(TIFF *</b><i>tif</i><b>)<br>
+int TIFFFlushData(TIFF *</b><i>tif</i><b>)</b></p>
 </td>
 </table>
 <a name="DESCRIPTION"></a>
@@ -48,38 +51,41 @@ into single-image <small>TIFF</small> files</p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>tiffsplit</i> takes a multi-directory (page)
-<small>TIFF</small> file and creates one or more
-single-directory (page) <small>TIFF</small> files from it.
-The output files are given names created by concatenating a
-prefix, a lexically ordered suffix in the range
-[<i>aaa</i>-<i>zzz</i>], the suffix <i>.tif</i> (e.g.
-<i>xaaa.tif</i>, <i>xaab.tif</i>, <i>xzzz.tif</i>). If a
-prefix is not specified on the command line, the default
-prefix of <i>x</i> is used.</p>
+<p><i>TIFFFlush</i> causes any pending writes for the
+specified file (including writes for the current directory)
+to be done. In normal operation this call is never needed
+&minus; the library automatically does any flushing
+required.</p>
+<!-- INDENTATION -->
+<p><i>TIFFFlushData</i> flushes any pending image data for
+the specified file to be written out; directory-related data
+are not flushed. In normal operation this call is never
+needed &minus; the library automatically does any flushing
+required.</p>
 </td>
 </table>
-<a name="OPTIONS"></a>
-<h2>OPTIONS</h2>
+<a name="RETURN VALUES"></a>
+<h2>RETURN VALUES</h2>
 <!-- INDENTATION -->
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p>None.</p>
+<p>0 is returned if an error is encountered, otherwise 1 is
+returned.</p>
 </td>
 </table>
-<a name="BUGS"></a>
-<h2>BUGS</h2>
+<a name="DIAGNOSTICS"></a>
+<h2>DIAGNOSTICS</h2>
 <!-- INDENTATION -->
 <table width="100%" border=0 rules="none" frame="void"
        cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p>Only a select set of &lsquo;&lsquo;known
-tags&rsquo;&rsquo; is copied when spliting.</p>
+<p>All error messages are directed to the
+<i>TIFFError</i>(3TIFF) routine.</p>
 </td>
 </table>
 <a name="SEE ALSO"></a>
@@ -90,8 +96,13 @@ tags&rsquo;&rsquo; is copied when spliting.</p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>tiffcp</i>(1), <i>tiffinfo</i>(1),
-<i>libtiff</i>(3)</p>
+<p><i>libtiff</i>(3TIFF), <i>TIFFOpen</i>(3TIFF),
+<i>TIFFWriteEncodedStrip</i>(3TIFF),
+<i>TIFFWriteEncodedTile</i>(3TIFF),
+<i>TIFFWriteRawStrip</i>(3TIFF),
+<i>TIFFWriteRawTile</i>(3TIFF),
+<i>TIFFWriteScanline</i>(3TIFF),
+<i>TIFFWriteTile</i>(3TIFF)</p>
 </td>
 </table>
 <hr>
