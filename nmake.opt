@@ -98,17 +98,22 @@ EXTRASAMPLE_AS_ALPHA_SUPPORT = 1
 CHECK_JPEG_YCBCR_SUBSAMPLING = 1
 
 #
-########### There is nothing to edit below this line normally. ###########
+# Compiler specific options. You may probably want to adjust compilation
+# parameters in CFLAGS variable. Refer to your compiler documentation
+# for the option reference.
 #
-
 MAKE	=	nmake /nologo
 CC	=	cl /nologo
 AR	=	lib /nologo
 LD	=	link /nologo
 
-CFLAGS  =	/W3 $(INCL) $(WINMODE) $(EXTRAFLAGS)
+CFLAGS  =	/W3 /MD $(INCL) $(WINMODE) $(EXTRAFLAGS)
 EXTRAFLAGS	=
 LIBS	=
+
+#
+########### There is nothing to edit below this line normally. ###########
+#
 
 # Set the native cpu bit order
 EXTRAFLAGS	= -DFILLODER_LSB2MSB $(EXTRAFLAGS)

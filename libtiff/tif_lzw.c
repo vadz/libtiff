@@ -415,7 +415,7 @@ LZWDecode(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 			NextCode(tif, sp, bp, code, GetNextCode);
 			if (code == CODE_EOI)
 				break;
-			*op++ = code, occ--;
+			*op++ = (char)code, occ--;
 			oldcodep = sp->dec_codetab + code;
 			continue;
 		}
@@ -501,7 +501,7 @@ LZWDecode(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 			}
 			op += len, occ -= len;
 		} else
-			*op++ = code, occ--;
+			*op++ = (char)code, occ--;
 	}
 
 	tif->tif_rawcp = (tidata_t) bp;
@@ -1076,3 +1076,5 @@ bad:
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 #endif /* LZW_SUPPORT */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */

@@ -428,7 +428,7 @@ const char *
 TIFFSetFileName(TIFF* tif, const char *name)
 {
 	const char* old_name = tif->tif_name;
-	tif->tif_name = name;
+	tif->tif_name = (char *)name;
 	return (old_name);
 }
 
