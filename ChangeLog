@@ -1,3 +1,8 @@
+2004-05-24  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffsplit.c: Don't forget to copy Photometric
+	Interpretation tag.
+
 2004-05-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_open.c, tiffio.h}: New function added:
