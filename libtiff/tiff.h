@@ -51,7 +51,7 @@
  *
  * See http://bugzilla.remotesensing.org/show_bug.cgi?id=39
  */
-#if defined(_H_INTTYPES) && defined(_ALL_SOURCE)
+#if defined(_H_INTTYPES) && defined(_ALL_SOURCE) && defined(USING_VISUALAGE)
 
 #define _TIFF_DATA_TYPEDEFS_
 typedef unsigned char uint8;
