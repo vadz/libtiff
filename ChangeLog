@@ -1,3 +1,8 @@
+2004-03-02  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/ycbcr.c: fixed main() declaration as per:
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=513
+
 2004-02-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffsplit.c: Copy JPEGTables tag contents for JPEG compressed 
