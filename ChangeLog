@@ -1,3 +1,12 @@
+2004-06-06  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiff.h, tif_dirwrite.c, tif_fax3.c, tif_packbits.c,}: Get rid
+	of ugly 64-bit hacks, replace them with the clever (autoconf based )
+	ones :-).
+
+	* libtiff/tiffio.h: Define thandle_t as int, not void* (may cause
+	problems in 64-bit environment).
+
 2004-06-05  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffset.c: tiffset now can set any libtiff supported tags.

@@ -81,6 +81,8 @@ AC_C_INLINE
 AC_C_BIGENDIAN
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
 AC_HEADER_TIME
 AC_STRUCT_TM
 dnl Check for BSDTYPES. winsock.h defines those types, so avoid redefinition
