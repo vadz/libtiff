@@ -40,6 +40,7 @@ EXPORTS TIFFOpen
 	TIFFReadScanline
 	TIFFWriteScanline
 	TIFFReadRGBAImage
+	TIFFReadRGBAImageOriented
 	TIFFPrintDirectory
 	TIFFReadScanline
 	TIFFWriteScanline
