@@ -39,6 +39,24 @@
 #include "tiffio.h"
 #include "tif_dir.h"
 
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
+/* Define BSDTYPES if we don't have the ones */
+# ifndef HAVE_U_CHAR
+typedef unsigned char u_char;
+# endif
+# ifndef HAVE_U_SHORT
+typedef unsigned short u_short;
+# endif
+# ifndef HAVE_U_INT
+typedef unsigned int u_int;
+# endif
+# ifndef HAVE_U_LONG
+typedef unsigned long u_long;
+# endif
+
 typedef double dblparam_t;
 
 #define GLOBALDATA(TYPE,NAME)	extern TYPE NAME
