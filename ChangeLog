@@ -1,3 +1,11 @@
+2000-09-18  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Fixed tif_jpeg.c so avoid destroying the decompressor before
+	we are done access data thanks to bug report from:
+	Michael Eckstein <eckstein@gepro.cz>.
+
+	* Reverted tif_flush change.
+
 2000-09-14  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* tif_flush.c: Changed so that TIFFFlushData() doesn't return an
