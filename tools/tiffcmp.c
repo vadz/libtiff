@@ -37,6 +37,7 @@ static	uint16 samplesperpixel = 1;
 static	uint32 imagewidth;
 static	uint32 imagelength;
 
+static	void usage(void);
 static	int tiffcmp(TIFF*, TIFF*);
 static	int cmptags(TIFF*, TIFF*);
 static	void ContigCompare(int, uint32, unsigned char*, unsigned char*, int);
@@ -44,27 +45,21 @@ static	void PrintDiff(uint32, int, uint32, int, int);
 static	void SeparateCompare(int, int, uint32, unsigned char*, unsigned char*);
 static	void eof(const char*, uint32, int);
 
-static void
-usage(void)
-{
-	fprintf(stderr, "Usage: tiffcmp [-l] [-t] [-z] file1 file2\n");
-	exit(-3);
-}
-
 int
 main(int argc, char* argv[])
 {
 	TIFF *tif1, *tif2;
 	int c, dirnum;
 	extern int optind;
+	extern char* optarg;
 
-	while ((c = getopt(argc, argv, "ltz")) != -1)
+	while ((c = getopt(argc, argv, "ltz:")) != -1)
 		switch (c) {
 		case 'l':
 			stopondiff = 0;
 			break;
 		case 'z':
-			stopondiff += 100;
+			stopondiff = atoi(optarg);
 			break;
 		case 't':
 			stoponfirsttag = 0;
@@ -97,6 +92,28 @@ main(int argc, char* argv[])
 		printf("Directory %d:\n", ++dirnum);
 	}
 	return (0);
+}
+
+char* stuff[] = {
+"usage: tiffcmp [options] file1 file2",
+"where options are:",
+" -l		list each byte of image data that differs between the files",
+" -z #		list specified number of bytes that differs between the files",
+" -t		ignore any differences in directory tags",
+NULL
+};
+
+static void
+usage(void)
+{
+	char buf[BUFSIZ];
+	int i;
+
+	setbuf(stderr, buf);
+        fprintf(stderr, "%s\n\n", TIFFGetVersion());
+	for (i = 0; stuff[i] != NULL; i++)
+		fprintf(stderr, "%s\n", stuff[i]);
+	exit(-1);
 }
 
 #define	checkEOF(tif, row, sample) { \
@@ -345,7 +362,7 @@ PrintDiff(uint32 row, int sample, uint32 pix, int w1, int w2)
 		mask1 =  ~((-1)<<bps);
 		s = (8-bps);
 		mask2 = mask1<<s;
-		for (; mask2; mask2 >>= bps, s -= bps, pix++) {
+		for (; mask2 && pix < imagewidth; mask2 >>= bps, s -= bps, pix++) {
 			if ((w1 & mask2) ^ (w2 & mask2)) {
 				printf(
 			"Scanline %lu, pixel %lu, sample %d: %01x %01x\n",
