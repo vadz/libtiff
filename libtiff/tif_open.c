@@ -511,3 +511,13 @@ TIFFIsMSB2LSB(TIFF* tif)
 {
 	return (isFillOrder(tif, FILLORDER_MSB2LSB));
 }
+
+/*
+ * Return nonzero if given file was written in big-endian order.
+ */
+int
+TIFFIsBigEndian(TIFF* tif)
+{
+	return (tif->tif_header.tiff_magic == TIFF_BIGENDIAN);
+}
+

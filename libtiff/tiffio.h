@@ -314,6 +314,7 @@ extern	int TIFFIsTiled(TIFF*);
 extern	int TIFFIsByteSwapped(TIFF*);
 extern	int TIFFIsUpSampled(TIFF*);
 extern	int TIFFIsMSB2LSB(TIFF*);
+extern	int TIFFIsBigEndian(TIFF*);
 extern	uint32 TIFFCurrentRow(TIFF*);
 extern	tdir_t TIFFCurrentDirectory(TIFF*);
 extern	tdir_t TIFFNumberOfDirectories(TIFF*);
@@ -425,7 +426,7 @@ extern	uint32 LogLuv32fromXYZ(float*, int);
 #endif /* LOGLUV_PUBLIC */
 
 /*
-** New stuff going public in 3.6.x.
+** Stuff, related to tag handling and creating custom tags.
 */
 extern  int  TIFFGetTagListCount( TIFF * );
 extern  ttag_t TIFFGetTagListEntry( TIFF *, int tag_index );
