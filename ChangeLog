@@ -1,3 +1,7 @@
+Tue Nov 30 14:15:32 EST 1999   Mike Welles <mike@onshore.com> 
+
+	* Added html for TIFFWriteTile.3t man page. 
+	
 Tue Nov 30 09:20:16 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Added some changes to tif_write.c to support rewriting existing
