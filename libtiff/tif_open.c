@@ -314,7 +314,7 @@ TIFFClientOpen(
 			goto bad;
 		tif->tif_diroff = 0;
 		tif->tif_dirlist = NULL;
-		tif->tif_dircount = 0;
+		tif->tif_dirnumber = 0;
 		return (tif);
 	}
 	/*

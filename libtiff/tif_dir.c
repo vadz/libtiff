@@ -1302,6 +1302,11 @@ TIFFSetDirectory(TIFF* tif, tdir_t dirn)
 	 * tif_curdir after successfully reading the directory.
 	 */
 	tif->tif_curdir = (dirn - n) - 1;
+	/*
+	 * Reset tif_dirnumber counter nad start new list of seen directories.
+	 * We need this in order to prevent IFD loops.
+	 */
+	tif->tif_dirnumber = 0;
 	return (TIFFReadDirectory(tif));
 }
 
@@ -1315,6 +1320,11 @@ int
 TIFFSetSubDirectory(TIFF* tif, uint32 diroff)
 {
 	tif->tif_nextdiroff = diroff;
+	/*
+	 * Reset tif_dirnumber counter nad start new list of seen directories.
+	 * We need this in order to prevent IFD loops.
+	 */
+	tif->tif_dirnumber = 0;
 	return (TIFFReadDirectory(tif));
 }
 
