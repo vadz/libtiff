@@ -1,3 +1,8 @@
+Wed Nov 24 12:08:16 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Modified TIFFquery.3t man pages info on TIFFIsByteSwapped() to
+	not imply applications are responsible for image data swapping.
+
 1999-11-22  Mike Welles <mike@onshore.com>
 	*  HTML-ized the man pages, added to html/man
 	
