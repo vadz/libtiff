@@ -1133,6 +1133,7 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_inkset = INKSET_CMYK;
 	td->td_ninks = 4;
 	tif->tif_postdecode = _TIFFNoPostDecode;
+        tif->tif_foundfield = NULL;
 	tif->tif_tagmethods.vsetfield = _TIFFVSetField;
 	tif->tif_tagmethods.vgetfield = _TIFFVGetField;
 	tif->tif_tagmethods.printdir = NULL;
