@@ -1,4 +1,5 @@
 EXPORTS TIFFOpen
+	TIFFOpenW
 	TIFFGetVersion
 	TIFFCleanup
 	TIFFClose
