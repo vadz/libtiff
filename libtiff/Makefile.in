@@ -87,7 +87,7 @@ SRCS	= \
 	tif_luv.c \
 	tif_lzw.c \
 	tif_next.c \
-	tif_ojpeg.c \
+	nnnntif_ojpeg.c \
 	tif_open.c \
 	tif_packbits.c \
 	tif_pixarlog.c \
@@ -297,6 +297,8 @@ tif_dumpmode.o: ${SRCDIR}/tif_dumpmode.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dumpmode.c
 tif_error.o: ${SRCDIR}/tif_error.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_error.c
+tif_extension.o: ${SRCDIR}/tif_extension.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tif_extension.c
 tif_fax3.o: ${SRCDIR}/tif_fax3.c ${SRCDIR}/t4.h ${SRCDIR}/tif_fax3.h
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_fax3.c
 tif_getimage.o: ${SRCDIR}/tif_getimage.c
@@ -311,6 +313,8 @@ tif_lzw.o: ${SRCDIR}/tif_lzw.c ${SRCDIR}/tif_predict.h
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_lzw.c
 tif_next.o: ${SRCDIR}/tif_next.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_next.c
+tif_ojpeg.o: ${SRCDIR}/tif_ojpeg.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tif_ojpeg.c
 tif_open.o: ${SRCDIR}/tif_open.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_open.c
 tif_packbits.o: ${SRCDIR}/tif_packbits.c
