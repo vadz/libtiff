@@ -53,11 +53,10 @@ AC_SUBST(LIBTIFF_VERSION)
 AC_SUBST(LIBTIFF_RELEASE_DATE)
 
 dnl Checks for programs.
-AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
 
 dnl We want warnings. As many warnings as possible.
 VL_PROG_CC_WARNINGS(ANSI)
@@ -75,7 +74,7 @@ case "$target_os" in
 esac
 
 dnl Checks for header files.
-AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h getopt.h])
+AC_CHECK_HEADERS([fcntl.h limits.h malloc.h sys/time.h unistd.h winsock.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
