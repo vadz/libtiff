@@ -367,9 +367,9 @@ setupPageState(TIFF* tif, uint32* pw, uint32* ph, float* pprw, float* pprh)
 	/*
 	 * Calculate printable area.
 	 */
-	if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres))
+	if (!TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres) || !xres)
 		xres = PS_UNIT_SIZE;
-	if (!TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres))
+	if (!TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres) || !yres)
 		yres = PS_UNIT_SIZE;
 	switch (res_unit) {
 	case RESUNIT_CENTIMETER:
