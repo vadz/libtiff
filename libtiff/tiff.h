@@ -36,8 +36,14 @@
  *    Suite 200
  *    Seattle, WA  98104
  *    206-622-5500
+ *    
+ *    (http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf)
+ *
+ * For Big TIFF design notes see the following link
+ *    http://gdal.maptools.org/twiki/bin/view/libtiff/BigTIFFDesign
  */
 #define	TIFF_VERSION	        42
+#define TIFF_BIGTIFF_VERSION    43
 
 #define	TIFF_BIGENDIAN		0x4d4d
 #define	TIFF_LITTLEENDIAN	0x4949
@@ -477,3 +483,5 @@ typedef	enum {
 #define     SGILOGENCODE_NODITHER	0     /* do not dither encoded values*/
 #define     SGILOGENCODE_RANDITHER	1     /* randomly dither encd values */
 #endif /* _TIFF_ */
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
