@@ -1,3 +1,8 @@
+2001-08-09  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tiff.h, libtiff/tif_fax3.c: added check for __LP64__ 
+	when checking for 64 bit architectures as per bugzilla bug 67.
+
 2001-07-27  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* man/Makefile.in: add TIFFClientOpen link as per debian submitted
