@@ -39,6 +39,8 @@
 
 #include "tiffio.h"
 
+extern int CheckShortField(TIFF *, ttag_t, uint16);
+
 const char	*filename = "short_test.tiff";
 
 #define	SPP	3		/* Samples per pixel */
@@ -73,7 +75,6 @@ main(int argc, char **argv)
 	TIFF		*tif;
 	int		i;
 	unsigned char	buf[3] = { 0, 127, 255 };
-	uint16		value;
 
 	/* Test whether we can write tags. */
 	tif = TIFFOpen(filename, "w");
@@ -134,49 +135,32 @@ main(int argc, char **argv)
 		fprintf (stderr, "Can't open test TIFF file %s.\n", filename);
 		return 1;
 	}
-	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &value)
-	    || value != width) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGEWIDTH);
+	
+	if (CheckShortField(tif, TIFFTAG_IMAGEWIDTH, width) < 0)
 		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &value)
-	    || value != length) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGELENGTH);
+
+	if (CheckShortField(tif, TIFFTAG_IMAGELENGTH, length) < 0)
 		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &value)
-	    || value != bps) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_BITSPERSAMPLE);
+
+	if (CheckShortField(tif, TIFFTAG_BITSPERSAMPLE, bps) < 0)
 		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &value)
-	    || value != photometric) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_PHOTOMETRIC);
+
+	if (CheckShortField(tif, TIFFTAG_PHOTOMETRIC, photometric) < 0)
 		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &value)
-	    || value != SPP) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_SAMPLESPERPIXEL);
+
+	if (CheckShortField(tif, TIFFTAG_SAMPLESPERPIXEL, SPP) < 0)
 		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &value)
-	    || value != rows_per_strip) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_ROWSPERSTRIP);
+
+	if (CheckShortField(tif, TIFFTAG_ROWSPERSTRIP, rows_per_strip) < 0)
 		goto failure;
-	}
-	if (!TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &value)
-	    || value != planarconfig) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_PLANARCONFIG);
+
+	if (CheckShortField(tif, TIFFTAG_PLANARCONFIG, planarconfig) < 0)
 		goto failure;
-	}
 
 	for (i = 0; i < NSINGLETAGS; i++) {
-		if (!TIFFGetField(tif, short_single_tags[i].tag, &value)
-		    || value != short_single_tags[i].value) {
-			fprintf(stderr, "Can't get tag %d.\n",
-				(int)short_single_tags[i].tag);
+		if (CheckShortField(tif, short_single_tags[i].tag,
+				    short_single_tags[i].value) < 0)
 			goto failure;
-		}
 	}
 
 	TIFFClose(tif);

@@ -39,6 +39,8 @@
 
 #include "tiffio.h"
 
+extern int CheckLongField(TIFF *, ttag_t, uint32);
+
 const char	*filename = "long_test.tiff";
 
 static struct Tags {
@@ -60,7 +62,6 @@ main(int argc, char **argv)
 	TIFF		*tif;
 	int		i;
 	unsigned char	buf[3] = { 0, 127, 255 };
-	uint32		value;
 
 	/* Test whether we can write tags. */
 	tif = TIFFOpen(filename, "w");
@@ -122,31 +123,19 @@ main(int argc, char **argv)
 		return 1;
 	}
 
-	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &value)
-	    || value != width) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGEWIDTH);
+	if (CheckLongField(tif, TIFFTAG_IMAGEWIDTH, width) < 0)
 		goto failure;
-	}
 
-	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &value)
-	    || value != length) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_IMAGELENGTH);
+	if (CheckLongField(tif, TIFFTAG_IMAGELENGTH, length) < 0)
 		goto failure;
-	}
 
-	if (!TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &value)
-	    || value != rows_per_strip) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_ROWSPERSTRIP);
+	if (CheckLongField(tif, TIFFTAG_ROWSPERSTRIP, rows_per_strip) < 0)
 		goto failure;
-	}
 
 	for (i = 0; i < NTAGS; i++) {
-		if (!TIFFGetField(tif, long_tags[i].tag, &value)
-		    || value != long_tags[i].value) {
-			fprintf(stderr, "Can't get tag %d.\n",
-				(int)long_tags[i].tag);
+		if (CheckLongField(tif, long_tags[i].tag,
+				   long_tags[i].value) < 0)
 			goto failure;
-		}
 	}
 
 	TIFFClose(tif);

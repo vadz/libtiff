@@ -320,9 +320,9 @@ main(int argc, char **argv)
 		goto failure;
 	}
 	if (read_image_stripped(filename, XSIZE * YSIZE, 1, rowsperstrip,
-				  compression, spp, bps, photometric,
-				  sampleformat, planarconfig,
-				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+				compression, spp, bps, photometric,
+				sampleformat, planarconfig,
+				(const tdata_t) byte_array1, byte_array1_size) < 0) {
 		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
 		goto failure;
 	}
@@ -336,9 +336,9 @@ main(int argc, char **argv)
 		goto failure;
 	}
 	if (read_image_stripped(filename, 1, XSIZE * YSIZE, rowsperstrip,
-				  compression, spp, bps, photometric,
-				  sampleformat, planarconfig,
-				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+				compression, spp, bps, photometric,
+				sampleformat, planarconfig,
+				(const tdata_t) byte_array1, byte_array1_size) < 0) {
 		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
 		goto failure;
 	}
@@ -362,9 +362,9 @@ main(int argc, char **argv)
 		goto failure;
 	}
 	if (read_image_stripped(filename, XSIZE, YSIZE, rowsperstrip,
-				  compression, spp, bps, photometric,
-				  sampleformat, planarconfig,
-				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+				compression, spp, bps, photometric,
+				sampleformat, planarconfig,
+				(const tdata_t) byte_array1, byte_array1_size) < 0) {
 		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
 		goto failure;
 	}
@@ -379,9 +379,9 @@ main(int argc, char **argv)
 		goto failure;
 	}
 	if (read_image_stripped(filename, XSIZE, YSIZE, rowsperstrip,
-				  compression, spp, bps, photometric,
-				  sampleformat, planarconfig,
-				  (const tdata_t) byte_array1, byte_array1_size) < 0) {
+				compression, spp, bps, photometric,
+				sampleformat, planarconfig,
+				(const tdata_t) byte_array1, byte_array1_size) < 0) {
 		fprintf (stderr, "Can't read TIFF file %s.\n", filename);
 		goto failure;
 	}
