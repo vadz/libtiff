@@ -41,6 +41,13 @@
 #include <assert.h>
 #include <stdio.h>
 #include <setjmp.h>
+
+/* We undefine FAR to avoid conflict with JPEG definition */
+
+#ifdef FAR
+#undef FAR
+#endif
+
 #include "jpeglib.h"
 #include "jerror.h"
 
