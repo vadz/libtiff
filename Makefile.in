@@ -337,6 +337,7 @@ TIFFFILES=\
 	    html/v3.5.6-beta.html				\
 	    html/v3.5.7.html					\
 	    html/v3.6.0.html					\
+	    html/v3.6.1.html					\
 	    html/man						\
 	    html/man/TIFFClose.3t.html				\
 	    html/man/TIFFDataWidth.3t.html			\
