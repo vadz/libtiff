@@ -30,13 +30,13 @@ into a fixed-format raster
 .SH SYNOPSIS
 .B "#include <tiffio.h>"
 .sp
-.B "#define TIFFGetR(abgr)	((abgr) & 0xff)"
+.B "#define TIFFGetR(abgr) ((abgr) & 0xff)"
 .br
-.B "#define TIFFGetG(abgr)	(((abgr) >> 8) & 0xff)"
+.B "#define TIFFGetG(abgr) (((abgr) >> 8) & 0xff)"
 .br
-.B "#define TIFFGetB(abgr)	(((abgr) >> 16) & 0xff)"
+.B "#define TIFFGetB(abgr) (((abgr) >> 16) & 0xff)"
 .br
-.B "#define TIFFGetA(abgr)	(((abgr) >> 24) & 0xff)"
+.B "#define TIFFGetA(abgr) (((abgr) >> 24) & 0xff)"
 .sp
 .BI "int TIFFReadRGBAImage(TIFF *" tif ", u_long " width ", u_long " height ", u_long *" raster ", int " stopOnError ")"
 .br
