@@ -46,6 +46,10 @@ data are organized in separate planes (\c
 To read a full strip of data the data buffer should typically be
 at least as large as the number returned by
 .IR TIFFStripSize (3T).
+If the -1 passed in
+.I size
+parameter, the whole strip will be read. You should be sure you have enough
+space allocated for the buffer.
 .PP
 The library attempts to hide bit- and byte-ordering differences
 between the image and the native machine by converting data
