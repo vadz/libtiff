@@ -280,6 +280,7 @@ TIFFFILES=\
 	    man/libtiff.3t			\
 	    man/TIFFbuffer.3t			\
 	    man/TIFFcodec.3t			\
+	    man/TIFFcolor.3t			\
 	    man/TIFFmemory.3t			\
 	    man/TIFFquery.3t			\
 	    man/TIFFsize.3t			\
@@ -366,6 +367,7 @@ TIFFFILES=\
 	    html/man/TIFFWriteScanline.3t.html			\
 	    html/man/TIFFbuffer.3t.html				\
 	    html/man/TIFFcodec.3t.html				\
+	    html/man/TIFFcolor.3t.html				\
 	    html/man/TIFFmemory.3t.html				\
 	    html/man/TIFFquery.3t.html				\
 	    html/man/TIFFsize.3t.html				\

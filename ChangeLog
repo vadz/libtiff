@@ -1,3 +1,9 @@
+2003-12-22  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_color, tif_getimage.c, tiffio.h}, man/TIFFcolor.3t:
+	More cleanups in color conversion interface, added appropriate manual
+	page.
+
 2003-12-19  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_extension.c, tif_dirinfo.c, tiff.h}: Warnings fixed as
