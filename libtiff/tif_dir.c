@@ -934,7 +934,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 
                 if( fip->field_passcount )
                 {
-                    *va_arg(ap, int *) = tv->count;
+                    *va_arg(ap, u_short *) = tv->count;
                     *va_arg(ap, void **) = tv->value;
                     ret_val = 1;
                     break;
