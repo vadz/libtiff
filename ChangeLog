@@ -1,9 +1,19 @@
 2004-01-29  Andrey Kiselev  <dron@remotesensing.org>
 
-	* libtiff/tif_win32.c: Check if the pointer is NULL befor proceed
-	further as per bug
+	* libtiff/tiff.h: Fixed tag definitions for TIFFTAG_YCLIPPATHUNITS
+	and TIFFTAG_INDEXED as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=475
+
+	* libtiff/{tif_win32.c, tif_unix.c}: Check whether the pointer is
+	NULL before proceeding further as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=474
+
+	Check results, returned by the TIFFFdOpen() before returning and close
+	file if TIFFFdOpen() failed as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=468
 	
 	* libtiff/tif_open.c: More fixes for
 
