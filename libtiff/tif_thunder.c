@@ -91,8 +91,10 @@ ThunderDecode(TIFF* tif, tidata_t op, tsize_t maxpixels)
 			} else
 				lastpixel |= lastpixel << 4;
 			npixels += n;
-			for (; n > 0; n -= 2)
-				*op++ = (tidataval_t) lastpixel;
+			if (npixels < maxpixels) {
+				for (; n > 0; n -= 2)
+					*op++ = (tidataval_t) lastpixel;
+			}
 			if (n == -1)
 				*--op &= 0xf0;
 			lastpixel &= 0xf;
