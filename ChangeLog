@@ -1,3 +1,8 @@
+2000-05-11  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* configure: Fixed DSO test for Linux as per patch from
+	  Jan Van Buggenhout <chipzz@Ace.ULYSSIS.Student.KULeuven.Ac.Be>.
+
 2000-04-21  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
 	* libtiff/tif_dirread.c: Don't use estimate strip byte count for
