@@ -1,3 +1,10 @@
+2004-01-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirwrite.c: Fixed handling of writable ASCII tags that
+	are field_passcount=TRUE properly.  Arguably anonymous custom tags
+	should be declared as passcount=FALSE, but I don't want to change
+	that without a careful review. 
+
 2004-01-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_write.c: Fixed reporting size of the buffer in case of
