@@ -37,7 +37,7 @@ EXTRA_DIST = \
 	autogen.sh \
 	nmake.opt
 
-SUBDIRS = port libtiff tools contrib man html
+SUBDIRS = port libtiff tools contrib test man html
 
 release:
 	(rm -f RELEASE-DATE && echo $(LIBTIFF_RELEASE_DATE) > RELEASE-DATE)

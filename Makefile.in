@@ -72,7 +72,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/libtiff/config.h
+CONFIG_HEADER = $(top_builddir)/libtiff/tif_config.h
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
@@ -219,7 +219,7 @@ EXTRA_DIST = \
 	autogen.sh \
 	nmake.opt
 
-SUBDIRS = port libtiff tools contrib man html
+SUBDIRS = port libtiff tools contrib test man html
 all: all-recursive
 
 .SUFFIXES:
