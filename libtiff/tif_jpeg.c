@@ -42,6 +42,9 @@
 #include <stdio.h>
 #include <setjmp.h>
 
+int TIFFFillStrip(TIFF*, tstrip_t);
+int TIFFFillTile(TIFF*, ttile_t);
+
 /* We undefine FAR to avoid conflict with JPEG definition */
 
 #ifdef FAR
@@ -116,6 +119,8 @@ typedef	struct {
 	int		jpegquality;	/* Compression quality level */
 	int		jpegcolormode;	/* Auto RGB<=>YCbCr convert? */
 	int		jpegtablesmode;	/* What to put in JPEGTables */
+
+        int             ycbcrsampling_fetched;
 } JPEGState;
 
 #define	JState(tif)	((JPEGState*)(tif)->tif_data)
@@ -681,7 +686,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 		    sp->cinfo.d.comp_info[0].v_samp_factor != sp->v_sampling) {
 			TIFFWarning(module, 
                                     "Improper JPEG sampling factors %d,%d\n"
-                                    "Apparently should be %d,%d,"
+                                    "Apparently should be %d,%d, "
                                     "decompressor will try reading with "
                                     "sampling %d,%d",
                                     sp->cinfo.d.comp_info[0].h_samp_factor,
@@ -1359,6 +1364,73 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	return (1);
 }
 
+/*
+ * Some JPEG-in-TIFF produces do not emit the YCBCRSUBSAMPLING values in
+ * the TIFF tags, but still use non-default (2,2) values within the jpeg
+ * data stream itself.  In order for TIFF applications to work properly
+ * - for instance to get the strip buffer size right - it is imperative
+ * that the subsampling be available before we start reading the image
+ * data normally.  This function will attempt to load the first strip in
+ * order to get the sampling values from the jpeg data stream.  Various
+ * hacks are various places are done to ensure this function gets called
+ * before the td_ycbcrsubsampling values are used from the directory structure,
+ * including calling TIFFGetField() for the YCBCRSUBSAMPLING field from 
+ * TIFFStripSize(), and the printing code in tif_print.c. 
+ *
+ * Note that JPEGPreDeocode() will produce a fairly loud warning when the
+ * discovered sampling does not match the default sampling (2,2) or whatever
+ * was actually in the tiff tags. 
+ *
+ * Problems:
+ *  o This code will cause one whole strip/tile of compressed data to be
+ *    loaded just to get the tags right, even if the imagery is never read.
+ *    It would be more efficient to just load a bit of the header, and
+ *    initialize things from that. 
+ *  o This code doesn't know whether or not the tag actually did occur in
+ *    the file.  If it knew this it could skip the hack but this is hard to
+ *    know since we have already set the "field set" bit for the subsampling
+ *    TIFFInitJPEG().
+ *
+ * See the bug in bugzilla for details:
+ *
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=168
+ *
+ * Frank Warmerdam, July 2002
+ */
+
+static void 
+JPEGFixupTestSubsampling( TIFF * tif )
+{
+#if CHECK_JPEG_YCBCR_SUBSAMPLING == 1
+    JPEGState *sp = JState(tif);
+
+    /*
+     * Some JPEG-in-TIFF files don't provide the ycbcrsampling tags, 
+     * and use a sampling schema other than the default 2,2.  To handle
+     * this we actually have to scan the header of a strip or tile of
+     * jpeg data to get the sampling.  
+     */
+    if( !sp->cinfo.comm.is_decompressor 
+        || sp->ycbcrsampling_fetched  )
+        return;
+
+    sp->ycbcrsampling_fetched = 1;
+    if( TIFFIsTiled( tif ) )
+    {
+        if( !TIFFFillTile( tif, 0 ) )
+            return;
+    }
+    else
+    {
+        if( !TIFFFillStrip( tif, 0 ) )
+            return;
+    }
+
+    TIFFSetField( tif, TIFFTAG_YCBCRSUBSAMPLING, 
+                  (uint16) sp->h_sampling, (uint16) sp->v_sampling );
+#endif /* CHECK_JPEG_YCBCR_SUBSAMPLING == 1 */
+}
+
 static int
 JPEGVGetField(TIFF* tif, ttag_t tag, va_list ap)
 {
@@ -1379,6 +1451,10 @@ JPEGVGetField(TIFF* tif, ttag_t tag, va_list ap)
 		break;
 	case TIFFTAG_JPEGTABLESMODE:
 		*va_arg(ap, int*) = sp->jpegtablesmode;
+		break;
+	case TIFFTAG_YCBCRSUBSAMPLING:
+                JPEGFixupTestSubsampling( tif );
+		return (*sp->vgetparent)(tif, tag, ap);
 		break;
 	default:
 		return (*sp->vgetparent)(tif, tag, ap);
@@ -1456,6 +1532,8 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	sp->jpegcolormode = JPEGCOLORMODE_RAW;
 	sp->jpegtablesmode = JPEGTABLESMODE_QUANT | JPEGTABLESMODE_HUFF;
 
+        sp->ycbcrsampling_fetched = 0;
+
 	/*
 	 * Install codec methods.
 	 */
@@ -1483,6 +1561,12 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	if (tif->tif_mode == O_RDONLY) {
 		if (!TIFFjpeg_create_decompress(sp))
 			return (0);
+
+                /*
+                 * Mark the TIFFTAG_YCBCRSAMPLES as present even if it is not
+                 * see: JPEGFixupTestSubsampling().
+                 */
+                TIFFSetFieldBit( tif, FIELD_YCBCRSUBSAMPLING );
 	} else {
 		if (!TIFFjpeg_create_compress(sp))
 			return (0);
