@@ -425,6 +425,7 @@ typedef	enum {
 #define	TIFFTAG_FAXRECVPARAMS		34908	/* encoded Class 2 ses. parms */
 #define	TIFFTAG_FAXSUBADDRESS		34909	/* received SubAddr string */
 #define	TIFFTAG_FAXRECVTIME		34910	/* receive time (secs) */
+#define	TIFFTAG_FAXDCS			34911	/* encoded fax ses. params, Table 2/T.30 */
 /* tags 37439-37443 are registered to SGI <gregl@sgi.com> */
 #define TIFFTAG_STONITS			37439	/* Sample value to Nits */
 /* tag 34929 is a private tag registered to FedEx */
