@@ -1,3 +1,10 @@
+2004-10-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_jpeg.c: There seems to be no need to include stdio.h
+	in this file so its inclusion is removed.  Including stdio.h
+	sometimes incurs an INT32 typedef conflict between MinGW's
+	basetsd.h and libjpeg's jmorecfg.h.
+
 2004-10-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* man/bmp2tiff.1: Added manual page for bmp2tiff utility.

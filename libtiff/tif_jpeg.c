@@ -38,7 +38,6 @@
  *
  * Contributed by Tom Lane <tgl@sss.pgh.pa.us>.
  */
-#include <stdio.h>
 #include <setjmp.h>
 
 int TIFFFillStrip(TIFF*, tstrip_t);
