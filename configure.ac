@@ -31,6 +31,8 @@ dnl Compute the canonical target-system type variable
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
+dnl Do not rebuild generated files every time
+AM_MAINTAINER_MODE
 AC_CONFIG_SRCDIR(libtiff/config.h.in)
 AM_CONFIG_HEADER(libtiff/config.h)
 
@@ -75,7 +77,6 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h stdlib.h string.h sys/time.h unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE
 AC_C_BIGENDIAN
@@ -83,6 +84,8 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
+dnl Check for BSDTYPES
+AC_CHECK_TYPES([u_char, u_short, u_int, u_long])
 dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
 AC_CHECK_TYPES([int8, int16, int32])
 
