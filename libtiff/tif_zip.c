@@ -312,7 +312,7 @@ TIFFInitZIP(TIFF* tif, int scheme)
 {
 	ZIPState* sp;
 
-	assert(scheme == COMPRESSION_DEFLATE);
+	assert( (scheme == COMPRESSION_DEFLATE) || (scheme == COMPRESSION_ADOBE_DEFLATE));
 
 	/*
 	 * Allocate state block so tag methods have storage to record values.

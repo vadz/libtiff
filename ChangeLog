@@ -1,3 +1,8 @@
+Tue Dec  7 12:04:47 EST 1999  Mike Welles  <mike@onshore.com>
+
+	* Added patch from Ivo Penzar <ivo.penzar@infolink-software.com>, 
+	  supporting Adobe ZIP deflate.  Untested. 
+	
 Sat Dec  4 15:47:11 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Made Packbits the default compression in tools/tiff2rgba.c instead

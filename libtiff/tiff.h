@@ -167,6 +167,7 @@ typedef	enum {
 #define     COMPRESSION_PIXARFILM	32908   /* Pixar companded 10bit LZW */
 #define	    COMPRESSION_PIXARLOG	32909   /* Pixar companded 11bit ZIP */
 #define	    COMPRESSION_DEFLATE		32946	/* Deflate compression */
+#define     COMPRESSION_ADOBE_DEFLATE   8       /* Deflate compression, as recognized by Adobe */
 /* compression code 32947 is reserved for Oceana Matrix <dev@oceana.com> */
 #define     COMPRESSION_DCS             32947   /* Kodak DCS encoding */
 #define	    COMPRESSION_JBIG		34661	/* ISO JBIG */
