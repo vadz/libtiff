@@ -54,14 +54,14 @@ static	const char photoTag[] = "PhotometricInterpretation";
 
 TIFFDisplay display_sRGB = {
 	{			/* XYZ -> luminance matrix */
-		{  3.2410, -1.5374, -0.4986 },
-		{  -0.9692, 1.8760, 0.0416 },
-		{  0.0556, -0.2040, 1.0570 }
+		{  3.2410F, -1.5374F, -0.4986F },
+		{  -0.9692F, 1.8760F, 0.0416F },
+		{  0.0556F, -0.2040F, 1.0570F }
 	},	
-	100, 100, 100,		/* Light o/p for reference white */
+	100.0F, 100.0F, 100.0F,	/* Light o/p for reference white */
 	255, 255, 255,		/* Pixel values for ref. white */
-	1, 1, 1,		/* Residual light o/p for black pixel */
-	2.4, 2.4, 2.4,		/* Gamma values for the three guns */
+	1.0F, 1.0F, 1.0F,	/* Residual light o/p for black pixel */
+	2.4F, 2.4F, 2.4F,	/* Gamma values for the three guns */
 };
 
 /*
@@ -2063,9 +2063,9 @@ initCIELabConversion(TIFFRGBAImage* img)
 	}
 
 	TIFFGetFieldDefaulted(img->tif, TIFFTAG_WHITEPOINT, &coeffs);
-	Y0 = 100.0;
+	Y0 = 100.0F;
 	X0 = coeffs[0] / coeffs[1] * Y0;
-	Z0 = (1.0 - coeffs[0] - coeffs[1]) / coeffs[1] * Y0;
+	Z0 = (1.0F - coeffs[0] - coeffs[1]) / coeffs[1] * Y0;
 	if (TIFFCIELabToRGBInit(img->cielab, &display_sRGB, X0, Y0, Z0) < 0) {
 		TIFFError(module,
 		    "Failed to initialize CIE L*a*b*->RGB conversion state.");

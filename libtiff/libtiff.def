@@ -22,6 +22,12 @@ EXPORTS TIFFOpen
 	TIFFGetMode
 	TIFFIsTiled
 	TIFFIsByteSwapped
+	TIFFCIELabToRGBInit
+	TIFFCIELabToRGBEnd
+	TIFFCIELabToXYZ
+	TIFFXYZToRGB
+	TIFFYCbCrToRGBInit
+	TIFFYCbCrtoRGB
 	TIFFCurrentRow
 	TIFFCurrentDirectory
 	TIFFCurrentStrip

@@ -119,13 +119,13 @@ typedef	void* thandle_t;	/* client data handle */
  */
 
 /* reference white */
-#define D65_X0 (95.0470)
-#define D65_Y0 (100.0)
-#define D65_Z0 (108.8827)
+#define D65_X0 (95.0470F)
+#define D65_Y0 (100.0F)
+#define D65_Z0 (108.8827F)
 
-#define D50_X0 (96.4250)
-#define D50_Y0 (100.0)
-#define D50_Z0 (82.4680)
+#define D50_X0 (96.4250F)
+#define D50_Y0 (100.0F)
+#define D50_Z0 (82.4680F)
 
 /* Structure for holding information about a display device. */
 
