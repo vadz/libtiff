@@ -27,11 +27,13 @@ EXTRA_DIST = \
 	COPYRIGHT \
 	ChangeLog \
 	HOWTO-RELEASE \
+	Makefile.vc \
 	README \
 	RELEASE-DATE \
 	TODO \
 	VERSION \
-	autogen.sh
+	autogen.sh \
+	nmake.opt
 
 SUBDIRS = port libtiff tools contrib man html
 
