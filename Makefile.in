@@ -214,6 +214,7 @@ TIFFFILES=\
 	    tools/thumbnail.c			\
 	    tools/tiff2bw.c			\
 	    tools/tiff2rgba.c			\
+	    tools/tiff2pdf.c			\
 	    tools/tiff2ps.c			\
 	    tools/tiffcmp.c			\
 	    tools/tiffcp.c			\

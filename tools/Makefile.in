@@ -68,6 +68,7 @@ OBJS=	\
 	thumbnail.o \
 	tiff2bw.o \
 	tiff2rgba.o \
+	tiff2pdf.o \
 	tiff2ps.o \
 	tiffcmp.o \
 	tiffcp.o \
@@ -90,6 +91,7 @@ TARGETS	=\
 	raw2tiff \
 	tiff2bw \
 	tiff2rgba \
+	tiff2pdf \
 	tiff2ps \
 	tiffcmp \
 	tiffcp \
@@ -166,6 +168,11 @@ tiffsplit: tiffsplit.o ${TIFFLIB}
 	${CC} -o tiffsplit ${CFLAGS} tiffsplit.o ${LIBS}
 tiffsplit.o: ${SRCDIR}/tiffsplit.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tiffsplit.c
+
+tiff2pdf: tiff2pdf.o ${TIFFLIB}
+	${CC} -o tiff2pdf ${CFLAGS} tiff2pdf.o ${LIBS}
+tiff2pdf.o: ${SRCDIR}/tiff2pdf.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tiff2pdf.c
 
 tiff2ps: tiff2ps.o ${TIFFLIB}
 	${CC} -o tiff2ps ${CFLAGS} tiff2ps.o ${LIBS}
