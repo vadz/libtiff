@@ -1,3 +1,7 @@
+Wed Jan  5 12:37:48 2000  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Added TIFFmemory(3t) functions to libtiff.def.
+
 Tue Jan  4 13:39:00 2000  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Added libtiff/libtiff.def to TIFFILES distribution list.
