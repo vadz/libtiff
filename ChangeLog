@@ -1,5 +1,8 @@
 2005-03-05  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tif_stream.cxx: Use ios namespace instead of ios_base to support
+	GCC 2.95.
+
 	* libtiff/{tiff.h, tif_fax3.tif, tif_jpeg.c}: Applied correct patch from
 	Lee Howard for HylaFax DCS tag
 	(see http://bugzilla.remotesensing.org/show_bug.cgi?id=771)
