@@ -68,3 +68,10 @@ EXPORTS TIFFOpen
 	TIFFSwabArrayOfLong
 	TIFFReverseBits
 	TIFFGetBitRevTable
+	_TIFFmalloc
+	_TIFFrealloc
+	_TIFFfree
+	_TIFFmemset
+	_TIFFmemcpy
+	_TIFFmemcmp
+
