@@ -361,7 +361,7 @@ checkImage(TIFF* tif)
 	return (1);
 }
 
-#define PS_UNIT_SIZE	72.0
+#define PS_UNIT_SIZE	72.0F
 #define	PSUNITS(npix,res)	((npix) * (PS_UNIT_SIZE / (res)))
 
 static	char RGBcolorimage[] = "\
@@ -411,7 +411,7 @@ PhotoshopBanner(FILE* fd, uint32 w, uint32 h, int bs, int nc, char* startline)
 static void
 setupPageState(TIFF* tif, uint32* pw, uint32* ph, double* pprw, double* pprh)
 {
-	double xres = 0.0, yres = 0.0;
+	float xres = 0.0F, yres = 0.0F;
 
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, pw);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, ph);
@@ -428,7 +428,7 @@ setupPageState(TIFF* tif, uint32* pw, uint32* ph, double* pprw, double* pprh)
 		yres = PS_UNIT_SIZE;
 	switch (res_unit) {
 	case RESUNIT_CENTIMETER:
-		xres *= 2.54, yres *= 2.54;
+		xres *= 2.54F, yres *= 2.54F;
 		break;
 	case RESUNIT_INCH:
 		break;
