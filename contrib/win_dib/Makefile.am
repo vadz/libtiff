@@ -25,7 +25,5 @@
 
 # Process this file with automake to produce Makefile.in.
 
-EXTRA_DIST = README
-
-SUBDIRS = acorn addtiffo dbs iptcutil mac-cw mac-mpw mfs ojpeg pds ras stream tags win_dib
+EXTRA_DIST = Makefile.w95 README.Tiffile README.tiff2dib Tiffile.cpp tiff2dib.c
 
