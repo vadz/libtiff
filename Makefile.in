@@ -1,13 +1,21 @@
-#! smake
-# $Header$
+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# $Id$
 #
-# @WARNING@
+# Tag Image File Format (TIFF) Software
 #
-# Tag Image File Format Library
+# Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
 #
-# Copyright (c) 1988-1997 Sam Leffler
-# Copyright (c) 1991-1997 Silicon Graphics, Inc.
-# 
 # Permission to use, copy, modify, distribute, and sell this software and 
 # its documentation for any purpose is hereby granted without fee, provided
 # that (i) the above copyright notices and this permission notice appear in
@@ -26,565 +34,343 @@
 # WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
 # LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
-#
 
-SRCDIR	= @SRCDIR@
-
-#
-# VERSION:	@VERSION@
-# DATE:		@DATE@
-# TARGET:	@TARGET@
-# CCOMPILER:	@CCOMPILER@
-#
-@SETMAKE@
-SHELL	= @SCRIPT_SH@
-SCRIPT_SH = @SCRIPT_SH@
-NULL	=
-ECHO	= echo
-GENDIST	= ${TOOLROOT}/usr/sbin/gendist
-INSTALL	= @INSTALL@
-
-all default:
-	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE} -${MAKEFLAGS}; \
-	else \
-	    true; \
-	fi
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS}
-	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS}
-	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS}
-
-install:
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} install
-	@${ECHO} "= "tools; cd tools; ${MAKE} install
-	@${ECHO} "= "man; cd man; ${MAKE} install
-	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} install; \
-	else \
-	    true; \
-	fi
-
-install-private: install
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS} installPrivateHdrs
-
-clean:
-	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE} -${MAKEFLAGS} clean; \
-	else \
-	    true; \
-	fi
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS} clean
-	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS} clean
-	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS} clean
-#	-cd contrib/dbs; ${MAKE} -${MAKEFLAGS} clean
-#	-cd contrib/dbs/xtiff; ${MAKE} -${MAKEFLAGS} clean
-
-clobber distclean: clean
-	rm -f Makefile libtiff/port.h config.log
-	rm -f libtiff/Makefile
-	rm -f tools/Makefile
-	rm -f man/Makefile
-	rm -f port/Makefile port/install.sh
-	rm -f html/Makefile
-
-#
-# The folllowing rule creates a binary distribution for IRIX.
-#
-installLink::
-	if [ @DIR_LIB@ != /usr/lib ]; then				\
-	    ${INSTALL} -idb tiff.sw.tools -F /usr/lib			\
-		-lns @DIR_LIB@/libtiff.@DSOSUF@ -O libtiff.@DSOSUF@;	\
-	else								\
-	    true;							\
-	fi
-product::
-	test -d dist || mkdir dist
-	rm -f dist/rawidb
-	SRC=`pwd` RAWIDB=`pwd`/dist/rawidb ${MAKE} -${MAKEFLAGS} install installLink
-	rm -f dist/idb
-	sort -u +4 dist/rawidb > dist/idb
-	${GENDIST} -v -dist dist -idb dist/idb \
-	    -sbase `pwd` -spec ${SRCDIR}/dist/tiff.spec
-
-#
-# These rules are used to create the source distribution images
-#
-
-HOST	= sgi
-COMPRESS= gzip
-ZIPSUF	= gz
-
-TIFFFILES=\
-	configure				\
-	config.guess				\
-	config.sub				\
-	config.site				\
-	Makefile.in				\
-	README					\
-	VERSION					\
-	RELEASE-DATE				\
-	COPYRIGHT				\
-	TODO					\
-	test_pics.sh				\
-	dist/tiff.spec				\
-	    dist/newalpha			\
-	    dist/newversion			\
-	libtiff/Makefile.in			\
-	    libtiff/Makefile.lcc		\
-	    libtiff/makefile.vc			\
-	    libtiff/libtiff.def			\
-	    libtiff/t4.h			\
-	    libtiff/tiff.h			\
-	    libtiff/tiffcomp.h			\
-	    libtiff/tiffconf.h			\
-	    libtiff/tiffio.h			\
-	    libtiff/tiffiop.h			\
-	    libtiff/uvcode.h			\
-	    libtiff/mkg3states.c		\
-	    libtiff/mkspans.c			\
-	    libtiff/mkversion.c			\
-	    libtiff/tif_acorn.c			\
-	    libtiff/tif_apple.c			\
-	    libtiff/tif_atari.c			\
-	    libtiff/tif_aux.c			\
-	    libtiff/tif_close.c			\
-	    libtiff/tif_codec.c			\
-	    libtiff/tif_compress.c		\
-	    libtiff/tif_color.c			\
-	    libtiff/tif_dir.h			\
-	    libtiff/tif_dir.c			\
-	    libtiff/tif_dirinfo.c		\
-	    libtiff/tif_dirread.c		\
-	    libtiff/tif_dirwrite.c		\
-	    libtiff/tif_dumpmode.c		\
-	    libtiff/tif_error.c			\
-	    libtiff/tif_extension.c		\
-	    libtiff/tif_fax3.c			\
-	    libtiff/fax3sm_winnt.c		\
-	    libtiff/tif_fax3.h			\
-	    libtiff/tif_flush.c			\
-	    libtiff/tif_getimage.c		\
-	    libtiff/tif_jpeg.c			\
-	    libtiff/tif_ojpeg.c			\
-	    libtiff/tif_luv.c			\
-	    libtiff/tif_lzw.c			\
-	    libtiff/tif_msdos.c			\
-	    libtiff/tif_next.c			\
-	    libtiff/tif_open.c			\
-	    libtiff/tif_packbits.c		\
-	    libtiff/tif_pixarlog.c		\
-	    libtiff/tif_predict.h		\
-	    libtiff/tif_predict.c		\
-	    libtiff/tif_print.c			\
-	    libtiff/tif_read.c			\
-	    libtiff/tif_strip.c			\
-	    libtiff/tif_swab.c			\
-	    libtiff/tif_thunder.c		\
-	    libtiff/tif_tile.c			\
-	    libtiff/tif_unix.c			\
-	    libtiff/tif_version.c		\
-	    libtiff/tiffvers.h			\
-	    libtiff/tif_vms.c			\
-	    libtiff/tif_warning.c		\
-	    libtiff/tif_win3.c			\
-	    libtiff/tif_win32.c			\
-	    libtiff/tif_write.c			\
-	    libtiff/tif_zip.c			\
-	port/Makefile.in			\
-	    port/getopt.c			\
-	    port/install.sh.in			\
-	    port/irix/so_locations		\
-	    port/strcasecmp.c			\
-	    port/strtoul.c			\
-	tools/Makefile.in			\
-	    tools/Makefile.vc			\
-	    tools/Makefile.lcc			\
-	    tools/fax2tiff.c			\
-	    tools/fax2ps.c			\
-	    tools/gif2tiff.c			\
-	    tools/pal2rgb.c			\
-	    tools/ppm2tiff.c			\
-	    tools/ras2tiff.c			\
-	    tools/rasterfile.h			\
-	    tools/raw2tiff.c			\
-	    tools/rgb2ycbcr.c			\
-	    tools/sgi2tiff.c			\
-	    tools/tiffgt.c			\
-	    tools/sgisv.c			\
-	    tools/thumbnail.c			\
-	    tools/tiff2bw.c			\
-	    tools/tiff2rgba.c			\
-	    tools/tiff2pdf.c			\
-	    tools/tiff2ps.c			\
-	    tools/tiffcmp.c			\
-	    tools/tiffcp.c			\
-	    tools/tiffdither.c			\
-	    tools/tiffdump.c			\
-	    tools/tiffinfo.c			\
-	    tools/tiffmedian.c			\
-	    tools/tiffsplit.c			\
-	    tools/tiffset.c			\
-	    tools/ycbcr.c			\
-	man/Makefile.in				\
-	    man/fax2tiff.1			\
-	    man/fax2ps.1			\
-	    man/gif2tiff.1			\
-	    man/pal2rgb.1			\
-	    man/ppm2tiff.1			\
-	    man/ras2tiff.1			\
-	    man/raw2tiff.1			\
-	    man/rgb2ycbcr.1			\
-	    man/sgi2tiff.1			\
-	    man/thumbnail.1			\
-	    man/tiff2bw.1			\
-	    man/tiff2rgba.1			\
-	    man/tiff2pdf.1			\
-	    man/tiff2ps.1			\
-	    man/tiffcmp.1			\
-	    man/tiffcp.1			\
-	    man/tiffdither.1			\
-	    man/tiffdump.1			\
-	    man/tiffgt.1			\
-	    man/tiffinfo.1			\
-	    man/tiffmedian.1			\
-	    man/tiffsplit.1			\
-	    man/tiffsv.1			\
-	    man/TIFFClose.3t			\
-	    man/TIFFDataWidth.3t		\
-	    man/TIFFError.3t			\
-	    man/TIFFFlush.3t			\
-	    man/TIFFGetField.3t			\
-	    man/TIFFOpen.3t			\
-	    man/TIFFPrintDirectory.3t		\
-	    man/TIFFReadDirectory.3t		\
-	    man/TIFFReadEncodedStrip.3t		\
-	    man/TIFFReadEncodedTile.3t		\
-	    man/TIFFReadRGBAImage.3t		\
-	    man/TIFFReadRGBAStrip.3t		\
-	    man/TIFFReadRGBATile.3t		\
-	    man/TIFFReadRawStrip.3t		\
-	    man/TIFFReadRawTile.3t		\
-	    man/TIFFReadScanline.3t		\
-	    man/TIFFReadTile.3t			\
-	    man/TIFFRGBAImage.3t		\
-	    man/TIFFSetDirectory.3t		\
-	    man/TIFFSetField.3t			\
-	    man/TIFFWarning.3t			\
-	    man/TIFFWriteDirectory.3t 		\
-	    man/TIFFWriteEncodedStrip.3t	\
-	    man/TIFFWriteEncodedTile.3t		\
-	    man/TIFFWriteTile.3t		\
-	    man/TIFFWriteRawStrip.3t		\
-	    man/TIFFWriteRawTile.3t		\
-	    man/TIFFWriteScanline.3t		\
-	    man/libtiff.3t			\
-	    man/TIFFbuffer.3t			\
-	    man/TIFFcodec.3t			\
-	    man/TIFFcolor.3t			\
-	    man/TIFFmemory.3t			\
-	    man/TIFFquery.3t			\
-	    man/TIFFsize.3t			\
-	    man/TIFFstrip.3t			\
-	    man/TIFFswab.3t			\
-	    man/TIFFtile.3t			\
-	    html/images				\
-	    html/images/back.gif				\
-	    html/images/bali.jpg				\
-	    html/images/cat.gif				\
-	    html/images/cover.jpg				\
-	    html/images/cramps.gif				\
-	    html/images/dave.gif				\
-	    html/images/info.gif				\
-	    html/images/jello.jpg				\
-	    html/images/jim.gif				\
-	    html/images/note.gif				\
-	    html/images/oxford.gif				\
-	    html/images/quad.jpg				\
-	    html/images/ring.gif				\
-	    html/images/smallliz.jpg				\
-	    html/images/strike.gif				\
-	    html/images/warning.gif				\
-	    html/Makefile.in				\
-	    html/TIFFTechNote2.html			\
-	    html/bugs.html				\
-	    html/build.html				\
-	    html/contrib.html				\
-	    html/document.html				\
-	    html/images.html				\
-	    html/index.html				\
-	    html/internals.html				\
-	    html/intro.html				\
-	    html/libtiff.html				\
-	    html/misc.html				\
-	    html/support.html				\
-	    html/tools.html				\
-	    html/v3.4beta007.html				\
-	    html/v3.4beta016.html				\
-	    html/v3.4beta018.html				\
-	    html/v3.4beta024.html				\
-	    html/v3.4beta028.html				\
-	    html/v3.4beta029.html				\
-	    html/v3.4beta031.html				\
-	    html/v3.4beta032.html				\
-	    html/v3.4beta033.html				\
-	    html/v3.4beta034.html				\
-	    html/v3.4beta035.html				\
-	    html/v3.4beta036.html				\
-	    html/v3.5.1.html					\
-	    html/v3.5.2.html					\
-	    html/v3.5.3.html					\
-	    html/v3.5.4.html					\
-	    html/v3.5.5.html					\
-	    html/v3.5.6-beta.html				\
-	    html/v3.5.7.html					\
-	    html/v3.6.0.html					\
-	    html/v3.6.1.html					\
-	    html/man						\
-	    html/man/TIFFClose.3t.html				\
-	    html/man/TIFFDataWidth.3t.html			\
-	    html/man/TIFFError.3t.html				\
-	    html/man/TIFFFlush.3t.html				\
-	    html/man/TIFFGetField.3t.html				\
-	    html/man/TIFFOpen.3t.html				\
-	    html/man/TIFFPrintDirectory.3t.html				\
-	    html/man/TIFFRGBAImage.3t.html				\
-	    html/man/TIFFReadDirectory.3t.html				\
-	    html/man/TIFFReadEncodedStrip.3t.html				\
-	    html/man/TIFFReadEncodedTile.3t.html				\
-	    html/man/TIFFReadRGBAImage.3t.html				\
-	    html/man/TIFFReadRGBAStrip.3t.html				\
-	    html/man/TIFFReadRGBATile.3t.html				\
-	    html/man/TIFFReadRawStrip.3t.html				\
-	    html/man/TIFFReadRawTile.3t.html				\
-	    html/man/TIFFReadScanline.3t.html				\
-	    html/man/TIFFReadTile.3t.html				\
-	    html/man/TIFFSetDirectory.3t.html				\
-	    html/man/TIFFSetField.3t.html				\
-	    html/man/TIFFWarning.3t.html				\
-	    html/man/TIFFWriteDirectory.3t.html				\
-	    html/man/TIFFWriteEncodedStrip.3t.html				\
-	    html/man/TIFFWriteEncodedTile.3t.html				\
-	    html/man/TIFFWriteRawStrip.3t.html			\
-	    html/man/TIFFWriteRawTile.3t.html			\
-	    html/man/TIFFWriteScanline.3t.html			\
-	    html/man/TIFFbuffer.3t.html				\
-	    html/man/TIFFcodec.3t.html				\
-	    html/man/TIFFcolor.3t.html				\
-	    html/man/TIFFmemory.3t.html				\
-	    html/man/TIFFquery.3t.html				\
-	    html/man/TIFFsize.3t.html				\
-	    html/man/TIFFstrip.3t.html				\
-	    html/man/TIFFswab.3t.html				\
-	    html/man/TIFFtile.3t.html				\
-	    html/man/fax2ps.1.html				\
-	    html/man/fax2tiff.1.html				\
-	    html/man/gif2tiff.1.html				\
-	    html/man/libtiff.3t.html				\
-	    html/man/pal2rgb.1.html				\
-	    html/man/ppm2tiff.1.html				\
-	    html/man/ras2tiff.1.html				\
-	    html/man/raw2tiff.1.html				\
-	    html/man/rgb2ycbcr.1.html				\
-	    html/man/sgi2tiff.1.html				\
-	    html/man/thumbnail.1.html				\
-	    html/man/tiff2bw.1.html				\
-	    html/man/tiff2pdf.1.html				\
-	    html/man/tiff2ps.1.html				\
-	    html/man/tiff2rgba.1.html				\
-	    html/man/tiffcmp.1.html				\
-	    html/man/tiffcp.1.html				\
-	    html/man/tiffdither.1.html				\
-	    html/man/tiffdump.1.html				\
-	    html/man/tiffgt.1.html				\
-	    html/man/tiffinfo.1.html				\
-	    html/man/tiffmedian.1.html				\
-	    html/man/tiffsplit.1.html				\
-	    html/man/tiffsv.1.html				\
-	    html/man/index.html					\
-	    html/man/TIFFWriteTile.3t.html			\
-	    ${NULL}
-OTHERFILES=\
-	${NULL}
-CONTRIBFILES=\
-	contrib/dbs/README			\
-	    contrib/dbs/Imakefile		\
-	    contrib/dbs/tiff-bi.c		\
-	    contrib/dbs/tiff-grayscale.c	\
-	    contrib/dbs/tiff-palette.c		\
-	    contrib/dbs/tiff-rgb.c		\
-	    contrib/dbs/xtiff/README		\
-		contrib/dbs/xtiff/Imakefile	\
-		contrib/dbs/xtiff/patchlevel.h	\
-		contrib/dbs/xtiff/xtiff.c	\
-		contrib/dbs/xtiff/xtifficon.h	\
-	contrib/ras/README			\
-	    contrib/ras/ras2tif.c		\
-	    contrib/ras/tif2ras.c		\
-	contrib/ojpeg/README			\
-	    contrib/ojpeg/jdhuff_add.c		\
-	contrib/vms/libtiff/makevms.com		\
-	    contrib/vms/libtiff/tiff.opt	\
-	    contrib/vms/libtiff/tiffshraxp.opt	\
-	    contrib/vms/libtiff/tiffshrvax.opt	\
-	    contrib/vms/libtiff/tiffvec.mar	\
-	    contrib/vms/tools/makevms.com	\
-	contrib/tags/README			\
-	    contrib/tags/Makefile.gcc		\
-	    contrib/tags/Makefile.mpw		\
-	    contrib/tags/listtif.c		\
-	    contrib/tags/maketif.c		\
-	    contrib/tags/xtif_dir.c		\
-	    contrib/tags/xtiffio.h		\
-	    contrib/tags/xtiffiop.h		\
-	contrib/mac-mpw/README			\
-	    contrib/mac-mpw/BUILD.mpw		\
-	    contrib/mac-mpw/libtiff.make	\
-	    contrib/mac-mpw/mactrans.c		\
-	    contrib/mac-mpw/port.make		\
-	    contrib/mac-mpw/tools.make		\
-	    contrib/mac-mpw/top.make		\
-	contrib/acorn/ReadMe			\
-	    contrib/acorn/Makefile		\
-	    contrib/acorn/SetVars		\
-	    contrib/acorn/cleanlib		\
-	    contrib/acorn/convert		\
-	    contrib/acorn/install		\
-	contrib/win32/README			\
-	    contrib/win32/dllshell.c		\
-	    contrib/win32/libtiff.def		\
-	contrib/win_dib/README.tiff2dib		\
-	    contrib/win_dib/Makefile.w95	\
-	    contrib/win_dib/tiff2dib.c		\
-	    contrib/win_dib/README.Tiffile	\
-	    contrib/win_dib/Tiffile.cpp		\
-	contrib/winnt/README			\
-	    contrib/winnt/README.console	\
-	    contrib/winnt/fax3sm.c		\
-	    contrib/winnt/libtiff.def		\
-	    contrib/winnt/libtiff.mak		\
-	    contrib/winnt/libtiff.vcp		\
-	    contrib/winnt/version.h		\
-	contrib/mac-cw/README			\
-	    contrib/mac-cw/Makefile.script	\
-	    contrib/mac-cw/mac_main.c		\
-	    contrib/mac-cw/mac_main.h		\
-	    contrib/mac-cw/metrowerks.note	\
-	    contrib/mac-cw/mkg3_main.c		\
-	    contrib/mac-cw/version.h		\
-	contrib/dosdjgpp/README			\
-	    contrib/dosdjgpp/Makefile.lib	\
-	    contrib/dosdjgpp/Makefile.tools	\
-	    contrib/dosdjgpp/Makefile.top	\
-	    contrib/dosdjgpp/conf.bat		\
-	    contrib/dosdjgpp/port.h		\
-	contrib/mfs/README			\
-	    contrib/mfs/mfs_file.c		\
-	contrib/pds/README			\
-	    contrib/pds/tif_imageiter.c		\
-	    contrib/pds/tif_imageiter.h		\
-	    contrib/pds/tif_pdsdirread.c	\
-	    contrib/pds/tif_pdsdirwrite.c	\
-	contrib/addtiffo/README			\
-	    contrib/addtiffo/Makefile		\
-	    contrib/addtiffo/Makefile.vc	\
-	    contrib/addtiffo/addtiffo.c		\
-	    contrib/addtiffo/tif_overview.c	\
-	    contrib/addtiffo/tif_ovrcache.c	\
-	    contrib/addtiffo/tif_ovrcache.h	\
-	contrib/iptcutil/Makefile		\
-		contrib/iptcutil/iptcutil.c	\
-		contrib/iptcutil/test.iptc	\
-		contrib/iptcutil/test.txt	\
-	${NULL}
-
-DISTFILES=\
-	${TIFFFILES}				\
-	dist/tiff.alpha				\
-	dist/tiff.version			\
-	${OTHERFILES}				\
-	${CONTRIBFILES}				\
-	${NULL}
-
-CONFIG=\
-	-with-CC=cc \
-	-with-GCOPTS=" " \
-	-with-JPEG=yes \
-	-with-DIR_JPEG=../src/jpeg-5a \
-	-with-ZIP=yes \
-	-with-DIR_LIBGZ=../src/zlib \
-	${NULL}
-
-rcsclean:
-	rcsclean ${TIFFFILES} && co ${TIFFFILES}
-
-release:
-	(cd ${SRCDIR}/dist; sh newversion)
-	${MAKE}  -${MAKEFLAGS} release.stamp
-	(cd ${SRCDIR}/libtiff; ${MAKE} -${MAKEFLAGS} tiffvers.h)
-#	${SRCDIR}/configure ${CONFIG}
-#	${MAKE} -${MAKEFLAGS} product
-	${MAKE} -${MAKEFLAGS} release.tar.zip
+# Process this file with automake to produce Makefile.in.
 
 
-# stamp relevant files according to current alpha
-release.stamp:
-	date "+%m/%d/%Y" > RELEASE-DATE
+SHELL = @SHELL@
 
-#diffs since last release
-releasediff:
-	-@for i in ${TIFFFILES}; do					\
-	    cvs diff -D`cat RELEASE-DATE` ${SRCDIR}/$$i;				\
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = .
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AR = @AR@
+AS = @AS@
+CC = @CC@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EGREP = @EGREP@
+EXEEXT = @EXEEXT@
+F77 = @F77@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
+LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
+LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
+LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
+LIBTIFF_VERSION = @LIBTIFF_VERSION@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+RC = @RC@
+STRIP = @STRIP@
+VERSION = @VERSION@
+
+EXTRA_DIST =  	COPYRIGHT 	ChangeLog 	HOWTO-RELEASE 	README 	RELEASE-DATE 	TODO 	VERSION 	autogen.sh
+
+
+SUBDIRS = libtiff man
+ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ./libtiff/config.h
+CONFIG_CLEAN_FILES = 
+DIST_COMMON =  README ChangeLog Makefile.am Makefile.in TODO aclocal.m4 \
+config.guess config.sub configure configure.ac install-sh ltmain.sh \
+missing mkinstalldirs
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP_ENV = --best
+all: all-redirect
+.SUFFIXES:
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --foreign Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+$(ACLOCAL_M4):  configure.ac 
+	cd $(srcdir) && $(ACLOCAL)
+
+config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
+	$(SHELL) ./config.status --recheck
+$(srcdir)/configure: $(srcdir)/configure.ac $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
+	cd $(srcdir) && $(AUTOCONF)
+
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
+
+@SET_MAKE@
+
+all-recursive install-data-recursive install-exec-recursive \
+installdirs-recursive install-recursive uninstall-recursive  \
+check-recursive installcheck-recursive info-recursive dvi-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
+
+mostlyclean-recursive clean-recursive distclean-recursive \
+maintainer-clean-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
+	  rev="$$subdir $$rev"; \
+	  test "$$subdir" != "." || dot_seen=yes; \
+	done; \
+	test "$$dot_seen" = "no" && rev=". $$rev"; \
+	target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $$rev; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
 	done
 
-# create release or beta distribution archive
-release.tar.zip:
-	if test "@RELEASE@" = "" ; then					\
-	  VERSIONREL="@VERSION@";					\
-	else								\
-	  VERSIONREL="@VERSION@-@RELEASE@";				\
-	fi;								\
-	rm -f ../tiff-$$VERSIONREL $$VERSIONREL $$VERSIONREL-tar;			\
-	ln -s ${SRCDIR} tiff-$$VERSIONREL;					\
-	(for i in ${DISTFILES}; do					\
-	   echo $$i;							\
-	done) | sed "s;.*;tiff-$$VERSIONREL/&;" >$$VERSIONREL;		\
-	tar cvf $$VERSIONREL-tar `cat $$VERSIONREL`;				\
-	zip ../tiff-$$VERSIONREL.zip `cat $$VERSIONREL`; 				\
-	cat $$VERSIONREL-tar | ${COMPRESS} >../tiff-$$VERSIONREL.tar.${ZIPSUF};	\
-	rm -f tiff-$$VERSIONREL $$VERSIONREL $$VERSIONREL-tar;
-#
-#	Simple rule to run test suite assuming that pics directory is 
-#	just below this one, and that .rpt files are available. 
-#
-test:
-	${SRCDIR}/test_pics.sh pics/*.tif
+tags: TAGS
 
-#
-# Create a package of the test images.
-#
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
 
-PICS=\
-	pics/README		 \
-	pics/cramps.tif		 \
-	pics/cramps-tile.tif	\
-	pics/fax2d.tif		\
-	pics/g3test.tif		\
-	pics/jello.tif		\
-	pics/jim___cg.tif	\
-	pics/jim___dg.tif	\
-	pics/jim___gg.tif	\
-	pics/jim___ah.tif	\
-	pics/strike.tif		\
-	pics/oxford.tif		\
-	pics/quad-lzw.tif	\
-	pics/quad-tile.tif	\
-	pics/text.tif		\
-	pics/ycbcr-cat.tif	\
-	pics/smallliz.tif	\
-	pics/zackthecat.tif	\
-	pics/fax2d.g3		\
-	pics/g3test.g3		\
-	${NULL}
+TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+   if test "$$subdir" = .; then :; else \
+	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
+   fi; \
+	done; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
 
-pics.tar:
-	tar cvf - ${PICS} | ${COMPRESS} > tiffpics.tar.${ZIPSUF}
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(PACKAGE)-$(VERSION)
+top_distdir = $(distdir)
+
+# This target untars the dist file and tries a VPATH configuration.  Then
+# it guarantees that the distribution is self-contained by making another
+# tarfile.
+distcheck: dist
+	-rm -rf $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
+	mkdir $(distdir)/=build
+	mkdir $(distdir)/=inst
+	dc_install_base=`cd $(distdir)/=inst && pwd`; \
+	cd $(distdir)/=build \
+	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
+	  && $(MAKE) $(AM_MAKEFLAGS) \
+	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
+	  && $(MAKE) $(AM_MAKEFLAGS) check \
+	  && $(MAKE) $(AM_MAKEFLAGS) install \
+	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
+	  && $(MAKE) $(AM_MAKEFLAGS) dist
+	-rm -rf $(distdir)
+	@banner="$(distdir).tar.gz is ready for distribution"; \
+	dashes=`echo "$$banner" | sed s/./=/g`; \
+	echo "$$dashes"; \
+	echo "$$banner"; \
+	echo "$$dashes"
+dist: distdir
+	-chmod -R a+r $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
+	-rm -rf $(distdir)
+dist-all: distdir
+	-chmod -R a+r $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
+	-rm -rf $(distdir)
+distdir: $(DISTFILES)
+	-rm -rf $(distdir)
+	mkdir $(distdir)
+	-chmod 777 $(distdir)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign Makefile
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+	for subdir in $(SUBDIRS); do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d $(distdir)/$$subdir \
+	    || mkdir $(distdir)/$$subdir \
+	    || exit 1; \
+	    chmod 777 $(distdir)/$$subdir; \
+	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(distdir) distdir=../$(distdir)/$$subdir distdir) \
+	      || exit 1; \
+	  fi; \
+	done
+info-am:
+info: info-recursive
+dvi-am:
+dvi: dvi-recursive
+check-am: all-am
+check: check-recursive
+installcheck-am:
+installcheck: installcheck-recursive
+install-exec-am:
+install-exec: install-exec-recursive
+
+install-data-am:
+install-data: install-data-recursive
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-recursive
+uninstall-am:
+uninstall: uninstall-recursive
+all-am: Makefile
+all-redirect: all-recursive
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs: installdirs-recursive
+installdirs-am:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-recursive
+
+clean-am:  clean-tags clean-generic mostlyclean-am
+
+clean: clean-recursive
+
+distclean-am:  distclean-tags distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-recursive
+	-rm -f config.status
+
+maintainer-clean-am:  maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-recursive
+	-rm -f config.status
+
+.PHONY: install-data-recursive uninstall-data-recursive \
+install-exec-recursive uninstall-exec-recursive installdirs-recursive \
+uninstalldirs-recursive all-recursive check-recursive \
+installcheck-recursive info-recursive dvi-recursive \
+mostlyclean-recursive distclean-recursive clean-recursive \
+maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs-am \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

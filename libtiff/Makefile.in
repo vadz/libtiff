@@ -1,10 +1,21 @@
-#	$Header$
+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# $Id$
 #
-# Tag Image File Format Library
+# Tag Image File Format (TIFF) Software
 #
-# Copyright (c) 1988-1997 Sam Leffler
-# Copyright (c) 1991-1997 Silicon Graphics, Inc.
-# 
+# Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
+#
 # Permission to use, copy, modify, distribute, and sell this software and 
 # its documentation for any purpose is hereby granted without fee, provided
 # that (i) the above copyright notices and this permission notice appear in
@@ -23,392 +34,414 @@
 # WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
 # LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
-#
 
-SRCDIR	= @LIBSRCDIR@
+# Process this file with automake to produce Makefile.in.
 
-#
-# VERSION:	@VERSION@
-# DATE:		@DATE@
-# TARGET:	@TARGET@
-# CCOMPILER:	@CCOMPILER@
-#
-SHELL	= @SCRIPT_SH@
-SCRIPT_SH = @SCRIPT_SH@
-NULL	=
-CC	= @CCOMPILER@
-AR	= @AR@
-AROPTS	= @AROPTS@
-RANLIB	= @RANLIB@
-INSTALL	= @INSTALL@
 
-#
-# If JPEG support is to be included and the Independent JPEG
-# Software distribution is not installed then DIR_JPEG must
-# refer to the directory where the include files reside.
-#
-# Similarly, if the libgz distribution is not installed, then
-# DIR_LIBGZ must refer to the directory where the include files
-# are located.  Note that recent versions 
-#
-IPATH	= -I. -I${SRCDIR} @COPT_LIBINC@
-#
-# To enable JPEG support include -DJPEG_SUPPORT here.
-# To enable Deflate support add a -DZIP_SUPPORT here.
-# Note that where the configure script is used these defines
-# are automatically setup when JPEG/ZIP is set to "yes".
-#
-# Otherwise, consult tiffconf.h for information on controlling
-# the configuration of optional library support.
-#
-CONF_LIBRARY=@CONF_JPEG@ @CONF_ZIP@
-COPTS	= @GCOPTS@
-OPTIMIZER=@OPTIMIZER@
-LFSOPTS=@LFSOPTS@
-CFLAGS	= @ENVOPTS@ @LIBCOPTS@ ${COPTS} ${OPTIMIZER} ${LFSOPTS} ${IPATH} ${CONF_LIBRARY}
-#
-SRCS	= \
-	tif_aux.c \
-	tif_close.c \
-	tif_codec.c \
-	tif_compress.c \
-	tif_color.c \
-	tif_dir.c \
-	tif_dirinfo.c \
-	tif_dirread.c \
-	tif_dirwrite.c \
-	tif_dumpmode.c \
-	tif_error.c \
-	tif_extension.c \
-	tif_fax3.c \
-	tif_fax3sm.c \
-	tif_getimage.c \
-	tif_jpeg.c \
-	tif_flush.c \
-	tif_luv.c \
-	tif_lzw.c \
-	tif_next.c \
-	nnnntif_ojpeg.c \
-	tif_open.c \
-	tif_packbits.c \
-	tif_pixarlog.c \
-	tif_predict.c \
-	tif_print.c \
-	tif_read.c \
-	tif_swab.c \
-	tif_strip.c \
-	tif_thunder.c \
-	tif_tile.c \
-	tif_unix.c \
-	tif_version.c \
-	tif_warning.c \
-	tif_write.c \
-	tif_zip.c \
-	${NULL}
-OBJS	= \
-	tif_aux.o \
-	tif_close.o \
-	tif_codec.o \
-	tif_compress.o \
-	tif_color.o\
-	tif_dir.o \
-	tif_dirinfo.o \
-	tif_dirread.o \
-	tif_dirwrite.o \
-	tif_dumpmode.o \
-	tif_error.o \
-	tif_extension.o \
-	tif_fax3.o \
-	tif_fax3sm.o \
-	tif_getimage.o \
-	tif_jpeg.o \
-	tif_flush.o \
-	tif_luv.o \
-	tif_lzw.o \
-	tif_next.o \
-	tif_ojpeg.o \
-	tif_open.o \
-	tif_packbits.o \
-	tif_pixarlog.o \
-	tif_predict.o \
-	tif_print.o \
-	tif_read.o \
-	tif_swab.o \
-	tif_strip.o \
-	tif_thunder.o \
-	tif_tile.o \
-	tif_unix.o \
-	tif_version.o \
-	tif_warning.o \
-	tif_write.o \
-	tif_zip.o \
-	${NULL}
-TARGETS	= libtiff.a
+SHELL = @SHELL@
 
-all:	${TARGETS}
-	if [ @DSO@dso != nodso ]; then \
-	    ${MAKE} -${MAKEFLAGS} @DSO@dso; \
-	else \
-	    true; \
-	fi
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
-libtiff.a: ${OBJS}
-	${AR} ${AROPTS} libtiff.a $?
-	${RANLIB} libtiff.a
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
 
-#
-# NB: The configure script verifies that the configured
-# tools are capable of producing a DSO before enabling
-# their creation/use.  The following rules are effectively
-# duplicated in the configure script to do this verification.
-# This means that if you want to add support for building a
-# DSO on another system you'll need to modify this file *and*
-# configure if you want the right thing to happen automatically
-# (should probably be fixed up).
-#
+DESTDIR =
 
-# default IRIX DSO building rule
-IRIXdso: ${OBJS}
-	@if [ "`basename ${CC}`" = "gcc" ]; then \
-	   ${LD} -n32 @ENVOPTS@ -o libtiff.@DSOSUF@ -shared -rdata_shared \
-	   ${OBJS}; \
-	else \
-	    ${CC} @ENVOPTS@ -o libtiff.@DSOSUF@ -shared -rdata_shared \
-	        -check_registry ${SRCDIR}/../port/irix/so_locations \
-	        -quickstart_info \
-	        ${OBJS} @LIBJPEG@ @LIBGZ@; \
-	fi
-	touch $@
-# special rule for IRIX 5.2
-IRIX52dso: ${OBJS}
-	${LD} -elf -o libtiff.@DSOSUF@ -shared -no_unresolved -all ${OBJS} \
-	    @LIBJPEG@ @LIBGZ@ -lc -lm
-	touch $@
-# Solaris 2.x
-SOLARISdso: ${OBJS}
-	${LD} -L@DIR_LIB@ -G -h libtiff.@DSOSUF@ -o libtiff.@DSOSUF@ ${OBJS}
-	touch $@
-# HP-UX 10.x+
-HPUXdso: ${OBJS}
-	${LD} -b -o libtiff.@DSOSUF_VERSION@ +h libtiff.@DSOSUF_VERSION@ ${OBJS}
-	touch $@
-# AIX 2.3.5 and 4.1.1
-AIXdso: ${OBJS}
-	rm -f libtiff.syms shr.o
-	echo "#!" > libtiff.syms
-	/bin/dump -g libtiff.a | sed -n -e \
-	      's/^[ 	]*[0-9][0-9]*[	 ]*\([^	 .][^ 	]*\)$$/\1/p' \
-	      >> libtiff.syms
-	${LD} -o shr.o libtiff.a -H512 -T512 -bM\:SRE \
-	    -bE\:libtiff.syms @LIBJPEG@ @LIBGZ@ -lc -lm -L@DIR_LIB@
-	rm -f libtiff.syms libtiff.@DSOSUF@
-	${AR} ${AROPTS} libtiff.@DSOSUF@ shr.o
-	rm -f shr.o
-	touch $@
-# GNU linker shared libraries
-GNULDdso: ${OBJS}
-	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
-	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
-		@LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
-	rm -f libtiff.@DSOSUF@
-	if [ @DSOSUF_VERSION@ != @DSOSUF@ ] ; then \
-	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
-	fi
-	touch $@
-DARWINdso: ${OBJS}
-	${CC} -dynamiclib -undefined error \
-	  -install_name libtiff.@DSOSUF@ \
-	  -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
-	  @LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
-	rm -f libtiff.@DSOSUF@
-	if [ @DSOSUF_VERSION@ != @DSOSUF@ ] ; then \
-	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
-	fi
-	touch $@
-# NetBSD 1.1 or FreeBSD (old style)
-NETBSDdso FREEBSDdso oldOPENBSDdso: ${OBJS}
-	@rm -f libtiff_pic.a
-	@${AR} cq libtiff_pic.a `lorder ${OBJS} | tsort -q`
-	${RANLIB} libtiff_pic.a
-	${LD} -x -Bshareable -Bforcearchive -o libtiff.@DSOSUF@ libtiff_pic.a
-	rm -f libtiff_pic.a
-	touch $@
-# linux ELF shared lib rule
-LINUXdso:  ${OBJS}
-	${CC} -shared -Wl,-soname,libtiff.@DSOSUF@ \
-	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
-		@LIBJPEG@ @LIBGZ@ @MACHLIBDEPS@
-	rm -f libtiff.@DSOSUF@
-	@LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@
-	touch $@
-# OSF/1 3.2 shared lib rule
-OSFdso: ${OBJS}
-	${LD} -o libtiff.@DSOSUF@ -shared -error_unresolved ${OBJS} @LIBJPEG@ @LIBGZ@ -lc -lm
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
-OPENBSDdso: ${OBJS}
-	${CC} -shared @LIBCOPTS@ -o libtiff.@DSOSUF_VERSION@ ${OBJS} @LIBJPEG@ @LIBGZ@ -lm
-	touch $@
+top_builddir = ..
 
-OPENSERVERdso:  ${OBJS}
-	${CC} -shared -fPIC \
-	  -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
-		@LIBJPEG@ @LIBGZ@
-	rm -f libtiff.@DSOSUF@
-	@LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@
-	touch $@
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
 
-${OBJS}: ${SRCDIR}/tiffio.h ${SRCDIR}/tiff.h ${SRCDIR}/tif_dir.h
-${OBJS}: ${SRCDIR}/tiffcomp.h ${SRCDIR}/tiffiop.h ${SRCDIR}/tiffconf.h
-${OBJS}: ${SRCDIR}/tiffvers.h
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
 
-VERSION	= @VERSIONFILE@
-RELEASE_DATE = @RELEASE_DATE_FILE@
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+AR = @AR@
+AS = @AS@
+CC = @CC@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
+EGREP = @EGREP@
+EXEEXT = @EXEEXT@
+F77 = @F77@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
+LIBTIFF_MAJOR_VERSION = @LIBTIFF_MAJOR_VERSION@
+LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
+LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
+LIBTIFF_VERSION = @LIBTIFF_VERSION@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+RC = @RC@
+STRIP = @STRIP@
+VERSION = @VERSION@
 
-${SRCDIR}/tiffvers.h: ${VERSION} ${SRCDIR}/mkversion.c
-	${CC} -o mkversion ${CFLAGS} ${SRCDIR}/mkversion.c
-	rm -f ${SRCDIR}/tiffvers.h
-	./mkversion -v ${VERSION} -r ${RELEASE_DATE} ${SRCDIR}/tiffvers.h
+lib_LTLIBRARIES = libtiff.la
+libtiff_la_SOURCES =  	tif_aux.c 	tif_close.c 	tif_codec.c 	tif_compress.c 	tif_color.c 	tif_dir.c 	tif_dirinfo.c 	tif_dirread.c 	tif_dirwrite.c 	tif_dumpmode.c 	tif_error.c 	tif_extension.c 	tif_fax3.c 	tif_fax3sm.c 	tif_getimage.c 	tif_jpeg.c 	tif_flush.c 	tif_luv.c 	tif_lzw.c 	tif_next.c 	tif_ojpeg.c 	tif_open.c 	tif_packbits.c 	tif_pixarlog.c 	tif_predict.c 	tif_print.c 	tif_read.c 	tif_swab.c 	tif_strip.c 	tif_thunder.c 	tif_tile.c 	tif_unix.c 	tif_version.c 	tif_warning.c 	tif_write.c 	tif_zip.c
 
-tiffvers.h:	${SRCDIR}/tiffvers.h
+libtiff_la_LDFLAGS =  	-no-undefined 	-version-number $(LIBTIFF_MAJOR_VERSION):$(LIBTIFF_MINOR_VERSION):$(LIBTIFF_MICRO_VERSION)
+
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = config.h
+CONFIG_CLEAN_FILES = 
+LTLIBRARIES =  $(lib_LTLIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I.
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+libtiff_la_LIBADD = 
+libtiff_la_OBJECTS =  tif_aux.lo tif_close.lo tif_codec.lo \
+tif_compress.lo tif_color.lo tif_dir.lo tif_dirinfo.lo tif_dirread.lo \
+tif_dirwrite.lo tif_dumpmode.lo tif_error.lo tif_extension.lo \
+tif_fax3.lo tif_fax3sm.lo tif_getimage.lo tif_jpeg.lo tif_flush.lo \
+tif_luv.lo tif_lzw.lo tif_next.lo tif_ojpeg.lo tif_open.lo \
+tif_packbits.lo tif_pixarlog.lo tif_predict.lo tif_print.lo tif_read.lo \
+tif_swab.lo tif_strip.lo tif_thunder.lo tif_tile.lo tif_unix.lo \
+tif_version.lo tif_warning.lo tif_write.lo tif_zip.lo
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  ./stamp-h.in Makefile.am Makefile.in config.h.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP_ENV = --best
+DEP_FILES =  .deps/tif_aux.P .deps/tif_close.P .deps/tif_codec.P \
+.deps/tif_color.P .deps/tif_compress.P .deps/tif_dir.P \
+.deps/tif_dirinfo.P .deps/tif_dirread.P .deps/tif_dirwrite.P \
+.deps/tif_dumpmode.P .deps/tif_error.P .deps/tif_extension.P \
+.deps/tif_fax3.P .deps/tif_fax3sm.P .deps/tif_flush.P \
+.deps/tif_getimage.P .deps/tif_jpeg.P .deps/tif_luv.P .deps/tif_lzw.P \
+.deps/tif_next.P .deps/tif_ojpeg.P .deps/tif_open.P \
+.deps/tif_packbits.P .deps/tif_pixarlog.P .deps/tif_predict.P \
+.deps/tif_print.P .deps/tif_read.P .deps/tif_strip.P .deps/tif_swab.P \
+.deps/tif_thunder.P .deps/tif_tile.P .deps/tif_unix.P \
+.deps/tif_version.P .deps/tif_warning.P .deps/tif_write.P \
+.deps/tif_zip.P
+SOURCES = $(libtiff_la_SOURCES)
+OBJECTS = $(libtiff_la_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .lo .o .obj .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --foreign libtiff/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+config.h: stamp-h
+	@if test ! -f $@; then \
+		rm -f stamp-h; \
+		$(MAKE) stamp-h; \
+	else :; fi
+stamp-h: $(srcdir)/config.h.in $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=libtiff/config.h \
+	     $(SHELL) ./config.status
+	@echo timestamp > stamp-h 2> /dev/null
+$(srcdir)/config.h.in: $(srcdir)/stamp-h.in
+	@if test ! -f $@; then \
+		rm -f $(srcdir)/stamp-h.in; \
+		$(MAKE) $(srcdir)/stamp-h.in; \
+	else :; fi
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOHEADER)
+	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
+
+mostlyclean-hdr:
+
+clean-hdr:
+
+distclean-hdr:
+	-rm -f config.h
+
+maintainer-clean-hdr:
+
+mostlyclean-libLTLIBRARIES:
+
+clean-libLTLIBRARIES:
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+
+distclean-libLTLIBRARIES:
+
+maintainer-clean-libLTLIBRARIES:
+
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(libdir)
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "$(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p; \
+	  else :; fi; \
+	done
+
+uninstall-libLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p; \
+	done
+
+# FIXME: We should only use cygpath when building on Windows,
+# and only if it is available.
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+.s.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.S.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+libtiff.la: $(libtiff_la_OBJECTS) $(libtiff_la_DEPENDENCIES)
+	$(LINK) -rpath $(libdir) $(libtiff_la_LDFLAGS) $(libtiff_la_OBJECTS) $(libtiff_la_LIBADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)config.h.in$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags config.h.in $$unique $(LISP))
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = libtiff
+
+distdir: $(DISTFILES)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign libtiff/Makefile
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+
+DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
+
+-include $(DEP_FILES)
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf .deps
+
+maintainer-clean-depend:
+
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+all-recursive-am: config.h
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+
+install-exec-am: install-libLTLIBRARIES
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-libLTLIBRARIES
+uninstall: uninstall-am
+all-am: Makefile $(LTLIBRARIES) config.h
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(libdir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-hdr mostlyclean-libLTLIBRARIES \
+		mostlyclean-compile mostlyclean-libtool \
+		mostlyclean-tags mostlyclean-depend mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-hdr clean-libLTLIBRARIES clean-compile clean-libtool \
+		clean-tags clean-depend clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-hdr distclean-libLTLIBRARIES distclean-compile \
+		distclean-libtool distclean-tags distclean-depend \
+		distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-hdr \
+		maintainer-clean-libLTLIBRARIES \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
+mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
+clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
+uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend info-am info \
+dvi-am dvi check check-am installcheck-am installcheck all-recursive-am \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
 
 #
 # The finite state machine tables used by the G3/G4 decoders
 # are generated by the mkg3states program.  On systems without
 # make these rules have to be manually carried out.
 #
-tif_fax3sm.c: ${SRCDIR}/mkg3states.c ${SRCDIR}/tif_fax3.h
-	${CC} -o mkg3states ${CFLAGS} ${SRCDIR}/mkg3states.c
+tif_fax3sm.c: mkg3states.c tif_fax3.h
+	${CC} -o mkg3states ${CFLAGS} mkg3states.c
 	rm -f tif_fax3sm.c; ./mkg3states -c const tif_fax3sm.c
 
-tif_aux.o: ${SRCDIR}/tif_aux.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_aux.c
-tif_close.o: ${SRCDIR}/tif_close.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_close.c
-tif_codec.o: ${SRCDIR}/tif_codec.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_codec.c
-tif_compress.o: ${SRCDIR}/tif_compress.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_compress.c
-tif_color.o: ${SRCDIR}/tif_color.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_color.c
-tif_dir.o: ${SRCDIR}/tif_dir.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dir.c
-tif_dirinfo.o: ${SRCDIR}/tif_dirinfo.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dirinfo.c
-tif_dirread.o: ${SRCDIR}/tif_dirread.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dirread.c
-tif_dirwrite.o: ${SRCDIR}/tif_dirwrite.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dirwrite.c
-tif_dumpmode.o: ${SRCDIR}/tif_dumpmode.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_dumpmode.c
-tif_error.o: ${SRCDIR}/tif_error.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_error.c
-tif_extension.o: ${SRCDIR}/tif_extension.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_extension.c
-tif_fax3.o: ${SRCDIR}/tif_fax3.c ${SRCDIR}/t4.h ${SRCDIR}/tif_fax3.h
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_fax3.c
-tif_getimage.o: ${SRCDIR}/tif_getimage.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_getimage.c
-tif_jpeg.o: ${SRCDIR}/tif_jpeg.c @DEPEND_JPEGLIB@
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_jpeg.c
-tif_flush.o: ${SRCDIR}/tif_flush.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_flush.c
-tif_luv.o: ${SRCDIR}/tif_luv.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_luv.c
-tif_lzw.o: ${SRCDIR}/tif_lzw.c ${SRCDIR}/tif_predict.h
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_lzw.c
-tif_next.o: ${SRCDIR}/tif_next.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_next.c
-tif_ojpeg.o: ${SRCDIR}/tif_ojpeg.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_ojpeg.c
-tif_open.o: ${SRCDIR}/tif_open.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_open.c
-tif_packbits.o: ${SRCDIR}/tif_packbits.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_packbits.c
-tif_pixarlog.o: ${SRCDIR}/tif_pixarlog.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_pixarlog.c
-tif_predict.o: ${SRCDIR}/tif_predict.c ${SRCDIR}/tif_predict.h
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_predict.c
-tif_print.o: ${SRCDIR}/tif_print.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_print.c
-tif_read.o: ${SRCDIR}/tif_read.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_read.c
-tif_swab.o: ${SRCDIR}/tif_swab.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_swab.c
-tif_strip.o: ${SRCDIR}/tif_strip.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_strip.c
-tif_thunder.o: ${SRCDIR}/tif_thunder.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_thunder.c
-tif_tile.o: ${SRCDIR}/tif_tile.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_tile.c
-tif_unix.o: ${SRCDIR}/tif_unix.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_unix.c
-tif_version.o: ${SRCDIR}/tif_version.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_version.c
-tif_warning.o: ${SRCDIR}/tif_warning.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_warning.c
-tif_write.o: ${SRCDIR}/tif_write.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_write.c
-tif_zip.o: ${SRCDIR}/tif_zip.c ${SRCDIR}/tif_predict.h @DEPEND_ZLIB@
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_zip.c
-
-tif_apple.o: ${SRCDIR}/tif_apple.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_apple.c
-tif_atari.o: ${SRCDIR}/tif_atari.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_atari.c
-tif_msdos.o: ${SRCDIR}/tif_msdos.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_msdos.c
-tif_vms.o: ${SRCDIR}/tif_vms.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_vms.c
-tif_win3.o: ${SRCDIR}/tif_win3.c
-	${CC} -c ${CFLAGS} ${SRCDIR}/tif_win3.c
-
-INCS	= ${SRCDIR}/tiff.h ${SRCDIR}/tiffio.h ${SRCDIR}/tiffconf.h \
-	${SRCDIR}/tiffvers.h
-
-INCS_PRIVATE = ${SRCDIR}/tiffiop.h ${SRCDIR}/tif_dir.h ${SRCDIR}/port.h
-
-installHdrs: ${INCS}
-	${INSTALL} -idb tiff.sw.dev -m 755 -dir ${DESTDIR}@DIR_INC@
-	for i in ${INCS}; do						\
-	    f=`basename $$i`;						\
-	    ${INSTALL} -idb tiff.sw.dev -m 444 -F ${DESTDIR}@DIR_INC@	\
-		-src $$i -O $$f;					\
-	done
-
-installPrivateHdrs: ${INCS_PRIVATE}
-	${INSTALL} -idb tiff.sw.dev -m 755 -dir ${DESTDIR}@DIR_INC@
-	for i in ${INCS_PRIVATE}; do					\
-	    f=`basename $$i`;						\
-	    ${INSTALL} -idb tiff.sw.dev -m 444 -F ${DESTDIR}@DIR_INC@	\
-		-src $$i -O $$f;					\
-	done
-
-installDSO: @DSO@dso
-	if [ @DSOSUF_VERSION@ != @DSOSUF@ ]; then			\
-	    ${INSTALL} -idb tiff.sw.tools.nostrip -m 555		\
-		-F ${DESTDIR}@DIR_LIB@ -O libtiff.@DSOSUF_VERSION@;	\
-	    ${INSTALL} -idb tiff.sw.tools -F ${DESTDIR}@DIR_LIB@	\
-		-lns libtiff.@DSOSUF_VERSION@ -O libtiff.@DSOSUF@;	\
-	    ${INSTALL} -idb tiff.sw.tools -F ${DESTDIR}@DIR_LIB@	\
-		-lns libtiff.@DSOSUF@ -O libtiff.so;			\
-	else								\
-	    ${INSTALL} -idb tiff.sw.tools.nostrip -m 555		\
-		-F ${DESTDIR}@DIR_LIB@ -O libtiff.@DSOSUF@;		\
-	fi
-
-install: all installHdrs
-	${INSTALL} -idb tiff.sw.dev -m 755 -dir ${DESTDIR}@DIR_LIB@
-	${INSTALL} -idb tiff.sw.dev -m 444 -F ${DESTDIR}@DIR_LIB@ -O libtiff.a
-	if [ @DSO@dso != nodso ]; then					\
-	    ${MAKE} -${MAKEFLAGS} installDSO;				\
-	else								\
-	    true;							\
-	fi
-
-install-private: install installPrivateHdrs
-
-clean:
-	rm -f ${TARGETS} ${OBJS} core a.out \
-	    mkg3states tif_fax3sm.c \
-	    mkversion ${SRCDIR}/tiffvers.h \
-	    libtiff.a libtiff.@DSOSUF@ libtiff.@DSOSUF_VERSION@ *dso
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
