@@ -1,4 +1,4 @@
-/* $Header$ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1990-1997 Sam Leffler
@@ -1126,8 +1126,14 @@ Fax3VSetField(TIFF* tif, ttag_t tag, va_list ap)
 		DecoderState(tif)->fill = va_arg(ap, TIFFFaxFillFunc);
 		return (1);			/* NB: pseudo tag */
 	case TIFFTAG_GROUP3OPTIONS:
+		/* XXX: avoid reading options if compression mismatches. */
+		if (tif->tif_dir.td_compression == COMPRESSION_CCITTFAX3)
+			sp->groupoptions = va_arg(ap, uint32);
+		break;
 	case TIFFTAG_GROUP4OPTIONS:
-		sp->groupoptions = va_arg(ap, uint32);
+		/* XXX: avoid reading options if compression mismatches. */
+		if (tif->tif_dir.td_compression == COMPRESSION_CCITTFAX4)
+			sp->groupoptions = va_arg(ap, uint32);
 		break;
 	case TIFFTAG_BADFAXLINES:
 		sp->badfaxlines = va_arg(ap, uint32);
