@@ -1684,6 +1684,9 @@ if [ "${JPEG}" = yes ]; then
       LIBJPEG="-ljpeg"
       test -z "${DIR_JPEGLIB-}" || LIBJPEG="-L${DIR_JPEGLIB} ${LIBJPEG}"
     fi
+    if [ "${OJPEG}" = yes ]; then
+      CONF_JPEG="$CONF_JPEG -DOJPEG_SUPPORT"
+    fi
 else
     CONF_JPEG=
     LIBJPEG=

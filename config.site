@@ -99,6 +99,12 @@
 #DIRS_LIBINC="$DIRS_LIBINC ../src/jpeg-6b" # directory for jpeg include files
 #DIR_JPEGLIB=../src/jpeg-6b		# directory for libjpeg
 
+# The following will enable OJPEG support.  Note that a patch libjpeg is
+# required before this can be enabled.  It is also only supported if JPEG is
+# enabled.  
+
+#OJPEG="yes"			        # yes|no configure OJPEG support
+
 #
 # Deflate-specific parameters; used when Deflate support is enabled (see above).
 #
