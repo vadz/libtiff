@@ -418,17 +418,115 @@ TIFFRGBAImageGet(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
  */
 int
 TIFFReadRGBAImage(TIFF* tif,
-    uint32 rwidth, uint32 rheight, uint32* raster, int stop)
+		  uint32 rwidth, uint32 rheight, uint32* raster, int stop)
 {
     char emsg[1024];
     TIFFRGBAImage img;
     int ok;
 
-    if (TIFFRGBAImageOK(tif, emsg) && TIFFRGBAImageBegin(&img, tif, stop, emsg)) {
+    if (TIFFRGBAImageOK(tif, emsg) &&
+	TIFFRGBAImageBegin(&img, tif, stop, emsg)) {
 	/* XXX verify rwidth and rheight against width and height */
 	ok = TIFFRGBAImageGet(&img, raster+(rheight-img.height)*rwidth,
 	    rwidth, img.height);
 	TIFFRGBAImageEnd(&img);
+    } else {
+	TIFFError(TIFFFileName(tif), emsg);
+	ok = 0;
+    }
+    return (ok);
+}
+
+int
+TIFFReadRGBAImageOriented(TIFF* tif,
+			  uint32 rwidth, uint32 rheight, uint32* raster,
+			  int orientation, int stop)
+{
+    char emsg[1024];
+    TIFFRGBAImage img;
+    int ok;
+
+    if (TIFFRGBAImageOK(tif, emsg) &&
+	TIFFRGBAImageBegin(&img, tif, stop, emsg)) {
+	/* XXX verify rwidth and rheight against width and height */
+	ok = TIFFRGBAImageGet(&img, raster+(rheight-img.height)*rwidth,
+	    rwidth, img.height);
+	TIFFRGBAImageEnd(&img);
+
+	/* 
+	 * TIFFRGBAImageGet() always returns bottom-left oriented raster.
+	 * Wi will rotate it accordingly with user request.
+	 */
+	if (orientation == ORIENTATION_TOPLEFT ||
+	    orientation == ORIENTATION_LEFTTOP) {
+		uint32 *linebuf = (uint32*)_TIFFmalloc(rwidth * sizeof(uint32));
+		uint32 *top, *bottom;
+
+		for (top = raster, bottom = raster + (rheight - 1) * rwidth;
+		     top < bottom;
+		     top+=rwidth, bottom-=rwidth) {
+			_TIFFmemcpy(linebuf, top, rwidth * sizeof(uint32));
+			_TIFFmemcpy(top, bottom, rwidth * sizeof(uint32));
+			_TIFFmemcpy(bottom, linebuf, rwidth * sizeof(uint32));
+		}
+
+		_TIFFfree(linebuf);
+	} else if (orientation == ORIENTATION_TOPRIGHT ||
+		   orientation == ORIENTATION_RIGHTTOP) {
+		uint32 *linebuf = (uint32*)_TIFFmalloc(rwidth * sizeof(uint32));
+		uint32 *top, *bottom;
+
+		for (top = raster, bottom = raster + (rheight - 1) * rwidth;
+		/* XXX: Use `<=' because we should revert center line too */
+		     top <= bottom;
+		     top+=rwidth, bottom-=rwidth) {
+			uint32 *left = top;
+			uint32 *right = left + rwidth - 1;
+			
+			while ( left < right ) {
+				uint32 temp = *left;
+				*left = *right;
+				*right = temp;
+				left++, right--;
+			}
+
+			/* 
+			 * XXX: check for center line, otherwise
+			 * it will be reverted back
+			 */
+			if (top != bottom) {
+				left = bottom;
+				right = left + rwidth - 1;
+				while ( left < right ) {
+					uint32 temp = *left;
+					*left = *right;
+					*right = temp;
+					left++, right--;
+				}
+			}
+
+			_TIFFmemcpy(linebuf, top, rwidth * sizeof(uint32));
+			_TIFFmemcpy(top, bottom, rwidth * sizeof(uint32));
+			_TIFFmemcpy(bottom, linebuf, rwidth * sizeof(uint32));
+		}
+
+		_TIFFfree(linebuf);
+	} else if (orientation == ORIENTATION_BOTRIGHT ||
+		   orientation == ORIENTATION_RIGHTBOT) {
+		uint32 line;
+
+		for (line = 0; line < rheight; line++) {
+			uint32 *left = raster + (line * rwidth);
+			uint32 *right = left + rwidth - 1;
+
+			while ( left < right ) {
+				uint32 temp = *left;
+				*left = *right;
+				*right = temp;
+				left++, right--;
+			}
+		}
+	}
     } else {
 	TIFFError(TIFFFileName(tif), emsg);
 	ok = 0;
