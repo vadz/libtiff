@@ -204,6 +204,7 @@ TIFFFILES=\
 	    tools/ppm2tiff.c			\
 	    tools/ras2tiff.c			\
 	    tools/rasterfile.h			\
+	    tools/raw2tiff.c			\
 	    tools/rgb2ycbcr.c			\
 	    tools/sgi2tiff.c			\
 	    tools/sgigt.c			\
