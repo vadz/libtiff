@@ -206,7 +206,7 @@ GNULDdso: ${OBJS}
 	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
 		@LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
 	rm -f libtiff.@DSOSUF@
-	if [ @DSOSUB_VERSION != @DSOSUF@ ] ; then \
+	if [ @DSOSUF_VERSION@ != @DSOSUF@ ] ; then \
 	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
 	fi
 	touch $@
@@ -216,7 +216,7 @@ DARWINdso: ${OBJS}
 	  -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
 	  @LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
 	rm -f libtiff.@DSOSUF@
-	if [ @DSOSUB_VERSION != @DSOSUF@ ] ; then \
+	if [ @DSOSUF_VERSION@ != @DSOSUF@ ] ; then \
 	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
 	fi
 	touch $@
