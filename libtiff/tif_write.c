@@ -154,7 +154,9 @@ TIFFWriteScanline(TIFF* tif, tdata_t buf, uint32 row, tsample_t sample)
 	}
 	status = (*tif->tif_encoderow)(tif, (tidata_t) buf,
 	    tif->tif_scanlinesize, sample);
-	tif->tif_row++;
+
+        /* we are now poised at the beginning of the next row */
+	tif->tif_row = row + 1;
 	return (status);
 }
 
