@@ -263,7 +263,7 @@ TIFFReadDirectory(TIFF* tif)
                     while (fix < tif->tif_nfields &&
                            tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
 			fix++;
-		    dp->tdir_tag = IGNORE;
+		    /* dp->tdir_tag = IGNORE; */
 		}
 		/*
 		 * Null out old tags that we ignore.
