@@ -33,29 +33,34 @@ Increment version in file "VERSION"
 
 7. 
 
-sh configure; make; make install (to test). 
+Set current date in "RELEASE-DATE" file.
 
 
 8. 
 
-make release. 
+sh configure; make; make install (to test). 
+
 
 9. 
 
-make distclean
+make release. 
 
 10. 
 
-cvs commit
+make distclean
 
 11. 
+
+cvs commit
+
+12. 
 
 ftp ftp.onshore.com; 
 cd /home/ftp/pub/libtiff
 put ../tiff-vn-n-n.zip .
 put ../tiff-vn-n-n.tar.gz .
 
-12
+13
 
 ftp ftp.libtiff.org
 lcd html
@@ -63,7 +68,7 @@ mput *.html
 put ../tiff-vn-n-n.zip .
 put ../tiff-vn-n-n.tar.gz .
 
-13.  
+14.  
 
 Announce to list, tiff@olympiakos.com
 
