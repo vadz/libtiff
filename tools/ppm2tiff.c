@@ -74,6 +74,10 @@ main(int argc, char* argv[])
 	extern int optind;
 	extern char* optarg;
 
+	if ( argc < 2 ) {
+	    fprintf(stderr, "%s: Too few arguments\n", argv[0]);
+	    usage();
+	}
 	while ((c = getopt(argc, argv, "c:r:R:")) != -1)
 		switch (c) {
 		case 'c':		/* compression scheme */
@@ -112,9 +116,9 @@ main(int argc, char* argv[])
 		in = stdin;
 	}
 
-	if (getc(in) != 'P')
+	if (fgetc(in) != 'P')
 		BadPPM(infile);
-	switch (getc(in)) {
+	switch (fgetc(in)) {
 	case '5':			/* it's a PGM file */
 		spp = 1;
 		photometric = PHOTOMETRIC_MINISBLACK;
@@ -129,9 +133,30 @@ main(int argc, char* argv[])
 	default:
 		BadPPM(infile);
 	}
+
+	/* Parse header */
+	while(1) {
+		if (feof(in))
+			BadPPM(infile);
+		c = fgetc(in);
+		/* Skip whitespaces (blanks, TABs, CRs, LFs) */
+		if (strchr(" \t\r\n", c))
+			continue;
+
+		/* Check fo comment line */
+		if (c == '#') {
+			do {
+			    c = fgetc(in);
+			} while(!strchr("\r\n", c) || feof(in));
+			continue;
+		}
+
+		ungetc(c, in);
+		break;
+	}
 	if (fscanf(in, " %ld %ld %d", &w, &h, &prec) != 3)
 		BadPPM(infile);
-	if (getc(in) != '\n' || w <= 0 || h <= 0 || prec != 255)
+	if (fgetc(in) != '\n' || w <= 0 || h <= 0 || prec != 255)
 		BadPPM(infile);
 
 	out = TIFFOpen(argv[optind], "w");
@@ -220,9 +245,8 @@ char* stuff[] = {
 "",
 " -c jpeg[:opts]  compress output with JPEG encoding",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
-"               (no longer supported by default due to Unisys patent enforcement)", 
 " -c zip[:opts]	compress output with deflate encoding",
-" -c packbits	compress output with packbits encoding",
+" -c packbits	compress output with packbits encoding (the default)",
 " -c none	use no compression algorithm on output",
 "",
 "JPEG options:",
