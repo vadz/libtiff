@@ -1,3 +1,9 @@
+1999-08-16    <warmerda@CS46980-B>
+
+	* Added simple makefile.vc makefiles for building with MS VC++
+	on Windows NT/98/95 in console mode.  Stuff in contrib/win* make give 
+	better solutions for some users.
+
 Mon Aug 16 21:52:11 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Added addtiffo (add overviews to a TIFF file) in contrib.  Didn't
