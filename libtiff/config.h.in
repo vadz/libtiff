@@ -12,8 +12,9 @@
 /* Define to 1 if you have the `getopt' function. */
 #undef HAVE_GETOPT
 
-/* Define to 1 if you have the `gettimeofday' function. */
-#undef HAVE_GETTIMEOFDAY
+/* Define as 0 or 1 according to the floating point format suported by the
+   machine */
+#undef HAVE_IEEEFP
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -42,8 +43,8 @@
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
 
-/* Define to 1 if you have the `munmap' function. */
-#undef HAVE_MUNMAP
+/* Define to 1 if you have the `mmap' function. */
+#undef HAVE_MMAP
 
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW

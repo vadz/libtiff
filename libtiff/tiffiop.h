@@ -37,11 +37,9 @@
  */
 #if defined(_MSC_VER)
 # include "config.h.vc"
-# include "tiffconf.h"
 # include "tiffcomp.h"
 #else
 # include "config.h"
-# include "tiffconf.h"
 #endif
 
 #if HAVE_FCNTL_H

@@ -1446,7 +1446,7 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 static void 
 JPEGFixupTestSubsampling( TIFF * tif )
 {
-#if CHECK_JPEG_YCBCR_SUBSAMPLING == 1
+#ifdef CHECK_JPEG_YCBCR_SUBSAMPLING
     JPEGState *sp = JState(tif);
     TIFFDirectory *td = &tif->tif_dir;
 
@@ -1477,7 +1477,7 @@ JPEGFixupTestSubsampling( TIFF * tif )
 
     TIFFSetField( tif, TIFFTAG_YCBCRSUBSAMPLING, 
                   (uint16) sp->h_sampling, (uint16) sp->v_sampling );
-#endif /* CHECK_JPEG_YCBCR_SUBSAMPLING == 1 */
+#endif /* CHECK_JPEG_YCBCR_SUBSAMPLING */
 }
 
 static int

@@ -79,7 +79,7 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor gettimeofday isascii memmove memset munmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol])
+AC_CHECK_FUNCS([floor isascii memmove memset mmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol])
 
 dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)
@@ -89,7 +89,7 @@ AC_REPLACE_FUNCS(strtoul)
 AC_SYS_LARGEFILE
 
 dnl ---------------------------------------------------------------------------
-dnl Check the native cpu bit order
+dnl Check the native cpu bit order.
 dnl ---------------------------------------------------------------------------
 AC_MSG_CHECKING([native cpu bit order])
 case "$target_cpu" in
@@ -103,6 +103,13 @@ case "$target_cpu" in
         ;;
 esac
 AC_DEFINE_UNQUOTED(HOST_FILLORDER, $HOST_FILLORDER, [Set the native cpu bit order])
+
+dnl ---------------------------------------------------------------------------
+dnl Set the floating point format.
+dnl FIXME: write appropriate test.
+dnl ---------------------------------------------------------------------------
+HAVE_IEEEFP=1
+AC_DEFINE_UNQUOTED(HAVE_IEEEFP, $HAVE_IEEEFP, [Define as 0 or 1 according to the floating point format suported by the machine])
 
 dnl ---------------------------------------------------------------------------
 dnl Switch on/off internal codecs.
@@ -315,6 +322,47 @@ fi
 
 AM_CONDITIONAL(HAVE_OPENGL, test "$HAVE_OPENGL" = "yes")
 AC_SUBST(OPENGL_LIBS)
+
+dnl ===========================================================================
+dnl ``Orthogonal Features''
+dnl ===========================================================================
+
+dnl ---------------------------------------------------------------------------
+dnl Default handling of strip chopping support.
+dnl ---------------------------------------------------------------------------
+
+HAVE_STRIPCHOP=yes
+
+AC_ARG_ENABLE(strip-chopping, AS_HELP_STRING([--disable-strip-chopping], [disable support for strip chopping (whether or not to convert single-strip uncompressed images to mutiple strips of ~8Kb to reduce memory usage)]), [HAVE_STRIPCHOP=no], [HAVE_STRIPCHOP=yes])
+
+if test "$HAVE_STRIPCHOP" = "yes" ; then
+  CPPFLAGS="-DSTRIPCHOP_DEFAULT=TIFF_STRIPCHOP $CPPFLAGS"
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl Default handling of ASSOCALPHA support.
+dnl ---------------------------------------------------------------------------
+
+HAVE_EXTRASAMPLE_AS_ALPHA=yes
+
+AC_ARG_ENABLE(extrasample-as-alpha, AS_HELP_STRING([--disable-extrasample-as-alpha], [the RGBA interface will treat a fourth sample with no EXTRASAMPLE_ value as being ASSOCALPHA. Many packages produce RGBA files but don't mark the alpha properly]), [HAVE_EXTRASAMPLE_AS_ALPHA=no], [HAVE_EXTRASAMPLE_AS_ALPHA=yes])
+
+if test "$HAVE_EXTRASAMPLE_AS_ALPHA" = "yes" ; then
+  CPPFLAGS="-DDEFAULT_EXTRASAMPLE_AS_ALPHA $CPPFLAGS"
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl Default handling of YCbCr subsampling support.
+dnl See Bug 168 in Bugzilla, and JPEGFixupTestSubsampling() for details.
+dnl ---------------------------------------------------------------------------
+
+CHECK_JPEG_YCBCR_SUBSAMPLING=yes
+
+AC_ARG_ENABLE(check-ycbcr-subsampling, AS_HELP_STRING([--disable-check-ycbcr-subsampling], [disable picking up YCbCr subsampling info from the JPEG data stream to support files lacking the tag]), [CHECK_JPEG_YCBCR_SUBSAMPLING=no], [CHECK_JPEG_YCBCR_SUBSAMPLING=yes])
+
+if test "$CHECK_JPEG_YCBCR_SUBSAMPLING" = "yes" ; then
+  CPPFLAGS="-DCHECK_JPEG_YCBCR_SUBSAMPLING $CPPFLAGS"
+fi
 
 dnl ---------------------------------------------------------------------------
 

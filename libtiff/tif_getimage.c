@@ -262,7 +262,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	}
     }
 
-#if DEFAULT_EXTRASAMPLE_AS_ALPHA == 1
+#ifdef DEFAULT_EXTRASAMPLE_AS_ALPHA
     if( !TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &img->photometric))
         img->photometric = PHOTOMETRIC_MINISWHITE;
 
