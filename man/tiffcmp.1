@@ -66,6 +66,12 @@ Ignore any differences in directory tags.
 .SH BUGS
 Tags that are not recognized by the library are not
 compared; they may also generate spurious diagnostics.
+.PP
+The image data of tiled files is not compared, since the TIFFReadScanline()
+function is used.  A error will be reported for tiled files.
+.PP
+The pixel and/or sample number reported in differences may be off
+in some exotic cases. 
 .SH "SEE ALSO"
 .IR pal2rgb (1),
 .IR tiffinfo (1),
