@@ -1,3 +1,10 @@
+2004-10-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffset.c: Check the malloc return value (Dmitry V. Levin).
+
+	* libtiff/{tif_strip.c, tif_tile.c}: Zero division problem fixed
+	(Vladimir Nadvornik, Dmitry V. Levin).
+
 2004-10-16  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff 3.7.0 released.
