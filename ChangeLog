@@ -1,3 +1,17 @@
+2002-07-31  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/{tif_jpeg.c,tif_strip.c,tif_print.c}: Hacked tif_jpeg.c to
+	fetch TIFFTAG_YCBCRSUBSAMPLING from the jpeg data stream if it isn't
+	present in the tiff tags. 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=168
+
+	* libtiff/tif_read.c, libtiff/tif_write.c: TIFFReadScanline() and
+	TIFFWriteScanline() now set tif_row explicitly in case the codec has
+	fooled with the value. 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=129
+
 2002-06-22  Andrey Kiselev  <dron@remotesensing.org>
 	
 	* /tools/tiff2ps: Added workaround for some software that may crash
