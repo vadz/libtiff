@@ -1947,8 +1947,8 @@ char* stuff[] = {
 " -r            rotate by 180 degrees",
 " -s            generate PostScript for a single image",
 " -T            print pages for top edge binding",
-" -x		override resolution units as centimeters",
-" -y		override resolution units as inches",
+" -x            override resolution units as centimeters",
+" -y            override resolution units as inches",
 " -z            enable printing in the deadzone (only for PostScript Level II)",
 NULL
 };
