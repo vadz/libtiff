@@ -1,3 +1,18 @@
+Fri Jan 28 10:13:49 2000  Frank Warmerdam  <warmerda@gdal.velocet.ca>
+
+	* Largely reimplemented contrib/addtiffo to avoid temp files, 
+	updating the TIFF file in place.  Fixed a few other bugs to.
+
+	* Set tif_rawdatasize to zero when freeing raw data buffer in
+	TIFFWriteDirectory().
+
+	* Enabled "REWRITE_HACK" in tif_write.c by default.
+
+	* Fix bug in tif_write.c when switching between reading one directory
+	and writing to another. 
+
+	* Made TIFFWriteCheck() public, and added TIFFCreateDirectory()
+
 Wed Jan  5 12:37:48 2000  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* Added TIFFmemory(3t) functions to libtiff.def.
