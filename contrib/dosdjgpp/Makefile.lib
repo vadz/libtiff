@@ -92,6 +92,7 @@ SRCS	= \
 	tif_warning.c \
 	tif_write.c \
 	tif_zip.c \
+	tif_luv.c \
 	${NULL}
 OBJS	= \
 	tif_aux.o \
@@ -125,6 +126,7 @@ OBJS	= \
 	tif_warning.o \
 	tif_write.o \
 	tif_zip.o \
+	tif_luv.o \
 	${NULL}
 TARGETS	= libtiff.a
 
