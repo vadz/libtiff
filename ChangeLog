@@ -1,3 +1,18 @@
+2004-12-19  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Do not forget about TIFF_VARIABLE2 when
+	checking for tag count in TIFFReadDirectory() function. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=713
+
+	* libtiff/{tif_dirread.c, tif_fax3.c}: More argument checking in
+	CheckMallock() function.
+
+	* libtiff/tif_getimage.c: Support for multiple-alpha-channelled
+	RGB-images as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=718
+
 2004-12-15  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_getimage.c: #define A1 bracketing for clean build on
