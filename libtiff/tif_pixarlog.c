@@ -498,14 +498,14 @@ PixarLogMakeTables(PixarLogState *sp)
     uint16  *From8;
 
     c = log(RATIO);	
-    nlin = 1./c;	/* nlin must be an integer */
+    nlin = (int)1./c;	/* nlin must be an integer */
     c = 1./nlin;
     b = exp(-c*ONE);	/* multiplicative scale factor [b*exp(c*ONE) = 1] */
     linstep = b*c*exp(1.);
 
     LogK1 = 1./c;	/* if (v >= 2)  token = k1*log(v*k2) */
     LogK2 = 1./b;
-    lt2size = (2./linstep)+1;
+    lt2size = (int)(2./linstep) + 1;
     FromLT2 = (uint16 *)_TIFFmalloc(lt2size*sizeof(uint16));
     From14 = (uint16 *)_TIFFmalloc(16384*sizeof(uint16));
     From8 = (uint16 *)_TIFFmalloc(256*sizeof(uint16));
@@ -543,9 +543,9 @@ PixarLogMakeTables(PixarLogState *sp)
 
     for (i = 0; i < TSIZEP1; i++)  {
 	v = ToLinearF[i]*65535.0 + 0.5;
-	ToLinear16[i] = (v > 65535.0) ? 65535 : v;
+	ToLinear16[i] = (v > 65535.0) ? 65535 : (uint16)v;
 	v = ToLinearF[i]*255.0  + 0.5;
-	ToLinear8[i]  = (v > 255.0) ? 255 : v;
+	ToLinear8[i]  = (v > 255.0) ? 255 : (unsigned char)v;
     }
 
     j = 0;
