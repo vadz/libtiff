@@ -70,6 +70,7 @@ TIFFCIELabToXYZ(TIFFCIELabToRGB *cielab, uint32 l, int32 a, int32 b,
 		*Z = cielab->Z0 * tmp * tmp * tmp;
 }
 
+#define RINT(R) ((uint32)((R)>0?((R)+0.5):((R)-0.5)))
 /*
  * Convert color value from the XYZ space to RGB.
  */
@@ -94,21 +95,22 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
 	/* Turn luminosity to colour value. */
 	i = TIFFmin(cielab->range,
 		    (int)((Yr - cielab->display.d_Y0R) / cielab->rstep));
-	*r = TIFFrint(cielab->Yr2r[i]);
+	*r = RINT(cielab->Yr2r[i]);
 
 	i = TIFFmin(cielab->range,
 		    (int)((Yg - cielab->display.d_Y0G) / cielab->gstep));
-	*g = TIFFrint(cielab->Yg2g[i]);
+	*g = RINT(cielab->Yg2g[i]);
 
 	i = TIFFmin(cielab->range,
 		    (int)((Yb - cielab->display.d_Y0B) / cielab->bstep));
-	*b = TIFFrint(cielab->Yb2b[i]);
+	*b = RINT(cielab->Yb2b[i]);
 
 	/* Clip output. */
 	*r = TIFFmin( *r, cielab->display.d_Vrwr );
 	*g = TIFFmin( *g, cielab->display.d_Vrwg );
 	*b = TIFFmin( *b, cielab->display.d_Vrwb );
 }
+#undef RINT
 
 /* 
  * Allocate conversion state structures and make look_up tables for
@@ -169,12 +171,15 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab,
 #define	FIX(x)			((int32)((x) * (1L<<SHIFT) + 0.5))
 #define	ONE_HALF		((int32)(1<<(SHIFT-1)))
 #define	Code2V(c, RB, RW, CR)	((((c)-(int32)(RB))*(float)(CR))/(float)((RW)-(RB)))
+#define	CLAMP(f,min,max)	((f)<(min)?(min):(f)>(max)?(max):(f))
 
 void
 TIFFYCbCrtoRGB(TIFFYCbCrToRGB *ycbcr, uint32 Y, int32 Cb, int32 Cr,
 	       uint32 *r, uint32 *g, uint32 *b)
 {
 	/* XXX: Only 8-bit YCbCr input supported for now */
+	Y = CLAMP(Y, 0, 255), Cb = CLAMP(Cb, 0, 255), Cr = CLAMP(Cr, 0, 255);
+
 	*r = ycbcr->clamptab[ycbcr->Y_tab[Y] + ycbcr->Cr_r_tab[Cr]];
 	*g = ycbcr->clamptab[ycbcr->Y_tab[Y]
 	    + (int)((ycbcr->Cb_g_tab[Cb] + ycbcr->Cr_g_tab[Cr]) >> SHIFT)];
@@ -254,6 +259,7 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, float *luma, float *refBlackWhite)
 
     return 0;
 }
+#undef	CLAMP
 #undef	Code2V
 #undef	SHIFT
 #undef	ONE_HALF
