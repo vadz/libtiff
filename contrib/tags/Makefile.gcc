@@ -18,10 +18,10 @@ IPATH=  -I.  -I${TIFFLIB} -I${PORT}
 CONF_LIBRARY=\
 	${NULL}
 CC=	gcc
-COPTS=	-ansi -g
+COPTS=	-g
 CFLAGS=	${COPTS} ${IPATH} ${CONF_LIBRARY}
 #
-LIBS=   ./libxtiff.a ${TIFFLIB}/libtiff.a 
+LIBS=   ./libxtiff.a ${TIFFLIB}/libtiff.a -lm
 
 OBJS=	\
 	xtif_dir.o \
