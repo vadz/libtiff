@@ -495,9 +495,9 @@ extern  void TIFFSetClientInfo( TIFF *, void *, const char * );
 #endif
 
 #if defined(c_plusplus) || defined(__cplusplus)
-# include <iostream.h>
-extern	TIFF* TIFFStreamOpen(const char*, ostream *);
-extern	TIFF* TIFFStreamOpen(const char*, istream *);
+# include <iostream>
+extern	TIFF* TIFFStreamOpen(const char*, std::ostream *);
+extern	TIFF* TIFFStreamOpen(const char*, std::istream *);
 #endif
 
 #endif /* _TIFFIO_ */
