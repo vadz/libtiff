@@ -1286,7 +1286,6 @@ TIFFReassignTagToIgnore (enum TIFFIgnoreSense task, int TIFFtagID)
       case TIS_EMPTY:
         tagcount = 0 ;			/* Clear the list */
         return (TRUE) ;
-        break;
         
       default:
         break;
