@@ -1,3 +1,7 @@
+2003-11-26 Ross Finlayson  <libtiff@apexinternetsoftware.com>
+
+	* /man/tiff2pdf.1:  File added to repository.
+
 2003-11-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* Makefile.in, /tools/{Makefile.in, makefile.vc}:
