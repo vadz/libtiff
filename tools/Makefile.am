@@ -23,8 +23,8 @@
 
 # Process this file with automake to produce Makefile.in.
 
-LIBPORT = $(top_builddir)/port/libport.a
-LIBTIFF = $(top_builddir)/libtiff/libtiff.la
+LIBPORT = -L$(top_builddir)/port -lport
+LIBTIFF = -L$(top_builddir)/libtiff -ltiff
 
 EXTRA_DIST = Makefile.vc
 
@@ -52,7 +52,6 @@ bin_PROGRAMS = \
 	tiffcp \
 	tiffdither \
 	tiffdump \
-	tiffgt \
 	tiffinfo \
 	tiffmedian \
 	tiffset \
