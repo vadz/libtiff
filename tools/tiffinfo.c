@@ -53,7 +53,7 @@ main(int argc, char* argv[])
 	uint32 diroff = 0;
 	int chopstrips = 0;		/* disable strip chopping */
 
-	while ((c = getopt(argc, argv, "f:o:cdDSjlmrsvwz0123456789")) != -1)
+	while ((c = getopt(argc, argv, "f:o:cdDSjilmrsvwz0123456789")) != -1)
 		switch (c) {
 		case '0': case '1': case '2': case '3':
 		case '4': case '5': case '6': case '7':
