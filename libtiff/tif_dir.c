@@ -355,7 +355,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			goto badvaluedbl;
 		td->td_stonits = d;
 		break;
-
 	/* Begin Pixar Tags */
  	case TIFFTAG_PIXAR_IMAGEFULLWIDTH:
  		td->td_imagefullwidth = va_arg(ap, uint32);
@@ -475,6 +474,13 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
  			td->td_photoshopLength);
 #endif
  		break;
+#endif
+#ifdef XML_SUPPORT
+	case TIFFTAG_XMLPACKET:
+		td->td_xmlpacketLength = (uint32) va_arg(ap, uint32);
+		_TIFFsetByteArray(&td->td_xmlpacketData, va_arg(ap, void*),
+		    td->td_xmlpacketLength);
+		break;
 #endif
         default: {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
@@ -872,6 +878,12 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             *va_arg(ap, void**) = td->td_richtiffiptcData;
             break;
 #endif
+#ifdef XML_SUPPORT
+	case TIFFTAG_XMLPACKET:
+            *va_arg(ap, uint32*) = td->td_xmlpacketLength;
+            *va_arg(ap, void**) = td->td_xmlpacketData;
+            break;
+#endif
             /* Begin Pixar Tags */
  	case TIFFTAG_PIXAR_IMAGEFULLWIDTH:
             *va_arg(ap, uint32*) = td->td_imagefullwidth;
@@ -899,8 +911,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
         default:
         {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
-            TIFFTagValue *tv;
-            int           tv_size, i;
+            int           i;
             
             /*
              * This can happen if multiple images are open with
@@ -1040,6 +1051,9 @@ TIFFFreeDirectory(TIFF* tif)
 #endif
 #ifdef IPTC_SUPPORT
     CleanupField(td_richtiffiptcData);
+#endif
+#ifdef XML_SUPPORT
+    CleanupField(td_xmlpacketData);
 #endif
     CleanupField(td_stripoffset);
     CleanupField(td_stripbytecount);
