@@ -1100,7 +1100,13 @@ if [ "$DSO" = auto ]; then
 	if (findApp rld /lib:/usr/lib:$PATH) >/dev/null 2>&1; then
 	    DSOSUF=so
 	    DSOLD="${CCOMPILER} ${ENVOPTS}"
-	    DSOOPTS='-shared -rdata_shared -check_registry ${SRCDIR}/port/irix/so_locations -quickstart_info'
+            if [ $ISGCC = yes ]; then
+               LIBCOPTS="-fpic"
+               DSOOPTS='-shared -rdata_shared'
+            else
+               LIBCOPTS="-KPIC"
+               DSOOPTS='-shared -rdata_shared -check_registry ${SRCDIR}/port/irix/so_locations -quickstart_info'
+            fi
 	    DSO=IRIX
 	    TIFFLIBREF='-L${DEPTH}/libtiff -rpath '${DIR_LIB}' -ltiff'
 	fi
@@ -1158,7 +1164,7 @@ if [ "$DSO" = auto ]; then
 	    DSO=LINUX
 	fi
 	;;
-    *-osf3*)
+    *-osf3*|*-osf4*)
 	DSOSUF=so
 	DSOOPTS='-shared'
 	DSO=OSF
