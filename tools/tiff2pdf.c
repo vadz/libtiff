@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.13  2004-08-24 07:48:36  dron
+ * Revision 1.14  2004-08-25 13:43:14  dron
+ * Initialize arrays properly.
+ *
+ * Revision 1.13  2004/08/24 07:48:36  dron
  * More fixes for bug http://bugzilla.remotesensing.org/show_bug.cgi?id=590
  * from Ross Finlayson.
  *
@@ -69,19 +72,25 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#ifdef __STDC__
-#include <unistd.h> /* getopt, unlink */
-#else
-#ifndef _WIN32
-#include <getopt.h> /* getopt in getopt.h, unlink in stdio.h */
-#endif
-#endif
+
 #include "tiffiop.h"
+
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#else
+extern int getopt(int, char**, char*);
+#endif
 
 #ifndef NULL
 #define NULL ((void*)0)
@@ -977,8 +986,8 @@ void t2p_free(T2P* t2p){
 }
 
 /*
-	This function validates the values of a T2P context struct pointer before calling 
-	t2p_write_pdf with it.
+	This function validates the values of a T2P context struct pointer
+        before calling t2p_write_pdf with it.
 */
 
 void t2p_validate(T2P* t2p){
@@ -2119,6 +2128,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 #ifdef ZIP_SUPPORT
 		if(t2p->pdf_compression == T2P_COMPRESS_ZIP){
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                        memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
 					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2141,6 +2151,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 
 			if(t2p->tiff_dataoffset != 0){
 				buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                                memset(buffer, 0, t2p->tiff_datasize);
 				if(buffer==NULL){
 					TIFFError(TIFF2PDF_MODULE, 
 						"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2199,6 +2210,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 					return(0);
 				}
 				buffer=(unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                                memset(buffer, 0, t2p->tiff_datasize);
 				if(buffer==NULL){
 					TIFFError(TIFF2PDF_MODULE, 
 						"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2239,6 +2251,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 #ifdef JPEG_SUPPORT
 		if(t2p->tiff_compression == COMPRESSION_JPEG){
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                        memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
 					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2299,6 +2312,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 
 	if(t2p->pdf_sample==T2P_SAMPLE_NOTHING){
 		buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                memset(buffer, 0, t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
 				"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2336,6 +2350,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			stripcount=sepstripcount/t2p->tiff_samplesperpixel;
 			
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                        memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
 					"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2384,6 +2399,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		}
 
 		buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
+                memset(buffer, 0, t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
 				"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2577,7 +2593,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		bufferoffset=TIFFWriteEncodedStrip(output, (tstrip_t)0, buffer,stripsize*stripcount); 
 	} else
 #endif
-	bufferoffset=TIFFWriteEncodedStrip(output, (tstrip_t)0, buffer,t2p->tiff_datasize); 
+	bufferoffset=TIFFWriteEncodedStrip(output, (tstrip_t)0, buffer, t2p->tiff_datasize); 
 	if(buffer != NULL){
 		_TIFFfree(buffer);
 		buffer=NULL;
