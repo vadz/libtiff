@@ -138,7 +138,7 @@ TIFFIsCODECConfigured(uint16 scheme)
 
 	if(codec == NULL)
 		return 0;
-	if(codec->init != _notConfigured)
+	if( codec->init != (TIFFInitMethod) _notConfigured)
 		return 1;
 	return 0;
 }
