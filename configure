@@ -1194,11 +1194,11 @@ if [ "$DSO" = auto ]; then
 	esac
 	;;
     *-darwin*)
-        DSOSUF=${DIST_MAJOR}.dylib
+        DSOSUF=dylib
         DSOSUF_VERSION=${DIST_MAJOR}.${DIST_MINOR}.${DIST_POINT}.dylib
         LIBCOPTS='-fno-common'
-          DSOLD=gcc
-        DSOOPTS='-dynamiclib -undefined suppress'
+        DSOLD="${CCOMPILER} ${ENVOPTS}"
+        DSOOPTS='-dynamiclib -undefined error'
         DSO=DARWIN
         ;;
     *-linux*)

@@ -211,7 +211,7 @@ GNULDdso: ${OBJS}
 	fi
 	touch $@
 DARWINdso: ${OBJS}
-	${CC} -dynamiclib -undefined suppress \
+	${CC} -dynamiclib -undefined error \
 	  -install_name libtiff.@DSOSUF@ \
 	  -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
 	  @LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
