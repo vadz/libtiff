@@ -45,38 +45,38 @@ INSTALL	= @INSTALL@
 
 all default:
 	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE}; \
+	    ${ECHO} "= "port; cd port; ${MAKE} -${MAKEFLAGS}; \
 	else \
 	    true; \
 	fi
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE}
-	@${ECHO} "= "tools; cd tools; ${MAKE}
-	@${ECHO} "= "man; cd man; ${MAKE}
+	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS}
+	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS}
+	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS}
 
 install:
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} install
-	@${ECHO} "= "tools; cd tools; ${MAKE} install
-	@${ECHO} "= "man; cd man; ${MAKE} install
+	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS} install
+	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS} install
+	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS} install
 	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} install; \
+	    ${ECHO} "= "html; cd html; ${MAKE} -${MAKEFLAGS} install; \
 	else \
 	    true; \
 	fi
 
 install-private: install
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} installPrivateHdrs
+	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS} installPrivateHdrs
 
 clean:
 	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE} clean; \
+	    ${ECHO} "= "port; cd port; ${MAKE} -${MAKEFLAGS} clean; \
 	else \
 	    true; \
 	fi
-	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} clean
-	@${ECHO} "= "tools; cd tools; ${MAKE} clean
-	@${ECHO} "= "man; cd man; ${MAKE} clean
-#	-cd contrib/dbs; ${MAKE} clean
-#	-cd contrib/dbs/xtiff; ${MAKE} clean
+	@${ECHO} "= "libtiff; cd libtiff; ${MAKE} -${MAKEFLAGS} clean
+	@${ECHO} "= "tools; cd tools; ${MAKE} -${MAKEFLAGS} clean
+	@${ECHO} "= "man; cd man; ${MAKE} -${MAKEFLAGS} clean
+#	-cd contrib/dbs; ${MAKE} -${MAKEFLAGS} clean
+#	-cd contrib/dbs/xtiff; ${MAKE} -${MAKEFLAGS} clean
 
 clobber distclean: clean
 	rm -f Makefile libtiff/port.h config.log
@@ -99,7 +99,7 @@ installLink::
 product::
 	test -d dist || mkdir dist
 	rm -f dist/rawidb
-	SRC=`pwd` RAWIDB=`pwd`/dist/rawidb ${MAKE} install installLink
+	SRC=`pwd` RAWIDB=`pwd`/dist/rawidb ${MAKE} -${MAKEFLAGS} install installLink
 	rm -f dist/idb
 	sort -u +4 dist/rawidb > dist/idb
 	${GENDIST} -v -dist dist -idb dist/idb \
@@ -488,10 +488,10 @@ rcsclean:
 
 release:
 	(cd ${SRCDIR}/dist; sh newversion)
-	${MAKE} release.stamp
+	${MAKE}  -${MAKEFLAGS}release.stamp
 #	${SRCDIR}/configure ${CONFIG}
-#	${MAKE} product
-	${MAKE} release.tar.zip
+#	${MAKE} -${MAKEFLAGS} product
+	${MAKE} -${MAKEFLAGS} release.tar.zip
 
 
 # stamp relevant files according to current alpha

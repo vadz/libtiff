@@ -100,12 +100,12 @@ TARGETS	=\
 
 all:	${TARGETS}
 	@if [ "@LIBIMAGE@" = yes ]; then \
-	    ${MAKE} sgi2tiff; \
+	    ${MAKE} -${MAKEFLAGS} sgi2tiff; \
 	else \
 	    true; \
 	fi
 	@if [ "@LIBGL@" = yes ]; then \
-	    ${MAKE} tiffgt tiffsv; \
+	    ${MAKE} -${MAKEFLAGS} tiffgt tiffsv; \
 	else \
 	    true; \
 	fi

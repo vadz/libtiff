@@ -502,7 +502,7 @@ checkCompiler()
     if [ -z "${ENVOPTS-}" ]; then
 	case $ISGCC-$TARGET in
 	no-*-irix*)	C_ANSI="-ansi";;
-	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
+	no-*-hp*)	C_ANSI="-D_HPUX_SOURCE";;
 	no-*-apollo-*)	C_ANSI="-A nansi";;
 	no-*-aix*)	C_ANSI="-Dunix -qlanglvl=ansi -qsrcmsg";;
 	*-sco*)		C_ANSI="-Dsco";;
@@ -916,13 +916,12 @@ main()
   int fd;
 
   buf1 = (char *)valloc(i2);
-  buf2 = (char *)valloc(i);
   buf3 = (char *)malloc(i2);
   for (j = 0; j < i2; ++j)
     *(buf1 + j) = rand();
   fd = open("conftestmmap", O_CREAT | O_RDWR, 0666);
   write(fd, buf1, i2);
-  mmap(buf2, i, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, fd, 0);
+  mmap(buf2, i, PROT_READ | PROT_WRITE, MAP_VARIABLE | MAP_PRIVATE, fd, 0);
   for (j = 0; j < i; ++j)
     if (*(buf1 + j) != *(buf2 + j))
       exit(1);
@@ -1144,10 +1143,11 @@ if [ "$DSO" = auto ]; then
         ;;		 
     *-hpux*)
 	DSOSUF=sl
+	DSOSUF_VERSION=${DIST_MAJOR}.${DIST_MINOR}${DIST_POINT}
 	DSOOPTS='-b'
-	LIBCOPTS="+Z"
+	LIBCOPTS="+z"
 	DSO=HPUX
-	TIFFLIBREF="-Wl,+s,+b${DIR_LIB}"' -L${DEPTH}/libtiff -ltiff'
+	TIFFLIBREF='-L$(DEPTH)/libtiff -ltiff'
 	;;
     *-solaris*)
 	DSOSUF=so
@@ -1348,7 +1348,7 @@ if [ -z "${MANSCHEME-}" ]; then
     *-ultrix*)			MANSCHEME=bsd-source-cat;;
     *-sunos*)			MANSCHEME=bsd-source-cat-strip;;
     *-sysv[234]*)		MANSCHEME=sysv-source-cat-strip;;
-    *-hpux*)			MANSCHEME=sysv-source-cat-strip;;
+    *-hpux*)			MANSCHEME=sysv-source-cat;;
     *-solaris*)			MANSCHEME=sysv-source-cat-strip;;
     *-aix*)			MANSCHEME=sysv-source-strip;;
     *-isc*|*-sco*)		MANSCHEME=sysv-source-cat;;

@@ -139,7 +139,7 @@ TARGETS	= libtiff.a
 
 all:	${TARGETS}
 	if [ @DSO@dso != nodso ]; then \
-	    ${MAKE} @DSO@dso; \
+	    ${MAKE} -${MAKEFLAGS} @DSO@dso; \
 	else \
 	    true; \
 	fi
@@ -180,9 +180,9 @@ IRIX52dso: ${OBJS}
 SOLARISdso: ${OBJS}
 	${LD} -L@DIR_LIB@ -G -h libtiff.@DSOSUF@ -o libtiff.@DSOSUF@ ${OBJS}
 	touch $@
-# HP-UX A.09.03
+# HP-UX 10.x+
 HPUXdso: ${OBJS}
-	${LD} +b@DIR_LIB@ -b -o libtiff.@DSOSUF@ ${OBJS}
+	${LD} -b -o libtiff.@DSOSUF_VERSION@ +h libtiff.@DSOSUF_VERSION@ ${OBJS}
 	touch $@
 # AIX 2.3.5 and 4.1.1
 AIXdso: ${OBJS}
@@ -203,7 +203,7 @@ GNULDdso: ${OBJS}
 	    -o libtiff.@DSOSUF_VERSION@  ${OBJS} \
 		@LIBJPEG@ @LIBGZ@ @MACHDEPLIBS@
 	rm -f libtiff.@DSOSUF@
-	if [ @DSOSUB_VERSION != @DSOSUF ] ; then \
+	if [ @DSOSUB_VERSION != @DSOSUF@ ] ; then \
 	  @LN@ @LN_S@ libtiff.@DSOSUF_VERSION@ libtiff.@DSOSUF@; \
 	fi
 	touch $@
@@ -362,7 +362,7 @@ install: all installHdrs
 	${INSTALL} -idb tiff.sw.dev -m 755 -dir @DIR_LIB@
 	${INSTALL} -idb tiff.sw.dev -m 444 -F @DIR_LIB@ -O libtiff.a
 	if [ @DSO@dso != nodso ]; then					\
-	    ${MAKE} installDSO;						\
+	    ${MAKE} -${MAKEFLAGS} installDSO;				\
 	else								\
 	    true;							\
 	fi

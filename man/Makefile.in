@@ -330,7 +330,7 @@ lib/TIFFWriteBufferSetup.3t:;	${ECHO} ".so ${MANDIR}TIFFbuffer.3t" > $@
 
 apps/Makefile:
 	test -d apps || mkdir apps
-	${MAKE} ${MANTOOLS}
+	${MAKE} -${MAKEFLAGS} ${MANTOOLS}
 	${RM} apps/Makefile
 	(cd apps;							\
 	 ${ECHO} 'install:';						\
@@ -342,7 +342,7 @@ apps/Makefile:
 	)>apps/Makefile
 lib/Makefile:
 	test -d lib || mkdir lib
-	${MAKE} ${MANDEV} ${MANDEVLINKS}
+	${MAKE} -${MAKEFLAGS} ${MANDEV} ${MANDEVLINKS}
 	${RM} lib/Makefile
 	(cd lib;							\
 	 ${ECHO} 'install:';						\
@@ -356,9 +356,9 @@ lib/Makefile:
 install: all
 	${INSTALL} -m 755 -dir -idb tiff.man.tools ${MAN}
 	${INSTALL} -m 755 -dir -idb tiff.man.tools ${MAN}/${MANAPPS}
-	cd apps; ${MAKE} install
+	cd apps; ${MAKE} -${MAKEFLAGS} install
 	${INSTALL} -m 755 -dir -idb tiff.man.dev ${MAN}/${MANLIB}
-	cd lib; ${MAKE} install
+	cd lib; ${MAKE} -${MAKEFLAGS} install
 
 clean:
 	rm -rf apps lib

@@ -1,3 +1,14 @@
+2001-04-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* configure, *Makefile.in: Various changes to improve configuration
+	for HP/UX specifically, and also in general.  They include:
+	 - Try to handle /usr/bin/sh instead of /bin/sh where necessary.
+	 - Upgrade to HP/UX 10.x+ compiler, linker and dso options.
+	 - Fixed mmap() test to avoid MMAP_FIXED ... it isn't available on HP
+	 - Use -${MAKEFLAGS} in sub makes from makefiles.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=40
+
 2001-04-02  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tiff.h: Applied hac to try and resolve the problem

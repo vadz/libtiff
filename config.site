@@ -139,6 +139,7 @@
 #RANLIB=":"				# pathname of suitable ranlib program
 #DSOSUF="so"				# DSO filename suffix
 #LIBCOPTS="-K PIC"			# compiler options for building library
+#SHELL=/usr/bin/sh                      # Bourne shell to use(normally /bin/sh)
 
 #
 # Makefile construction parameters.
