@@ -258,6 +258,7 @@ ColorMap	320	R/W
 ColorResponseUnit	300		parsed but ignored
 Compression	259	R/W	choosing codec
 ConsecutiveBadFaxLines	328	R/W
+Copyright       33432   R/W
 DataType	32996	R	obsoleted by SampleFormat tag
 DateTime	306	R/W
 DocumentName	269	R/W
