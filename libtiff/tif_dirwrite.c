@@ -943,6 +943,83 @@ TIFFWriteData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 }
 
 /*
+ * Similar to TIFFWriteDirectory(), but if the directory has already
+ * been written once, it is relocated to the end of the file, in case it
+ * has changed in size.  Note that this will result in the loss of the 
+ * previously used directory space. 
+ */ 
+
+int 
+TIFFRewriteDirectory( TIFF *tif )
+{
+    static const char module[] = "TIFFRewriteDirectory";
+
+    /* We don't need to do anything special if it hasn't been written. */
+    if( tif->tif_diroff == 0 )
+        return TIFFWriteDirectory( tif );
+
+    /*
+    ** Find and zero the pointer to this directory, so that TIFFLinkDirectory
+    ** will cause it to be added after this directories current pre-link.
+    */
+    
+    /* Is it the first directory in the file? */
+    if (tif->tif_header.tiff_diroff == tif->tif_diroff) 
+    {
+        tif->tif_header.tiff_diroff = 0;
+        tif->tif_diroff = 0;
+
+#define	HDROFF(f)	((toff_t) &(((TIFFHeader*) 0)->f))
+        TIFFSeekFile(tif, HDROFF(tiff_diroff), SEEK_SET);
+        if (!WriteOK(tif, &(tif->tif_header.tiff_diroff), 
+                     sizeof (tif->tif_diroff))) 
+        {
+            TIFFError(tif->tif_name, "Error updating TIFF header");
+            return (0);
+        }
+    }
+    else
+    {
+        toff_t  nextdir, off;
+
+	nextdir = tif->tif_header.tiff_diroff;
+	do {
+		uint16 dircount;
+
+		if (!SeekOK(tif, nextdir) ||
+		    !ReadOK(tif, &dircount, sizeof (dircount))) {
+			TIFFError(module, "Error fetching directory count");
+			return (0);
+		}
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabShort(&dircount);
+		(void) TIFFSeekFile(tif,
+		    dircount * sizeof (TIFFDirEntry), SEEK_CUR);
+		if (!ReadOK(tif, &nextdir, sizeof (nextdir))) {
+			TIFFError(module, "Error fetching directory link");
+			return (0);
+		}
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabLong(&nextdir);
+	} while (nextdir != tif->tif_diroff && nextdir != 0);
+        off = TIFFSeekFile(tif, 0, SEEK_CUR); /* get current offset */
+        (void) TIFFSeekFile(tif, off - (toff_t)sizeof(nextdir), SEEK_SET);
+        tif->tif_diroff = 0;
+	if (!WriteOK(tif, &(tif->tif_diroff), sizeof (nextdir))) {
+		TIFFError(module, "Error writing directory link");
+		return (0);
+	}
+    }
+
+    /*
+    ** Now use TIFFWriteDirectory() normally.
+    */
+
+    return TIFFWriteDirectory( tif );
+}
+
+
+/*
  * Link the current directory into the
  * directory chain for the file.
  */

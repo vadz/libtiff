@@ -1,3 +1,8 @@
+2001-09-26  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirwrite.c: added TIFFRewriteDirectory() function.
+	Updated TIFFWriteDirectory man page to include TIFFRewriteDirectory.
+
 2001-09-24  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_lzw.c: Avoid MS VC++ 5.0 optimization bug.
