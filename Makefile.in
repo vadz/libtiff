@@ -181,6 +181,7 @@ TIFFFILES=\
 	    libtiff/tif_tile.c			\
 	    libtiff/tif_unix.c			\
 	    libtiff/tif_version.c		\
+	    libtiff/tiffvers.h			\
 	    libtiff/tif_vms.c			\
 	    libtiff/tif_warning.c		\
 	    libtiff/tif_win3.c			\
@@ -497,7 +498,8 @@ rcsclean:
 
 release:
 	(cd ${SRCDIR}/dist; sh newversion)
-	${MAKE}  -${MAKEFLAGS}release.stamp
+	${MAKE}  -${MAKEFLAGS} release.stamp
+	(cd ${SRCDIR}/libtiff; ${MAKE} -${MAKEFLAGS} tiffvers.h)
 #	${SRCDIR}/configure ${CONFIG}
 #	${MAKE} -${MAKEFLAGS} product
 	${MAKE} -${MAKEFLAGS} release.tar.zip
