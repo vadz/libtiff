@@ -1010,7 +1010,7 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_tilelength = (uint32) -1;
 	td->td_tiledepth = 1;
 	td->td_resolutionunit = RESUNIT_INCH;
-	td->td_sampleformat = SAMPLEFORMAT_VOID;
+	td->td_sampleformat = SAMPLEFORMAT_UINT;
 	td->td_imagedepth = 1;
 #ifdef YCBCR_SUPPORT
 	td->td_ycbcrsubsampling[0] = 2;
