@@ -35,7 +35,7 @@ TIFFReadRGBAStrip \- read and decode an image strip into a fixed-format raster
 .B "#define TIFFGetB(abgr)	(((abgr) >> 16) & 0xff)"
 .B "#define TIFFGetA(abgr)	(((abgr) >> 24) & 0xff)"
 .sp 5p
-.B "int TIFFReadRGBAStrip(TIFF* tif, tstrip_t strip, uint32 * raster )"
+.B "int TIFFReadRGBAStrip(TIFF* tif, uint32 row, uint32 * raster )"
 .SH DESCRIPTION
 .IR TIFFReadRGBAStrip
 reads a single strip of a strip-based image into memory, 
@@ -48,10 +48,8 @@ rowsperstrip is the maximum lines in a strip (TIFFTAG_ROWSPERSTRIP).
 
 .PP
 The 
-.IR strip 
-value should be the strip number (strip zero is the first) as returned by the
-.I TIFFComputeStrip
-function, but always for sample 0.
+.IR row
+value should be the row of the first row in the strip (strip * rowsperstrip, zero based).
 
 .PP
 Note that the raster is assume to be organized such that the pixel
