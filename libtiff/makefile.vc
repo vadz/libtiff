@@ -59,7 +59,7 @@ default:	libtiff.lib
 
 all:	libtiff.lib libtiff.dll
 
-libtiff.lib:	$(OBJ)
+libtiff.lib:	tiffvers.h $(OBJ)
 	lib /out:libtiff.lib $(OBJ)
 
 libtiff.dll:	$(OBJ)
