@@ -1,3 +1,11 @@
+2004-09-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_jpeg.c, tif_pixarlog.c}: Use _TIFFmemset() instead of
+	memset().
+
+	* libtiff/{tif_dirread.c, tif_strip.c, tif_tile.c}: Applied patches
+	from Dmitry V. Levin to fix possible integer overflow problems.
+
 2004-09-28  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_getimage.c: Check for allocated buffers before clearing
