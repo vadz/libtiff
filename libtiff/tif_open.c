@@ -295,7 +295,8 @@ TIFFClientOpen(
 	/*
 	 * Read in TIFF header.
 	 */
-	if (!ReadOK(tif, &tif->tif_header, sizeof (TIFFHeader))) {
+	if (tif->tif_mode & O_TRUNC ||
+	    !ReadOK(tif, &tif->tif_header, sizeof (TIFFHeader))) {
 		if (tif->tif_mode == O_RDONLY) {
 			TIFFError(name, "Cannot read TIFF header");
 			goto bad;
