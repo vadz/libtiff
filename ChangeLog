@@ -1,3 +1,9 @@
+2000-12-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_apple.c: Applied "Carbon" supplied by
+	Leonard Rosenthol <leonardr@lazerware.com>.  May interfere
+	with correct building on older systems.  If so, please let me know.
+
 2000-12-19 Mike Welles <mike@bangsate.com>   *** 3.5.6 release ***
 
 	* Took out LZW Encoding from tif_lzw.c 
