@@ -107,7 +107,7 @@ main(int argc, char* argv[])
                 short   wc;
 
                 if (fip->field_writecount == TIFF_VARIABLE)
-                        wc = argv[arg_index++];
+                        wc = atoi(argv[arg_index++]);
                 else
                         wc = fip->field_writecount;
 
