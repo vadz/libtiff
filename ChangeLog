@@ -1,3 +1,13 @@
+2004-02-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffsplit.c: Copy JPEGTables tag contents for JPEG compressed 
+	images. Reported by Artem Mirolubov.
+
+	* libtiff/tif_dirread.c: Fixed problem with handling TIFF_UNDEFINED 
+	tag type in TIFFFetchNormalTag() as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=508
+
 2004-02-17  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_codec.c: Fixed typo in TIFFInitPackBits name as per:
