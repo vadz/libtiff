@@ -26,6 +26,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 AC_INIT([LibTIFF Software], 3.7.0alpha, [tiff@remotesensing.org], tiff)
+AC_LANG(C)
 
 dnl Compute the canonical target-system type variable
 AC_CANONICAL_TARGET
@@ -33,8 +34,6 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 dnl Do not rebuild generated files every time
 AM_MAINTAINER_MODE
-AC_CONFIG_SRCDIR(libtiff/config.h.in)
-AM_CONFIG_HEADER(libtiff/config.h)
 
 dnl Versioning.
 dnl Don't fill the ALPHA_VERSION field, if not applicable.
@@ -391,6 +390,9 @@ if test "$CHECK_JPEG_YCBCR_SUBSAMPLING" = "yes" ; then
 fi
 
 dnl ---------------------------------------------------------------------------
+
+AC_CONFIG_SRCDIR(libtiff/config.h.in)
+AM_CONFIG_HEADER(libtiff/config.h)
 
 AC_CONFIG_FILES([Makefile \
 		 contrib/Makefile \
