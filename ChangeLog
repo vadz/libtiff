@@ -1,3 +1,9 @@
+2003-05-27  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: modified segment_height calculation to always
+	be a full height tile for tiled images.  Also changed error to just
+	be a warning.
+
 2003-05-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/fax2tiff.c: Page numbering fixed, as per bug
