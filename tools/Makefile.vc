@@ -26,3 +26,6 @@ getopt.obj:	..\port\getopt.c
 
 strcasecmp.obj:	..\port\strcasecmp.c
 	$(CC) /c $(CFLAGS) ..\port\strcasecmp.c
+
+clean:
+	del *.obj *.exe
