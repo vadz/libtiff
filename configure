@@ -1705,7 +1705,7 @@ else
     LIBJPEG=
 fi
 if [ "${ZIP}" = yes ]; then
-    test -z "${CONF_ZIP-}"	&& CONF_ZIP="-DZIP_SUPPORT"
+    test -z "${CONF_ZIP-}"	&& CONF_ZIP="-DZIP_SUPPORT -DPIXARLOG_SUPPORT"
     if test -z "${LIBGZ-}" ; then
       LIBGZ="-lz"
       test -z "${DIR_GZLIB-}" || LIBGZ="-L${DIR_GZLIB} ${LIBGZ}"
