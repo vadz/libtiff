@@ -255,6 +255,7 @@ TIFFFILES=\
 	    man/TIFFWriteDirectory.3t 		\
 	    man/TIFFWriteEncodedStrip.3t	\
 	    man/TIFFWriteEncodedTile.3t		\
+	    man/TIFFWriteTile.3t		\
 	    man/TIFFWriteRawStrip.3t		\
 	    man/TIFFWriteRawTile.3t		\
 	    man/TIFFWriteScanline.3t		\
