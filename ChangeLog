@@ -1,5 +1,7 @@
 1999-09-23    <warmerda@CS46980-B>
 
+	* Set O_BINARY for tif_unix.c open() ... used on cygwin for instance.
+
 	* Added CYGWIN case in configure.
 
 Fri Sep 17 00:13:51 CEST 1999  Mike Welles <mike@onshore.com> 
