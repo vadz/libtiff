@@ -967,7 +967,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
 	if (isMapped(tif))
 	  {
 	    tsize_t poff=*nextdir;
-	    if (poff+sizeof (uint16) > tif->tif_size)
+	    if (((tsize_t) (poff+sizeof(uint16))) > tif->tif_size)
 	      {
 		TIFFError(module, "%s: Error fetching directory count",
 			  tif->tif_name);
@@ -979,7 +979,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
 	    poff+=sizeof (uint16)+dircount*sizeof (TIFFDirEntry);
 	    if (off != NULL)
 	      *off = poff;
-	    if (poff+sizeof (uint32) > tif->tif_size)
+	    if (((tsize_t) (poff+sizeof (uint32))) > tif->tif_size)
 	      {
 		TIFFError(module, "%s: Error fetching directory link",
 			  tif->tif_name);
