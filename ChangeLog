@@ -1,3 +1,11 @@
+2003-08-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirwrite.c: Fixed problem with custom tags writing,
+	reported by Ashley Dreier.
+
+	* libtiff/tif_print.c: Fixed problem with float tags reading, support
+	for printing RATIONAL and BYTE tags added.
+
 2003-08-05  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_lzw.c: Move LZW codec state block allocation back to
