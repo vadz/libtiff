@@ -32,14 +32,14 @@ SRCDIR	= ../tools
 LIBDIR	= ../libtiff
 
 #
-# VERSION:	v3.4beta037
-# DATE:		Wed Feb  3 19:53:27 EST 1999
+# VERSION:	v3.5.1
+# DATE:		Mon Aug 16 13:54:45 EDT 1999
 # TARGET:	i586-unknown-linux
-# CCOMPILER:	/usr/bin/gcc
+# CCOMPILER:	/usr/local/bin/gcc
 #
 SHELL	= /bin/sh
 NULL	=
-CC	= /usr/bin/gcc
+CC	= /usr/local/bin/gcc
 INSTALL	= ${SHELL} ../port/install.sh
 #
 COPTS	= -g
@@ -47,10 +47,10 @@ OPTIMIZER=-O
 IPATH	= -I. -I${SRCDIR} -I${LIBDIR}
 CFLAGS	=  ${COPTS} ${OPTIMIZER} ${IPATH}
 #
-TIFFLIB	= ${DEPTH}/libtiff/libtiff.a
+TIFFLIB	= ${DEPTH}/libtiff/libtiff.so.3
 LIBJPEG	= 
 LIBGZ	= 
-LIBTIFF	= ${DEPTH}/libtiff/libtiff.a
+LIBTIFF	= ${DEPTH}/libtiff/libtiff.so.3
 LIBPORT	= 
 MACHLIBS= -lm
 LIBS	= ${LIBTIFF} ${LIBJPEG} ${LIBGZ} ${LIBPORT} ${MACHLIBS}
@@ -65,6 +65,7 @@ OBJS=	\
 	ras2tiff.o \
 	thumbnail.o \
 	tiff2bw.o \
+	tiff2rgba.o \
 	tiff2ps.o \
 	tiffcmp.o \
 	tiffcp.o \
@@ -84,6 +85,7 @@ TARGETS	=\
 	thumbnail \
 	ras2tiff \
 	tiff2bw \
+	tiff2rgba \
 	tiff2ps \
 	tiffcmp \
 	tiffcp \
@@ -171,6 +173,12 @@ tiff2bw: tiff2bw.o ${TIFFLIB}
 	${CC} -o tiff2bw ${CFLAGS} tiff2bw.o ${LIBS}
 tiff2bw.o: ${SRCDIR}/tiff2bw.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tiff2bw.c
+
+# convert anything to RGBA.
+tiff2rgba: tiff2rgba.o ${TIFFLIB}
+	${CC} -o tiff2rgba ${CFLAGS} tiff2rgba.o ${LIBS}
+tiff2rgba.o: ${SRCDIR}/tiff2rgba.c
+	${CC} -c ${CFLAGS} ${SRCDIR}/tiff2rgba.c
 
 # convert B&W image to bilevel w/ FS dithering
 tiffdither: tiffdither.o ${TIFFLIB}
