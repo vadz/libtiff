@@ -75,7 +75,8 @@ typedef	struct {
 	tstrip_t td_nstrips;		/* size of offset & bytecount arrays */
 	uint32*	td_stripoffset;
 	uint32*	td_stripbytecount;
-	uint16	td_nsubifd;		
+	int	td_stripbytecountsorted; /* is the bytecount array sorted ascending? */
+	uint16	td_nsubifd;
 	uint32*	td_subifd;
 	/* YCbCr parameters */
 	float*	td_ycbcrcoeffs;
@@ -112,7 +113,7 @@ typedef	struct {
  	/* End Pixar Tag Values. */
 	uint32	td_xmlpacketLength;
 	void	*td_xmlpacketData;
-		int     td_customValueCount;
+	int     td_customValueCount;
         TIFFTagValue *td_customValues;
 } TIFFDirectory;
 

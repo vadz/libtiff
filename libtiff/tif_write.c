@@ -621,7 +621,7 @@ TIFFAppendToStrip(TIFF* tif, tstrip_t strip, tidata_t data, tsize_t cc)
 		/*
 		 * No current offset, set the current strip.
 		 */
-		if (td->td_stripoffset[strip] != 0) {
+		if (td->td_nstrips || td->td_stripoffset[strip] != 0) {
 			/*
 			 * Prevent overlapping of the data chunks. We need
                          * this to enable in place updating of the compressed
@@ -629,22 +629,34 @@ TIFFAppendToStrip(TIFF* tif, tstrip_t strip, tidata_t data, tsize_t cc)
                          * the file without any optimization of the spare
                          * space, so such scheme is not too much effective.
 			 */
-			tstrip_t i;
-			for (i = 0; i < td->td_stripsperimage; i++) {
-				if (td->td_stripoffset[i] > 
-					td->td_stripoffset[strip]
-				    && td->td_stripoffset[i] <
+			if (td->td_stripbytecountsorted) {
+				if (strip == td->td_nstrips - 1
+				    || td->td_stripoffset[strip + 1] <
 					td->td_stripoffset[strip] + cc) {
 					td->td_stripoffset[strip] =
-						TIFFSeekFile(tif, (toff_t) 0,
+						TIFFSeekFile(tif, (toff_t)0,
 							     SEEK_END);
+				}
+			} else {
+				tstrip_t i;
+				for (i = 0; i < td->td_nstrips; i++) {
+					if (td->td_stripoffset[i] > 
+						td->td_stripoffset[strip]
+					    && td->td_stripoffset[i] <
+						td->td_stripoffset[strip] + cc) {
+						td->td_stripoffset[strip] =
+							TIFFSeekFile(tif,
+								     (toff_t)0,
+								     SEEK_END);
+					}
 				}
 			}
 
 			if (!SeekOK(tif, td->td_stripoffset[strip])) {
 				TIFFError(module,
 					  "%s: Seek error at scanline %lu",
-					  tif->tif_name, (unsigned long)tif->tif_row);
+					  tif->tif_name,
+					  (unsigned long)tif->tif_row);
 				return (0);
 			}
 		} else

@@ -593,6 +593,25 @@ TIFFReadDirectory(TIFF* tif)
 	/*
 	 * Setup default compression scheme.
 	 */
+
+	/*
+	 * XXX: We can optimize checking for the strip bounds using the sorted
+	 * bytecounts array. See also comments for TIFFAppendToStrip()
+	 * function in tif_write.c.
+	 */
+	if (td->td_nstrips > 1) {
+		tstrip_t strip;
+
+		td->td_stripbytecountsorted = 1;
+		for (strip = 1; strip < td->td_nstrips; strip++) {
+			if (td->td_stripoffset[strip - 1] >
+			    td->td_stripoffset[strip]) {
+				td->td_stripbytecountsorted = 0;
+				break;
+			}
+		}
+	}
+
 	if (!TIFFFieldSet(tif, FIELD_COMPRESSION))
 		TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
         /*
@@ -607,6 +626,7 @@ TIFFReadDirectory(TIFF* tif)
 	if (td->td_nstrips == 1 && td->td_compression == COMPRESSION_NONE &&
 	    (tif->tif_flags & (TIFF_STRIPCHOP|TIFF_ISTILED)) == TIFF_STRIPCHOP)
 		ChopUpSingleUncompressedStrip(tif);
+
 	/*
 	 * Reinitialize i/o since we are starting on a new directory.
 	 */
@@ -616,6 +636,12 @@ TIFFReadDirectory(TIFF* tif)
 	tif->tif_curtile = (ttile_t) -1;
 	tif->tif_tilesize = TIFFTileSize(tif);
 	tif->tif_scanlinesize = TIFFScanlineSize(tif);
+
+	if (!tif->tif_scanlinesize) {
+		TIFFError(module, "%s: cannot handle zero scanline size",
+			  tif->tif_name);
+		goto bad;
+	}
 	return (1);
 bad:
 	if (dir)
@@ -1507,6 +1533,7 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	_TIFFfree(td->td_stripoffset);
 	td->td_stripbytecount = newcounts;
 	td->td_stripoffset = newoffsets;
+	td->td_stripbytecountsorted = 1;
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
