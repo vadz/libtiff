@@ -111,7 +111,7 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 		"InkSet", td->td_inkset);
 	    return (0);
 	}
-	if (td->td_samplesperpixel != 4) {
+	if (td->td_samplesperpixel < 4) {
 	    sprintf(emsg, "Sorry, can not handle separated image with %s=%d",
 		"Samples/pixel", td->td_samplesperpixel);
 	    return (0);
@@ -280,6 +280,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	    /* can rely on libjpeg to convert to RGB */
 	    /* XXX should restore current state on exit */
 	    switch (compress) {
+		case COMPRESSION_OJPEG:
 		case COMPRESSION_JPEG:
 		    TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
 		    img->photometric = PHOTOMETRIC_RGB;
@@ -305,7 +306,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 		"InkSet", inkset);
 	    return (0);
 	}
-	if (img->samplesperpixel != 4) {
+	if (img->samplesperpixel < 4) {
 	    sprintf(emsg, "Sorry, can not handle separated image with %s=%d",
 		"Samples/pixel", img->samplesperpixel);
 	    return (0);

@@ -1,3 +1,10 @@
+2001-08-28  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_getimage.c: Don't complain for CMYK (separated)
+	images with more than four samples per pixel.  See:
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=73
+
 2001-08-10  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_getimage.c: Use memmove() instead of TIFFmemcpy()
