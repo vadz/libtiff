@@ -659,7 +659,7 @@ Fax3PutEOL(TIFF* tif)
 	Fax3EncodeState* sp = EncoderState(tif);
 	u_int bit = sp->bit;
 	int data = sp->data;
-	u_int code, length;
+	u_int code, length, tparm;
 
 	if (sp->b.groupoptions & GROUP3OPT_FILLBITS) {
 		/*
@@ -674,7 +674,8 @@ Fax3PutEOL(TIFF* tif)
 			else
 				align = sp->bit - align;
 			code = 0;
-			_PutBits(tif, ((u_int)0), ((u_int)align));
+			tparm=align; 
+			_PutBits(tif, 0, tparm);
 		}
 	}
 	code = EOL, length = 12;

@@ -394,6 +394,7 @@ CONTRIBFILES=\
 	    contrib/addtiffo/rawblockedimage.cpp \
 	    contrib/addtiffo/rawblockedimage.h  \
 	${NULL}
+
 DISTFILES=\
 	${TIFFFILES}				\
 	dist/tiff.alpha				\
@@ -416,9 +417,8 @@ rcsclean:
 
 release:
 	(cd ${SRCDIR}/dist; sh newversion)
-	-${MAKE} clean
 	${MAKE} release.stamp
-	${SRCDIR}/configure ${CONFIG}
+#	${SRCDIR}/configure ${CONFIG}
 #	${MAKE} product
 	${MAKE} release.tar
 
@@ -436,7 +436,7 @@ releasediff:
 # create release distribution archive
 release.tar:
 	VERSION="@VERSION@";						\
-	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;			\
+	rm -f ../tiff-$$VERSION $$VERSION $$VERSION-tar;			\
 	ln -s ${SRCDIR} tiff-$$VERSION;					\
 	(for i in ${DISTFILES}; do					\
 	   echo $$i;							\

@@ -1,3 +1,16 @@
+199-11-28  Mike Welles <mike@onshore.com> 
+
+	*  Fixed apocalypse-inducing y2k bug in contrib/ras/ras2tiff.c 
+
+	*  Did some casts cleaning up to reduce compiler warnings in tif_fax3.c,
+	   from Bruce Carmeron <cameron@petris.com> -- modifications of 
+	   changes made by Frank (sun cc still complained on cast). 
+
+	*  Added tiffconf.h to install target per request from Bill
+	   Radcliffe <billr@corbis.com>: "We need a way for ImageMagick to
+ 	   know features have been compiled into the TIFF library in order to
+	   handle things properly".  
+	
 Sat Nov 27 16:49:21 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 
 	* fixed various VC++ warnings as suggested by Gilles Vollant
@@ -11,12 +24,9 @@ Wed Nov 24 12:08:16 1999  Frank Warmerdam  <warmerda@gdal.velocet.ca>
 1999-11-22  Mike Welles <mike@onshore.com>
 	*  HTML-ized the man pages, added to html/man
 	
-1999-11-22  Mike Welles <mike@onshore.com>
-
 	*  Removed LZW Compression to comply with Unisys patent extortion. 
 	
 1999-09-29  Mike Welles		<mike@onshore.com> 
-	
 	*  Corrected one remaining 16 -> 32 bit value in tif_fax3.c, 
 	   From Ivo Penzar <ivo.penzar@infolink-software.com. 
 

@@ -1,5 +1,5 @@
 #ifndef lint
-static char sccsid[] = "@(#)tif2ras.c 1.2 90/03/06";
+static char id[] = "$Id$"; 
 #endif
 /*-
  * tif2ras.c - Converts from a Tagged Image File Format image to a Sun Raster.

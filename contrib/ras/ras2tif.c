@@ -34,6 +34,7 @@ static char sccsid[] = "@(#)ras2tif.c 1.2 90/03/06";
  * 06-Mar-90: fix bug in SCALE() macro.
  *	      got rid of xres and yres, (they weren't working anyways).
  *	      fixed bpsl calculation.
+ * 25-Nov-99: y2k fix (year as 1900 + tm_year) <mike@onshore.com>
  *
  * Description:
  *   This program takes a Sun Rasterfile [see rasterfile(5)] as input and
@@ -93,6 +94,7 @@ main(argc, argv)
     long        width,
                 height;
     long        rowsperstrip;
+    int         year; 
     short       photometric;
     short       samplesperpixel;
     short       bitspersample;
@@ -102,8 +104,9 @@ main(argc, argv)
 
     gettimeofday(&tv, (struct timezone *) NULL);
     ct = localtime(&tv.tv_sec);
-    sprintf(datetime, "19%02d:%02d:%02d %02d:%02d:%02d",
-	    ct->tm_year, ct->tm_mon + 1, ct->tm_mday,
+    year=1900 + ct->tm_year; 
+    sprintf(datetime, "%04d:%02d:%02d %02d:%02d:%02d",
+	    year, ct->tm_mon + 1, ct->tm_mday,
 	    ct->tm_hour, ct->tm_min, ct->tm_sec);
 
     setbuf(stderr, NULL);

@@ -313,7 +313,7 @@ tif_vms.o: ${SRCDIR}/tif_vms.c
 tif_win3.o: ${SRCDIR}/tif_win3.c
 	${CC} -c ${CFLAGS} ${SRCDIR}/tif_win3.c
 
-INCS	= ${SRCDIR}/tiff.h ${SRCDIR}/tiffio.h
+INCS	= ${SRCDIR}/tiff.h ${SRCDIR}/tiffio.h ${SRCDIR}/tiffconf.h
 
 installHdrs: ${INCS}
 	${INSTALL} -idb tiff.sw.dev -m 755 -dir @DIR_INC@
