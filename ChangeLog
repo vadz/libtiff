@@ -1,5 +1,13 @@
 2001-09-09  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_getimage.c: Fixed problem with reading strips or
+	tiles that don't start on a tile boundary.  Fix contributed by
+	Josep Vallverdu (from HP), and further described in bug 47.
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=47
+
+	* tools/tiff2ps.c: added OJPEG YCbCr to RGB support. 
+
 	* libtiff/tif_ojpeg.c: Applied substantial patch from Scott.
 
 2001-09-06  Frank Warmerdam  <warmerdam@pobox.com>
