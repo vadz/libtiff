@@ -1,3 +1,10 @@
+2004-09-19  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.7.0beta released.
+
+	* libtiff/{tif_luv.c, tif_next.c, tif_thunder.c}: Several buffer
+	overruns fixed, as noted by Chris Evans.
+
 2004-09-14  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* commit: Added a script to make it more convenient to commit
