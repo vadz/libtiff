@@ -443,12 +443,15 @@ TIFFPredictorInit(TIFF* tif)
 	 * override parent get/set field methods.
 	 */
 	_TIFFMergeFieldInfo(tif, predictFieldInfo, N(predictFieldInfo));
-	sp->vgetparent = tif->tif_vgetfield;
-	tif->tif_vgetfield = PredictorVGetField;/* hook for predictor tag */
-	sp->vsetparent = tif->tif_vsetfield;
-	tif->tif_vsetfield = PredictorVSetField;/* hook for predictor tag */
-	sp->printdir = tif->tif_printdir;
-	tif->tif_printdir = PredictorPrintDir;	/* hook for predictor tag */
+	sp->vgetparent = tif->tif_tagmethods.vgetfield;
+	tif->tif_tagmethods.vgetfield =
+            PredictorVGetField;/* hook for predictor tag */
+	sp->vsetparent = tif->tif_tagmethods.vsetfield;
+	tif->tif_tagmethods.vsetfield =
+            PredictorVSetField;/* hook for predictor tag */
+	sp->printdir = tif->tif_tagmethods.printdir;
+	tif->tif_tagmethods.printdir =
+            PredictorPrintDir;	/* hook for predictor tag */
 
 	sp->setupdecode = tif->tif_setupdecode;
 	tif->tif_setupdecode = PredictorSetupDecode;
