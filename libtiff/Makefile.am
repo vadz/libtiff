@@ -23,13 +23,13 @@
 
 # Process this file with automake to produce Makefile.in.
 
-LIBPORT = $(top_builddir)/port/libport.a
-
-EXTRA_DIST = Makefile.vc files.lst
+LIBPORT = -L$(top_builddir)/port -lport
 
 # Read list of source files and headers from the external file,
 # shared with other makefiles
 include files.lst
+
+EXTRA_DIST = Makefile.vc files.lst $(EXTRA_SRCS)
 
 libtiffincludedir = $(includedir)
 libtiffinclude_HEADERS = $(HDRS)
