@@ -1,6 +1,7 @@
 LIBRARY libtiff
 EXPORTS TIFFOpen
 	TIFFGetVersion
+	TIFFCleanup
 	TIFFClose
 	TIFFFlush
 	TIFFFlushData
