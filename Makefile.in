@@ -466,6 +466,8 @@ CONTRIBFILES=\
 	    contrib/addtiffo/Makefile.vc	\
 	    contrib/addtiffo/addtiffo.c		\
 	    contrib/addtiffo/tif_overview.c	\
+	    contrib/addtiffo/tif_ovrcache.c	\
+	    contrib/addtiffo/tif_ovrcache.h	\
 	contrib/iptcutil/Makefile		\
 		contrib/iptcutil/iptcutil.c	\
 		contrib/iptcutil/test.iptc	\
