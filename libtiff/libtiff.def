@@ -105,3 +105,17 @@ EXPORTS TIFFOpen
 	TIFFWriteCheck
 	TIFFRGBAImageOK
 	TIFFNumberOfDirectories
+	TIFFSetFileName
+	TIFFSetClientdata
+	TIFFSetMode
+	TIFFClientdata
+	TIFFGetReadProc
+	TIFFGetWriteProc
+	TIFFGetSeekProc
+	TIFFGetCloseProc
+	TIFFGetSizeProc
+	TIFFGetMapFileProc
+	TIFFGetUnmapFileProc
+	TIFFIsCODECConfigured
+	TIFFGetConfiguredCODECs
+
