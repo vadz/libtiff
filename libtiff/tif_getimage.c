@@ -55,7 +55,7 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
     uint16 photometric;
     int colorchannels;
 
-    if (!(*tif->tif_setupdecode)(tif)) {
+    if (!tif->tif_decodestatus) {
 	sprintf(emsg, "Sorry, requested compression method is not configured");
 	return (0);
     }
