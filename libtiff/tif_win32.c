@@ -152,7 +152,7 @@ TIFF*
 TIFFFdOpen(int ifd, const char* name, const char* mode)
 {
 	TIFF* tif;
-	BOOL fSuppressMap = (mode[1] == 'u' || mode[2] == 'u');
+	BOOL fSuppressMap = (mode[1] == 'u' || (mode[1]!=0 && mode[2] == 'u'));
 
 	tif = TIFFClientOpen(name, mode,
 		 (thandle_t)ifd,
@@ -224,14 +224,23 @@ _TIFFfree(tdata_t p)
 tdata_t
 _TIFFrealloc(tdata_t p, tsize_t s)
 {
-	void* pvTmp;
-	if ((pvTmp = GlobalReAlloc(p, s, 0)) == NULL) {
-		if ((pvTmp = GlobalAlloc(GMEM_FIXED, s)) != NULL) {
-			CopyMemory(pvTmp, p, GlobalSize(p));
-			GlobalFree(p);
-		}
-	}
-	return ((tdata_t)pvTmp);
+  void* pvTmp;
+  tsize_t old=GlobalSize(p);
+  if (old>=s)
+    {
+      if ((pvTmp = GlobalAlloc(GMEM_FIXED, s)) != NULL) {
+	CopyMemory(pvTmp, p, s);
+	GlobalFree(p);
+      }
+    }
+  else
+    {
+      if ((pvTmp = GlobalAlloc(GMEM_FIXED, s)) != NULL) {
+	CopyMemory(pvTmp, p, old);
+	GlobalFree(p);
+      }
+    }
+  return ((tdata_t)pvTmp);
 }
 
 void

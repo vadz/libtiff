@@ -1,6 +1,12 @@
 2000-04-04  Mike Welles	     <mike@onshore.com> 
-
-	* tif_lzw.c Applied patch to silence VC6 warnings.  From 
+	* tif_win32.c:  Applied patch to fix overreads and ovverwrites
+	  caught by BoundsChecker.  From Arvan Pritchard 
+	  <arvan.pritchard@infomatix.co.uk>  (untested). 
+	
+        * tif_getimage.c:  Applied patch to silence VC6 warnings.  From 
+	  Arvan Pritchard <arvan.pritchard@informatix.co.uk>
+	
+	* tif_lzw.c:  Applied patch to silence VC6 warnings.  From 
 	  Arvan Pritchard <arvan.pritchard@informatix.co.uk>
 	
 2000-03-28  Frank Warmerdam  <warmerda@cs46980-c>
