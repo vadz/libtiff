@@ -1,3 +1,9 @@
+2004-10-13  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffcmp.c (leof): Renamed from 'eof' in order to avoid
+	conflict noticed under MinGW.
+	* ltmain.sh: Fix for MinGW compilation.
+
 2004-10-13  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* man/tiffsplit.1: Fixed to indicate using aaa-zzz, not aa-zz.

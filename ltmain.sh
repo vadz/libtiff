@@ -4796,9 +4796,16 @@ check_executable(const char * path)
     return 0;
 
   if ((stat (path, &st) >= 0) &&
-      (((st.st_mode & S_IXOTH) == S_IXOTH) ||
+      (
+        /* MinGW does not support S_IXOTH or S_IXGRP */
+#if defined (S_IXOTH)
+       ((st.st_mode & S_IXOTH) == S_IXOTH) ||
+#endif
+#if defined (S_IXGRP)
        ((st.st_mode & S_IXGRP) == S_IXGRP) ||
-       ((st.st_mode & S_IXUSR) == S_IXUSR)))
+#endif
+       ((st.st_mode & S_IXUSR) == S_IXUSR))
+      )
     return 1;
   else
     return 0;
