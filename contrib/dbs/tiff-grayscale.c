@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     TIFFSetField(tif, TIFFTAG_TRANSFERFUNCTION, gray);
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_NONE);
 
-    scan_line = (u_char *) malloc(WIDTH / (8 / bits_per_pixel));
+    scan_line = (unsigned char *) malloc(WIDTH / (8 / bits_per_pixel));
 
     for (i = 0; i < HEIGHT; i++) {
         for (j = 0, k = 0; j < WIDTH;) {
