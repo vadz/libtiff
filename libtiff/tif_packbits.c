@@ -222,13 +222,28 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		if (n < 0) {		/* replicate next byte -n+1 times */
 			if (n == -128)	/* nop */
 				continue;
-			n = -n + 1;
+                        n = -n + 1;
+                        if( occ < n )
+                        {
+                            TIFFWarning("PackbitsDecode",
+                                        "%s: discarding data to "
+                                        "avoid buffer overrun",
+                                        tif->tif_name );
+                        }
 			occ -= n;
 			b = *bp++, cc--;
 			while (n-- > 0)
 				*op++ = b;
 		} else {		/* copy next n+1 bytes literally */
-			_TIFFmemcpy(op, bp, ++n);
+			if (occ < n + 1)
+                        {
+                            TIFFWarning("PackbitsDecode",
+                                        "%s: discarding data to "
+                                        "avoid buffer overrun",
+                                        tif->tif_name );
+                            n = occ - 1;
+                        }
+                        _TIFFmemcpy(op, bp, ++n);
 			op += n; occ -= n;
 			bp += n; cc -= n;
 		}
