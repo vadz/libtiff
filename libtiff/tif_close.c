@@ -32,19 +32,32 @@
 void
 TIFFClose(TIFF* tif)
 {
-	if (tif->tif_mode != O_RDONLY)
-		/*
-		 * Flush buffered data and directory (if dirty).
-		 */
-		TIFFFlush(tif);
-	(*tif->tif_cleanup)(tif);
-	TIFFFreeDirectory(tif);
-	if (tif->tif_rawdata && (tif->tif_flags&TIFF_MYBUFFER))
-		_TIFFfree(tif->tif_rawdata);
-	if (isMapped(tif))
-		TIFFUnmapFileContents(tif, tif->tif_base, tif->tif_size);
-	(void) TIFFCloseFile(tif);
-	if (tif->tif_fieldinfo)
-		_TIFFfree(tif->tif_fieldinfo);
-	_TIFFfree(tif);
+    int i;
+    
+    if (tif->tif_mode != O_RDONLY)
+        /*
+         * Flush buffered data and directory (if dirty).
+         */
+        TIFFFlush(tif);
+    (*tif->tif_cleanup)(tif);
+    TIFFFreeDirectory(tif);
+        
+    /* Clean up client info links */
+    while( tif->tif_clientinfo )
+    {
+        TIFFClientInfoLink *link = tif->tif_clientinfo;
+
+        tif->tif_clientinfo = link->next;
+        _TIFFfree( link->name );
+        _TIFFfree( link );
+    }
+
+    if (tif->tif_rawdata && (tif->tif_flags&TIFF_MYBUFFER))
+        _TIFFfree(tif->tif_rawdata);
+    if (isMapped(tif))
+        TIFFUnmapFileContents(tif, tif->tif_base, tif->tif_size);
+    (void) TIFFCloseFile(tif);
+    if (tif->tif_fieldinfo)
+        _TIFFfree(tif->tif_fieldinfo);
+    _TIFFfree(tif);
 }
