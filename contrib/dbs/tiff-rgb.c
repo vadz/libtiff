@@ -27,6 +27,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "tiffio.h"
 
@@ -41,8 +42,8 @@ char *              programName;
 
 int main(int argc, char **argv)
 {
-    char *          input_file;
-    double          image_gamma;
+    char *          input_file = NULL;
+    double          image_gamma = TIFF_GAMMA;
     int             i, j;
     TIFF *          tif;
     unsigned char * scan_line;

@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "tiffio.h"
 
@@ -38,8 +39,8 @@ void                Usage();
 
 int main(int argc, char **argv)
 {
-    int             bits_per_pixel, cmsize, i, j, k,
-                    cmap_index, chunk_size, nchunks;
+    int             bits_per_pixel = 8, cmsize, i, j, k,
+                    cmap_index, chunk_size = 32, nchunks = 16;
     unsigned char * scan_line;
     uint16          *red, *green, *blue;
     TIFF *          tif;
