@@ -1,3 +1,7 @@
+2004-07-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiffio.h: Revert thandle_t back to void* type.
+
 2004-07-11  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_read.c, tif_tile.c, tif_strip.c}: Fixes in error
