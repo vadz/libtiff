@@ -87,6 +87,108 @@ AC_FUNC_REALLOC
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor gettimeofday isascii memmove memset munmap pow sqrt strcasecmp strchr strncasecmp strrchr strstr strtol strtoul])
 
+AC_SYS_LARGEFILE
+
+dnl ---------------------------------------------------------------------------
+dnl Check for ZLIB.
+dnl ---------------------------------------------------------------------------
+
+HAVE_ZLIB=no
+
+AC_ARG_ENABLE(zlib, AS_HELP_STRING([--disable-zlib], [disable Zlib usage (required for Deflate compression, enabled by default)]),,)
+AC_ARG_WITH(zlib-inc,AS_HELP_STRING([--with-zlib-inc=ARG], [location of Zlib headers (specify, if not in standard place)]),,)
+AC_ARG_WITH(zlib-lib,AS_HELP_STRING([--with-zlib-lib=ARG], [location of Zlib library binary (specify, if not in standard place)]),,)
+
+if test "x$enable_zlib" != "xno" ; then
+
+  if test "x$with_zlib_lib" = "xyes" ; then
+    AC_CHECK_LIB(z, inflateEnd, [zlib_lib=yes], [zlib_lib=no],)
+  elif test "x$with_zlib_lib" != "xno" ; then
+    LIBS="$with_zlib_lib $LIBS"
+    AC_CHECK_LIB(z, inflateEnd, [zlib_lib=yes], [zlib_lib=no],)
+    if test "$zlib_lib" = "no" ; then
+      AC_MSG_ERROR([Zlib library not found in $with_zlib_lib])
+    fi
+  fi
+    
+  if test "x$with_zlib_h" = "xyes" ; then
+    AC_CHECK_HEADER(zlib.h, [zlib_h=yes], [zlib_h=no])
+  elif test "x$with_zlib_h" != "xno" ; then
+    INCLUDE="$with_zlib_h $INCLUDE"
+    AC_CHECK_HEADER(zlib.h, [zlib_h=yes], [zlib_h=no])
+    if test "$zlib_h" = "no" ; then
+      AC_MSG_ERROR([Zlib headers not found in $with_zlib_h])
+    fi
+  fi
+
+  if test "$zlib_lib" = "yes" -a "$zlib_h" = "yes" ; then
+    HAVE_ZLIB=yes
+  fi
+
+fi
+
+if test "$HAVE_ZLIB" = "yes" ; then
+  CPPFLAGS="-DZIP_SUPPORT $CPPFLAGS"
+  LIBS="-lz $LIBS"
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl Check for JPEG.
+dnl ---------------------------------------------------------------------------
+
+HAVE_JPEG=no
+
+AC_ARG_ENABLE(jpeg, AS_HELP_STRING([--disable-jpeg], [disable IJG JPEG library usage (required for JPEG compression, enabled by default)]),,)
+AC_ARG_WITH(jpeg-inc,AS_HELP_STRING([--with-jpeg-inc=ARG], [location of IJG JPEG library headers (specify, if not in standard place)]),,)
+AC_ARG_WITH(jpeg-lib,AS_HELP_STRING([--with-jpeg-lib=ARG], [location of IJG JPEG library binary (specify, if not in standard place)]),,)
+
+if test "x$enable_jpeg" != "xno" ; then
+
+  if test "x$with_jpeg_lib" = "xyes" ; then
+    AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [jpeg_lib=yes], [jpeg_lib=no],)
+  elif test "x$with_jpeg_lib" != "xno" ; then
+    LIBS="$with_jpeg_lib $LIBS"
+    AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [jpeg_lib=yes], [jpeg_lib=no],)
+    if test "$jpeg_lib" = "no" ; then
+      AC_MSG_ERROR([IJG JPEG library not found in $with_jpeg_lib])
+    fi
+  fi
+    
+  if test "x$with_jpeg_h" = "xyes" ; then
+    AC_CHECK_HEADER(jpeglib.h, [jpeg_h=yes], [jpeg_h=no])
+  elif test "x$with_jpeg_h" != "xno" ; then
+    INCLUDE="$with_jpeg_h $INCLUDE"
+    AC_CHECK_HEADER(jpeglib.h, [jpeg_h=yes], [jpeg_h=no])
+    if test "$jpeg_h" = "no" ; then
+      AC_MSG_ERROR([IJG JPEG library headers not found in $with_jpeg_h])
+    fi
+  fi
+
+  if test "$jpeg_lib" = "yes" -a "$jpeg_h" = "yes" ; then
+    HAVE_JPEG=yes
+  fi
+
+fi
+
+if test "$HAVE_JPEG" = "yes" ; then
+  CPPFLAGS="-DJPEG_SUPPORT $CPPFLAGS"
+  LIBS="-ljpeg $LIBS"
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl Check for Old JPEG.
+dnl ---------------------------------------------------------------------------
+
+HAVE_OJPEG=no
+
+AC_ARG_ENABLE(old-jpeg, AS_HELP_STRING([--enable-old-jpeg], [enable support for Old JPEG compresson (read contrib/ojpeg/README first! Compilation fails with unpatched IJG JPEG library)]), [HAVE_OJPEG=yes], [HAVE_OJPEG=no])
+
+if test "$HAVE_JPEG" = "yes" -a "$HAVE_OJPEG" = "yes" ; then
+  CPPFLAGS="-DOJPEG_SUPPORT $CPPFLAGS"
+fi
+
+dnl ---------------------------------------------------------------------------
+
 AC_SUBST(LIBTIFF,../libtiff/libtiff.la)
 
 AC_CONFIG_FILES([Makefile \
@@ -95,6 +197,8 @@ AC_CONFIG_FILES([Makefile \
 		 html/man/Makefile \
                  libtiff/Makefile \
                  man/Makefile \
+		 port/Makefile \
                  tools/Makefile])
 AC_OUTPUT
+
 

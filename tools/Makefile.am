@@ -55,7 +55,7 @@ bin_PROGRAMS = \
 	tiffset \
 	tiffsplit \
 	$(BIN_TIFFGT)
-EXTRA_PROGRAMS = $(BIN_TIFFGT) sgi2tiff.c sgisv.c ycbcr.c
+EXTRA_PROGRAMS = $(BIN_TIFFGT) sgi2tiff sgisv ycbcr
 
 fax2ps_SOURCES = fax2ps.c
 fax2ps_LDADD = @LIBTIFF@

@@ -72,8 +72,8 @@ bin_PROGRAMS = fax2ps$(EXEEXT) fax2tiff$(EXEEXT) gif2tiff$(EXEEXT) \
 	tiffdither$(EXEEXT) tiffdump$(EXEEXT) tiffgt$(EXEEXT) \
 	tiffinfo$(EXEEXT) tiffmedian$(EXEEXT) tiffset$(EXEEXT) \
 	tiffsplit$(EXEEXT) $(am__EXEEXT_1)
-EXTRA_PROGRAMS = $(am__EXEEXT_1) sgi2tiff.c$(EXEEXT) sgisv.c$(EXEEXT) \
-	ycbcr.c$(EXEEXT)
+EXTRA_PROGRAMS = $(am__EXEEXT_1) sgi2tiff$(EXEEXT) sgisv$(EXEEXT) \
+	ycbcr$(EXEEXT)
 subdir = tools
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -111,12 +111,12 @@ raw2tiff_DEPENDENCIES =
 am_rgb2ycbcr_OBJECTS = rgb2ycbcr.$(OBJEXT)
 rgb2ycbcr_OBJECTS = $(am_rgb2ycbcr_OBJECTS)
 rgb2ycbcr_DEPENDENCIES =
-sgi2tiff_c_SOURCES = sgi2tiff.c
-sgi2tiff_c_OBJECTS = sgi2tiff.$(OBJEXT)
-sgi2tiff_c_LDADD = $(LDADD)
-sgisv_c_SOURCES = sgisv.c
-sgisv_c_OBJECTS = sgisv.$(OBJEXT)
-sgisv_c_LDADD = $(LDADD)
+sgi2tiff_SOURCES = sgi2tiff.c
+sgi2tiff_OBJECTS = sgi2tiff.$(OBJEXT)
+sgi2tiff_LDADD = $(LDADD)
+sgisv_SOURCES = sgisv.c
+sgisv_OBJECTS = sgisv.$(OBJEXT)
+sgisv_LDADD = $(LDADD)
 am_thumbnail_OBJECTS = thumbnail.$(OBJEXT)
 thumbnail_OBJECTS = $(am_thumbnail_OBJECTS)
 thumbnail_DEPENDENCIES =
@@ -159,9 +159,9 @@ tiffset_DEPENDENCIES =
 am_tiffsplit_OBJECTS = tiffsplit.$(OBJEXT)
 tiffsplit_OBJECTS = $(am_tiffsplit_OBJECTS)
 tiffsplit_DEPENDENCIES =
-ycbcr_c_SOURCES = ycbcr.c
-ycbcr_c_OBJECTS = ycbcr.$(OBJEXT)
-ycbcr_c_LDADD = $(LDADD)
+ycbcr_SOURCES = ycbcr.c
+ycbcr_OBJECTS = ycbcr.$(OBJEXT)
+ycbcr_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/libtiff
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -437,12 +437,12 @@ raw2tiff$(EXEEXT): $(raw2tiff_OBJECTS) $(raw2tiff_DEPENDENCIES)
 rgb2ycbcr$(EXEEXT): $(rgb2ycbcr_OBJECTS) $(rgb2ycbcr_DEPENDENCIES) 
 	@rm -f rgb2ycbcr$(EXEEXT)
 	$(LINK) $(rgb2ycbcr_LDFLAGS) $(rgb2ycbcr_OBJECTS) $(rgb2ycbcr_LDADD) $(LIBS)
-sgi2tiff.c$(EXEEXT): $(sgi2tiff_c_OBJECTS) $(sgi2tiff_c_DEPENDENCIES) 
-	@rm -f sgi2tiff.c$(EXEEXT)
-	$(LINK) $(sgi2tiff_c_LDFLAGS) $(sgi2tiff_c_OBJECTS) $(sgi2tiff_c_LDADD) $(LIBS)
-sgisv.c$(EXEEXT): $(sgisv_c_OBJECTS) $(sgisv_c_DEPENDENCIES) 
-	@rm -f sgisv.c$(EXEEXT)
-	$(LINK) $(sgisv_c_LDFLAGS) $(sgisv_c_OBJECTS) $(sgisv_c_LDADD) $(LIBS)
+sgi2tiff$(EXEEXT): $(sgi2tiff_OBJECTS) $(sgi2tiff_DEPENDENCIES) 
+	@rm -f sgi2tiff$(EXEEXT)
+	$(LINK) $(sgi2tiff_LDFLAGS) $(sgi2tiff_OBJECTS) $(sgi2tiff_LDADD) $(LIBS)
+sgisv$(EXEEXT): $(sgisv_OBJECTS) $(sgisv_DEPENDENCIES) 
+	@rm -f sgisv$(EXEEXT)
+	$(LINK) $(sgisv_LDFLAGS) $(sgisv_OBJECTS) $(sgisv_LDADD) $(LIBS)
 thumbnail$(EXEEXT): $(thumbnail_OBJECTS) $(thumbnail_DEPENDENCIES) 
 	@rm -f thumbnail$(EXEEXT)
 	$(LINK) $(thumbnail_LDFLAGS) $(thumbnail_OBJECTS) $(thumbnail_LDADD) $(LIBS)
@@ -485,9 +485,9 @@ tiffset$(EXEEXT): $(tiffset_OBJECTS) $(tiffset_DEPENDENCIES)
 tiffsplit$(EXEEXT): $(tiffsplit_OBJECTS) $(tiffsplit_DEPENDENCIES) 
 	@rm -f tiffsplit$(EXEEXT)
 	$(LINK) $(tiffsplit_LDFLAGS) $(tiffsplit_OBJECTS) $(tiffsplit_LDADD) $(LIBS)
-ycbcr.c$(EXEEXT): $(ycbcr_c_OBJECTS) $(ycbcr_c_DEPENDENCIES) 
-	@rm -f ycbcr.c$(EXEEXT)
-	$(LINK) $(ycbcr_c_LDFLAGS) $(ycbcr_c_OBJECTS) $(ycbcr_c_LDADD) $(LIBS)
+ycbcr$(EXEEXT): $(ycbcr_OBJECTS) $(ycbcr_DEPENDENCIES) 
+	@rm -f ycbcr$(EXEEXT)
+	$(LINK) $(ycbcr_LDFLAGS) $(ycbcr_OBJECTS) $(ycbcr_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
