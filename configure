@@ -23493,7 +23493,7 @@ echo "$as_me: error: Zlib library not found at $with_zlib_lib_dir" >&2;}
   fi
 
   if test "x$with_zlib_include_dir" != "x" ; then
-    INCLUDES="-I$with_zlib_include_dir $INCLUDES"
+    CPPFLAGS="-I$with_zlib_include_dir $CPPFLAGS"
   fi
   if test "${ac_cv_header_zlib_h+set}" = set; then
   echo "$as_me:$LINENO: checking for zlib.h" >&5
@@ -23772,7 +23772,7 @@ echo "$as_me: error: IJG JPEG library not found at $with_jpeg_lib_dir" >&2;}
   fi
 
   if test "x$with_jpeg_include_dir" != "x" ; then
-    INCLUDES="-I$with_jpeg_include_dir $INCLUDES"
+    CPPFLAGS="-I$with_jpeg_include_dir $CPPFLAGS"
   fi
   if test "${ac_cv_header_jpeglib_h+set}" = set; then
   echo "$as_me:$LINENO: checking for jpeglib.h" >&5
@@ -24064,7 +24064,7 @@ echo "$as_me: error: OpenGL library not found at $with_opengl_lib_dir" >&2;}
   fi
 
   if test "x$with_opengl_include_dir" != "x" ; then
-    INCLUDES"-I$with_opengl_include_dir $INCLUDES"
+    CPPFLAGS"-I$with_opengl_include_dir $CPPFLAGS"
   fi
   if test "${ac_cv_header_GL_gl_h+set}" = set; then
   echo "$as_me:$LINENO: checking for GL/gl.h" >&5
@@ -24294,7 +24294,7 @@ echo "$as_me: error: GLUT library not found at $with_glut_lib_dir" >&2;}
   fi
 
   if test "x$with_glut_include_dir" != "x" ; then
-    INCLUDES="-I$with_glut_include_dir $INCLUDES"
+    CPPFLAGS="-I$with_glut_include_dir $CPPFLAGS"
   fi
   if test "${ac_cv_header_GL_glut_h+set}" = set; then
   echo "$as_me:$LINENO: checking for GL/glut.h" >&5

@@ -212,7 +212,7 @@ if test "x$enable_zlib" != "xno" ; then
   fi
     
   if test "x$with_zlib_include_dir" != "x" ; then
-    INCLUDES="-I$with_zlib_include_dir $INCLUDES"
+    CPPFLAGS="-I$with_zlib_include_dir $CPPFLAGS"
   fi
   AC_CHECK_HEADER(zlib.h, [zlib_h=yes], [zlib_h=no])
   if test "$zlib_h" = "no" -a "x$with_zlib_include_dir" != "x" ; then
@@ -263,7 +263,7 @@ if test "x$enable_jpeg" != "xno" ; then
   fi
     
   if test "x$with_jpeg_include_dir" != "x" ; then
-    INCLUDES="-I$with_jpeg_include_dir $INCLUDES"
+    CPPFLAGS="-I$with_jpeg_include_dir $CPPFLAGS"
   fi
   AC_CHECK_HEADER(jpeglib.h, [jpeg_h=yes], [jpeg_h=no])
   if test "$jpeg_h" = "no" -a "x$with_jpeg_include_dir" != "x" ; then
@@ -317,7 +317,7 @@ if test "x$enable_opengl" != "xno" ; then
   fi
     
   if test "x$with_opengl_include_dir" != "x" ; then
-    INCLUDES"-I$with_opengl_include_dir $INCLUDES"
+    CPPFLAGS"-I$with_opengl_include_dir $CPPFLAGS"
   fi
   AC_CHECK_HEADER(GL/gl.h, [opengl_h=yes], [opengl_h=no])
   if test "$opengl_h" = "no" -a "x$with_opengl_include_dir" != "x" ; then
@@ -333,7 +333,7 @@ if test "x$enable_opengl" != "xno" ; then
   fi
     
   if test "x$with_glut_include_dir" != "x" ; then
-    INCLUDES="-I$with_glut_include_dir $INCLUDES"
+    CPPFLAGS="-I$with_glut_include_dir $CPPFLAGS"
   fi
   AC_CHECK_HEADER(GL/glut.h, [glut_h=yes], [glut_h=no])
   if test "$glut_h" = "no" -a "x$with_glut_include_dir" != "x" ; then
