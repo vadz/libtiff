@@ -104,7 +104,7 @@ do
     -o)		SaveFirst=yes;;
     -O)		RemoveFirst=yes; SaveFirst=yes;;
     -root)	shift; ROOT=$1;;
-    -dir)	CMD=mkdir; HasSource=no;
+    -dir)	CMD="mkdir -p"; HasSource=no;
 		RM=":"; STRIP=":"
 		;;
     -fifo)	CMD=@MKFIFO@; HasSource=no;
