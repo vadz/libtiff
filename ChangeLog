@@ -1,3 +1,9 @@
+2000-04-21  Frank Warmerdam  <warmerda@rommel.atlsci.com>
+
+	* libtiff/tif_dirread.c: Don't use estimate strip byte count for
+	one tile/strip images with an offset, and byte count of zero. These
+	could be "unpopulated" images. 
+
 2000-04-18  Frank Warmerdam  <warmerda@rommel.atlsci.com>
 
 	* contrib/addtiffo: Added "averaging" resampling option.
