@@ -141,7 +141,7 @@ main(int argc, char **argv)
 
 	for (i = 0; i < NTAGS; i++) {
 		if (!TIFFGetField(tif, ascii_tags[i].tag, &value)
-		    && !strcmp(value, ascii_tags[i].value)) {
+		    || strcmp(value, ascii_tags[i].value)) {
 			fprintf(stderr, "Can't get tag %d.\n",
 				(int)ascii_tags[i].tag);
 			goto failure;
@@ -149,7 +149,7 @@ main(int argc, char **argv)
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_INKNAMES, &value)
-	    && !memcmp(value, ink_names, ink_names_size)) {
+	    || memcmp(value, ink_names, ink_names_size)) {
 		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_INKNAMES);
 		goto failure;
 	}
