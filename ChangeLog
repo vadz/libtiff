@@ -1,3 +1,11 @@
+2000-09-30  Frank Warmerdam  <warmerda@cs46980-c>
+
+	* Modified TIFFClientOpen() to emit an error on an attempt to
+	open a comperessed file for update (O_RDWR/r+) access.  This is
+	because the compressor/decompressor code gets very confused when
+	the mode is O_RDWR, assuming this means writing only.  See
+	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=13
+
 2000-09-27  Frank Warmerdam  <warmerda@cs46980-c>
 
 	* Added GNULDdso target and switched linux and freebsd to use it. 
