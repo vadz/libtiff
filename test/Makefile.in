@@ -38,7 +38,7 @@
 # OF THIS SOFTWARE.
 
 # Process this file with automake to produce Makefile.in.
-SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES) $(short_tag_SOURCES)
+SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES) $(short_tag_SOURCES) $(strip_rw_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -62,7 +62,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
 check_PROGRAMS = ascii_tag$(EXEEXT) long_tag$(EXEEXT) \
-	short_tag$(EXEEXT)
+	short_tag$(EXEEXT) strip_rw$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -84,11 +84,15 @@ long_tag_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_short_tag_OBJECTS = short_tag.$(OBJEXT)
 short_tag_OBJECTS = $(am_short_tag_OBJECTS)
 short_tag_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_strip_rw_OBJECTS = strip_rw.$(OBJEXT) test_arrays.$(OBJEXT)
+strip_rw_OBJECTS = $(am_strip_rw_OBJECTS)
+strip_rw_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/libtiff -I$(top_builddir)/libtiff
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ascii_tag.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/long_tag.Po ./$(DEPDIR)/short_tag.Po
+@AMDEP_TRUE@	./$(DEPDIR)/long_tag.Po ./$(DEPDIR)/short_tag.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/strip_rw.Po ./$(DEPDIR)/test_arrays.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
@@ -98,9 +102,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES) \
-	$(short_tag_SOURCES)
+	$(short_tag_SOURCES) $(strip_rw_SOURCES)
 DIST_SOURCES = $(ascii_tag_SOURCES) $(long_tag_SOURCES) \
-	$(short_tag_SOURCES)
+	$(short_tag_SOURCES) $(strip_rw_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -237,6 +241,8 @@ long_tag_SOURCES = long_tag.c
 long_tag_LDADD = $(LIBTIFF)
 short_tag_SOURCES = short_tag.c
 short_tag_LDADD = $(LIBTIFF)
+strip_rw_SOURCES = strip_rw.c test_arrays.c test_arrays.h
+strip_rw_LDADD = $(LIBTIFF)
 INCLUDES = -I$(top_srcdir)/libtiff
 all: all-am
 
@@ -287,6 +293,9 @@ long_tag$(EXEEXT): $(long_tag_OBJECTS) $(long_tag_DEPENDENCIES)
 short_tag$(EXEEXT): $(short_tag_OBJECTS) $(short_tag_DEPENDENCIES) 
 	@rm -f short_tag$(EXEEXT)
 	$(LINK) $(short_tag_LDFLAGS) $(short_tag_OBJECTS) $(short_tag_LDADD) $(LIBS)
+strip_rw$(EXEEXT): $(strip_rw_OBJECTS) $(strip_rw_DEPENDENCIES) 
+	@rm -f strip_rw$(EXEEXT)
+	$(LINK) $(strip_rw_LDFLAGS) $(strip_rw_OBJECTS) $(strip_rw_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -297,6 +306,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ascii_tag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/long_tag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/short_tag.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strip_rw.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_arrays.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
