@@ -1,5 +1,9 @@
 2003-11-12  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tools/{ras2tiff.c, rasterfile.h}: Properly determine SUN Rasterfiles
+	with the reverse byte order (it is reported by the magic header
+	field). Problem reported by Andreas Wiesmann.
+
 	* tools/raw2tiff.c, man/raw2tiff.1: Few improvements in correlation
 	calculation function. Guessing mechanics now documented in manual page.
 
