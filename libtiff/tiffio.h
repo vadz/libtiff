@@ -167,8 +167,7 @@ typedef struct {				/* CIE Lab 1976->RGB support */
 	float	Yb2b[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yb to b */
 } TIFFCIELabToRGB;
 
-extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *,
-			       float, float, float);
+extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *, float*);
 extern void TIFFCIELabToXYZ(TIFFCIELabToRGB *, uint32, int32, int32,
 			    float *, float *, float *);
 extern void TIFFXYZToRGB(TIFFCIELabToRGB *, float, float, float,

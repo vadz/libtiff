@@ -115,8 +115,8 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
  * the Yr,Yb,Yg <=> r,g,b conversions.
  */
 int
-TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab, TIFFDisplay *display,
-		    float X0, float Y0, float Z0)
+TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab,
+		    TIFFDisplay *display, float *refWhite)
 {
 	static char module[] = "TIFFCIELabToRGBInit";
 
@@ -155,9 +155,9 @@ TIFFCIELabToRGBInit(TIFFCIELabToRGB* cielab, TIFFDisplay *display,
 	}
 
 	/* Init reference white point */
-	cielab->X0 = X0;
-	cielab->Y0 = Y0;
-	cielab->Z0 = Z0;
+	cielab->X0 = refWhite[0];
+	cielab->Y0 = refWhite[1];
+	cielab->Z0 = refWhite[2];
 
 	return 0;
 }
@@ -238,9 +238,6 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, float *luma, float *refBlackWhite)
        * they are in a range defined by the ReferenceBlackWhite
        * tag) so there is some range shifting to do here when
        * constructing tables indexed by the raw pixel data.
-       *
-       * XXX handle ReferenceBlackWhite correctly to calculate
-       *     Cb/Cr values to use in constructing the tables.
        */
       for (i = 0, x = -128; i < 256; i++, x++) {
 	    int Cr = Code2V(x, refBlackWhite[4] - 128.0,
