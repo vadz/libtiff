@@ -6,6 +6,10 @@
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=52
 	
 	* configure: Set -DPIXARLOG_SUPPORT option along with -DZIP_SUPPORT
+
+	* html/Makefile.in: New targets added: html and groffhtml for
+	producing HTML representations of the manual pages automatically.
+	html target uses man2html tool, groffhtml uses groff tool.
 	
 2002-09-15  Andrey Kiselev  <dron@remotesensing.org>
 

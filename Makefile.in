@@ -353,9 +353,9 @@ TIFFFILES=\
 	    html/man/TIFFWriteDirectory.3t.html				\
 	    html/man/TIFFWriteEncodedStrip.3t.html				\
 	    html/man/TIFFWriteEncodedTile.3t.html				\
-	    html/man/TIFFWriteRawStrip.3t.html				\
-	    html/man/TIFFWriteRawTile.3t.html				\
-	    html/man/TIFFWriteScanline.3t.html				\
+	    html/man/TIFFWriteRawStrip.3t.html			\
+	    html/man/TIFFWriteRawTile.3t.html			\
+	    html/man/TIFFWriteScanline.3t.html			\
 	    html/man/TIFFbuffer.3t.html				\
 	    html/man/TIFFcodec.3t.html				\
 	    html/man/TIFFmemory.3t.html				\
@@ -371,6 +371,7 @@ TIFFFILES=\
 	    html/man/pal2rgb.1.html				\
 	    html/man/ppm2tiff.1.html				\
 	    html/man/ras2tiff.1.html				\
+	    html/man/raw2tiff.1.html				\
 	    html/man/rgb2ycbcr.1.html				\
 	    html/man/sgi2tiff.1.html				\
 	    html/man/thumbnail.1.html				\
@@ -385,8 +386,8 @@ TIFFFILES=\
 	    html/man/tiffmedian.1.html				\
 	    html/man/tiffsplit.1.html				\
 	    html/man/tiffsv.1.html				\
-	    html/man/index.html				\
-	    html/man/TIFFWriteTile.3t.html				\
+	    html/man/index.html					\
+	    html/man/TIFFWriteTile.3t.html			\
 	    ${NULL}
 OTHERFILES=\
 	${NULL}
