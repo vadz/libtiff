@@ -1,3 +1,7 @@
+Tue Apr 18 16:18:08 2000  Frank Warmerdam  <warmerda@esabot.atlsci.com>
+
+	* tools/Makefile.in: Modified to install properly on SGI.
+
 2000-04-04  Mike Welles	     <mike@onshore.com> 
 	* tif_win32.c:  Applied patch to fix overreads and ovverwrites
 	  caught by BoundsChecker.  From Arvan Pritchard 
