@@ -561,6 +561,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     int ret = 1, flip;
 
     buf = (unsigned char*) _TIFFmalloc(TIFFTileSize(tif));
+    memset(buf, 0, TIFFTileSize(tif));
     if (buf == 0) {
 	TIFFError(TIFFFileName(tif), "No space for tile buffer");
 	return (0);
@@ -660,6 +661,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
     tilesize = TIFFTileSize(tif);
     buf = (unsigned char*) _TIFFmalloc(4*tilesize);
+    memset(buf, 0, 4*tilesize);
     if (buf == 0) {
 	TIFFError(TIFFFileName(tif), "No space for tile buffer");
 	return (0);
@@ -727,9 +729,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
                 (*put)(img, raster+y*w+col, col, y,
                        npix, nrow, fromskew, toskew + fromskew, 
                        r + pos, g + pos, b + pos, a + pos);
-            } 
-            else 
-            {
+            } else {
                 (*put)(img, raster+y*w+col, col, y,
                        tw, nrow, 0, toskew, r + pos, g + pos, b + pos, a + pos);
             }
@@ -779,6 +779,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     int ret = 1, flip;
 
     buf = (unsigned char*) _TIFFmalloc(TIFFStripSize(tif));
+    memset(buf, 0, TIFFStripSize(tif));
     if (buf == 0) {
 	TIFFError(TIFFFileName(tif), "No space for strip buffer");
 	return (0);
@@ -788,8 +789,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     if (flip & FLIP_VERTICALLY) {
 	    y = h - 1;
 	    toskew = -(int32)(w + w);
-    }
-    else {
+    } else {
 	    y = 0;
 	    toskew = -(int32)(w - w);
     }
@@ -861,6 +861,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 
     stripsize = TIFFStripSize(tif);
     r = buf = (unsigned char *)_TIFFmalloc(4*stripsize);
+    memset(buf, 0, 4*stripsize);
     if (buf == 0) {
 	TIFFError(TIFFFileName(tif), "No space for tile buffer");
 	return (0);
