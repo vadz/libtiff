@@ -475,6 +475,13 @@ release.tar:
 	rm -f tiff-$$VERSION $$VERSION $$VERSION-tar;
 
 #
+#	Simple rule to run test suite assuming that pics directory is 
+#	just below this one, and that .rpt files are available. 
+#
+test:
+	test_pics.sh pics/*.tif
+
+#
 # Create a package of the test images.
 #
 
