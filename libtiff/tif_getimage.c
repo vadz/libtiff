@@ -473,11 +473,11 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     uint16 orientation;
     uint32 col, row, y, rowstoread, ret = 1;
     uint32 pos;
-    uint32 tw, th;
+    uint32 tw, th, tile_row_size;
     u_char* buf;
     int32 fromskew, toskew;
     uint32 nrow;
- 
+
     buf = (u_char*) _TIFFmalloc(TIFFTileSize(tif));
     if (buf == 0) {
 	TIFFError(TIFFFileName(tif), "No space for tile buffer");
@@ -488,7 +488,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     y = setorientation(img, h);
     orientation = img->orientation;
     toskew = -(int32) (orientation == ORIENTATION_TOPLEFT ? tw+w : tw-w);
-    for (row = 0; row < h; row += nrow) 
+    for (row = 0; row < h; row += nrow)
     {
         rowstoread = th - (row + img->row_offset) % th;
     	nrow = (row + rowstoread > h ? h - row : rowstoread);
@@ -500,8 +500,36 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
                 ret = 0;
                 break;
             }
+	    
+            tile_row_size = TIFFTileRowSize(tif);
+            pos = ((row+img->row_offset) % th) * tile_row_size;
 
-            pos = ((row+img->row_offset) % th) * TIFFTileRowSize(tif);
+	    if(orientation == ORIENTATION_BOTLEFT)
+	    /* Vertically mirror rows in tile according to `Orientation' tag */
+            {
+                u_char *wrk_line, *top_line, *bottom_line;
+                uint32 t_row;
+
+                wrk_line = (u_char*)_TIFFmalloc(tile_row_size);
+                if (wrk_line == 0)
+	        {
+                    TIFFError(TIFFFileName(tif), "No space for tile row buffer");
+                    return (0);
+                }
+    
+                for(t_row = 0; t_row < th / 2; t_row++)
+                {
+
+                    top_line = buf + tile_row_size * t_row;
+                    bottom_line = buf + tile_row_size * (th-t_row-1);
+
+                    _TIFFmemcpy(wrk_line, top_line, tile_row_size);
+                    _TIFFmemcpy(top_line, bottom_line, tile_row_size);
+                    _TIFFmemcpy(bottom_line, wrk_line, tile_row_size);
+                }
+
+                _TIFFfree(wrk_line);
+            }
 
     	    if (col + tw > w) 
             {
