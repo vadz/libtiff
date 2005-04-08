@@ -549,7 +549,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		        fprintf(fd, "%d", (int)((short *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_LONG)
 		        fprintf(fd, "%lu",
-		    	    (int)((unsigned long *) raw_data)[j]);
+		    	    (unsigned long)((unsigned long *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_SLONG)
 		        fprintf(fd, "%ld", (long)((long *) raw_data)[j]);
 		    else if(fip->field_type == TIFF_RATIONAL
