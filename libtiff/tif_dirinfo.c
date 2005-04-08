@@ -604,7 +604,7 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
             key.field_type = dt;
             return((const TIFFFieldInfo *) lfind(&key, 
 						   tif->tif_fieldinfo, 
-						   tif->tif_nfields,
+						   &tif->tif_nfields,
 						   sizeof(TIFFFieldInfo), 
 						   tagNameCompare));
         } else
