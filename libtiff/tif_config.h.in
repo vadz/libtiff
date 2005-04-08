@@ -82,6 +82,9 @@
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD
 
+/* Define to 1 if you have the <search.h> header file. */
+#undef HAVE_SEARCH_H
+
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
 
