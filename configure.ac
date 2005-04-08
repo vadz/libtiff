@@ -57,7 +57,7 @@ dnl Checks for programs.
 AC_PROG_CC
 
 dnl We want warnings. As many warnings as possible.
-#VL_PROG_CC_WARNINGS()
+VL_PROG_CC_WARNINGS()
 
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -76,7 +76,7 @@ case "$target_os" in
 esac
 
 dnl Checks for header files.
-AC_CHECK_HEADERS([assert.h fcntl.h limits.h malloc.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([assert.h fcntl.h limits.h malloc.h search.h sys/time.h unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
