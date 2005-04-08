@@ -1,3 +1,15 @@
+2005-04-08  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffiop.h, tif_dir.c}: Use uint32 type for appropriate
+	values in _TIFFVSetField() function. Inspired by the bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=816
+
+	* man/TIFFSetField.3tiff: Fixed definition of the TIFFTAG_INKNAMES tag
+	as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=816
+
 2005-03-30  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_open.c: Do not read header in case the output file
