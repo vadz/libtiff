@@ -289,6 +289,9 @@ typedef	enum {
 #define	TIFFTAG_ARTIST			315	/* creator of image */
 #define	TIFFTAG_HOSTCOMPUTER		316	/* machine where created */
 #define	TIFFTAG_PREDICTOR		317	/* prediction scheme w/ LZW */
+#define     PREDICTOR_NONE		1	/* no prediction scheme used */
+#define     PREDICTOR_HORIZONTAL	2	/* horizontal differencing */
+#define     PREDICTOR_FLOATINGPOINT	3	/* floating point predictor */
 #define	TIFFTAG_WHITEPOINT		318	/* image white point */
 #define	TIFFTAG_PRIMARYCHROMATICITIES	319	/* !primary chromaticities */
 #define	TIFFTAG_COLORMAP		320	/* RGB map for pallette image */
