@@ -238,6 +238,7 @@ extern	void _TIFFNoPostDecode(TIFF*, tidata_t, tsize_t);
 extern  int  _TIFFNoPreCode (TIFF*, tsample_t); 
 extern	int _TIFFNoSeek(TIFF*, uint32);
 extern	void _TIFFSwab16BitData(TIFF*, tidata_t, tsize_t);
+extern	void _TIFFSwab24BitData(TIFF*, tidata_t, tsize_t);
 extern	void _TIFFSwab32BitData(TIFF*, tidata_t, tsize_t);
 extern	void _TIFFSwab64BitData(TIFF*, tidata_t, tsize_t);
 extern	int TIFFFlushData1(TIFF*);

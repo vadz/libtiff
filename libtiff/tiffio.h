@@ -401,6 +401,7 @@ extern	void TIFFSwabShort(uint16*);
 extern	void TIFFSwabLong(uint32*);
 extern	void TIFFSwabDouble(double*);
 extern	void TIFFSwabArrayOfShort(uint16*, unsigned long);
+extern	void TIFFSwabArrayOfTriples(uint8*, unsigned long);
 extern	void TIFFSwabArrayOfLong(uint32*, unsigned long);
 extern	void TIFFSwabArrayOfDouble(double*, unsigned long);
 extern	void TIFFReverseBits(unsigned char *, unsigned long);

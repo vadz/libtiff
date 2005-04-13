@@ -624,6 +624,14 @@ _TIFFSwab16BitData(TIFF* tif, tidata_t buf, tsize_t cc)
 }
 
 void
+_TIFFSwab24BitData(TIFF* tif, tidata_t buf, tsize_t cc)
+{
+    (void) tif;
+    assert((cc % 3) == 0);
+    TIFFSwabArrayOfTriples((uint8*) buf, cc/3);
+}
+
+void
 _TIFFSwab32BitData(TIFF* tif, tidata_t buf, tsize_t cc)
 {
     (void) tif;
