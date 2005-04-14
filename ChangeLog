@@ -1,3 +1,8 @@
+2005-04-14  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_predict.h, tif_predict.c}: Added ability to decode
+	floating point predictor, as per TIFF technical Note 3.
+
 2005-04-13  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tiffio.h, tiffiop.h, tif_dir.c, tif_read.c, tif_swab.c}:
