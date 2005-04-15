@@ -348,7 +348,7 @@ processCompressOptions(char* opt)
 		char* cp = strchr(opt, ':');
 		if (cp)
 			defpredictor = atoi(cp+1);
-		defcompression = COMPRESSION_DEFLATE;
+		defcompression = COMPRESSION_ADOBE_DEFLATE;
 	} else
 		return (0);
 	return (1);
@@ -649,6 +649,7 @@ tiffcp(TIFF* in, TIFF* out)
 		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
 		break;
 	case COMPRESSION_LZW:
+	case COMPRESSION_ADOBE_DEFLATE:
 	case COMPRESSION_DEFLATE:
 		if (predictor != (uint16)-1)
 			TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
