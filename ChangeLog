@@ -1,3 +1,8 @@
+2005-04-27  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffdither.c: Copy the PhotometricInterpretation tag from the
+	input file.
+
 2005-04-15  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_predict.c: Added ability to encode floating point
