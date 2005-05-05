@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.20  2005-03-18 09:47:34  dron
+ * Revision 1.21  2005-05-05 20:52:57  dron
+ * Calculate the tilewidth properly; added new option '-b' to use interpolation
+ * in output PDF files (Bruno Ledoux).
+ *
+ * Revision 1.20  2005/03/18 09:47:34  dron
  * Fixed problem with alpha channel handling as per bug
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=794
  *
@@ -287,6 +291,8 @@ typedef struct {
 	float tiff_primarychromaticities[6];
 	float tiff_referenceblackwhite[2];
 	float* tiff_transferfunction[3];
+	int pdf_image_interpolate;	/* 0 (default) : do not interpolate,
+					   1 : interpolate */
 	uint16 tiff_transferfunctioncount;
 	uint32 pdf_icccs;
 	uint32 tiff_iccprofilelength;
@@ -467,7 +473,7 @@ tsize_t t2p_write_pdf_trailer(T2P*, TIFF*);
     -r: 'd' for resolution default, 'o' for resolution override
     -p: paper size, eg "letter", "legal", "A4"
     -f  set PDF "Fit Window" user preference
-
+    -b set PDF "Interpolate" user preference
     -e: date, overrides image or current date/time default, YYYYMMDDHHMMSS
     -c: creator, overrides image software default
     -a: author, overrides image artist default
@@ -520,7 +526,7 @@ int main(int argc, char** argv){
 		goto failexit;
 	}
 
-	while ((c = getopt(argc, argv, "o:q:u:x:y:w:l:r:p:e:c:a:t:s:k:jzndifh")) != -1){
+	while ((c = getopt(argc, argv, "o:q:u:x:y:w:l:r:p:e:c:a:t:s:k:jzndifbh")) != -1){
 		switch (c) {
 			case 'o': 
 				output=TIFFOpen(optarg, "w");
@@ -691,6 +697,9 @@ int main(int argc, char** argv){
 				}
 				strcpy(t2p->pdf_keywords, optarg);
 				t2p->pdf_keywords[strlen(optarg)]=0;
+				break;		
+			case 'b':
+				t2p->pdf_image_interpolate = 1;
 				break;
 			case 'h': 
 			case '?': 
@@ -841,6 +850,7 @@ void tiff2pdf_usage(){
 	" -t: sets document title, overrides image document name default",
 	" -s: sets document subject, overrides image image description default",
 	" -k: sets document keywords",
+	" -b set PDF \"Interpolate\" user preference",
 	" -h  usage",
 	NULL
 	};
@@ -3422,7 +3432,7 @@ void t2p_tile_collapse_left(
 	uint32 i=0;
 	tsize_t edgescanwidth=0;
 	
-	edgescanwidth = scanwidth * edgetilewidth / tilewidth;
+	edgescanwidth = (scanwidth * edgetilewidth + (tilewidth - 1))/ tilewidth;
 	for(i=i;i<tilelength;i++){
 		_TIFFmemcpy( 
 			&(((char*)buffer)[edgescanwidth*i]), 
@@ -3510,8 +3520,8 @@ tsize_t t2p_sample_realize_palette(T2P* t2p, unsigned char* buffer){
 	into RGB interleaved data, discarding A.
 */
 
-tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
-
+tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount)
+{
 	uint32 i=0;
 	uint32 sample=0;
 	
@@ -3533,7 +3543,7 @@ tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount){
 tsize_t
 t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
 {
-	uint32 i, sample;
+	uint32 i;
 	
 	for(i = 0; i < samplecount; i++)
 		memcpy((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
@@ -3546,8 +3556,8 @@ t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
 	into RGB interleaved data, adding 255-A to each component sample.
 */
 
-tsize_t t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount){
-
+tsize_t t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount)
+{
 	uint32 i=0;
 	uint32 sample=0;
 	unsigned char alpha=0;
@@ -4647,6 +4657,9 @@ tsize_t t2p_write_pdf_xobject_stream_dict(ttile_t tile,
 	written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
 	written += TIFFWriteFile(output, (tdata_t) "\r/ColorSpace ", 13);
 	written += t2p_write_pdf_xobject_cs(t2p, output);
+	if (t2p->pdf_image_interpolate)
+		written += TIFFWriteFile(output,
+					 (tdata_t) "\r/Interpolate true", 18);
 	if( (t2p->pdf_switchdecode != 0)
 #ifdef CCITT_SUPPORT
 		&& ! (t2p->pdf_colorspace == T2P_CS_BILEVEL 
@@ -4656,13 +4669,14 @@ tsize_t t2p_write_pdf_xobject_stream_dict(ttile_t tile,
 		written += t2p_write_pdf_xobject_decode(t2p, output);
 	}
 	written += t2p_write_pdf_xobject_stream_filter(tile, t2p, output);
-
+	
 	return(written);
 }
 
 /*
-	This function writes a PDF Image XObject Colorspace name to output.
-*/
+ * 	This function writes a PDF Image XObject Colorspace name to output.
+ */
+
 
 tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 
