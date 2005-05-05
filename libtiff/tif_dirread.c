@@ -1303,33 +1303,37 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 static int
 TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, uint16* pl)
 {
-	uint16 samples = tif->tif_dir.td_samplesperpixel;
-	int status = 0;
+    uint16 samples = tif->tif_dir.td_samplesperpixel;
+    int status = 0;
 
-	if (CheckDirCount(tif, dir, (uint32) samples)) {
-		uint16 buf[10];
-		uint16* v = buf;
+    if (CheckDirCount(tif, dir, (uint32) samples)) {
+        uint16 buf[10];
+        uint16* v = buf;
 
-		if (samples > NITEMS(buf))
-			v = (uint16*) CheckMalloc(tif, samples, sizeof(uint16),
-						  "to fetch per-sample values");
-		if (v && TIFFFetchShortArray(tif, dir, v)) {
-			uint16 i;
-			for (i = 1; i < samples; i++)
-				if (v[i] != v[0]) {
-					TIFFError(tif->tif_name,
-		"Cannot handle different per-sample values for field \"%s\"",
-			   _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-					goto bad;
-				}
-			*pl = v[0];
-			status = 1;
-		}
-	bad:
-		if (v && v != buf)
-			_TIFFfree(v);
-	}
-	return (status);
+        if (dir->tdir_count > NITEMS(buf))
+            v = (uint16*) CheckMalloc(tif, dir->tdir_count, sizeof(uint16),
+                                      "to fetch per-sample values");
+        if (v && TIFFFetchShortArray(tif, dir, v)) {
+            uint16 i;
+            int check_count = dir->tdir_count;
+            if( samples < check_count )
+                check_count = samples;
+
+            for (i = 1; i < check_count; i++)
+                if (v[i] != v[0]) {
+                    TIFFError(tif->tif_name,
+                              "Cannot handle different per-sample values for field \"%s\"",
+                              _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
+                    goto bad;
+                }
+            *pl = v[0];
+            status = 1;
+        }
+      bad:
+        if (v && v != buf)
+            _TIFFfree(v);
+    }
+    return (status);
 }
 
 /*
