@@ -1,4 +1,10 @@
 2005-05-06  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirread.c: Applied similar change to 
+	TIFFFetchPerSampleLongs and TIFFFetchPerSampleAnys. 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=843
+
 	* libtiff/tif_jpeg.c: added LIB_JPEG_MK1 support in JPEGDecodeRaw().
 
 2005-05-06  Andrey Kiselev  <dron@remotesensing.org>
