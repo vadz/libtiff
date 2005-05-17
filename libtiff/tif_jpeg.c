@@ -1517,6 +1517,8 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	TIFFDirectory* td = &tif->tif_dir;
 	uint32 v32;
 
+	assert(sp != NULL);
+
 	switch (tag) {
 	case TIFFTAG_JPEGTABLES:
 		v32 = va_arg(ap, uint32);
@@ -1655,6 +1657,8 @@ JPEGVGetField(TIFF* tif, ttag_t tag, va_list ap)
 {
 	JPEGState* sp = JState(tif);
 
+	assert(sp != NULL);
+
 	switch (tag) {
 	case TIFFTAG_JPEGTABLES:
 		*va_arg(ap, uint32*) = sp->jpegtables_length;
@@ -1695,6 +1699,8 @@ static void
 JPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 {
 	JPEGState* sp = JState(tif);
+
+	assert(sp != NULL);
 
 	(void) flags;
 	if (TIFFFieldSet(tif,FIELD_JPEGTABLES))
