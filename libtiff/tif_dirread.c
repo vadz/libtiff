@@ -591,7 +591,10 @@ TIFFReadDirectory(TIFF* tif)
       (tif->tif_mode == O_RDONLY && \
        td->td_compression == COMPRESSION_NONE && \
        td->td_stripbytecount[0] < TIFFScanlineSize(tif) * td->td_imagelength) )
-	} else if (td->td_nstrips == 1 && BYTECOUNTLOOKSBAD) {
+
+	} else if (td->td_nstrips == 1 
+                   && td->td_stripoffset[0] != 0 
+                   && BYTECOUNTLOOKSBAD) {
 		/*
 		 * Plexus (and others) sometimes give a value
 		 * of zero for a tag when they don't know what
