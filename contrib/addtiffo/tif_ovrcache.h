@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * tif_ovrcache.h,v 1.3 2005/05/25 09:03:16 dron Exp
  *
  * Project:  TIFF Overview Builder
  * Purpose:  Library functions to maintain two rows of tiles or two strips
@@ -30,16 +30,17 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
- *
- * $Log$
- * Revision 1.1  2000-01-28 15:03:32  warmerda
- * New
- *
  */
 
 #ifndef TIF_OVRCACHE_H_INCLUDED
 #define TIF_OVRCACHE_H_INCLUDED
 
+#include "tiffio.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+    
 typedef struct 
 {
     uint32	nXSize;
@@ -68,5 +69,25 @@ TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, int nDirOffset );
 unsigned char *TIFFGetOvrBlock( TIFFOvrCache *, int, int, int );
 void           TIFFDestroyOvrCache( TIFFOvrCache * );
 
+void TIFFBuildOverviews( TIFF *, int, int *, int, const char *,
+                         int (*)(double,void*), void * );
+
+void TIFF_ProcessFullResBlock( TIFF *hTIFF, int nPlanarConfig,
+                               int nOverviews, int * panOvList,
+                               int nBitsPerPixel, 
+                               int nSamples, TIFFOvrCache ** papoRawBIs,
+                               int nSXOff, int nSYOff,
+                               unsigned char *pabySrcTile,
+                               int nBlockXSize, int nBlockYSize,
+                               int nSampleFormat, const char * pszResampling );
+
+uint32 TIFF_WriteOverview( TIFF *, int, int, int, int, int, int, int,
+                           int, int, int, int, unsigned short *,
+                           unsigned short *, unsigned short *, int );
+
+#if defined(__cplusplus)
+}
+#endif
+    
 #endif /* ndef TIF_OVRCACHE_H_INCLUDED */
 

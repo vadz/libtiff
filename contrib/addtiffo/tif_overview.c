@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * tif_overview.c,v 1.9 2005/05/25 09:03:16 dron Exp
  *
  * Project:  TIFF Overview Builder
  * Purpose:  Library function for building overviews in a TIFF file.
@@ -53,6 +53,10 @@
 #include "tiffio.h"
 #include "tif_ovrcache.h"
 
+#include "cpl_port.h"
+
+CPL_CVSID("tif_overview.c,v 1.2 2001/07/18 04:51:56 warmerda Exp");
+
 #ifndef FALSE
 #  define FALSE 0
 #  define TRUE 1
@@ -76,7 +80,7 @@ void TIFFBuildOverviews( TIFF *, int, int *, int, const char *,
 /************************************************************************/
 
 uint32 TIFF_WriteOverview( TIFF *hTIFF, int nXSize, int nYSize,
-                           int nBitsPerPixel, int nSamples, 
+                           int nBitsPerPixel, int nPlanarConfig, int nSamples, 
                            int nBlockXSize, int nBlockYSize,
                            int bTiled, int nCompressFlag, int nPhotometric,
                            int nSampleFormat,
@@ -101,7 +105,7 @@ uint32 TIFF_WriteOverview( TIFF *hTIFF, int nXSize, int nYSize,
     if( nSamples == 1 )
         TIFFSetField( hTIFF, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG );
     else
-        TIFFSetField( hTIFF, TIFFTAG_PLANARCONFIG, PLANARCONFIG_SEPARATE );
+        TIFFSetField( hTIFF, TIFFTAG_PLANARCONFIG, nPlanarConfig );
 
     TIFFSetField( hTIFF, TIFFTAG_BITSPERSAMPLE, nBitsPerPixel );
     TIFFSetField( hTIFF, TIFFTAG_SAMPLESPERPIXEL, nSamples );
@@ -531,14 +535,15 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
                       &panRedMap, &panGreenMap, &panBlueMap ) )
     {
         uint16		*panRed2, *panGreen2, *panBlue2;
+        int             nColorCount = 1 << nBitsPerPixel;
 
-        panRed2 = (uint16 *) _TIFFmalloc(2*256);
-        panGreen2 = (uint16 *) _TIFFmalloc(2*256);
-        panBlue2 = (uint16 *) _TIFFmalloc(2*256);
+        panRed2 = (uint16 *) _TIFFmalloc(2*nColorCount);
+        panGreen2 = (uint16 *) _TIFFmalloc(2*nColorCount);
+        panBlue2 = (uint16 *) _TIFFmalloc(2*nColorCount);
 
-        memcpy( panRed2, panRedMap, 512 );
-        memcpy( panGreen2, panGreenMap, 512 );
-        memcpy( panBlue2, panBlueMap, 512 );
+        memcpy( panRed2, panRedMap, 2 * nColorCount );
+        memcpy( panGreen2, panGreenMap, 2 * nColorCount );
+        memcpy( panBlue2, panBlueMap, 2 * nColorCount );
 
         panRedMap = panRed2;
         panGreenMap = panGreen2;
@@ -575,8 +580,8 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
         }
 
         nDirOffset = TIFF_WriteOverview( hTIFF, nOXSize, nOYSize,
-                                         nBitsPerPixel, nSamples,
-                                         nOBlockXSize, nOBlockYSize,
+                                         nBitsPerPixel, nPlanarConfig,
+                                         nSamples, nOBlockXSize, nOBlockYSize,
                                          bTiled, nCompressFlag, nPhotometric,
                                          nSampleFormat,
                                          panRedMap, panGreenMap, panBlueMap,
