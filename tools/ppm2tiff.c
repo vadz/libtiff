@@ -37,6 +37,10 @@
 
 #include "tiffio.h"
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 #if defined(_WINDOWS) || defined(MSDOS)
 #define BINMODE "b"
 #else
@@ -68,13 +72,11 @@ main(int argc, char* argv[])
 	uint32 rowsperstrip = (uint32) -1;
 	double resolution = -1;
 	unsigned char *buf = NULL;
-	uint32 row;
 	tsize_t linebytes;
 	uint16 spp = 1;
 	TIFF *out;
 	FILE *in;
-	uint32 w, h;
-	int prec;
+	unsigned int w, h, prec, row;
 	char *infile;
 	int c;
 	extern int optind;
@@ -160,16 +162,16 @@ main(int argc, char* argv[])
 		ungetc(c, in);
 		break;
 	}
-	if (fscanf(in, " %lu %lu %d", &w, &h, &prec) != 3)
+	if (fscanf(in, " %u %u %u", &w, &h, &prec) != 3)
 		BadPPM(infile);
-	if (fgetc(in) != '\n' || w <= 0 || h <= 0 || prec != 255)
+	if (fgetc(in) != '\n' || prec != 255)
 		BadPPM(infile);
 
 	out = TIFFOpen(argv[optind], "w");
 	if (out == NULL)
 		return (-4);
-	TIFFSetField(out, TIFFTAG_IMAGEWIDTH,  w);
-	TIFFSetField(out, TIFFTAG_IMAGELENGTH, h);
+	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, (uint32) w);
+	TIFFSetField(out, TIFFTAG_IMAGELENGTH, (uint32) h);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, spp);
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
