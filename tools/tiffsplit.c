@@ -30,6 +30,10 @@
 
 #include "tiffio.h"
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 #define	CopyField(tag, v) \
     if (TIFFGetField(in, tag, &v)) TIFFSetField(out, tag, v)
 #define	CopyField2(tag, v1, v2) \
@@ -125,11 +129,11 @@ newfilename(void)
          * start from 0 every 676 times (provided by lastTurn)
          * this keeps us within a-z boundaries
          */
-	fpnt[1] = (fnum - lastTurn) / 26 + 'a';
+	fpnt[1] = (char)((fnum - lastTurn) / 26) + 'a';
 	/* 
          * cycle last letter every file, from a-z, then repeat
          */
-	fpnt[2] = fnum % 26 + 'a';
+	fpnt[2] = (char)(fnum % 26) + 'a';
 	fnum++;
 }
 
