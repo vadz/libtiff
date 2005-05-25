@@ -1,3 +1,34 @@
+2005-05-25  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/ppm2tiff.c: Fixed format string when read PPM file header with
+	the fscanf() function. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=861
+
+	* libtiff/{tif_dirinfo.c, tif_print.c}: TIFFFetchByteArray() returns
+	uint16 array when fetching the BYTE and SBYTE filds, so we should
+	consider result as pointer to uint16 array and not as array of chars.
+	As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=831
+
+	* libtiff/tif_dir.c: More efficient custom tags retrieval as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=830
+
+	* libtiff/tif_win32.c: Use FILE_SHARE_READ | FILE_SHARE_WRITE share
+	mode in CreateFile() call as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=829
+
+	* libtiff/Makefile.am: Fixed parallel compilation of the libtiff and
+	libtiffxx libraries as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=826
+
+	* contrib/addtiffo/{tif_overview.c, tif_ovrcache.h}: Sinchronized with
+	GDAL.
+
 2005-05-23  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Substantial fix for addtiffo problems with
@@ -11,6 +42,7 @@
 	zero. This is a common case with GDAL indicating a "null" tile/strip.
 
 2005-05-17  Andrey Kiselev  <dron@remotesensing.org>
+
 	* tools/tiffsplit.c: Check for JPEGTables tag presence before copying.
 
 2005-05-06  Frank Warmerdam  <warmerdam@pobox.com>
