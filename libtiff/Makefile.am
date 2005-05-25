@@ -121,6 +121,7 @@ if HAVE_RPATH
 libtiffxx_la_LDFLAGS += $(LIBDIR)
 endif
 libtiffxx_la_LIBADD = $(LIBTIFF)
+libtiffxx_la_DEPENDENCIES = libtiff.la
 
 #
 # The finite state machine tables used by the G3/G4 decoders
