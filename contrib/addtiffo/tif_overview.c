@@ -53,10 +53,6 @@
 #include "tiffio.h"
 #include "tif_ovrcache.h"
 
-#include "cpl_port.h"
-
-CPL_CVSID("tif_overview.c,v 1.2 2001/07/18 04:51:56 warmerda Exp");
-
 #ifndef FALSE
 #  define FALSE 0
 #  define TRUE 1
