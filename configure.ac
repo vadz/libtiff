@@ -46,11 +46,25 @@ LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VER
 dnl This will be used with the 'make release' target
 LIBTIFF_RELEASE_DATE=`date +"%Y%m%d"`
 
+# This is a special hack for OpenBSD and MirOS systems. The dynamic linker
+# in OpenBSD uses some special semantics for shared libraries. Their soname
+# contains only two numbers, major and minor.
+# See http://bugzilla.remotesensing.org/show_bug.cgi?id=838 for details.
+case "$target_os" in
+    openbsd* | mirbsd*)
+	LIBTIFF_VERSION_INFO=$LIBTIFF_MAJOR_VERSION$LIBTIFF_MINOR_VERSION:$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION:0
+	;;
+    *)
+	LIBTIFF_VERSION_INFO=$LIBTIFF_MAJOR_VERSION:$LIBTIFF_MINOR_VERSION:$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
+	;;
+esac
+
 AC_SUBST(LIBTIFF_MAJOR_VERSION)
 AC_SUBST(LIBTIFF_MINOR_VERSION)
 AC_SUBST(LIBTIFF_MICRO_VERSION)
 AC_SUBST(LIBTIFF_ALPHA_VERSION)
 AC_SUBST(LIBTIFF_VERSION)
+AC_SUBST(LIBTIFF_VERSION_INFO)
 AC_SUBST(LIBTIFF_RELEASE_DATE)
 
 dnl Checks for programs.
