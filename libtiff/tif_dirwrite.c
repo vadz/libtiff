@@ -884,7 +884,7 @@ TIFFWriteFloatArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 static int
 TIFFWriteDoubleArray(TIFF* tif, TIFFDirEntry* dir, double* v)
 {
-	TIFFCvtNativeToIEEEDouble(tif, n, v);
+	TIFFCvtNativeToIEEEDouble(tif, dir->tdir_count, v);
 	return (TIFFWriteData(tif, dir, (char*) v));
 }
 
