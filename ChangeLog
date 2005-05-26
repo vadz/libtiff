@@ -1,3 +1,16 @@
+2005-05-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac, libtiff/Makefile.am: Added workaround for
+	OpenBSD/MirOS soname problem as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=838
+
+	* libtiff/tif_dirwrite.c: Use tdir_count when calling
+	TIFFCvtNativeToIEEEDouble() in the TIFFWriteDoubleArray() function as
+	per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=845
+
 2005-05-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/ppm2tiff.c: Fixed format string when read PPM file header with
