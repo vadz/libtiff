@@ -1,3 +1,16 @@
+2005-06-01  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dirinfo.c, tif_dir.h, tif_dir.c, tif_print.c}: Make
+	DocumentName, Artist, HostComputer, ImageDescription, Make, Model,
+	Copyright, DateTime, PageName, TextureFormat, TextureWrapModes and
+	TargetPrinter tags custom.
+
+	* libtiff/tif_jpeg.c: Cleanup the codec state depending on
+	TIFF_CODERSETUP flag (to fix memry leaks).
+
+	* libtiff/tif_jpeg.c: Initialize JPEGTables array with zero after
+	allocating.
+
 2005-05-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* configure.ac, libtiff/Makefile.am: Added workaround for
