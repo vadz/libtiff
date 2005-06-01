@@ -534,16 +534,9 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 tv->count = fip->field_writecount;
             
     
-	    if (fip->field_type == TIFF_ASCII) {
-		const char *value = va_arg(ap, const char *);
-		tv->count = strlen(value) + 1;
-		tv->value = _TIFFmalloc(tv->count);
-		if (!tv->value) {
-		    status = 0;
-		    goto end;
-		}
-		strcpy(tv->value, value);
-	    } else {
+	    if (fip->field_type == TIFF_ASCII)
+		    _TIFFsetString(&tv->value, va_arg(ap, char *));
+	    else {
                 tv->value = _TIFFmalloc(tv_size * tv->count);
 	        if (!tv->value) {
 		    status = 0;
