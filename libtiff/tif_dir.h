@@ -62,15 +62,6 @@ typedef	struct {
 	uint16	td_extrasamples;
 	uint16*	td_sampleinfo;
 	double	td_stonits;
-	char*	td_documentname;
-	char*	td_artist;
-	char*	td_datetime;
-	char*	td_hostcomputer;
-	char*	td_imagedescription;
-	char*	td_make;
-	char*	td_model;
-        char*   td_copyright;
-	char*	td_pagename;
 	tstrip_t td_stripsperimage;
 	tstrip_t td_nstrips;		/* size of offset & bytecount arrays */
 	uint32*	td_stripoffset;
@@ -93,7 +84,6 @@ typedef	struct {
 	uint16	td_dotrange[2];
 	int	td_inknameslen;
 	char*	td_inknames;
-	char*	td_targetprinter;
 	/* ICC parameters */
 	uint32	td_profileLength;
 	void	*td_profileData;
@@ -105,8 +95,6 @@ typedef	struct {
 	void	*td_richtiffiptcData;
         /* Begin Pixar Tag values. */
         uint32	td_imagefullwidth, td_imagefulllength;
- 	char*	td_textureformat;
- 	char*	td_wrapmodes;
  	float	td_fovcot;
  	float*	td_matrixWorldToScreen;
  	float*	td_matrixWorldToCamera;
@@ -146,25 +134,25 @@ typedef	struct {
 #define	FIELD_PHOTOMETRIC		8
 #define	FIELD_THRESHHOLDING		9
 #define	FIELD_FILLORDER			10
-#define	FIELD_DOCUMENTNAME		11
-#define	FIELD_IMAGEDESCRIPTION		12
-#define	FIELD_MAKE			13
-#define	FIELD_MODEL			14
+/* unused - was FIELD_DOCUMENTNAME	11 */
+/* unused - was FIELD_IMAGEDESCRIPTION	12 */
+/* unused - was FIELD_MAKE		13 */
+/* unused - was FIELD_MODEL		14 */
 #define	FIELD_ORIENTATION		15
 #define	FIELD_SAMPLESPERPIXEL		16
 #define	FIELD_ROWSPERSTRIP		17
 #define	FIELD_MINSAMPLEVALUE		18
 #define	FIELD_MAXSAMPLEVALUE		19
 #define	FIELD_PLANARCONFIG		20
-#define	FIELD_PAGENAME			21
+/* unused - was FIELD_PAGENAME		21 */
 #define	FIELD_RESOLUTIONUNIT		22
 #define	FIELD_PAGENUMBER		23
 #define	FIELD_STRIPBYTECOUNTS		24
 #define	FIELD_STRIPOFFSETS		25
 #define	FIELD_COLORMAP			26
-#define FIELD_ARTIST			27
-#define FIELD_DATETIME			28
-#define FIELD_HOSTCOMPUTER		29
+/* unused - was FIELD_ARTIST		27 */
+/* unused - was FIELD_DATETIME		28 */
+/* unused - was FIELD_HOSTCOMPUTER	29 */
 /* unused - was FIELD_SOFTWARE          30 */
 #define	FIELD_EXTRASAMPLES		31
 #define FIELD_SAMPLEFORMAT		32
@@ -183,7 +171,7 @@ typedef	struct {
 #define	FIELD_INKSET			45
 #define	FIELD_INKNAMES			46
 #define	FIELD_DOTRANGE			47
-#define	FIELD_TARGETPRINTER		48
+/* unused - was FIELD_TARGETPRINTER	48 */
 #define	FIELD_SUBIFD			49
 #define	FIELD_NUMBEROFINKS		50
 #define FIELD_ICCPROFILE		51
@@ -193,12 +181,12 @@ typedef	struct {
 /* Begin PIXAR */
 #define	FIELD_IMAGEFULLWIDTH		55
 #define	FIELD_IMAGEFULLLENGTH		56
-#define FIELD_TEXTUREFORMAT		57
-#define FIELD_WRAPMODES			58
+/* unused - was FIELD_TEXTUREFORMAT	57 */
+/* unused - was FIELD_WRAPMODES		58 */
 #define FIELD_FOVCOT			59
 #define FIELD_MATRIX_WORLDTOSCREEN	60
 #define FIELD_MATRIX_WORLDTOCAMERA	61
-#define FIELD_COPYRIGHT			62
+/* unused - was FIELD_COPYRIGHT		62 */
 #define FIELD_XMLPACKET			63
 /*      FIELD_CUSTOM (see tiffio.h)     65 */
 /* end of support for well-known tags; codec-private tags follow */

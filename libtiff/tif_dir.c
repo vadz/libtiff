@@ -141,12 +141,11 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_BITSPERSAMPLE:
 		td->td_bitspersample = (uint16) va_arg(ap, int);
 		/*
-		 * If the data require post-decoding processing
-		 * to byte-swap samples, set it up here.  Note
-		 * that since tags are required to be ordered,
-		 * compression code can override this behaviour
-		 * in the setup method if it wants to roll the
-		 * post decoding work in with its normal work.
+		 * If the data require post-decoding processing to byte-swap
+		 * samples, set it up here.  Note that since tags are required
+		 * to be ordered, compression code can override this behaviour
+		 * in the setup method if it wants to roll the post decoding
+		 * work in with its normal work.
 		 */
 		if (tif->tif_flags & TIFF_SWAB) {
 			if (td->td_bitspersample == 16)
@@ -162,9 +161,9 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_COMPRESSION:
 		v = va_arg(ap, uint32) & 0xffff;
 		/*
-		 * If we're changing the compression scheme,
-		 * the notify the previous module so that it
-		 * can cleanup any state it's setup.
+		 * If we're changing the compression scheme, the notify the
+		 * previous module so that it can cleanup any state it's
+		 * setup.
 		 */
 		if (TIFFFieldSet(tif, FIELD_COMPRESSION)) {
 			if (td->td_compression == v)
@@ -192,29 +191,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			goto badvalue;
 		td->td_fillorder = (uint16) v;
 		break;
-	case TIFFTAG_DOCUMENTNAME:
-		_TIFFsetString(&td->td_documentname, va_arg(ap, char*));
-		break;
-	case TIFFTAG_ARTIST:
-		_TIFFsetString(&td->td_artist, va_arg(ap, char*));
-		break;
-	case TIFFTAG_DATETIME:
-		_TIFFsetString(&td->td_datetime, va_arg(ap, char*));
-		break;
-	case TIFFTAG_HOSTCOMPUTER:
-		_TIFFsetString(&td->td_hostcomputer, va_arg(ap, char*));
-		break;
-	case TIFFTAG_IMAGEDESCRIPTION:
-		_TIFFsetString(&td->td_imagedescription, va_arg(ap, char*));
-		break;
-	case TIFFTAG_MAKE:
-		_TIFFsetString(&td->td_make, va_arg(ap, char*));
-		break;
-	case TIFFTAG_MODEL:
-		_TIFFsetString(&td->td_model, va_arg(ap, char*));
-		break;
-	case TIFFTAG_COPYRIGHT:
-		_TIFFsetString(&td->td_copyright, va_arg(ap, char*));
 		break;
 	case TIFFTAG_ORIENTATION:
 		v = va_arg(ap, uint32);
@@ -265,9 +241,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		if (v != PLANARCONFIG_CONTIG && v != PLANARCONFIG_SEPARATE)
 			goto badvalue;
 		td->td_planarconfig = (uint16) v;
-		break;
-	case TIFFTAG_PAGENAME:
-		_TIFFsetString(&td->td_pagename, va_arg(ap, char*));
 		break;
 	case TIFFTAG_XPOSITION:
 		td->td_xposition = (float) va_arg(ap, dblparam_t);
@@ -382,12 +355,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
  	case TIFFTAG_PIXAR_IMAGEFULLLENGTH:
  		td->td_imagefulllength = va_arg(ap, uint32);
  		break;
- 	case TIFFTAG_PIXAR_TEXTUREFORMAT:
- 		_TIFFsetString(&td->td_textureformat, va_arg(ap, char*));
- 		break;
- 	case TIFFTAG_PIXAR_WRAPMODES:
- 		_TIFFsetString(&td->td_wrapmodes, va_arg(ap, char*));
- 		break;
  	case TIFFTAG_PIXAR_FOVCOT:
  		td->td_fovcot = (float) va_arg(ap, dblparam_t);
  		break;
@@ -459,9 +426,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_NUMBEROFINKS:
 		td->td_ninks = (uint16) va_arg(ap, int);
 		break;
-	case TIFFTAG_TARGETPRINTER:
-		_TIFFsetString(&td->td_targetprinter, va_arg(ap, char*));
-		break;
 	case TIFFTAG_ICCPROFILE:
 		td->td_profileLength = (uint32) va_arg(ap, uint32);
 		_TIFFsetByteArray(&td->td_profileData, va_arg(ap, void*),
@@ -489,15 +453,13 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             int tv_size, iCustom;
 
             /*
-             * This can happen if multiple images are open with
-             * different codecs which have private tags.  The
-             * global tag information table may then have tags
-             * that are valid for one file but not the other. 
-             * If the client tries to set a tag that is not valid
-             * for the image's codec then we'll arrive here.  This
-             * happens, for example, when tiffcp is used to convert
-             * between compression schemes and codec-specific tags
-             * are blindly copied.
+	     * This can happen if multiple images are open with different
+	     * codecs which have private tags.  The global tag information
+	     * table may then have tags that are valid for one file but not
+	     * the other. If the client tries to set a tag that is not valid
+	     * for the image's codec then we'll arrive here.  This
+	     * happens, for example, when tiffcp is used to convert between
+	     * compression schemes and codec-specific tags are blindly copied.
              */
             if(fip == NULL || fip->field_bit != FIELD_CUSTOM) {
 		TIFFError(module,
@@ -760,30 +722,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_FILLORDER:
             *va_arg(ap, uint16*) = td->td_fillorder;
             break;
-	case TIFFTAG_DOCUMENTNAME:
-            *va_arg(ap, char**) = td->td_documentname;
-            break;
-	case TIFFTAG_ARTIST:
-            *va_arg(ap, char**) = td->td_artist;
-            break;
-	case TIFFTAG_DATETIME:
-            *va_arg(ap, char**) = td->td_datetime;
-            break;
-	case TIFFTAG_HOSTCOMPUTER:
-            *va_arg(ap, char**) = td->td_hostcomputer;
-            break;
-	case TIFFTAG_IMAGEDESCRIPTION:
-            *va_arg(ap, char**) = td->td_imagedescription;
-            break;
-	case TIFFTAG_MAKE:
-            *va_arg(ap, char**) = td->td_make;
-            break;
-	case TIFFTAG_MODEL:
-            *va_arg(ap, char**) = td->td_model;
-            break;
-	case TIFFTAG_COPYRIGHT:
-            *va_arg(ap, char**) = td->td_copyright;
-            break;
 	case TIFFTAG_ORIENTATION:
             *va_arg(ap, uint16*) = td->td_orientation;
             break;
@@ -819,9 +757,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             break;
 	case TIFFTAG_YPOSITION:
             *va_arg(ap, float*) = td->td_yposition;
-            break;
-	case TIFFTAG_PAGENAME:
-            *va_arg(ap, char**) = td->td_pagename;
             break;
 	case TIFFTAG_RESOLUTIONUNIT:
             *va_arg(ap, uint16*) = td->td_resolutionunit;
@@ -933,9 +868,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_NUMBEROFINKS:
             *va_arg(ap, uint16*) = td->td_ninks;
             break;
-	case TIFFTAG_TARGETPRINTER:
-            *va_arg(ap, char**) = td->td_targetprinter;
-            break;
 	case TIFFTAG_ICCPROFILE:
             *va_arg(ap, uint32*) = td->td_profileLength;
             *va_arg(ap, void**) = td->td_profileData;
@@ -958,12 +890,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             break;
  	case TIFFTAG_PIXAR_IMAGEFULLLENGTH:
             *va_arg(ap, uint32*) = td->td_imagefulllength;
-            break;
- 	case TIFFTAG_PIXAR_TEXTUREFORMAT:
-            *va_arg(ap, char**) = td->td_textureformat;
-            break;
- 	case TIFFTAG_PIXAR_WRAPMODES:
-            *va_arg(ap, char**) = td->td_wrapmodes;
             break;
  	case TIFFTAG_PIXAR_FOVCOT:
             *va_arg(ap, float*) = td->td_fovcot;
@@ -1132,20 +1058,10 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_colormap[0]);
 	CleanupField(td_colormap[1]);
 	CleanupField(td_colormap[2]);
-	CleanupField(td_documentname);
-	CleanupField(td_artist);
-	CleanupField(td_datetime);
-	CleanupField(td_hostcomputer);
-	CleanupField(td_imagedescription);
-	CleanupField(td_make);
-	CleanupField(td_model);
-	CleanupField(td_copyright);
-	CleanupField(td_pagename);
 	CleanupField(td_sampleinfo);
 	CleanupField(td_subifd);
 	CleanupField(td_ycbcrcoeffs);
 	CleanupField(td_inknames);
-	CleanupField(td_targetprinter);
 	CleanupField(td_whitepoint);
 	CleanupField(td_primarychromas);
 	CleanupField(td_refblackwhite);
@@ -1159,8 +1075,6 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_stripoffset);
 	CleanupField(td_stripbytecount);
 	/* Begin Pixar Tags */
-	CleanupField(td_textureformat);
-	CleanupField(td_wrapmodes);
 	CleanupField(td_matrixWorldToScreen);
 	CleanupField(td_matrixWorldToCamera);
 	/* End Pixar Tags */

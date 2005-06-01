@@ -107,10 +107,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		  (unsigned long) td->td_imagefullwidth,
 		  (unsigned long) td->td_imagefulllength);
  	}
- 	if (TIFFFieldSet(tif,FIELD_TEXTUREFORMAT))
-	  _TIFFprintAsciiTag(fd, "Texture Format", td->td_textureformat);
- 	if (TIFFFieldSet(tif,FIELD_WRAPMODES))
-	  _TIFFprintAsciiTag(fd, "Texture Wrap Modes", td->td_wrapmodes);
  	if (TIFFFieldSet(tif,FIELD_FOVCOT))
 	  fprintf(fd, "  Field of View Cotangent: %g\n", td->td_fovcot);
 	if (TIFFFieldSet(tif,FIELD_MATRIX_WORLDTOSCREEN)) {
@@ -282,8 +278,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_DOTRANGE))
 		fprintf(fd, "  Dot Range: %u-%u\n",
 		    td->td_dotrange[0], td->td_dotrange[1]);
-	if (TIFFFieldSet(tif,FIELD_TARGETPRINTER))
-		_TIFFprintAsciiTag(fd, "Target Printer", td->td_targetprinter);
 	if (TIFFFieldSet(tif,FIELD_THRESHHOLDING)) {
 		fprintf(fd, "  Thresholding: ");
 		switch (td->td_threshholding) {
@@ -354,22 +348,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_HALFTONEHINTS))
 		fprintf(fd, "  Halftone Hints: light %u dark %u\n",
 		    td->td_halftonehints[0], td->td_halftonehints[1]);
-	if (TIFFFieldSet(tif,FIELD_ARTIST))
-		_TIFFprintAsciiTag(fd, "Artist", td->td_artist);
-	if (TIFFFieldSet(tif,FIELD_DATETIME))
-		_TIFFprintAsciiTag(fd, "Date & Time", td->td_datetime);
-	if (TIFFFieldSet(tif,FIELD_HOSTCOMPUTER))
-		_TIFFprintAsciiTag(fd, "Host Computer", td->td_hostcomputer);
-	if (TIFFFieldSet(tif,FIELD_COPYRIGHT))
-		_TIFFprintAsciiTag(fd, "Copyright", td->td_copyright);
-	if (TIFFFieldSet(tif,FIELD_DOCUMENTNAME))
-		_TIFFprintAsciiTag(fd, "Document Name", td->td_documentname);
-	if (TIFFFieldSet(tif,FIELD_IMAGEDESCRIPTION))
-		_TIFFprintAsciiTag(fd, "Image Description", td->td_imagedescription);
-	if (TIFFFieldSet(tif,FIELD_MAKE))
-		_TIFFprintAsciiTag(fd, "Make", td->td_make);
-	if (TIFFFieldSet(tif,FIELD_MODEL))
-		_TIFFprintAsciiTag(fd, "Model", td->td_model);
 	if (TIFFFieldSet(tif,FIELD_ORIENTATION)) {
 		fprintf(fd, "  Orientation: ");
 		if (td->td_orientation < NORIENTNAMES)
@@ -412,8 +390,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			break;
 		}
 	}
-	if (TIFFFieldSet(tif,FIELD_PAGENAME))
-		_TIFFprintAsciiTag(fd, "Page Name", td->td_pagename);
 	if (TIFFFieldSet(tif,FIELD_PAGENUMBER))
 		fprintf(fd, "  Page Number: %u-%u\n",
 		    td->td_pagenumber[0], td->td_pagenumber[1]);
