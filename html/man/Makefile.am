@@ -109,8 +109,8 @@ index: $(docfiles)
 
 manpages := $(docfiles:.html=)
 
-.PHONY: html
-html: index
+.PHONY: htmldoc
+htmldoc: index
 	for i in $(manpages); do					\
 		${GROFF} $(MANSRCDIR)/$$i > $$i.html;			\
 	done
