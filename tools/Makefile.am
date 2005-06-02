@@ -124,8 +124,14 @@ tiffsplit_SOURCES = tiffsplit.c
 tiffsplit_LDADD = $(LIBTIFF) $(LIBPORT)
 
 tiffgt_SOURCES = tiffgt.c
-tiffgt_CFLAGS = $(CFLAGS) $(GLUT_CFLAGS) $(GLU_CFLAGS) $(GL_CFLAGS)
-tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) $(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS) $(GL_LIBS) $(GLU_LIBS) $(GLUT_LIBS)
+tiffgt_CFLAGS = $(CFLAGS) $(GLUT_CFLAGS) $(AM_CFLAGS)
+tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) $(X_LIBS) $(GLUT_LIBS)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
+echo:
+	(echo $(CFLAGS))
+	(echo $(tiffgt_CFLAGS))
+	(echo $(GL_CFLAGS))
+	(echo $(GLU_CFLAGS))
+	(echo $(GLUT_CFLAGS))
