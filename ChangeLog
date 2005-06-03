@@ -1,3 +1,11 @@
+2005-06-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_open.c: Replace runtime endianess check with the compile
+	time one.
+
+	* libtiff/tif_predict.c: Floating point predictor now works on
+	big-endian hosts.
+
 2005-06-01  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dir.c: Use _TIFFsetString() function when read custom
