@@ -50,7 +50,7 @@
 # define assert(x) 
 #endif
 
-#ifdef HAVE_SEARCH_H
+#if HAVE_SEARCH_H
 # include <search.h>
 #endif
 
