@@ -97,17 +97,19 @@ _tiffDummyUnmapProc(thandle_t fd, tdata_t base, toff_t size)
  * contents and the machine architecture.
  */
 static void
-TIFFInitOrder(TIFF* tif, int magic, int bigendian)
+TIFFInitOrder(TIFF* tif, int magic)
 {
 	tif->tif_typemask = typemask;
 	if (magic == TIFF_BIGENDIAN) {
 		tif->tif_typeshift = bigTypeshift;
-		if (!bigendian)
-			tif->tif_flags |= TIFF_SWAB;
+#ifndef WORDS_BIGENDIAN
+		tif->tif_flags |= TIFF_SWAB;
+#endif
 	} else {
 		tif->tif_typeshift = litTypeshift;
-		if (bigendian)
-			tif->tif_flags |= TIFF_SWAB;
+#ifdef WORDS_BIGENDIAN
+		tif->tif_flags |= TIFF_SWAB;
+#endif
 	}
 }
 
@@ -150,7 +152,7 @@ TIFFClientOpen(
 {
 	static const char module[] = "TIFFClientOpen";
 	TIFF *tif;
-	int m, bigendian;
+	int m;
 	const char* cp;
 
 	m = _TIFFgetMode(mode, module);
@@ -203,7 +205,6 @@ TIFFClientOpen(
 		tif->tif_flags |= STRIPCHOP_DEFAULT;
 #endif
 
-	{ union { int32 i; char c[4]; } u; u.i = 1; bigendian = u.c[0] == 0; }
 	/*
 	 * Process library-specific flags in the open mode string.
 	 * The following flags may be used to control intrinsic library
@@ -256,12 +257,16 @@ TIFFClientOpen(
 	for (cp = mode; *cp; cp++)
 		switch (*cp) {
 		case 'b':
-			if ((m&O_CREAT) && !bigendian)
+#ifndef WORDS_BIGENDIAN
+		    if (m&O_CREAT)
 				tif->tif_flags |= TIFF_SWAB;
+#endif
 			break;
 		case 'l':
-			if ((m&O_CREAT) && bigendian)
+#ifdef WORDS_BIGENDIAN
+			if ((m&O_CREAT))
 				tif->tif_flags |= TIFF_SWAB;
+#endif
 			break;
 		case 'B':
 			tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
@@ -304,9 +309,13 @@ TIFFClientOpen(
 		/*
 		 * Setup header and write.
 		 */
+#ifdef WORDS_BIGENDIAN
 		tif->tif_header.tiff_magic = tif->tif_flags & TIFF_SWAB
-		    ? (bigendian ? TIFF_LITTLEENDIAN : TIFF_BIGENDIAN)
-		    : (bigendian ? TIFF_BIGENDIAN : TIFF_LITTLEENDIAN);
+		    ? TIFF_LITTLEENDIAN : TIFF_BIGENDIAN;
+#else
+		tif->tif_header.tiff_magic = tif->tif_flags & TIFF_SWAB
+		    ? TIFF_BIGENDIAN : TIFF_LITTLEENDIAN;
+#endif
 		tif->tif_header.tiff_version = TIFF_VERSION;
 		if (tif->tif_flags & TIFF_SWAB)
 			TIFFSwabShort(&tif->tif_header.tiff_version);
@@ -319,7 +328,7 @@ TIFFClientOpen(
 		/*
 		 * Setup the byte order handling.
 		 */
-		TIFFInitOrder(tif, tif->tif_header.tiff_magic, bigendian);
+		TIFFInitOrder(tif, tif->tif_header.tiff_magic);
 		/*
 		 * Setup default directory.
 		 */
@@ -340,7 +349,7 @@ TIFFClientOpen(
 		    tif->tif_header.tiff_magic);
 		goto bad;
 	}
-	TIFFInitOrder(tif, tif->tif_header.tiff_magic, bigendian);
+	TIFFInitOrder(tif, tif->tif_header.tiff_magic);
 	/*
 	 * Swap header if required.
 	 */
