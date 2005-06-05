@@ -75,7 +75,7 @@ static int
 setExtraSamples(TIFFDirectory* td, va_list ap, uint32* v)
 {
 	uint16* va;
-	int i;
+	uint32 i;
 
 	*v = va_arg(ap, uint32);
 	if ((uint16) *v > td->td_samplesperpixel)
@@ -535,7 +535,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
             
     
 	    if (fip->field_type == TIFF_ASCII)
-		    _TIFFsetString(&tv->value, va_arg(ap, char *));
+		    _TIFFsetString((char **)&tv->value, va_arg(ap, char *));
 	    else {
                 tv->value = _TIFFmalloc(tv_size * tv->count);
 	        if (!tv->value) {
