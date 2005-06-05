@@ -6,6 +6,7 @@
 
 LIBTIFF_DIR =	..\..\libtiff
 #
+INCL		= 	-I..\..\libtiff
 LIBS	=	$(LIBTIFF_DIR)\libtiff.lib
 
 addtiffo:	addtiffo.obj tif_overview.obj tif_ovrcache.obj
@@ -17,10 +18,10 @@ addtiffo.obj:	addtiffo.c
 	$(CC) -c $(CFLAGS) addtiffo.c
 
 tif_overview.obj:	tif_overview.c
-	$(CPPC) -c $(CFLAGS) tif_overview.c
+	$(CC) -c $(CFLAGS) tif_overview.c
 
 tif_ovrcache.obj:	tif_ovrcache.c
-	$(CPPC) -c $(CFLAGS) tif_ovrcache.c
+	$(CC) -c $(CFLAGS) tif_ovrcache.c
 
 clean:
 	del *.obj addtiffo.exe
