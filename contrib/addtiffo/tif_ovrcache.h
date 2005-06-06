@@ -46,11 +46,13 @@ typedef struct
     uint32	nXSize;
     uint32	nYSize;
 
-    uint32	nBlockXSize;
-    uint32	nBlockYSize;
     uint16	nBitsPerPixel;
     uint16	nSamples;
-    int		nBytesPerBlock;
+    uint16      nPlanarConfig;
+    uint32	nBlockXSize;
+    uint32	nBlockYSize;
+    uint32	nBytesPerBlock;
+    uint32      nBytesPerRow;
 
     int		nBlocksPerRow;
     int		nBlocksPerColumn;

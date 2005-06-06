@@ -271,8 +271,8 @@ void TIFF_DownSample( unsigned char *pabySrcTile,
         if( j + nTYOff >= nOBlockYSize )
             break;
             
-        pabyDst = pabyOTile
-            + ((j+nTYOff)*nOBlockXSize + nTXOff) * nPixelBytes;
+        pabyDst = pabyOTile + ((j+nTYOff)*nOBlockXSize + nTXOff)
+            * nPixelBytes * nPixelGroupBytes;
 
 /* -------------------------------------------------------------------- */
 /*      Handler nearest resampling ... we don't even care about the     */
@@ -294,10 +294,9 @@ void TIFF_DownSample( unsigned char *pabySrcTile,
                  */
 
                 for( k = 0; k < nPixelBytes; k++ )
-                {
-                    *(pabyDst++) = pabySrc[k];
-                }
-            
+                    pabyDst[k] = pabySrc[k];
+
+                pabyDst += nPixelBytes * nPixelGroupBytes;
                 pabySrc += nOMult * nPixelGroupBytes;
             }
         }
