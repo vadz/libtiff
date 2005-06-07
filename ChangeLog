@@ -1,3 +1,8 @@
+2005-06-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* contrib/addtiffo/tif_ovrcache.c: Properly extract tile/strip size;
+	use pixel sized shift in contigous case.
+
 2005-06-06  Andrey Kiselev  <dron@remotesensing.org>
 
 	* contrib/addtiffo/{tif_overview.c, tif_ovrcache.c, tif_ovrcache.h}:
