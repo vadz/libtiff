@@ -27,17 +27,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
- *
- * $Log$
- * Revision 1.3  2005-06-06 14:15:47  dron
- * Make overviews working for contiguos images.
- *
- * Revision 1.2  2000/01/28 15:42:25  warmerda
- * Avoid warnings on Windows.
- *
- * Revision 1.1  2000/01/28 15:03:44  warmerda
- * New
- *
  */
 
 #include "tiffiop.h"
@@ -78,12 +67,14 @@ TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, int nDirOffset )
     {
         TIFFGetField( hTIFF, TIFFTAG_ROWSPERSTRIP, &(psCache->nBlockYSize) );
         psCache->nBlockXSize = psCache->nXSize;
+        psCache->nBytesPerBlock = TIFFStripSize(hTIFF);
         psCache->bTiled = FALSE;
     }
     else
     {
         TIFFGetField( hTIFF, TIFFTAG_TILEWIDTH, &(psCache->nBlockXSize) );
         TIFFGetField( hTIFF, TIFFTAG_TILELENGTH, &(psCache->nBlockYSize) );
+        psCache->nBytesPerBlock = TIFFTileSize(hTIFF);
         psCache->bTiled = TRUE;
     }
 
@@ -97,21 +88,11 @@ TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, int nDirOffset )
         		/ psCache->nBlockYSize;
 
     if (psCache->nPlanarConfig == PLANARCONFIG_SEPARATE)
-    {
-        psCache->nBytesPerBlock =
-            (psCache->nBlockXSize * psCache->nBlockYSize
-             * psCache->nBitsPerPixel + 7) / 8;
         psCache->nBytesPerRow = psCache->nBytesPerBlock
             * psCache->nBlocksPerRow * psCache->nSamples;
-    }
     else
-    {
-        psCache->nBytesPerBlock =
-            (psCache->nBlockXSize * psCache->nBlockYSize
-             * psCache->nBitsPerPixel + 7) / 8 * psCache->nSamples;
         psCache->nBytesPerRow =
             psCache->nBytesPerBlock * psCache->nBlocksPerRow;
-    }
 
 
 /* -------------------------------------------------------------------- */
@@ -295,7 +276,8 @@ unsigned char *TIFFGetOvrBlock( TIFFOvrCache *psCache, int iTileX, int iTileY,
         nRowOffset = ((iTileX * psCache->nSamples) + iSample)
             * psCache->nBytesPerBlock;
     else
-        nRowOffset = iTileX * psCache->nBytesPerBlock + iSample;
+        nRowOffset = iTileX * psCache->nBytesPerBlock +
+            (psCache->nBitsPerPixel + 7) / 8 * iSample;
 
     if( iTileY == psCache->nBlockOffset )
         return psCache->pabyRow1Blocks + nRowOffset;
