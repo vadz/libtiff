@@ -35,9 +35,8 @@
 
 /*
  * NB: NB: THIS ARRAY IS ASSUMED TO BE SORTED BY TAG.
- *     If a tag can have both LONG and SHORT types
- *     then the LONG must be placed before the SHORT for
- *     writing to work properly.
+ *       If a tag can have both LONG and SHORT types then the LONG must be
+ *       placed before the SHORT for writing to work properly.
  *
  * NOTE: The second field (field_readcount) and third field (field_writecount)
  *       sometimes use the values TIFF_VARIABLE (-1), TIFF_VARIABLE2 (-3)
@@ -200,6 +199,20 @@ const TIFFFieldInfo tiffFieldInfo[] = {
       TRUE,	FALSE,	"SMinSampleValue" },
     { TIFFTAG_SMAXSAMPLEVALUE,	-2,-1, TIFF_ANY,	FIELD_SMAXSAMPLEVALUE,
       TRUE,	FALSE,	"SMaxSampleValue" },
+    { TIFFTAG_CLIPPATH,		-1, -3, TIFF_BYTE,	FIELD_CUSTOM,
+      FALSE,	TRUE,	"ClipPath" },
+    { TIFFTAG_XCLIPPATHUNITS,	 1, 1,	TIFF_SLONG,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"XClipPathUnits" },
+    { TIFFTAG_XCLIPPATHUNITS,	 1, 1,	TIFF_SSHORT,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"XClipPathUnits" },
+    { TIFFTAG_XCLIPPATHUNITS,	 1, 1,	TIFF_SBYTE,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"XClipPathUnits" },
+    { TIFFTAG_YCLIPPATHUNITS,	 1, 1,	TIFF_SLONG,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"YClipPathUnits" },
+    { TIFFTAG_YCLIPPATHUNITS,	 1, 1,	TIFF_SSHORT,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"YClipPathUnits" },
+    { TIFFTAG_YCLIPPATHUNITS,	 1, 1,	TIFF_SBYTE,	FIELD_CUSTOM,
+      FALSE,	FALSE,	"YClipPathUnits" },
     { TIFFTAG_YCBCRCOEFFICIENTS, 3, 3, TIFF_RATIONAL,	FIELD_YCBCRCOEFFICIENTS,
       FALSE,	FALSE,	"YCbCrCoefficients" },
     { TIFFTAG_YCBCRSUBSAMPLING,	 2, 2, TIFF_SHORT,	FIELD_YCBCRSUBSAMPLING,
