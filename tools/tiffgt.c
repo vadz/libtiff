@@ -31,10 +31,19 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <GL/gl.h>
-#include <GL/glut.h>
+#if HAVE_APPLE_OPENGL_FRAMEWORK
+# include <OpenGL/gl.h>
+# include <GLUT/glut.h>
+#else
+# include <GL/gl.h>
+# include <GL/glut.h>
+#endif
 
 #include "tiffio.h"
+
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
 
 static	uint32	width = 0, height = 0;		/* window width & height */
 static	uint32*	raster = NULL;			/* displayable image */
