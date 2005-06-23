@@ -155,8 +155,6 @@ am_tiffgt_OBJECTS = tiffgt-tiffgt.$(OBJEXT)
 tiffgt_OBJECTS = $(am_tiffgt_OBJECTS)
 am__DEPENDENCIES_3 =
 tiffgt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2) \
-	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_3) \
-	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_3) \
 	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_3)
 am_tiffinfo_OBJECTS = tiffinfo.$(OBJEXT)
 tiffinfo_OBJECTS = $(am_tiffinfo_OBJECTS)
@@ -261,6 +259,7 @@ LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
 LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
 LIBTIFF_RELEASE_DATE = @LIBTIFF_RELEASE_DATE@
 LIBTIFF_VERSION = @LIBTIFF_VERSION@
+LIBTIFF_VERSION_INFO = @LIBTIFF_VERSION_INFO@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -384,8 +383,8 @@ tiffset_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffsplit_SOURCES = tiffsplit.c
 tiffsplit_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffgt_SOURCES = tiffgt.c
-tiffgt_CFLAGS = $(CFLAGS) $(GLUT_CFLAGS) $(GLU_CFLAGS) $(GL_CFLAGS)
-tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) $(X_PRE_LIBS) $(X_LIBS) $(X_EXTRA_LIBS) $(GL_LIBS) $(GLU_LIBS) $(GLUT_LIBS)
+tiffgt_CFLAGS = $(CFLAGS) $(GLUT_CFLAGS) $(AM_CFLAGS)
+tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) $(X_LIBS) $(GLUT_LIBS)
 INCLUDES = -I$(top_srcdir)/libtiff
 all: all-am
 
@@ -773,6 +772,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-info-am
 
+
+echo:
+	(echo $(CFLAGS))
+	(echo $(tiffgt_CFLAGS))
+	(echo $(GL_CFLAGS))
+	(echo $(GLU_CFLAGS))
+	(echo $(GLUT_CFLAGS))
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

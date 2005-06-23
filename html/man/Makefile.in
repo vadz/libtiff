@@ -142,6 +142,7 @@ LIBTIFF_MICRO_VERSION = @LIBTIFF_MICRO_VERSION@
 LIBTIFF_MINOR_VERSION = @LIBTIFF_MINOR_VERSION@
 LIBTIFF_RELEASE_DATE = @LIBTIFF_RELEASE_DATE@
 LIBTIFF_VERSION = @LIBTIFF_VERSION@
+LIBTIFF_VERSION_INFO = @LIBTIFF_VERSION_INFO@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -425,6 +426,8 @@ dvi: dvi-am
 
 dvi-am:
 
+html: html-am
+
 info: info-am
 
 info-am:
@@ -477,8 +480,8 @@ index: $(docfiles)
 	done
 	${ECHO} ${INDEXEND} >> $(indexfile)
 
-.PHONY: html
-html: index
+.PHONY: htmldoc
+htmldoc: index
 	for i in $(manpages); do					\
 		${GROFF} $(MANSRCDIR)/$$i > $$i.html;			\
 	done

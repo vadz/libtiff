@@ -1,3 +1,22 @@
+2005-06-23  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2pdf.c: Print two characters per loop in the
+	t2p_write_pdf_trailer(). As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=594
+
+	* tools/tiffgt.c: Use MacOS X OpenGL framework when appropriate. As
+	per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=844
+
+	* acinclude.m4: Updated to latest OpenGL test macros versions.
+
+	* libtiff/tiff.h: Use correct int size on Sparc 64bit/Sun compiler
+	platform. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=855
+
 2005-06-14  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirinfo.c: Added support for ClipPath, XClipPathUnits
@@ -107,7 +126,7 @@
 	* libtiff/tif_jpeg.c: added LIB_JPEG_MK1 support in JPEGDecodeRaw().
 
 2005-05-06  Andrey Kiselev  <dron@remotesensing.org>
-	* tools/tiff2pdfr.c, man/tiff2pdf.1: Calculate the tilewidth properly;
+	* tools/tiff2pdfr.c, man/tiff2pdf.1: Calculate the tile width properly;
 	added new option '-b' to use interpolation in output PDF files (Bruno
 	Ledoux).
 
@@ -165,7 +184,7 @@
 
 2005-03-22  Andrey Kiselev  <dron@remotesensing.org>
 
-	* configure.ac, libtiff/Makefile.am}: Use libtool machinery to pass
+	* configure.ac, libtiff/Makefile.am: Use libtool machinery to pass
 	rpath option.
 
 2005-03-21  Andrey Kiselev  <dron@remotesensing.org>

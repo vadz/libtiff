@@ -25758,10 +25758,20 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_APPLE_OPENGL_FRAMEWORK 1
 _ACEOF
 
-  GL_CFLAGS="-framework OpenGL"
+  GL_LIBS="-framework OpenGL"
 else
-  GL_CFLAGS="${PTHREAD_CFLAGS}"
-  GL_LIBS="${PTHREAD_LIBS} -lm"
+  ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+  AX_LANG_COMPILER_MS
+  if test X$ax_compiler_ms = Xno; then
+    GL_CFLAGS="${PTHREAD_CFLAGS}"
+    GL_LIBS="${PTHREAD_LIBS} -lm"
+  fi
 
   #
   # Use x_includes and x_libraries if they have been set (presumably by
@@ -25775,13 +25785,6 @@ else
       GL_LIBS="-L${x_libraries} -lX11 ${GL_LIBS}"
     fi
   fi
-
-  ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
 
 
 for ac_header in windows.h
@@ -25944,8 +25947,8 @@ else
   ax_save_LIBS="${LIBS}"
   LIBS=""
   ax_check_libs="-lopengl32 -lGL"
-    for ax_lib in ${ax_check_libs}; do
-    if test "X$CC" = "Xcl"; then
+  for ax_lib in ${ax_check_libs}; do
+    if test X$ax_compiler_ms = Xyes; then
       ax_try_lib=`echo $ax_lib | sed -e 's/^-l//' -e 's/$/.lib/'`
     else
       ax_try_lib="${ax_lib}"
@@ -25962,7 +25965,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #   include <windows.h>
 # endif
 # include <GL/gl.h>
-
 int
 main ()
 {
@@ -26039,7 +26041,7 @@ else
   LIBS=""
   ax_check_libs="-lglu32 -lGLU"
   for ax_lib in ${ax_check_libs}; do
-    if test "X$CC" = "Xcl"; then
+    if test X$ax_compiler_ms = Xyes; then
       ax_try_lib=`echo $ax_lib | sed -e 's/^-l//' -e 's/$/.lib/'`
     else
       ax_try_lib="${ax_lib}"
@@ -26051,12 +26053,18 @@ else
     # "conftest.cc"; and Microsoft cl doesn't know what to do with such a
     # file.
     #
-    if test "X$CXX" != "Xcl"; then
-      ac_ext=cc
+    ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+    if test X$ax_compiler_ms = Xyes; then
+      ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
     fi
     cat >conftest.$ac_ext <<_ACEOF
@@ -26070,7 +26078,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #   include <windows.h>
 # endif
 # include <GL/glu.h>
-
 int
 main ()
 {
@@ -26088,7 +26095,7 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   cat conftest.err >&5
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
@@ -26108,14 +26115,20 @@ sed 's/^/| /' conftest.$ac_ext >&5
 fi
 rm -f conftest.err conftest.$ac_objext \
       conftest$ac_exeext conftest.$ac_ext
-    if test "X$CXX" != "Xcl"; then
-      ac_ext=c
+    if test X$ax_compiler_ms = Xyes; then
+      ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+    fi
+    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-    fi
   done
   LIBS=${ax_save_LIBS}
   CPPFLAGS=${ax_save_CPPFLAGS}
@@ -26123,7 +26136,7 @@ fi
 echo "$as_me:$LINENO: result: $ax_cv_check_glu_libglu" >&5
 echo "${ECHO_T}$ax_cv_check_glu_libglu" >&6
   if test "X${ax_cv_check_glu_libglu}" = "Xno"; then
-    no_gl="yes"
+    no_glu="yes"
     GLU_CFLAGS=""
     GLU_LIBS=""
   else
@@ -26135,16 +26148,17 @@ fi
 
 
 if test "X$with_apple_opengl_framework" = "Xyes"; then
-  GLUT_CFLAGS="-framework GLUT ${GLU_CFLAGS}"
-  GLUT_LIBS="-lobjc ${GL_LIBS}"
+  GLUT_CFLAGS="${GLU_CFLAGS}"
+  GLUT_LIBS="-framework GLUT -lobjc ${GL_LIBS}"
 else
   GLUT_CFLAGS=${GLU_CFLAGS}
+  GLUT_LIBS=${GLU_LIBS}
 
   #
   # If X is present, assume GLUT depends on it.
   #
   if test "X${no_x}" != "Xyes"; then
-    GLUT_LIBS="${X_PRE_LIBS} -lXmu -lXi ${X_EXTRA_LIBS} ${GLU_LIBS}"
+    GLUT_LIBS="${X_PRE_LIBS} -lXmu -lXi ${X_EXTRA_LIBS} ${GLUT_LIBS}"
   fi
 
   ac_ext=c
@@ -26167,7 +26181,7 @@ else
   LIBS=""
   ax_check_libs="-lglut32 -lglut"
   for ax_lib in ${ax_check_libs}; do
-    if test "X$CC" = "Xcl"; then
+    if test X$ax_compiler_ms = Xyes; then
       ax_try_lib=`echo $ax_lib | sed -e 's/^-l//' -e 's/$/.lib/'`
     else
       ax_try_lib="${ax_lib}"
@@ -26184,7 +26198,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #   include <windows.h>
 # endif
 # include <GL/glut.h>
-
 int
 main ()
 {
