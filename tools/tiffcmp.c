@@ -36,6 +36,10 @@
 
 #include "tiffio.h"
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 static	int stopondiff = 1;
 static	int stoponfirsttag = 1;
 static	uint16 bitspersample = 1;
@@ -49,7 +53,7 @@ static	int tiffcmp(TIFF*, TIFF*);
 static	int cmptags(TIFF*, TIFF*);
 static	int ContigCompare(int, uint32, unsigned char*, unsigned char*, int);
 static	int SeparateCompare(int, int, uint32, unsigned char*, unsigned char*);
-static	void PrintIntDiff(uint32, int, uint32, int32, int32);
+static	void PrintIntDiff(uint32, int, uint32, uint32, uint32);
 static	void PrintFloatDiff(uint32, int, uint32, double, double);
 
 static	void leof(const char*, uint32, int);
@@ -403,7 +407,7 @@ ContigCompare(int sample, uint32 row,
 }
 
 static void
-PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
+PrintIntDiff(uint32 row, int sample, uint32 pix, uint32 w1, uint32 w2)
 {
 	if (sample < 0)
 		sample = 0;
@@ -422,9 +426,11 @@ PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
 			if ((w1 & mask2) ^ (w2 & mask2)) {
 				printf(
 			"Scanline %lu, pixel %lu, sample %d: %01x %01x\n",
-	    				(long) row, (long) pix,
-					sample, (w1 >> s) & mask1,
-					(w2 >> s) & mask1 );
+	    				(unsigned long) row,
+					(unsigned long) pix,
+					sample,
+					(unsigned int)((w1 >> s) & mask1),
+					(unsigned int)((w2 >> s) & mask1));
 				if (--stopondiff == 0)
 					exit(1);
 			}
@@ -433,19 +439,22 @@ PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
 	    }
 	case 8: 
 		printf("Scanline %lu, pixel %lu, sample %d: %02x %02x\n",
-		    (long) row, (long) pix, sample, w1, w2);
+		       (unsigned long) row, (unsigned long) pix, sample,
+		       (unsigned int) w1, (unsigned int) w2);
 		if (--stopondiff == 0)
 			exit(1);
 		break;
 	case 16:
 		printf("Scanline %lu, pixel %lu, sample %d: %04x %04x\n",
-		    (long) row, (long) pix, sample, w1, w2);
+		    (unsigned long) row, (unsigned long) pix, sample,
+		    (unsigned int) w1, (unsigned int) w2);
 		if (--stopondiff == 0)
 			exit(1);
 		break;
 	case 32:
 		printf("Scanline %lu, pixel %lu, sample %d: %08x %08x\n",
-		    (long) row, (long) pix, sample, w1, w2);
+		    (unsigned long) row, (unsigned long) pix, sample,
+		    (unsigned int) w1, (unsigned int) w2);
 		if (--stopondiff == 0)
 			exit(1);
 		break;
