@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.21  2005-05-05 20:52:57  dron
+ * Revision 1.22  2005-06-23 13:28:33  dron
+ * Print two characters per loop in the t2p_write_pdf_trailer(). As per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=594
+ *
+ * Revision 1.21  2005/05/05 20:52:57  dron
  * Calculate the tilewidth properly; added new option '-b' to use interpolation
  * in output PDF files (Bruno Ledoux).
  *
@@ -5123,34 +5127,34 @@ tsize_t t2p_write_pdf_xreftable(T2P* t2p, TIFF* output){
 }
 
 /*
-	This function writes a PDF trailer to output.
-*/
+ *	This function writes a PDF trailer to output.
+ */
 
-tsize_t t2p_write_pdf_trailer(T2P* t2p, TIFF* output){
+tsize_t t2p_write_pdf_trailer(T2P* t2p, TIFF* output)
+{
 
-	tsize_t written=0;
+	tsize_t written = 0;
 	char buffer[32];
-	int buflen=0;
+	int buflen = 0;
 	char fileidbuf[16];
-	int i=0;
+	int i = 0;
 
 	((int*)fileidbuf)[0] = rand();
 	((int*)fileidbuf)[1] = rand();
 	((int*)fileidbuf)[2] = rand();
 	((int*)fileidbuf)[3] = rand();
-	t2p->pdf_fileid=(char*)_TIFFmalloc(33);
-	if(t2p->pdf_fileid==NULL){
+	t2p->pdf_fileid = (char*)_TIFFmalloc(33);
+	if(t2p->pdf_fileid == NULL) {
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %u bytes of memory for t2p_write_pdf_trailer", 
+		"Can't allocate %u bytes of memory for t2p_write_pdf_trailer", 
 			33 );
 		t2p->t2p_error = T2P_ERR_ERROR;
 		return(0);
 	}
 	_TIFFmemset(t2p->pdf_fileid, 0x00, 33);
-	for (i=0;i<16;i++){
-		sprintf(&(t2p->pdf_fileid[2*i]), "%.2X", fileidbuf[i]);
-	}
+	for (i=0; i<16; i++)
+		sprintf(&(t2p->pdf_fileid[2*i]), "%.2hhX", fileidbuf[i]);
 	written += TIFFWriteFile(output, (tdata_t) "trailer\r<<\r/Size ", 17);
 	buflen=sprintf(buffer, "%lu", t2p->pdf_xrefcount+1);
 	written += TIFFWriteFile(output, (tdata_t) buffer, buflen);
