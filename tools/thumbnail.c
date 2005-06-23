@@ -516,7 +516,7 @@ setImage1(const uint8* br, uint32 rw, uint32 rh)
     int limit = tnh;
     int err = 0;
     int bpr = TIFFhowmany8(rw);
-    uint32 sy = 0;
+    int sy = 0;
     uint8* row = thumbnail;
     uint32 dy;
     for (dy = 0; dy < tnh; dy++) {
@@ -564,7 +564,7 @@ generateThumbnail(TIFF* in, TIFF* out)
 	return 0;
     rowsize = TIFFScanlineSize(in);
     rastersize = sh * rowsize;
-    fprintf(stderr, "rastersize=%d\n", rastersize);
+    fprintf(stderr, "rastersize=%u\n", (unsigned int)rastersize);
     raster = (unsigned char*)_TIFFmalloc(rastersize);
     if (!raster) {
 	    TIFFError(TIFFFileName(in),
