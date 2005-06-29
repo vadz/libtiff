@@ -405,10 +405,9 @@ _TIFFSetupFieldInfo(TIFF* tif)
 		{
 			TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
 			if (fld->field_bit == FIELD_CUSTOM && 
-				strncmp("Tag ", fld->field_name, 4) == 0) 
-				{
-				_TIFFfree(fld->field_name);
-				_TIFFfree(fld);
+				strncmp("Tag ", fld->field_name, 4) == 0) {
+					_TIFFfree(fld->field_name);
+					_TIFFfree(fld);
 				}
 		}   
       
@@ -461,8 +460,8 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 		tp[i] = (TIFFFieldInfo*) &info[i];	/* XXX */
 
         /* Sort the field info by tag number */
-        qsort(tif->tif_fieldinfo, (size_t) (tif->tif_nfields += n),
-              sizeof (TIFFFieldInfo*), tagCompare);
+        qsort(tif->tif_fieldinfo, tif->tif_nfields += n,
+	      sizeof (TIFFFieldInfo*), tagCompare);
 }
 
 void
@@ -615,11 +614,11 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
             TIFFFieldInfo key = {0, 0, 0, 0, 0, 0, 0, 0};
             key.field_name = (char *)field_name;
             key.field_type = dt;
-            return((const TIFFFieldInfo *) lfind(&key, 
-						   tif->tif_fieldinfo, 
-						   &tif->tif_nfields,
-						   sizeof(TIFFFieldInfo), 
-						   tagNameCompare));
+            return((const TIFFFieldInfo *) lfind(&key,
+						 tif->tif_fieldinfo, 
+						 &tif->tif_nfields,
+						 sizeof(TIFFFieldInfo),
+						 tagNameCompare));
         } else
 		for (i = 0, n = tif->tif_nfields; i < n; i++) {
 			const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
