@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFOpen 3TIFF "January 9, 1996" "libtiff"
+.TH TIFFOpen 3TIFF "July 1, 2005" "libtiff"
 .SH NAME
 TIFFOpen, TIFFFdOpen, TIFFClientOpen \- open a
 .SM TIFF
@@ -203,6 +203,11 @@ strip chopping.
 .TP
 .B c
 Disable the use of strip chopping when reading images.
+.TP
+.B h
+Read TIFF header only, do not load the first image directory. That could be
+useful in case of the broken first directory. We can open the file and proceed
+to the other directories.
 .SH "BYTE ORDER"
 The 
 .SM TIFF
