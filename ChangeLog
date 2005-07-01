@@ -1,3 +1,13 @@
+2005-07-01  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tiffiop.h, tif_open.c}: Added open option 'h' to avoid
+	reading the first IFD when needed. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=875
+
+	* libtiff/tif_color.c: Better use of TIFFmin() macro to avoid side
+	effects.
+
 2005-06-23  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2pdf.c: Print two characters per loop in the
