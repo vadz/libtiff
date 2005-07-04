@@ -23538,7 +23538,7 @@ _ACEOF
 
   LIBS="-lz $LIBS"
 
-  if test "$HAVE_RPATH" = "yes"; then
+  if test "$HAVE_RPATH" = "yes" -a "x$with_zlib_lib_dir" != "x" ; then
     LIBDIR="-R $with_zlib_lib_dir $LIBDIR"
   fi
 
@@ -23832,7 +23832,7 @@ _ACEOF
 
   LIBS="-ljpeg $LIBS"
 
-  if test "$HAVE_RPATH" = "yes"; then
+  if test "$HAVE_RPATH" = "yes" -a "x$with_jpeg_lib_dir" != "x" ; then
     LIBDIR="-R $with_jpeg_lib_dir $LIBDIR"
   fi
 
