@@ -1,3 +1,10 @@
+2005-07-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.7.3 released.
+
+	* configure, configure.ac: Do not use empty -R option when linking
+	with --enable-rpath.
+
 2005-07-01  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tiffiop.h, tif_open.c}: Added open option 'h' to avoid

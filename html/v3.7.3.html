@@ -61,6 +61,8 @@ The following information is located here:
 <A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
 
 <UL>
+	<li> Do not use empty -R option when linking with --enable-rpath.
+
 	<li> Added workaround for OpenBSD/MirOS soname problem as per bug
 	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=838">
 		http://bugzilla.remotesensing.org/show_bug.cgi?id=838</a>
@@ -83,6 +85,11 @@ The following information is located here:
 <A NAME="libtiff"><B><FONT SIZE=+3>C</FONT>HANGES IN LIBTIFF:</B></A>
 
 <UL>
+	<li> tiffiop.h, tif_open.c: Added open option 'h' to avoid reading
+	the first IFD when needed. As per bug
+	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=875">
+		http://bugzilla.remotesensing.org/show_bug.cgi?id=875</a>
+
 	<li> tiff.h: Use correct int size on Sparc 64bit/Sun compiler
 	platform. As per bug
 	<a href="http://bugzilla.remotesensing.org/show_bug.cgi?id=855>
