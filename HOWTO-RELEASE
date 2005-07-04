@@ -42,15 +42,15 @@ utilities to release a package.
 
 12. cvs tag Release-v3-5-7 (or the appropriate name for the release)
 
-13. make dist
+13. configure; make dist
     Two files with names tiff-version.tar.gz and tiff-version.zip will
     be created in the top level package directory.
 
 14. Copy to ftp.remotesensing.org ftp site. 
-    scp tiff-*.tar.gz ftp.remotesensing.org:/ftp/remotesensing/pub/libtiff
-    scp tiff-*.zip ftp.remotesensing.org:/ftp/remotesensing/pub/libtiff
+    scp tiff-*.tar.gz ftp.remotesensing.org:/var/ftp/libtiff/
+    scp tiff-*.zip ftp.remotesensing.org:/var/ftp/libtiff/
 
-15. Announce to list, tiff@remotesensing.org]
+15. Announce to list, tiff@remotesensing.org
 
 16. Update libtiff page on freshmeat with new version announcement.
 
