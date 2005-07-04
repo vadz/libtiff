@@ -24,32 +24,34 @@ utilities to release a package.
    Version should be updated in two places: in the second argument of the
    AC_INIT macro and in LIBTIFF_xxx_VERSION variables.
 
-5. sh configure
+5. autoconf
 
-6. make release -- this will update "RELEASE-DATE" and "VERSION" in the top
+6. sh configure
+
+7. make release -- this will update "RELEASE-DATE" and "VERSION" in the top
    level dir, and libtiff/tiffvers.h.  
 
-7. Please verify that the version info in RELEASE-DATE, VERSION and
+8. Please verify that the version info in RELEASE-DATE, VERSION and
    libtiff/tiffvers.h is right.
 
-8. make; make distcheck (to test). 
+9. make; make distcheck (to test). 
 
-9. make distclean
+10. make distclean
 
-10. cvs commit
+11. cvs commit
 
-11. cvs tag Release-v3-5-7 (or the appropriate name for the release)
+12. cvs tag Release-v3-5-7 (or the appropriate name for the release)
 
-12. make dist
+13. make dist
     Two files with names tiff-version.tar.gz and tiff-version.zip will
     be created in the top level package directory.
 
-13. Copy to ftp.remotesensing.org ftp site. 
+14. Copy to ftp.remotesensing.org ftp site. 
     scp tiff-*.tar.gz ftp.remotesensing.org:/ftp/remotesensing/pub/libtiff
     scp tiff-*.zip ftp.remotesensing.org:/ftp/remotesensing/pub/libtiff
 
-14. Announce to list, tiff@remotesensing.org]
+15. Announce to list, tiff@remotesensing.org]
 
-15. Update libtiff page on freshmeat with new version announcement.
+16. Update libtiff page on freshmeat with new version announcement.
 
 
