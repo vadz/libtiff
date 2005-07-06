@@ -1,3 +1,11 @@
+2005-07-06  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcp.c: Fixed WhitePoint tag copying.
+
+	* libtiff/{tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_print.c}:
+	Make FieldOfViewCotangent, MatrixWorldToScreen, MatrixWorldToCamera,
+	ImageFullWidth, ImageFullLength and PrimaryChromaticities tags custom.
+
 2005-07-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff 3.7.3 released.
