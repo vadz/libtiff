@@ -99,38 +99,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			    (unsigned long) td->td_imagedepth);
 		fprintf(fd, "\n");
 	}
-
- 	/* Begin Pixar */
- 	if (TIFFFieldSet(tif,FIELD_IMAGEFULLWIDTH) ||
- 	    TIFFFieldSet(tif,FIELD_IMAGEFULLLENGTH)) {
-	  fprintf(fd, "  Pixar Full Image Width: %lu Full Image Length: %lu\n",
-		  (unsigned long) td->td_imagefullwidth,
-		  (unsigned long) td->td_imagefulllength);
- 	}
- 	if (TIFFFieldSet(tif,FIELD_FOVCOT))
-	  fprintf(fd, "  Field of View Cotangent: %g\n", td->td_fovcot);
-	if (TIFFFieldSet(tif,FIELD_MATRIX_WORLDTOSCREEN)) {
-	  typedef float	Matrix[4][4];
-	  Matrix*		m = (Matrix*)td->td_matrixWorldToScreen;
-	  
-	  fprintf(fd, "  Matrix NP:\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n",
-		  (*m)[0][0], (*m)[0][1], (*m)[0][2], (*m)[0][3],
-		  (*m)[1][0], (*m)[1][1], (*m)[1][2], (*m)[1][3],
-		  (*m)[2][0], (*m)[2][1], (*m)[2][2], (*m)[2][3],
-		  (*m)[3][0], (*m)[3][1], (*m)[3][2], (*m)[3][3]);
- 	}
- 	if (TIFFFieldSet(tif,FIELD_MATRIX_WORLDTOCAMERA)) {
-	  typedef float	Matrix[4][4];
-	  Matrix*		m = (Matrix*)td->td_matrixWorldToCamera;
-	  
-	  fprintf(fd, "  Matrix Nl:\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n\t%g %g %g %g\n",
-		  (*m)[0][0], (*m)[0][1], (*m)[0][2], (*m)[0][3],
-		  (*m)[1][0], (*m)[1][1], (*m)[1][2], (*m)[1][3],
-		  (*m)[2][0], (*m)[2][1], (*m)[2][2], (*m)[2][3],
-		  (*m)[3][0], (*m)[3][1], (*m)[3][2], (*m)[3][3]);
- 	}
- 	/* End Pixar */
-	
 	if (TIFFFieldSet(tif,FIELD_TILEDIMENSIONS)) {
 		fprintf(fd, "  Tile Width: %lu Tile Length: %lu",
 		    (unsigned long) td->td_tilewidth, (unsigned long) td->td_tilelength);
@@ -410,11 +378,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_WHITEPOINT))
 		fprintf(fd, "  White Point: %g-%g\n",
 		    td->td_whitepoint[0], td->td_whitepoint[1]);
-	if (TIFFFieldSet(tif,FIELD_PRIMARYCHROMAS))
-		fprintf(fd, "  Primary Chromaticities: %g,%g %g,%g %g,%g\n",
-		    td->td_primarychromas[0], td->td_primarychromas[1],
-		    td->td_primarychromas[2], td->td_primarychromas[3],
-		    td->td_primarychromas[4], td->td_primarychromas[5]);
 	if (TIFFFieldSet(tif,FIELD_REFBLACKWHITE)) {
 		fprintf(fd, "  Reference Black/White:\n");
 		for (i = 0; i < td->td_samplesperpixel; i++)

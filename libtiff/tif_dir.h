@@ -75,7 +75,6 @@ typedef	struct {
 	uint16	td_ycbcrpositioning;
 	/* Colorimetry parameters */
 	float*	td_whitepoint;
-	float*	td_primarychromas;
 	float*	td_refblackwhite;
 	uint16*	td_transferfunction[3];
 	/* CMYK parameters */
@@ -93,12 +92,6 @@ typedef	struct {
 	/* IPTC parameters */
 	uint32	td_richtiffiptcLength;
 	void	*td_richtiffiptcData;
-        /* Begin Pixar Tag values. */
-        uint32	td_imagefullwidth, td_imagefulllength;
- 	float	td_fovcot;
- 	float*	td_matrixWorldToScreen;
- 	float*	td_matrixWorldToCamera;
- 	/* End Pixar Tag Values. */
 	uint32	td_xmlpacketLength;
 	void	*td_xmlpacketData;
 	int     td_customValueCount;
@@ -166,7 +159,7 @@ typedef	struct {
 #define FIELD_YCBCRPOSITIONING		40
 #define	FIELD_REFBLACKWHITE		41
 #define	FIELD_WHITEPOINT		42
-#define	FIELD_PRIMARYCHROMAS		43
+/* unused - was FIELD_PRIMARYCHROMAS	43 */
 #define	FIELD_TRANSFERFUNCTION		44
 #define	FIELD_INKSET			45
 #define	FIELD_INKNAMES			46
@@ -178,14 +171,13 @@ typedef	struct {
 #define FIELD_PHOTOSHOP			52
 #define FIELD_RICHTIFFIPTC		53
 #define FIELD_STONITS			54
-/* Begin PIXAR */
-#define	FIELD_IMAGEFULLWIDTH		55
-#define	FIELD_IMAGEFULLLENGTH		56
+/* unused - was FIELD_IMAGEFULLWIDTH	55 */
+/* unused - was FIELD_IMAGEFULLLENGTH	56 */
 /* unused - was FIELD_TEXTUREFORMAT	57 */
 /* unused - was FIELD_WRAPMODES		58 */
-#define FIELD_FOVCOT			59
-#define FIELD_MATRIX_WORLDTOSCREEN	60
-#define FIELD_MATRIX_WORLDTOCAMERA	61
+/* unused - was FIELD_FOVCOT		59 */
+/* unused - was FIELD_MATRIX_WORLDTOSCREEN	60 */
+/* unused - was FIELD_MATRIX_WORLDTOCAMERA	61 */
 /* unused - was FIELD_COPYRIGHT		62 */
 #define FIELD_XMLPACKET			63
 /*      FIELD_CUSTOM (see tiffio.h)     65 */
