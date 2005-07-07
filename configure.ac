@@ -117,6 +117,7 @@ dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)
 AC_REPLACE_FUNCS(strcasecmp)
 AC_REPLACE_FUNCS(strtoul)
+AC_REPLACE_FUNCS(lfind)
 
 dnl ---------------------------------------------------------------------------
 dnl Check the native cpu bit order.
