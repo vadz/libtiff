@@ -31,7 +31,6 @@
  */
 #include "tiffiop.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 /*
  * NB: NB: THIS ARRAY IS ASSUMED TO BE SORTED BY TAG.
