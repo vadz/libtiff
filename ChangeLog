@@ -1,3 +1,14 @@
+2005-07-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* port/{getopt.c, strcasecmp.c, strtoul.c}: Update modules from
+	the NetBSD source tree (the old	4-clause BSD license changed to
+	the new 3-clause one).
+
+	* configure.ac, port/lfind.c, libtiff/tiffiop.h: Added lfind()
+	replacement module.
+
+	* port/dummy.c: Make the dummy function static.
+
 2005-07-06  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Fixed WhitePoint tag copying.
