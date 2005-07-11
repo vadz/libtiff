@@ -32,25 +32,25 @@
 
 #include "tif_config.h"
 
-#if HAVE_FCNTL_H
+#ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 
-#if HAVE_SYS_TYPES_H
+#ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
 
-#if HAVE_STRING_H
+#ifdef HAVE_STRING_H
 # include <string.h>
 #endif
 
-#if HAVE_ASSERT_H
+#ifdef HAVE_ASSERT_H
 # include <assert.h>
 #else
 # define assert(x) 
 #endif
 
-#if HAVE_SEARCH_H
+#ifdef HAVE_SEARCH_H
 # include <search.h>
 #else
 extern void *lfind(const void *, const void *, size_t *, size_t,
