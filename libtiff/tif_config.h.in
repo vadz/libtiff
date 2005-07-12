@@ -52,6 +52,9 @@
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
 
+/* Define to 1 if you have the `lfind' function. */
+#undef HAVE_LFIND
+
 /* Define to 1 if you have the `c' library (-lc). */
 #undef HAVE_LIBC
 
@@ -183,7 +186,7 @@
 /* Support Pixar log-format algorithm (requires Zlib) */
 #undef PIXARLOG_SUPPORT
 
-/* Define to the necessary symbol if this constant uses a non-standard name on
+/* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
 #undef PTHREAD_CREATE_JOINABLE
 
