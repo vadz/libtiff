@@ -37,15 +37,15 @@
 # include <unistd.h>
 #endif
 
-#if HAVE_FCNTL_H
+#ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 
-#if HAVE_SYS_TYPES_H
+#ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
 
-#if HAVE_IO_H
+#ifdef HAVE_IO_H
 # include <io.h>
 #endif
 
