@@ -38,6 +38,7 @@ docfiles = \
 EXTRA_DIST = \
 	HOWTO-RELEASE \
 	Makefile.vc \
+	SConstruct \
 	autogen.sh \
 	nmake.opt
 
