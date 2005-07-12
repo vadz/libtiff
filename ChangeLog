@@ -1,3 +1,10 @@
+2005-07-12  Andrey Kiselev  <dron@remotesensing.org>
+
+	* SConstruct, libtiff/SConstruct: Added the first very preliminary
+	support for SCons software building tool (http://www.scons.org/).
+	This is experimental infrastructure and it will exist along with the
+	autotools mechanics.
+
 2005-07-07  Andrey Kiselev  <dron@remotesensing.org>
 
 	* port/{getopt.c, strcasecmp.c, strtoul.c}: Update modules from
