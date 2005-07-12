@@ -66,7 +66,7 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = port
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in getopt.c \
-	strcasecmp.c strtoul.c
+	lfind.c strcasecmp.c strtoul.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/libtool.m4 \
 	$(top_srcdir)/acinclude.m4 $(top_srcdir)/configure.ac
@@ -245,9 +245,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  port/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  port/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  port/Makefile
+	  $(AUTOMAKE) --gnu  port/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -284,6 +284,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/lfind.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoul.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dummy.Plo@am__quote@
