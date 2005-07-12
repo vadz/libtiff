@@ -112,6 +112,7 @@ libtiff_la_LDFLAGS = \
 if HAVE_RPATH
 libtiff_la_LDFLAGS += $(LIBDIR)
 endif
+libtiff_la_LIBADD = $(LIBPORT)
 
 libtiffxx_la_SOURCES = $(SRCSXX)
 libtiffxx_la_LDFLAGS = \
@@ -120,7 +121,7 @@ libtiffxx_la_LDFLAGS = \
 if HAVE_RPATH
 libtiffxx_la_LDFLAGS += $(LIBDIR)
 endif
-libtiffxx_la_LIBADD = $(LIBTIFF)
+libtiffxx_la_LIBADD = $(LIBTIFF) $(LIBPORT)
 libtiffxx_la_DEPENDENCIES = libtiff.la
 
 #
