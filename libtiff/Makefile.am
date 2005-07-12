@@ -26,7 +26,7 @@
 LIBPORT = $(top_builddir)/port/libport.la
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
-EXTRA_DIST = Makefile.vc tif_config.h.vc tiffconf.h.vc libtiff.def \
+EXTRA_DIST = Makefile.vc SConstruct tif_config.h.vc tiffconf.h.vc libtiff.def \
 	     $(EXTRA_SRCS)
 
 HDRS = \
