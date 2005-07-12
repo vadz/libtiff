@@ -33,9 +33,9 @@
 
 #define	IGNORE	0		/* tag placeholder used below */
 
-#if HAVE_IEEEFP
-#define	TIFFCvtIEEEFloatToNative(tif, n, fp)
-#define	TIFFCvtIEEEDoubleToNative(tif, n, dp)
+#ifdef HAVE_IEEEFP
+# define	TIFFCvtIEEEFloatToNative(tif, n, fp)
+# define	TIFFCvtIEEEDoubleToNative(tif, n, dp)
 #else
 extern	void TIFFCvtIEEEFloatToNative(TIFF*, uint32, float*);
 extern	void TIFFCvtIEEEDoubleToNative(TIFF*, uint32, double*);
@@ -90,9 +90,9 @@ TIFFReadDirectory(TIFF* tif)
 {
 	static const char module[] = "TIFFReadDirectory";
 
-	register TIFFDirEntry* dp;
-	register int n;
-	register TIFFDirectory* td;
+	TIFFDirEntry* dp;
+	int n;
+	TIFFDirectory* td;
 	TIFFDirEntry* dir;
 	uint16 iv;
 	uint32 v;
@@ -687,6 +687,16 @@ bad:
 	if (dir)
 		_TIFFfree(dir);
 	return (0);
+}
+
+/*
+ */
+int
+TIFFReadCustomDirectory(TIFF* tif, toff_t diroff)
+{
+	static const char module[] = "TIFFReadCustomDirectory";
+
+	return 1;
 }
 
 static int

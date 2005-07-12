@@ -31,9 +31,9 @@
  */
 #include "tiffiop.h"
 
-#if HAVE_IEEEFP
-#define	TIFFCvtNativeToIEEEFloat(tif, n, fp)
-#define	TIFFCvtNativeToIEEEDouble(tif, n, dp)
+#ifdef HAVE_IEEEFP
+# define	TIFFCvtNativeToIEEEFloat(tif, n, fp)
+# define	TIFFCvtNativeToIEEEDouble(tif, n, dp)
 #else
 extern	void TIFFCvtNativeToIEEEFloat(TIFF*, uint32, float*);
 extern	void TIFFCvtNativeToIEEEDouble(TIFF*, uint32, double*);
