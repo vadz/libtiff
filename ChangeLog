@@ -1,3 +1,9 @@
+2005-07-21  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_write.c: Do not check the PlanarConfiguration field in
+	the TIFFWriteCheck() function in case of single band images (as per
+	TIFF spec).
+
 2005-07-12  Andrey Kiselev  <dron@remotesensing.org>
 
 	* SConstruct, libtiff/SConstruct: Added the first very preliminary
