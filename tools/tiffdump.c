@@ -34,22 +34,22 @@
 # include <unistd.h>
 #endif
 
-#if HAVE_FCNTL_H
+#ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 
-#if HAVE_SYS_TYPES_H
+#ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
 
-#if HAVE_IO_H
+#ifdef HAVE_IO_H
 # include <io.h>
 #endif
 
 #include "tiffio.h"
 
 #ifndef O_BINARY
-#define	O_BINARY	0
+# define O_BINARY	0
 #endif
 
 char*	appname;
@@ -70,6 +70,7 @@ char*	rationalfmt = "%s%g";		/* RATIONAL */
 char*	srationalfmt = "%s%g";		/* SRATIONAL */
 char*	floatfmt = "%s%g";		/* FLOAT */
 char*	doublefmt = "%s%g";		/* DOUBLE */
+char*	ifdfmt = "%s%#04x";		/* IFD offset */
 
 static	void dump(int, off_t);
 extern	int optind;
@@ -148,6 +149,7 @@ InitByteOrder(int magic)
 	typemask[ord(TIFF_SSHORT)] = 0xffff;
 	typemask[ord(TIFF_LONG)] = 0xffffffff;
 	typemask[ord(TIFF_SLONG)] = 0xffffffff;
+	typemask[ord(TIFF_IFD)] = 0xffffffff;
 	typemask[ord(TIFF_RATIONAL)] = 0xffffffff;
 	typemask[ord(TIFF_SRATIONAL)] = 0xffffffff;
 	typemask[ord(TIFF_FLOAT)] = 0xffffffff;
@@ -155,6 +157,7 @@ InitByteOrder(int magic)
 	typeshift[0] = 0;
 	typeshift[ord(TIFF_LONG)] = 0;
 	typeshift[ord(TIFF_SLONG)] = 0;
+	typeshift[ord(TIFF_IFD)] = 0;
 	typeshift[ord(TIFF_RATIONAL)] = 0;
 	typeshift[ord(TIFF_SRATIONAL)] = 0;
 	typeshift[ord(TIFF_FLOAT)] = 0;
@@ -236,6 +239,7 @@ static int datawidth[] = {
     8,	/* TIFF_SRATIONAL */
     4,	/* TIFF_FLOAT */
     8,	/* TIFF_DOUBLE */
+    4	/* TIFF_IFD */
 };
 #define	NWIDTHS	(sizeof (datawidth) / sizeof (datawidth[0]))
 static	int TIFFFetchData(int, TIFFDirEntry*, void*);
@@ -342,6 +346,9 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 				break;
 			case TIFF_SLONG:
 				PrintLong(stdout, slongfmt, dp);
+				break;
+			case TIFF_IFD:
+				PrintLong(stdout, ifdfmt, dp);
 				break;
 			}
 		} else {
@@ -607,19 +614,19 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 		PrintASCII(fd, count, data);
 		break;
 	case TIFF_SHORT: {
-		register uint16 *wp = (uint16*)data;
+		uint16 *wp = (uint16*)data;
 		while (count-- > 0)
 			fprintf(fd, shortfmt, sep, *wp++), sep = " ";
 		break;
 	}
 	case TIFF_SSHORT: {
-		register int16 *wp = (int16*)data;
+		int16 *wp = (int16*)data;
 		while (count-- > 0)
 			fprintf(fd, sshortfmt, sep, *wp++), sep = " ";
 		break;
 	}
 	case TIFF_LONG: {
-		register uint32 *lp = (uint32*)data;
+		uint32 *lp = (uint32*)data;
 		while (count-- > 0) {
 			fprintf(fd, longfmt, sep, (unsigned long) *lp++);
 			sep = " ";
@@ -627,13 +634,13 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 		break;
 	}
 	case TIFF_SLONG: {
-		register int32 *lp = (int32*)data;
+		int32 *lp = (int32*)data;
 		while (count-- > 0)
 			fprintf(fd, slongfmt, sep, (long) *lp++), sep = " ";
 		break;
 	}
 	case TIFF_RATIONAL: {
-		register uint32 *lp = (uint32*)data;
+		uint32 *lp = (uint32*)data;
 		while (count-- > 0) {
 			if (lp[1] == 0)
 				fprintf(fd, "%sNan (%lu/%lu)", sep,
@@ -648,7 +655,7 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 		break;
 	}
 	case TIFF_SRATIONAL: {
-		register int32 *lp = (int32*)data;
+		int32 *lp = (int32*)data;
 		while (count-- > 0) {
 			if (lp[1] == 0)
 				fprintf(fd, "%sNan (%ld/%ld)", sep,
@@ -662,15 +669,23 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 		break;
 	}
 	case TIFF_FLOAT: {
-		register float *fp = (float *)data;
+		float *fp = (float *)data;
 		while (count-- > 0)
 			fprintf(fd, floatfmt, sep, *fp++), sep = " ";
 		break;
 	}
 	case TIFF_DOUBLE: {
-		register double *dp = (double *)data;
+		double *dp = (double *)data;
 		while (count-- > 0)
 			fprintf(fd, doublefmt, sep, *dp++), sep = " ";
+		break;
+	}
+	case TIFF_IFD: {
+		uint32 *lp = (uint32*)data;
+		while (count-- > 0) {
+			fprintf(fd, ifdfmt, sep, (unsigned long) *lp++);
+			sep = " ";
+		}
 		break;
 	}
 	}
@@ -698,6 +713,7 @@ TIFFFetchData(int fd, TIFFDirEntry* dir, void* cp)
 			case TIFF_LONG:
 			case TIFF_SLONG:
 			case TIFF_FLOAT:
+			case TIFF_IFD:
 				TIFFSwabArrayOfLong((uint32*) cp,
 				    dir->tdir_count);
 				break;
