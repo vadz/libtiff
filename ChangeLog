@@ -1,3 +1,9 @@
+2005-07-25  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_print.c: Fixed printing of the BYTE and SBYTE arrays.
+
+	* tools/tiffdump.c: Added support for TIFF_IFD datatype.
+
 2005-07-21  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_write.c: Do not check the PlanarConfiguration field in
