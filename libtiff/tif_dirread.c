@@ -53,7 +53,6 @@ static	int TIFFFetchPerSampleLongs(TIFF*, TIFFDirEntry*, uint32*);
 static	int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*);
 static	int TIFFFetchShortArray(TIFF*, TIFFDirEntry*, uint16*);
 static	int TIFFFetchStripThing(TIFF*, TIFFDirEntry*, long, uint32**);
-static	int TIFFFetchExtraSamples(TIFF*, TIFFDirEntry*);
 static	int TIFFFetchRefBlackWhite(TIFF*, TIFFDirEntry*);
 static	float TIFFFetchFloat(TIFF*, TIFFDirEntry*);
 static	int TIFFFetchFloatArray(TIFF*, TIFFDirEntry*, float*);
@@ -372,12 +371,9 @@ TIFFReadDirectory(TIFF* tif)
 		case TIFFTAG_TILEDEPTH:
 		case TIFFTAG_PLANARCONFIG:
 		case TIFFTAG_ROWSPERSTRIP:
+		case TIFFTAG_EXTRASAMPLES:
 			if (!TIFFFetchNormalTag(tif, dp))
 				goto bad;
-			dp->tdir_tag = IGNORE;
-			break;
-		case TIFFTAG_EXTRASAMPLES:
-			(void) TIFFFetchExtraSamples(tif, dp);
 			dp->tdir_tag = IGNORE;
 			break;
 		}
@@ -915,7 +911,7 @@ TIFFFetchFloat(TIFF* tif, TIFFDirEntry* dir)
  * Fetch an array of BYTE or SBYTE values.
  */
 static int
-TIFFFetchByteArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
+TIFFFetchByteArray(TIFF* tif, TIFFDirEntry* dir, uint8* v)
 {
     if (dir->tdir_count <= 4) {
         /*
@@ -924,32 +920,32 @@ TIFFFetchByteArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
         if (tif->tif_header.tiff_magic == TIFF_BIGENDIAN) {
 	    if (dir->tdir_type == TIFF_SBYTE)
                 switch (dir->tdir_count) {
-                    case 4: v[3] = (signed char)(dir->tdir_offset & 0xff);
-                    case 3: v[2] = (signed char)((dir->tdir_offset >> 8) & 0xff);
-                    case 2: v[1] = (signed char)((dir->tdir_offset >> 16) & 0xff);
-		    case 1: v[0] = (signed char)(dir->tdir_offset >> 24);	
+                    case 4: v[3] = dir->tdir_offset & 0xff;
+                    case 3: v[2] = (dir->tdir_offset >> 8) & 0xff;
+                    case 2: v[1] = (dir->tdir_offset >> 16) & 0xff;
+		    case 1: v[0] = dir->tdir_offset >> 24;
                 }
 	    else
                 switch (dir->tdir_count) {
-                    case 4: v[3] = (uint16)(dir->tdir_offset & 0xff);
-                    case 3: v[2] = (uint16)((dir->tdir_offset >> 8) & 0xff);
-                    case 2: v[1] = (uint16)((dir->tdir_offset >> 16) & 0xff);
-		    case 1: v[0] = (uint16)(dir->tdir_offset >> 24);	
+                    case 4: v[3] = dir->tdir_offset & 0xff;
+                    case 3: v[2] = (dir->tdir_offset >> 8) & 0xff;
+                    case 2: v[1] = (dir->tdir_offset >> 16) & 0xff;
+		    case 1: v[0] = dir->tdir_offset >> 24;
                 }
 	} else {
 	    if (dir->tdir_type == TIFF_SBYTE)
                 switch (dir->tdir_count) {
-                    case 4: v[3] = (signed char)(dir->tdir_offset >> 24);
-                    case 3: v[2] = (signed char)((dir->tdir_offset >> 16) & 0xff);
-                    case 2: v[1] = (signed char)((dir->tdir_offset >> 8) & 0xff);
-                    case 1: v[0] = (signed char)(dir->tdir_offset & 0xff);
+                    case 4: v[3] = dir->tdir_offset >> 24;
+                    case 3: v[2] = (dir->tdir_offset >> 16) & 0xff;
+                    case 2: v[1] = (dir->tdir_offset >> 8) & 0xff;
+                    case 1: v[0] = dir->tdir_offset & 0xff;
 		}
 	    else
                 switch (dir->tdir_count) {
-                    case 4: v[3] = (uint16)(dir->tdir_offset >> 24);
-                    case 3: v[2] = (uint16)((dir->tdir_offset >> 16) & 0xff);
-                    case 2: v[1] = (uint16)((dir->tdir_offset >> 8) & 0xff);
-                    case 1: v[0] = (uint16)(dir->tdir_offset & 0xff);
+                    case 4: v[3] = dir->tdir_offset >> 24;
+                    case 3: v[2] = (dir->tdir_offset >> 16) & 0xff;
+                    case 2: v[1] = (dir->tdir_offset >> 8) & 0xff;
+                    case 1: v[0] = dir->tdir_offset & 0xff;
 		}
 	}
         return (1);
@@ -981,27 +977,30 @@ TIFFFetchShortArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
 }
 
 /*
- * Fetch a pair of SHORT or BYTE values.
+ * Fetch a pair of SHORT or BYTE values. Some tags may have either BYTE
+ * or SHORT type and this function works with both ones.
  */
 static int
 TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir)
 {
-	uint16 v[4];
-	int ok = 0;
-
 	switch (dir->tdir_type) {
-	case TIFF_SHORT:
-	case TIFF_SSHORT:
-		ok = TIFFFetchShortArray(tif, dir, v);
-		break;
-	case TIFF_BYTE:
-	case TIFF_SBYTE:
-		ok  = TIFFFetchByteArray(tif, dir, v);
-		break;
+		case TIFF_BYTE:
+		case TIFF_SBYTE:
+			{
+			uint8 v[4];
+			return TIFFFetchByteArray(tif, dir, v)
+				&& TIFFSetField(tif, dir->tdir_tag, v[0], v[1]);
+			}
+		case TIFF_SHORT:
+		case TIFF_SSHORT:
+			{
+			uint16 v[4];
+			return TIFFFetchShortArray(tif, dir, v)
+				&& TIFFSetField(tif, dir->tdir_tag, v[0], v[1]);
+			}
+		default:
+			return 0;
 	}
-	if (ok)
-		TIFFSetField(tif, dir->tdir_tag, v[0], v[1]);
-	return (ok);
 }
 
 /*
@@ -1094,14 +1093,14 @@ TIFFFetchAnyArray(TIFF* tif, TIFFDirEntry* dir, double* v)
 	switch (dir->tdir_type) {
 	case TIFF_BYTE:
 	case TIFF_SBYTE:
-		if (!TIFFFetchByteArray(tif, dir, (uint16*) v))
+		if (!TIFFFetchByteArray(tif, dir, (uint8*) v))
 			return (0);
 		if (dir->tdir_type == TIFF_BYTE) {
-			uint16* vp = (uint16*) v;
+			uint8* vp = (uint8*) v;
 			for (i = dir->tdir_count-1; i >= 0; i--)
 				v[i] = vp[i];
 		} else {
-			int16* vp = (int16*) v;
+			int8* vp = (int8*) v;
 			for (i = dir->tdir_count-1; i >= 0; i--)
 				v[i] = vp[i];
 		}
@@ -1181,10 +1180,9 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 		switch (dp->tdir_type) {
 		case TIFF_BYTE:
 		case TIFF_SBYTE:
-			/* NB: always expand BYTE values to shorts */
 			cp = CheckMalloc(tif,
-			    dp->tdir_count, sizeof (uint16), mesg);
-			ok = cp && TIFFFetchByteArray(tif, dp, (uint16*) cp);
+			    dp->tdir_count, sizeof (uint8), mesg);
+			ok = cp && TIFFFetchByteArray(tif, dp, (uint8*) cp);
 			break;
 		case TIFF_SHORT:
 		case TIFF_SSHORT:
@@ -1496,35 +1494,6 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, long nstrips, uint32** lpp)
         
 	return (status);
 }
-
-#define	NITEMS(x)	(sizeof (x) / sizeof (x[0]))
-/*
- * Fetch and set the ExtraSamples tag.
- */
-static int
-TIFFFetchExtraSamples(TIFF* tif, TIFFDirEntry* dir)
-{
-	uint16 buf[10];
-	uint16* v = buf;
-	int status;
-
-	if (dir->tdir_count > NITEMS(buf)) {
-		v = (uint16*) CheckMalloc(tif, dir->tdir_count, sizeof (uint16),
-					  "to fetch extra samples");
-		if (!v)
-			return (0);
-	}
-	if (dir->tdir_type == TIFF_BYTE)
-		status = TIFFFetchByteArray(tif, dir, v);
-	else
-		status = TIFFFetchShortArray(tif, dir, v);
-	if (status)
-		status = TIFFSetField(tif, dir->tdir_tag, dir->tdir_count, v);
-	if (v != buf)
-		_TIFFfree((char*) v);
-	return (status);
-}
-#undef NITEMS
 
 /*
  * Fetch and set the RefBlackWhite tag.

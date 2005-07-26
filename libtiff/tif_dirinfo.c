@@ -526,11 +526,11 @@ int
 _TIFFDataSize(TIFFDataType type)
 {
 	switch (type) {
+		case TIFF_BYTE:
+		case TIFF_SBYTE:
 		case TIFF_ASCII:
 		case TIFF_UNDEFINED:
 		    return 1;
-		case TIFF_BYTE:
-		case TIFF_SBYTE:
 		case TIFF_SHORT:
 		case TIFF_SSHORT:
 		    return 2;
