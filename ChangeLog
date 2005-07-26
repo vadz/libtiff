@@ -1,3 +1,18 @@
+2005-07-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dirread.c, tif_dirinfo.c}: Do not upcast BYTEs to
+	SHORTs in the TIFFFetchByteArray(). Remove TIFFFetchExtraSamples()
+	function, use TIFFFetchNormalTag() instead as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=831
+
+	Remove TIFFFetchExtraSamples() function, use TIFFFetchNormalTag()
+	instead. 
+
+	* libtiff/tiffconf.h.in: One more attempt to fix the AIX bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=39
+
 2005-07-25  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_print.c: Fixed printing of the BYTE and SBYTE arrays.
