@@ -530,12 +530,27 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		} else {
 		    switch (fip->field_type) {
 			case TIFF_BYTE:
-			case TIFF_SBYTE:
-			case TIFF_SHORT:
-			case TIFF_SSHORT:
 			case TIFF_UNDEFINED:
 			    {
-				int v = va_arg(ap, int);
+				uint8 v = (uint8)va_arg(ap, int);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
+			    }
+			    break;
+			case TIFF_SBYTE:
+			    {
+				int8 v = (int8)va_arg(ap, int);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
+			    }
+			    break;
+			case TIFF_SHORT:
+			    {
+				uint16 v = (uint16)va_arg(ap, int);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
+			    }
+			    break;
+			case TIFF_SSHORT:
+			    {
+				int16 v = (int16)va_arg(ap, int);
 				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
 			    }
 			    break;
@@ -555,6 +570,11 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			case TIFF_RATIONAL:
 			case TIFF_SRATIONAL:
 			case TIFF_FLOAT:
+			    {
+				float v = (float)va_arg(ap, double);
+				_TIFFmemcpy(tv->value, &v, tv_size*tv->count);
+			    }
+			    break;
 			case TIFF_DOUBLE:
 			    {
 				double v = va_arg(ap, double);
