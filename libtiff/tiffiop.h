@@ -268,7 +268,7 @@ extern	void _TIFFprintAsciiTag(FILE*, const char*, const char*);
 GLOBALDATA(TIFFErrorHandler,_TIFFwarningHandler);
 GLOBALDATA(TIFFErrorHandler,_TIFFerrorHandler);
 
-extern	char *_TIFFCheckMalloc(TIFF*, size_t, size_t, const char*);
+extern	tdata_t _TIFFCheckMalloc(TIFF*, size_t, size_t, const char*);
 
 extern	int TIFFInitDumpMode(TIFF*, int);
 #ifdef PACKBITS_SUPPORT
