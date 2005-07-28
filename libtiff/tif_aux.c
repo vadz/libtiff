@@ -33,7 +33,7 @@
 #include "tif_predict.h"
 #include <math.h>
 
-tdata_t
+char *
 _TIFFCheckMalloc(TIFF* tif, size_t nmemb, size_t elem_size, const char* what)
 {
 	tdata_t *cp = NULL;
