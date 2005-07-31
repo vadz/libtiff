@@ -156,6 +156,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 				tif->tif_postdecode = _TIFFSwab32BitData;
 			else if (td->td_bitspersample == 64)
 				tif->tif_postdecode = _TIFFSwab64BitData;
+			else if (td->td_bitspersample == 128) /* two 64's */
+				tif->tif_postdecode = _TIFFSwab64BitData;
 		}
 		break;
 	case TIFFTAG_COMPRESSION:
@@ -334,10 +336,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                          && td->td_bitspersample == 64
                          && tif->tif_postdecode == _TIFFSwab64BitData )
                     tif->tif_postdecode = _TIFFSwab32BitData;
-                else if( td->td_sampleformat == SAMPLEFORMAT_COMPLEXIEEEFP
-                         && td->td_bitspersample == 128
-                         && tif->tif_postdecode == NULL )
-                    tif->tif_postdecode = _TIFFSwab64BitData;
 		break;
 	case TIFFTAG_IMAGEDEPTH:
 		td->td_imagedepth = va_arg(ap, uint32);
