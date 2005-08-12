@@ -672,8 +672,6 @@ bad:
 int
 TIFFReadCustomDirectory(TIFF* tif, toff_t diroff)
 {
-	static const char module[] = "TIFFReadCustomDirectory";
-
 	return 1;
 }
 
