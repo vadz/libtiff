@@ -84,7 +84,7 @@ tif_config.h:
 tiffconf.h:
 	copy tiffconf.h.vc tiffconf.h
 
-libtiff.lib:	tif_config.h $(OBJ)
+libtiff.lib:	tif_config.h tiffconf.h $(OBJ)
 	$(AR) /out:libtiff.lib $(OBJ) $(LIBS)
 
 $(DLLNAME):	tif_config.h $(OBJ)
