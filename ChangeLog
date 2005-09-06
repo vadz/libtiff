@@ -1,3 +1,11 @@
+2005-09-05  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dir.c: When prefreeing tv->value in TIFFSetFieldV
+	also set it to NULL to avoid double free when re-setting custom
+	string fields as per: 
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=922
+
 2005-08-12  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_print.c: avoid signed/unsigned warning.

@@ -453,7 +453,10 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 if(td->td_customValues[iCustom].info == fip) {
                     tv = td->td_customValues + iCustom;
                     if(tv->value != NULL)
+                    {
                         _TIFFfree(tv->value);
+                        tv->value = NULL;
+                    }
                     break;
                 }
             }
