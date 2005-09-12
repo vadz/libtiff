@@ -50,7 +50,7 @@ utilities to release a package.
     scp tiff-*.tar.gz ftp.remotesensing.org:/var/ftp/libtiff/
     scp tiff-*.zip ftp.remotesensing.org:/var/ftp/libtiff/
 
-15. Announce to list, tiff@remotesensing.org
+15. Announce to list, tiff@lists.maptools.org
 
 16. Update libtiff page on freshmeat with new version announcement.
 
