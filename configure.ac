@@ -25,14 +25,15 @@ dnl OF THIS SOFTWARE.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([LibTIFF Software], 3.7.3, [tiff@remotesensing.org], tiff)
+AC_INIT([LibTIFF Software], 3.7.4, [tiff@lists.maptools.org], tiff)
+AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_MACRO_DIR(m4)
 AC_LANG(C)
 
 dnl Compute the canonical target-system type variable
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
-AM_PROG_CC_C_O
 dnl Do not rebuild generated files every time
 AM_MAINTAINER_MODE
 
@@ -40,7 +41,7 @@ dnl Versioning.
 dnl Don't fill the ALPHA_VERSION field, if not applicable.
 LIBTIFF_MAJOR_VERSION=3
 LIBTIFF_MINOR_VERSION=7
-LIBTIFF_MICRO_VERSION=3
+LIBTIFF_MICRO_VERSION=4
 LIBTIFF_ALPHA_VERSION=
 LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
 dnl This will be used with the 'make release' target
@@ -69,6 +70,7 @@ AC_SUBST(LIBTIFF_RELEASE_DATE)
 
 dnl Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 
 dnl We want warnings. As many warnings as possible.
 VL_PROG_CC_WARNINGS()
