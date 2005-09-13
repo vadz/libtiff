@@ -295,7 +295,8 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 	if (swabflag)
 		TIFFSwabLong(&nextdiroff);
 	printf("Directory %u: offset %lu (%#lx) next %lu (%#lx)\n", ix,
-	    (unsigned long) off, (unsigned long) off, nextdiroff, nextdiroff);
+	    (unsigned long)off, (unsigned long)off,
+	    (unsigned long)nextdiroff, (unsigned long)nextdiroff);
 	for (dp = dir, n = dircount; n > 0; n--, dp++) {
 		if (swabflag) {
 			TIFFSwabArrayOfShort(&dp->tdir_tag, 2);

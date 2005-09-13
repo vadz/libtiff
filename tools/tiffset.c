@@ -29,7 +29,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.10  2005-02-24 14:47:11  fwarmerdam
+ * Revision 1.11  2005-09-13 14:13:42  dron
+ * Avoid warnings.
+ *
+ * Revision 1.10  2005/02/24 14:47:11  fwarmerdam
  * Updated header.
  *
  */
@@ -107,7 +110,7 @@ main(int argc, char* argv[])
                     fprintf( stderr, "Failed to set %s=%s\n",
                              fip->field_name, argv[arg_index] );
             } else if (fip->field_writecount > 0) {
-                int     ret;
+                int     ret = 1;
                 short   wc;
 
                 if (fip->field_writecount == TIFF_VARIABLE)
@@ -139,6 +142,7 @@ main(int argc, char* argv[])
                                 case TIFF_ASCII:
                                 case TIFF_SBYTE:
                                 case TIFF_UNDEFINED:
+				default:
                                     size = 1;
                                     break;
 
