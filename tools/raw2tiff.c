@@ -371,7 +371,8 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		*length = imagesize / *width;
 		
-		fprintf(stderr, "Height is guessed as %lu.\n", *length);
+		fprintf(stderr, "Height is guessed as %lu.\n",
+			(unsigned long)*length);
 
 		return 1;
 	} else if (*width == 0 && *length != 0) {
@@ -379,7 +380,8 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		*width = imagesize / *length;
 		
-		fprintf(stderr,	"Width is guessed as %lu.\n", *width);
+		fprintf(stderr,	"Width is guessed as %lu.\n",
+			(unsigned long)*width);
 
 		return 1;
 	} else if (*width == 0 && *length == 0) {
@@ -415,7 +417,7 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		fprintf(stderr,
 			"Width is guessed as %lu, height is guessed as %lu.\n",
-			*width, *length);
+			(unsigned long)*width, (unsigned long)*length);
 
 		return 1;
 	} else {
