@@ -1,4 +1,4 @@
-.\"	$Header$
+.\" $Id$
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -24,7 +24,7 @@
 .\"
 .if n .po 0
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH TIFF2PS 1 "January 27, 1997"
+.TH TIFF2PS 1 "September 20, 2005" "tff2ps"
 .SH NAME
 tiff2ps \- convert a
 .SM TIFF
@@ -127,9 +127,9 @@ Specify the vertical size of the printed area (in inches).
 .TP
 .B \-H
 Specify the maximum height of image (in inches). Images with larger sizes will
-be splitted in several pages. Option
+be split in several pages. Option
 .B \-L
-may be used for specifying size of splitted images overlapping.
+may be used for specifying size of split images overlapping.
 .TP
 .B \-i
 Enable/disable pixel interpolation.  This option requires a
@@ -137,8 +137,8 @@ single numeric value: zero to disable pixel interpolation and
 non-zero to enable.  The default is enabled.
 .TP
 .B \-L
-Specify the size of overlapping for splitted images (in inches). Used in
-conjuction with
+Specify the size of overlapping for split images (in inches). Used in
+conjunction with
 .B \-H
 option.
 .TP
@@ -189,7 +189,7 @@ When generating \*(Ps Level 2, data is scaled so that it does not
 image into the 
 .I deadzone
 on a page (the outer margin that the printing device is unable to mark).
-This option suppresses this behaviour.
+This option suppresses this behavior.
 When \*(Ps Level 1 is generated, data is imaged to the entire printed
 page and this option has no affect.
 .SH EXAMPLES
@@ -211,7 +211,7 @@ tiff2ps -d 1 foo.tif
 .RE
 (notice that directories are numbered starting at zero.)
 .PP
-If you have a long image, it may be splitted in several pages:
+If you have a long image, it may be split in several pages:
 .RS
 .nf
 tiff2ps -h11 -w8.5 -H14 -L.5 foo.tif > foo.ps
