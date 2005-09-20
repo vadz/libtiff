@@ -3,7 +3,11 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.23  2005-09-13 13:40:48  dron
+ * Revision 1.24  2005-09-20 11:19:38  dron
+ * Added missed 'break' statement as per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=932
+ *
+ * Revision 1.23  2005/09/13 13:40:48  dron
  * Avoid warnings.
  *
  * Revision 1.22  2005/06/23 13:28:33  dron
@@ -624,6 +628,7 @@ int main(int argc, char** argv){
 				break;
 			case 'i':
 				t2p->pdf_colorspace_invert=1;
+				break;
 			case 'f': 
 				t2p->pdf_fitwindow=1;
 				break;
