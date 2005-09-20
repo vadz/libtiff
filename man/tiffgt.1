@@ -1,4 +1,4 @@
-.\"	$Header$
+.\" $Id$
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFGT 1 "October 15, 1995"
+.TH TIFFGT 1 "September 20, 2005" "tiffgt"
 .SH NAME
 tiffgt \- display an image stored in a
 .SM TIFF
@@ -71,7 +71,7 @@ by the
 library.
 .PP
 For palette images (\c
-.IR PhotomatricInterpretation =3),
+.IR PhotometricInterpretation =3),
 .I tiffgt
 inspects the colormap values and assumes either 16-bit
 or 8-bit values according to the maximum value.
@@ -97,7 +97,7 @@ In addition the following keyboard commands are recognized:
 .TP
 .B b
 Use a
-.I PhotometricIntepretation
+.I PhotometricInterpretation
 of MinIsBlack in displaying the current image.
 .TP
 .B l
@@ -108,7 +108,7 @@ of lsb-to-msb in decoding the current image.
 .B m
 Use a
 .I FillOrder
-of msb-tolmsb in decoding the current image.
+of msb-to-lsb in decoding the current image.
 .TP
 .B c
 Use a colormap visual to display the current image.
@@ -118,7 +118,7 @@ Use a true color (24-bit RGB) visual to display the current image.
 .TP
 .B w
 Use a
-.I PhotometricIntepretation
+.I PhotometricInterpretation
 of MinIsWhite in displaying the current image.
 .TP
 .B W
