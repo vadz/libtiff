@@ -289,7 +289,7 @@ docfiles = \
 dist_doc_DATA = $(indexfile) $(docfiles)
 INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY BGCOLOR=white><ul><H2>Man Pages</h2><p>'
 INDEXEND = '</ul></BODY></HTML>'
-manpages := $(docfiles:.html=)
+manpages = $(docfiles:.html=)
 all: all-am
 
 .SUFFIXES:
@@ -302,9 +302,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  html/man/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  html/man/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  html/man/Makefile
+	  $(AUTOMAKE) --gnu  html/man/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

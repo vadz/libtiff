@@ -107,7 +107,7 @@ index: $(docfiles)
 	done
 	${ECHO} ${INDEXEND} >> $(indexfile)
 
-manpages := $(docfiles:.html=)
+manpages = $(docfiles:.html=)
 
 .PHONY: htmldoc
 htmldoc: index
