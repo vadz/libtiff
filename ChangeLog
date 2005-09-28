@@ -1,6 +1,10 @@
+2005-09-28  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffdump.c: Fixed crash when reading malformed tags.
+
 2005-09-20  Andrey Kiselev  <dron@remotesensing.org>
 
-	* tools/tiff2pdf: Added missed 'break' statement as per bug
+	* tools/tiff2pdf.c: Added missed 'break' statement as per bug
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=932
 
 2005-09-12  Andrey Kiselev  <dron@remotesensing.org>
