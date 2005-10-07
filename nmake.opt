@@ -83,9 +83,11 @@ LOGLUV_SUPPORT	= 1
 #
 # Comment out the following lines to disable strip chopping
 # (whether or not to convert single-strip uncompressed images to mutiple
-# strips of ~8Kb to reduce memory usage)
+# strips of specified size to reduce memory usage). Default strip size
+# is 8192 bytes, it can be configured via the STRIP_SIZE_DEFAULT parameter
 #
 STRIPCHOP_SUPPORT = 1
+STRIP_SIZE_DEFAULT = 8192
 
 #
 # Comment out the following lines to disable treating the fourth sample with
@@ -194,7 +196,7 @@ EXTRAFLAGS	= -DPIXARLOG_SUPPORT $(EXTRAFLAGS)
 !ENDIF
 
 !IFDEF STRIPCHOP_SUPPORT
-EXTRAFLAGS	= -DSTRIPCHOP_DEFAULT=TIFF_STRIPCHOP $(EXTRAFLAGS)
+EXTRAFLAGS	= -DSTRIPCHOP_DEFAULT=TIFF_STRIPCHOP -DSTRIP_SIZE_DEFAULT=$(STRIP_SIZE_DEFAULT) $(EXTRAFLAGS)
 !ENDIF
 
 !IFDEF EXTRASAMPLE_AS_ALPHA_SUPPORT
