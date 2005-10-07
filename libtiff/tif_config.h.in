@@ -200,8 +200,11 @@
 #undef STDC_HEADERS
 
 /* Support strip chopping (whether or not to convert single-strip uncompressed
-   images to mutiple strips of ~8Kb to reduce memory usage) */
+   images to mutiple strips of specified size to reduce memory usage) */
 #undef STRIPCHOP_DEFAULT
+
+/* Default size of the strip in bytes (when strip chopping enabled) */
+#undef STRIP_SIZE_DEFAULT
 
 /* Enable SubIFD tag (330) support */
 #undef SUBIFD_SUPPORT

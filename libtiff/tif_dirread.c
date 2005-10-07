@@ -1527,20 +1527,25 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	uint32* newoffsets;
 
 	/*
-	 * Make the rows hold at least one
-	 * scanline, but fill 8k if possible.
+	 * Make the rows hold at least one scanline, but fill specified amount
+	 * of data if possible.
 	 */
-	if (rowbytes > 8192) {
+#ifndef STRIP_SIZE_DEFAULT
+# define STRIP_SIZE_DEFAULT 8192
+#endif
+	if (rowbytes > STRIP_SIZE_DEFAULT) {
 		stripbytes = rowbytes;
 		rowsperstrip = 1;
 	} else if (rowbytes > 0 ) {
-		rowsperstrip = 8192 / rowbytes;
+		rowsperstrip = STRIP_SIZE_DEFAULT / rowbytes;
 		stripbytes = rowbytes * rowsperstrip;
 	}
         else
             return;
 
-	/* never increase the number of strips in an image */
+	/* 
+	 * never increase the number of strips in an image
+	 */
 	if (rowsperstrip >= td->td_rowsperstrip)
 		return;
 	nstrips = (tstrip_t) TIFFhowmany(bytecount, stripbytes);
@@ -1560,9 +1565,8 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 		return;
 	}
 	/*
-	 * Fill the strip information arrays with
-	 * new bytecounts and offsets that reflect
-	 * the broken-up format.
+	 * Fill the strip information arrays with new bytecounts and offsets
+	 * that reflect the broken-up format.
 	 */
 	for (strip = 0; strip < nstrips; strip++) {
 		if (stripbytes > (tsize_t) bytecount)
