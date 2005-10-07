@@ -1542,6 +1542,7 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	}
         else
             return;
+#undef STRIP_SIZE_DEFAULT
 
 	/* 
 	 * never increase the number of strips in an image

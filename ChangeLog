@@ -1,3 +1,9 @@
+2005-10-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* configure.ac, configure, nmake.opt, libtiff/{tif_config.h,
+	tif_dirread.c}: Make the default strip size configurable via the
+	--with-default-strip-size and STRIP_SIZE_DEFAULT options.
+
 2005-09-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* html/support.html: Fixed link to documentation on Greg Ward's
