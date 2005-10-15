@@ -523,7 +523,7 @@ TIFFWriteCheck(TIFF* tif, int tiles, const char* module)
 		 * because this field is used in other parts of library even
 		 * in the single band case.
 		 */
-		tif->tif_dir.td_planarconfig == PLANARCONFIG_CONTIG;
+		tif->tif_dir.td_planarconfig = PLANARCONFIG_CONTIG;
 	} else {
 		if (!TIFFFieldSet(tif, FIELD_PLANARCONFIG)) {
 			TIFFError(module,
