@@ -1,3 +1,9 @@
+2005-10-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_dirread.c: Don't try and split single strips into "0" strips
+	in ChopUpSingleUncompressedStrip.  This happens in some degenerate
+	cases (like 1x1 files with stripbytecounts==0 (gtsmall.jp2 embed tiff)
+
 2005-10-20  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* tif_fax3.c: changed 'at scanline ...' style warning/errors 
