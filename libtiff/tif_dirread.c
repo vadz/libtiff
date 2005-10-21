@@ -1550,6 +1550,9 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	if (rowsperstrip >= td->td_rowsperstrip)
 		return;
 	nstrips = (tstrip_t) TIFFhowmany(bytecount, stripbytes);
+        if( nstrips == 0 ) /* something is wonky, do nothing. */
+            return;
+
 	newcounts = (uint32*) _TIFFCheckMalloc(tif, nstrips, sizeof (uint32),
 				"for chopped \"StripByteCounts\" array");
 	newoffsets = (uint32*) _TIFFCheckMalloc(tif, nstrips, sizeof (uint32),
