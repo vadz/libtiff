@@ -518,8 +518,7 @@ main(int argc, char* argv[])
 		 */
 		size = width * info_hdr.iBitCount + 31;
 		if (!width || !info_hdr.iBitCount
-		    || (size - 31) / info_hdr.iBitCount != width )
-		{
+		    || (size - 31) / info_hdr.iBitCount != width ) {
 			TIFFError(infilename,
 				  "Wrong image parameters; "
 				  "can't allocate space for scanline buffer");
