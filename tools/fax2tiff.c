@@ -84,6 +84,8 @@ main(int argc, char* argv[])
 	uint32 group3options_out = 0;	/* 1d-encoded */
 	uint32 group4options_in = 0;	/* compressed */
 	uint32 group4options_out = 0;	/* compressed */
+	uint32 defrowsperstrip = (uint32) 0;
+	uint32 rowsperstrip;
 	int photometric_in = PHOTOMETRIC_MINISWHITE;
 	int photometric_out = PHOTOMETRIC_MINISWHITE;
 	int mode = FAXMODE_CLASSF;
@@ -95,7 +97,7 @@ main(int argc, char* argv[])
 	extern char* optarg;
 
 
-	while ((c = getopt(argc, argv, "R:X:o:1234ABLMPUW5678abcflmpsuvwz?")) != -1)
+	while ((c = getopt(argc, argv, "R:X:o:1234ABLMPUW5678abcflmprsuvwz?")) != -1)
 		switch (c) {
 			/* input-related options */
 		case '3':		/* input is g3-encoded */
@@ -182,6 +184,9 @@ main(int argc, char* argv[])
 			break;
 		case 'p':	/* generate not EOL-aligned output (g3 only) */
 			group3options_out &= ~GROUP3OPT_FILLBITS;
+			break;
+		case 'r':		/* rows/strip */
+			defrowsperstrip = atol(optarg);
 			break;
 		case 's':		/* stretch image by dup'ng scanlines */
 			stretch = 1;
@@ -270,22 +275,27 @@ main(int argc, char* argv[])
 		switch (compression_out) {
 			/* g3 */
 			case COMPRESSION_CCITTFAX3:
-			TIFFSetField(out, TIFFTAG_GROUP3OPTIONS, group3options_out);
+			TIFFSetField(out, TIFFTAG_GROUP3OPTIONS,
+				     group3options_out);
 			TIFFSetField(out, TIFFTAG_FAXMODE, mode);
-			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, -1L);
+			rowsperstrip =
+				(defrowsperstrip)?defrowsperstrip:(uint32)-1L;
 			break;
 
 			/* g4 */
 			case COMPRESSION_CCITTFAX4:
-			TIFFSetField(out, TIFFTAG_GROUP4OPTIONS, group4options_out);
+			TIFFSetField(out, TIFFTAG_GROUP4OPTIONS,
+				     group4options_out);
 			TIFFSetField(out, TIFFTAG_FAXMODE, mode);
-			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, -1L);
+			rowsperstrip =
+				(defrowsperstrip)?defrowsperstrip:(uint32)-1L;
 			break;
 
 			default:
-			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
-			    TIFFDefaultStripSize(out, 0));
+			rowsperstrip = (defrowsperstrip) ?
+				defrowsperstrip : TIFFDefaultStripSize(out, 0);
 		}
+		TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
 		TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder_out);
 		TIFFSetField(out, TIFFTAG_SOFTWARE, "fax2tiff");
@@ -424,6 +434,7 @@ char* stuff[] = {
 " -f		generate TIFF Class F (TIFF/F) format	[default]",
 " -m		output fill order is MSB2LSB",
 " -l		output fill order is LSB2MSB		[default]",
+" -r #		make each strip have no more than # rows",
 " -s		stretch image by duplicating scanlines",
 " -v		print information about conversion work",
 " -z		generate LZW compressed output",
