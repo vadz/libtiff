@@ -1,3 +1,34 @@
+2005-10-31  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/fax2tiff.c: Properly calculate sizes of temporary arrays
+	as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=943
+
+	* tools/fax2tiff.c: Added option '-r' to set RowsPerStrip parameter
+	as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=944
+
+	* tools/tiffdump.c: Fixed typeshift and typemask arrays initialization
+	problem as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=946
+
+	* tools/bmp2tiff.c: Fixed possible integer overflow error as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=965
+
+	* libtiff/tif_dirinfo.c: Make XResolution, YResolution and
+	ResolutionUnit tags modifiable during write process. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=977
+
+	* tools/tiffsplit.c: Copy fax related fields over splitted parts
+	as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=983
+
 2005-10-21  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_dirread.c: Don't try and split single strips into "0" strips
@@ -6,9 +37,9 @@
 
 2005-10-20  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
-	* tif_fax3.c: changed 'at scanline ...' style warning/errors 
-        with incorrect use of tif_row, to 'at line ... of 
-        strip/tile ...' style
+	* tif_fax3.c: changed 'at scanline ...' style warning/errors
+	with incorrect use of tif_row, to 'at line ... of
+	strip/tile ...' style
 
 2005-10-15  Frank Warmerdam  <warmerdam@pobox.com>
 
