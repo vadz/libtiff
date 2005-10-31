@@ -508,7 +508,25 @@ main(int argc, char* argv[])
                 uint32 offset, size;
                 char *scanbuf;
 
-                size = ((width * info_hdr.iBitCount + 31) & ~31) / 8;
+		/* XXX: Avoid integer overflow. We can calculate size in one
+		 * step using
+		 *
+		 *   size = ((width * info_hdr.iBitCount + 31) & ~31) / 8
+		 *
+		 * formulae, but we should check for overflow conditions
+		 * during calculation.
+		 */
+		size = width * info_hdr.iBitCount + 31;
+		if (!width || !info_hdr.iBitCount
+		    || (size - 31) / info_hdr.iBitCount != width )
+		{
+			TIFFError(infilename,
+				  "Wrong image parameters; "
+				  "can't allocate space for scanline buffer");
+			goto bad3;
+		}
+                size = (size & ~31) / 8;
+
                 scanbuf = (char *) _TIFFmalloc(size);
 		if (!scanbuf) {
 			TIFFError(infilename,
@@ -525,12 +543,14 @@ main(int argc, char* argv[])
 				TIFFError(infilename,
 					  "scanline %lu: Seek error",
 					  (unsigned long) row);
+				break;
                         }
 
 			if (read(fd, scanbuf, size) < 0) {
 				TIFFError(infilename,
 					  "scanline %lu: Read error",
 					  (unsigned long) row);
+				break;
                         }
 
                         rearrangePixels(scanbuf, width, info_hdr.iBitCount);
@@ -539,6 +559,7 @@ main(int argc, char* argv[])
 				TIFFError(infilename,
 					  "scanline %lu: Write error",
 					  (unsigned long) row);
+				break;
                         }
                 }
 
