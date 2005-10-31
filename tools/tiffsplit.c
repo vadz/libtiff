@@ -199,6 +199,13 @@ tiffcp(TIFF* in, TIFF* out)
 	CopyField(TIFFTAG_HOSTCOMPUTER, stringv);
 	CopyField(TIFFTAG_PAGENAME, stringv);
 	CopyField(TIFFTAG_DOCUMENTNAME, stringv);
+	CopyField(TIFFTAG_BADFAXLINES, longv);
+	CopyField(TIFFTAG_CLEANFAXDATA, longv);
+	CopyField(TIFFTAG_CONSECUTIVEBADFAXLINES, longv);
+	CopyField(TIFFTAG_FAXRECVPARAMS, longv);
+	CopyField(TIFFTAG_FAXRECVTIME, longv);
+	CopyField(TIFFTAG_FAXSUBADDRESS, stringv);
+	CopyField(TIFFTAG_FAXDCS, stringv);
 	if (TIFFIsTiled(in))
 		return (cpTiles(in, out));
 	else
