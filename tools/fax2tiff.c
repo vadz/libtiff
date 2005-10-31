@@ -57,11 +57,13 @@
 # define EXIT_FAILURE	1
 #endif
 
+#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
+
 TIFF	*faxTIFF;
 char	*rowbuf;
 char	*refbuf;
 
-int	xsize = 1728;
+uint32	xsize = 1728;
 int	verbose;
 int	stretch;
 uint16	badfaxrun;
@@ -138,7 +140,7 @@ main(int argc, char* argv[])
 			resY = (float) atof(optarg);
 			break;
 		case 'X':		/* input width */
-			xsize = atoi(optarg);
+			xsize = (uint32) atoi(optarg);
 			break;
 
 			/* output-related options */
@@ -211,10 +213,8 @@ main(int argc, char* argv[])
 	if (npages < 1)
 		usage();
 
-/* NB: the uint32 casts are to silence certain ANSI-C compilers */
-#define	TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
-	rowbuf = _TIFFmalloc(TIFFhowmany(xsize,8));
-	refbuf = _TIFFmalloc(TIFFhowmany(xsize,8));
+	rowbuf = _TIFFmalloc(TIFFhowmany8(xsize));
+	refbuf = _TIFFmalloc(TIFFhowmany8(xsize));
 	if (rowbuf == NULL || refbuf == NULL) {
 		fprintf(stderr, "%s: Not enough memory\n", argv[0]);
 		return (EXIT_FAILURE);
@@ -343,6 +343,7 @@ int
 copyFaxFile(TIFF* tifin, TIFF* tifout)
 {
 	uint32 row;
+	uint32 linesize = TIFFhowmany8(xsize);
 	uint16 badrun;
 	int ok;
 
@@ -365,22 +366,22 @@ copyFaxFile(TIFF* tifin, TIFF* tifout)
 	badfaxlines = 0;
 	badfaxrun = 0;
 
-	_TIFFmemset(refbuf, 0, sizeof (refbuf));
+	_TIFFmemset(refbuf, 0, linesize);
 	row = 0;
 	badrun = 0;		/* current run of bad lines */
 	while (tifin->tif_rawcc > 0) {
 		ok = (*tifin->tif_decoderow)(tifin, (tdata_t) rowbuf, 
-					     sizeof (rowbuf), 0);
+					     linesize, 0);
 		if (!ok) {
 			badfaxlines++;
 			badrun++;
 			/* regenerate line from previous good line */
-			_TIFFmemcpy(rowbuf, refbuf, sizeof (rowbuf));
+			_TIFFmemcpy(rowbuf, refbuf, linesize);
 		} else {
 			if (badrun > badfaxrun)
 				badfaxrun = badrun;
 			badrun = 0;
-			_TIFFmemcpy(refbuf, rowbuf, sizeof (rowbuf));
+			_TIFFmemcpy(refbuf, rowbuf, linesize);
 		}
 		tifin->tif_row++;
 
