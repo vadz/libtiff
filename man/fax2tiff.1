@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH FAX2TIFF 1 "February 27, 2003"
+.TH FAX2TIFF 1 "October 31, 2005"
 .SH NAME
 fax2tiff \- create a
 .SM TIFF
@@ -212,6 +212,21 @@ Force  output data to have bits filled from least significant bit (\c
 ) to most significant bit (\c
 .SM MSB\c
 ) (default).
+.TP
+.B \-r
+Specify the number of rows (scanlines) in each strip of data
+written to the output file.
+By default (or when value
+.B 0
+is specified),
+.I tiffcp
+attempts to set the rows/strip
+that no more than 8 kilobytes of data appear in a strip (with except of G3/G4
+compression schemes). If you specify special value
+.B -1
+it will results in infinite number of the rows per strip. The entire image
+will be the one strip in that case. This is default in case of G3/G4 output
+compression schemes.
 .TP
 .B \-s
 Stretch the input image vertically by writing each input row of
