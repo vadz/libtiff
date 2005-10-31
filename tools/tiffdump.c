@@ -56,8 +56,8 @@ char*	appname;
 char*	curfile;
 int	swabflag;
 int	bigendian;
-int	typeshift[13];		/* data type shift counts */
-long	typemask[13];		/* data type masks */
+int	typeshift[14];		/* data type shift counts */
+long	typemask[14];		/* data type masks */
 uint32	maxitems = 24;		/* maximum indirect data items to print */
 
 char*	bytefmt = "%s%#02x";		/* BYTE */
