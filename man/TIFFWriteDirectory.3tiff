@@ -128,8 +128,11 @@ a previous directory.
 This can occur when setting up a link to the directory that is being
 written.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFError (3TIFF),
-.IR TIFFReadDirectory (3TIFF),
-.IR TIFFSetDirectory (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFError (3TIFF),
+.BR TIFFReadDirectory (3TIFF),
+.BR TIFFSetDirectory (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

@@ -69,8 +69,11 @@ An error was encountered while reading the ``directory count'' field.
 An error was encountered while reading the ``link value'' that points to the
 next directory in a file.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
 .IR TIFFCurrentDirectory (3TIFF),
 .IR TIFFOpen (3TIFF),
 .IR TIFFReadDirectory (3TIFF),
-.IR TIFFWriteDirectory (3TIFF)
+.IR TIFFWriteDirectory (3TIFF),
+.IR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

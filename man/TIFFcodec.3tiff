@@ -76,4 +76,7 @@ to register a codec.
 did not locate the specified codec in the table of registered 
 compression schemes.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF)
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

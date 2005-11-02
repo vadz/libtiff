@@ -59,7 +59,7 @@ image data with BitsPerSample greater than 8.
 is returned.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .PP
 \fB%s: File not open for writing\fP.
@@ -71,23 +71,26 @@ The image is assumed to be organized in strips because neither of the
 or
 .I TileLength
 tags have been set with
-.IR TIFFSetField (3TIFF).
+.BR TIFFSetField (3TIFF).
 .PP
 \fB%s: Must set "ImageWidth" before writing data\fP. The image's width has not
 be set before the first write. See
-.IR TIFFSetField (3TIFF)
+.BR TIFFSetField (3TIFF)
 for information on how to do this.
 .PP
 \fB%s: Must set "PlanarConfiguration" before writing data\fP. The organization
 of data has not be defined before the first write. See
-.IR TIFFSetField (3TIFF)
+.BR TIFFSetField (3TIFF)
 for information on how to do this.
 .PP
 \fB%s: No space for tile arrays"\fP.
 There was not enough space for the arrays that hold tile offsets and byte
 counts.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFWriteTile (3TIFF),
-.IR TIFFWriteRawTile (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFWriteTile (3TIFF),
+.BR TIFFWriteRawTile (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

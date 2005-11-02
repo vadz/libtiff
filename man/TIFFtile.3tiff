@@ -119,10 +119,13 @@ returns the number of tiles in the image.
 .SH DIAGNOSTICS
 None.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFReadEncodedTile (3TIFF),
-.IR TIFFReadRawTile (3TIFF),
-.IR TIFFReadTile (3TIFF),
-.IR TIFFWriteEncodedTile (3TIFF),
-.IR TIFFWriteRawTile (3TIFF),
-.IR TIFFWriteTile (3TIFF)
+.BR TIFFReadEncodedTile (3TIFF),
+.BR TIFFReadRawTile (3TIFF),
+.BR TIFFReadTile (3TIFF),
+.BR TIFFWriteEncodedTile (3TIFF),
+.BR TIFFWriteRawTile (3TIFF),
+.BR TIFFWriteTile (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

@@ -205,22 +205,25 @@ printf("Tag %d: %s, count %d\n", 36867, (char *)data, count);
 
 
 is not supported by
-.IR libtiff(3TIFF),
+.BR libtiff(3TIFF),
 library
 .SH RETURN VALUES
 1 is returned if the tag is defined in the current directory; otherwise a 0 is
 returned.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .PP
 .BR "Unknown field, tag 0x%x" .
 An unknown tag was supplied.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFSetField (3TIFF),
-.IR TIFFSetDirectory (3TIFF),
-.IR TIFFReadDirectory (3TIFF),
-.IR TIFFWriteDirectory (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFSetField (3TIFF),
+.BR TIFFSetDirectory (3TIFF),
+.BR TIFFReadDirectory (3TIFF),
+.BR TIFFWriteDirectory (3TIFF)
+.BR libtiff (3TIFF),
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

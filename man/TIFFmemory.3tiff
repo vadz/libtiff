@@ -82,6 +82,9 @@ repsectively.
 .SH DIAGNOSTICS
 None.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR malloc (3),
-.IR memory (3)
+.BR malloc (3),
+.BR memory (3),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

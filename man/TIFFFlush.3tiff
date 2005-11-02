@@ -48,14 +48,17 @@ needed \- the library automatically does any flushing required.
 0 is returned if an error is encountered, otherwise 1 is returned.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFWriteEncodedStrip (3TIFF),
-.IR TIFFWriteEncodedTile (3TIFF),
-.IR TIFFWriteRawStrip (3TIFF),
-.IR TIFFWriteRawTile (3TIFF),
-.IR TIFFWriteScanline (3TIFF),
-.IR TIFFWriteTile (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFWriteEncodedStrip (3TIFF),
+.BR TIFFWriteEncodedTile (3TIFF),
+.BR TIFFWriteRawStrip (3TIFF),
+.BR TIFFWriteRawTile (3TIFF),
+.BR TIFFWriteScanline (3TIFF),
+.BR TIFFWriteTile (3TIFF)
+.BR libtiff (3TIFF),
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

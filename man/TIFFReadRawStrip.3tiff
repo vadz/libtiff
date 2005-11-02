@@ -51,11 +51,14 @@ is returned;
 returns \-1 if an error was encountered.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFReadEncodedStrip (3TIFF),
-.IR TIFFReadScanline (3TIFF),
-.IR TIFFStripSize (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFReadEncodedStrip (3TIFF),
+.BR TIFFReadScanline (3TIFF),
+.BR TIFFStripSize (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

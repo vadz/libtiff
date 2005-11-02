@@ -68,4 +68,7 @@ Currently following data types are supported:
 returns a number of bytes occupied by the item of given type. 0 returned when
 uknown data type supplied.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
+.BR libtiff (3TIFF),
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

@@ -45,7 +45,7 @@ organized in separate planes (\c
 .IR PlanarConfiguration =2).
 To read a full strip of data the data buffer should typically be at least as
 large as the number returned by
-.IR TIFFStripSize (3TIFF).
+.BR TIFFStripSize (3TIFF).
 If the -1 passed in
 .I size
 parameter, the whole strip will be read. You should be sure you have enough
@@ -66,10 +66,13 @@ is returned;
 returns \-1 if an error was encountered.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFReadRawStrip (3TIFF),
-.IR TIFFReadScanline (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFReadRawStrip (3TIFF),
+.BR TIFFReadScanline (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

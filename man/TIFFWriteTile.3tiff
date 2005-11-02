@@ -61,14 +61,17 @@ returns \-1 if it detects an error; otherwise the number of bytes in the tile
 is returned.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFCheckTile (3TIFF),
-.IR TIFFComputeTile (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFReadTile (3TIFF),
-.IR TIFFWriteScanline (3TIFF),
-.IR TIFFWriteEncodedTile (3TIFF),
-.IR TIFFWriteRawTile (3TIFF)
+.BR TIFFCheckTile (3TIFF),
+.BR TIFFComputeTile (3TIFF),
+.BR TIFFOpen (3TIFF),
+.BR TIFFReadTile (3TIFF),
+.BR TIFFWriteScanline (3TIFF),
+.BR TIFFWriteEncodedTile (3TIFF),
+.BR TIFFWriteRawTile (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

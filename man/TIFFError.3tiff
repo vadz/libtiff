@@ -61,6 +61,9 @@ A
 .IR TIFFSetErrorHandler
 returns a reference to the previous error handling function.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFWarning (3TIFF),
-.IR printf (3)
+.BR TIFFWarning (3TIFF),
+.BR libtiff (3TIFF),
+.BR printf (3)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

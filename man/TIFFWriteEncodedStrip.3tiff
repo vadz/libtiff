@@ -93,7 +93,10 @@ for information on how to do this.
 There was not enough space for the arrays that hold strip offsets and byte
 counts.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFWriteScanline (3TIFF),
-.IR TIFFWriteRawStrip (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFWriteScanline (3TIFF),
+.BR TIFFWriteRawStrip (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

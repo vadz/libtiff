@@ -1,4 +1,4 @@
-.\"	$Header$
+.\"	$Id$
 .\"
 .\" Copyright (c) 1991-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -23,8 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH FAX2PS 1 "March 16, 1995"
+.TH FAX2PS 1 "November 2, 2005" "libtiff"
 .SH NAME
 fax2ps \- convert a
 .SM TIFF
@@ -144,7 +143,7 @@ This can result in long horizontal black lines in the resultant
 If the destination printer supports \*(Ps Level II then
 it is always faster to just send the encoded bitmap generated
 by the
-.IR tiff2ps (1)
+.BR tiff2ps (1)
 program.
 .SH BUGS
 .I fax2ps
@@ -152,5 +151,8 @@ should probably figure out when it is doing a poor
 job of compressing the output and just generate 
 \*(Ps to image the bitmap raster instead.
 .SH "SEE ALSO"
-.IR tiff2ps (1),
-.IR libtiff (3)
+.BR tiff2ps (1),
+.BR libtiff (3)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

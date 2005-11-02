@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFBUFFER 3TIFF "October 15, 1995" "libtiff"
+.TH TIFFBUFFER 3TIFF "November 1, 2005" "libtiff"
 .SH NAME
 TIFFReadBufferSetup, TIFFWriteBufferSetup \- I/O buffering control routines
 .SH SYNOPSIS
@@ -71,4 +71,7 @@ was unable to dynamically allocate space for a data buffer.
 .I TIFFWriteBufferSetup
 was unable to dynamically allocate space for a data buffer.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF)
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

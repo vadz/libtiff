@@ -260,7 +260,9 @@ _TIFFfree(cielab);
 .fi
 .RE
 .PP
-
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFRGBAImage (3TIFF)
+.BR TIFFRGBAImage (3TIFF)
+.BR libtiff (3TIFF),
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

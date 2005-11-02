@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFSV 1 "September 20, 2005" "tiffsv"
+.TH TIFFSV 1 "September 20, 2005" "libtiff"
 .SH NAME
 tiffsv \- save an image from the framebuffer in a
 .SM TIFF
@@ -126,14 +126,17 @@ with the appropriate options.
 If data are saved compressed and in separate planes, then the
 rows in each strip is silently set to one to avoid limitations
 in the
-.IR libtiff (3)
+.BR libtiff (3TIFF)
 library.
 .SH "SEE ALSO"
-.IR scrsave (6D)
-.IR pal2rgb (1),
-.IR tiffdump (1),
-.IR tiffgt (1),
-.IR tiffinfo (1),
-.IR tiffcp (1),
-.IR tiffmedian (1),
-.IR libtiff (3)
+.BR scrsave (6D)
+.BR pal2rgb (1),
+.BR tiffdump (1),
+.BR tiffgt (1),
+.BR tiffinfo (1),
+.BR tiffcp (1),
+.BR tiffmedian (1),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

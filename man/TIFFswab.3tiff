@@ -74,4 +74,7 @@ i.e.
 .SH DIAGNOSTICS
 None.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

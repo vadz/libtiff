@@ -183,7 +183,7 @@ is one, then a single array is passed; otherwise three arrays should be
 passed.
 .fi
 * The contents of this field are quite complex.  See 
-.IR "The ICC Profile Format Specification" ,
+.BR "The ICC Profile Format Specification" ,
 Annex B.3 "Embedding ICC Profiles in TIFF Files"
 (available at http://www.color.org) for an explanation.
 .br
@@ -192,7 +192,7 @@ Annex B.3 "Embedding ICC Profiles in TIFF Files"
 Otherwise, 0 is returned if an error was detected.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.BR TIFFError (3TIFF)
 routine.
 .PP
 \fB%s: Cannot modify tag "%s" while writing\fP.
@@ -204,9 +204,12 @@ the format of written data.
 \fB%d: Bad value for "%s"\fP.
 An invalid value was supplied for the named tag.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFGetField (3TIFF),
-.IR TIFFSetDirectory (3TIFF),
-.IR TIFFWriteDirectory (3TIFF),
-.IR TIFFReadDirectory (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFGetField (3TIFF),
+.BR TIFFSetDirectory (3TIFF),
+.BR TIFFWriteDirectory (3TIFF),
+.BR TIFFReadDirectory (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

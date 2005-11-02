@@ -154,8 +154,11 @@ unspecified.
 If the image has a single strip, the library will estimate
 the missing value based on the file size.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFWriteDirectory (3TIFF),
-.IR TIFFSetDirectory (3TIFF),
-.IR TIFFSetSubDirectory (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFWriteDirectory (3TIFF),
+.BR TIFFSetDirectory (3TIFF),
+.BR TIFFSetSubDirectory (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

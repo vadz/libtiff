@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFClose 3TIFF "May 2, 1990" "libtiff"
+.TH TIFFClose 3TIFF "November 2, 2005" "libtiff"
 .SH NAME
 TIFFClose \- close a previously opened
 .SM TIFF
@@ -35,16 +35,19 @@ file
 .SH DESCRIPTION
 .IR TIFFClose
 closes a file that was previously opened with
-.IR TIFFOpen (3TIFF).
+.BR TIFFOpen (3TIFF).
 Any buffered data are flushed to the file, including the contents of the
 current directory (if modified); and all resources are reclaimed.
 .SH DIAGNOSTICS
 All error messages are directed to the
-.IR TIFFError (3TIFF)
+.bR TIFFError (3TIFF)
 routine.
 Likewise, warning messages are directed to the
-.IR TIFFWarning (3TIFF)
+.BR TIFFWarning (3TIFF)
 routine.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF)
+.BR libtiff (3TIFF),
+.BR TIFFOpen (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

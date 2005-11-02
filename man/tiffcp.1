@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFCP 1 "September 20, 2005" "tiffcp"
+.TH TIFFCP 1 "September 20, 2005" "libtiff"
 .SH NAME
 tiffcp \- copy (and possibly convert) a
 .SM TIFF
@@ -262,9 +262,12 @@ as follows:
 .nf
 tiffcp -c none -,=% -b CCD,X.tif CCD,X%1%.tif result.tif
 .SH "SEE ALSO"
-.IR pal2rgb (1),
-.IR tiffinfo (1),
-.IR tiffcmp (1),
-.IR tiffmedian (1),
-.IR tiffsplit (1),
-.IR libtiff (3)
+.BR pal2rgb (1),
+.BR tiffinfo (1),
+.BR tiffcmp (1),
+.BR tiffmedian (1),
+.BR tiffsplit (1),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

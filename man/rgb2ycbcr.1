@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH RGB2YCBCR 1 "October 15, 1995"
+.TH RGB2YCBCR 1 "November 2, 2005" "libtiff"
 .SH NAME
 rgb2ycbcr \- convert non-YCbCr
 .SM TIFF
@@ -42,23 +42,19 @@ converts
 .SM RGB
 color, greyscale, or bi-level
 .SM TIFF
-images to YCbCr images by
-transforming and sampling pixel data.
-If multiple files are specified on the command line
-each source file is converted to a separate directory
-in the destination file.
+images to YCbCr images by transforming and sampling pixel data. If multiple
+files are specified on the command line each source file is converted to a
+separate directory in the destination file.
 .PP
 By default, chrominance samples are created by sampling
-2 by 2 blocks of luminance values; this can be changed with
-the
+2 by 2 blocks of luminance values; this can be changed with the
 .B \-h
 and
 .B \-v
 options.
 Output data are compressed with the
 .SM PackBits
-compression scheme, by default; an alternate scheme can be
-selected with the
+compression scheme, by default; an alternate scheme can be selected with the
 .B \-c
 option.
 By default, output data are compressed in strips with
@@ -95,6 +91,9 @@ is approximately 8 kilobytes.
 .B \-v
 Set the vertical sampling dimension to one of: 1, 2 (default), or 4.
 .SH "SEE ALSO"
-.IR tiffinfo (1),
-.IR tiffcp (1),
-.IR libtiff (3)
+.BR tiffinfo (1),
+.BR tiffcp (1),
+.BR libtiff (3)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff

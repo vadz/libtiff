@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH INTRO 3TIFF "November 24, 2004" "libtiff"
+.TH INTRO 3TIFF "November 2, 2005" "libtiff"
 .SH NAME
 libtiff \- introduction to
 .IR libtiff ,
@@ -501,35 +501,36 @@ Warning messages are likewise directed through the
 .IR TIFFWarning
 routine.
 .SH "SEE ALSO"
-.IR fax2tiff (1),
-.IR gif2tiff (1),
-.IR pal2rgb (1),
-.IR ppm2tiff (1),
-.IR rgb2ycbcr (1),
-.IR ras2tiff (1),
-.IR raw2tiff (1),
-.IR sgi2tiff (1),
-.IR tiff2bw (1),
-.IR tiffdither (1),
-.IR tiffdump (1),
-.IR tiffcp (1),
-.IR tiffcmp (1),
-.IR tiffgt (1),
-.IR tiffinfo (1),
-.IR tiffmedian (1),
-.IR tiffsplit (1),
-.IR tiffsv (1),
+.BR fax2tiff (1),
+.BR gif2tiff (1),
+.BR pal2rgb (1),
+.BR ppm2tiff (1),
+.BR rgb2ycbcr (1),
+.BR ras2tiff (1),
+.BR raw2tiff (1),
+.BR sgi2tiff (1),
+.BR tiff2bw (1),
+.BR tiffdither (1),
+.BR tiffdump (1),
+.BR tiffcp (1),
+.BR tiffcmp (1),
+.BR tiffgt (1),
+.BR tiffinfo (1),
+.BR tiffmedian (1),
+.BR tiffsplit (1),
+.BR tiffsv (1).
 .PP
-.IR "Tag Image File Format Specification \(em Revision 6.0" ,
+.BR "Tag Image File Format Specification \(em Revision 6.0" ,
 an Aldus Technical Memorandum.
 .PP
-.IR "The Spirit of TIFF Class F" ,
+.BR "The Spirit of TIFF Class F" ,
 an appendix to the TIFF 5.0 specification prepared by Cygnet Technologies.
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/
 .SH BUGS
 The library does not support multi-sample images
 where some samples have different bits/sample.
 .PP
 The library does not support random access to compressed data
 that is organized with more than one row per tile or strip.
-The library discards unknown tags.
-The library should do more validity checking of a directory's contents.

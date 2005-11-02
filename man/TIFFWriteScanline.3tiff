@@ -113,13 +113,13 @@ should be set to one.
 \fB%s: Must set "ImageWidth" before writing data\fP.
 The image's width has not be set before the first write.
 See
-.IR TIFFSetField (3TIFF)
+.BR TIFFSetField (3TIFF)
 for information on how to do this.
 .PP
 \fB%s: Must set "PlanarConfiguration" before writing data\fP.
 The organization of data has not be defined before the first write.
 See
-.IR TIFFSetField (3TIFF)
+.BR TIFFSetField (3TIFF)
 for information on how to do this.
 .PP
 \fBCan not change "ImageLength" when using separate planes\fP. Separate image
@@ -145,7 +145,10 @@ the size of a scanline is not calculated on a per-sample basis, and for
 .IR PlanarConfiguration =1
 the library does not pack the block-interleaved samples.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFWriteEncodedStrip (3TIFF),
-.IR TIFFWriteRawStrip (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFWriteEncodedStrip (3TIFF),
+.BR TIFFWriteRawStrip (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

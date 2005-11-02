@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFDITHER 1 "September 20, 2005" "tiffdither"
+.TH TIFFDITHER 1 "September 20, 2005" "libtiff"
 .SH NAME
 tiffdither \- convert a greyscale image to bilevel using dithering
 .SH SYNOPSIS
@@ -114,12 +114,15 @@ Set the threshold value for dithering.
 By default the threshold value is 128.
 .SH NOTES
 The dither algorithm is taken from the
-.IR tiffmedian (1)
+.BR tiffmedian (1)
 program (written by Paul Heckbert).
 .SH "SEE ALSO"
-.IR pal2rgb (1),
-.IR fax2tiff (1),
-.IR tiffinfo (1),
-.IR tiffcp (1),
-.IR tiff2bw (1),
-.IR libtiff (3)
+.BR pal2rgb (1),
+.BR fax2tiff (1),
+.BR tiffinfo (1),
+.BR tiffcp (1),
+.BR tiff2bw (1),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

@@ -89,8 +89,11 @@ returns the number of strips in the image.
 .SH DIAGNOSTICS
 None.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFReadEncodedStrip (3TIFF),
-.IR TIFFReadRawStrip (3TIFF),
-.IR TIFFWriteEncodedStrip (3TIFF),
-.IR TIFFWriteRawStrip (3TIFF)
+.BR TIFFReadEncodedStrip (3TIFF),
+.BR TIFFReadRawStrip (3TIFF),
+.BR TIFFWriteEncodedStrip (3TIFF),
+.BR TIFFWriteRawStrip (3TIFF),
+.BR libtiff (3TIFF),
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/

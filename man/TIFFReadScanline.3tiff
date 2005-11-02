@@ -85,7 +85,10 @@ the size of a scanline is not calculated on a per-sample basis, and for
 the library does not unpack the block-interleaved samples; use the strip- and
 tile-based interfaces to read these formats.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFReadEncodedStrip (3TIFF),
-.IR TIFFReadRawStrip (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFReadEncodedStrip (3TIFF),
+.BR TIFFReadRawStrip (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.remotesensing.org/libtiff/
