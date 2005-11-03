@@ -327,6 +327,7 @@ extern	int TIFFReadBufferSetup(TIFF*, tdata_t, tsize_t);
 extern	int TIFFWriteBufferSetup(TIFF*, tdata_t, tsize_t);
 extern	int TIFFSetupStrips(TIFF *);
 extern  int TIFFWriteCheck(TIFF*, int, const char *);
+extern	void TIFFFreeDirectory(TIFF*);
 extern  int TIFFCreateDirectory(TIFF*);
 extern	int TIFFLastDirectory(TIFF*);
 extern	int TIFFSetDirectory(TIFF*, tdir_t);

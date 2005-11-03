@@ -118,4 +118,6 @@ EXPORTS TIFFOpen
 	TIFFGetUnmapFileProc
 	TIFFIsCODECConfigured
 	TIFFGetConfiguredCODECs
+	TIFFFreeDirectory
+
 
