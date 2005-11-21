@@ -81,6 +81,9 @@
    lacking the tag (default enabled). */
 #undef CHECK_JPEG_YCBCR_SUBSAMPLING
 
+/* Support MS MDI magic number files as TIFF */
+#undef MDI_SUPPORT
+
 /*
  * Feature support definitions.
  * XXX: These macros are obsoleted. Don't use them in your apps!
