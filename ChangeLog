@@ -1,5 +1,9 @@
 2005-11-20  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tif_open.c, tiff.h, tiffdump.c: Incorporate preliminary support
+	for MS MDI format.
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1002
+
 	* .cvsignore: many files added, and a few update according
 	to suggestion of Brad HArds on tiff mailing list. 
 

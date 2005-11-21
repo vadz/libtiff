@@ -252,6 +252,19 @@ if test "$HAVE_LOGLUV" = "yes" ; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl Switch on/off support for Microsoft Document Imaging
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(mdi,
+	      AS_HELP_STRING([--disable-mdi],
+			     [disable support for Microsoft Document Imaging]),
+	      [HAVE_MDI=$enableval], [HAVE_MDI=yes])
+
+if test "$HAVE_MDI" = "yes" ; then
+  AC_DEFINE(MDI_SUPPORT,1,[Support Microsoft Document Imaging format])
+fi
+
+dnl ---------------------------------------------------------------------------
 dnl Check for ZLIB.
 dnl ---------------------------------------------------------------------------
 
@@ -529,6 +542,7 @@ LOC_MSG([  Documentation directory:            ${LIBTIFF_DOCDIR}])
 LOC_MSG([  C compiler:                         ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler:                       ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Enable runtime linker paths:        ${HAVE_RPATH}])
+LOC_MSG([  Support Microsoft Document Imaging: ${HAVE_MDI}])
 LOC_MSG()
 LOC_MSG([ Support for internal codecs:])
 LOC_MSG([  CCITT Group 3 & 4 algorithms:       ${HAVE_CCITT}])

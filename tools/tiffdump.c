@@ -162,7 +162,7 @@ InitByteOrder(int magic)
 	typeshift[ord(TIFF_SRATIONAL)] = 0;
 	typeshift[ord(TIFF_FLOAT)] = 0;
 	typeshift[ord(TIFF_DOUBLE)] = 0;
-	if (magic == TIFF_BIGENDIAN) {
+	if (magic == TIFF_BIGENDIAN || magic == MDI_BIGENDIAN) {
 		typeshift[ord(TIFF_BYTE)] = 24;
 		typeshift[ord(TIFF_SBYTE)] = 24;
 		typeshift[ord(TIFF_SHORT)] = 16;
@@ -193,8 +193,14 @@ dump(int fd, off_t diroff)
 	/*
 	 * Setup the byte order handling.
 	 */
-	if (hdr.tiff_magic != TIFF_BIGENDIAN && hdr.tiff_magic != TIFF_LITTLEENDIAN)
-		Fatal("Not a TIFF file, bad magic number %u (%#x)",
+	if (hdr.tiff_magic != TIFF_BIGENDIAN && hdr.tiff_magic != TIFF_LITTLEENDIAN &&
+#if HOST_BIGENDIAN
+	    // MDI is sensitive to the host byte order, unlike TIFF
+	    MDI_BIGENDIAN != hdr.tiff_magic )
+#else
+	    MDI_LITTLEENDIAN != hdr.tiff_magic )
+#endif
+		Fatal("Not a TIFF or MDI file, bad magic number %u (%#x)",
 		    hdr.tiff_magic, hdr.tiff_magic);
 	InitByteOrder(hdr.tiff_magic);
 	/*
@@ -520,7 +526,7 @@ PrintByte(FILE* fd, const char* fmt, TIFFDirEntry* dp)
 {
 	char* sep = "";
 
-	if (hdr.tiff_magic != TIFF_LITTLEENDIAN) {
+	if (hdr.tiff_magic == TIFF_BIGENDIAN) {
 		switch ((int)dp->tdir_count) {
 		case 4: fprintf(fd, fmt, sep, dp->tdir_offset&0xff);
 			sep = " ";
@@ -548,7 +554,7 @@ PrintShort(FILE* fd, const char* fmt, TIFFDirEntry* dp)
 {
 	char *sep = "";
 
-	if (hdr.tiff_magic != TIFF_LITTLEENDIAN) {
+	if (hdr.tiff_magic == TIFF_BIGENDIAN) {
 		switch (dp->tdir_count) {
 		case 2: fprintf(fd, fmt, sep, dp->tdir_offset&0xffff);
 			sep = " ";

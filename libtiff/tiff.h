@@ -50,7 +50,8 @@
 
 #define	TIFF_BIGENDIAN		0x4d4d
 #define	TIFF_LITTLEENDIAN	0x4949
-
+#define	MDI_LITTLEENDIAN        0x5045
+#define	MDI_BIGENDIAN           0x4550
 /*
  * Intrinsic data types required by the file format:
  *
