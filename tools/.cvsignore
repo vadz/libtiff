@@ -21,3 +21,5 @@ tiffset
 tiffsplit
 tiff2pdf
 bmp2tiff
+.deps
+.libs
