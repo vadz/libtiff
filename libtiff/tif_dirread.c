@@ -78,7 +78,7 @@ TIFFReadDirectory(TIFF* tif)
 	uint16 iv;
 	uint32 v;
 	const TIFFFieldInfo* fip;
-	int fix;
+	size_t fix;
 	uint16 dircount;
 	toff_t nextdiroff;
 	char* cp;

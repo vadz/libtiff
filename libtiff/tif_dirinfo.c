@@ -398,7 +398,7 @@ void
 _TIFFSetupFieldInfo(TIFF* tif)
 {
 	if (tif->tif_fieldinfo) {
-		int  i;
+		size_t  i;
 
 		for (i = 0; i < tif->tif_nfields; i++) 
 		{
@@ -466,13 +466,13 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 void
 _TIFFPrintFieldInfo(TIFF* tif, FILE* fd)
 {
-	int i;
+	size_t i;
 
 	fprintf(fd, "%s: \n", tif->tif_name);
 	for (i = 0; i < tif->tif_nfields; i++) {
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		fprintf(fd, "field[%2d] %5lu, %2d, %2d, %d, %2d, %5s, %5s, %s\n"
-			, i
+			, (int)i
 			, (unsigned long) fip->field_tag
 			, fip->field_readcount, fip->field_writecount
 			, fip->field_type
@@ -675,32 +675,33 @@ _TIFFFindOrRegisterFieldInfo( TIFF *tif, ttag_t tag, TIFFDataType dt )
 TIFFFieldInfo*
 _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
 {
-    TIFFFieldInfo *fld;
+	(void) tif;
+	TIFFFieldInfo *fld;
 
-    fld = (TIFFFieldInfo *) _TIFFmalloc(sizeof (TIFFFieldInfo));
-    if (fld == NULL)
-	return NULL;
-    _TIFFmemset( fld, 0, sizeof(TIFFFieldInfo) );
+	fld = (TIFFFieldInfo *) _TIFFmalloc(sizeof (TIFFFieldInfo));
+	if (fld == NULL)
+	    return NULL;
+	_TIFFmemset( fld, 0, sizeof(TIFFFieldInfo) );
 
-    fld->field_tag = tag;
-    fld->field_readcount = TIFF_VARIABLE;
-    fld->field_writecount = TIFF_VARIABLE;
-    fld->field_type = field_type;
-    fld->field_bit = FIELD_CUSTOM;
-    fld->field_oktochange = TRUE;
-    fld->field_passcount = TRUE;
-    fld->field_name = (char *) _TIFFmalloc(32);
-    if (fld->field_name == NULL) {
-	_TIFFfree(fld);
-	return NULL;
-    }
+	fld->field_tag = tag;
+	fld->field_readcount = TIFF_VARIABLE;
+	fld->field_writecount = TIFF_VARIABLE;
+	fld->field_type = field_type;
+	fld->field_bit = FIELD_CUSTOM;
+	fld->field_oktochange = TRUE;
+	fld->field_passcount = TRUE;
+	fld->field_name = (char *) _TIFFmalloc(32);
+	if (fld->field_name == NULL) {
+	    _TIFFfree(fld);
+	    return NULL;
+	}
 
-    /* note that this name is a special sign to TIFFClose() and
-     * _TIFFSetupFieldInfo() to free the field
-     */
-    sprintf(fld->field_name, "Tag %d", (int) tag);
+	/* note that this name is a special sign to TIFFClose() and
+	 * _TIFFSetupFieldInfo() to free the field
+	 */
+	sprintf(fld->field_name, "Tag %d", (int) tag);
 
-    return fld;    
+	return fld;    
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
