@@ -836,6 +836,7 @@ JPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 {
     JPEGState *sp = JState(tif);
     tsize_t nrows;
+    (void) s;
 
     nrows = cc / sp->bytesperline;
     if (cc % sp->bytesperline)
@@ -939,6 +940,7 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 {
     JPEGState *sp = JState(tif);
     tsize_t nrows;
+    (void) s;
 
     /* data is expected to be read in multiples of a scanline */
     if ( (nrows = sp->cinfo.d.image_height) ) {

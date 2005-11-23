@@ -462,10 +462,9 @@ Fax3SetupState(TIFF* tif)
 {
 	TIFFDirectory* td = &tif->tif_dir;
 	Fax3BaseState* sp = Fax3State(tif);
-	long rowbytes, rowpixels;
 	int needsRefLine;
 	Fax3CodecState* dsp = (Fax3CodecState*) Fax3State(tif);
-	uint32 nruns;
+	uint32 rowbytes, rowpixels, nruns;
 
 	if (td->td_bitspersample != 1) {
 		TIFFError(tif->tif_name,
@@ -796,7 +795,7 @@ find0span(unsigned char* bp, int32 bs, int32 be)
 		bp++;
 	} else
 		span = 0;
-	if (bits >= 2*8*sizeof (long)) {
+	if (bits >= (int32)(2 * 8 * sizeof(long))) {
 		long* lp;
 		/*
 		 * Align to longword boundary and check longwords.
@@ -808,7 +807,7 @@ find0span(unsigned char* bp, int32 bs, int32 be)
 			bp++;
 		}
 		lp = (long*) bp;
-		while (bits >= 8*sizeof (long) && *lp == 0) {
+		while ((bits >= (int32)(8 * sizeof(long))) && (0 == *lp)) {
 			span += 8*sizeof (long), bits -= 8*sizeof (long);
 			lp++;
 		}
@@ -855,7 +854,7 @@ find1span(unsigned char* bp, int32 bs, int32 be)
 		bp++;
 	} else
 		span = 0;
-	if (bits >= 2*8*sizeof (long)) {
+	if (bits >= (int32)(2 * 8 * sizeof(long))) {
 		long* lp;
 		/*
 		 * Align to longword boundary and check longwords.
@@ -867,7 +866,7 @@ find1span(unsigned char* bp, int32 bs, int32 be)
 			bp++;
 		}
 		lp = (long*) bp;
-		while (bits >= 8*sizeof (long) && *lp == ~0) {
+		while ((bits >= (int32)(8 * sizeof(long))) && (~0 == *lp)) {
 			span += 8*sizeof (long), bits -= 8*sizeof (long);
 			lp++;
 		}
@@ -942,17 +941,17 @@ Fax3Encode1DRow(TIFF* tif, unsigned char* bp, uint32 bits)
 }
 
 static const tableentry horizcode =
-    { 3, 0x1 };		/* 001 */
+    { 3, 0x1, 0 };	/* 001 */
 static const tableentry passcode =
-    { 4, 0x1 };		/* 0001 */
+    { 4, 0x1, 0 };	/* 0001 */
 static const tableentry vcodes[7] = {
-    { 7, 0x03 },	/* 0000 011 */
-    { 6, 0x03 },	/* 0000 11 */
-    { 3, 0x03 },	/* 011 */
-    { 1, 0x1 },		/* 1 */
-    { 3, 0x2 },		/* 010 */
-    { 6, 0x02 },	/* 0000 10 */
-    { 7, 0x02 }		/* 0000 010 */
+    { 7, 0x03, 0 },	/* 0000 011 */
+    { 6, 0x03, 0 },	/* 0000 11 */
+    { 3, 0x03, 0 },	/* 011 */
+    { 1, 0x1, 0 },	/* 1 */
+    { 3, 0x2, 0 },	/* 010 */
+    { 6, 0x02, 0 },	/* 0000 10 */
+    { 7, 0x02, 0 }	/* 0000 010 */
 };
 
 /*
@@ -1346,6 +1345,7 @@ InitCCITTFax3(TIFF* tif)
 int
 TIFFInitCCITTFax3(TIFF* tif, int scheme)
 {
+	(void) scheme;
 	if (InitCCITTFax3(tif)) {
 		_TIFFMergeFieldInfo(tif, fax3FieldInfo, N(fax3FieldInfo));
 
@@ -1447,6 +1447,7 @@ Fax4PostEncode(TIFF* tif)
 int
 TIFFInitCCITTFax4(TIFF* tif, int scheme)
 {
+	(void) scheme;
 	if (InitCCITTFax3(tif)) {		/* reuse G3 support */
 		_TIFFMergeFieldInfo(tif, fax4FieldInfo, N(fax4FieldInfo));
 
@@ -1522,6 +1523,7 @@ Fax3DecodeRLE(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 int
 TIFFInitCCITTRLE(TIFF* tif, int scheme)
 {
+	(void) scheme;
 	if (InitCCITTFax3(tif)) {		/* reuse G3 support */
 		tif->tif_decoderow = Fax3DecodeRLE;
 		tif->tif_decodestrip = Fax3DecodeRLE;
@@ -1538,6 +1540,7 @@ TIFFInitCCITTRLE(TIFF* tif, int scheme)
 int
 TIFFInitCCITTRLEW(TIFF* tif, int scheme)
 {
+	(void) scheme;
 	if (InitCCITTFax3(tif)) {		/* reuse G3 support */
 		tif->tif_decoderow = Fax3DecodeRLE;
 		tif->tif_decodestrip = Fax3DecodeRLE;
