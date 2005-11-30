@@ -421,6 +421,7 @@ tagCompare(const void* a, const void* b)
 {
 	const TIFFFieldInfo* ta = *(const TIFFFieldInfo**) a;
 	const TIFFFieldInfo* tb = *(const TIFFFieldInfo**) b;
+	fprintf(stderr, "%d - %d\n", ta->field_tag, tb->field_tag);
 	/* NB: be careful of return values for 16-bit platforms */
 	if (ta->field_tag != tb->field_tag)
 		return (ta->field_tag < tb->field_tag ? -1 : 1);
@@ -454,9 +455,9 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 		    _TIFFmalloc(n * sizeof (TIFFFieldInfo*));
 	}
 	assert(tif->tif_fieldinfo != NULL);
-	tp = &tif->tif_fieldinfo[tif->tif_nfields];
+	tp = tif->tif_fieldinfo + tif->tif_nfields;
 	for (i = 0; i < n; i++)
-		tp[i] = (TIFFFieldInfo*) &info[i];	/* XXX */
+		*tp++ = (TIFFFieldInfo*) (info + i);	/* XXX */
 
         /* Sort the field info by tag number */
         qsort(tif->tif_fieldinfo, tif->tif_nfields += n,
@@ -583,13 +584,18 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 	/* NB: use sorted search (e.g. binary search) */
 	if(dt != TIFF_ANY) {
             TIFFFieldInfo key = {0, 0, 0, 0, 0, 0, 0, 0};
-            key.field_tag = tag;
+	    TIFFFieldInfo* pkey = &key;
+	    const TIFFFieldInfo **ret;
+
+	    key.field_tag = tag;
             key.field_type = dt;
-            return((const TIFFFieldInfo *) bsearch(&key, 
+
+	    ret = (const TIFFFieldInfo **) bsearch(&pkey,
 						   tif->tif_fieldinfo, 
 						   tif->tif_nfields,
-						   sizeof(TIFFFieldInfo), 
-						   tagCompare));
+						   sizeof(TIFFFieldInfo *), 
+						   tagCompare);
+	    return (ret) ? (*ret) : NULL;
         } else for (i = 0, n = tif->tif_nfields; i < n; i++) {
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		if (fip->field_tag == tag &&
@@ -611,13 +617,18 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	/* NB: use sorted search (e.g. binary search) */
 	if(dt != TIFF_ANY) {
             TIFFFieldInfo key = {0, 0, 0, 0, 0, 0, 0, 0};
+	    TIFFFieldInfo* pkey = &key;
+	    const TIFFFieldInfo **ret;
+
             key.field_name = (char *)field_name;
             key.field_type = dt;
-            return((const TIFFFieldInfo *) lfind(&key,
+
+            ret = (const TIFFFieldInfo **) lfind(&pkey,
 						 tif->tif_fieldinfo, 
 						 &tif->tif_nfields,
-						 sizeof(TIFFFieldInfo),
-						 tagNameCompare));
+						 sizeof(TIFFFieldInfo *),
+						 tagNameCompare);
+	    return (ret) ? (*ret) : NULL;
         } else
 		for (i = 0, n = tif->tif_nfields; i < n; i++) {
 			const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
