@@ -1,3 +1,15 @@
+2005-11-30  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirinfo.c: Release file descriptor in case of failure
+	in the TIFFOpenW() function as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1003
+
+	* libtiff/tif_dirinfo.c: Correctly yse bsearch() and lfind()
+	functions as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1008
+
 2005-11-20  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_open.c, tiff.h, tiffdump.c: Incorporate preliminary support
