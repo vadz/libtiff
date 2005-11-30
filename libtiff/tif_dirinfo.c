@@ -421,7 +421,6 @@ tagCompare(const void* a, const void* b)
 {
 	const TIFFFieldInfo* ta = *(const TIFFFieldInfo**) a;
 	const TIFFFieldInfo* tb = *(const TIFFFieldInfo**) b;
-	fprintf(stderr, "%d - %d\n", ta->field_tag, tb->field_tag);
 	/* NB: be careful of return values for 16-bit platforms */
 	if (ta->field_tag != tb->field_tag)
 		return (ta->field_tag < tb->field_tag ? -1 : 1);
