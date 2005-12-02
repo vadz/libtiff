@@ -685,8 +685,8 @@ _TIFFFindOrRegisterFieldInfo( TIFF *tif, ttag_t tag, TIFFDataType dt )
 TIFFFieldInfo*
 _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
 {
-	(void) tif;
 	TIFFFieldInfo *fld;
+	(void) tif;
 
 	fld = (TIFFFieldInfo *) _TIFFmalloc(sizeof (TIFFFieldInfo));
 	if (fld == NULL)
