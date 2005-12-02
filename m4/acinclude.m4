@@ -38,12 +38,12 @@ AC_DEFUN([VL_PROG_CC_WARNINGS], [
 int main(int argc, char **argv) { return 0; }
 EOF
 
-      dnl GCC
+      dnl GCC. -W option has been renamed in -wextra in latest gcc versions.
       if test "$GCC" = "yes"; then
         if test -z "$ansi"; then
-          vl_cv_prog_cc_warnings="-Wall -Wextra"
+          vl_cv_prog_cc_warnings="-Wall -W"
         else
-          vl_cv_prog_cc_warnings="-Wall -Wextra -ansi -pedantic"
+          vl_cv_prog_cc_warnings="-Wall -W -ansi -pedantic"
         fi
 
       dnl Most compilers print some kind of a version string with some command
