@@ -1,3 +1,9 @@
+2005-12-05  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: One more workaround for broken
+	StripByteCounts tag. Handle the case when StripByteCounts array filled
+	with completely wrong values.
+
 2005-11-30  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirinfo.c: Release file descriptor in case of failure
