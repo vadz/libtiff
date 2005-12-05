@@ -576,10 +576,9 @@ TIFFReadDirectory(TIFF* tif)
                    && td->td_stripoffset[0] != 0 
                    && BYTECOUNTLOOKSBAD) {
 		/*
-		 * Plexus (and others) sometimes give a value
-		 * of zero for a tag when they don't know what
-		 * the correct value is!  Try and handle the
-		 * simple case of estimating the size of a one
+		 * XXX: Plexus (and others) sometimes give a value of zero for
+		 * a tag when they don't know what the correct value is!  Try
+		 * and handle the simple case of estimating the size of a one
 		 * strip image.
 		 */
 		TIFFWarning(module,
@@ -587,6 +586,21 @@ TIFFReadDirectory(TIFF* tif)
                             tif->tif_name,
 		            _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
 		if(EstimateStripByteCounts(tif, dir, dircount) < 0)
+		    goto bad;
+	} else if (td->td_nstrips > 1
+		   && td->td_compression == COMPRESSION_NONE
+		   && td->td_stripoffset[0] != td->td_stripoffset[1]) {
+		/*
+		 * XXX: Some vendors fill StripByteCount array with absolutely
+		 * wrong values (it can be equal to StripOffset array, for
+		 * example). The sample of such broken software is Pixel image
+		 * editor by Pavel Kanzelsberger. Catch this case here.
+		 */
+		TIFFWarning(module,
+	"%s: Wrong \"%s\" field, ignoring and calculating from imagelength",
+                            tif->tif_name,
+		            _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
+		if (EstimateStripByteCounts(tif, dir, dircount) < 0)
 		    goto bad;
 	}
 	if (dir) {
