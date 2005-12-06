@@ -71,10 +71,9 @@ TIFFReadDirectory(TIFF* tif)
 {
 	static const char module[] = "TIFFReadDirectory";
 
-	TIFFDirEntry* dp;
 	int n;
 	TIFFDirectory* td;
-	TIFFDirEntry* dir;
+	TIFFDirEntry *dp, *dir = NULL;
 	uint16 iv;
 	uint32 v;
 	const TIFFFieldInfo* fip;
@@ -593,8 +592,7 @@ TIFFReadDirectory(TIFF* tif)
 		/*
 		 * XXX: Some vendors fill StripByteCount array with absolutely
 		 * wrong values (it can be equal to StripOffset array, for
-		 * example). The sample of such broken software is Pixel image
-		 * editor by Pavel Kanzelsberger. Catch this case here.
+		 * example). Catch this case here.
 		 */
 		TIFFWarning(module,
 	"%s: Wrong \"%s\" field, ignoring and calculating from imagelength",
@@ -688,7 +686,85 @@ bad:
 int
 TIFFReadCustomDirectory(TIFF* tif, toff_t diroff)
 {
+	static const char module[] = "TIFFReadCustomDirectory";
+
+	TIFFDirEntry *dp, *dir = NULL;
+	uint16 n, dircount;
+
+	if (!isMapped(tif)) {
+		if (!SeekOK(tif, diroff)) {
+			TIFFError(module,
+			    "%s: Seek error accessing TIFF directory",
+                            tif->tif_name);
+			return (0);
+		}
+		if (!ReadOK(tif, &dircount, sizeof (uint16))) {
+			TIFFError(module,
+			    "%s: Can not read TIFF directory count",
+                            tif->tif_name);
+			return (0);
+		}
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabShort(&dircount);
+		dir = (TIFFDirEntry *)_TIFFCheckMalloc(tif,
+						  dircount,
+						  sizeof (TIFFDirEntry),
+						  "to read TIFF directory");
+		if (dir == NULL)
+			return (0);
+		if (!ReadOK(tif, dir, dircount * sizeof (TIFFDirEntry))) {
+			TIFFError(module,
+                                  "%.100s: Can not read TIFF directory",
+                                  tif->tif_name);
+			goto bad;
+		}
+	} else {
+		toff_t off = diroff;
+
+		if (off + sizeof (uint16) > tif->tif_size) {
+			TIFFError(module,
+			    "%s: Can not read TIFF directory count",
+                            tif->tif_name);
+			return (0);
+		} else
+			_TIFFmemcpy(&dircount, tif->tif_base + off, sizeof (uint16));
+		off += sizeof (uint16);
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabShort(&dircount);
+		dir = (TIFFDirEntry *)_TIFFCheckMalloc(tif,
+		    dircount, sizeof (TIFFDirEntry), "to read TIFF directory");
+		if (dir == NULL)
+			return (0);
+		if (off + dircount * sizeof (TIFFDirEntry) > tif->tif_size) {
+			TIFFError(module,
+                                  "%s: Can not read TIFF directory",
+                                  tif->tif_name);
+			goto bad;
+		} else {
+			_TIFFmemcpy(dir, tif->tif_base + off,
+				    dircount * sizeof (TIFFDirEntry));
+		}
+	}
+
+	for (dp = dir, n = dircount; n > 0; n--, dp++) {
+		if (tif->tif_flags & TIFF_SWAB) {
+			TIFFSwabArrayOfShort(&dp->tdir_tag, 2);
+			TIFFSwabArrayOfLong(&dp->tdir_count, 2);
+		}
+		TIFFMergeFieldInfo(tif,
+			   _TIFFCreateAnonFieldInfo(tif, dp->tdir_tag,
+						(TIFFDataType)dp->tdir_type),
+			   1);
+	}
+
+	if (dir)
+		_TIFFfree(dir);
 	return 1;
+
+bad:
+	if (dir)
+		_TIFFfree(dir);
+	return 0;
 }
 
 static int
