@@ -56,6 +56,7 @@ main(int argc, char* argv[])
 	TIFF *in, *out;
 
 	if (argc < 2) {
+                fprintf(stderr, "%s\n\n", TIFFGetVersion());
 		fprintf(stderr, "usage: tiffsplit input.tif [prefix]\n");
 		return (-3);
 	}
@@ -271,3 +272,5 @@ cpTiles(TIFF* in, TIFF* out)
 	}
 	return (0);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
