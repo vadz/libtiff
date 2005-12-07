@@ -1,3 +1,12 @@
+2005-12-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dirinfo.c, tif_dirread.c, tif_dir.h, tif_dir.c}:
+	More work to implement custom directory read support.
+
+	* libtiff/{tif_aux.c, tif_dirinfo.c, tif_dirread.c, tif_dir.h,
+	tif_dir.c, tif_print.c}: Make YCbCrCoefficients and ReferenceBlackWhite
+	tags custom.
+
 2005-12-05  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirread.c: One more workaround for broken
