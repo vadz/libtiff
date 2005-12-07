@@ -74,7 +74,6 @@ typedef	struct {
 	uint16	td_ycbcrpositioning;
 	/* Colorimetry parameters */
 	float*	td_whitepoint;
-	float*	td_refblackwhite;
 	uint16*	td_transferfunction[3];
 	/* CMYK parameters */
 	uint16	td_inkset;
@@ -156,7 +155,7 @@ typedef	struct {
 /* unused - was FIELD_YCBCRCOEFFICIENTS	38 */
 #define FIELD_YCBCRSUBSAMPLING		39
 #define FIELD_YCBCRPOSITIONING		40
-#define	FIELD_REFBLACKWHITE		41
+/* unused - was FIELD_REFBLACKWHITE	41 */
 #define	FIELD_WHITEPOINT		42
 /* unused - was FIELD_PRIMARYCHROMAS	43 */
 #define	FIELD_TRANSFERFUNCTION		44
