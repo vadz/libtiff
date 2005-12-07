@@ -32,6 +32,9 @@
  */
 #include "tiffiop.h"
 
+extern	const TIFFFieldInfo tiffFieldInfo[];
+extern	const size_t tiffFieldInfoSize;
+
 /*
  * These are used in the backwards compatibility code...
  */
@@ -357,9 +360,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			status = 0;
 		}
 		break;
-	case TIFFTAG_YCBCRCOEFFICIENTS:
-		_TIFFsetFloatArray(&td->td_ycbcrcoeffs, va_arg(ap, float*), 3);
-		break;
 	case TIFFTAG_YCBCRPOSITIONING:
 		td->td_ycbcrpositioning = (uint16) va_arg(ap, int);
 		break;
@@ -375,10 +375,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		for (i = 0; i < v; i++)
 			_TIFFsetShortArray(&td->td_transferfunction[i],
 			    va_arg(ap, uint16*), 1L<<td->td_bitspersample);
-		break;
-	case TIFFTAG_REFERENCEBLACKWHITE:
-		/* XXX should check for null range */
-		_TIFFsetFloatArray(&td->td_refblackwhite, va_arg(ap, float*), 6);
 		break;
 	case TIFFTAG_INKSET:
 		td->td_inkset = (uint16) va_arg(ap, int);
@@ -820,9 +816,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             *va_arg(ap, uint16*) = td->td_nsubifd;
             *va_arg(ap, uint32**) = td->td_subifd;
             break;
-	case TIFFTAG_YCBCRCOEFFICIENTS:
-            *va_arg(ap, float**) = td->td_ycbcrcoeffs;
-            break;
 	case TIFFTAG_YCBCRPOSITIONING:
             *va_arg(ap, uint16*) = td->td_ycbcrpositioning;
             break;
@@ -839,9 +832,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 *va_arg(ap, uint16**) = td->td_transferfunction[1];
                 *va_arg(ap, uint16**) = td->td_transferfunction[2];
             }
-            break;
-	case TIFFTAG_REFERENCEBLACKWHITE:
-            *va_arg(ap, float**) = td->td_refblackwhite;
             break;
 	case TIFFTAG_INKSET:
             *va_arg(ap, uint16*) = td->td_inkset;
@@ -1031,10 +1021,8 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_colormap[2]);
 	CleanupField(td_sampleinfo);
 	CleanupField(td_subifd);
-	CleanupField(td_ycbcrcoeffs);
 	CleanupField(td_inknames);
 	CleanupField(td_whitepoint);
-	CleanupField(td_refblackwhite);
 	CleanupField(td_transferfunction[0]);
 	CleanupField(td_transferfunction[1]);
 	CleanupField(td_transferfunction[2]);
@@ -1097,7 +1085,7 @@ TIFFDefaultDirectory(TIFF* tif)
 {
 	register TIFFDirectory* td = &tif->tif_dir;
 
-	_TIFFSetupFieldInfo(tif);
+	_TIFFSetupFieldInfo(tif, tiffFieldInfo, tiffFieldInfoSize);
 	_TIFFmemset(td, 0, sizeof (*td));
 	td->td_fillorder = FILLORDER_MSB2LSB;
 	td->td_bitspersample = 1;

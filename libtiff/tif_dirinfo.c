@@ -43,9 +43,6 @@
  *       the formatting of the code, so please interprete the -1, -2 and -3 
  *       values accordingly.
  */
-#ifndef VMS
-static 
-#endif
 const TIFFFieldInfo tiffFieldInfo[] = {
     { TIFFTAG_SUBFILETYPE,	 1, 1, TIFF_LONG,	FIELD_SUBFILETYPE,
       TRUE,	FALSE,	"SubfileType" },
@@ -393,9 +390,10 @@ const TIFFFieldInfo tiffFieldInfo[] = {
 /* end DNG tags */
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
+const size_t tiffFieldInfoSize = N(tiffFieldInfo);
 
 void
-_TIFFSetupFieldInfo(TIFF* tif)
+_TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 {
 	if (tif->tif_fieldinfo) {
 		size_t  i;
@@ -413,7 +411,7 @@ _TIFFSetupFieldInfo(TIFF* tif)
 		_TIFFfree(tif->tif_fieldinfo);
 		tif->tif_nfields = 0;
 	}
-	_TIFFMergeFieldInfo(tif, tiffFieldInfo, N(tiffFieldInfo));
+	_TIFFMergeFieldInfo(tif, info, n);
 }
 
 static int
