@@ -208,17 +208,11 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 		*va_arg(ap, uint32 *) = td->td_imagedepth;
 		return (1);
 	case TIFFTAG_YCBCRCOEFFICIENTS:
-		if (!td->td_ycbcrcoeffs) {
-			td->td_ycbcrcoeffs = (float *)
-			    _TIFFmalloc(3*sizeof (float));
-			if (!td->td_ycbcrcoeffs)
-				return (0);
+		{
 			/* defaults are from CCIR Recommendation 601-1 */
-			td->td_ycbcrcoeffs[0] = 0.299f;
-			td->td_ycbcrcoeffs[1] = 0.587f;
-			td->td_ycbcrcoeffs[2] = 0.114f;
+			float ycbcrcoeffs[] = { 0.299f, 0.587f, 0.114f };
+			*va_arg(ap, float **) = ycbcrcoeffs;
 		}
-		*va_arg(ap, float **) = td->td_ycbcrcoeffs;
 		return (1);
 	case TIFFTAG_YCBCRSUBSAMPLING:
 		*va_arg(ap, uint16 *) = td->td_ycbcrsubsampling[0];

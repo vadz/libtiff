@@ -70,7 +70,6 @@ typedef	struct {
 	uint16	td_nsubifd;
 	uint32*	td_subifd;
 	/* YCbCr parameters */
-	float*	td_ycbcrcoeffs;
 	uint16	td_ycbcrsubsampling[2];
 	uint16	td_ycbcrpositioning;
 	/* Colorimetry parameters */
@@ -154,7 +153,7 @@ typedef	struct {
 #define FIELD_IMAGEDEPTH		35
 #define FIELD_TILEDEPTH			36
 #define	FIELD_HALFTONEHINTS		37
-#define FIELD_YCBCRCOEFFICIENTS		38
+/* unused - was FIELD_YCBCRCOEFFICIENTS	38 */
 #define FIELD_YCBCRSUBSAMPLING		39
 #define FIELD_YCBCRPOSITIONING		40
 #define	FIELD_REFBLACKWHITE		41
