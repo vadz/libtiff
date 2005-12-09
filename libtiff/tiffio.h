@@ -273,12 +273,67 @@ extern	void TIFFUnRegisterCODEC(TIFFCodec*);
 extern  int TIFFIsCODECConfigured(uint16);
 extern	TIFFCodec* TIFFGetConfiguredCODECs(void);
 
+/*
+ * Auxiliary functions.
+ */
+
 extern	tdata_t _TIFFmalloc(tsize_t);
 extern	tdata_t _TIFFrealloc(tdata_t, tsize_t);
 extern	void _TIFFmemset(tdata_t, int, tsize_t);
 extern	void _TIFFmemcpy(tdata_t, const tdata_t, tsize_t);
 extern	int _TIFFmemcmp(const tdata_t, const tdata_t, tsize_t);
 extern	void _TIFFfree(tdata_t);
+
+/*
+** Stuff, related to tag handling and creating custom tags.
+*/
+extern  int  TIFFGetTagListCount( TIFF * );
+extern  ttag_t TIFFGetTagListEntry( TIFF *, int tag_index );
+    
+#define	TIFF_ANY	TIFF_NOTYPE	/* for field descriptor searching */
+#define	TIFF_VARIABLE	-1		/* marker for variable length tags */
+#define	TIFF_SPP	-2		/* marker for SamplesPerPixel tags */
+#define	TIFF_VARIABLE2	-3		/* marker for uint32 var-length tags */
+
+#define FIELD_CUSTOM    65    
+
+typedef	struct {
+	ttag_t	field_tag;		/* field's tag */
+	short	field_readcount;	/* read count/TIFF_VARIABLE/TIFF_SPP */
+	short	field_writecount;	/* write count/TIFF_VARIABLE */
+	TIFFDataType field_type;	/* type of associated data */
+        unsigned short field_bit;	/* bit in fieldsset bit vector */
+	unsigned char field_oktochange;	/* if true, can change while writing */
+	unsigned char field_passcount;	/* if true, pass dir count on set */
+	char	*field_name;		/* ASCII name */
+} TIFFFieldInfo;
+
+typedef struct _TIFFTagValue {
+    const TIFFFieldInfo  *info;
+    int             count;
+    void           *value;
+} TIFFTagValue;
+
+extern	void TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], int);
+extern	const TIFFFieldInfo* TIFFFindFieldInfo(TIFF*, ttag_t, TIFFDataType);
+extern  const TIFFFieldInfo* TIFFFindFieldInfoByName(TIFF* , const char *,
+						     TIFFDataType);
+extern	const TIFFFieldInfo* TIFFFieldWithTag(TIFF*, ttag_t);
+extern	const TIFFFieldInfo* TIFFFieldWithName(TIFF*, const char *);
+
+typedef	int (*TIFFVSetMethod)(TIFF*, ttag_t, va_list);
+typedef	int (*TIFFVGetMethod)(TIFF*, ttag_t, va_list);
+typedef	void (*TIFFPrintMethod)(TIFF*, FILE*, long);
+    
+typedef struct {
+    TIFFVSetMethod	vsetfield;	/* tag set routine */
+    TIFFVGetMethod	vgetfield;	/* tag get routine */
+    TIFFPrintMethod	printdir;	/* directory print routine */
+} TIFFTagMethods;
+        
+extern  TIFFTagMethods *TIFFAccessTagMethods( TIFF * );
+extern  void *TIFFGetClientInfo( TIFF *, const char * );
+extern  void TIFFSetClientInfo( TIFF *, void *, const char * );
 
 extern	void TIFFCleanup(TIFF*);
 extern	void TIFFClose(TIFF*);
@@ -289,6 +344,9 @@ extern	int TIFFVGetField(TIFF*, ttag_t, va_list);
 extern	int TIFFGetFieldDefaulted(TIFF*, ttag_t, ...);
 extern	int TIFFVGetFieldDefaulted(TIFF*, ttag_t, va_list);
 extern	int TIFFReadDirectory(TIFF*);
+extern	int TIFFReadCustomDirectory(TIFF*, toff_t, const TIFFFieldInfo[],
+				    size_t);
+extern	int TIFFReadEXIFDirectory(TIFF*, toff_t);
 extern	tsize_t TIFFScanlineSize(TIFF*);
 extern	tsize_t TIFFRasterScanlineSize(TIFF*);
 extern	tsize_t TIFFStripSize(TIFF*);
@@ -432,57 +490,6 @@ extern	uint32 LogLuv24fromXYZ(float*, int);
 extern	uint32 LogLuv32fromXYZ(float*, int);
 #endif
 #endif /* LOGLUV_PUBLIC */
-
-/*
-** Stuff, related to tag handling and creating custom tags.
-*/
-extern  int  TIFFGetTagListCount( TIFF * );
-extern  ttag_t TIFFGetTagListEntry( TIFF *, int tag_index );
-    
-#define	TIFF_ANY	TIFF_NOTYPE	/* for field descriptor searching */
-#define	TIFF_VARIABLE	-1		/* marker for variable length tags */
-#define	TIFF_SPP	-2		/* marker for SamplesPerPixel tags */
-#define	TIFF_VARIABLE2	-3		/* marker for uint32 var-length tags */
-
-#define FIELD_CUSTOM    65    
-
-typedef	struct {
-	ttag_t	field_tag;		/* field's tag */
-	short	field_readcount;	/* read count/TIFF_VARIABLE/TIFF_SPP */
-	short	field_writecount;	/* write count/TIFF_VARIABLE */
-	TIFFDataType field_type;	/* type of associated data */
-        unsigned short field_bit;	/* bit in fieldsset bit vector */
-	unsigned char field_oktochange;	/* if true, can change while writing */
-	unsigned char field_passcount;	/* if true, pass dir count on set */
-	char	*field_name;		/* ASCII name */
-} TIFFFieldInfo;
-
-typedef struct _TIFFTagValue {
-    const TIFFFieldInfo  *info;
-    int             count;
-    void           *value;
-} TIFFTagValue;
-
-extern	void TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], int);
-extern	const TIFFFieldInfo* TIFFFindFieldInfo(TIFF*, ttag_t, TIFFDataType);
-extern  const TIFFFieldInfo* TIFFFindFieldInfoByName(TIFF* , const char *,
-						     TIFFDataType);
-extern	const TIFFFieldInfo* TIFFFieldWithTag(TIFF*, ttag_t);
-extern	const TIFFFieldInfo* TIFFFieldWithName(TIFF*, const char *);
-
-typedef	int (*TIFFVSetMethod)(TIFF*, ttag_t, va_list);
-typedef	int (*TIFFVGetMethod)(TIFF*, ttag_t, va_list);
-typedef	void (*TIFFPrintMethod)(TIFF*, FILE*, long);
-    
-typedef struct {
-    TIFFVSetMethod	vsetfield;	/* tag set routine */
-    TIFFVGetMethod	vgetfield;	/* tag get routine */
-    TIFFPrintMethod	printdir;	/* directory print routine */
-} TIFFTagMethods;
-        
-extern  TIFFTagMethods *TIFFAccessTagMethods( TIFF * );
-extern  void *TIFFGetClientInfo( TIFF *, const char * );
-extern  void TIFFSetClientInfo( TIFF *, void *, const char * );
     
 extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *, float*);
 extern void TIFFCIELabToXYZ(TIFFCIELabToRGB *, uint32, int32, int32,

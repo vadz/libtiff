@@ -32,9 +32,6 @@
  */
 #include "tiffiop.h"
 
-extern	const TIFFFieldInfo tiffFieldInfo[];
-extern	const size_t tiffFieldInfoSize;
-
 /*
  * These are used in the backwards compatibility code...
  */
@@ -1016,6 +1013,7 @@ TIFFFreeDirectory(TIFF* tif)
 	TIFFDirectory *td = &tif->tif_dir;
 	int            i;
 
+	_TIFFmemset(td->td_fieldsset, 0, FIELD_SETLONGS);
 	CleanupField(td_colormap[0]);
 	CleanupField(td_colormap[1]);
 	CleanupField(td_colormap[2]);
@@ -1085,7 +1083,7 @@ TIFFDefaultDirectory(TIFF* tif)
 {
 	register TIFFDirectory* td = &tif->tif_dir;
 
-	_TIFFSetupFieldInfo(tif, tiffFieldInfo, tiffFieldInfoSize);
+	_TIFFSetupFieldInfo(tif, tiffFieldInfo, TIFFArraySize(tiffFieldInfo));
 	_TIFFmemset(td, 0, sizeof (*td));
 	td->td_fillorder = FILLORDER_MSB2LSB;
 	td->td_bitspersample = 1;

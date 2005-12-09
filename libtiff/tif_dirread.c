@@ -588,7 +588,7 @@ TIFFReadDirectory(TIFF* tif)
 		    goto bad;
 	} else if (td->td_nstrips > 1
 		   && td->td_compression == COMPRESSION_NONE
-		   && td->td_stripoffset[0] != td->td_stripoffset[1]) {
+		   && td->td_stripbytecount[0] != td->td_stripbytecount[1]) {
 		/*
 		 * XXX: Some vendors fill StripByteCount array with absolutely
 		 * wrong values (it can be equal to StripOffset array, for
@@ -681,7 +681,9 @@ bad:
 	return (0);
 }
 
-/*
+/* 
+ * Read custom directory from the arbitarry offset.
+ * The code is very similar to TIFFReadDirectory().
  */
 int
 TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
@@ -689,10 +691,15 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 {
 	static const char module[] = "TIFFReadCustomDirectory";
 
+	TIFFDirectory* td = &tif->tif_dir;
 	TIFFDirEntry *dp, *dir = NULL;
+	const TIFFFieldInfo* fip;
+	size_t fix;
 	uint16 i, dircount;
 
 	_TIFFSetupFieldInfo(tif, info, n);
+
+	tif->tif_diroff = diroff;
 
 	if (!isMapped(tif)) {
 		if (!SeekOK(tif, diroff)) {
@@ -749,17 +756,82 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 		}
 	}
 
+	TIFFFreeDirectory(tif);
+
+	fix = 0;
 	for (dp = dir, i = dircount; i > 0; i--, dp++) {
 		if (tif->tif_flags & TIFF_SWAB) {
 			TIFFSwabArrayOfShort(&dp->tdir_tag, 2);
 			TIFFSwabArrayOfLong(&dp->tdir_count, 2);
 		}
-		TIFFMergeFieldInfo(tif,
-			   _TIFFCreateAnonFieldInfo(tif, dp->tdir_tag,
-						(TIFFDataType)dp->tdir_type),
-			   1);
-	}
 
+		if (fix >= tif->tif_nfields || dp->tdir_tag == IGNORE)
+			continue;
+
+		while (fix < tif->tif_nfields &&
+		       tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
+			fix++;
+
+		if (fix >= tif->tif_nfields ||
+		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
+
+			TIFFWarning(module,
+                        "%s: unknown field with tag %d (0x%x) encountered",
+				    tif->tif_name, dp->tdir_tag, dp->tdir_tag,
+				    dp->tdir_type);
+
+			TIFFMergeFieldInfo(tif,
+					   _TIFFCreateAnonFieldInfo(tif,
+						dp->tdir_tag,
+						(TIFFDataType)dp->tdir_type),
+					   1);
+
+			fix = 0;
+			while (fix < tif->tif_nfields &&
+			       tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
+				fix++;
+		}
+		/*
+		 * Null out old tags that we ignore.
+		 */
+		if (tif->tif_fieldinfo[fix]->field_bit == FIELD_IGNORE) {
+	ignore:
+			dp->tdir_tag = IGNORE;
+			continue;
+		}
+		/*
+		 * Check data type.
+		 */
+		fip = tif->tif_fieldinfo[fix];
+		while (dp->tdir_type != (unsigned short) fip->field_type
+                       && fix < tif->tif_nfields) {
+			if (fip->field_type == TIFF_ANY)	/* wildcard */
+				break;
+                        fip = tif->tif_fieldinfo[++fix];
+			if (fix >= tif->tif_nfields ||
+			    fip->field_tag != dp->tdir_tag) {
+				TIFFWarning(module,
+			"%s: wrong data type %d for \"%s\"; tag ignored",
+					    tif->tif_name, dp->tdir_type,
+					    tif->tif_fieldinfo[fix-1]->field_name);
+				goto ignore;
+			}
+		}
+		/*
+		 * Check count if known in advance.
+		 */
+		if (fip->field_readcount != TIFF_VARIABLE
+		    && fip->field_readcount != TIFF_VARIABLE2) {
+			uint32 expected = (fip->field_readcount == TIFF_SPP) ?
+			    (uint32) td->td_samplesperpixel :
+			    (uint32) fip->field_readcount;
+			if (!CheckDirCount(tif, dp, expected))
+				goto ignore;
+		}
+
+		(void) TIFFFetchNormalTag(tif, dp);
+	}
+	
 	if (dir)
 		_TIFFfree(dir);
 	return 1;
@@ -768,6 +840,17 @@ bad:
 	if (dir)
 		_TIFFfree(dir);
 	return 0;
+}
+
+/*
+ * EXIF is important special case of custom IFD, so we have a special
+ * function to read it.
+ */
+int
+TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
+{
+	return TIFFReadCustomDirectory(tif, diroff, exifFieldInfo,
+				       TIFFArraySize(exifFieldInfo));
 }
 
 static int
