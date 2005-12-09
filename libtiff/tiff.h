@@ -576,6 +576,23 @@ typedef	enum {
 #define TIFFTAG_SGILOGENCODE		65561 /* SGILog data encoding control*/
 #define     SGILOGENCODE_NODITHER	0     /* do not dither encoded values*/
 #define     SGILOGENCODE_RANDITHER	1     /* randomly dither encd values */
+
+/*
+ * EXIF tags
+ */
+#define EXIFTAG_EXIFVERSION		36864	/* Exif version */
+#define EXIFTAG_COMPONENTSCONFIGURATION	37121	/* Meaning of each component */
+#define EXIFTAG_COMPRESSEDBITSPERPIXEL	37122	/* Image compression mode */
+#define EXIFTAG_MAKERNOTE		37500	/* Manufacturer notes */
+#define EXIFTAG_USERCOMMENT		37510	/* User comments */
+#define EXIFTAG_DATETIMEORIGINAL	36867	/* Date and time of original
+						   data generation */
+#define EXIFTAG_FLASHPIXVERSION		40960	/* Supported Flashpix version */
+#define EXIFTAG_COLORSPACE		40961	/* Color space information */
+#define EXIFTAG_PIXELXDIMENSION		40962	/* Valid image width */
+#define EXIFTAG_PIXELYDIMENSION		40963	/* Valid image height */
+#define EXIFTAG_RELATEDSOUNDFILE	40964	/* Related audio file */
+
 #endif /* _TIFF_ */
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
