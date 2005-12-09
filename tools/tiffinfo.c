@@ -129,9 +129,16 @@ main(int argc, char* argv[])
 				if (TIFFSetSubDirectory(tif, diroff))
 					tiffinfo(tif, order, flags);
 			} else {
-				do
+				do {
+					uint32 offset;
+
 					tiffinfo(tif, order, flags);
-				while (TIFFReadDirectory(tif));
+					if (TIFFGetField(tif, TIFFTAG_EXIFIFD,
+							 &offset)) {
+						if (TIFFReadEXIFDirectory(tif, offset))
+							tiffinfo(tif, order, flags);
+					}
+				} while (TIFFReadDirectory(tif));
 			}
 			TIFFClose(tif);
 		}
