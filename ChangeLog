@@ -1,5 +1,7 @@
 2005-12-09  Andrey Kiselev  <dron@remotesensing.org>
 
+	* tools/tiffinfo.c: Print EXIF directory contents if exist.
+
 	* libtiff/tiff.h: Few EXIF tag numbers added.
 
 	* libtiff/{tif_dirinfo.c, tif_dirread.c, tif_dir.h, tif_dir.c,
