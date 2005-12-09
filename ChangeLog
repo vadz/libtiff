@@ -1,3 +1,11 @@
+2005-12-09  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiff.h: Few EXIF tag numbers added.
+
+	* libtiff/{tif_dirinfo.c, tif_dirread.c, tif_dir.h, tif_dir.c,
+	tiffio.h}: Preliminary support to read custom directories. New
+	functions: TIFFReadCustomDirectory() and TIFFReadEXIFDirectory().
+
 2005-12-07  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_dirinfo.c, tif_dirread.c, tif_dir.h, tif_dir.c}:
