@@ -90,8 +90,6 @@ typedef	struct {
 	/* IPTC parameters */
 	uint32	td_richtiffiptcLength;
 	void	*td_richtiffiptcData;
-	uint32	td_xmlpacketLength;
-	void	*td_xmlpacketData;
 	int     td_customValueCount;
         TIFFTagValue *td_customValues;
 } TIFFDirectory;
@@ -169,15 +167,6 @@ typedef	struct {
 #define FIELD_PHOTOSHOP			52
 #define FIELD_RICHTIFFIPTC		53
 #define FIELD_STONITS			54
-/* unused - was FIELD_IMAGEFULLWIDTH	55 */
-/* unused - was FIELD_IMAGEFULLLENGTH	56 */
-/* unused - was FIELD_TEXTUREFORMAT	57 */
-/* unused - was FIELD_WRAPMODES		58 */
-/* unused - was FIELD_FOVCOT		59 */
-/* unused - was FIELD_MATRIX_WORLDTOSCREEN	60 */
-/* unused - was FIELD_MATRIX_WORLDTOCAMERA	61 */
-/* unused - was FIELD_COPYRIGHT		62 */
-#define FIELD_XMLPACKET			63
 /*      FIELD_CUSTOM (see tiffio.h)     65 */
 /* end of support for well-known tags; codec-private tags follow */
 #define	FIELD_CODEC			66	/* base of codec-private tags */
@@ -385,7 +374,7 @@ static const TIFFFieldInfo tiffFieldInfo[] = {
 /* XXX temporarily accept LONG for backwards compatibility */
     { TIFFTAG_REFERENCEBLACKWHITE, 6, 6, TIFF_LONG,	FIELD_CUSTOM,
       1,	0,	"ReferenceBlackWhite" },
-    { TIFFTAG_XMLPACKET,	-1,-3,	TIFF_BYTE,	FIELD_XMLPACKET,
+    { TIFFTAG_XMLPACKET,	-1,-3,	TIFF_BYTE,	FIELD_CUSTOM,
       0,	1,	"XMLPacket" },
 /* begin SGI tags */
     { TIFFTAG_MATTEING,		 1, 1,	TIFF_SHORT,	FIELD_EXTRASAMPLES,

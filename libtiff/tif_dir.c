@@ -410,11 +410,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 				   va_arg(ap, uint32*),
 				   td->td_richtiffiptcLength);
  		break;
-	case TIFFTAG_XMLPACKET:
-		td->td_xmlpacketLength = (uint32) va_arg(ap, uint32);
-		_TIFFsetByteArray(&td->td_xmlpacketData, va_arg(ap, void*),
-		    td->td_xmlpacketLength);
-		break;
         default: {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
             TIFFTagValue *tv;
@@ -855,10 +850,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             *va_arg(ap, uint32*) = td->td_richtiffiptcLength;
             *va_arg(ap, void**) = td->td_richtiffiptcData;
             break;
-	case TIFFTAG_XMLPACKET:
-            *va_arg(ap, uint32*) = td->td_xmlpacketLength;
-            *va_arg(ap, void**) = td->td_xmlpacketData;
-            break;
 
         default:
         {
@@ -1027,7 +1018,6 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_profileData);
 	CleanupField(td_photoshopData);
 	CleanupField(td_richtiffiptcData);
-	CleanupField(td_xmlpacketData);
 	CleanupField(td_stripoffset);
 	CleanupField(td_stripbytecount);
 

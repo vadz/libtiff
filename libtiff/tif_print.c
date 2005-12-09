@@ -62,9 +62,9 @@ static const char *orientNames[] = {
 
 static void
 _TIFFPrintField(FILE* fd, const TIFFFieldInfo *fip,
-		uint16 value_count, void *raw_data)
+		uint32 value_count, void *raw_data)
 {
-	int j;
+	uint32 j;
 		
 	fprintf(fd, "  %s: ", fip->field_name);
 
@@ -112,24 +112,35 @@ _TIFFPrintField(FILE* fd, const TIFFFieldInfo *fip,
 }
 
 static int
-_TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag, void *raw_data)
+_TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
+		      uint32 value_count, void *raw_data)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 
 	switch (tag)
 	{
 		case TIFFTAG_REFERENCEBLACKWHITE:
-			{
-			int i;
+		{
+			uint16 i;
 
 			fprintf(fd, "  Reference Black/White:\n");
 			for (i = 0; i < td->td_samplesperpixel; i++)
 			fprintf(fd, "    %2d: %5g %5g\n", i,
 				((float *)raw_data)[2*i+0],
 				((float *)raw_data)[2*i+1]);
-			}
+		}
 		return 1;
-	}
+		case TIFFTAG_XMLPACKET:
+		{
+			uint32 i;
+			
+			fprintf(fd, "  XMLPacket (XMP Metadata):\n" );
+			for(i = 0; i < value_count; i++)
+				fputc(((char *)raw_data)[i], fd);
+			fprintf( fd, "\n" );
+		}
+		return 1;
+        }
 
 	return 0;
 }
@@ -146,8 +157,8 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	uint16 i;
 	long l, n;
 
-	fprintf(fd, "TIFF Directory at offset 0x%lx\n",
-		(unsigned long)tif->tif_diroff);
+	fprintf(fd, "TIFF Directory at offset 0x%lx (%lu)\n",
+		(unsigned long)tif->tif_diroff, (unsigned long)tif->tif_diroff);
 	if (TIFFFieldSet(tif,FIELD_SUBFILETYPE)) {
 		fprintf(fd, "  Subfile Type:");
 		sep = " ";
@@ -477,12 +488,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			fprintf(fd, " %5lu", (long) td->td_subifd[i]);
 		fputc('\n', fd);
 	}
- 	if (TIFFFieldSet(tif,FIELD_XMLPACKET)) {
-            fprintf(fd, "  XMLPacket (XMP Metadata):\n" );
-            for( i=0; i < td->td_xmlpacketLength; i++ )
-                fputc( ((char *)td->td_xmlpacketData)[i], fd );
-            fprintf( fd, "\n" );
-        }
 
         /*
         ** Custom tag support.
@@ -539,12 +544,10 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		 * _TIFFPrettyPrintField() fall down and print it as any other
 		 * tag.
 		 */
-		if (_TIFFPrettyPrintField(tif, fd, tag, raw_data))
+		if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data))
 			continue;
 		else
-		{
 			_TIFFPrintField(fd, fip, value_count, raw_data);
-		}
 
 		if(mem_alloc)
 			_TIFFfree(raw_data);
