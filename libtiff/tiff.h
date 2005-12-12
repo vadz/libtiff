@@ -580,17 +580,41 @@ typedef	enum {
 /*
  * EXIF tags
  */
+#define EXIFTAG_EXPOSURETIME		33434	/* Exposure time */
+#define EXIFTAG_FNUMBER			33437	/* F number */
+#define EXIFTAG_EXPOSUREPROGRAM		34850	/* Exposure program */
+#define EXIFTAG_SPECTRALSENSITIVITY	34852	/* Spectral sensitivity */
+#define EXIFTAG_ISOSPEEDRATINGS		34855	/* ISO speed rating */
+#define EXIFTAG_OECF			34856	/* Optoelectric conversion
+						   factor */
 #define EXIFTAG_EXIFVERSION		36864	/* Exif version */
 #define EXIFTAG_COMPONENTSCONFIGURATION	37121	/* Meaning of each component */
 #define EXIFTAG_COMPRESSEDBITSPERPIXEL	37122	/* Image compression mode */
+#define EXIFTAG_SHUTTERSPEEDVALUE	37377	/* Shutter speed */
+#define EXIFTAG_APERTUREVALUE		37378	/* Aperture */
+#define EXIFTAG_BRIGHTNESSVALUE		37379	/* Brightness */
+#define EXIFTAG_EXPOSUREBIASVALUE	37380	/* Exposure bias */
+#define EXIFTAG_MAXAPERTUREVALUE	37381	/* Maximum lens aperture */
+#define EXIFTAG_SUBJECTDISTANCE		37382	/* Subject distance */
+#define EXIFTAG_METERINGMODE		37383	/* Metering mode */
+#define EXIFTAG_LIGHTSOURCE		37384	/* Light source */
+#define EXIFTAG_FLASH			37385	/* Flash */
+#define EXIFTAG_FOCALLENGTH		37386	/* Lens focal length */
 #define EXIFTAG_MAKERNOTE		37500	/* Manufacturer notes */
 #define EXIFTAG_USERCOMMENT		37510	/* User comments */
 #define EXIFTAG_DATETIMEORIGINAL	36867	/* Date and time of original
 						   data generation */
+#define EXIFTAG_DATETIMEDIGITIZED	36868	/* Date and time of digital
+						   data generation */
+#define EXIFTAG_SUBSECTIME		37520	/* DateTime subseconds */
+#define EXIFTAG_SUBSECTIMEORIGINAL	37521	/* DateTimeOriginal subseconds */
+#define EXIFTAG_SUBSECTIMEDIGITIZED	37522	/* DateTimeDigitized subseconds */
 #define EXIFTAG_FLASHPIXVERSION		40960	/* Supported Flashpix version */
 #define EXIFTAG_COLORSPACE		40961	/* Color space information */
 #define EXIFTAG_PIXELXDIMENSION		40962	/* Valid image width */
 #define EXIFTAG_PIXELYDIMENSION		40963	/* Valid image height */
+#define EXIFTAG_RELATEDSOUNDFILE	40964	/* Related audio file */
+#define EXIFTAG_IMAGEUNIQUEID		42016	/* Unique image ID */
 #define EXIFTAG_RELATEDSOUNDFILE	40964	/* Related audio file */
 
 #endif /* _TIFF_ */
