@@ -295,7 +295,7 @@ main(int argc, char* argv[])
 		TIFFClose(in);
 	}
 
-        TIFFClose( out );
+        TIFFClose(out);
         return (0);
 }
 
@@ -723,9 +723,9 @@ static int x(TIFF* in, TIFF* out, \
     uint32 imagelength, uint32 imagewidth, tsample_t spp)
 
 #define	DECLAREreadFunc(x) \
-static void x(TIFF* in, \
+static int x(TIFF* in, \
     uint8* buf, uint32 imagelength, uint32 imagewidth, tsample_t spp)
-typedef void (*readFunc)(TIFF*, uint8*, uint32, uint32, tsample_t);
+typedef int (*readFunc)(TIFF*, uint8*, uint32, uint32, tsample_t);
 
 #define	DECLAREwriteFunc(x) \
 static int x(TIFF* out, \
@@ -1024,15 +1024,17 @@ static int
 cpImage(TIFF* in, TIFF* out, readFunc fin, writeFunc fout,
 	uint32 imagelength, uint32 imagewidth, tsample_t spp)
 {
-	int status = FALSE;
+	int status = 0;
 	tdata_t buf = _TIFFmalloc(TIFFRasterScanlineSize(in) * imagelength);
         
 	if (buf) {
-		(*fin)(in, (uint8*)buf, imagelength, imagewidth, spp);
-		status = (fout)(out, (uint8*)buf, imagelength, imagewidth, spp);
+		if ((*fin)(in, (uint8*)buf, imagelength, imagewidth, spp)) {
+			status = (*fout)(out, (uint8*)buf,
+					 imagelength, imagewidth, spp);
+		}
 		_TIFFfree(buf);
 	}
-	return (status);
+	return status;
 }
 
 DECLAREreadFunc(readContigStripsIntoBuffer)
@@ -1044,30 +1046,38 @@ DECLAREreadFunc(readContigStripsIntoBuffer)
 	(void) imagewidth; (void) spp;
 	for (row = 0; row < imagelength; row++) {
 		if (TIFFReadScanline(in, (tdata_t) bufp, row, 0) < 0 && !ignore)
-			break;
+			return 0;
 		bufp += scanlinesize;
 	}
+
+	return 1;
 }
 
 DECLAREreadFunc(readSeparateStripsIntoBuffer)
 {
+	int status = 1;
 	tsize_t scanlinesize = TIFFScanlineSize(in);
 	tdata_t scanline = _TIFFmalloc(scanlinesize);
+	if (!scanlinesize)
+		return 0;
 
 	(void) imagewidth;
 	if (scanline) {
 		uint8* bufp = (uint8*) buf;
 		uint32 row;
 		tsample_t s;
-for (row = 0; row < imagelength; row++) {
+		for (row = 0; row < imagelength; row++) {
 			/* merge channels */
 			for (s = 0; s < spp; s++) {
 				uint8* bp = bufp + s;
 				tsize_t n = scanlinesize;
                                 uint8* sbuf = scanline;
 
-				if (TIFFReadScanline(in, scanline, row, s) < 0 && !ignore)
+				if (TIFFReadScanline(in, scanline, row, s) < 0
+				    && !ignore) {
+					status = 0;
 					goto done;
+				}
 				while (n-- > 0)
 					*bp = *sbuf++, bp += spp;
 			}
@@ -1076,11 +1086,13 @@ for (row = 0; row < imagelength; row++) {
 
 done:
 		_TIFFfree(scanline);
+		return status;
 	}
 }
 
 DECLAREreadFunc(readContigTilesIntoBuffer)
 {
+	int status = 1;
 	tdata_t tilebuf = _TIFFmalloc(TIFFTileSize(in));
 	uint32 imagew = TIFFScanlineSize(in);
 	uint32 tilew  = TIFFTileRowSize(in);
@@ -1091,7 +1103,7 @@ DECLAREreadFunc(readContigTilesIntoBuffer)
 
 	(void) spp;
 	if (tilebuf == 0)
-		return;
+		return 0;
 	(void) TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
         
@@ -1101,9 +1113,11 @@ DECLAREreadFunc(readContigTilesIntoBuffer)
 		uint32 col;
 
 		for (col = 0; col < imagewidth; col += tw) {
-			if (TIFFReadTile(in, tilebuf, col, row, 0, 0) < 0 &&
-			    !ignore)
+			if (TIFFReadTile(in, tilebuf, col, row, 0, 0) < 0
+			    && !ignore) {
+				status = 0;
 				goto done;
+			}
 			if (colb + tilew > imagew) {
 				uint32 width = imagew - colb;
 				uint32 oskew = tilew - width;
@@ -1120,10 +1134,12 @@ DECLAREreadFunc(readContigTilesIntoBuffer)
 	}
 done:
 	_TIFFfree(tilebuf);
+	return status;
 }
 
 DECLAREreadFunc(readSeparateTilesIntoBuffer)
 {
+	int status = 1;
 	uint32 imagew = TIFFRasterScanlineSize(in);
 	uint32 tilew = TIFFTileRowSize(in);
 	int iskew  = imagew - tilew*spp;
@@ -1134,7 +1150,7 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
         uint16 bps, bytes_per_sample;
 
 	if (tilebuf == 0)
-		return;
+		return 0;
 	(void) TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bps);
@@ -1150,8 +1166,11 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
 			tsample_t s;
 
 			for (s = 0; s < spp; s++) {
-				if (TIFFReadTile(in, tilebuf, col, row, 0, s) < 0 && !ignore)
+				if (TIFFReadTile(in, tilebuf, col, row, 0, s) < 0
+				    && !ignore) {
+					status = 0;
 					goto done;
+				}
 				/*
 				 * Tile is clipped horizontally.  Calculate
 				 * visible portion and skewing factors.
@@ -1179,6 +1198,7 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
 	}
 done:
 	_TIFFfree(tilebuf);
+	return status;
 }
 
 DECLAREwriteFunc(writeBufferToContigStrips)
