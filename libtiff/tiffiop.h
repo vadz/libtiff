@@ -229,7 +229,7 @@ struct tiff {
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))
 #define TIFFmin(A,B) ((A)<(B)?(A):(B))
 
-#define TIFFArraySize(a) (sizeof (a) / sizeof ((a)[0]))
+#define TIFFArrayCount(a) (sizeof (a) / sizeof ((a)[0]))
 
 #if defined(__cplusplus)
 extern "C" {

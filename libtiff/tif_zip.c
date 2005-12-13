@@ -305,7 +305,6 @@ static const TIFFFieldInfo zipFieldInfo[] = {
     { TIFFTAG_ZIPQUALITY,	 0, 0,	TIFF_ANY,	FIELD_PSEUDO,
       TRUE,	FALSE,	"" },
 };
-#define	N(a)	(sizeof (a) / sizeof (a[0]))
 
 int
 TIFFInitZIP(TIFF* tif, int scheme)
@@ -330,7 +329,7 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	 * Merge codec-specific tag information and
 	 * override parent get/set field methods.
 	 */
-	_TIFFMergeFieldInfo(tif, zipFieldInfo, N(zipFieldInfo));
+	_TIFFMergeFieldInfo(tif, zipFieldInfo, TIFFArrayCount(zipFieldInfo));
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = ZIPVGetField;	/* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;

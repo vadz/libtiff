@@ -850,7 +850,7 @@ int
 TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
 {
 	return TIFFReadCustomDirectory(tif, diroff, exifFieldInfo,
-				       TIFFArraySize(exifFieldInfo));
+				       TIFFArrayCount(exifFieldInfo));
 }
 
 static int

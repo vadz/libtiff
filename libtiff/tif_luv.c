@@ -1584,7 +1584,7 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 
 	/* override SetField so we can handle our private pseudo-tag */
 	_TIFFMergeFieldInfo(tif, LogLuvFieldInfo,
-			    TIFFArraySize(LogLuvFieldInfo));
+			    TIFFArrayCount(LogLuvFieldInfo));
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = LogLuvVGetField;   /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;

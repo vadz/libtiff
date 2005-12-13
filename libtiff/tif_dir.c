@@ -1073,7 +1073,7 @@ TIFFDefaultDirectory(TIFF* tif)
 {
 	register TIFFDirectory* td = &tif->tif_dir;
 
-	_TIFFSetupFieldInfo(tif, tiffFieldInfo, TIFFArraySize(tiffFieldInfo));
+	_TIFFSetupFieldInfo(tif, tiffFieldInfo, TIFFArrayCount(tiffFieldInfo));
 	_TIFFmemset(td, 0, sizeof (*td));
 	td->td_fillorder = FILLORDER_MSB2LSB;
 	td->td_bitspersample = 1;
