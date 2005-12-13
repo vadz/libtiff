@@ -28,7 +28,10 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.4  2004-09-21 13:31:23  dron
+ * Revision 1.5  2005-12-13 15:18:11  joris
+ * Some minor nitpicking
+ *
+ * Revision 1.4  2004/09/21 13:31:23  dron
  * Add missed include string.h.
  *
  * Revision 1.3  2000/04/18 22:48:31  warmerda
@@ -80,7 +83,7 @@ int main( int argc, char ** argv )
                 "                tiff_filename [resolution_reductions]\n"
                 "\n"
                 "Example:\n"
-                " %% addtifo abc.tif 2 4 8 16\n" );
+                " %% addtiffo abc.tif 2 4 8 16\n" );
         exit( 1 );
     }
 
@@ -98,14 +101,24 @@ int main( int argc, char ** argv )
             argc -= 2;
             pszResampling = *argv;
         }
+        else
+        {
+            fprintf( stderr, "Incorrect parameters\n" );
+            exit( 1 );
+        }
     }
 
 /* -------------------------------------------------------------------- */
 /*      Collect the user requested reduction factors.                   */
 /* -------------------------------------------------------------------- */
-    while( nOverviewCount < argc - 2 && nOverviewCount < 100 )
+    while( ( nOverviewCount < argc - 2 ) && ( nOverviewCount < 100 ) )
     {
         anOverviews[nOverviewCount] = atoi(argv[nOverviewCount+2]);
+        if( anOverviews[nOverviewCount] <= 0)
+        {
+            fprintf( stderr, "Incorrect parameters\n" );
+            exit( 1 );
+        }
         nOverviewCount++;
     }
 
