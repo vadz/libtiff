@@ -743,16 +743,15 @@ DECLAREcpFunc(cpContig2ContigByRow)
 	(void) imagewidth; (void) spp;
 	for (row = 0; row < imagelength; row++) {
 		if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore)
-			goto done;
+			goto bad;
 		if (TIFFWriteScanline(out, buf, row, 0) < 0)
 			goto bad;
 	}
-done:
 	_TIFFfree(buf);
-	return (TRUE);
+	return 1;
 bad:
 	_TIFFfree(buf);
-	return (FALSE);
+	return 0;
 }
 
 
@@ -788,52 +787,60 @@ static biasFn *lineSubtractFn (unsigned bits)
  */
 DECLAREcpFunc(cpBiasedContig2Contig)
 {
-  if (spp == 1) {
-    tsize_t biasSize = TIFFScanlineSize(bias);
-    tsize_t bufSize = TIFFScanlineSize(in);
-    tdata_t buf, biasBuf;
-    uint32 biasWidth = 0, biasLength = 0;
-    TIFFGetField(bias, TIFFTAG_IMAGEWIDTH, &biasWidth);
-    TIFFGetField(bias, TIFFTAG_IMAGELENGTH, &biasLength);
-    if (biasSize == bufSize && 
-        imagelength == biasLength && imagewidth == biasWidth) {
-      uint16 sampleBits = 0;
-      biasFn *subtractLine;
-      TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &sampleBits);
-      subtractLine = lineSubtractFn (sampleBits);
-      if (subtractLine) {
-        uint32 row;
-        buf = _TIFFmalloc(bufSize);
-        biasBuf = _TIFFmalloc(bufSize);
-	for (row = 0; row < imagelength; row++) {
-	  if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore)
-		break;
-	  if (TIFFReadScanline(bias, biasBuf, row, 0) < 0 && !ignore)
-		break;
-          subtractLine (buf, biasBuf, imagewidth);
-	  if (TIFFWriteScanline(out, buf, row, 0) < 0) {
-            _TIFFfree(buf); _TIFFfree(biasBuf);
-            return FALSE;
+	if (spp == 1) {
+	  tsize_t biasSize = TIFFScanlineSize(bias);
+	  tsize_t bufSize = TIFFScanlineSize(in);
+	  tdata_t buf, biasBuf;
+	  uint32 biasWidth = 0, biasLength = 0;
+	  TIFFGetField(bias, TIFFTAG_IMAGEWIDTH, &biasWidth);
+	  TIFFGetField(bias, TIFFTAG_IMAGELENGTH, &biasLength);
+	  if (biasSize == bufSize && 
+	      imagelength == biasLength && imagewidth == biasWidth) {
+		uint16 sampleBits = 0;
+		biasFn *subtractLine;
+		TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &sampleBits);
+		subtractLine = lineSubtractFn (sampleBits);
+		if (subtractLine) {
+			uint32 row;
+			buf = _TIFFmalloc(bufSize);
+			biasBuf = _TIFFmalloc(bufSize);
+			for (row = 0; row < imagelength; row++) {
+				if (TIFFReadScanline(in, buf, row, 0) < 0
+				    && !ignore)
+					goto bad;
+			if (TIFFReadScanline(bias, biasBuf, row, 0) < 0
+			    && !ignore)
+				goto bad;
+			subtractLine (buf, biasBuf, imagewidth);
+			if (TIFFWriteScanline(out, buf, row, 0) < 0)
+				goto bad;
+			}
+		
+			_TIFFfree(buf);
+			_TIFFfree(biasBuf);
+			TIFFSetDirectory(bias,
+				TIFFCurrentDirectory(bias)); /* rewind */
+			return 1;
+bad:
+			_TIFFfree(buf);
+			_TIFFfree(biasBuf);
+			return 0;
+	    } else {
+	      fprintf (stderr, "No support for biasing %d bit pixels\n",
+		       sampleBits);
+	      return 0;
+	    }
 	  }
+	  fprintf (stderr,"Bias image %s,%d\nis not the same size as %s,%d\n",
+	           TIFFFileName(bias), TIFFCurrentDirectory(bias),
+	           TIFFFileName(in), TIFFCurrentDirectory(in));
+	  return 0;
+	} else {
+	  fprintf (stderr, "Can't bias %s,%d as it has >1 Sample/Pixel\n",
+	           TIFFFileName(in), TIFFCurrentDirectory(in));
+	  return 0;
 	}
-	_TIFFfree(buf); _TIFFfree(biasBuf);
-        TIFFSetDirectory (bias, TIFFCurrentDirectory(bias)); /* rewind */
-	return TRUE;
-        
-      }else{
-        fprintf (stderr, "No support for biasing %d bit pixels\n", sampleBits);
-        return FALSE;
-      }
-    }
-    fprintf (stderr,"Bias image %s,%d\nis not the same size as %s,%d\n",
-             TIFFFileName(bias), TIFFCurrentDirectory(bias),
-             TIFFFileName(in), TIFFCurrentDirectory(in));
-    return FALSE;
-  }else{
-    fprintf (stderr, "Can't bias %s,%d as it has >1 Sample/Pixel\n",
-             TIFFFileName(in), TIFFCurrentDirectory(in));
-    return FALSE;
-  }
+
 }
 
 
@@ -853,17 +860,19 @@ DECLAREcpFunc(cpDecodedStrips)
 			tsize_t cc = (row + rowsperstrip > imagelength) ?
 			    TIFFVStripSize(in, imagelength - row) : stripsize;
 			if (TIFFReadEncodedStrip(in, s, buf, cc) < 0 && !ignore)
-				break;
-			if (TIFFWriteEncodedStrip(out, s, buf, cc) < 0) {
-				_TIFFfree(buf);
-				return (FALSE);
-			}
+				goto bad;
+			if (TIFFWriteEncodedStrip(out, s, buf, cc) < 0)
+				goto bad;
 			row += rowsperstrip;
 		}
 		_TIFFfree(buf);
-		return (TRUE);
+		return 1;
 	}
-	return (FALSE);
+	return 0;
+
+bad:
+	_TIFFfree(buf);
+	return 0;
 }
 
 /*
@@ -879,17 +888,16 @@ DECLAREcpFunc(cpSeparate2SeparateByRow)
 	for (s = 0; s < spp; s++) {
 		for (row = 0; row < imagelength; row++) {
 			if (TIFFReadScanline(in, buf, row, s) < 0 && !ignore)
-				goto done;
+				goto bad;
 			if (TIFFWriteScanline(out, buf, row, s) < 0)
 				goto bad;
 		}
 	}
-done:
 	_TIFFfree(buf);
-	return (TRUE);
+	return 1;
 bad:
 	_TIFFfree(buf);
-	return (FALSE);
+	return 0;
 }
 
 /*
@@ -908,7 +916,7 @@ DECLAREcpFunc(cpContig2SeparateByRow)
 	for (s = 0; s < spp; s++) {
 		for (row = 0; row < imagelength; row++) {
 			if (TIFFReadScanline(in, inbuf, row, 0) < 0 && !ignore)
-				goto done;
+				goto bad;
 			inp = ((uint8*)inbuf) + s;
 			outp = (uint8*)outbuf;
 			for (n = imagewidth; n-- > 0;) {
@@ -919,14 +927,13 @@ DECLAREcpFunc(cpContig2SeparateByRow)
 				goto bad;
 		}
 	}
-done:
 	if (inbuf) _TIFFfree(inbuf);
 	if (outbuf) _TIFFfree(outbuf);
-	return (TRUE);
+	return 1;
 bad:
 	if (inbuf) _TIFFfree(inbuf);
 	if (outbuf) _TIFFfree(outbuf);
-	return (FALSE);
+	return 0;
 }
 
 /*
@@ -945,7 +952,7 @@ DECLAREcpFunc(cpSeparate2ContigByRow)
 		/* merge channels */
 		for (s = 0; s < spp; s++) {
 			if (TIFFReadScanline(in, inbuf, row, s) < 0 && !ignore)
-				goto done;
+				goto bad;
 			inp = (uint8*)inbuf;
 			outp = ((uint8*)outbuf) + s;
 			for (n = imagewidth; n-- > 0;) {
@@ -956,7 +963,6 @@ DECLAREcpFunc(cpSeparate2ContigByRow)
 		if (TIFFWriteScanline(out, outbuf, row, 0) < 0)
 			goto bad;
 	}
-done:
 	if (inbuf) _TIFFfree(inbuf);
 	if (outbuf) _TIFFfree(outbuf);
 	return (TRUE);
