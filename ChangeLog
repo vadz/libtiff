@@ -1,3 +1,7 @@
+2005-12-14  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcp.c: Return non-zero status when reading fails (again).
+
 2005-12-13  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Return non-zero status when reading fails.
