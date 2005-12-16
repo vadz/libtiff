@@ -4,7 +4,7 @@
  * Project:  TIFF Overview Builder
  * Purpose:  Library functions to maintain two rows of tiles or two strips
  *           of data for output overviews as an output cache. 
- * Author:   Frank Warmerdam, warmerda@home.com
+ * Author:   Frank Warmerdam, warmerdam@pobox.com
  *
  ******************************************************************************
  * Copyright (c) 2000, Frank Warmerdam
@@ -109,6 +109,7 @@ TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, int nDirOffset )
     {
         TIFFError( hTIFF->tif_name,
                    "Can't allocate memory for overview cache." );
+        /* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
         return NULL;
     }
 
@@ -138,9 +139,9 @@ static void TIFFWriteOvrRow( TIFFOvrCache * psCache )
     uint32	nBaseDirOffset;
     
 /* -------------------------------------------------------------------- */
-/*	If the output cache is multi-byte per sample, and the file	*/
-/*	being written to is of a different byte order than the current	*/
-/*	platform, we will need to byte swap the data. 			*/
+/*      If the output cache is multi-byte per sample, and the file      */
+/*      being written to is of a different byte order than the current  */
+/*      platform, we will need to byte swap the data.                   */
 /* -------------------------------------------------------------------- */
     if( TIFFIsByteSwapped(psCache->hTIFF) )
     {
@@ -233,6 +234,7 @@ static void TIFFWriteOvrRow( TIFFOvrCache * psCache )
             }
         }
     }
+    /* TODO: add checks on error status return of TIFFWriteEncodedTile and TIFFWriteEncodedStrip */
 
 /* -------------------------------------------------------------------- */
 /*      Rotate buffers.                                                 */
@@ -249,20 +251,23 @@ static void TIFFWriteOvrRow( TIFFOvrCache * psCache )
 /*      Restore access to original directory.                           */
 /* -------------------------------------------------------------------- */
     TIFFFlush( psCache->hTIFF );
-    
+    /* TODO: add checks on error status return of TIFFFlush */
     TIFFSetSubDirectory( psCache->hTIFF, nBaseDirOffset );
+    /* TODO: add checks on error status return of TIFFSetSubDirectory */
 }
 
 /************************************************************************/
 /*                          TIFFGetOvrBlock()                           */
 /************************************************************************/
 
+/* TODO: make TIFF_Downsample handle iSample offset, so that we can
+ * do with a single TIFFGetOvrBlock and no longer need TIFFGetOvrBlock_Subsampled */
 unsigned char *TIFFGetOvrBlock( TIFFOvrCache *psCache, int iTileX, int iTileY,
                                 int iSample )
 
 {
     int		nRowOffset;
-    
+
     if( iTileY > psCache->nBlockOffset + 1 )
         TIFFWriteOvrRow( psCache );
 
@@ -278,6 +283,33 @@ unsigned char *TIFFGetOvrBlock( TIFFOvrCache *psCache, int iTileX, int iTileY,
     else
         nRowOffset = iTileX * psCache->nBytesPerBlock +
             (psCache->nBitsPerPixel + 7) / 8 * iSample;
+
+    if( iTileY == psCache->nBlockOffset )
+        return psCache->pabyRow1Blocks + nRowOffset;
+    else
+        return psCache->pabyRow2Blocks + nRowOffset;
+}
+
+/************************************************************************/
+/*                     TIFFGetOvrBlock_Subsampled()                     */
+/************************************************************************/
+
+unsigned char *TIFFGetOvrBlock_Subsampled( TIFFOvrCache *psCache, 
+                                           int iTileX, int iTileY )
+
+{
+    int		nRowOffset;
+
+    if( iTileY > psCache->nBlockOffset + 1 )
+        TIFFWriteOvrRow( psCache );
+
+    assert( iTileX >= 0 && iTileX < psCache->nBlocksPerRow );
+    assert( iTileY >= 0 && iTileY < psCache->nBlocksPerColumn );
+    assert( iTileY >= psCache->nBlockOffset
+            && iTileY < psCache->nBlockOffset+2 );
+    assert( psCache->nPlanarConfig != PLANARCONFIG_SEPARATE );
+
+    nRowOffset = iTileX * psCache->nBytesPerBlock;
 
     if( iTileY == psCache->nBlockOffset )
         return psCache->pabyRow1Blocks + nRowOffset;

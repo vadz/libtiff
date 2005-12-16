@@ -4,7 +4,7 @@
  * Project:  TIFF Overview Builder
  * Purpose:  Library functions to maintain two rows of tiles or two strips
  *           of data for output overviews as an output cache. 
- * Author:   Frank Warmerdam, warmerda@home.com
+ * Author:   Frank Warmerdam, warmerdam@pobox.com
  *
  * This code could potentially be used by other applications wanting to
  * manage a once-through write cache. 
@@ -68,13 +68,16 @@ typedef struct
 } TIFFOvrCache;
 
 TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, int nDirOffset );
-unsigned char *TIFFGetOvrBlock( TIFFOvrCache *, int, int, int );
+unsigned char *TIFFGetOvrBlock( TIFFOvrCache *psCache, int iTileX, int iTileY,
+                                int iSample );
+unsigned char *TIFFGetOvrBlock_Subsampled( TIFFOvrCache *psCache, int iTileX, int iTileY );
 void           TIFFDestroyOvrCache( TIFFOvrCache * );
 
 void TIFFBuildOverviews( TIFF *, int, int *, int, const char *,
                          int (*)(double,void*), void * );
 
 void TIFF_ProcessFullResBlock( TIFF *hTIFF, int nPlanarConfig,
+                               int bSubsampled, int nHorSamples, int nVerSamples,
                                int nOverviews, int * panOvList,
                                int nBitsPerPixel, 
                                int nSamples, TIFFOvrCache ** papoRawBIs,
@@ -85,7 +88,10 @@ void TIFF_ProcessFullResBlock( TIFF *hTIFF, int nPlanarConfig,
 
 uint32 TIFF_WriteOverview( TIFF *, int, int, int, int, int, int, int,
                            int, int, int, int, unsigned short *,
-                           unsigned short *, unsigned short *, int );
+                           unsigned short *, unsigned short *, int,
+                           int, int);
+
+
 
 #if defined(__cplusplus)
 }
