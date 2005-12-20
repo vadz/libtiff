@@ -1,3 +1,10 @@
+2005-12-20  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiffcp.c: Added many error reporting messages; fixed integer
+	overflow as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=789
+
 2005-12-16  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* contrib/addtiffo/*: Major upgrade by Joris to support subsampled
