@@ -742,10 +742,18 @@ DECLAREcpFunc(cpContig2ContigByRow)
 
 	(void) imagewidth; (void) spp;
 	for (row = 0; row < imagelength; row++) {
-		if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore)
+		if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore) {
+			TIFFError(TIFFFileName(in),
+				  "Error, can't read scanline %lu",
+				  (unsigned long) row);
 			goto bad;
-		if (TIFFWriteScanline(out, buf, row, 0) < 0)
+		}
+		if (TIFFWriteScanline(out, buf, row, 0) < 0) {
+			TIFFError(TIFFFileName(out),
+				  "Error, can't write scanline %lu",
+				  (unsigned long) row);
 			goto bad;
+		}
 	}
 	_TIFFfree(buf);
 	return 1;
@@ -806,14 +814,26 @@ DECLAREcpFunc(cpBiasedContig2Contig)
 			biasBuf = _TIFFmalloc(bufSize);
 			for (row = 0; row < imagelength; row++) {
 				if (TIFFReadScanline(in, buf, row, 0) < 0
-				    && !ignore)
+				    && !ignore) {
+					TIFFError(TIFFFileName(in),
+					"Error, can't read scanline %lu",
+					(unsigned long) row);
 					goto bad;
-			if (TIFFReadScanline(bias, biasBuf, row, 0) < 0
-			    && !ignore)
-				goto bad;
-			subtractLine (buf, biasBuf, imagewidth);
-			if (TIFFWriteScanline(out, buf, row, 0) < 0)
-				goto bad;
+				}
+				if (TIFFReadScanline(bias, biasBuf, row, 0) < 0
+				    && !ignore) {
+					TIFFError(TIFFFileName(in),
+					"Error, can't read biased scanline %lu",
+					(unsigned long) row);
+					goto bad;
+				}
+				subtractLine (buf, biasBuf, imagewidth);
+				if (TIFFWriteScanline(out, buf, row, 0) < 0) {
+					TIFFError(TIFFFileName(out),
+					"Error, can't write scanline %lu",
+					(unsigned long) row);
+					goto bad;
+				}
 			}
 		
 			_TIFFfree(buf);
@@ -826,18 +846,21 @@ bad:
 			_TIFFfree(biasBuf);
 			return 0;
 	    } else {
-	      fprintf (stderr, "No support for biasing %d bit pixels\n",
-		       sampleBits);
+	      TIFFError(TIFFFileName(in),
+			"No support for biasing %d bit pixels\n",
+			sampleBits);
 	      return 0;
 	    }
 	  }
-	  fprintf (stderr,"Bias image %s,%d\nis not the same size as %s,%d\n",
-	           TIFFFileName(bias), TIFFCurrentDirectory(bias),
-	           TIFFFileName(in), TIFFCurrentDirectory(in));
+	  TIFFError(TIFFFileName(in),
+		    "Bias image %s,%d\nis not the same size as %s,%d\n",
+		    TIFFFileName(bias), TIFFCurrentDirectory(bias),
+		    TIFFFileName(in), TIFFCurrentDirectory(in));
 	  return 0;
 	} else {
-	  fprintf (stderr, "Can't bias %s,%d as it has >1 Sample/Pixel\n",
-	           TIFFFileName(in), TIFFCurrentDirectory(in));
+	  TIFFError(TIFFFileName(in),
+		    "Can't bias %s,%d as it has >1 Sample/Pixel\n",
+		    TIFFFileName(in), TIFFCurrentDirectory(in));
 	  return 0;
 	}
 
@@ -859,16 +882,29 @@ DECLAREcpFunc(cpDecodedStrips)
 		for (s = 0; s < ns; s++) {
 			tsize_t cc = (row + rowsperstrip > imagelength) ?
 			    TIFFVStripSize(in, imagelength - row) : stripsize;
-			if (TIFFReadEncodedStrip(in, s, buf, cc) < 0 && !ignore)
+			if (TIFFReadEncodedStrip(in, s, buf, cc) < 0
+			    && !ignore) {
+				TIFFError(TIFFFileName(in),
+					  "Error, can't read strip %lu",
+					  (unsigned long) s);
 				goto bad;
-			if (TIFFWriteEncodedStrip(out, s, buf, cc) < 0)
+			}
+			if (TIFFWriteEncodedStrip(out, s, buf, cc) < 0) {
+				TIFFError(TIFFFileName(out),
+					  "Error, can't write strip %lu",
+					  (unsigned long) s);
 				goto bad;
+			}
 			row += rowsperstrip;
 		}
 		_TIFFfree(buf);
 		return 1;
+	} else {
+		TIFFError(TIFFFileName(in),
+			  "Error, can't allocate memory buffer of size %lu "
+			  "to read strips", (unsigned long) stripsize);
+		return 0;
 	}
-	return 0;
 
 bad:
 	_TIFFfree(buf);
@@ -887,10 +923,18 @@ DECLAREcpFunc(cpSeparate2SeparateByRow)
 	(void) imagewidth;
 	for (s = 0; s < spp; s++) {
 		for (row = 0; row < imagelength; row++) {
-			if (TIFFReadScanline(in, buf, row, s) < 0 && !ignore)
+			if (TIFFReadScanline(in, buf, row, s) < 0 && !ignore) {
+				TIFFError(TIFFFileName(in),
+					  "Error, can't read scanline %lu",
+					  (unsigned long) row);
 				goto bad;
-			if (TIFFWriteScanline(out, buf, row, s) < 0)
+			}
+			if (TIFFWriteScanline(out, buf, row, s) < 0) {
+				TIFFError(TIFFFileName(out),
+					  "Error, can't write scanline %lu",
+					  (unsigned long) row);
 				goto bad;
+			}
 		}
 	}
 	_TIFFfree(buf);
@@ -915,16 +959,25 @@ DECLAREcpFunc(cpContig2SeparateByRow)
 	/* unpack channels */
 	for (s = 0; s < spp; s++) {
 		for (row = 0; row < imagelength; row++) {
-			if (TIFFReadScanline(in, inbuf, row, 0) < 0 && !ignore)
+			if (TIFFReadScanline(in, inbuf, row, 0) < 0
+			    && !ignore) {
+				TIFFError(TIFFFileName(in),
+					  "Error, can't read scanline %lu",
+					  (unsigned long) row);
 				goto bad;
+			}
 			inp = ((uint8*)inbuf) + s;
 			outp = (uint8*)outbuf;
 			for (n = imagewidth; n-- > 0;) {
 				*outp++ = *inp;
 				inp += spp;
 			}
-			if (TIFFWriteScanline(out, outbuf, row, s) < 0)
+			if (TIFFWriteScanline(out, outbuf, row, s) < 0) {
+				TIFFError(TIFFFileName(out),
+					  "Error, can't write scanline %lu",
+					  (unsigned long) row);
 				goto bad;
+			}
 		}
 	}
 	if (inbuf) _TIFFfree(inbuf);
@@ -951,8 +1004,13 @@ DECLAREcpFunc(cpSeparate2ContigByRow)
 	for (row = 0; row < imagelength; row++) {
 		/* merge channels */
 		for (s = 0; s < spp; s++) {
-			if (TIFFReadScanline(in, inbuf, row, s) < 0 && !ignore)
+			if (TIFFReadScanline(in, inbuf, row, s) < 0
+			    && !ignore) {
+				TIFFError(TIFFFileName(in),
+					  "Error, can't read scanline %lu",
+					  (unsigned long) row);
 				goto bad;
+			}
 			inp = (uint8*)inbuf;
 			outp = ((uint8*)outbuf) + s;
 			for (n = imagewidth; n-- > 0;) {
@@ -960,16 +1018,20 @@ DECLAREcpFunc(cpSeparate2ContigByRow)
 				outp += spp;
 			}
 		}
-		if (TIFFWriteScanline(out, outbuf, row, 0) < 0)
+		if (TIFFWriteScanline(out, outbuf, row, 0) < 0) {
+			TIFFError(TIFFFileName(out),
+				  "Error, can't write scanline %lu",
+				  (unsigned long) row);
 			goto bad;
+		}
 	}
 	if (inbuf) _TIFFfree(inbuf);
 	if (outbuf) _TIFFfree(outbuf);
-	return (TRUE);
+	return 1;
 bad:
 	if (inbuf) _TIFFfree(inbuf);
 	if (outbuf) _TIFFfree(outbuf);
-	return (FALSE);
+	return 0;
 }
 
 static void
@@ -1031,15 +1093,31 @@ cpImage(TIFF* in, TIFF* out, readFunc fin, writeFunc fout,
 	uint32 imagelength, uint32 imagewidth, tsample_t spp)
 {
 	int status = 0;
-	tdata_t buf = _TIFFmalloc(TIFFRasterScanlineSize(in) * imagelength);
-        
-	if (buf) {
-		if ((*fin)(in, (uint8*)buf, imagelength, imagewidth, spp)) {
-			status = (*fout)(out, (uint8*)buf,
-					 imagelength, imagewidth, spp);
+	tdata_t buf = NULL;
+	tsize_t scanlinesize = TIFFRasterScanlineSize(in);
+        tsize_t bytes = scanlinesize * (tsize_t)imagelength;                                      
+        /*
+         * XXX: Check for integer overflow.
+         */
+        if (scanlinesize
+	    && imagelength
+	    && bytes / (tsize_t)imagelength == scanlinesize) {
+                buf = _TIFFmalloc(bytes);
+		if (buf) {
+			if ((*fin)(in, (uint8*)buf, imagelength, 
+				   imagewidth, spp)) {
+				status = (*fout)(out, (uint8*)buf,
+						 imagelength, imagewidth, spp);
+			}
+			_TIFFfree(buf);
+		} else {
+			TIFFError(TIFFFileName(in),
+				"Error, can't allocate space for image buffer");
 		}
-		_TIFFfree(buf);
+	} else {
+		TIFFError(TIFFFileName(in), "Error, no space for image buffer");
 	}
+
 	return status;
 }
 
@@ -1051,8 +1129,13 @@ DECLAREreadFunc(readContigStripsIntoBuffer)
 
 	(void) imagewidth; (void) spp;
 	for (row = 0; row < imagelength; row++) {
-		if (TIFFReadScanline(in, (tdata_t) bufp, row, 0) < 0 && !ignore)
+		if (TIFFReadScanline(in, (tdata_t) bufp, row, 0) < 0
+		    && !ignore) {
+			TIFFError(TIFFFileName(in),
+				  "Error, can't read scanline %lu",
+				  (unsigned long) row);
 			return 0;
+		}
 		bufp += scanlinesize;
 	}
 
@@ -1081,6 +1164,9 @@ DECLAREreadFunc(readSeparateStripsIntoBuffer)
 
 				if (TIFFReadScanline(in, scanline, row, s) < 0
 				    && !ignore) {
+					TIFFError(TIFFFileName(in),
+					"Error, can't read scanline %lu",
+					(unsigned long) row);
 					status = 0;
 					goto done;
 				}
@@ -1089,11 +1175,11 @@ DECLAREreadFunc(readSeparateStripsIntoBuffer)
 			}
 			bufp += scanlinesize * spp;
 		}
+	}
 
 done:
-		_TIFFfree(scanline);
-		return status;
-	}
+	_TIFFfree(scanline);
+	return status;
 }
 
 DECLAREreadFunc(readContigTilesIntoBuffer)
@@ -1121,6 +1207,10 @@ DECLAREreadFunc(readContigTilesIntoBuffer)
 		for (col = 0; col < imagewidth; col += tw) {
 			if (TIFFReadTile(in, tilebuf, col, row, 0, 0) < 0
 			    && !ignore) {
+				TIFFError(TIFFFileName(in),
+					  "Error, can't read tile at %lu %lu",
+					  (unsigned long) col,
+					  (unsigned long) row);
 				status = 0;
 				goto done;
 			}
@@ -1174,6 +1264,12 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
 			for (s = 0; s < spp; s++) {
 				if (TIFFReadTile(in, tilebuf, col, row, 0, s) < 0
 				    && !ignore) {
+					TIFFError(TIFFFileName(in),
+					  "Error, can't read tile at %lu %lu, "
+					  "sample %lu",
+					  (unsigned long) col,
+					  (unsigned long) row,
+					  (unsigned long) s);
 					status = 0;
 					goto done;
 				}
@@ -1218,11 +1314,14 @@ DECLAREwriteFunc(writeBufferToContigStrips)
 		uint32 nrows = (row+rowsperstrip > imagelength) ?
 		    imagelength-row : rowsperstrip;
 		tsize_t stripsize = TIFFVStripSize(out, nrows);
-		if (TIFFWriteEncodedStrip(out, strip++, buf, stripsize) < 0)
-			return (FALSE);
+		if (TIFFWriteEncodedStrip(out, strip++, buf, stripsize) < 0) {
+			TIFFError(TIFFFileName(out),
+				  "Error, can't write strip %lu", strip - 1);
+			return 0;
+		}
 		buf += stripsize;
 	}
-	return (TRUE);
+	return 1;
 }
 
 DECLAREwriteFunc(writeBufferToSeparateStrips)
@@ -1247,13 +1346,16 @@ DECLAREwriteFunc(writeBufferToSeparateStrips)
 			    obuf, (uint8*) buf + row*rowsize + s, 
 			    nrows, imagewidth, 0, 0, spp, 1);
 			if (TIFFWriteEncodedStrip(out, strip++, obuf, stripsize) < 0) {
+				TIFFError(TIFFFileName(out),
+					  "Error, can't write strip %lu",
+					  strip - 1);
 				_TIFFfree(obuf);
-				return (FALSE);
+				return 0;
 			}
 		}
 	}
 	_TIFFfree(obuf);
-	return (TRUE);
+	return 1;
 
 }
 
@@ -1269,7 +1371,7 @@ DECLAREwriteFunc(writeBufferToContigTiles)
 
 	(void) spp;
 	if (obuf == NULL)
-		return (FALSE);
+		return 0;
 	(void) TIFFGetField(out, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw);
 	for (row = 0; row < imagelength; row += tilelength) {
@@ -1291,15 +1393,19 @@ DECLAREwriteFunc(writeBufferToContigTiles)
 				cpStripToTile(obuf, bufp + colb, nrow, tilew,
 				    0, iskew);
 			if (TIFFWriteTile(out, obuf, col, row, 0, 0) < 0) {
+				TIFFError(TIFFFileName(out),
+					  "Error, can't write tile at %lu %lu",
+					  (unsigned long) col,
+					  (unsigned long) row);
 				_TIFFfree(obuf);
-				return (FALSE);
+				return 0;
 			}
 			colb += tilew;
 		}
 		bufp += nrow * imagew;
 	}
 	_TIFFfree(obuf);
-	return (TRUE);
+	return 1;
 }
 
 DECLAREwriteFunc(writeBufferToSeparateTiles)
@@ -1315,7 +1421,7 @@ DECLAREwriteFunc(writeBufferToSeparateTiles)
         uint16 bps, bytes_per_sample;
 
 	if (obuf == NULL)
-		return (FALSE);
+		return 0;
 	(void) TIFFGetField(out, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(out, TIFFTAG_BITSPERSAMPLE, &bps);
@@ -1350,8 +1456,14 @@ DECLAREwriteFunc(writeBufferToSeparateTiles)
 					    0, iskew, spp,
                                             bytes_per_sample);
 				if (TIFFWriteTile(out, obuf, col, row, 0, s) < 0) {
+					TIFFError(TIFFFileName(out),
+					"Error, can't write tile at %lu %lu "
+					"sample %lu",
+					(unsigned long) col,
+					(unsigned long) row,
+					(unsigned long) s);
 					_TIFFfree(obuf);
-					return (FALSE);
+					return 0;
 				}
 			}
 			colb += tilew;
@@ -1359,7 +1471,7 @@ DECLAREwriteFunc(writeBufferToSeparateTiles)
 		bufp += nrow * iimagew;
 	}
 	_TIFFfree(obuf);
-	return (TRUE);
+	return 1;
 }
 
 /*
