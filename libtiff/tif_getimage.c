@@ -2240,7 +2240,7 @@ makecmap(TIFFRGBAImage* img)
     img->PALmap = (uint32**) _TIFFmalloc(
 	256*sizeof (uint32 *)+(256*nsamples*sizeof(uint32)));
     if (img->PALmap == NULL) {
-		TIFFError(img->tif->tif_clientdata, TIFFFileName(img->tif), "No space for Palette mapping table");
+		TIFFErrorExt(img->tif->tif_clientdata, TIFFFileName(img->tif), "No space for Palette mapping table");
 		return (0);
 	}
     p = (uint32*)(img->PALmap + 256);
