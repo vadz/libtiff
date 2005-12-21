@@ -128,8 +128,8 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
 			fprintf(fd, "    %2d: %5g %5g\n", i,
 				((float *)raw_data)[2*i+0],
 				((float *)raw_data)[2*i+1]);
+			return 1;
 		}
-		return 1;
 		case TIFFTAG_XMLPACKET:
 		{
 			uint32 i;
@@ -138,8 +138,25 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
 			for(i = 0; i < value_count; i++)
 				fputc(((char *)raw_data)[i], fd);
 			fprintf( fd, "\n" );
+			return 1;
 		}
-		return 1;
+		case TIFFTAG_RICHTIFFIPTC:
+			/*
+			 * XXX: for some weird reason RichTIFFIPTC tag
+			 * defined as array of LONG values.
+			 */
+			fprintf(fd,
+				"  RichTIFFIPTC Data: <present>, %lu bytes\n",
+				(unsigned long) value_count * 4);
+			return 1;
+		case TIFFTAG_PHOTOSHOP:
+			fprintf(fd, "  Photoshop Data: <present>, %lu bytes\n",
+				(unsigned long) value_count);
+			return 1;
+		case TIFFTAG_ICCPROFILE:
+			fprintf(fd, "  ICC Profile: <present>, %lu bytes\n",
+				(unsigned long) value_count);
+			return 1;
         }
 
 	return 0;
@@ -473,15 +490,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		} else
 			fprintf(fd, "(present)\n");
 	}
-	if (TIFFFieldSet(tif,FIELD_ICCPROFILE))
-		fprintf(fd, "  ICC Profile: <present>, %lu bytes\n",
-		    (unsigned long) td->td_profileLength);
- 	if (TIFFFieldSet(tif,FIELD_PHOTOSHOP))
- 		fprintf(fd, "  Photoshop Data: <present>, %lu bytes\n",
- 		    (unsigned long) td->td_photoshopLength);
- 	if (TIFFFieldSet(tif,FIELD_RICHTIFFIPTC))
- 		fprintf(fd, "  RichTIFFIPTC Data: <present>, %lu bytes\n",
- 		    (unsigned long) td->td_richtiffiptcLength);
 	if (TIFFFieldSet(tif, FIELD_SUBIFD)) {
 		fprintf(fd, "  SubIFD Offsets:");
 		for (i = 0; i < td->td_nsubifd; i++)

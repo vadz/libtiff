@@ -81,15 +81,6 @@ typedef	struct {
 	uint16	td_dotrange[2];
 	int	td_inknameslen;
 	char*	td_inknames;
-	/* ICC parameters */
-	uint32	td_profileLength;
-	void	*td_profileData;
-	/* Adobe Photoshop tag handling */
-	uint32	td_photoshopLength;
-	void	*td_photoshopData;
-	/* IPTC parameters */
-	uint32	td_richtiffiptcLength;
-	void	*td_richtiffiptcData;
 	int     td_customValueCount;
         TIFFTagValue *td_customValues;
 } TIFFDirectory;
@@ -163,9 +154,6 @@ typedef	struct {
 /* unused - was FIELD_TARGETPRINTER	48 */
 #define	FIELD_SUBIFD			49
 #define	FIELD_NUMBEROFINKS		50
-#define FIELD_ICCPROFILE		51
-#define FIELD_PHOTOSHOP			52
-#define FIELD_RICHTIFFIPTC		53
 #define FIELD_STONITS			54
 /*      FIELD_CUSTOM (see tiffio.h)     65 */
 /* end of support for well-known tags; codec-private tags follow */
@@ -408,13 +396,13 @@ static const TIFFFieldInfo tiffFieldInfo[] = {
     { TIFFTAG_COPYRIGHT,	-1, -1,	TIFF_ASCII,	FIELD_CUSTOM,
       1,	0,	"Copyright" },
 /* end Pixar tags */
-    { TIFFTAG_RICHTIFFIPTC, -1, -3,	TIFF_LONG,   FIELD_RICHTIFFIPTC, 
+    { TIFFTAG_RICHTIFFIPTC, -1, -3,	TIFF_LONG,	FIELD_CUSTOM, 
       0,    1,   "RichTIFFIPTC" },
-    { TIFFTAG_PHOTOSHOP,    -1, -3,	TIFF_BYTE,   FIELD_PHOTOSHOP, 
+    { TIFFTAG_PHOTOSHOP,    -1, -3,	TIFF_BYTE,	FIELD_CUSTOM, 
       0,    1,   "Photoshop" },
     { TIFFTAG_EXIFIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"EXIFIFDOffset" },
-    { TIFFTAG_ICCPROFILE,	-1, -3,	TIFF_UNDEFINED,	FIELD_ICCPROFILE,
+    { TIFFTAG_ICCPROFILE,	-1, -3,	TIFF_UNDEFINED,	FIELD_CUSTOM,
       0,	1,	"ICC Profile" },
     { TIFFTAG_GPSIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"GPSIFDOffset" },

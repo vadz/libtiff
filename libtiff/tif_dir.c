@@ -394,22 +394,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_NUMBEROFINKS:
 		td->td_ninks = (uint16) va_arg(ap, int);
 		break;
-	case TIFFTAG_ICCPROFILE:
-		td->td_profileLength = (uint32) va_arg(ap, uint32);
-		_TIFFsetByteArray(&td->td_profileData, va_arg(ap, void*),
-		    td->td_profileLength);
-		break;
- 	case TIFFTAG_PHOTOSHOP:
-  		td->td_photoshopLength = (uint32) va_arg(ap, uint32);
-  		_TIFFsetByteArray (&td->td_photoshopData, va_arg(ap, void*),
- 			td->td_photoshopLength);
- 		break;
-	case TIFFTAG_RICHTIFFIPTC: 
-  		td->td_richtiffiptcLength = (uint32) va_arg(ap, uint32);
-  		_TIFFsetLongArray ((uint32**)&td->td_richtiffiptcData,
-				   va_arg(ap, uint32*),
-				   td->td_richtiffiptcLength);
- 		break;
         default: {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
             TIFFTagValue *tv;
@@ -838,18 +822,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_NUMBEROFINKS:
             *va_arg(ap, uint16*) = td->td_ninks;
             break;
-	case TIFFTAG_ICCPROFILE:
-            *va_arg(ap, uint32*) = td->td_profileLength;
-            *va_arg(ap, void**) = td->td_profileData;
-            break;
- 	case TIFFTAG_PHOTOSHOP:
-            *va_arg(ap, uint32*) = td->td_photoshopLength;
-            *va_arg(ap, void**) = td->td_photoshopData;
-            break;
- 	case TIFFTAG_RICHTIFFIPTC:
-            *va_arg(ap, uint32*) = td->td_richtiffiptcLength;
-            *va_arg(ap, void**) = td->td_richtiffiptcData;
-            break;
 
         default:
         {
@@ -1015,9 +987,6 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_transferfunction[0]);
 	CleanupField(td_transferfunction[1]);
 	CleanupField(td_transferfunction[2]);
-	CleanupField(td_profileData);
-	CleanupField(td_photoshopData);
-	CleanupField(td_richtiffiptcData);
 	CleanupField(td_stripoffset);
 	CleanupField(td_stripbytecount);
 
@@ -1275,7 +1244,8 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	tdir_t n;
 
 	if (tif->tif_mode == O_RDONLY) {
-		TIFFErrorExit(tif->tif_clientdata, module, "Can not unlink directory in read-only file");
+		TIFFErrorExit(tif->tif_clientdata, module,
+			      "Can not unlink directory in read-only file");
 		return (0);
 	}
 	/*
