@@ -1244,8 +1244,8 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	tdir_t n;
 
 	if (tif->tif_mode == O_RDONLY) {
-		TIFFErrorExit(tif->tif_clientdata, module,
-			      "Can not unlink directory in read-only file");
+		TIFFErrorExt(tif->tif_clientdata, module,
+                             "Can not unlink directory in read-only file");
 		return (0);
 	}
 	/*
