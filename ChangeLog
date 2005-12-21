@@ -1,3 +1,8 @@
+2005-12-21  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dir.c, tif_dir.h, tif_print.c}: Make RichTIFFIPTC,
+	Photoshop and ICCProfile tags custom.
+
 2005-12-21  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/*, contrib/*: Added 'dial-mode' error handling, enabling 
