@@ -1,3 +1,10 @@
+2005-12-21  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* libtiff/*, contrib/*: Added 'dial-mode' error handling, enabling 
+	newer code to get context indicator in error handler and still
+	remain compatible with older code: Done TIFFError calls everywhere 
+	except in tools   
+
 2005-12-20  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiffcp.c: Added many error reporting messages; fixed integer

@@ -61,7 +61,7 @@ PredictorSetup(TIFF* tif)
 		case PREDICTOR_HORIZONTAL:
 			if (td->td_bitspersample != 8
 			    && td->td_bitspersample != 16) {
-				TIFFError(module,
+				TIFFErrorExt(tif->tif_clientdata, module,
     "Horizontal differencing \"Predictor\" not supported with %d-bit samples",
 					  td->td_bitspersample);
 				return 0;
@@ -69,14 +69,14 @@ PredictorSetup(TIFF* tif)
 			break;
 		case PREDICTOR_FLOATINGPOINT:
 			if (td->td_sampleformat != SAMPLEFORMAT_IEEEFP) {
-				TIFFError(module,
+				TIFFErrorExt(tif->tif_clientdata, module,
 	"Floating point \"Predictor\" not supported with %d data format",
 					  td->td_sampleformat);
 				return 0;
 			}
 			break;
 		default:
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 				  "\"Predictor\" value %d not supported",
 				  sp->predictor);
 			return 0;

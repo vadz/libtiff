@@ -41,7 +41,7 @@ summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)
 	uint32	bytes = summand1 + summand2;
 
 	if (bytes - summand1 != summand2) {
-		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Integer overflow in %s", where);
 		bytes = 0;
 	}
 
@@ -54,7 +54,7 @@ multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)
 	uint32	bytes = nmemb * elem_size;
 
 	if (elem_size && bytes / elem_size != nmemb) {
-		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Integer overflow in %s", where);
 		bytes = 0;
 	}
 
@@ -107,23 +107,23 @@ TIFFCheckTile(TIFF* tif, uint32 x, uint32 y, uint32 z, tsample_t s)
 	TIFFDirectory *td = &tif->tif_dir;
 
 	if (x >= td->td_imagewidth) {
-		TIFFError(tif->tif_name, "%lu: Col out of range, max %lu",
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "%lu: Col out of range, max %lu",
 		    (unsigned long) x, (unsigned long) td->td_imagewidth);
 		return (0);
 	}
 	if (y >= td->td_imagelength) {
-		TIFFError(tif->tif_name, "%lu: Row out of range, max %lu",
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "%lu: Row out of range, max %lu",
 		    (unsigned long) y, (unsigned long) td->td_imagelength);
 		return (0);
 	}
 	if (z >= td->td_imagedepth) {
-		TIFFError(tif->tif_name, "%lu: Depth out of range, max %lu",
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "%lu: Depth out of range, max %lu",
 		    (unsigned long) z, (unsigned long) td->td_imagedepth);
 		return (0);
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE &&
 	    s >= td->td_samplesperpixel) {
-		TIFFError(tif->tif_name, "%lu: Sample out of range, max %lu",
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "%lu: Sample out of range, max %lu",
 		    (unsigned long) s, (unsigned long) td->td_samplesperpixel);
 		return (0);
 	}
@@ -209,7 +209,7 @@ TIFFVTileSize(TIFF* tif, uint32 nrows)
 		tsize_t samplingarea =
 		    td->td_ycbcrsubsampling[0]*td->td_ycbcrsubsampling[1];
 		if (samplingarea == 0) {
-			TIFFError(tif->tif_name, "Invalid YCbCr subsampling");
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Invalid YCbCr subsampling");
 			return 0;
 		}
 		nrows = TIFFroundup(nrows, td->td_ycbcrsubsampling[1]);

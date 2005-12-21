@@ -281,7 +281,7 @@ _TIFFFieldWithTag(TIFF* tif, ttag_t tag)
 {
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	if (!fip) {
-		TIFFError("TIFFFieldWithTag",
+		TIFFErrorExt(tif->tif_clientdata, "TIFFFieldWithTag",
 			  "Internal error, unknown tag 0x%x",
                           (unsigned int) tag);
 		assert(fip != NULL);
@@ -296,7 +296,7 @@ _TIFFFieldWithName(TIFF* tif, const char *field_name)
 	const TIFFFieldInfo* fip =
 		_TIFFFindFieldInfoByName(tif, field_name, TIFF_ANY);
 	if (!fip) {
-		TIFFError("TIFFFieldWithName",
+		TIFFErrorExt(tif->tif_clientdata, "TIFFFieldWithName",
 			  "Internal error, unknown tag %s", field_name);
 		assert(fip != NULL);
 		/*NOTREACHED*/

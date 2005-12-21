@@ -125,7 +125,7 @@ _tiffSizeProc(thandle_t fd)
 	long size;
 
 	if (GetEOF((short) fd, &size) != noErr) {
-		TIFFError("_tiffSizeProc", "%s: Cannot get file size");
+		TIFFErrorExt(fd, "_tiffSizeProc", "%s: Cannot get file size");
 		return (-1L);
 	}
 	return ((toff_t) size);
@@ -202,10 +202,10 @@ TIFFOpen(const char* name, const char* mode)
 	}
 	return (TIFFFdOpen((int) fref, name, mode));
 badCreate:
-	TIFFError(module, "%s: Cannot create", name);
+	TIFFErrorExt(0, module, "%s: Cannot create", name);
 	return ((TIFF*) 0);
 badOpen:
-	TIFFError(module, "%s: Cannot open", name);
+	TIFFErrorExt(0, module, "%s: Cannot open", name);
 	return ((TIFF*) 0);
 }
 

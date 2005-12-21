@@ -109,7 +109,7 @@ checkInkNamesString(TIFF* tif, uint32 slen, const char* s)
 		return (cp-s);
 	}
 bad:
-	TIFFError("TIFFSetField",
+	TIFFErrorExt(tif->tif_clientdata, "TIFFSetField",
 	    "%s: Invalid InkNames value; expecting %d names, found %d",
 	    tif->tif_name,
 	    td->td_samplesperpixel,
@@ -352,7 +352,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			_TIFFsetLongArray(&td->td_subifd, va_arg(ap, uint32*),
 			    (long) td->td_nsubifd);
 		} else {
-			TIFFError(module, "%s: Sorry, cannot nest SubIFDs",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Sorry, cannot nest SubIFDs",
 				  tif->tif_name);
 			status = 0;
 		}
@@ -425,7 +425,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	     * compression schemes and codec-specific tags are blindly copied.
              */
             if(fip == NULL || fip->field_bit != FIELD_CUSTOM) {
-		TIFFError(module,
+		TIFFErrorExt(tif->tif_clientdata, module,
 		    "%s: Invalid %stag \"%s\" (not supported by codec)",
 		    tif->tif_name, isPseudoTag(tag) ? "pseudo-" : "",
 		    _TIFFFieldWithTag(tif, tag)->field_name);
@@ -460,7 +460,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			_TIFFrealloc(td->td_customValues,
 				     sizeof(TIFFTagValue) * td->td_customValueCount);
 		if (!new_customValues) {
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 		"%s: Failed to allocate space for list of custom values",
 				  tif->tif_name);
 			status = 0;
@@ -481,7 +481,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	    tv_size = _TIFFDataSize(fip->field_type);
 	    if (tv_size == 0) {
 		    status = 0;
-		    TIFFError(module, "%s: Bad field type %d for \"%s\"",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad field type %d for \"%s\"",
 			      tif->tif_name, fip->field_type, fip->field_name);
 		    goto end;
 	    }
@@ -588,17 +588,17 @@ end:
 	va_end(ap);
 	return (status);
 badvalue:
-	TIFFError(module, "%s: Bad value %d for \"%s\"",
+	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad value %d for \"%s\"",
 		  tif->tif_name, v, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvalue32:
-	TIFFError(module, "%s: Bad value %ld for \"%s\"",
+	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad value %ld for \"%s\"",
 		   tif->tif_name, v32, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvaluedbl:
-	TIFFError(module, "%s: Bad value %f for \"%s\"",
+	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad value %f for \"%s\"",
 		  tif->tif_name, d, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
@@ -618,7 +618,7 @@ OkToChangeTag(TIFF* tif, ttag_t tag)
 {
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	if (!fip) {			/* unknown tag */
-		TIFFError("TIFFSetField", "%s: Unknown %stag %u",
+		TIFFErrorExt(tif->tif_clientdata, "TIFFSetField", "%s: Unknown %stag %u",
 		    tif->tif_name, isPseudoTag(tag) ? "pseudo-" : "", tag);
 		return (0);
 	}
@@ -630,7 +630,7 @@ OkToChangeTag(TIFF* tif, ttag_t tag)
 		 * to those tags that don't/shouldn't affect the
 		 * compression and/or format of the data.
 		 */
-		TIFFError("TIFFSetField",
+		TIFFErrorExt(tif->tif_clientdata, "TIFFSetField",
 		    "%s: Cannot modify tag \"%s\" while writing",
 		    tif->tif_name, fip->field_name);
 		return (0);
@@ -866,7 +866,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
              */
             if( fip == NULL || fip->field_bit != FIELD_CUSTOM )
             {
-                TIFFError("_TIFFVGetField",
+				TIFFErrorExt(tif->tif_clientdata, "_TIFFVGetField",
                           "%s: Invalid %stag \"%s\" (not supported by codec)",
                           tif->tif_name, isPseudoTag(tag) ? "pseudo-" : "",
                           _TIFFFieldWithTag(tif, tag)->field_name);
@@ -1135,7 +1135,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
         toff_t poff=*nextdir;
         if (poff+sizeof(uint16) > tif->tif_size)
         {
-            TIFFError(module, "%s: Error fetching directory count",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
                       tif->tif_name);
             return (0);
         }
@@ -1147,7 +1147,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
             *off = poff;
         if (((toff_t) (poff+sizeof (uint32))) > tif->tif_size)
         {
-            TIFFError(module, "%s: Error fetching directory link",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
                       tif->tif_name);
             return (0);
         }
@@ -1160,7 +1160,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
     {
         if (!SeekOK(tif, *nextdir) ||
             !ReadOK(tif, &dircount, sizeof (uint16))) {
-            TIFFError(module, "%s: Error fetching directory count",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
                       tif->tif_name);
             return (0);
         }
@@ -1173,7 +1173,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
             (void) TIFFSeekFile(tif,
                                 dircount*sizeof (TIFFDirEntry), SEEK_CUR);
         if (!ReadOK(tif, nextdir, sizeof (uint32))) {
-            TIFFError(module, "%s: Error fetching directory link",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
                       tif->tif_name);
             return (0);
         }
@@ -1275,7 +1275,7 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	tdir_t n;
 
 	if (tif->tif_mode == O_RDONLY) {
-		TIFFError(module, "Can not unlink directory in read-only file");
+		TIFFErrorExit(tif->tif_clientdata, module, "Can not unlink directory in read-only file");
 		return (0);
 	}
 	/*
@@ -1287,7 +1287,7 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	off = sizeof (uint16) + sizeof (uint16);
 	for (n = dirn-1; n > 0; n--) {
 		if (nextdir == 0) {
-			TIFFError(module, "Directory %d does not exist", dirn);
+			TIFFErrorExt(tif->tif_clientdata, module, "Directory %d does not exist", dirn);
 			return (0);
 		}
 		if (!TIFFAdvanceDirectory(tif, &nextdir, &off))
@@ -1308,7 +1308,7 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	if (tif->tif_flags & TIFF_SWAB)
 		TIFFSwabLong(&nextdir);
 	if (!WriteOK(tif, &nextdir, sizeof (uint32))) {
-		TIFFError(module, "Error writing directory link");
+		TIFFErrorExt(tif->tif_clientdata, module, "Error writing directory link");
 		return (0);
 	}
 	/*

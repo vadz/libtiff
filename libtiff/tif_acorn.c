@@ -451,7 +451,7 @@ TIFFOpen(const char* name, const char* mode)
 
 	if (fd < 0)
 	{
-		TIFFError(module, "%s: Cannot open", name);
+		TIFFErrorExt(0, module, "%s: Cannot open", name);
 		return ((TIFF *)0);
 	}
 	return (TIFFFdOpen(fd, name, mode));

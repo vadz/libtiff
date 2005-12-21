@@ -41,7 +41,7 @@ summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)
 	uint32	bytes = summand1 + summand2;
 
 	if (bytes - summand1 != summand2) {
-		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Integer overflow in %s", where);
 		bytes = 0;
 	}
 
@@ -54,7 +54,7 @@ multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)
 	uint32	bytes = nmemb * elem_size;
 
 	if (elem_size && bytes / elem_size != nmemb) {
-		TIFFError(tif->tif_name, "Integer overflow in %s", where);
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Integer overflow in %s", where);
 		bytes = 0;
 	}
 
@@ -73,7 +73,7 @@ TIFFComputeStrip(TIFF* tif, uint32 row, tsample_t sample)
 	strip = row / td->td_rowsperstrip;
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE) {
 		if (sample >= td->td_samplesperpixel) {
-			TIFFError(tif->tif_name,
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 			    "%lu: Sample out of range, max %lu",
 			    (unsigned long) sample, (unsigned long) td->td_samplesperpixel);
 			return ((tstrip_t) 0);
@@ -130,7 +130,7 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 
 		samplingarea = ycbcrsubsampling[0]*ycbcrsubsampling[1];
 		if (samplingarea == 0) {
-			TIFFError(tif->tif_name, "Invalid YCbCr subsampling");
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Invalid YCbCr subsampling");
 			return 0;
 		}
 
@@ -160,7 +160,7 @@ TIFFRawStripSize(TIFF* tif, tstrip_t strip)
 	tsize_t bytecount = td->td_stripbytecount[strip];
 
 	if (bytecount <= 0) {
-		TIFFError(tif->tif_name,
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 			  "%lu: Invalid strip byte count, strip %lu",
 			  (unsigned long) bytecount, (unsigned long) strip);
 		bytecount = (tsize_t) -1;

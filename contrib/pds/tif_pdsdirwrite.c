@@ -177,7 +177,7 @@ TIFFWritePrivateDataSubDirectory(TIFF* tif,
 	dirsize = nfields * sizeof (TIFFDirEntry);
 	data = (char*) _TIFFmalloc(dirsize);
 	if (data == NULL) {
-		TIFFError(tif->tif_name,
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "Cannot write private subdirectory, out of space");
 		return (0);
 	}
@@ -270,15 +270,15 @@ TIFFWritePrivateDataSubDirectory(TIFF* tif,
 
 	(void) TIFFSeekFile(tif, tif->tif_dataoff, SEEK_SET);
 	if (!WriteOK(tif, &dircount, sizeof (dircount))) {
-		TIFFError(tif->tif_name, "Error writing private subdirectory count");
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error writing private subdirectory count");
 		goto bad;
 	}
 	if (!WriteOK(tif, data, dirsize)) {
-		TIFFError(tif->tif_name, "Error writing private subdirectory contents");
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error writing private subdirectory contents");
 		goto bad;
 	}
 	if (!WriteOK(tif, &nextdiroff, sizeof (nextdiroff))) {
-		TIFFError(tif->tif_name, "Error writing private subdirectory link");
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error writing private subdirectory link");
 		goto bad;
 	}
 	tif->tif_dataoff += sizeof(dircount) + dirsize + sizeof(nextdiroff);
@@ -878,7 +878,7 @@ TIFFWriteData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 		tif->tif_dataoff += (cc + 1) & ~1;
 		return (1);
 	}
-	TIFFError(tif->tif_name, "Error writing data for field \"%s\"",
+	TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error writing data for field \"%s\"",
 	    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
 	return (0);
 }
@@ -902,7 +902,7 @@ TIFFLinkDirectory(TIFF* tif)
 	if (tif->tif_flags & TIFF_INSUBIFD) {
 		(void) TIFFSeekFile(tif, tif->tif_subifdoff, SEEK_SET);
 		if (!WriteOK(tif, &diroff, sizeof (diroff))) {
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%s: Error writing SubIFD directory link",
 			    tif->tif_name);
 			return (0);
@@ -927,7 +927,7 @@ TIFFLinkDirectory(TIFF* tif)
 #define	HDROFF(f)	((toff_t) &(((TIFFHeader*) 0)->f))
 		(void) TIFFSeekFile(tif, HDROFF(tiff_diroff), SEEK_SET);
 		if (!WriteOK(tif, &diroff, sizeof (diroff))) {
-			TIFFError(tif->tif_name, "Error writing TIFF header");
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error writing TIFF header");
 			return (0);
 		}
 		return (1);
@@ -941,7 +941,7 @@ TIFFLinkDirectory(TIFF* tif)
 
 		if (!SeekOK(tif, nextdir) ||
 		    !ReadOK(tif, &dircount, sizeof (dircount))) {
-			TIFFError(module, "Error fetching directory count");
+			TIFFErrorExt(tif->tif_clientdata, module, "Error fetching directory count");
 			return (0);
 		}
 		if (tif->tif_flags & TIFF_SWAB)
@@ -949,7 +949,7 @@ TIFFLinkDirectory(TIFF* tif)
 		(void) TIFFSeekFile(tif,
 		    dircount * sizeof (TIFFDirEntry), SEEK_CUR);
 		if (!ReadOK(tif, &nextdir, sizeof (nextdir))) {
-			TIFFError(module, "Error fetching directory link");
+			TIFFErrorExt(tif->tif_clientdata, module, "Error fetching directory link");
 			return (0);
 		}
 		if (tif->tif_flags & TIFF_SWAB)
@@ -957,7 +957,7 @@ TIFFLinkDirectory(TIFF* tif)
 	} while (nextdir != 0);
 	(void) TIFFSeekFile(tif, -(toff_t) sizeof (nextdir), SEEK_CUR);
 	if (!WriteOK(tif, &diroff, sizeof (diroff))) {
-		TIFFError(module, "Error writing directory link");
+		TIFFErrorExt(tif->tif_clientdata, module, "Error writing directory link");
 		return (0);
 	}
 	return (1);

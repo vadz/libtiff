@@ -89,7 +89,7 @@ CheckMalloc(TIFF* tif, tsize_t n, const char* what)
 {
 	char *cp = (char*)_TIFFmalloc(n);
 	if (cp == NULL)
-		TIFFError(tif->tif_name, "No space %s", what);
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "No space %s", what);
 	return (cp);
 }
 
@@ -137,12 +137,12 @@ TIFFReadPrivateDataSubDirectory(TIFF* tif, toff_t pdir_offset,
 
 	if (!isMapped(tif)) {
 		if (!SeekOK(tif, pdir_offset)) {
-			TIFFError(tif->tif_name,
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 			    "Seek error accessing TIFF private subdirectory");
 			return (0);
 		}
 		if (!ReadOK(tif, &dircount, sizeof (uint16))) {
-			TIFFError(tif->tif_name,
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 			    "Can not read TIFF private subdirectory count");
 			return (0);
 		}
@@ -153,7 +153,7 @@ TIFFReadPrivateDataSubDirectory(TIFF* tif, toff_t pdir_offset,
 		if (dir == NULL)
 			return (0);
 		if (!ReadOK(tif, dir, dircount*sizeof (TIFFDirEntry))) {
-			TIFFError(tif->tif_name, "Can not read TIFF private subdirectory");
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Can not read TIFF private subdirectory");
 			goto bad;
 		}
 		/*
@@ -164,7 +164,7 @@ TIFFReadPrivateDataSubDirectory(TIFF* tif, toff_t pdir_offset,
 		toff_t off = pdir_offset;
 
 		if (off + sizeof (short) > tif->tif_size) {
-			TIFFError(tif->tif_name,
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 			    "Can not read TIFF private subdirectory count");
 			return (0);
 		} else
@@ -177,7 +177,7 @@ TIFFReadPrivateDataSubDirectory(TIFF* tif, toff_t pdir_offset,
 		if (dir == NULL)
 			return (0);
 		if (off + dircount*sizeof (TIFFDirEntry) > tif->tif_size) {
-			TIFFError(tif->tif_name, "Can not read TIFF private subdirectory");
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Can not read TIFF private subdirectory");
 			goto bad;
 		} else
 			_TIFFmemcpy(dir, tif->tif_base + off,
@@ -338,7 +338,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 static void
 MissingRequired(TIFF* tif, const char* tagname)
 {
-	TIFFError(tif->tif_name,
+	TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 	    "TIFF directory is missing required \"%s\" field", tagname);
 }
 
@@ -402,7 +402,7 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 	}
 	return (cc);
 bad:
-	TIFFError(tif->tif_name, "Error fetching data for field \"%s\"",
+	TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error fetching data for field \"%s\"",
 	    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
 	return ((tsize_t) 0);
 }
@@ -430,7 +430,7 @@ static int
 cvtRational(TIFF* tif, TIFFDirEntry* dir, uint32 num, uint32 denom, float* rv)
 {
 	if (denom == 0) {
-		TIFFError(tif->tif_name,
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "%s: Rational with zero denominator (num = %lu)",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name, num);
 		return (0);
@@ -719,7 +719,7 @@ TIFFFetchAnyArray(TIFF* tif, TIFFDirEntry* dir, double* v)
 		/* TIFF_NOTYPE */
 		/* TIFF_ASCII */
 		/* TIFF_UNDEFINED */
-		TIFFError(tif->tif_name,
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "Cannot read TIFF_ANY type %d for field \"%s\"",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
 		return (0);
@@ -897,7 +897,7 @@ TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, int* pl)
 			int i;
 			for (i = 1; i < samples; i++)
 				if (v[i] != v[0]) {
-					TIFFError(tif->tif_name,
+					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		"Cannot handle different per-sample values for field \"%s\"",
 			   _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
 					goto bad;
@@ -933,7 +933,7 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
 			int i;
 			for (i = 1; i < samples; i++)
 				if (v[i] != v[0]) {
-					TIFFError(tif->tif_name,
+					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		"Cannot handle different per-sample values for field \"%s\"",
 			   _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
 					goto bad;

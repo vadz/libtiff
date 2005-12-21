@@ -138,12 +138,12 @@ _XTIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	va_end(ap);
 	return (status);
 badvalue:
-	TIFFError(tif->tif_name, "%d: Bad value for \"%s\"", v,
+	TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "%d: Bad value for \"%s\"", v,
 	    _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvalue32:
-	TIFFError(tif->tif_name, "%ld: Bad value for \"%s\"", v32,
+	TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "%ld: Bad value for \"%s\"", v32,
 	    _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);

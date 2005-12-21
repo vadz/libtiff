@@ -91,7 +91,7 @@ ZIPSetupDecode(TIFF* tif)
 
 	assert(sp != NULL);
 	if (inflateInit(&sp->stream) != Z_OK) {
-		TIFFError(module, "%s: %s", tif->tif_name, sp->stream.msg);
+		TIFFErrorExt(tif->tif_clientdata, module, "%s: %s", tif->tif_name, sp->stream.msg);
 		return (0);
 	} else {
 		sp->state |= ZSTATE_INIT;
@@ -129,7 +129,7 @@ ZIPDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		if (state == Z_STREAM_END)
 			break;
 		if (state == Z_DATA_ERROR) {
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%s: Decoding error at scanline %d, %s",
 			    tif->tif_name, tif->tif_row, sp->stream.msg);
 			if (inflateSync(&sp->stream) != Z_OK)
@@ -137,13 +137,13 @@ ZIPDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 			continue;
 		}
 		if (state != Z_OK) {
-			TIFFError(module, "%s: zlib error: %s",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: zlib error: %s",
 			    tif->tif_name, sp->stream.msg);
 			return (0);
 		}
 	} while (sp->stream.avail_out > 0);
 	if (sp->stream.avail_out != 0) {
-		TIFFError(module,
+		TIFFErrorExt(tif->tif_clientdata, module,
 		    "%s: Not enough data at scanline %d (short %d bytes)",
 		    tif->tif_name, tif->tif_row, sp->stream.avail_out);
 		return (0);
@@ -159,7 +159,7 @@ ZIPSetupEncode(TIFF* tif)
 
 	assert(sp != NULL);
 	if (deflateInit(&sp->stream, sp->zipquality) != Z_OK) {
-		TIFFError(module, "%s: %s", tif->tif_name, sp->stream.msg);
+		TIFFErrorExt(tif->tif_clientdata, module, "%s: %s", tif->tif_name, sp->stream.msg);
 		return (0);
 	} else {
 		sp->state |= ZSTATE_INIT;
@@ -196,7 +196,7 @@ ZIPEncode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	sp->stream.avail_in = cc;
 	do {
 		if (deflate(&sp->stream, Z_NO_FLUSH) != Z_OK) {
-			TIFFError(module, "%s: Encoder error: %s",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: Encoder error: %s",
 			    tif->tif_name, sp->stream.msg);
 			return (0);
 		}
@@ -237,7 +237,7 @@ ZIPPostEncode(TIFF* tif)
 		    }
 		    break;
 		default:
-		    TIFFError(module, "%s: zlib error: %s",
+			TIFFErrorExt(tif->tif_clientdata, module, "%s: zlib error: %s",
 			tif->tif_name, sp->stream.msg);
 		    return (0);
 		}
@@ -274,7 +274,7 @@ ZIPVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		if (tif->tif_mode != O_RDONLY && (sp->state&ZSTATE_INIT)) {
 			if (deflateParams(&sp->stream,
 			    sp->zipquality, Z_DEFAULT_STRATEGY) != Z_OK) {
-				TIFFError(module, "%s: zlib error: %s",
+				TIFFErrorExt(tif->tif_clientdata, module, "%s: zlib error: %s",
 				    tif->tif_name, sp->stream.msg);
 				return (0);
 			}
@@ -360,7 +360,7 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	(void) TIFFPredictorInit(tif);
 	return (1);
 bad:
-	TIFFError("TIFFInitZIP", "No space for ZIP state block");
+	TIFFErrorExt(tif->tif_clientdata, "TIFFInitZIP", "No space for ZIP state block");
 	return (0);
 }
 #endif /* ZIP_SUPORT */

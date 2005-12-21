@@ -179,17 +179,17 @@ Fax3PreDecode(TIFF* tif, tsample_t s)
 static void
 Fax3Unexpected(const char* module, TIFF* tif, uint32 line, uint32 a0)
 {
-	TIFFError(module, "%s: Bad code word at line %lu of %s %lu (x %lu)",
-	    tif->tif_name, (unsigned long) line, isTiled(tif) ? "tile" : "strip",
-       (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
-       (unsigned long) a0);
+	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad code word at line %lu of %s %lu (x %lu)",
+		tif->tif_name, (unsigned long) line, isTiled(tif) ? "tile" : "strip",
+	   (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
+	   (unsigned long) a0);
 }
 #define	unexpected(table, a0)	Fax3Unexpected(module, tif, line, a0)
 
 static void
 Fax3Extension(const char* module, TIFF* tif, uint32 line, uint32 a0)
 {
-	TIFFError(module,
+	TIFFErrorExt(tif->tif_clientdata, module,
 	    "%s: Uncompressed data (not supported) at line %lu of %s %lu (x %lu)",
 	    tif->tif_name, (unsigned long) line, isTiled(tif) ? "tile" : "strip",
        (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
@@ -467,7 +467,7 @@ Fax3SetupState(TIFF* tif)
 	uint32 rowbytes, rowpixels, nruns;
 
 	if (td->td_bitspersample != 1) {
-		TIFFError(tif->tif_name,
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "Bits/sample must be 1 for Group 3/4 encoding/decoding");
 		return (0);
 	}
@@ -520,7 +520,7 @@ Fax3SetupState(TIFF* tif)
 		 */
 		esp->refline = (unsigned char*) _TIFFmalloc(rowbytes);
 		if (esp->refline == NULL) {
-			TIFFError("Fax3SetupState",
+			TIFFErrorExt(tif->tif_clientdata, "Fax3SetupState",
 			    "%s: No space for Group 3/4 reference line",
 			    tif->tif_name);
 			return (0);
@@ -1293,7 +1293,7 @@ InitCCITTFax3(TIFF* tif)
 		_TIFFmalloc(sizeof (Fax3CodecState));
 
 	if (tif->tif_data == NULL) {
-		TIFFError("TIFFInitCCITTFax3",
+		TIFFErrorExt(tif->tif_clientdata, "TIFFInitCCITTFax3",
 		    "%s: No space for state block", tif->tif_name);
 		return (0);
 	}

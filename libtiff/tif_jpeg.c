@@ -163,7 +163,7 @@ static	int JPEGDecodeRaw(TIFF*, tidata_t, tsize_t, tsample_t);
 static	int JPEGEncode(TIFF*, tidata_t, tsize_t, tsample_t);
 static	int JPEGEncodeRaw(TIFF*, tidata_t, tsize_t, tsample_t);
 static  int JPEGInitializeLibJPEG( TIFF * tif,
-                                   int force_encode, int force_decode );
+								   int force_encode, int force_decode );
 
 #define	FIELD_JPEGTABLES	(FIELD_CODEC+0)
 #define	FIELD_RECVPARAMS	(FIELD_CODEC+1)
@@ -188,7 +188,7 @@ static const TIFFFieldInfo jpegFieldInfo[] = {
     { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	FIELD_RECVTIME,
       TRUE,	FALSE,	"FaxRecvTime" },
     { TIFFTAG_FAXDCS,		-1, -1, TIFF_ASCII,	FIELD_FAXDCS,
-      TRUE,	FALSE,	"FaxDcs" },
+	  TRUE,	FALSE,	"FaxDcs" },
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
@@ -213,7 +213,7 @@ TIFFjpeg_error_exit(j_common_ptr cinfo)
 	char buffer[JMSG_LENGTH_MAX];
 
 	(*cinfo->err->format_message) (cinfo, buffer);
-	TIFFError("JPEGLib", buffer);		/* display the error message */
+	TIFFErrorExt(sp->tif->tif_clientdata, "JPEGLib", buffer);		/* display the error message */
 	jpeg_abort(cinfo);			/* clean up libjpeg state */
 	LONGJMP(sp->exit_jmpbuf, 1);		/* return to libtiff caller */
 }
@@ -482,7 +482,7 @@ TIFFjpeg_tables_dest(JPEGState* sp, TIFF* tif)
 	sp->jpegtables = (void*) _TIFFmalloc((tsize_t) sp->jpegtables_length);
 	if (sp->jpegtables == NULL) {
 		sp->jpegtables_length = 0;
-		TIFFError("TIFFjpeg_tables_dest", "No space for JPEGTables");
+		TIFFErrorExt(sp->tif->tif_clientdata, "TIFFjpeg_tables_dest", "No space for JPEGTables");
 		return (0);
 	}
 	sp->cinfo.c.dest = &sp->dest;
@@ -637,7 +637,7 @@ JPEGSetupDecode(TIFF* tif)
 	if (TIFFFieldSet(tif,FIELD_JPEGTABLES)) {
 		TIFFjpeg_tables_src(sp, tif);
 		if(TIFFjpeg_read_header(sp,FALSE) != JPEG_HEADER_TABLES_ONLY) {
-			TIFFError("JPEGSetupDecode", "Bogus JPEGTables field");
+			TIFFErrorExt(tif->tif_clientdata, "JPEGSetupDecode", "Bogus JPEGTables field");
 			return (0);
 		}
 	}
@@ -722,19 +722,19 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 	if (sp->cinfo.d.num_components !=
 	    (td->td_planarconfig == PLANARCONFIG_CONTIG ?
 	     td->td_samplesperpixel : 1)) {
-		TIFFError(module, "Improper JPEG component count");
+		TIFFErrorExt(tif->tif_clientdata, module, "Improper JPEG component count");
 		return (0);
 	}
 #ifdef JPEG_LIB_MK1
 	if (12 != td->td_bitspersample && 8 != td->td_bitspersample) {
-            TIFFError(module, "Improper JPEG data precision");
+			TIFFErrorExt(tif->tif_clientdata, module, "Improper JPEG data precision");
             return (0);
 	}
         sp->cinfo.d.data_precision = td->td_bitspersample;
         sp->cinfo.d.bits_in_jsample = td->td_bitspersample;
 #else
 	if (sp->cinfo.d.data_precision != td->td_bitspersample) {
-            TIFFError(module, "Improper JPEG data precision");
+			TIFFErrorExt(tif->tif_clientdata, module, "Improper JPEG data precision");
             return (0);
 	}
 #endif
@@ -773,7 +773,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 		for (ci = 1; ci < sp->cinfo.d.num_components; ci++) {
 			if (sp->cinfo.d.comp_info[ci].h_samp_factor != 1 ||
 			    sp->cinfo.d.comp_info[ci].v_samp_factor != 1) {
-				TIFFError(module, "Improper JPEG sampling factors");
+				TIFFErrorExt(tif->tif_clientdata, module, "Improper JPEG sampling factors");
 				return (0);
 			}
 		}
@@ -781,7 +781,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 		/* PC 2's single component should have sampling factors 1,1 */
 		if (sp->cinfo.d.comp_info[0].h_samp_factor != 1 ||
 		    sp->cinfo.d.comp_info[0].v_samp_factor != 1) {
-			TIFFError(module, "Improper JPEG sampling factors");
+			TIFFErrorExt(tif->tif_clientdata, module, "Improper JPEG sampling factors");
 			return (0);
 		}
 	}
@@ -1163,7 +1163,7 @@ JPEGSetupEncode(TIFF* tif)
 		break;
 	case PHOTOMETRIC_PALETTE:		/* disallowed by Tech Note */
 	case PHOTOMETRIC_MASK:
-		TIFFError(module,
+		TIFFErrorExt(tif->tif_clientdata, module,
 			  "PhotometricInterpretation %d not allowed for JPEG",
 			  (int) sp->photometric);
 		return (0);
@@ -1173,7 +1173,7 @@ JPEGSetupEncode(TIFF* tif)
 		sp->v_sampling = 1;
 		break;
 	}
-	
+
 	/* Verify miscellaneous parameters */
 
 	/*
@@ -1188,7 +1188,7 @@ JPEGSetupEncode(TIFF* tif)
 	if (td->td_bitspersample != BITS_IN_JSAMPLE ) 
 #endif
         {
-		TIFFError(module, "BitsPerSample %d not allowed for JPEG",
+		TIFFErrorExt(tif->tif_clientdata, module, "BitsPerSample %d not allowed for JPEG",
 			  (int) td->td_bitspersample);
 		return (0);
 	}
@@ -1198,13 +1198,13 @@ JPEGSetupEncode(TIFF* tif)
 #endif
 	if (isTiled(tif)) {
 		if ((td->td_tilelength % (sp->v_sampling * DCTSIZE)) != 0) {
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 				  "JPEG tile height must be multiple of %d",
 				  sp->v_sampling * DCTSIZE);
 			return (0);
 		}
 		if ((td->td_tilewidth % (sp->h_sampling * DCTSIZE)) != 0) {
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 				  "JPEG tile width must be multiple of %d",
 				  sp->h_sampling * DCTSIZE);
 			return (0);
@@ -1212,7 +1212,7 @@ JPEGSetupEncode(TIFF* tif)
 	} else {
 		if (td->td_rowsperstrip < td->td_imagelength &&
 		    (td->td_rowsperstrip % (sp->v_sampling * DCTSIZE)) != 0) {
-			TIFFError(module,
+			TIFFErrorExt(tif->tif_clientdata, module,
 				  "RowsPerStrip must be multiple of %d for JPEG",
 				  sp->v_sampling * DCTSIZE);
 			return (0);
@@ -1275,7 +1275,7 @@ JPEGPreEncode(TIFF* tif, tsample_t s)
 		segment_height = TIFFhowmany(segment_height, sp->v_sampling);
 	}
 	if (segment_width > 65535 || segment_height > 65535) {
-		TIFFError(module, "Strip/tile too large for JPEG");
+		TIFFErrorExt(tif->tif_clientdata, module, "Strip/tile too large for JPEG");
 		return (0);
 	}
 	sp->cinfo.c.image_width = segment_width;
@@ -1843,7 +1843,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	tif->tif_data = (tidata_t) _TIFFmalloc(sizeof (JPEGState));
 
 	if (tif->tif_data == NULL) {
-		TIFFError("TIFFInitJPEG", "No space for JPEG state block");
+		TIFFErrorExt(tif->tif_clientdata, "TIFFInitJPEG", "No space for JPEG state block");
 		return (0);
 	}
         _TIFFmemset( tif->tif_data, 0, sizeof(JPEGState));

@@ -250,13 +250,14 @@ typedef struct {
 
 /* share internal LogLuv conversion routines? */
 #ifndef LOGLUV_PUBLIC
-#define LOGLUV_PUBLIC		1	
+#define LOGLUV_PUBLIC		1
 #endif
 
 #if defined(c_plusplus) || defined(__cplusplus)
 extern "C" {
 #endif
 typedef	void (*TIFFErrorHandler)(const char*, const char*, va_list);
+typedef	void (*TIFFErrorHandlerExt)(thandle_t, const char*, const char*, va_list);
 typedef	tsize_t (*TIFFReadWriteProc)(thandle_t, tdata_t, tsize_t);
 typedef	toff_t (*TIFFSeekProc)(thandle_t, toff_t, int);
 typedef	int (*TIFFCloseProc)(thandle_t);
@@ -431,11 +432,15 @@ extern	TIFF* TIFFClientOpen(const char*, const char*,
 	    TIFFSizeProc,
 	    TIFFMapFileProc, TIFFUnmapFileProc);
 extern	const char* TIFFFileName(TIFF*);
-extern const char* TIFFSetFileName(TIFF*, const char *);
+extern	const char* TIFFSetFileName(TIFF*, const char *);
 extern	void TIFFError(const char*, const char*, ...);
+extern	void TIFFErrorExt(thandle_t, const char*, const char*, ...);
 extern	void TIFFWarning(const char*, const char*, ...);
+extern	void TIFFWarningExt(thandle_t, const char*, const char*, ...);
 extern	TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler);
+extern	TIFFErrorHandlerExt TIFFSetErrorHandlerExt(TIFFErrorHandlerExt);
 extern	TIFFErrorHandler TIFFSetWarningHandler(TIFFErrorHandler);
+extern	TIFFErrorHandlerExt TIFFSetWarningHandlerExt(TIFFErrorHandlerExt);
 extern	TIFFExtendProc TIFFSetTagExtender(TIFFExtendProc);
 extern	ttile_t TIFFComputeTile(TIFF*, uint32, uint32, uint32, tsample_t);
 extern	int TIFFCheckTile(TIFF*, uint32, uint32, uint32, tsample_t);

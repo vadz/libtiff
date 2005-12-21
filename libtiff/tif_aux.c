@@ -46,8 +46,8 @@ _TIFFCheckMalloc(TIFF* tif, size_t nmemb, size_t elem_size, const char* what)
 		cp = _TIFFmalloc(bytes);
 
 	if (cp == NULL)
-		TIFFError(tif->tif_name, "No space %s", what);
-	
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "No space %s", what);
+
 	return (cp);
 }
 
@@ -211,7 +211,7 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_TRANSFERFUNCTION:
 		if (!td->td_transferfunction[0] &&
 		    !TIFFDefaultTransferFunction(td)) {
-			TIFFError(tif->tif_name, "No space for \"TransferFunction\" tag");
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "No space for \"TransferFunction\" tag");
 			return (0);
 		}
 		*va_arg(ap, uint16 **) = td->td_transferfunction[0];
