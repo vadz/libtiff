@@ -29,6 +29,9 @@
  */
 #include "tiffiop.h"
 
+TIFFErrorHandlerExt _TIFFwarningHandlerExt = NULL;
+TIFFErrorHandlerExt _TIFFerrorHandlerExt = NULL;
+
 TIFFErrorHandler
 TIFFSetErrorHandler(TIFFErrorHandler handler)
 {
@@ -68,3 +71,4 @@ TIFFErrorExt(thandle_t fd, const char* module, const char* fmt, ...)
 		(*_TIFFerrorHandlerExt)(fd, module, fmt, ap);
 	va_end(ap);
 }
+
