@@ -696,9 +696,9 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
 
 {
     TIFFOvrCache	**papoRawBIs;
-	uint32		nXSize, nYSize, nBlockXSize, nBlockYSize;
+    uint32		nXSize, nYSize, nBlockXSize, nBlockYSize;
     uint16		nBitsPerPixel, nPhotometric, nCompressFlag, nSamples,
-                        nPlanarConfig, nSampleFormat;
+        nPlanarConfig, nSampleFormat;
     int         bSubsampled;
     uint16      nHorSubsampling, nVerSubsampling;
     int			bTiled, nSXOff, nSYOff, i;
@@ -713,7 +713,7 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
     TIFFGetField( hTIFF, TIFFTAG_IMAGELENGTH, &nYSize );
 
     TIFFGetField( hTIFF, TIFFTAG_BITSPERSAMPLE, &nBitsPerPixel );
-            /* TODO: nBitsPerPixel seems misnomer and may need renaming to nBitsPerSample */
+    /* TODO: nBitsPerPixel seems misnomer and may need renaming to nBitsPerSample */
     TIFFGetField( hTIFF, TIFFTAG_SAMPLESPERPIXEL, &nSamples );
     TIFFGetFieldDefaulted( hTIFF, TIFFTAG_PLANARCONFIG, &nPlanarConfig );
 
@@ -724,13 +724,13 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
     if( nPhotometric == PHOTOMETRIC_YCBCR || nPhotometric == PHOTOMETRIC_ITULAB )
     {
         if( nBitsPerPixel != 8 || nSamples != 3 || nPlanarConfig != PLANARCONFIG_CONTIG ||
-                    nSampleFormat != SAMPLEFORMAT_UINT)
+            nSampleFormat != SAMPLEFORMAT_UINT)
         {
-			/* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
-			TIFFErrorExt( hTIFF->tif_clientdata, "TIFFBuildOverviews",
-						  "File `%s' has an unsupported subsampling configuration.\n",
-						  TIFFFileName(hTIFF) );
-			/* If you need support for this particular flavor, please contact either
+            /* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
+            TIFFErrorExt( TIFFClientdata(hTIFF), "TIFFBuildOverviews",
+                          "File `%s' has an unsupported subsampling configuration.\n",
+                          TIFFFileName(hTIFF) );
+            /* If you need support for this particular flavor, please contact either
              * Frank Warmerdam warmerdam@pobox.com
              * Joris Van Damme info@awaresystems.be
              */
@@ -738,17 +738,17 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
         }
         bSubsampled = 1;
         TIFFGetField( hTIFF, TIFFTAG_YCBCRSUBSAMPLING, &nHorSubsampling, &nVerSubsampling );
-          /* TODO: find out if maybe TIFFGetFieldDefaulted is better choice for YCbCrSubsampling tag */
+        /* TODO: find out if maybe TIFFGetFieldDefaulted is better choice for YCbCrSubsampling tag */
     }
     else
     {
         if( nBitsPerPixel < 8 )
         {
-			/* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
-			TIFFErrorExt( hTIFF->tif_clientdata, "TIFFBuildOverviews",
-						  "File `%s' has samples of %d bits per sample.  Sample\n"
-						  "sizes of less than 8 bits per sample are not supported.\n",
-						  TIFFFileName(hTIFF), nBitsPerPixel );
+            /* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
+            TIFFErrorExt( TIFFClientdata(hTIFF), "TIFFBuildOverviews",
+                          "File `%s' has samples of %d bits per sample.  Sample\n"
+                          "sizes of less than 8 bits per sample are not supported.\n",
+                          TIFFFileName(hTIFF), nBitsPerPixel );
             return;
         }
         bSubsampled = 0;
