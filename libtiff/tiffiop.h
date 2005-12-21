@@ -268,6 +268,8 @@ extern	void _TIFFprintAsciiTag(FILE*, const char*, const char*);
 
 GLOBALDATA(TIFFErrorHandler,_TIFFwarningHandler);
 GLOBALDATA(TIFFErrorHandler,_TIFFerrorHandler);
+GLOBALDATA(TIFFErrorHandlerExt,_TIFFwarningHandlerExt);
+GLOBALDATA(TIFFErrorHandlerExt,_TIFFerrorHandlerExt);
 
 extern	tdata_t _TIFFCheckMalloc(TIFF*, size_t, size_t, const char*);
 
