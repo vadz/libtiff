@@ -119,6 +119,9 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
 
 	switch (tag)
 	{
+		case TIFFTAG_WHITEPOINT:
+			fprintf(fd, "  White Point: %g-%g\n",
+				((float *)raw_data)[0], ((float *)raw_data)[1]);			return 1;
 		case TIFFTAG_REFERENCEBLACKWHITE:
 		{
 			uint16 i;
@@ -471,9 +474,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		} else
 			fprintf(fd, "(present)\n");
 	}
-	if (TIFFFieldSet(tif,FIELD_WHITEPOINT))
-		fprintf(fd, "  White Point: %g-%g\n",
-		    td->td_whitepoint[0], td->td_whitepoint[1]);
 	if (TIFFFieldSet(tif,FIELD_TRANSFERFUNCTION)) {
 		fprintf(fd, "  Transfer Function: ");
 		if (flags & TIFFPRINT_CURVES) {

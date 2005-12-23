@@ -73,7 +73,6 @@ typedef	struct {
 	uint16	td_ycbcrsubsampling[2];
 	uint16	td_ycbcrpositioning;
 	/* Colorimetry parameters */
-	float*	td_whitepoint;
 	uint16*	td_transferfunction[3];
 	/* CMYK parameters */
 	uint16	td_inkset;
@@ -114,26 +113,17 @@ typedef	struct {
 #define	FIELD_PHOTOMETRIC		8
 #define	FIELD_THRESHHOLDING		9
 #define	FIELD_FILLORDER			10
-/* unused - was FIELD_DOCUMENTNAME	11 */
-/* unused - was FIELD_IMAGEDESCRIPTION	12 */
-/* unused - was FIELD_MAKE		13 */
-/* unused - was FIELD_MODEL		14 */
 #define	FIELD_ORIENTATION		15
 #define	FIELD_SAMPLESPERPIXEL		16
 #define	FIELD_ROWSPERSTRIP		17
 #define	FIELD_MINSAMPLEVALUE		18
 #define	FIELD_MAXSAMPLEVALUE		19
 #define	FIELD_PLANARCONFIG		20
-/* unused - was FIELD_PAGENAME		21 */
 #define	FIELD_RESOLUTIONUNIT		22
 #define	FIELD_PAGENUMBER		23
 #define	FIELD_STRIPBYTECOUNTS		24
 #define	FIELD_STRIPOFFSETS		25
 #define	FIELD_COLORMAP			26
-/* unused - was FIELD_ARTIST		27 */
-/* unused - was FIELD_DATETIME		28 */
-/* unused - was FIELD_HOSTCOMPUTER	29 */
-/* unused - was FIELD_SOFTWARE          30 */
 #define	FIELD_EXTRASAMPLES		31
 #define FIELD_SAMPLEFORMAT		32
 #define	FIELD_SMINSAMPLEVALUE		33
@@ -141,17 +131,12 @@ typedef	struct {
 #define FIELD_IMAGEDEPTH		35
 #define FIELD_TILEDEPTH			36
 #define	FIELD_HALFTONEHINTS		37
-/* unused - was FIELD_YCBCRCOEFFICIENTS	38 */
 #define FIELD_YCBCRSUBSAMPLING		39
 #define FIELD_YCBCRPOSITIONING		40
-/* unused - was FIELD_REFBLACKWHITE	41 */
-#define	FIELD_WHITEPOINT		42
-/* unused - was FIELD_PRIMARYCHROMAS	43 */
 #define	FIELD_TRANSFERFUNCTION		44
 #define	FIELD_INKSET			45
 #define	FIELD_INKNAMES			46
 #define	FIELD_DOTRANGE			47
-/* unused - was FIELD_TARGETPRINTER	48 */
 #define	FIELD_SUBIFD			49
 #define	FIELD_NUMBEROFINKS		50
 #define FIELD_STONITS			54
@@ -288,7 +273,7 @@ static const TIFFFieldInfo tiffFieldInfo[] = {
       1,	0,	"Artist" },
     { TIFFTAG_HOSTCOMPUTER,	-1,-1,	TIFF_ASCII,	FIELD_CUSTOM,
       1,	0,	"HostComputer" },
-    { TIFFTAG_WHITEPOINT,	 2, 2,	TIFF_RATIONAL,	FIELD_WHITEPOINT,
+    { TIFFTAG_WHITEPOINT,	 2, 2,	TIFF_RATIONAL,	FIELD_CUSTOM,
       1,	0,	"WhitePoint" },
     { TIFFTAG_PRIMARYCHROMATICITIES,6,6,TIFF_RATIONAL,	FIELD_CUSTOM,
       1,	0,	"PrimaryChromaticities" },

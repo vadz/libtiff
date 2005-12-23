@@ -145,7 +145,7 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
                 {
 			TIFFPredictorState* sp = (TIFFPredictorState*) tif->tif_data;
 			*va_arg(ap, uint16*) = (uint16) sp->predictor;
-			return (1);
+			return 1;
                 }
 	case TIFFTAG_DOTRANGE:
 		*va_arg(ap, uint16 *) = 0;
@@ -183,8 +183,8 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 			/* defaults are from CCIR Recommendation 601-1 */
 			float ycbcrcoeffs[] = { 0.299f, 0.587f, 0.114f };
 			*va_arg(ap, float **) = ycbcrcoeffs;
+			return 1;
 		}
-		return (1);
 	case TIFFTAG_YCBCRSUBSAMPLING:
 		*va_arg(ap, uint16 *) = td->td_ycbcrsubsampling[0];
 		*va_arg(ap, uint16 *) = td->td_ycbcrsubsampling[1];
@@ -193,21 +193,17 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 		*va_arg(ap, uint16 *) = td->td_ycbcrpositioning;
 		return (1);
 	case TIFFTAG_WHITEPOINT:
-		if (!td->td_whitepoint) {
-			td->td_whitepoint = (float *)
-				_TIFFmalloc(2 * sizeof (float));
-			if (!td->td_whitepoint)
-				return (0);
-			/* TIFF 6.0 specification says that it is no default
+		{
+			static float whitepoint[2];
+
+			/* TIFF 6.0 specification tells that it is no default
 			   value for the WhitePoint, but AdobePhotoshop TIFF
 			   Technical Note tells that it should be CIE D50. */
-			td->td_whitepoint[0] =
-				D50_X0 / (D50_X0 + D50_Y0 + D50_Z0);
-			td->td_whitepoint[1] =
-				D50_Y0 / (D50_X0 + D50_Y0 + D50_Z0);
+			whitepoint[0] =	D50_X0 / (D50_X0 + D50_Y0 + D50_Z0);
+			whitepoint[1] =	D50_Y0 / (D50_X0 + D50_Y0 + D50_Z0);
+			*va_arg(ap, float **) = whitepoint;
+			return 1;
 		}
-		*va_arg(ap, float **) = td->td_whitepoint;
-		return (1);
 	case TIFFTAG_TRANSFERFUNCTION:
 		if (!td->td_transferfunction[0] &&
 		    !TIFFDefaultTransferFunction(td)) {
@@ -223,9 +219,9 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_REFERENCEBLACKWHITE:
 		{
 			int i;
-			float ycbcr_refblackwhite[] = 
+			static float ycbcr_refblackwhite[] = 
 			{ 0.0F, 255.0F, 128.0F, 255.0F, 128.0F, 255.0F };
-			float rgb_refblackwhite[6];
+			static float rgb_refblackwhite[6];
 
 			for (i = 0; i < 3; i++) {
 				rgb_refblackwhite[2 * i + 0] = 0.0F;
@@ -246,9 +242,8 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 				 */
 				*va_arg(ap, float **) = rgb_refblackwhite;
 			}
-
+			return 1;
 		}
-		return 1;
 	}
 	return 0;
 }

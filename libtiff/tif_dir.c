@@ -364,9 +364,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		td->td_ycbcrsubsampling[0] = (uint16) va_arg(ap, int);
 		td->td_ycbcrsubsampling[1] = (uint16) va_arg(ap, int);
 		break;
-	case TIFFTAG_WHITEPOINT:
-		_TIFFsetFloatArray(&td->td_whitepoint, va_arg(ap, float*), 2);
-		break;
 	case TIFFTAG_TRANSFERFUNCTION:
 		v = (td->td_samplesperpixel - td->td_extrasamples) > 1 ? 3 : 1;
 		for (i = 0; i < v; i++)
@@ -799,9 +796,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             *va_arg(ap, uint16*) = td->td_ycbcrsubsampling[0];
             *va_arg(ap, uint16*) = td->td_ycbcrsubsampling[1];
             break;
-	case TIFFTAG_WHITEPOINT:
-            *va_arg(ap, float**) = td->td_whitepoint;
-            break;
 	case TIFFTAG_TRANSFERFUNCTION:
             *va_arg(ap, uint16**) = td->td_transferfunction[0];
             if (td->td_samplesperpixel - td->td_extrasamples > 1) {
@@ -983,7 +977,6 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_sampleinfo);
 	CleanupField(td_subifd);
 	CleanupField(td_inknames);
-	CleanupField(td_whitepoint);
 	CleanupField(td_transferfunction[0]);
 	CleanupField(td_transferfunction[1]);
 	CleanupField(td_transferfunction[2]);
