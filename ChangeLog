@@ -1,10 +1,17 @@
+2005-12-23  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_aux.c, tif_dir.c, tif_dir.h, tif_print.c}: Make
+	WhitePoint tag custom.
+
+	* libtiff/{tif_dir.h, tiff.h}: More EXIF tags added.
+
 2005-12-23  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/tiffio.h: fixed typo that potentially resulted in 
 	redefininition of USE_WIN32_FILEIO
 
 	* libtiff/*: Added more 'dual-mode' error handling: Done TIFFWarning 
-        calls in core LibTiff.
+	calls in core LibTiff.
 
 2005-12-21  Andrey Kiselev  <dron@remotesensing.org>
 
