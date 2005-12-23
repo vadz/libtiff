@@ -850,7 +850,7 @@ TIFFWriteRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 
 		if (fv < 0) {
 			if (dir->tdir_type == TIFF_RATIONAL) {
-				TIFFWarning(tif->tif_name,
+				TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 	"\"%s\": Information lost writing value (%g) as (unsigned) RATIONAL",
 				_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name,
 				fv);

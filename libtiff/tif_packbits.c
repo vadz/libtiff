@@ -239,7 +239,7 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
                         n = -n + 1;
                         if( occ < n )
                         {
-                            TIFFWarning(tif->tif_name,
+							TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
                                         "PackBitsDecode: discarding %d bytes "
                                         "to avoid buffer overrun",
                                         n - occ);
@@ -252,7 +252,7 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		} else {		/* copy next n+1 bytes literally */
 			if (occ < n + 1)
                         {
-                            TIFFWarning(tif->tif_name,
+                            TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
                                         "PackBitsDecode: discarding %d bytes "
                                         "to avoid buffer overrun",
                                         n - occ + 1);

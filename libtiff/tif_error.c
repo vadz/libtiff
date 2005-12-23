@@ -29,7 +29,6 @@
  */
 #include "tiffiop.h"
 
-TIFFErrorHandlerExt _TIFFwarningHandlerExt = NULL;
 TIFFErrorHandlerExt _TIFFerrorHandlerExt = NULL;
 
 TIFFErrorHandler

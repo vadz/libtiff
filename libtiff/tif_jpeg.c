@@ -229,7 +229,7 @@ TIFFjpeg_output_message(j_common_ptr cinfo)
 	char buffer[JMSG_LENGTH_MAX];
 
 	(*cinfo->err->format_message) (cinfo, buffer);
-	TIFFWarning("JPEGLib", buffer);
+	TIFFWarningExt(((JPEGState *) cinfo)->tif->tif_clientdata, "JPEGLib", buffer);
 }
 
 /*
@@ -712,7 +712,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 	}
 	if (sp->cinfo.d.image_width != segment_width ||
 	    sp->cinfo.d.image_height != segment_height) {
-		TIFFWarning(module, 
+		TIFFWarningExt(tif->tif_clientdata, module,
                  "Improper JPEG strip/tile size, expected %dx%d, got %dx%d",
                           segment_width, 
                           segment_height,
@@ -742,7 +742,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 		/* Component 0 should have expected sampling factors */
 		if (sp->cinfo.d.comp_info[0].h_samp_factor != sp->h_sampling ||
 		    sp->cinfo.d.comp_info[0].v_samp_factor != sp->v_sampling) {
-			    TIFFWarning(module, 
+				TIFFWarningExt(tif->tif_clientdata, module,
                                     "Improper JPEG sampling factors %d,%d\n"
                                     "Apparently should be %d,%d.",
                                     sp->cinfo.d.comp_info[0].h_samp_factor,
@@ -757,7 +757,7 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 			     * of the tag 33918.
 			     */
 			    if (!_TIFFFindFieldInfo(tif, 33918, TIFF_ANY)) {
-				    TIFFWarning(module, 
+					TIFFWarningExt(tif->tif_clientdata, module,
 					"Decompressor will try reading with "
 					"sampling %d,%d.",
 					sp->cinfo.d.comp_info[0].h_samp_factor,
@@ -840,7 +840,7 @@ JPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 
     nrows = cc / sp->bytesperline;
     if (cc % sp->bytesperline)
-        TIFFWarning(tif->tif_name, "fractional scanline not read");
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name, "fractional scanline not read");
 
     if( nrows > (int) sp->cinfo.d.image_height )
         nrows = sp->cinfo.d.image_height;
@@ -1375,7 +1375,7 @@ JPEGEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 	/* data is expected to be supplied in multiples of a scanline */
 	nrows = cc / sp->bytesperline;
 	if (cc % sp->bytesperline)
-		TIFFWarning(tif->tif_name, "fractional scanline discarded");
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name, "fractional scanline discarded");
 
 	while (nrows-- > 0) {
 		bufptr[0] = (JSAMPROW) buf;
@@ -1409,7 +1409,7 @@ JPEGEncodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 	/* data is expected to be supplied in multiples of a scanline */
 	nrows = cc / sp->bytesperline;
 	if (cc % sp->bytesperline)
-		TIFFWarning(tif->tif_name, "fractional scanline discarded");
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name, "fractional scanline discarded");
 
 	/* Cb,Cr both have sampling factors 1, so this is correct */
 	clumps_per_line = sp->cinfo.c.comp_info[1].downsampled_width;

@@ -197,7 +197,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_ORIENTATION:
 		v = va_arg(ap, uint32);
 		if (v < ORIENTATION_TOPLEFT || ORIENTATION_LEFTBOT < v) {
-			TIFFWarning(tif->tif_name,
+			TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 			    "Bad value %lu for \"%s\" tag ignored",
 			    v, _TIFFFieldWithTag(tif, tag)->field_name);
 		} else
@@ -286,8 +286,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		if (v32 % 16) {
 			if (tif->tif_mode != O_RDONLY)
 				goto badvalue32;
-			TIFFWarning(tif->tif_name,
-			    "Nonstandard tile width %d, convert file", v32);
+			TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
+				"Nonstandard tile width %d, convert file", v32);
 		}
 		td->td_tilewidth = v32;
 		tif->tif_flags |= TIFF_ISTILED;
@@ -297,7 +297,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		if (v32 % 16) {
 			if (tif->tif_mode != O_RDONLY)
 				goto badvalue32;
-			TIFFWarning(tif->tif_name,
+			TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 			    "Nonstandard tile length %d, convert file", v32);
 		}
 		td->td_tilelength = v32;

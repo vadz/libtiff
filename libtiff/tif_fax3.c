@@ -200,7 +200,7 @@ Fax3Extension(const char* module, TIFF* tif, uint32 line, uint32 a0)
 static void
 Fax3BadLength(const char* module, TIFF* tif, uint32 line, uint32 a0, uint32 lastx)
 {
-	TIFFWarning(module, "%s: %s at line %lu of %s %lu (got %lu, expected %lu)",
+	TIFFWarningExt(tif->tif_clientdata, module, "%s: %s at line %lu of %s %lu (got %lu, expected %lu)",
 	    tif->tif_name,
 	    a0 < lastx ? "Premature EOL" : "Line length mismatch",
 	    (unsigned long) line, isTiled(tif) ? "tile" : "strip",
@@ -212,7 +212,7 @@ Fax3BadLength(const char* module, TIFF* tif, uint32 line, uint32 a0, uint32 last
 static void
 Fax3PrematureEOF(const char* module, TIFF* tif, uint32 line, uint32 a0)
 {
-	TIFFWarning(module, "%s: Premature EOF at line %lu of %s %lu (x %lu)",
+	TIFFWarningExt(tif->tif_clientdata, module, "%s: Premature EOF at line %lu of %s %lu (x %lu)",
 	    tif->tif_name,
 	    (unsigned long) line, isTiled(tif) ? "tile" : "strip",
         (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),

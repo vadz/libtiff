@@ -245,7 +245,7 @@ TIFFReadDirectory(TIFF* tif)
 		 */
 		if (dp->tdir_tag < tif->tif_fieldinfo[fix]->field_tag) {
 			if (!diroutoforderwarning) {
-				TIFFWarning(module,
+				TIFFWarningExt(tif->tif_clientdata, module,
 "%s: invalid TIFF directory; tags are not sorted in ascending order",
                                             tif->tif_name);
 				diroutoforderwarning = 1;
@@ -258,7 +258,7 @@ TIFFReadDirectory(TIFF* tif)
 		if (fix >= tif->tif_nfields ||
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
 
-                    TIFFWarning(module,
+					TIFFWarningExt(tif->tif_clientdata, module,
                         "%s: unknown field with tag %d (0x%x) encountered",
                                 tif->tif_name, dp->tdir_tag, dp->tdir_tag,
                                 dp->tdir_type);
@@ -292,7 +292,7 @@ TIFFReadDirectory(TIFF* tif)
                         fip = tif->tif_fieldinfo[++fix];
 			if (fix >= tif->tif_nfields ||
 			    fip->field_tag != dp->tdir_tag) {
-				TIFFWarning(module,
+				TIFFWarningExt(tif->tif_clientdata, module,
 			"%s: wrong data type %d for \"%s\"; tag ignored",
 					    tif->tif_name, dp->tdir_type,
 					    tif->tif_fieldinfo[fix-1]->field_name);
@@ -546,7 +546,7 @@ TIFFReadDirectory(TIFF* tif)
 		    MissingRequired(tif, "StripByteCounts");
 		    goto bad;
 		}
-		TIFFWarning(module,
+		TIFFWarningExt(tif->tif_clientdata, module,
 			"%s: TIFF directory is missing required "
 			"\"%s\" field, calculating from imagelength",
 			tif->tif_name,
@@ -580,7 +580,7 @@ TIFFReadDirectory(TIFF* tif)
 		 * and handle the simple case of estimating the size of a one
 		 * strip image.
 		 */
-		TIFFWarning(module,
+		TIFFWarningExt(tif->tif_clientdata, module,
 	"%s: Bogus \"%s\" field, ignoring and calculating from imagelength",
                             tif->tif_name,
 		            _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
@@ -594,7 +594,7 @@ TIFFReadDirectory(TIFF* tif)
 		 * wrong values (it can be equal to StripOffset array, for
 		 * example). Catch this case here.
 		 */
-		TIFFWarning(module,
+		TIFFWarningExt(tif->tif_clientdata, module,
 	"%s: Wrong \"%s\" field, ignoring and calculating from imagelength",
                             tif->tif_name,
 		            _TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
@@ -775,7 +775,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 		if (fix >= tif->tif_nfields ||
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
 
-			TIFFWarning(module,
+			TIFFWarningExt(tif->tif_clientdata, module,
                         "%s: unknown field with tag %d (0x%x) encountered",
 				    tif->tif_name, dp->tdir_tag, dp->tdir_tag,
 				    dp->tdir_type);
@@ -810,7 +810,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
                         fip = tif->tif_fieldinfo[++fix];
 			if (fix >= tif->tif_nfields ||
 			    fip->field_tag != dp->tdir_tag) {
-				TIFFWarning(module,
+				TIFFWarningExt(tif->tif_clientdata, module,
 			"%s: wrong data type %d for \"%s\"; tag ignored",
 					    tif->tif_name, dp->tdir_type,
 					    tif->tif_fieldinfo[fix-1]->field_name);
@@ -938,13 +938,13 @@ static int
 CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 {
 	if (count > dir->tdir_count) {
-		TIFFWarning(tif->tif_name,
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 	"incorrect count for field \"%s\" (%lu, expecting %lu); tag ignored",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
 		return (0);
 	} else if (count < dir->tdir_count) {
-		TIFFWarning(tif->tif_name,
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 	"incorrect count for field \"%s\" (%lu, expecting %lu); tag trimmed",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
