@@ -1,3 +1,9 @@
+2005-12-24  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_aux.c, tif_dir.c, tif_dir.h, tif_dirwrite.c,
+	tif_print.c, tif_getimage.c}: Make InkSet, NumberOfInks, DotRange and
+	StoNits tags custom.
+
 2005-12-23  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_aux.c, tif_dir.c, tif_dir.h, tif_print.c}: Make
