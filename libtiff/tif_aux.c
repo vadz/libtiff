@@ -152,10 +152,10 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 		*va_arg(ap, uint16 *) = (1<<td->td_bitspersample)-1;
 		return (1);
 	case TIFFTAG_INKSET:
-		*va_arg(ap, uint16 *) = td->td_inkset;
-		return (1);
+		*va_arg(ap, uint16 *) = INKSET_CMYK;
+		return 1;
 	case TIFFTAG_NUMBEROFINKS:
-		*va_arg(ap, uint16 *) = td->td_ninks;
+		*va_arg(ap, uint16 *) = 4;
 		return (1);
 	case TIFFTAG_EXTRASAMPLES:
 		*va_arg(ap, uint16 *) = td->td_extrasamples;

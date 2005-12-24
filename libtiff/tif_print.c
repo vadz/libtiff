@@ -119,6 +119,23 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
 
 	switch (tag)
 	{
+		case TIFFTAG_INKSET:
+			fprintf(fd, "  Ink Set: ");
+			switch (*((uint16*)raw_data)) {
+				case INKSET_CMYK:
+					fprintf(fd, "CMYK\n");
+					break;
+				default:
+					fprintf(fd, "%u (0x%x)\n",
+						*((uint16*)raw_data),
+						*((uint16*)raw_data));
+					break;
+			}
+			return 1;
+		case TIFFTAG_DOTRANGE:
+			fprintf(fd, "  Dot Range: %u-%u\n",
+				((uint16*)raw_data)[0], ((uint16*)raw_data)[1]);
+			return 1;
 		case TIFFTAG_WHITEPOINT:
 			fprintf(fd, "  White Point: %g-%g\n",
 				((float *)raw_data)[0], ((float *)raw_data)[1]);			return 1;
@@ -159,6 +176,11 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
 		case TIFFTAG_ICCPROFILE:
 			fprintf(fd, "  ICC Profile: <present>, %lu bytes\n",
 				(unsigned long) value_count);
+			return 1;
+		case TIFFTAG_STONITS:
+			fprintf(fd,
+				"  Sample to Nits conversion factor: %.4e\n",
+				*((double*)raw_data));
 			return 1;
         }
 
@@ -317,22 +339,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		}
 		fprintf(fd, ">\n");
 	}
-	if (TIFFFieldSet(tif,FIELD_STONITS)) {
-		fprintf(fd, "  Sample to Nits conversion factor: %.4e\n",
-				td->td_stonits);
-	}
-	if (TIFFFieldSet(tif,FIELD_INKSET)) {
-		fprintf(fd, "  Ink Set: ");
-		switch (td->td_inkset) {
-		case INKSET_CMYK:
-			fprintf(fd, "CMYK\n");
-			break;
-		default:
-			fprintf(fd, "%u (0x%x)\n",
-			    td->td_inkset, td->td_inkset);
-			break;
-		}
-	}
 	if (TIFFFieldSet(tif,FIELD_INKNAMES)) {
 		char* cp;
 		fprintf(fd, "  Ink Names: ");
@@ -345,11 +351,6 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		}
                 fputs("\n", fd);
 	}
-	if (TIFFFieldSet(tif,FIELD_NUMBEROFINKS))
-		fprintf(fd, "  Number of Inks: %u\n", td->td_ninks);
-	if (TIFFFieldSet(tif,FIELD_DOTRANGE))
-		fprintf(fd, "  Dot Range: %u-%u\n",
-		    td->td_dotrange[0], td->td_dotrange[1]);
 	if (TIFFFieldSet(tif,FIELD_THRESHHOLDING)) {
 		fprintf(fd, "  Thresholding: ");
 		switch (td->td_threshholding) {

@@ -61,7 +61,6 @@ typedef	struct {
 	uint16	td_halftonehints[2];
 	uint16	td_extrasamples;
 	uint16*	td_sampleinfo;
-	double	td_stonits;
 	tstrip_t td_stripsperimage;
 	tstrip_t td_nstrips;		/* size of offset & bytecount arrays */
 	uint32*	td_stripoffset;
@@ -75,11 +74,9 @@ typedef	struct {
 	/* Colorimetry parameters */
 	uint16*	td_transferfunction[3];
 	/* CMYK parameters */
-	uint16	td_inkset;
-	uint16	td_ninks;
-	uint16	td_dotrange[2];
 	int	td_inknameslen;
 	char*	td_inknames;
+
 	int     td_customValueCount;
         TIFFTagValue *td_customValues;
 } TIFFDirectory;
@@ -134,12 +131,8 @@ typedef	struct {
 #define FIELD_YCBCRSUBSAMPLING		39
 #define FIELD_YCBCRPOSITIONING		40
 #define	FIELD_TRANSFERFUNCTION		44
-#define	FIELD_INKSET			45
 #define	FIELD_INKNAMES			46
-#define	FIELD_DOTRANGE			47
 #define	FIELD_SUBIFD			49
-#define	FIELD_NUMBEROFINKS		50
-#define FIELD_STONITS			54
 /*      FIELD_CUSTOM (see tiffio.h)     65 */
 /* end of support for well-known tags; codec-private tags follow */
 #define	FIELD_CODEC			66	/* base of codec-private tags */
@@ -299,15 +292,15 @@ static const TIFFFieldInfo tiffFieldInfo[] = {
       1,	1,	"SubIFD" },
     { TIFFTAG_SUBIFD,		-1,-1,	TIFF_LONG,	FIELD_SUBIFD,
       1,	1,	"SubIFD" },
-    { TIFFTAG_INKSET,		 1, 1,	TIFF_SHORT,	FIELD_INKSET,
+    { TIFFTAG_INKSET,		 1, 1,	TIFF_SHORT,	FIELD_CUSTOM,
       0,	0,	"InkSet" },
     { TIFFTAG_INKNAMES,		-1,-1,	TIFF_ASCII,	FIELD_INKNAMES,
       1,	1,	"InkNames" },
-    { TIFFTAG_NUMBEROFINKS,	 1, 1,	TIFF_SHORT,	FIELD_NUMBEROFINKS,
+    { TIFFTAG_NUMBEROFINKS,	 1, 1,	TIFF_SHORT,	FIELD_CUSTOM,
       1,	0,	"NumberOfInks" },
-    { TIFFTAG_DOTRANGE,		 2, 2,	TIFF_SHORT,	FIELD_DOTRANGE,
+    { TIFFTAG_DOTRANGE,		 2, 2,	TIFF_SHORT,	FIELD_CUSTOM,
       0,	0,	"DotRange" },
-    { TIFFTAG_DOTRANGE,		 2, 2,	TIFF_BYTE,	FIELD_DOTRANGE,
+    { TIFFTAG_DOTRANGE,		 2, 2,	TIFF_BYTE,	FIELD_CUSTOM,
       0,	0,	"DotRange" },
     { TIFFTAG_TARGETPRINTER,	-1,-1,	TIFF_ASCII,	FIELD_CUSTOM,
       1,	0,	"TargetPrinter" },
@@ -391,28 +384,28 @@ static const TIFFFieldInfo tiffFieldInfo[] = {
       0,	1,	"ICC Profile" },
     { TIFFTAG_GPSIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"GPSIFDOffset" },
-    { TIFFTAG_STONITS,		 1, 1,	TIFF_DOUBLE,	FIELD_STONITS,
+    { TIFFTAG_STONITS,		 1, 1,	TIFF_DOUBLE,	FIELD_CUSTOM,
       0,	0,	"StoNits" },
-    { TIFFTAG_INTEROPERABILITYIFD,	1, 1,	TIFF_LONG,	FIELD_CUSTOM,
+    { TIFFTAG_INTEROPERABILITYIFD, 1, 1, TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"InteroperabilityIFDOffset" },
 /* begin DNG tags */
     { TIFFTAG_DNGVERSION,	4, 4,	TIFF_BYTE,	FIELD_CUSTOM, 
       0,	0,	"DNGVersion" },
-    { TIFFTAG_DNGBACKWARDVERSION,	4, 4,	TIFF_BYTE,	FIELD_CUSTOM, 
+    { TIFFTAG_DNGBACKWARDVERSION, 4, 4,	TIFF_BYTE,	FIELD_CUSTOM, 
       0,	0,	"DNGBackwardVersion" },
     { TIFFTAG_UNIQUECAMERAMODEL,    -1, -1, TIFF_ASCII,	FIELD_CUSTOM,
       1,	0,	"UniqueCameraModel" },
-    { TIFFTAG_LOCALIZEDCAMERAMODEL,    -1, -1, TIFF_ASCII,	FIELD_CUSTOM,
+    { TIFFTAG_LOCALIZEDCAMERAMODEL, -1, -1, TIFF_ASCII,	FIELD_CUSTOM,
       1,	0,	"LocalizedCameraModel" },
-    { TIFFTAG_LOCALIZEDCAMERAMODEL,    -1, -1, TIFF_BYTE,	FIELD_CUSTOM,
+    { TIFFTAG_LOCALIZEDCAMERAMODEL, -1, -1, TIFF_BYTE,	FIELD_CUSTOM,
       1,	1,	"LocalizedCameraModel" },
     { TIFFTAG_CFAPLANECOLOR,	-1, -1,	TIFF_BYTE,	FIELD_CUSTOM, 
       0,	1,	"CFAPlaneColor" },
     { TIFFTAG_CFALAYOUT,	1, 1,	TIFF_SHORT,	FIELD_CUSTOM, 
       0,	0,	"CFALayout" },
-    { TIFFTAG_LINEARIZATIONTABLE,	-1, -1,	TIFF_SHORT,	FIELD_CUSTOM, 
+    { TIFFTAG_LINEARIZATIONTABLE, -1, -1, TIFF_SHORT,	FIELD_CUSTOM, 
       0,	1,	"LinearizationTable" },
-    { TIFFTAG_BLACKLEVELREPEATDIM,	2, 2,	TIFF_SHORT,	FIELD_CUSTOM, 
+    { TIFFTAG_BLACKLEVELREPEATDIM, 2, 2, TIFF_SHORT,	FIELD_CUSTOM, 
       0,	0,	"BlackLevelRepeatDim" },
     { TIFFTAG_BLACKLEVEL,	-1, -1,	TIFF_LONG,	FIELD_CUSTOM, 
       0,	1,	"BlackLevel" },

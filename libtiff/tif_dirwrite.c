@@ -293,7 +293,6 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		case FIELD_PAGENUMBER:
 		case FIELD_HALFTONEHINTS:
 		case FIELD_YCBCRSUBSAMPLING:
-		case FIELD_DOTRANGE:
 			if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
 				goto bad;
 			break;

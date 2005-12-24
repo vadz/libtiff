@@ -125,7 +125,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	TIFFDirectory* td = &tif->tif_dir;
 	int status = 1;
 	uint32 v32, i, v;
-	double d;
 	char* s;
 
 	switch (tag) {
@@ -340,12 +339,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_IMAGEDEPTH:
 		td->td_imagedepth = va_arg(ap, uint32);
 		break;
-	case TIFFTAG_STONITS:
-		d = va_arg(ap, dblparam_t);
-		if (d <= 0.)
-			goto badvaluedbl;
-		td->td_stonits = d;
-		break;
 	case TIFFTAG_SUBIFD:
 		if ((tif->tif_flags & TIFF_INSUBIFD) == 0) {
 			td->td_nsubifd = (uint16) va_arg(ap, int);
@@ -370,14 +363,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			_TIFFsetShortArray(&td->td_transferfunction[i],
 			    va_arg(ap, uint16*), 1L<<td->td_bitspersample);
 		break;
-	case TIFFTAG_INKSET:
-		td->td_inkset = (uint16) va_arg(ap, int);
-		break;
-	case TIFFTAG_DOTRANGE:
-		/* XXX should check for null range */
-		td->td_dotrange[0] = (uint16) va_arg(ap, int);
-		td->td_dotrange[1] = (uint16) va_arg(ap, int);
-		break;
 	case TIFFTAG_INKNAMES:
 		v = va_arg(ap, uint32);
 		s = va_arg(ap, char*);
@@ -387,9 +372,6 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			_TIFFsetNString(&td->td_inknames, s, v);
 			td->td_inknameslen = v;
 		}
-		break;
-	case TIFFTAG_NUMBEROFINKS:
-		td->td_ninks = (uint16) va_arg(ap, int);
 		break;
         default: {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
@@ -576,11 +558,6 @@ badvalue:
 badvalue32:
 	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad value %ld for \"%s\"",
 		   tif->tif_name, v32, _TIFFFieldWithTag(tif, tag)->field_name);
-	va_end(ap);
-	return (0);
-badvaluedbl:
-	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad value %f for \"%s\"",
-		  tif->tif_name, d, _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 }
@@ -782,9 +759,6 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_IMAGEDEPTH:
             *va_arg(ap, uint32*) = td->td_imagedepth;
             break;
-	case TIFFTAG_STONITS:
-            *va_arg(ap, double*) = td->td_stonits;
-            break;
 	case TIFFTAG_SUBIFD:
             *va_arg(ap, uint16*) = td->td_nsubifd;
             *va_arg(ap, uint32**) = td->td_subifd;
@@ -803,20 +777,9 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
                 *va_arg(ap, uint16**) = td->td_transferfunction[2];
             }
             break;
-	case TIFFTAG_INKSET:
-            *va_arg(ap, uint16*) = td->td_inkset;
-            break;
-	case TIFFTAG_DOTRANGE:
-            *va_arg(ap, uint16*) = td->td_dotrange[0];
-            *va_arg(ap, uint16*) = td->td_dotrange[1];
-            break;
 	case TIFFTAG_INKNAMES:
             *va_arg(ap, char**) = td->td_inknames;
             break;
-	case TIFFTAG_NUMBEROFINKS:
-            *va_arg(ap, uint16*) = td->td_ninks;
-            break;
-
         default:
         {
             const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
@@ -1053,8 +1016,6 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_ycbcrsubsampling[0] = 2;
 	td->td_ycbcrsubsampling[1] = 2;
 	td->td_ycbcrpositioning = YCBCRPOSITION_CENTERED;
-	td->td_inkset = INKSET_CMYK;
-	td->td_ninks = 4;
 	tif->tif_postdecode = _TIFFNoPostDecode;
         tif->tif_foundfield = NULL;
 	tif->tif_tagmethods.vsetfield = _TIFFVSetField;
