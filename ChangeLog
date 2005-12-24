@@ -1,3 +1,10 @@
+2005-12-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/build.html: Added some additional instructions for when
+	building using MSVC under Windows.  Also fixed two HTML syntax
+	errors and used HTML Tidy to tidy up the HTML syntax and
+	formatting.
+
 2005-12-24  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_aux.c, tif_dir.c, tif_dir.h, tif_dirwrite.c,
