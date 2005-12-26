@@ -850,8 +850,11 @@ bad:
 int
 TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
 {
+	size_t exifFieldInfoCount;
+	const TIFFFieldInfo *exifFieldInfo =
+		_TIFFGetFieldInfo(&exifFieldInfoCount);
 	return TIFFReadCustomDirectory(tif, diroff, exifFieldInfo,
-				       TIFFArrayCount(exifFieldInfo));
+				       exifFieldInfoCount);
 }
 
 static int
