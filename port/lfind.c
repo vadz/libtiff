@@ -43,11 +43,9 @@ __RCSID("$NetBSD: lsearch.c,v 1.2 2005/07/06 15:47:15 drochner Exp $");
 # define NULL 0
 #endif
 
-typedef int (*cmp_fn_t) __P((const void *, const void *));
-
 void *
 lfind(const void *key, const void *base, size_t *nmemb, size_t size,
-      cmp_fn_t compar)
+      int(*compar)(const void *, const void *))
 {
 	char *element, *end;
 
