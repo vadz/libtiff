@@ -1,6 +1,7 @@
 /*
   Configuration defines for installed libtiff.
-  Editing this file no longer has any effect on the libtiff build!
+  This file maintained for backward compatibility. Do not use definitions
+  from this file in your programs.
 */
 
 #ifndef _TIFFCONF_
