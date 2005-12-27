@@ -1,3 +1,7 @@
+2005-12-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_jpeg.c: Improve compilation under MinGW.
+
 2005-12-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_dir.c, tif_dir.h, tif_dirread.c, tif_dirinfo.c}: 

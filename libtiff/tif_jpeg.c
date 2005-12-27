@@ -24,6 +24,9 @@
  * OF THIS SOFTWARE.
  */
 
+#define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
+
 #include "tiffiop.h"
 #ifdef JPEG_SUPPORT
 
@@ -50,6 +53,15 @@ int TIFFFillTile(TIFF*, ttile_t);
 #undef FAR
 #endif
 
+/*
+  Libjpeg's jmorecfg.h defines INT16 and INT32, but only if XMD_H is
+  not defined.  Unfortunately, the MinGW and Borland compilers include
+  a typedef for INT32, which causes a conflict.  MSVC does not include
+  a conficting typedef given the headers which are included.
+*/
+#if defined(__BORLANDC__) || defined(__MINGW32__)
+# define XMD_H 1
+#endif
 
 /*
    The windows RPCNDR.H file defines boolean, but defines it with the
@@ -65,7 +77,7 @@ int TIFFFillTile(TIFF*, ttile_t);
 */
 
 /* Define "boolean" as unsigned char, not int, per Windows custom. */
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__MINGW32__)
 # ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
    typedef unsigned char boolean;
 # endif

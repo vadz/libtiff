@@ -907,3 +907,4 @@ AC_SUBST([am__untar])
 
 m4_include([m4/acinclude.m4])
 m4_include([m4/libtool.m4])
+m4_include([m4/ltoptions.m4])

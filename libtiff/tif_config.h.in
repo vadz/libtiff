@@ -152,6 +152,9 @@
 /* Support LZW algorithm */
 #undef LZW_SUPPORT
 
+/* Support Microsoft Document Imaging format */
+#undef MDI_SUPPORT
+
 /* Support NeXT 2-bit RLE algorithm */
 #undef NEXT_SUPPORT
 
