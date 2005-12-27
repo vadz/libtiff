@@ -1,3 +1,8 @@
+2005-12-27  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tiffio.h: Added VC_EXTRALEAN definition before including
+	windows.h, to reduce the compile time.
+
 2005-12-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_jpeg.c: Improve compilation under MinGW.
