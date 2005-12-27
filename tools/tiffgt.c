@@ -53,7 +53,7 @@ static uint16	photo0 = (uint16) -1, photo;
 static int	stoponerr = 0;			/* stop on read error */
 static int	verbose = 0;
 static char	title[1024];			/* window title line */
-static long	xmax, ymax;
+static uint32	xmax, ymax;
 static char**	filelist = NULL;
 static int	fileindex;
 static int	filenum;

@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.24  2005-09-20 11:19:38  dron
+ * Revision 1.25  2005-12-27 12:24:07  dron
+ * Avoid warnings.
+ *
+ * Revision 1.24  2005/09/20 11:19:38  dron
  * Added missed 'break' statement as per bug
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=932
  *
@@ -4810,6 +4813,7 @@ tsize_t t2p_write_pdf_transfer_dict(T2P* t2p, TIFF* output, uint16 i){
 	tsize_t written=0;
 	char buffer[32];
 	int buflen=0;
+	(void)i; // XXX
 
 	written += TIFFWriteFile(output, (tdata_t) "/FunctionType 0 \r", 17);
 	written += TIFFWriteFile(output, (tdata_t) "/Domain [0.0 1.0] \r", 19);
