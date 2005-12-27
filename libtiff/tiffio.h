@@ -86,6 +86,7 @@ typedef	uint32 toff_t;		/* file offset */
 #endif
 
 #if defined(USE_WIN32_FILEIO)
+# define VC_EXTRALEAN
 # include <windows.h>
 # ifdef __WIN32__
 DECLARE_HANDLE(thandle_t);	/* Win32 file handle */
