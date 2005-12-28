@@ -1,6 +1,6 @@
 2005-12-28  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
-	* html/index.html: Cleaned up HTML
+	* html/{index.html, support.hml}: Cleaned up HTML
 
 2005-12-27  Andrey Kiselev  <dron@remotesensing.org>
 
