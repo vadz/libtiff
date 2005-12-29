@@ -1,5 +1,7 @@
 2005-12-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/bmp2tiff.c (main): Fixed warning regarding returning
+	inconsistent types from a condition.
 	* tools/tiffcmp.c (CheckLongTag): Eliminate warning due to printf
 	format.
 	* tools/bmp2tiff.c: Reduce compilation warnings on big-endian CPUs.
