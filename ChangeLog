@@ -1,3 +1,9 @@
+2005-12-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffcmp.c (CheckLongTag): Eliminate warning due to printf
+	format.
+	* tools/bmp2tiff.c: Reduce compilation warnings on big-endian CPUs.
+
 2005-12-28  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* html/{index.html, support.hml, libtiff.html}: Cleaned up HTML

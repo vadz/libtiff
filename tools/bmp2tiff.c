@@ -322,16 +322,16 @@ main(int argc, char* argv[])
                 read(fd, &info_hdr.iClrUsed, 4);
                 read(fd, &info_hdr.iClrImportant, 4);
 #ifdef WORDS_BIGENDIAN
-                TIFFSwabLong(&info_hdr.iWidth);
-                TIFFSwabLong(&info_hdr.iHeight);
-                TIFFSwabShort(&info_hdr.iPlanes);
-                TIFFSwabShort(&info_hdr.iBitCount);
-                TIFFSwabLong(&info_hdr.iCompression);
-                TIFFSwabLong(&info_hdr.iSizeImage);
-                TIFFSwabLong(&info_hdr.iXPelsPerMeter);
-                TIFFSwabLong(&info_hdr.iYPelsPerMeter);
-                TIFFSwabLong(&info_hdr.iClrUsed);
-                TIFFSwabLong(&info_hdr.iClrImportant);
+                TIFFSwabLong((uint32*) &info_hdr.iWidth);
+                TIFFSwabLong((uint32*) &info_hdr.iHeight);
+                TIFFSwabShort((uint16*) &info_hdr.iPlanes);
+                TIFFSwabShort((uint16*) &info_hdr.iBitCount);
+                TIFFSwabLong((uint32*) &info_hdr.iCompression);
+                TIFFSwabLong((uint32*) &info_hdr.iSizeImage);
+                TIFFSwabLong((uint32*) &info_hdr.iXPelsPerMeter);
+                TIFFSwabLong((uint32*) &info_hdr.iYPelsPerMeter);
+                TIFFSwabLong((uint32*) &info_hdr.iClrUsed);
+                TIFFSwabLong((uint32*) &info_hdr.iClrImportant);
 #endif
                 n_clr_elems = 4;
         }
@@ -349,22 +349,22 @@ main(int argc, char* argv[])
 
                 read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
-                TIFFSwabShort(&iShort);
+                TIFFSwabShort((uint16*) &iShort);
 #endif
                 info_hdr.iWidth = iShort;
                 read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
-                TIFFSwabShort(&iShort);
+                TIFFSwabShort((uint16*) &iShort);
 #endif
                 info_hdr.iHeight = iShort;
                 read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
-                TIFFSwabShort(&iShort);
+                TIFFSwabShort((uint16*) &iShort);
 #endif
                 info_hdr.iPlanes = iShort;
                 read(fd, &iShort, 2);
 #ifdef WORDS_BIGENDIAN
-                TIFFSwabShort(&iShort);
+                TIFFSwabShort((uint16*) &iShort);
 #endif
                 info_hdr.iBitCount = iShort;
 		info_hdr.iCompression = BMPC_RGB;
