@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Sun Mar  6 13:59:51 2005 -->
+<!-- CreationDate: Fri Dec 30 00:55:55 2005 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
@@ -12,6 +12,7 @@
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#AUTOREGISTERED TAGS">AUTOREGISTERED TAGS</a><br>
 <a href="#RETURN VALUES">RETURN VALUES</a><br>
 <a href="#DIAGNOSTICS">DIAGNOSTICS</a><br>
 <a href="#SEE ALSO">SEE ALSO</a><br>
@@ -62,7 +63,7 @@ ttag_t</b> <i>tag</i><b>, va_list</b> <i>ap</i><b>)</b></p>
 <td width="91%">
 <p><i>TIFFGetField</i> returns the value of a tag or
 pseudo-tag associated with the the current directory of the
-open <small>TIFF</small> file <i>tif</i>. (A
+opened <small>TIFF</small> file <i>tif</i>. (A
 <i>pseudo-tag</i> is a parameter that is used to control the
 operation of the <small>TIFF</small> library but whose value
 is not read or written to the underlying file.) The file
@@ -88,9 +89,9 @@ layering interfaces on top of the functionality provided by
 a tag is not defined in the current directory and it has a
 default value, then the default value is returned.</p>
 <!-- INDENTATION -->
-<p>The tags understood by <i>libtiff</i>, the number of
-parameter values, and the types for the returned values are
-shown below. The data types are specified as in C and
+<p>The tags understood by <i>libtiff(3TIFF),</i> the number
+of parameter values, and the types for the returned values
+are shown below. The data types are specified as in C and
 correspond to the types used to specify tag values to
 <i>TIFFSetField</i>(3TIFF). Remember that
 <i>TIFFGetField</i> returns parameter values, so all the
@@ -1299,6 +1300,48 @@ array is returned; otherwise three arrays are returned.<br>
 at http://www.color.org) for an explanation.</p>
 </td>
 </table>
+<a name="AUTOREGISTERED TAGS"></a>
+<h2>AUTOREGISTERED TAGS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>If you can&rsquo;t find the tag in the table above that
+means this is unsupported tag. But you still be able to read
+it&rsquo;s value if you know the data type of that tag. For
+example, if you want to read the LONG value from the tag
+33424 and ASCII string from the tag 36867 you can use the
+following code:</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="17%"></td>
+<td width="82%">
+<pre>uint16  count;
+void    *data;
+
+TIFFGetField(tiff, 33424, &amp;count, &amp;data);
+printf(&quot;Tag %d: %d, count %d0, 33424, *(uint32 *)data, count);
+TIFFGetField(tiff, 36867, &amp;count, &amp;data);
+printf(&quot;Tag %d: %s, count %d0, 36867, (char *)data, count);
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>is not supported by <b>libtiff(3TIFF),</b> library</p>
+</td>
+</table>
 <a name="RETURN VALUES"></a>
 <h2>RETURN VALUES</h2>
 <!-- INDENTATION -->
@@ -1320,7 +1363,7 @@ directory; otherwise a 0 is returned.</p>
 <td width="8%"></td>
 <td width="91%">
 <p>All error messages are directed to the
-<i>TIFFError</i>(3TIFF) routine.</p>
+<b>TIFFError</b>(3TIFF) routine.</p>
 <!-- INDENTATION -->
 <p><b>Unknown field, tag 0x%x</b>. An unknown tag was
 supplied.</p>
@@ -1334,10 +1377,13 @@ supplied.</p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>libtiff</i>(3TIFF), <i>TIFFOpen</i>(3TIFF),
-<i>TIFFSetField</i>(3TIFF), <i>TIFFSetDirectory</i>(3TIFF),
-<i>TIFFReadDirectory</i>(3TIFF),
-<i>TIFFWriteDirectory</i>(3TIFF)</p>
+<p><b>TIFFOpen</b>(3TIFF), <b>TIFFSetField</b>(3TIFF),
+<b>TIFFSetDirectory</b>(3TIFF),
+<b>TIFFReadDirectory</b>(3TIFF),
+<b>TIFFWriteDirectory</b>(3TIFF) <b>libtiff</b>(3TIFF),</p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.remotesensing.org/libtiff/</b></p>
 </td>
 </table>
 <hr>

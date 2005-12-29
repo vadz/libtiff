@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Sun Mar  6 13:59:55 2005 -->
+<!-- CreationDate: Fri Dec 30 00:55:59 2005 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
@@ -77,7 +77,7 @@ value of <i>size</i> is returned.</p>
 <td width="8%"></td>
 <td width="91%">
 <p>All error messages are directed to the
-<i>TIFFError</i>(3TIFF) routine.</p>
+<b>TIFFError</b>(3TIFF) routine.</p>
 <!-- INDENTATION -->
 <p><b>%s: File not open for writing</b>. The file was opened
 for reading, not writing.</p>
@@ -85,17 +85,17 @@ for reading, not writing.</p>
 <p><b>Can not write tiles to a stripped image</b>. The image
 is assumed to be organized in strips because neither of the
 <i>TileWidth</i> or <i>TileLength</i> tags have been set
-with <i>TIFFSetField</i>(3TIFF).</p>
+with <b>TIFFSetField</b>(3TIFF).</p>
 <!-- INDENTATION -->
 <p><b>%s: Must set &quot;ImageWidth&quot; before writing
 data</b>. The image&rsquo;s width has not be set before the
-first write. See <i>TIFFSetField</i>(3TIFF) for information
+first write. See <b>TIFFSetField</b>(3TIFF) for information
 on how to do this.</p>
 <!-- INDENTATION -->
 <p><b>%s: Must set &quot;PlanarConfiguration&quot; before
 writing data</b>. The organization of data has not be
 defined before the first write. See
-<i>TIFFSetField</i>(3TIFF) for information on how to do
+<b>TIFFSetField</b>(3TIFF) for information on how to do
 this.</p>
 <!-- INDENTATION -->
 <p><b>%s: No space for tile arrays&quot;</b>. There was not
@@ -115,9 +115,12 @@ specified image dimensions.</p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>libtiff</i>(3TIFF), <i>TIFFOpen</i>(3TIFF),
-<i>TIFFWriteEncodedTile</i>(3TIFF),
-<i>TIFFWriteScanline</i>(3TIFF)</p>
+<p><b>TIFFOpen</b>(3TIFF),
+<b>TIFFWriteEncodedTile</b>(3TIFF),
+<b>TIFFWriteScanline</b>(3TIFF), <b>libtiff</b>(3TIFF)</p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.remotesensing.org/libtiff/</b></p>
 </td>
 </table>
 <hr>

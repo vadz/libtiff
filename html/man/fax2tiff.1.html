@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Sun Mar  6 13:59:56 2005 -->
+<!-- CreationDate: Fri Dec 30 00:55:59 2005 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
@@ -475,6 +475,27 @@ bit ( <small>MSB</small> ) (default).</p>
 <td width="10%"></td>
 <td width="3%">
 
+<p><b>&minus;r</b></p>
+</td>
+<td width="5%"></td>
+<td width="80%">
+
+<p>Specify the number of rows (scanlines) in each strip of
+data written to the output file. By default (or when value
+<b>0</b> is specified), <i>tiffcp</i> attempts to set the
+rows/strip that no more than 8 kilobytes of data appear in a
+strip (with except of G3/G4 compression schemes). If you
+specify special value <b>-1</b> it will results in infinite
+number of the rows per strip. The entire image will be the
+one strip in that case. This is default in case of G3/G4
+output compression schemes.</p>
+</td>
+<td width="0%">
+</td>
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="3%">
+
 <p><b>&minus;s</b></p>
 </td>
 <td width="5%"></td>
@@ -567,15 +588,18 @@ override this assumption from the command line.</p>
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i><small>CCITT</small> Recommendation T.4</i>
+<p><b><small>CCITT</small> Recommendation T.4</b>
 (Standardization of Group 3 Facsimile Apparatus for Document
 Transmission).</p>
 <!-- INDENTATION -->
-<p><i>The Spirit of TIFF Class F</i>, an appendix to the
+<p><b>The Spirit of TIFF Class F</b>, an appendix to the
 TIFF 5.0 specification prepared by Cygnet Technologies.</p>
 <!-- INDENTATION -->
-<p><i>tiffinfo</i>(1), <i>tiffdither</i>(1),
-<i>tiffgt</i>(1), <i>libtiff</i>(3).</p>
+<p><b>tiffinfo</b>(1), <b>tiffdither</b>(1),
+<b>tiffgt</b>(1), <b>libtiff</b>(3)</p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.remotesensing.org/libtiff/</b></p>
 </td>
 </table>
 <hr>

@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Sun Mar  6 13:59:58 2005 -->
+<!-- CreationDate: Fri Dec 30 00:56:02 2005 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
@@ -52,8 +52,8 @@ created according to the Tag Image File Format, Revision
 6.0. The header of each <small>TIFF</small> file (magic
 number, version, and first directory offset) is displayed,
 followed by the tag contents of each directory in the file.
-For each tag, the name, datatype, count, and value(s) is
-displayed. When the symbolic name for a tag or datatype is
+For each tag, the name, data type, count, and value(s) is
+displayed. When the symbolic name for a tag or data type is
 known, the symbolic name is displayed followed by it&rsquo;s
 numeric (decimal) value. Tag values are displayed enclosed
 in &lsquo;&lsquo;&lt;&gt;&rsquo;&rsquo; characters
@@ -86,22 +86,44 @@ than the default decimal.</p>
 </td>
 <td width="0%">
 </td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="10%"></td>
-<td width="2%">
-
-<p><b>&minus;o</b></p>
-</td>
-<td width="6%"></td>
+<td width="8%"></td>
+<td width="91%">
+<p><b>&minus;m items</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="19%"></td>
 <td width="80%">
-
+<p>Change the number of indirect data items that are
+printed. By default, this will be 24.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>&minus;o offset</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="19%"></td>
+<td width="80%">
 <p>Dump the contents of the <small>IFD</small> at the a
 particular file offset. The file offset may be specified
 using the usual C-style syntax; i.e. a leading
 &lsquo;&lsquo;0x&rsquo;&rsquo; for hexadecimal and a leading
 &lsquo;&lsquo;0&rsquo;&rsquo; for octal.</p>
-</td>
-<td width="0%">
 </td>
 </table>
 <a name="SEE ALSO"></a>
@@ -112,7 +134,10 @@ using the usual C-style syntax; i.e. a leading
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>tiffinfo</i>(1), <i>libtiff</i>(3)</p>
+<p><b>tiffinfo</b>(1), <b>libtiff</b>(3TIFF)</p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.remotesensing.org/libtiff/</b></p>
 </td>
 </table>
 <hr>
