@@ -2,7 +2,7 @@
 
 	* html/man/Makefile.am (htmldoc): Fix htmldoc rule so that it can
 	be used if build directory is not the same as source directory.
-	* man/{TIFFGetField.3tiff, man/TIFFSetField.3tiff}: Documented
+	* man/{TIFFGetField.3tiff, TIFFSetField.3tiff}: Documented
 	TIFFTAG_PHOTOSHOP, TIFFTAG_RICHTIFFIPTC, and TIFFTAG_XMLPACKET,
 	and re-sorted tag names in alphabetical order.
 
