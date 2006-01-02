@@ -1,14 +1,24 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Fri Dec 30 00:55:55 2005 -->
+<!-- Creator     : groff version 1.19.2 -->
+<!-- CreationDate: Mon Jan  2 17:41:36 2006 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p     { margin-top: 0; margin-bottom: 0; }
+       pre   { margin-top: 0; margin-bottom: 0; }
+       table { margin-top: 0; margin-bottom: 0; }
+</style>
 <title>TIFFFlush</title>
+
 </head>
 <body>
 
 <h1 align=center>TIFFFlush</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -17,97 +27,75 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
+
+
 <a name="NAME"></a>
 <h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>TIFFFlush, TIFFFlushData &minus; flush pending writes to
-an open <small>TIFF</small> file</p>
-</td>
-</table>
+
+
+<p style="margin-left:11%; margin-top: 1em">TIFFFlush,
+TIFFFlushData &minus; flush pending writes to an open
+<small>TIFF</small> file</p>
+
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>#include &lt;tiffio.h&gt;</b></p>
-<!-- INDENTATION -->
-<p><b>int TIFFFlush(TIFF *</b><i>tif</i><b>)<br>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>#include
+&lt;tiffio.h&gt;</b></p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>int
+TIFFFlush(TIFF *</b><i>tif</i><b>) <br>
 int TIFFFlushData(TIFF *</b><i>tif</i><b>)</b></p>
-</td>
-</table>
+
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>TIFFFlush</i> causes any pending writes for the
-specified file (including writes for the current directory)
-to be done. In normal operation this call is never needed
-&minus; the library automatically does any flushing
-required.</p>
-<!-- INDENTATION -->
-<p><i>TIFFFlushData</i> flushes any pending image data for
-the specified file to be written out; directory-related data
-are not flushed. In normal operation this call is never
-needed &minus; the library automatically does any flushing
-required.</p>
-</td>
-</table>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>TIFFFlush</i>
+causes any pending writes for the specified file (including
+writes for the current directory) to be done. In normal
+operation this call is never needed &minus; the library
+automatically does any flushing required.</p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>TIFFFlushData</i>
+flushes any pending image data for the specified file to be
+written out; directory-related data are not flushed. In
+normal operation this call is never needed &minus; the
+library automatically does any flushing required.</p>
+
 <a name="RETURN VALUES"></a>
 <h2>RETURN VALUES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>0 is returned if an error is encountered, otherwise 1 is
-returned.</p>
-</td>
-</table>
+
+
+<p style="margin-left:11%; margin-top: 1em">0 is returned
+if an error is encountered, otherwise 1 is returned.</p>
+
 <a name="DIAGNOSTICS"></a>
 <h2>DIAGNOSTICS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>All error messages are directed to the
-<b>TIFFError</b>(3TIFF) routine.</p>
-</td>
-</table>
+
+
+<p style="margin-left:11%; margin-top: 1em">All error
+messages are directed to the <b>TIFFError</b>(3TIFF)
+routine.</p>
+
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>TIFFOpen</b>(3TIFF),
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>TIFFOpen</b>(3TIFF),
 <b>TIFFWriteEncodedStrip</b>(3TIFF),
 <b>TIFFWriteEncodedTile</b>(3TIFF),
 <b>TIFFWriteRawStrip</b>(3TIFF),
 <b>TIFFWriteRawTile</b>(3TIFF),
 <b>TIFFWriteScanline</b>(3TIFF), <b>TIFFWriteTile</b>(3TIFF)
 <b>libtiff</b>(3TIFF),</p>
-<!-- INDENTATION -->
-<p>Libtiff library home page:
-<b>http://www.remotesensing.org/libtiff/</b></p>
-</td>
-</table>
+
+<p style="margin-left:11%; margin-top: 1em">Libtiff library
+home page: <b>http://www.remotesensing.org/libtiff/</b></p>
 <hr>
 </body>
 </html>

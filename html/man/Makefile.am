@@ -25,6 +25,7 @@
 
 docdir = $(LIBTIFF_DOCDIR)/html/man
 MANSRCDIR = $(top_srcdir)/man
+HTMLMANDIR = $(top_srcdir)/html/man
 
 GROFF = groff -Thtml -mandoc
 ECHO = echo
@@ -112,6 +113,6 @@ manpages = $(docfiles:.html=)
 .PHONY: htmldoc
 htmldoc: index
 	for i in $(manpages); do					\
-		${GROFF} $(MANSRCDIR)/$$i > $$i.html;			\
+		${GROFF} $(MANSRCDIR)/$$i > $(HTMLMANDIR)/$$i.html;	\
 	done
 

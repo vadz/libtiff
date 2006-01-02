@@ -1,3 +1,11 @@
+2006-01-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/man/Makefile.am (htmldoc): Fix htmldoc rule so that it can
+	be used if build directory is not the same as source directory.
+	* man/{TIFFGetField.3tiff, man/TIFFSetField.3tiff}: Documented
+	TIFFTAG_PHOTOSHOP, TIFFTAG_RICHTIFFIPTC, and TIFFTAG_XMLPACKET,
+	and re-sorted tag names in alphabetical order.
+
 2005-12-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/bmp2tiff.c (main): Fixed warning regarding returning

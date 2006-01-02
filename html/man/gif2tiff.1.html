@@ -1,14 +1,24 @@
-<!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Fri Dec 30 00:55:59 2005 -->
+<!-- Creator     : groff version 1.19.2 -->
+<!-- CreationDate: Mon Jan  2 17:41:51 2006 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p     { margin-top: 0; margin-bottom: 0; }
+       pre   { margin-top: 0; margin-bottom: 0; }
+       table { margin-top: 0; margin-bottom: 0; }
+</style>
 <title>GIF2TIFF</title>
+
 </head>
 <body>
 
 <h1 align=center>GIF2TIFF</h1>
+
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -18,124 +28,103 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
+
+
 <a name="NAME"></a>
 <h2>NAME</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>gif2tiff &minus; create a <small>TIFF</small> file from a
-GIF87 format image file</p>
-</td>
-</table>
+
+
+<p style="margin-left:11%; margin-top: 1em">gif2tiff
+&minus; create a <small>TIFF</small> file from a GIF87
+format image file</p>
+
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>gif2tiff</b> [ <i>options</i> ] <i>input.gif
-output.tif</i></p>
-</td>
-</table>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>gif2tiff</b>
+[ <i>options</i> ] <i>input.gif output.tif</i></p>
+
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><i>Gif2tiff</i> converts a file in the GIF87 format to
-<small>TIFF.</small> The <small>TIFF</small> image is
-created as a palette image, with samples compressed with the
-Lempel-Ziv &amp; Welch algorithm (<i>Compression</i>=5).
-These characteristics can overridden, or explicitly
-specified with the options described below.</p>
-</td>
-</table>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>Gif2tiff</i>
+converts a file in the GIF87 format to <small>TIFF.</small>
+The <small>TIFF</small> image is created as a palette image,
+with samples compressed with the Lempel-Ziv &amp; Welch
+algorithm (<i>Compression</i>=5). These characteristics can
+overridden, or explicitly specified with the options
+described below.</p>
+
 <a name="OPTIONS"></a>
 <h2>OPTIONS</h2>
-<!-- TABS -->
+
+
 <table width="100%" border=0 rules="none" frame="void"
-       cols="5" cellspacing="0" cellpadding="0">
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="10%"></td>
+<td width="11%"></td>
 <td width="3%">
 
-<p><b>&minus;c</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
 
-<p>Specify a compression scheme to use when writing image
-data: <b>&minus;c none</b> for no compression, <b>-c
-packbits</b> for the PackBits compression algorithm, <b>-c
-zip</b> for the Deflate compression algorithm, and
-<b>&minus;c lzw</b> for Lempel-Ziv &amp; Welch (the
-default).</p>
-</td>
-<td width="0%">
-</td>
+
+<p style="margin-top: 1em" valign="top"><b>&minus;c</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Specify a
+compression scheme to use when writing image data:
+<b>&minus;c none</b> for no compression, <b>-c packbits</b>
+for the PackBits compression algorithm, <b>-c zip</b> for
+the Deflate compression algorithm, and <b>&minus;c lzw</b>
+for Lempel-Ziv &amp; Welch (the default).</p></td>
 <tr valign="top" align="left">
-<td width="10%"></td>
+<td width="11%"></td>
 <td width="3%">
 
-<p><b>&minus;r</b></p>
-</td>
-<td width="5%"></td>
-<td width="80%">
 
-<p>Write data with a specified number of rows per strip; by
-default the number of rows/strip is selected so that each
-strip is approximately 8 kilobytes.</p>
-</td>
-<td width="0%">
-</td>
+
+<p style="margin-top: 1em" valign="top"><b>&minus;r</b></p> </td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em" valign="top">Write data with a
+specified number of rows per strip; by default the number of
+rows/strip is selected so that each strip is approximately 8
+kilobytes.</p> </td>
 </table>
+
 <a name="NOTES"></a>
 <h2>NOTES</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>The program is based on Paul Haeberli&rsquo;s
-<i>fromgif</i> program which, in turn, is based on Marcel
-J.E. Mol&rsquo;s GIF reader.</p>
-</td>
-</table>
+
+
+<p style="margin-left:11%; margin-top: 1em">The program is
+based on Paul Haeberli&rsquo;s <i>fromgif</i> program which,
+in turn, is based on Marcel J.E. Mol&rsquo;s GIF reader.</p>
+
 <a name="BUGS"></a>
 <h2>BUGS</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p>Should have more options to control output format.</p>
-</td>
-</table>
+
+
+<p style="margin-left:11%; margin-top: 1em">Should have
+more options to control output format.</p>
+
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-<!-- INDENTATION -->
-<table width="100%" border=0 rules="none" frame="void"
-       cols="2" cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="8%"></td>
-<td width="91%">
-<p><b>pal2rgb</b>(1), <b>tiffinfo</b>(1), <b>tiffcp</b>(1),
-<b>tiffmedian</b>(1), <b>libtiff</b>(3)</p>
-<!-- INDENTATION -->
-<p>Libtiff library home page:
-<b>http://www.remotesensing.org/libtiff/</b></p>
-</td>
-</table>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>pal2rgb</b>(1),
+<b>tiffinfo</b>(1), <b>tiffcp</b>(1), <b>tiffmedian</b>(1),
+<b>libtiff</b>(3)</p>
+
+<p style="margin-left:11%; margin-top: 1em">Libtiff library
+home page: <b>http://www.remotesensing.org/libtiff/</b></p>
 <hr>
 </body>
 </html>
