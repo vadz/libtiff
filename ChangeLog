@@ -1,3 +1,9 @@
+2006-01-04  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirinfo.c: Change definitions for TIFFTAG_ICCPROFILE,
+	TIFFTAG_PHOTOSHOP, TIFFTAG_RICHTIFFIPTC, TIFFTAG_XMLPACKET: readcount
+	should be uint32 value.
+
 2006-01-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* html/man/Makefile.am (htmldoc): Fix htmldoc rule so that it can
@@ -5,6 +11,10 @@
 	* man/{TIFFGetField.3tiff, TIFFSetField.3tiff}: Documented
 	TIFFTAG_PHOTOSHOP, TIFFTAG_RICHTIFFIPTC, and TIFFTAG_XMLPACKET,
 	and re-sorted tag names in alphabetical order.
+
+2005-12-29  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff 3.8.0 released.
 
 2005-12-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
