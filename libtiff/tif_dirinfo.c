@@ -221,7 +221,7 @@ tiffFieldInfo[] = {
 /* XXX temporarily accept LONG for backwards compatibility */
     { TIFFTAG_REFERENCEBLACKWHITE, 6, 6, TIFF_LONG,	FIELD_CUSTOM,
       1,	0,	"ReferenceBlackWhite" },
-    { TIFFTAG_XMLPACKET,	-1,-3,	TIFF_BYTE,	FIELD_CUSTOM,
+    { TIFFTAG_XMLPACKET,	-3,-3,	TIFF_BYTE,	FIELD_CUSTOM,
       0,	1,	"XMLPacket" },
 /* begin SGI tags */
     { TIFFTAG_MATTEING,		 1, 1,	TIFF_SHORT,	FIELD_EXTRASAMPLES,
@@ -255,13 +255,13 @@ tiffFieldInfo[] = {
     { TIFFTAG_COPYRIGHT,	-1, -1,	TIFF_ASCII,	FIELD_CUSTOM,
       1,	0,	"Copyright" },
 /* end Pixar tags */
-    { TIFFTAG_RICHTIFFIPTC, -1, -3,	TIFF_LONG,	FIELD_CUSTOM, 
+    { TIFFTAG_RICHTIFFIPTC, -3, -3,	TIFF_LONG,	FIELD_CUSTOM, 
       0,    1,   "RichTIFFIPTC" },
-    { TIFFTAG_PHOTOSHOP,    -1, -3,	TIFF_BYTE,	FIELD_CUSTOM, 
+    { TIFFTAG_PHOTOSHOP,    -3, -3,	TIFF_BYTE,	FIELD_CUSTOM, 
       0,    1,   "Photoshop" },
     { TIFFTAG_EXIFIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"EXIFIFDOffset" },
-    { TIFFTAG_ICCPROFILE,	-1, -3,	TIFF_UNDEFINED,	FIELD_CUSTOM,
+    { TIFFTAG_ICCPROFILE,	-3, -3,	TIFF_UNDEFINED,	FIELD_CUSTOM,
       0,	1,	"ICC Profile" },
     { TIFFTAG_GPSIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"GPSIFDOffset" },
