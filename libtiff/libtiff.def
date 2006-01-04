@@ -119,5 +119,5 @@ EXPORTS TIFFOpen
 	TIFFIsCODECConfigured
 	TIFFGetConfiguredCODECs
 	TIFFFreeDirectory
-
-
+	TIFFReadCustomDirectory
+	TIFFReadEXIFDirectory
