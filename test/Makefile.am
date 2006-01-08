@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-LIBTIFF = -L$(top_builddir)/libtiff -ltiff
+LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 #EXTRA_DIST = Makefile.vc
 

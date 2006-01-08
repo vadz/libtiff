@@ -1,3 +1,9 @@
+2006-01-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/Makefile.am (LIBTIFF): Due to linking against libtiff
+	incorrectly, tests were not actually testing the uninstalled
+	libtiff.  Now they are.
+
 2006-01-04  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirinfo.c: Change definitions for TIFFTAG_ICCPROFILE,
