@@ -1,3 +1,8 @@
+2006-01-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Fix with_default_strip_size comparison as reported
+	by Norihiko Murase.
+
 2006-01-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/Makefile.am (LIBTIFF): Due to linking against libtiff

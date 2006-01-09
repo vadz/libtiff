@@ -454,7 +454,7 @@ AC_ARG_WITH(default-strip-size,
 if test "$HAVE_STRIPCHOP" = "yes" ; then
   AC_DEFINE(STRIPCHOP_DEFAULT,TIFF_STRIPCHOP,[Support strip chopping (whether or not to convert single-strip uncompressed images to mutiple strips of specified size to reduce memory usage)])
 
-  if test "x$with_default_strip_size" == "x" ; then
+  if test "x$with_default_strip_size" = "x" ; then
     with_default_strip_size="8192"
   fi
 
