@@ -532,7 +532,7 @@ processCompressOptions(char* opt)
 	else if (strncmp(opt, "jpeg", 4) == 0) {
 		char* cp = strchr(opt, ':');
 
-                defcompression = COMPRESSION_JPEG;
+                compression = COMPRESSION_JPEG;
                 while( cp )
                 {
                     if (isdigit((int)cp[1]))

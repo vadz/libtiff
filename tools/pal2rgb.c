@@ -232,7 +232,7 @@ processCompressOptions(char* opt)
 	else if (strneq(opt, "jpeg", 4)) {
 		char* cp = strchr(opt, ':');
 
-                defcompression = COMPRESSION_JPEG;
+                compression = COMPRESSION_JPEG;
                 while( cp )
                 {
                     if (isdigit((int)cp[1]))
