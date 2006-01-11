@@ -1,3 +1,10 @@
+2006-01-11  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/bmp2tiff,pal2rgb,ppm2tiff,ras2tiff,raw2tiff,sgi2tiff,
+	tiff2bw,tiffcp: Fixed jpeg option processing so -c jpeg:r:50 works
+	properly as per bug:
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1025
+
 2006-01-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Fix with_default_strip_size comparison as reported
