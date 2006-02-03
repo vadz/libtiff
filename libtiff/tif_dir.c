@@ -841,63 +841,73 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 			*va_arg(ap, void **) = tv->value;
 			ret_val = 1;
                 } else {
-			if (fip->field_type == TIFF_ASCII
+			if ((fip->field_type == TIFF_ASCII
 			    || fip->field_readcount == TIFF_VARIABLE
 			    || fip->field_readcount == TIFF_VARIABLE2
 			    || fip->field_readcount == TIFF_SPP
-			    || tv->count > 1) {
+			    || tv->count > 1)
+			    && fip->field_tag != TIFFTAG_PAGENUMBER
+			    && fip->field_tag != TIFFTAG_HALFTONEHINTS
+			    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
+			    && fip->field_tag != TIFFTAG_DOTRANGE) {
 				*va_arg(ap, void **) = tv->value;
 				ret_val = 1;
 			} else {
+			    int i;
+			    char *val = (char *)tv->value;
+
+			    for (i = 0; i < tv->count;
+				 i++, val += _TIFFDataSize(fip->field_type)) {
 				switch (fip->field_type) {
 					case TIFF_BYTE:
 					case TIFF_UNDEFINED:
 						*va_arg(ap, uint8*) =
-							*(uint8 *)tv->value;
+							*(uint8 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_SBYTE:
 						*va_arg(ap, int8*) =
-							*(int8 *)tv->value;
+							*(int8 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_SHORT:
 						*va_arg(ap, uint16*) =
-							*(uint16 *)tv->value;
+							*(uint16 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_SSHORT:
 						*va_arg(ap, int16*) =
-							*(int16 *)tv->value;
+							*(int16 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_LONG:
 					case TIFF_IFD:
 						*va_arg(ap, uint32*) =
-							*(uint32 *)tv->value;
+							*(uint32 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_SLONG:
 						*va_arg(ap, int32*) =
-							*(int32 *)tv->value;
+							*(int32 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_RATIONAL:
 					case TIFF_SRATIONAL:
 					case TIFF_FLOAT:
 						*va_arg(ap, float*) =
-							*(float *)tv->value;
+							*(float *)val;
 						ret_val = 1;
 						break;
 					case TIFF_DOUBLE:
 						*va_arg(ap, double*) =
-							*(double *)tv->value;
+							*(double *)val;
 						ret_val = 1;
 						break;
 					default:
 						ret_val = 0;
 						break;
 				}
+			    }
 			}
                 }
 		break;
