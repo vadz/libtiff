@@ -975,6 +975,8 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_transferfunction[2]);
 	CleanupField(td_stripoffset);
 	CleanupField(td_stripbytecount);
+	TIFFClrFieldBit(tif, FIELD_YCBCRSUBSAMPLING);
+	TIFFClrFieldBit(tif, FIELD_YCBCRPOSITIONING);
 
 	/* Cleanup custom tag values */
 	for( i = 0; i < td->td_customValueCount; i++ ) {
