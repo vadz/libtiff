@@ -1,3 +1,16 @@
+2006-02-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dir.c: Special handling for PageNumber, HalftoneHints,
+	YCbCrSubsampling and DotRange tags as per bugs
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1029
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1034
+
+	* libtiff/tif_dirread.c: Use _TIFFGetExifFieldInfo() instead of
+	_TIFFGetFieldInfo() in TIFFReadEXIFDirectory() call as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1026.
+
 2006-01-23  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtool related stuff updated from the 2.1a branch.
