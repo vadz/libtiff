@@ -181,7 +181,7 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
 	case TIFFTAG_YCBCRCOEFFICIENTS:
 		{
 			/* defaults are from CCIR Recommendation 601-1 */
-			float ycbcrcoeffs[] = { 0.299f, 0.587f, 0.114f };
+			static float ycbcrcoeffs[] = { 0.299f, 0.587f, 0.114f };
 			*va_arg(ap, float **) = ycbcrcoeffs;
 			return 1;
 		}
