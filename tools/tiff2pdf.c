@@ -3,7 +3,10 @@
  * tiff2pdf - converts a TIFF image to a PDF document
  *
  * $Log$
- * Revision 1.25  2005-12-27 12:24:07  dron
+ * Revision 1.26  2006-02-07 14:28:49  fwarmerdam
+ * fix for non-YCbCr jpeg compressed files
+ *
+ * Revision 1.25  2005/12/27 12:24:07  dron
  * Avoid warnings.
  *
  * Revision 1.24  2005/09/20 11:19:38  dron
@@ -5087,6 +5090,11 @@ tsize_t t2p_write_pdf_xobject_stream_filter(ttile_t tile, T2P* t2p, TIFF* output
 #ifdef JPEG_SUPPORT
 		case T2P_COMPRESS_JPEG:
 			written += TIFFWriteFile(output, (tdata_t) "/DCTDecode ", 11);
+
+			if(t2p->tiff_photometric != PHOTOMETRIC_YCBCR) {
+				written += TIFFWriteFile(output, (tdata_t) "/DecodeParms ", 13);
+				written += TIFFWriteFile(output, (tdata_t) "<< /ColorTransform 0 >>\r", 24);
+			}
 			break;
 #endif
 #ifdef ZIP_SUPPORT
