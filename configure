@@ -19735,14 +19735,16 @@ if test "${with_default_strip_size+set}" = set; then
 
 fi;
 
-if test "$HAVE_STRIPCHOP" = "yes" ; then
+if test "$HAVE_STRIPCHOP" = "yes" \
+	-a "x$with_default_strip_size" != "xno"; then
 
 cat >>confdefs.h <<\_ACEOF
 #define STRIPCHOP_DEFAULT TIFF_STRIPCHOP
 _ACEOF
 
 
-  if test "x$with_default_strip_size" = "x" ; then
+  if test "x$with_default_strip_size" = "x" \
+	  -o "x$with_default_strip_size" = "xyes"; then
     with_default_strip_size="8192"
   fi
 
