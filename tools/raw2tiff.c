@@ -602,7 +602,7 @@ static char* stuff[] = {
 "",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
 " -c zip[:opts]	compress output with deflate encoding",
-" -c jpeg[:opts]compress output with JPEG encoding",
+" -c jpeg[:opts]	compress output with JPEG encoding",
 " -c packbits	compress output with packbits encoding",
 " -c none	use no compression algorithm on output",
 "",
