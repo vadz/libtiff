@@ -1,3 +1,17 @@
+2006-02-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_dirread.c, tif_packbits.c, tif_win32.c}: Properly
+	cast values to avoid warnings. As per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1033.
+
+	* libtiff/tif_dirinfo.c: Use TIFF_NOTYPE instead of 0 when
+	appropriate. As per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1033.
+
+	* libtiff/tif_aux.c: Fixed type of temporary variable in
+	_TIFFCheckMalloc() as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1033.
+
 2006-02-06  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_aux.c: Return static array when fetching default
