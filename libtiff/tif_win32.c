@@ -251,7 +251,7 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 	mbname = NULL;
 	mbsize = WideCharToMultiByte(CP_ACP, 0, name, -1, NULL, 0, NULL, NULL);
 	if (mbsize > 0) {
-		mbname = _TIFFmalloc(mbsize);
+		mbname = (char *)_TIFFmalloc(mbsize);
 		if (!mbname) {
 			TIFFErrorExt(0, module,
 			"Can't allocate space for filename conversion buffer");

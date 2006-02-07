@@ -38,7 +38,7 @@ PackBitsPreEncode(TIFF* tif, tsample_t s)
 {
 	(void) s;
 
-        if (!(tif->tif_data = _TIFFmalloc(sizeof(tsize_t))))
+        if (!(tif->tif_data = (tidata_t)_TIFFmalloc(sizeof(tsize_t))))
 		return (0);
 	/*
 	 * Calculate the scanline/tile-width size in bytes.
