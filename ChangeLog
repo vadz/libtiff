@@ -1,3 +1,14 @@
+2006-02-09  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_tile.c: Fix error reporting in TIFFCheckTile() as per
+	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1063.
+
+	* tools/tiffgt.c: Avoid crashing in case of image unsupported by
+	TIFFRGBAImage interface.
+
+	* libtiff/tif_color.c: Avoid overflow in case of wrong input as per
+	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1065.
+
 2006-02-07  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2pdf.c: Fixed support for non-YCbCr encoded JPEG
