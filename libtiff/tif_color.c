@@ -92,6 +92,11 @@ TIFFXYZToRGB(TIFFCIELabToRGB *cielab, float X, float Y, float Z,
 	Yg = TIFFmax(Yg, cielab->display.d_Y0G);
 	Yb = TIFFmax(Yb, cielab->display.d_Y0B);
 
+	/* Avoid overflow in case of wrong input values */
+	Yr = TIFFmin(Yr, cielab->display.d_YCR);
+	Yg = TIFFmin(Yg, cielab->display.d_YCG);
+	Yb = TIFFmin(Yb, cielab->display.d_YCB);
+
 	/* Turn luminosity to colour value. */
 	i = (int)((Yr - cielab->display.d_Y0R) / cielab->rstep);
 	i = TIFFmin(cielab->range, i);
