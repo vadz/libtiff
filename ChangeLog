@@ -1,3 +1,15 @@
+2006-02-15  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2pdf.c: Do not create output file until all option checks
+	will be done. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1072
+
+	* tools/bmp2tiff.c: Added ability to create multipage TIFFs from the
+	list of input files as per bug:
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1077
+
 2006-02-09  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_tile.c: Fix error reporting in TIFFCheckTile() as per
