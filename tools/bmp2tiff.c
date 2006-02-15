@@ -228,7 +228,7 @@ main(int argc, char* argv[])
         uint16	depth = 8;		/* bits per pixel in input image */
 	uint32	rowsperstrip = (uint32) -1;
         uint16	photometric = PHOTOMETRIC_MINISBLACK;
-	int	fd;
+	int	fd = 0;
 	struct stat instat;
 	char	*outfilename = NULL, *infilename = NULL;
 	TIFF	*out = NULL;
@@ -267,201 +267,8 @@ main(int argc, char* argv[])
 	if (argc - optind < 2)
 		usage();
 
-	infilename = argv[optind];
-	fd = open(infilename, O_RDONLY|O_BINARY, 0);
-	if (fd < 0) {
-		TIFFError(infilename, "Cannot open input file");
-		return -1;
-	}
-
-	read(fd, file_hdr.bType, 2);
-	if(file_hdr.bType[0] != 'B' || file_hdr.bType[1] != 'M') {
-		TIFFError(infilename, "File is not BMP");
-		goto bad;
-	}
-
-/* -------------------------------------------------------------------- */
-/*      Read the BMPFileHeader. We need iOffBits value only             */
-/* -------------------------------------------------------------------- */
-	lseek(fd, 10, SEEK_SET);
-	read(fd, &file_hdr.iOffBits, 4);
-#ifdef WORDS_BIGENDIAN
-        TIFFSwabLong(&file_hdr.iOffBits);
-#endif
-	fstat(fd, &instat);
-	file_hdr.iSize = instat.st_size;
-
-/* -------------------------------------------------------------------- */
-/*      Read the BMPInfoHeader.                                         */
-/* -------------------------------------------------------------------- */
-
-        lseek(fd, BFH_SIZE, SEEK_SET);
-        read(fd, &info_hdr.iSize, 4);
-#ifdef WORDS_BIGENDIAN
-        TIFFSwabLong(&info_hdr.iSize);
-#endif
-
-        if (info_hdr.iSize == BIH_WIN4SIZE)
-                bmp_type = BMPT_WIN4;
-        else if (info_hdr.iSize == BIH_OS21SIZE)
-                bmp_type = BMPT_OS21;
-        else if (info_hdr.iSize == BIH_OS22SIZE || info_hdr.iSize == 16)
-                bmp_type = BMPT_OS22;
-        else
-                bmp_type = BMPT_WIN5;
-
-        if (bmp_type == BMPT_WIN4 || bmp_type == BMPT_WIN5 || bmp_type == BMPT_OS22) {
-                read(fd, &info_hdr.iWidth, 4);
-                read(fd, &info_hdr.iHeight, 4);
-                read(fd, &info_hdr.iPlanes, 2);
-                read(fd, &info_hdr.iBitCount, 2);
-                read(fd, &info_hdr.iCompression, 4);
-                read(fd, &info_hdr.iSizeImage, 4);
-                read(fd, &info_hdr.iXPelsPerMeter, 4);
-                read(fd, &info_hdr.iYPelsPerMeter, 4);
-                read(fd, &info_hdr.iClrUsed, 4);
-                read(fd, &info_hdr.iClrImportant, 4);
-#ifdef WORDS_BIGENDIAN
-                TIFFSwabLong((uint32*) &info_hdr.iWidth);
-                TIFFSwabLong((uint32*) &info_hdr.iHeight);
-                TIFFSwabShort((uint16*) &info_hdr.iPlanes);
-                TIFFSwabShort((uint16*) &info_hdr.iBitCount);
-                TIFFSwabLong((uint32*) &info_hdr.iCompression);
-                TIFFSwabLong((uint32*) &info_hdr.iSizeImage);
-                TIFFSwabLong((uint32*) &info_hdr.iXPelsPerMeter);
-                TIFFSwabLong((uint32*) &info_hdr.iYPelsPerMeter);
-                TIFFSwabLong((uint32*) &info_hdr.iClrUsed);
-                TIFFSwabLong((uint32*) &info_hdr.iClrImportant);
-#endif
-                n_clr_elems = 4;
-        }
-
-	if (bmp_type == BMPT_OS22) {
-		/* 
-		 * FIXME: different info in different documents
-		 * regarding this!
-		 */
-                 n_clr_elems = 3;
-        }
-
-	if (bmp_type == BMPT_OS21) {
-                int16  iShort;
-
-                read(fd, &iShort, 2);
-#ifdef WORDS_BIGENDIAN
-                TIFFSwabShort((uint16*) &iShort);
-#endif
-                info_hdr.iWidth = iShort;
-                read(fd, &iShort, 2);
-#ifdef WORDS_BIGENDIAN
-                TIFFSwabShort((uint16*) &iShort);
-#endif
-                info_hdr.iHeight = iShort;
-                read(fd, &iShort, 2);
-#ifdef WORDS_BIGENDIAN
-                TIFFSwabShort((uint16*) &iShort);
-#endif
-                info_hdr.iPlanes = iShort;
-                read(fd, &iShort, 2);
-#ifdef WORDS_BIGENDIAN
-                TIFFSwabShort((uint16*) &iShort);
-#endif
-                info_hdr.iBitCount = iShort;
-		info_hdr.iCompression = BMPC_RGB;
-                n_clr_elems = 3;
-        }
-
-        if (info_hdr.iBitCount != 1  && info_hdr.iBitCount != 4  &&
-            info_hdr.iBitCount != 8  && info_hdr.iBitCount != 16 &&
-            info_hdr.iBitCount != 24 && info_hdr.iBitCount != 32) {
-            TIFFError(infilename, "Cannot process BMP file with bit count %d",
-		      info_hdr.iBitCount);
-            close(fd);
-            return 0;
-        }
-
-        width = info_hdr.iWidth;
-        length = (info_hdr.iHeight > 0) ? info_hdr.iHeight : -info_hdr.iHeight;
-
-	switch (info_hdr.iBitCount)
-        {
-                case 1:
-                case 4:
-                case 8:
-                        nbands = 1;
-			depth = info_hdr.iBitCount;
-                        photometric = PHOTOMETRIC_PALETTE;
-                        /* Allocate memory for colour table and read it. */
-                        if (info_hdr.iClrUsed)
-                            clr_tbl_size = ((uint32)(1 << depth) < info_hdr.iClrUsed) ?
-				    (uint32) (1 << depth) : info_hdr.iClrUsed;
-                        else
-                            clr_tbl_size = 1 << depth;
-                        clr_tbl = (unsigned char *)
-				_TIFFmalloc(n_clr_elems * clr_tbl_size);
-			if (!clr_tbl) {
-				TIFFError(infilename,
-				"Can't allocate space for color table");
-				goto bad;
-			}
-
-			lseek(fd, BFH_SIZE + info_hdr.iSize, SEEK_SET);
-                        read(fd, clr_tbl, n_clr_elems * clr_tbl_size);
-
-			red_tbl = (unsigned short*)
-				_TIFFmalloc(1<<depth * sizeof(unsigned short));
-			if (!red_tbl) {
-				TIFFError(infilename,
-				"Can't allocate space for red component table");
-				_TIFFfree(clr_tbl);
-				goto bad1;
-			}
-			green_tbl = (unsigned short*)
-				_TIFFmalloc(1<<depth * sizeof(unsigned short));
-			if (!green_tbl) {
-				TIFFError(infilename,
-			"Can't allocate space for green component table");
-				_TIFFfree(clr_tbl);
-				goto bad2;
-			}
-			blue_tbl = (unsigned short*)
-				_TIFFmalloc(1<<depth * sizeof(unsigned short));
-			if (!blue_tbl) {
-				TIFFError(infilename,
-			"Can't allocate space for blue component table");
-				_TIFFfree(clr_tbl);
-				goto bad3;
-			}
-
-                        for(clr = 0; clr < clr_tbl_size; clr++) {
-                            red_tbl[clr] = 257 * clr_tbl[clr*n_clr_elems+2];
-                            green_tbl[clr] = 257 * clr_tbl[clr*n_clr_elems+1];
-                            blue_tbl[clr] = 257 * clr_tbl[clr*n_clr_elems];
-                        }
-
-                        _TIFFfree(clr_tbl);
-                        break;
-                case 16:
-                case 24:
-                        nbands = 3;
-			depth = info_hdr.iBitCount / nbands;
-                        photometric = PHOTOMETRIC_RGB;
-                        break;
-                case 32:
-                        nbands = 3;
-			depth = 8;
-                        photometric = PHOTOMETRIC_RGB;
-                        break;
-                default:
-                        break;
-        }
-
-/* -------------------------------------------------------------------- */
-/*  Create output file.                                                 */
-/* -------------------------------------------------------------------- */
-
 	if (outfilename == NULL)
-		outfilename = argv[optind+1];
+		outfilename = argv[argc-1];
 	out = TIFFOpen(outfilename, "w");
 	if (out == NULL) {
 		TIFFError(infilename, "Cannot open file %s for output",
@@ -469,218 +276,439 @@ main(int argc, char* argv[])
 		goto bad3;
 	}
 	
-	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
-	TIFFSetField(out, TIFFTAG_IMAGELENGTH, length);
-	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, nbands);
-	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, depth);
-	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
-        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
-                     TIFFDefaultStripSize(out, rowsperstrip));
-	
-	if (red_tbl && green_tbl && blue_tbl)
-		TIFFSetField(out, TIFFTAG_COLORMAP, red_tbl, green_tbl, blue_tbl);
-	
-	if (compression == (uint16) -1)
-		compression = COMPRESSION_PACKBITS;
-	TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
-	switch (compression) {
-	case COMPRESSION_JPEG:
-		if (photometric == PHOTOMETRIC_RGB
-		    && jpegcolormode == JPEGCOLORMODE_RGB)
-			photometric = PHOTOMETRIC_YCBCR;
-		TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
-		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
-		break;
-	case COMPRESSION_LZW:
-	case COMPRESSION_DEFLATE:
-		if (predictor != 0)
-			TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
-		break;
-	}
+
+	while (optind < argc-1) {
+		infilename = argv[optind];
+		optind++;
+	    
+		fd = open(infilename, O_RDONLY|O_BINARY, 0);
+		if (fd < 0) {
+			TIFFError(infilename, "Cannot open input file");
+			return -1;
+		}
+
+		read(fd, file_hdr.bType, 2);
+		if(file_hdr.bType[0] != 'B' || file_hdr.bType[1] != 'M') {
+			TIFFError(infilename, "File is not BMP");
+			goto bad;
+		}
+
+/* -------------------------------------------------------------------- */
+/*      Read the BMPFileHeader. We need iOffBits value only             */
+/* -------------------------------------------------------------------- */
+		lseek(fd, 10, SEEK_SET);
+		read(fd, &file_hdr.iOffBits, 4);
+#ifdef WORDS_BIGENDIAN
+		TIFFSwabLong(&file_hdr.iOffBits);
+#endif
+		fstat(fd, &instat);
+		file_hdr.iSize = instat.st_size;
+
+/* -------------------------------------------------------------------- */
+/*      Read the BMPInfoHeader.                                         */
+/* -------------------------------------------------------------------- */
+
+		lseek(fd, BFH_SIZE, SEEK_SET);
+		read(fd, &info_hdr.iSize, 4);
+#ifdef WORDS_BIGENDIAN
+		TIFFSwabLong(&info_hdr.iSize);
+#endif
+
+		if (info_hdr.iSize == BIH_WIN4SIZE)
+			bmp_type = BMPT_WIN4;
+		else if (info_hdr.iSize == BIH_OS21SIZE)
+			bmp_type = BMPT_OS21;
+		else if (info_hdr.iSize == BIH_OS22SIZE
+			 || info_hdr.iSize == 16)
+			bmp_type = BMPT_OS22;
+		else
+			bmp_type = BMPT_WIN5;
+
+		if (bmp_type == BMPT_WIN4
+		    || bmp_type == BMPT_WIN5
+		    || bmp_type == BMPT_OS22) {
+			read(fd, &info_hdr.iWidth, 4);
+			read(fd, &info_hdr.iHeight, 4);
+			read(fd, &info_hdr.iPlanes, 2);
+			read(fd, &info_hdr.iBitCount, 2);
+			read(fd, &info_hdr.iCompression, 4);
+			read(fd, &info_hdr.iSizeImage, 4);
+			read(fd, &info_hdr.iXPelsPerMeter, 4);
+			read(fd, &info_hdr.iYPelsPerMeter, 4);
+			read(fd, &info_hdr.iClrUsed, 4);
+			read(fd, &info_hdr.iClrImportant, 4);
+#ifdef WORDS_BIGENDIAN
+			TIFFSwabLong((uint32*) &info_hdr.iWidth);
+			TIFFSwabLong((uint32*) &info_hdr.iHeight);
+			TIFFSwabShort((uint16*) &info_hdr.iPlanes);
+			TIFFSwabShort((uint16*) &info_hdr.iBitCount);
+			TIFFSwabLong((uint32*) &info_hdr.iCompression);
+			TIFFSwabLong((uint32*) &info_hdr.iSizeImage);
+			TIFFSwabLong((uint32*) &info_hdr.iXPelsPerMeter);
+			TIFFSwabLong((uint32*) &info_hdr.iYPelsPerMeter);
+			TIFFSwabLong((uint32*) &info_hdr.iClrUsed);
+			TIFFSwabLong((uint32*) &info_hdr.iClrImportant);
+#endif
+			n_clr_elems = 4;
+		}
+
+		if (bmp_type == BMPT_OS22) {
+			/* 
+			 * FIXME: different info in different documents
+			 * regarding this!
+			 */
+			 n_clr_elems = 3;
+		}
+
+		if (bmp_type == BMPT_OS21) {
+			int16  iShort;
+
+			read(fd, &iShort, 2);
+#ifdef WORDS_BIGENDIAN
+			TIFFSwabShort((uint16*) &iShort);
+#endif
+			info_hdr.iWidth = iShort;
+			read(fd, &iShort, 2);
+#ifdef WORDS_BIGENDIAN
+			TIFFSwabShort((uint16*) &iShort);
+#endif
+			info_hdr.iHeight = iShort;
+			read(fd, &iShort, 2);
+#ifdef WORDS_BIGENDIAN
+			TIFFSwabShort((uint16*) &iShort);
+#endif
+			info_hdr.iPlanes = iShort;
+			read(fd, &iShort, 2);
+#ifdef WORDS_BIGENDIAN
+			TIFFSwabShort((uint16*) &iShort);
+#endif
+			info_hdr.iBitCount = iShort;
+			info_hdr.iCompression = BMPC_RGB;
+			n_clr_elems = 3;
+		}
+
+		if (info_hdr.iBitCount != 1  && info_hdr.iBitCount != 4  &&
+		    info_hdr.iBitCount != 8  && info_hdr.iBitCount != 16 &&
+		    info_hdr.iBitCount != 24 && info_hdr.iBitCount != 32) {
+		    TIFFError(infilename,
+			      "Cannot process BMP file with bit count %d",
+			      info_hdr.iBitCount);
+		    close(fd);
+		    return 0;
+		}
+
+		width = info_hdr.iWidth;
+		length = (info_hdr.iHeight > 0) ? info_hdr.iHeight : -info_hdr.iHeight;
+
+		switch (info_hdr.iBitCount)
+		{
+			case 1:
+			case 4:
+			case 8:
+				nbands = 1;
+				depth = info_hdr.iBitCount;
+				photometric = PHOTOMETRIC_PALETTE;
+				/* Allocate memory for colour table and read it. */
+				if (info_hdr.iClrUsed)
+				    clr_tbl_size =
+					    ((uint32)(1<<depth)<info_hdr.iClrUsed)
+					    ? (uint32) (1 << depth)
+					    : info_hdr.iClrUsed;
+				else
+				    clr_tbl_size = 1 << depth;
+				clr_tbl = (unsigned char *)
+					_TIFFmalloc(n_clr_elems * clr_tbl_size);
+				if (!clr_tbl) {
+					TIFFError(infilename,
+					"Can't allocate space for color table");
+					goto bad;
+				}
+
+				lseek(fd, BFH_SIZE + info_hdr.iSize, SEEK_SET);
+				read(fd, clr_tbl, n_clr_elems * clr_tbl_size);
+
+				red_tbl = (unsigned short*)
+					_TIFFmalloc(1<<depth * sizeof(unsigned short));
+				if (!red_tbl) {
+					TIFFError(infilename,
+				"Can't allocate space for red component table");
+					_TIFFfree(clr_tbl);
+					goto bad1;
+				}
+				green_tbl = (unsigned short*)
+					_TIFFmalloc(1<<depth * sizeof(unsigned short));
+				if (!green_tbl) {
+					TIFFError(infilename,
+				"Can't allocate space for green component table");
+					_TIFFfree(clr_tbl);
+					goto bad2;
+				}
+				blue_tbl = (unsigned short*)
+					_TIFFmalloc(1<<depth * sizeof(unsigned short));
+				if (!blue_tbl) {
+					TIFFError(infilename,
+				"Can't allocate space for blue component table");
+					_TIFFfree(clr_tbl);
+					goto bad3;
+				}
+
+				for(clr = 0; clr < clr_tbl_size; clr++) {
+				    red_tbl[clr] = 257*clr_tbl[clr*n_clr_elems+2];
+				    green_tbl[clr] = 257*clr_tbl[clr*n_clr_elems+1];
+				    blue_tbl[clr] = 257*clr_tbl[clr*n_clr_elems];
+				}
+
+				_TIFFfree(clr_tbl);
+				break;
+			case 16:
+			case 24:
+				nbands = 3;
+				depth = info_hdr.iBitCount / nbands;
+				photometric = PHOTOMETRIC_RGB;
+				break;
+			case 32:
+				nbands = 3;
+				depth = 8;
+				photometric = PHOTOMETRIC_RGB;
+				break;
+			default:
+				break;
+		}
+
+/* -------------------------------------------------------------------- */
+/*  Create output file.                                                 */
+/* -------------------------------------------------------------------- */
+
+		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
+		TIFFSetField(out, TIFFTAG_IMAGELENGTH, length);
+		TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+		TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, nbands);
+		TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, depth);
+		TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+		TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
+		TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
+			     TIFFDefaultStripSize(out, rowsperstrip));
+		
+		if (red_tbl && green_tbl && blue_tbl) {
+			TIFFSetField(out, TIFFTAG_COLORMAP,
+				     red_tbl, green_tbl, blue_tbl);
+		}
+		
+		if (compression == (uint16) -1)
+			compression = COMPRESSION_PACKBITS;
+		TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
+		switch (compression) {
+		case COMPRESSION_JPEG:
+			if (photometric == PHOTOMETRIC_RGB
+			    && jpegcolormode == JPEGCOLORMODE_RGB)
+				photometric = PHOTOMETRIC_YCBCR;
+			TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
+			TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
+			break;
+		case COMPRESSION_LZW:
+		case COMPRESSION_DEFLATE:
+			if (predictor != 0)
+				TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
+			break;
+		}
 
 /* -------------------------------------------------------------------- */
 /*  Read uncompressed image data.                                       */
 /* -------------------------------------------------------------------- */
 
-        if (info_hdr.iCompression == BMPC_RGB) {
-                uint32 offset, size;
-                char *scanbuf;
+		if (info_hdr.iCompression == BMPC_RGB) {
+			uint32 offset, size;
+			char *scanbuf;
 
-		/* XXX: Avoid integer overflow. We can calculate size in one
-		 * step using
-		 *
-		 *   size = ((width * info_hdr.iBitCount + 31) & ~31) / 8
-		 *
-		 * formulae, but we should check for overflow conditions
-		 * during calculation.
-		 */
-		size = width * info_hdr.iBitCount + 31;
-		if (!width || !info_hdr.iBitCount
-		    || (size - 31) / info_hdr.iBitCount != width ) {
-			TIFFError(infilename,
-				  "Wrong image parameters; "
-				  "can't allocate space for scanline buffer");
-			goto bad3;
-		}
-                size = (size & ~31) / 8;
-
-                scanbuf = (char *) _TIFFmalloc(size);
-		if (!scanbuf) {
-			TIFFError(infilename,
-				  "Can't allocate space for scanline buffer");
-			goto bad3;
-		}
-
-                for (row = 0; row < length; row++) {
-                        if (info_hdr.iHeight > 0)
-                                offset = file_hdr.iOffBits + (length - row - 1) * size;
-                        else
-                                offset = file_hdr.iOffBits + row * size;
-                        if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
+			/* XXX: Avoid integer overflow. We can calculate size
+			 * in one step using
+			 *
+			 *  size = ((width * info_hdr.iBitCount + 31) & ~31) / 8
+			 *
+			 * formulae, but we should check for overflow
+			 * conditions during calculation.
+			 */
+			size = width * info_hdr.iBitCount + 31;
+			if (!width || !info_hdr.iBitCount
+			    || (size - 31) / info_hdr.iBitCount != width ) {
 				TIFFError(infilename,
-					  "scanline %lu: Seek error",
-					  (unsigned long) row);
-				break;
-                        }
+					  "Wrong image parameters; can't "
+					  "allocate space for scanline buffer");
+				goto bad3;
+			}
+			size = (size & ~31) / 8;
 
-			if (read(fd, scanbuf, size) < 0) {
+			scanbuf = (char *) _TIFFmalloc(size);
+			if (!scanbuf) {
 				TIFFError(infilename,
-					  "scanline %lu: Read error",
-					  (unsigned long) row);
-				break;
-                        }
+				"Can't allocate space for scanline buffer");
+				goto bad3;
+			}
 
-                        rearrangePixels(scanbuf, width, info_hdr.iBitCount);
+			for (row = 0; row < length; row++) {
+				if (info_hdr.iHeight > 0)
+					offset = file_hdr.iOffBits+(length-row-1)*size;
+				else
+					offset = file_hdr.iOffBits + row * size;
+				if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
+					TIFFError(infilename,
+						  "scanline %lu: Seek error",
+						  (unsigned long) row);
+					break;
+				}
 
-                        if (TIFFWriteScanline(out, scanbuf, row, 0) < 0) {
-				TIFFError(infilename,
-					  "scanline %lu: Write error",
-					  (unsigned long) row);
-				break;
-                        }
-                }
+				if (read(fd, scanbuf, size) < 0) {
+					TIFFError(infilename,
+						  "scanline %lu: Read error",
+						  (unsigned long) row);
+					break;
+				}
 
-                _TIFFfree(scanbuf);
+				rearrangePixels(scanbuf, width, info_hdr.iBitCount);
+
+				if (TIFFWriteScanline(out, scanbuf, row, 0)<0) {
+					TIFFError(infilename,
+						  "scanline %lu: Write error",
+						  (unsigned long) row);
+					break;
+				}
+			}
+
+			_TIFFfree(scanbuf);
 
 /* -------------------------------------------------------------------- */
 /*  Read compressed image data.                                         */
 /* -------------------------------------------------------------------- */
 
-        } else if ( info_hdr.iCompression == BMPC_RLE8
-		    || info_hdr.iCompression == BMPC_RLE4 ) {
-		uint32		i, j, k, runlength;
-		uint32		compr_size, uncompr_size;
-		unsigned char   *comprbuf;
-		unsigned char   *uncomprbuf;
+		} else if ( info_hdr.iCompression == BMPC_RLE8
+			    || info_hdr.iCompression == BMPC_RLE4 ) {
+			uint32		i, j, k, runlength;
+			uint32		compr_size, uncompr_size;
+			unsigned char   *comprbuf;
+			unsigned char   *uncomprbuf;
 
-		compr_size = file_hdr.iSize - file_hdr.iOffBits;
-		uncompr_size = width * length;
-		comprbuf = (unsigned char *) _TIFFmalloc( compr_size );
-		if (!comprbuf) {
-			TIFFError(infilename,
-			"Can't allocate space for compressed scanline buffer");
-			goto bad3;
-		}
-		uncomprbuf = (unsigned char *) _TIFFmalloc( uncompr_size );
-		if (!uncomprbuf) {
-			TIFFError(infilename,
-		"Can't allocate space for uncompressed scanline buffer");
-			goto bad3;
-		}
-
-		lseek(fd, file_hdr.iOffBits, SEEK_SET);
-		read(fd, comprbuf, compr_size);
-		i = 0;
-		j = 0;
-		if (info_hdr.iBitCount == 8) {		    /* RLE8 */
-		    while( j < uncompr_size && i < compr_size ) {
-			if ( comprbuf[i] ) {
-			    runlength = comprbuf[i++];
-			    while( runlength > 0
-				   && j < uncompr_size
-				   && i < compr_size ) {
-				uncomprbuf[j++] = comprbuf[i];
-				runlength--;
-			    }
-			    i++;
-			} else {
-			    i++;
-			    if ( comprbuf[i] == 0 )         /* Next scanline */
-				i++;
-			    else if ( comprbuf[i] == 1 )    /* End of image */
-				break;
-			    else if ( comprbuf[i] == 2 ) {  /* Move to... */
-				i++;
-				if ( i < compr_size - 1 ) {
-				    j += comprbuf[i] + comprbuf[i+1] * width;
-				    i += 2;
-				}
-				else
-				    break;
-			    } else {                         /* Absolute mode */
-				runlength = comprbuf[i++];
-				for ( k = 0; k < runlength && j < uncompr_size && i < compr_size; k++ )
-				    uncomprbuf[j++] = comprbuf[i++];
-				if ( k & 0x01 )
-				    i++;
-			    }
-			}
-		    }
-		}
-		else {					    /* RLE4 */
-		    while( j < uncompr_size && i < compr_size ) {
-			if ( comprbuf[i] ) {
-			    runlength = comprbuf[i++];
-			    while( runlength > 0 && j < uncompr_size && i < compr_size ) {
-				if ( runlength & 0x01 )
-				    uncomprbuf[j++] = (comprbuf[i] & 0xF0) >> 4;
-				else
-				    uncomprbuf[j++] = comprbuf[i] & 0x0F;
-				runlength--;
-			    }
-			    i++;
-			} else {
-			    i++;
-			    if ( comprbuf[i] == 0 )         /* Next scanline */
-				i++;
-			    else if ( comprbuf[i] == 1 )    /* End of image */
-				break;
-			    else if ( comprbuf[i] == 2 ) {  /* Move to... */
-				i++;
-				if ( i < compr_size - 1 ) {
-				    j += comprbuf[i] + comprbuf[i+1] * width;
-				    i += 2;
-				}
-				else
-				    break;
-			    } else {                        /* Absolute mode */
-				runlength = comprbuf[i++];
-				for ( k = 0; k < runlength && j < uncompr_size && i < compr_size; k++) {
-				    if ( k & 0x01 )
-					uncomprbuf[j++] = comprbuf[i++] & 0x0F;
-				    else
-					uncomprbuf[j++] = (comprbuf[i] & 0xF0) >> 4;
-				}
-				if ( k & 0x01 )
-				    i++;
-			    }
-			}
-		    }
-		}
-
-		_TIFFfree(comprbuf);
-
-		for (row = 0; row < length; row++) {
-                        if (TIFFWriteScanline(out, uncomprbuf + (length - row - 1) * width, row, 0) < 0) {
+			compr_size = file_hdr.iSize - file_hdr.iOffBits;
+			uncompr_size = width * length;
+			comprbuf = (unsigned char *) _TIFFmalloc( compr_size );
+			if (!comprbuf) {
 				TIFFError(infilename,
-					  "scanline %lu: Write error.\n",
-					  (unsigned long) row);
-                        }
-		}
+			"Can't allocate space for compressed scanline buffer");
+				goto bad3;
+			}
+			uncomprbuf = (unsigned char *)_TIFFmalloc(uncompr_size);
+			if (!uncomprbuf) {
+				TIFFError(infilename,
+			"Can't allocate space for uncompressed scanline buffer");
+				goto bad3;
+			}
 
-		_TIFFfree(uncomprbuf);
+			lseek(fd, file_hdr.iOffBits, SEEK_SET);
+			read(fd, comprbuf, compr_size);
+			i = 0;
+			j = 0;
+			if (info_hdr.iBitCount == 8) {		/* RLE8 */
+			    while(j < uncompr_size && i < compr_size) {
+				if ( comprbuf[i] ) {
+				    runlength = comprbuf[i++];
+				    while( runlength > 0
+					   && j < uncompr_size
+					   && i < compr_size ) {
+					uncomprbuf[j++] = comprbuf[i];
+					runlength--;
+				    }
+				    i++;
+				} else {
+				    i++;
+				    if (comprbuf[i] == 0) /* Next scanline */
+					i++;
+				    else if (comprbuf[i] == 1) /* End of image */
+					break;
+				    else if (comprbuf[i] == 2) { /* Move to... */
+					i++;
+					if (i < compr_size - 1) {
+					    j+=comprbuf[i]+comprbuf[i+1]*width;
+					    i += 2;
+					}
+					else
+					    break;
+				    } else {            /* Absolute mode */
+					runlength = comprbuf[i++];
+					for (k = 0; k < runlength && j < uncompr_size && i < compr_size; k++)
+					    uncomprbuf[j++] = comprbuf[i++];
+					if ( k & 0x01 )
+					    i++;
+				    }
+				}
+			    }
+			}
+			else {				    /* RLE4 */
+			    while( j < uncompr_size && i < compr_size ) {
+				if ( comprbuf[i] ) {
+				    runlength = comprbuf[i++];
+				    while( runlength > 0 && j < uncompr_size && i < compr_size ) {
+					if ( runlength & 0x01 )
+					    uncomprbuf[j++] = (comprbuf[i] & 0xF0) >> 4;
+					else
+					    uncomprbuf[j++] = comprbuf[i] & 0x0F;
+					runlength--;
+				    }
+				    i++;
+				} else {
+				    i++;
+				    if (comprbuf[i] == 0) /* Next scanline */
+					i++;
+				    else if (comprbuf[i] == 1) /* End of image */
+					break;
+				    else if (comprbuf[i] == 2) { /* Move to... */
+					i++;
+					if (i < compr_size - 1) {
+					    j+=comprbuf[i]+comprbuf[i+1]*width;
+					    i += 2;
+					}
+					else
+					    break;
+				    } else {            /* Absolute mode */
+					runlength = comprbuf[i++];
+					for (k = 0; k < runlength && j < uncompr_size && i < compr_size; k++) {
+					    if (k & 0x01)
+						uncomprbuf[j++] = comprbuf[i++] & 0x0F;
+					    else
+						uncomprbuf[j++] = (comprbuf[i] & 0xF0) >> 4;
+					}
+					if (k & 0x01)
+					    i++;
+				    }
+				}
+			    }
+			}
+
+			_TIFFfree(comprbuf);
+
+			for (row = 0; row < length; row++) {
+				if (TIFFWriteScanline(out,
+					uncomprbuf + (length - row - 1) * width,
+					row, 0) < 0) {
+					TIFFError(infilename,
+						"scanline %lu: Write error.\n",
+						  (unsigned long) row);
+				}
+			}
+
+			_TIFFfree(uncomprbuf);
+		}
+		TIFFWriteDirectory(out);
+		if (blue_tbl) {
+		  _TIFFfree(blue_tbl);
+		  blue_tbl=NULL;
+		}
+		if (green_tbl) {
+		  _TIFFfree(green_tbl);
+		  green_tbl=NULL;
+		}
+		if (red_tbl) {
+		  _TIFFfree(red_tbl);
+		  red_tbl=NULL;
+		}
 	}
 
 bad3:
@@ -776,7 +804,7 @@ processCompressOptions(char* opt)
 
 static char* stuff[] = {
 "bmp2tiff --- convert Windows BMP files to TIFF",
-"usage: bmp2tiff [options] input.bmp output.tif",
+"usage: bmp2tiff [options] input.bmp [input2.bmp ...] output.tif",
 "where options are:",
 " -r #		make each strip have no more than # rows",
 "",

@@ -32,13 +32,15 @@ file from a Microsoft Windows Device Independent Bitmap image file
 [
 .I options
 ]
-.I input.bmp
+.I input.bmp [input2.bmp ...]
 .I output.tiff
 .SH DESCRIPTION
 .I bmp2tiff
 converts a Microsoft Windows Device Independent Bitmap image file to
 .SM TIFF.
-By default, the
+If several input BMP files are being specified the multipage
+.SM TIFF
+output file will be created. By default, the
 .SM TIFF
 image is created with data samples packed (\c
 .IR PlanarConfiguration =1),
