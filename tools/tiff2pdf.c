@@ -2,95 +2,6 @@
  *
  * tiff2pdf - converts a TIFF image to a PDF document
  *
- * $Log$
- * Revision 1.26  2006-02-07 14:28:49  fwarmerdam
- * fix for non-YCbCr jpeg compressed files
- *
- * Revision 1.25  2005/12/27 12:24:07  dron
- * Avoid warnings.
- *
- * Revision 1.24  2005/09/20 11:19:38  dron
- * Added missed 'break' statement as per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=932
- *
- * Revision 1.23  2005/09/13 13:40:48  dron
- * Avoid warnings.
- *
- * Revision 1.22  2005/06/23 13:28:33  dron
- * Print two characters per loop in the t2p_write_pdf_trailer(). As per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=594
- *
- * Revision 1.21  2005/05/05 20:52:57  dron
- * Calculate the tilewidth properly; added new option '-b' to use interpolation
- * in output PDF files (Bruno Ledoux).
- *
- * Revision 1.20  2005/03/18 09:47:34  dron
- * Fixed problem with alpha channel handling as per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=794
- *
- * Revision 1.19  2004/10/28 13:32:28  fwarmerdam
- * provide explicit unsigned char casts for a few values to avoid warnings
- *
- * Revision 1.18  2004/10/10 11:38:34  dron
- * Move _TIFFmemset() behind the pointer check in t2p_init().
- *
- * Revision 1.17  2004/10/09 14:15:07  dron
- * Fixed TransferFunction tag handling reported by Ross A. Finlayson.
- *
- * Revision 1.16  2004/09/10 11:50:57  dron
- * Fixed reading TransferFunction tag as per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=590
- *
- * Revision 1.15  2004/08/25 18:34:55  dron
- * Work out getopt problems.
- *
- * Revision 1.14  2004/08/25 13:43:14  dron
- * Initialize arrays properly.
- *
- * Revision 1.13  2004/08/24 07:48:36  dron
- * More fixes for bug http://bugzilla.remotesensing.org/show_bug.cgi?id=590
- * from Ross Finlayson.
- *
- * Revision 1.12  2004/08/23 12:00:30  dron
- * Fixed a bunch of problems as per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=590
- *
- * Revision 1.11  2004/08/21 08:09:49  dron
- * More fixes from Ross.
- *
- * Revision 1.10  2004/08/20 19:23:25  dron
- * Applied patch from Ross Finlayson that checks that the input file has
- * compression, photometric interpretation, etcetra, tags or if not than a more
- * descriptive error is returned.
- *
- * Revision 1.9  2004/06/04 13:46:25  dron
- * Avoid warnings.
- *
- * Revision 1.8  2004/05/26 09:24:07  dron
- * Get rid of __T() macro; avoid warnings.
- *
- * Revision 1.7  2004/04/20 14:54:05  dron
- * Fixed problem with unaligned access as per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=555
- *
- * Revision 1.6  2004/04/20 14:24:31  dron
- * Obsoleted configuration switches removed.
- *
- * Revision 1.5  2004/01/26 17:00:56  dron
- * Get rid of C++ style comments.
- *
- * Revision 1.4  2003/12/01 10:51:39  rossf
- * Some bugs fixed.
- *
- * Revision 1.3  2003/11/29 15:32:40  rossf
- * Some bugs fixed.
- *
- *
- * "d" - Improved colorimetry support
- * "c" - Added support for orientation, planar configuration
- * "b" - Improved JPEG handling
- * "a" - Written/ported for libtiff
- *
  * Copyright (c) 2003 Ross Finlayson
  *
  * Permission to use, copy, modify, distribute, and sell this software and 
@@ -527,10 +438,10 @@ tsize_t t2p_write_pdf_trailer(T2P*, TIFF*);
 int main(int argc, char** argv){
 
 	extern int optind;
-	extern char* optarg;
-	T2P* t2p = NULL;
-	TIFF* input = NULL;
-	TIFF* output = NULL;
+	extern char *optarg;
+	T2P *t2p = NULL;
+	TIFF *input = NULL, *output = NULL;
+	const char *outfilename = NULL;
 	tsize_t written=0;
 	int c=0;
 	
@@ -545,18 +456,8 @@ int main(int argc, char** argv){
 
 	while ((c = getopt(argc, argv, "o:q:u:x:y:w:l:r:p:e:c:a:t:s:k:jzndifbh")) != -1){
 		switch (c) {
-			case 'o': 
-				output=TIFFOpen(optarg, "w");
-				if(output==NULL){
-					TIFFError(
-						TIFF2PDF_MODULE, 
-						"Can't open output file %s for writing", 
-						optarg);
-					goto failfreet2p;
-				}
-				if(output->tif_seekproc != NULL){
-					TIFFSeekFile(output, (toff_t) 0, SEEK_SET);
-				}
+			case 'o':
+				outfilename = optarg;
 				break;
 #ifdef JPEG_SUPPORT
 			case 'j':  
@@ -626,9 +527,8 @@ int main(int argc, char** argv){
 					optarg)){
 					t2p->pdf_overridepagesize=1;
 				} else {
-					TIFFWarning(
-						TIFF2PDF_MODULE, 
-						"Unknown paper size %s, ignoring option",
+					TIFFWarning(TIFF2PDF_MODULE, 
+					"Unknown paper size %s, ignoring option",
 						optarg);
 				}
 				break;
@@ -639,13 +539,12 @@ int main(int argc, char** argv){
 				t2p->pdf_fitwindow=1;
 				break;
 			case 'e':
-				t2p->pdf_datetime= (char*)_TIFFmalloc(17);
+				t2p->pdf_datetime = (char*)_TIFFmalloc(17);
 				if(t2p->pdf_datetime==NULL){
-					TIFFError(
-						TIFF2PDF_MODULE, 
-						"Can't allocate %u bytes of memory for main", 
+					TIFFError(TIFF2PDF_MODULE, 
+				"Can't allocate %u bytes of memory for main", 
 						17); 
-					goto failcloseoutput;
+					goto failfreet2p;
 				}
 				if(strlen(optarg)==0){
 					t2p->pdf_datetime[0]=0;
@@ -657,25 +556,26 @@ int main(int argc, char** argv){
 				}
 				break;
 			case 'c': 
-				t2p->pdf_creator= (char*)_TIFFmalloc(strlen(optarg)+1);
+				t2p->pdf_creator =
+					(char *)_TIFFmalloc(strlen(optarg) + 1);
 				if(t2p->pdf_creator==NULL){
-					TIFFError(
-						TIFF2PDF_MODULE, 
-						"Can't allocate %u bytes of memory for main", 
-						strlen(optarg)+1); 
-					goto failcloseoutput;
+					TIFFError(TIFF2PDF_MODULE, 
+				"Can't allocate %u bytes of memory for main", 
+						  strlen(optarg)+1); 
+					goto failfreet2p;
 				}
 				strcpy(t2p->pdf_creator, optarg);
 				t2p->pdf_creator[strlen(optarg)]=0;
 				break;
 			case 'a': 
-				t2p->pdf_author= (char*)_TIFFmalloc(strlen(optarg)+1);
+				t2p->pdf_author =
+					(char *)_TIFFmalloc(strlen(optarg) + 1);
 				if(t2p->pdf_author==NULL){
 					TIFFError(
 						TIFF2PDF_MODULE, 
 						"Can't allocate %u bytes of memory for main", 
 						strlen(optarg)+1); 
-					goto failcloseoutput;
+					goto failfreet2p;
 				}
 				strcpy(t2p->pdf_author, optarg);
 				t2p->pdf_author[strlen(optarg)]=0;
@@ -687,7 +587,7 @@ int main(int argc, char** argv){
 						TIFF2PDF_MODULE, 
 						"Can't allocate %u bytes of memory for main", 
 						strlen(optarg)+1); 
-					goto failcloseoutput;
+					goto failfreet2p;
 				}
 				strcpy(t2p->pdf_title, optarg);
 				t2p->pdf_title[strlen(optarg)]=0;
@@ -699,7 +599,7 @@ int main(int argc, char** argv){
 						TIFF2PDF_MODULE, 
 						"Can't allocate %u bytes of memory for main", 
 						strlen(optarg)+1); 
-					goto failcloseoutput;
+					goto failfreet2p;
 				}
 				strcpy(t2p->pdf_subject, optarg);
 				t2p->pdf_subject[strlen(optarg)]=0;
@@ -711,7 +611,7 @@ int main(int argc, char** argv){
 						TIFF2PDF_MODULE, 
 						"Can't allocate %u bytes of memory for main", 
 						strlen(optarg)+1); 
-					goto failcloseoutput;
+					goto failfreet2p;
 				}
 				strcpy(t2p->pdf_keywords, optarg);
 				t2p->pdf_keywords[strlen(optarg)]=0;
@@ -722,7 +622,7 @@ int main(int argc, char** argv){
 			case 'h': 
 			case '?': 
 				tiff2pdf_usage();
-				goto failcloseoutput;
+				goto failfreet2p;
 				break;
 		}
 	}
@@ -736,14 +636,14 @@ int main(int argc, char** argv){
 				TIFF2PDF_MODULE, 
 				"Can't open input file %s for reading", 
 				argv[optind-1]);
-			goto failcloseoutput;
+			goto failfreet2p;
 		}
 	} else {
 		TIFFError(
 			TIFF2PDF_MODULE, 
 			"No input file specified"); 
 		tiff2pdf_usage();
-		goto failcloseoutput;
+		goto failfreet2p;
 	}
 
 	if(argc>optind){
@@ -754,9 +654,20 @@ int main(int argc, char** argv){
 		goto failcloseinput;
 	}
 
-	if(output==NULL){
+	if (outfilename) {
+		output = TIFFOpen(outfilename, "w");
+		if(output == NULL) {
+			TIFFError(TIFF2PDF_MODULE, 
+				  "Can't open output file %s for writing", 
+				  optarg);
+			goto failfreet2p;
+		}
+		if(output->tif_seekproc != NULL) {
+			TIFFSeekFile(output, (toff_t) 0, SEEK_SET);
+		}
+	} else {
 #ifndef _WIN32
-		output = TIFFFdOpen( (int)fileno(tmpfile()), "-", "w");
+		output = TIFFFdOpen((int)fileno(tmpfile()), "-", "w");
 #endif
 #ifdef _WIN32
 		{
@@ -776,10 +687,9 @@ int main(int argc, char** argv){
 		}
 #endif
 		if(output==NULL){
-			TIFFError(
-				TIFF2PDF_MODULE, 
-				"Can't open temporary output file for writing to stdout", 
-				argv[optind-1]);
+			TIFFError(TIFF2PDF_MODULE, 
+			"Can't open temporary output file for writing to stdout", 
+				  argv[optind-1]);
 			goto failcloseinput;
 		}
 		TIFFFlush(output);
@@ -821,22 +731,15 @@ int main(int argc, char** argv){
 
 	return(EXIT_SUCCESS);
 
-	failcloseinput:
+failcloseinput:
 	if(input != NULL){
 		TIFFClose(input);
 	}
-	failcloseoutput:
-	if(output != NULL){
-		if(strcmp(TIFFFileName(output), "-") != 0){
-			unlink(TIFFFileName(output));
-		}
-		TIFFClose(output);
-	}
-	failfreet2p:
+failfreet2p:
 	if(t2p != NULL){
 		t2p_free(t2p);
 	}
-	failexit:
+failexit:
 	return(EXIT_FAILURE);
 }
 
