@@ -853,11 +853,11 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
 				*va_arg(ap, void **) = tv->value;
 				ret_val = 1;
 			} else {
-			    int i;
+			    int j;
 			    char *val = (char *)tv->value;
 
-			    for (i = 0; i < tv->count;
-				 i++, val += _TIFFDataSize(fip->field_type)) {
+			    for (j = 0; j < tv->count;
+				 j++, val += _TIFFDataSize(tv->info->field_type)) {
 				switch (fip->field_type) {
 					case TIFF_BYTE:
 					case TIFF_UNDEFINED:
