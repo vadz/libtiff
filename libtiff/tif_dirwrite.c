@@ -335,7 +335,12 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 			}
 			break;
 		default:
-			if (!TIFFWriteNormalTag(tif, dir, fip))
+			/* XXX: Should be fixed and removed. */
+			if (fip->field_tag == TIFFTAG_DOTRANGE) {
+				if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
+					goto bad;
+			}
+			else if (!TIFFWriteNormalTag(tif, dir, fip))
 				goto bad;
 			break;
 		}
