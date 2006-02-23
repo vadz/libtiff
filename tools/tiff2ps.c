@@ -545,8 +545,6 @@ TIFF2PS(FILE* fd, TIFF* tif,
 	float ox, oy;
         double prw, prh;
 	double scale = 1.0;
-	double left_offset = lm * PS_UNIT_SIZE;
-	double bottom_offset = bm * PS_UNIT_SIZE;
 	uint32 subfiletype;
 	uint16* sampleinfo;
 	static int npages = 0;
@@ -620,12 +618,13 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			fprintf(fd, "gsave\n");
 			fprintf(fd, "100 dict begin\n");
 			if (pw != 0 || ph != 0) {
-				if (!pw)
-					pw = prw;
-				if (!ph)
-					ph = prh;
+				double psw = pw, psh = ph;
+				if (!psw)
+					psw = prw;
+				if (!psh)
+					psh = prh;
 				if (maxPageHeight) { /* used -H option */
-					split = PlaceImage(fd,pw,ph,prw,prh,
+					split = PlaceImage(fd,psw,psh,prw,prh,
 							   0,lm,bm,cnt);
 					while( split ) {
 					    PSpage(fd, tif, w, h);
@@ -637,23 +636,25 @@ TIFF2PS(FILE* fd, TIFF* tif,
 						    npages, npages);
 					    fprintf(fd, "gsave\n");
 					    fprintf(fd, "100 dict begin\n");
-					    split = PlaceImage(fd,pw,ph,prw,prh,
+					    split = PlaceImage(fd,psw,psh,prw,prh,
 							       split,lm,bm,cnt);
 					}
 				} else {
-					pw *= PS_UNIT_SIZE;
-					ph *= PS_UNIT_SIZE;
+					double left_offset = lm * PS_UNIT_SIZE;
+					double bottom_offset = bm * PS_UNIT_SIZE;
+					psw *= PS_UNIT_SIZE;
+					psh *= PS_UNIT_SIZE;
 
 					/* NB: maintain image aspect ratio */
-					scale = pw/prw < ph/prh ?
-						pw/prw : ph/prh;
+					scale = psw/prw < psh/prh ?
+						psw/prw : psh/prh;
 					if (scale > 1.0)
 						scale = 1.0;
 					if (cnt) {
 						bottom_offset +=
-							(ph - prh * scale) / 2;
+							(psh - prh * scale) / 2;
 						left_offset +=
-							(pw - prw * scale) / 2;
+							(psw - prw * scale) / 2;
 					}
 					fprintf(fd, "%f %f translate\n",
 						left_offset, bottom_offset);
