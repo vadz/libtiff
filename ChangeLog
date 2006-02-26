@@ -1,3 +1,10 @@
+2006-02-26  Andrey Kiselev  <dron@remotesensing.org>
+
+	* tools/tiff2pdf.c: Functions t2p_sample_rgbaa_to_rgb() and
+	t2p_sample_rgba_to_rgb() was used in place of each other, that was
+	resulted in problems with RGBA images with associated alpha.
+	As per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1097
+
 2006-02-23  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_dirwrite.c: Properly write TIFFTAG_DOTRANGE tag as per
