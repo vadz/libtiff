@@ -3462,7 +3462,7 @@ tsize_t t2p_sample_abgr_to_rgb(tdata_t data, uint32 samplecount)
  */
 
 tsize_t
-t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
+t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount)
 {
 	uint32 i;
 	
@@ -3473,32 +3473,27 @@ t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
 }
 
 /*
-	This functions converts in place a buffer of RGBA interleaved data
-	into RGB interleaved data, adding 255-A to each component sample.
-*/
+ * This functions converts in place a buffer of RGBA interleaved data
+ * into RGB interleaved data, adding 255-A to each component sample.
+ */
 
-tsize_t t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount)
+tsize_t
+t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
 {
-	uint32 i=0;
-	uint32 sample=0;
-	unsigned char alpha=0;
+	uint32 i = 0;
+	uint32 sample = 0;
+	uint8 alpha = 0;
 	
-	for(i=0;i<samplecount;i++){
+	for (i = 0; i < samplecount; i++) {
 		sample=((uint32*)data)[i];
-		alpha=(unsigned char)((255-(sample & 0xff)));
-		((unsigned char*)data)[i*3] =
-			(unsigned char) ((sample>>24) & 0xff);
-		((unsigned char*)data)[i*3+1] =
-			(unsigned char) ((sample>>16) & 0xff);
-		((unsigned char*)data)[i*3+2] =
-			(unsigned char) ((sample>>8) & 0xff);
-		((unsigned char*)data)[i*3]+=alpha;
-		((unsigned char*)data)[i*3+1]+=alpha;
-		((unsigned char*)data)[i*3+2]+=alpha;
+		alpha=(uint8)((255 - (sample & 0xff)));
+		((uint8 *)data)[i * 3] = (uint8) ((sample >> 24) & 0xff) + alpha;
+		((uint8 *)data)[i * 3 + 1] = (uint8) ((sample >> 16) & 0xff) + alpha;
+		((uint8 *)data)[i * 3 + 2] = (uint8) ((sample >> 8) & 0xff) + alpha;
 		
 	}
 
-	return(i*3);
+	return (i * 3);
 }
 
 /*
