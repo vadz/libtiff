@@ -89,6 +89,15 @@ TIFFWriteScanline(TIFF* tif, tdata_t buf, uint32 row, tsample_t sample)
 		strip = sample*td->td_stripsperimage + row/td->td_rowsperstrip;
 	} else
 		strip = row / td->td_rowsperstrip;
+	/*
+	 * Check strip array to make sure there's space. We don't support
+	 * dynamically growing files that have data organized in separate
+	 * bitplanes because it's too painful.  In that case we require that
+	 * the imagelength be set properly before the first write (so that the
+	 * strips array will be fully allocated above).
+	 */
+	if (strip >= td->td_nstrips && !TIFFGrowStrips(tif, 1, module))
+		return (-1);
 	if (strip != tif->tif_curstrip) {
 		/*
 		 * Changing strips -- flush any data present.
@@ -97,9 +106,9 @@ TIFFWriteScanline(TIFF* tif, tdata_t buf, uint32 row, tsample_t sample)
 			return (-1);
 		tif->tif_curstrip = strip;
 		/*
-		 * Watch out for a growing image.  The value of
-		 * strips/image will initially be 1 (since it
-		 * can't be deduced until the imagelength is known).
+		 * Watch out for a growing image.  The value of strips/image
+		 * will initially be 1 (since it can't be deduced until the
+		 * imagelength is known).
 		 */
 		if (strip >= td->td_stripsperimage && imagegrew)
 			td->td_stripsperimage =
@@ -128,17 +137,6 @@ TIFFWriteScanline(TIFF* tif, tdata_t buf, uint32 row, tsample_t sample)
 			return (-1);
 		tif->tif_flags |= TIFF_POSTENCODE;
 	}
-	/*
-	 * Check strip array to make sure there's space.
-	 * We don't support dynamically growing files that
-	 * have data organized in separate bitplanes because
-	 * it's too painful.  In that case we require that
-	 * the imagelength be set properly before the first
-	 * write (so that the strips array will be fully
-	 * allocated above).
-	 */
-	if (strip >= td->td_nstrips && !TIFFGrowStrips(tif, 1, module))
-		return (-1);
 	/*
 	 * Ensure the write is either sequential or at the
 	 * beginning of a strip (or that we can randomly
