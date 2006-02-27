@@ -199,6 +199,9 @@ TIFFDefaultStripSize(TIFF* tif, uint32 request)
 	return (*tif->tif_defstripsize)(tif, request);
 }
 
+#ifndef STRIP_SIZE_DEFAULT
+# define STRIP_SIZE_DEFAULT 8192
+#endif
 uint32
 _TIFFDefaultStripSize(TIFF* tif, uint32 s)
 {
@@ -208,12 +211,13 @@ _TIFFDefaultStripSize(TIFF* tif, uint32 s)
 		 * image up into strips that are approximately 8Kbytes.
 		 */
 		tsize_t scanline = TIFFScanlineSize(tif);
-		s = (uint32)(8*1024) / (scanline == 0 ? 1 : scanline);
+		s = (uint32)STRIP_SIZE_DEFAULT / (scanline == 0 ? 1 : scanline);
 		if (s == 0)		/* very wide images */
 			s = 1;
 	}
 	return (s);
 }
+#undef STRIP_SIZE_DEFAULT
 
 /*
  * Return the number of bytes to read/write in a call to
