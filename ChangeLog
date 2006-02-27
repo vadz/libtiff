@@ -1,3 +1,10 @@
+2006-02-27  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_write.c: Small code rearrangement in TIFFWriteScanline()
+	to avoid crash as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1081.
+
 2006-02-26  Andrey Kiselev  <dron@remotesensing.org>
 
 	* tools/tiff2pdf.c: Functions t2p_sample_rgbaa_to_rgb() and
