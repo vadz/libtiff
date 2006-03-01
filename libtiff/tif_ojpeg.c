@@ -1877,16 +1877,6 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
 
     switch (tag)
       {
-
-     /* If a "ReferenceBlackWhite" TIFF tag appears in the file explicitly, undo
-        any modified default definition that we might have installed below, then
-        install the real one.
-     */
-        case TIFFTAG_REFERENCEBLACKWHITE   : if (td->td_refblackwhite)
-                                               {
-                                                 _TIFFfree(td->td_refblackwhite);
-                                                 td->td_refblackwhite = 0;
-                                               };
         default                            : return
                                                (*sp->vsetparent)(tif,tag,ap);
 
@@ -1910,20 +1900,18 @@ OJPEGVSetField(register TIFF *tif,ttag_t tag,va_list ap)
               && td->td_photometric == PHOTOMETRIC_YCBCR
              )
 	  {
-            if ( (td->td_refblackwhite = _TIFFmalloc(6*sizeof(float))) )
-              { register long top = 1 << td->td_bitspersample;
-
-                td->td_refblackwhite[0] = 0;
-                td->td_refblackwhite[1] = td->td_refblackwhite[3] =
-                td->td_refblackwhite[5] = top - 1;
-                td->td_refblackwhite[2] = td->td_refblackwhite[4] = top >> 1;
-              }
-            else
-              {
-                TIFFError(tif->tif_name,
-                  "Cannot set default reference black and white levels");
-                v32 = 0;
-              };
+		float *ref;
+		if (!TIFFGetField(tif, TIFFTAG_REFERENCEBLACKWHITE, &ref)) {
+			float refbw[6];
+			long top = 1L << td->td_bitspersample;
+			refbw[0] = 0;
+			refbw[1] = (float)(top-1L);
+			refbw[2] = (float)(top>>1);
+			refbw[3] = refbw[1];
+			refbw[4] = refbw[2];
+			refbw[5] = refbw[1];
+			TIFFSetField(tif, TIFFTAG_REFERENCEBLACKWHITE, refbw);
+		}
 	  }
           return v32;
 
