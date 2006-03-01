@@ -54,6 +54,7 @@ static	uint16 compression = COMPRESSION_PACKBITS;
 static	uint16 predictor = 0;
 static	int quality = 75;	/* JPEG quality */
 static	int jpegcolormode = JPEGCOLORMODE_RGB;
+static  uint32 g3opts;
 
 static	void usage(void);
 static	int processCompressOptions(char*);
@@ -72,8 +73,9 @@ main(int argc, char* argv[])
 	uint32 rowsperstrip = (uint32) -1;
 	double resolution = -1;
 	unsigned char *buf = NULL;
-	tsize_t linebytes;
+	tsize_t linebytes = 0;
 	uint16 spp = 1;
+	uint16 bpp = 8;
 	TIFF *out;
 	FILE *in;
 	unsigned int w, h, prec, row;
@@ -82,7 +84,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	extern char* optarg;
 
-	if ( argc < 2 ) {
+	if (argc < 2) {
 	    fprintf(stderr, "%s: Too few arguments\n", argv[0]);
 	    usage();
 	}
@@ -103,7 +105,7 @@ main(int argc, char* argv[])
 			/*NOTREACHED*/
 		}
 
-	if ( optind + 2 < argc ) {
+	if (optind + 2 < argc) {
 	    fprintf(stderr, "%s: Too many arguments\n", argv[0]);
 	    usage();
 	}
@@ -127,19 +129,26 @@ main(int argc, char* argv[])
 	if (fgetc(in) != 'P')
 		BadPPM(infile);
 	switch (fgetc(in)) {
-	case '5':			/* it's a PGM file */
-		spp = 1;
-		photometric = PHOTOMETRIC_MINISBLACK;
-		break;
-	case '6':			/* it's a PPM file */
-		spp = 3;
-		photometric = PHOTOMETRIC_RGB;
-		if (compression == COMPRESSION_JPEG &&
-		    jpegcolormode == JPEGCOLORMODE_RGB)
-			photometric = PHOTOMETRIC_YCBCR;
-		break;
-	default:
-		BadPPM(infile);
+		case '4':			/* it's a PBM file */
+			bpp = 1;
+			spp = 1;
+			photometric = PHOTOMETRIC_MINISWHITE;
+			break;
+		case '5':			/* it's a PGM file */
+			bpp = 8;
+			spp = 1;
+			photometric = PHOTOMETRIC_MINISBLACK;
+			break;
+		case '6':			/* it's a PPM file */
+			bpp = 8;
+			spp = 3;
+			photometric = PHOTOMETRIC_RGB;
+			if (compression == COMPRESSION_JPEG &&
+			    jpegcolormode == JPEGCOLORMODE_RGB)
+				photometric = PHOTOMETRIC_YCBCR;
+			break;
+		default:
+			BadPPM(infile);
 	}
 
 	/* Parse header */
@@ -151,7 +160,7 @@ main(int argc, char* argv[])
 		if (strchr(" \t\r\n", c))
 			continue;
 
-		/* Check fo comment line */
+		/* Check for comment line */
 		if (c == '#') {
 			do {
 			    c = fgetc(in);
@@ -162,11 +171,20 @@ main(int argc, char* argv[])
 		ungetc(c, in);
 		break;
 	}
-	if (fscanf(in, " %u %u %u", &w, &h, &prec) != 3)
-		BadPPM(infile);
-	if (fgetc(in) != '\n' || prec != 255)
-		BadPPM(infile);
-
+	switch (bpp) {
+	case 1:
+		if (fscanf(in, " %u %u", &w, &h) != 2)
+			BadPPM(infile);
+		if (fgetc(in) != '\n')
+			BadPPM(infile);
+		break;
+	case 8:
+		if (fscanf(in, " %u %u %u", &w, &h, &prec) != 3)
+			BadPPM(infile);
+		if (fgetc(in) != '\n' || prec != 255)
+			BadPPM(infile);
+		break;
+	}
 	out = TIFFOpen(argv[optind], "w");
 	if (out == NULL)
 		return (-4);
@@ -174,7 +192,7 @@ main(int argc, char* argv[])
 	TIFFSetField(out, TIFFTAG_IMAGELENGTH, (uint32) h);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, spp);
-	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
+	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, bpp);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
 	TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
@@ -188,14 +206,30 @@ main(int argc, char* argv[])
 		if (predictor != 0)
 			TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
 		break;
+        case COMPRESSION_CCITTFAX3:
+		TIFFSetField(out, TIFFTAG_GROUP3OPTIONS, g3opts);
+		break;
 	}
-	linebytes = spp * w;
+	switch (bpp) {
+		case 1:
+			linebytes = (spp * w + (8 - 1)) / 8;
+			if (rowsperstrip == (uint32) -1) {
+				TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, h);
+			} else {
+				TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
+				    TIFFDefaultStripSize(out, rowsperstrip));
+			}
+			break;
+		case 8:
+			linebytes = spp * w;
+			TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
+			    TIFFDefaultStripSize(out, rowsperstrip));
+			break;
+	}
 	if (TIFFScanlineSize(out) > linebytes)
 		buf = (unsigned char *)_TIFFmalloc(linebytes);
 	else
 		buf = (unsigned char *)_TIFFmalloc(TIFFScanlineSize(out));
-	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
-	    TIFFDefaultStripSize(out, rowsperstrip));
 	if (resolution > 0) {
 		TIFFSetField(out, TIFFTAG_XRESOLUTION, resolution);
 		TIFFSetField(out, TIFFTAG_YRESOLUTION, resolution);
@@ -216,6 +250,25 @@ main(int argc, char* argv[])
 	return (0);
 }
 
+static void
+processG3Options(char* cp)
+{
+	g3opts = 0;
+        if( (cp = strchr(cp, ':')) ) {
+                do {
+                        cp++;
+                        if (strneq(cp, "1d", 2))
+                                g3opts &= ~GROUP3OPT_2DENCODING;
+                        else if (strneq(cp, "2d", 2))
+                                g3opts |= GROUP3OPT_2DENCODING;
+                        else if (strneq(cp, "fill", 4))
+                                g3opts |= GROUP3OPT_FILLBITS;
+                        else
+                                usage();
+                } while( (cp = strchr(cp, ':')) );
+        }
+}
+
 static int
 processCompressOptions(char* opt)
 {
@@ -227,7 +280,7 @@ processCompressOptions(char* opt)
 		char* cp = strchr(opt, ':');
 
                 compression = COMPRESSION_JPEG;
-                while( cp )
+                while (cp)
                 {
                     if (isdigit((int)cp[1]))
 			quality = atoi(cp+1);
@@ -238,6 +291,11 @@ processCompressOptions(char* opt)
 
                     cp = strchr(cp+1,':');
                 }
+	} else if (strneq(opt, "g3", 2)) {
+		processG3Options(opt);
+		compression = COMPRESSION_CCITTFAX3;
+	} else if (streq(opt, "g4")) {
+		compression = COMPRESSION_CCITTFAX4;
 	} else if (strneq(opt, "lzw", 3)) {
 		char* cp = strchr(opt, ':');
 		if (cp)
@@ -263,6 +321,8 @@ char* stuff[] = {
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
 " -c zip[:opts]	compress output with deflate encoding",
 " -c packbits	compress output with packbits encoding (the default)",
+" -c g3[:opts]  compress output with CCITT Group 3 encoding",
+" -c g4         compress output with CCITT Group 4 encoding",
 " -c none	use no compression algorithm on output",
 "",
 "JPEG options:",
