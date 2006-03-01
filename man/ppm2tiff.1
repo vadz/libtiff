@@ -23,13 +23,15 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH PPM2TIFF 1 "November 2, 2005" "libtiff"
+.TH PPM2TIFF 1 "March 1, 2006" "libtiff"
 .SH NAME
 ppm2tiff \- create a
 .SM TIFF
-file from a 
-.SM PPM
-image file
+file from 
+.SM PPM, PGM
+and
+.SM PBM
+image files
 .SH SYNOPSIS
 .B ppm2tiff
 [
@@ -41,25 +43,25 @@ image file
 .SH DESCRIPTION
 .I ppm2tiff
 converts a file in the 
-.SM PPM
-image format to
+.SM PPM, PGM
+and
+.SM PBM
+image formats to
 .SM TIFF.
 By default, the
 .SM TIFF
 image is created with data samples packed (\c
 .IR PlanarConfiguration =1),
-compressed with the Lempel-Ziv & Welch algorithm (\c
-.IR Compression =5),
-and with each strip no more than 8 kilobytes.
-These characteristics can be overridden, or explicitly specified
-with the options described below
+compressed with the Packbits algorithm (\c
+.IR Compression =32773),
+and with each strip no more than 8 kilobytes. These characteristics can be
+overridden, or explicitly specified with the options described below
 .PP
 If the
 .SM PPM
 file contains greyscale data, then the
 .I PhotometricInterpretation
-tag is set to 1 (min-is-black),
-otherwise it is set to 2 (RGB).
+tag is set to 1 (min-is-black), otherwise it is set to 2 (RGB).
 .PP
 If no
 .SM PPM
@@ -70,26 +72,29 @@ will read from the standard input.
 .TP
 .B \-c
 Specify a compression scheme to use when writing image data:
-.B "\-c none"
+.B none 
 for no compression,
-.B "-c packbits"
-for the PackBits compression algorithm (the default),
-.B "-c jpeg"
-for the baseline JPEG compression algorithm,
-.B "-c zip
-for the Deflate compression algorithm,
+.B packbits
+for PackBits compression (will be used by default),
+.B lzw
+for Lempel-Ziv & Welch compression,
+.B jpeg
+for baseline JPEG compression,
+.B zip
+for Deflate compression,
+.B g3
+for CCITT Group 3 (T.4) compression,
 and
-.B "\-c lzw"
-for Lempel-Ziv & Welch compression.
+.B g4
+for CCITT Group 4 (T.6) compression.
 .TP
 .B \-r
-Write data with a specified number of rows per strip;
-by default the number of rows/strip is selected so that each strip
-is approximately 8 kilobytes.
+Write data with a specified number of rows per strip; by default the number of
+rows/strip is selected so that each strip is approximately 8 kilobytes.
 .TP
 .B \-R
-Mark the resultant image to have the specified
-X and Y resolution (in dots/inch).
+Mark the resultant image to have the specified X and Y resolution (in
+dots/inch).
 .SH "SEE ALSO"
 .BR tiffinfo (1),
 .BR tiffcp (1),
