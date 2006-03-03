@@ -1,3 +1,18 @@
+2006-03-03  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/{tif_predict.c, tif_predict.h}: Added new function
+	TIFFPredictorCleanup() to restore parent decode/encode/field methods.
+
+	* libtiff/{tif_lzw.c, tif_pixarlog.c, tif_zip.c}: Use
+	TIFFPredictorCleanup() in codec cleanup methods. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
+
+	* libtiff/tif_dirread.c: Fixed integer overflow condition in
+	TIFFFetchData() function. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
+
 2006-03-01  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/tif_ojpeg.c: Set the ReferenceBlackWhite with the
