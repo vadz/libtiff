@@ -972,13 +972,20 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 	int w = TIFFDataWidth((TIFFDataType) dir->tdir_type);
 	tsize_t cc = dir->tdir_count * w;
 
+	/* Check for overflow. */
+	if (!dir->tdir_count || !w || (tsize_t)dir->tdir_count / w != cc)
+		goto bad;
+
 	if (!isMapped(tif)) {
 		if (!SeekOK(tif, dir->tdir_offset))
 			goto bad;
 		if (!ReadOK(tif, cp, cc))
 			goto bad;
 	} else {
-		if (dir->tdir_offset + cc > tif->tif_size)
+		tsize_t offset = dir->tdir_offset + cc;
+		/* Check for overflow. */
+		if ((tsize_t)dir->tdir_offset != offset - cc
+		    || offset > (tsize_t)tif->tif_size)
 			goto bad;
 		_TIFFmemcpy(cp, tif->tif_base + dir->tdir_offset, cc);
 	}
@@ -1004,9 +1011,10 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 	}
 	return (cc);
 bad:
-	TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Error fetching data for field \"%s\"",
-	    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-	return ((tsize_t) 0);
+	TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+		     "Error fetching data for field \"%s\"",
+		     _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
+	return (tsize_t) 0;
 }
 
 /*
