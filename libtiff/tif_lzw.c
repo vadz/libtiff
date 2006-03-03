@@ -1002,6 +1002,8 @@ cl_hash(LZWCodecState* sp)
 static void
 LZWCleanup(TIFF* tif)
 {
+	(void)TIFFPredictorCleanup(tif);
+
 	if (tif->tif_data) {
 		if (DecoderState(tif)->dec_codetab)
 			_TIFFfree(DecoderState(tif)->dec_codetab);
@@ -1050,7 +1052,8 @@ TIFFInitLZW(TIFF* tif, int scheme)
 	(void) TIFFPredictorInit(tif);
 	return (1);
 bad:
-	TIFFErrorExt(tif->tif_clientdata, "TIFFInitLZW", "No space for LZW state block");
+	TIFFErrorExt(tif->tif_clientdata, "TIFFInitLZW", 
+		     "No space for LZW state block");
 	return (0);
 }
 
