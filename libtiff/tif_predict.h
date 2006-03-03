@@ -55,6 +55,7 @@ typedef struct {
 extern "C" {
 #endif
 extern	int TIFFPredictorInit(TIFF*);
+extern	int TIFFPredictorCleanup(TIFF*);
 #if defined(__cplusplus)
 }
 #endif
