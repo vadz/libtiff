@@ -973,7 +973,7 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 	tsize_t cc = dir->tdir_count * w;
 
 	/* Check for overflow. */
-	if (!dir->tdir_count || !w || (tsize_t)dir->tdir_count / w != cc)
+	if (!dir->tdir_count || !w || cc / w != (tsize_t)dir->tdir_count)
 		goto bad;
 
 	if (!isMapped(tif)) {
