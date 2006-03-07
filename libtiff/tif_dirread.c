@@ -982,10 +982,10 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 		if (!ReadOK(tif, cp, cc))
 			goto bad;
 	} else {
-		tsize_t offset = dir->tdir_offset + cc;
 		/* Check for overflow. */
-		if ((tsize_t)dir->tdir_offset != offset - cc
-		    || offset > (tsize_t)tif->tif_size)
+		if ((tsize_t)dir->tdir_offset + cc < (tsize_t)dir->tdir_offset
+		    || (tsize_t)dir->tdir_offset + cc < cc
+		    || (tsize_t)dir->tdir_offset + cc > (tsize_t)tif->tif_size)
 			goto bad;
 		_TIFFmemcpy(cp, tif->tif_base + dir->tdir_offset, cc);
 	}
