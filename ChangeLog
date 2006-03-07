@@ -1,3 +1,17 @@
+2006-03-07  Andrey Kiselev  <dron@remotesensing.org>
+
+	* libtiff/tif_dirread.c: Fixed error reporting in TIFFFetchAnyArray()
+	function as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
+
+	* libtiff/tif_dirread.c: More wise check for integer overflow
+	condition as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
+
+	* libtiff/{tif_jpeg.c, tif_pixarlog.c, tif_fax3.c, tif_zip.c}:
+	Properly restore setfield/getfield methods in cleanup functions. As
+	per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
+
 2006-03-03  Andrey Kiselev  <dron@remotesensing.org>
 
 	* libtiff/{tif_predict.c, tif_predict.h}: Added new function
