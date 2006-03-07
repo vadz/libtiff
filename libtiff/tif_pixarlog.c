@@ -1167,6 +1167,9 @@ PixarLogCleanup(TIFF* tif)
 
 	(void)TIFFPredictorCleanup(tif);
 
+	tif->tif_tagmethods.vgetfield = sp->vgetparent;
+	tif->tif_tagmethods.vsetfield = sp->vsetparent;
+
 	if (sp->FromLT2) _TIFFfree(sp->FromLT2);
 	if (sp->From14) _TIFFfree(sp->From14);
 	if (sp->From8) _TIFFfree(sp->From8);

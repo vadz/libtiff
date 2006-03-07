@@ -1519,15 +1519,19 @@ JPEGPostEncode(TIFF* tif)
 static void
 JPEGCleanup(TIFF* tif)
 {
-	if (tif->tif_data) {
-		JPEGState *sp = JState(tif);
-                if( sp->cinfo_initialized )
-                    TIFFjpeg_destroy(sp);	/* release libjpeg resources */
-		if (sp->jpegtables)		/* tag value */
-			_TIFFfree(sp->jpegtables);
-		_TIFFfree(tif->tif_data);	/* release local state */
-		tif->tif_data = NULL;
-	}
+	JPEGState *sp = JState(tif);
+	
+	assert(sp != 0);
+
+	tif->tif_tagmethods.vgetfield = sp->vgetparent;
+	tif->tif_tagmethods.vsetfield = sp->vsetparent;
+
+	if( sp->cinfo_initialized )
+	    TIFFjpeg_destroy(sp);	/* release libjpeg resources */
+	if (sp->jpegtables)		/* tag value */
+		_TIFFfree(sp->jpegtables);
+	_TIFFfree(tif->tif_data);	/* release local state */
+	tif->tif_data = NULL;
 }
 
 static int

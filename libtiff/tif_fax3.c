@@ -1068,19 +1068,22 @@ Fax3Close(TIFF* tif)
 static void
 Fax3Cleanup(TIFF* tif)
 {
-	if (tif->tif_data) {
-		Fax3CodecState* sp = DecoderState(tif);
+	Fax3CodecState* sp = DecoderState(tif);
+	
+	assert(sp != 0);
 
-		if (sp->runs)
-			_TIFFfree(sp->runs);
-		if (sp->refline)
-			_TIFFfree(sp->refline);
+	tif->tif_tagmethods.vgetfield = sp->b.vgetparent;
+	tif->tif_tagmethods.vsetfield = sp->b.vsetparent;
 
-		if (Fax3State(tif)->subaddress)
-			_TIFFfree(Fax3State(tif)->subaddress);
-		_TIFFfree(tif->tif_data);
-		tif->tif_data = NULL;
-	}
+	if (sp->runs)
+		_TIFFfree(sp->runs);
+	if (sp->refline)
+		_TIFFfree(sp->refline);
+
+	if (Fax3State(tif)->subaddress)
+		_TIFFfree(Fax3State(tif)->subaddress);
+	_TIFFfree(tif->tif_data);
+	tif->tif_data = NULL;
 }
 
 #define	FIELD_BADFAXLINES	(FIELD_CODEC+0)
@@ -1131,6 +1134,9 @@ static int
 Fax3VSetField(TIFF* tif, ttag_t tag, va_list ap)
 {
 	Fax3BaseState* sp = Fax3State(tif);
+
+	assert(sp != 0);
+	assert(sp->vsetparent != 0);
 
 	switch (tag) {
 	case TIFFTAG_FAXMODE:

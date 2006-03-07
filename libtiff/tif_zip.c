@@ -254,6 +254,9 @@ ZIPCleanup(TIFF* tif)
 
 	(void)TIFFPredictorCleanup(tif);
 
+	tif->tif_tagmethods.vgetfield = sp->vgetparent;
+	tif->tif_tagmethods.vsetfield = sp->vsetparent;
+
 	if (sp->state&ZSTATE_INIT) {
 		/* NB: avoid problems in the library */
 		if (tif->tif_mode == O_RDONLY)
@@ -335,9 +338,9 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	 */
 	_TIFFMergeFieldInfo(tif, zipFieldInfo, TIFFArrayCount(zipFieldInfo));
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
-	tif->tif_tagmethods.vgetfield = ZIPVGetField;	/* hook for codec tags */
+	tif->tif_tagmethods.vgetfield = ZIPVGetField; /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = ZIPVSetField;	/* hook for codec tags */
+	tif->tif_tagmethods.vsetfield = ZIPVSetField; /* hook for codec tags */
 
 	/* Default values for codec-specific fields */
 	sp->zipquality = Z_DEFAULT_COMPRESSION;	/* default comp. level */
@@ -364,7 +367,8 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	(void) TIFFPredictorInit(tif);
 	return (1);
 bad:
-	TIFFErrorExt(tif->tif_clientdata, "TIFFInitZIP", "No space for ZIP state block");
+	TIFFErrorExt(tif->tif_clientdata, "TIFFInitZIP",
+		     "No space for ZIP state block");
 	return (0);
 }
 #endif /* ZIP_SUPORT */
