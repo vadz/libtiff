@@ -1,24 +1,14 @@
-<!-- Creator     : groff version 1.19.2 -->
-<!-- CreationDate: Mon Jan  2 17:41:36 2006 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!-- Creator     : groff version 1.18.1 -->
+<!-- CreationDate: Mon Mar 13 18:03:08 2006 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
-<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
-<style type="text/css">
-       p     { margin-top: 0; margin-bottom: 0; }
-       pre   { margin-top: 0; margin-bottom: 0; }
-       table { margin-top: 0; margin-bottom: 0; }
-</style>
 <title>TIFFError</title>
-
 </head>
 <body>
 
 <h1 align=center>TIFFError</h1>
-
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -26,76 +16,91 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
-
-
 <a name="NAME"></a>
 <h2>NAME</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">TIFFError,
-TIFFSetErrorHandler &minus; library error handling
-interface</p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>TIFFError, TIFFSetErrorHandler &minus; library error
+handling interface</p>
+</td>
+</table>
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em"><b>#include
-&lt;tiffio.h&gt;</b></p>
-
-<p style="margin-left:11%; margin-top: 1em"><b>void
-TIFFError(const char *</b><i>module</i><b>, const char
-*</b><i>fmt</i><b>,</b> <i>...</i><b>)</b></p>
-
-<p style="margin-left:11%; margin-top: 1em"><b>#include
-&lt;stdarg.h&gt;</b></p>
-
-<p style="margin-left:11%; margin-top: 1em"><b>typedef void
-(*TIFFErrorHandler)(const char *</b><i>module</i><b>, const
-char *</b><i>fmt</i><b>, va_list</b> <i>ap</i><b>); <br>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>#include &lt;tiffio.h&gt;</b></p>
+<!-- INDENTATION -->
+<p><b>void TIFFError(const char *</b><i>module</i><b>, const
+char *</b><i>fmt</i><b>,</b> <i>...</i><b>)</b></p>
+<!-- INDENTATION -->
+<p><b>#include &lt;stdarg.h&gt;</b></p>
+<!-- INDENTATION -->
+<p><b>typedef void (*TIFFErrorHandler)(const char
+*</b><i>module</i><b>, const char *</b><i>fmt</i><b>,
+va_list</b> <i>ap</i><b>);<br>
 TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler
 handler);</b></p>
-
+</td>
+</table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-
-
-
-<p style="margin-left:11%; margin-top: 1em"><i>TIFFError</i>
-invokes the library-wide error handling function to
-(normally) write an error message to the <b>stderr</b>. The
-<i>fmt</i> parameter is a <i>printf</i>(3S) format string,
-and any number arguments can be supplied. The <i>module</i>
-parameter, if non-zero, is printed before the message; it
-typically is used to identify the software module in which
-an error is detected.</p>
-
-<p style="margin-left:11%; margin-top: 1em">Applications
-that desire to capture control in the event of an error
-should use <i>TIFFSetErrorHandler</i> to override the
-default error handler. A <small>NULL</small> (0) error
-handling function may be installed to suppress error
-messages.</p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>TIFFError</i> invokes the library-wide error handling
+function to (normally) write an error message to the
+<b>stderr</b>. The <i>fmt</i> parameter is a
+<i>printf</i>(3S) format string, and any number arguments
+can be supplied. The <i>module</i> parameter, if non-zero,
+is printed before the message; it typically is used to
+identify the software module in which an error is
+detected.</p>
+<!-- INDENTATION -->
+<p>Applications that desire to capture control in the event
+of an error should use <i>TIFFSetErrorHandler</i> to
+override the default error handler. A <small>NULL</small>
+(0) error handling function may be installed to suppress
+error messages.</p>
+</td>
+</table>
 <a name="RETURN VALUES"></a>
 <h2>RETURN VALUES</h2>
-
-
-
-<p style="margin-left:11%; margin-top: 1em"><i>TIFFSetErrorHandler</i>
-returns a reference to the previous error handling
-function.</p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>TIFFSetErrorHandler</i> returns a reference to the
+previous error handling function.</p>
+</td>
+</table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-
-
-
-<p style="margin-left:11%; margin-top: 1em"><b>TIFFWarning</b>(3TIFF),
-<b>libtiff</b>(3TIFF), <b>printf</b>(3)</p>
-
-<p style="margin-left:11%; margin-top: 1em">Libtiff library
-home page: <b>http://www.remotesensing.org/libtiff/</b></p>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>TIFFWarning</b>(3TIFF), <b>libtiff</b>(3TIFF),
+<b>printf</b>(3)</p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.remotesensing.org/libtiff/</b></p>
+</td>
+</table>
 <hr>
 </body>
 </html>

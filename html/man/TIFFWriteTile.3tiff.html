@@ -1,24 +1,14 @@
-<!-- Creator     : groff version 1.19.2 -->
-<!-- CreationDate: Mon Jan  2 17:41:50 2006 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!-- Creator     : groff version 1.18.1 -->
+<!-- CreationDate: Mon Mar 13 18:03:11 2006 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
-<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <meta name="Content-Style" content="text/css">
-<style type="text/css">
-       p     { margin-top: 0; margin-bottom: 0; }
-       pre   { margin-top: 0; margin-bottom: 0; }
-       table { margin-top: 0; margin-bottom: 0; }
-</style>
 <title>TIFFWriteTile</title>
-
 </head>
 <body>
 
 <h1 align=center>TIFFWriteTile</h1>
-
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
@@ -27,77 +17,99 @@
 <a href="#SEE ALSO">SEE ALSO</a><br>
 
 <hr>
-
-
 <a name="NAME"></a>
 <h2>NAME</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">TIFFWriteTile
-&minus; encode and write a tile of data to an open
-<small>TIFF</small> file</p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>TIFFWriteTile &minus; encode and write a tile of data to
+an open <small>TIFF</small> file</p>
+</td>
+</table>
 <a name="SYNOPSIS"></a>
 <h2>SYNOPSIS</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em"><b>#include
-&lt;tiffio.h&gt;</b></p>
-
-<p style="margin-left:11%; margin-top: 1em"><b>tsize_t
-TIFFWriteTile(TIFF *</b><i>tif</i><b>, tdata_t</b>
-<i>buf</i><b>, uint32</b> <i>x</i><b>, uint32</b>
-<i>y</i><b>, uint32</b> <i>z</i><b>, tsample_t</b>
-<i>sample</i><b>)</b></p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>#include &lt;tiffio.h&gt;</b></p>
+<!-- INDENTATION -->
+<p><b>tsize_t TIFFWriteTile(TIFF *</b><i>tif</i><b>,
+tdata_t</b> <i>buf</i><b>, uint32</b> <i>x</i><b>,
+uint32</b> <i>y</i><b>, uint32</b> <i>z</i><b>,
+tsample_t</b> <i>sample</i><b>)</b></p>
+</td>
+</table>
 <a name="DESCRIPTION"></a>
 <h2>DESCRIPTION</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">Write the data
-for the tile <i>containing</i> the specified coordinates.
-The data in <i>buf</i> are is (potentially) compressed, and
-written to the indicated file, normally being appended to
-the end of the file. The buffer must be contain an entire
-tile of data. Applications should call the routine
-<i>TIFFTileSize</i> to find out the size (in bytes) of a
-tile buffer. The <i>x</i> and <i>y</i> parameters are always
-used by <i>TIFFWriteTile</i>. The <i>z</i> parameter is used
-if the image is deeper than 1 slice
-(<i>ImageDepth</i>&gt;1). The <i>sample</i> parameter is
-used only if data are organized in separate planes
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>Write the data for the tile <i>containing</i> the
+specified coordinates. The data in <i>buf</i> are is
+(potentially) compressed, and written to the indicated file,
+normally being appended to the end of the file. The buffer
+must be contain an entire tile of data. Applications should
+call the routine <i>TIFFTileSize</i> to find out the size
+(in bytes) of a tile buffer. The <i>x</i> and <i>y</i>
+parameters are always used by <i>TIFFWriteTile</i>. The
+<i>z</i> parameter is used if the image is deeper than 1
+slice (<i>ImageDepth</i>&gt;1). The <i>sample</i> parameter
+is used only if data are organized in separate planes
 (<i>PlanarConfiguration</i>=2).</p>
-
+</td>
+</table>
 <a name="RETURN VALUES"></a>
 <h2>RETURN VALUES</h2>
-
-
-
-<p style="margin-left:11%; margin-top: 1em"><i>TIFFWriteTile</i>
-returns &minus;1 if it detects an error; otherwise the
-number of bytes in the tile is returned.</p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><i>TIFFWriteTile</i> returns &minus;1 if it detects an
+error; otherwise the number of bytes in the tile is
+returned.</p>
+</td>
+</table>
 <a name="DIAGNOSTICS"></a>
 <h2>DIAGNOSTICS</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">All error
-messages are directed to the <b>TIFFError</b>(3TIFF)
-routine.</p>
-
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p>All error messages are directed to the
+<b>TIFFError</b>(3TIFF) routine.</p>
+</td>
+</table>
 <a name="SEE ALSO"></a>
 <h2>SEE ALSO</h2>
-
-
-
-<p style="margin-left:11%; margin-top: 1em"><b>TIFFCheckTile</b>(3TIFF),
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="8%"></td>
+<td width="91%">
+<p><b>TIFFCheckTile</b>(3TIFF),
 <b>TIFFComputeTile</b>(3TIFF), <b>TIFFOpen</b>(3TIFF),
 <b>TIFFReadTile</b>(3TIFF), <b>TIFFWriteScanline</b>(3TIFF),
 <b>TIFFWriteEncodedTile</b>(3TIFF),
 <b>TIFFWriteRawTile</b>(3TIFF), <b>libtiff</b>(3TIFF)</p>
-
-<p style="margin-left:11%; margin-top: 1em">Libtiff library
-home page: <b>http://www.remotesensing.org/libtiff/</b></p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.remotesensing.org/libtiff/</b></p>
+</td>
+</table>
 <hr>
 </body>
 </html>
