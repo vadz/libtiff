@@ -578,8 +578,11 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		 * _TIFFPrettyPrintField() fall down and print it as any other
 		 * tag.
 		 */
-		if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data))
+		if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data)) {
+			if(mem_alloc)
+				_TIFFfree(raw_data);
 			continue;
+		}
 		else
 			_TIFFPrintField(fd, fip, value_count, raw_data);
 
