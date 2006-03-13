@@ -1,4 +1,8 @@
-2006-03-07  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-13  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff 3.8.1 released.
+
+2006-03-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Fixed error reporting in TIFFFetchAnyArray()
 	function as per bug
@@ -12,7 +16,7 @@
 	Properly restore setfield/getfield methods in cleanup functions. As
 	per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
 
-2006-03-03  Andrey Kiselev  <dron@remotesensing.org>
+2006-03-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_predict.c, tif_predict.h}: Added new function
 	TIFFPredictorCleanup() to restore parent decode/encode/field methods.
@@ -27,7 +31,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1102
 
-2006-03-01  Andrey Kiselev  <dron@remotesensing.org>
+2006-03-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_ojpeg.c: Set the ReferenceBlackWhite with the
 	TIFFSetField() method, not directly. As per bug
@@ -37,21 +41,21 @@
 	* tools/ppm2tiff.c: Added support for PBM files as per bug
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1044
 
-2006-02-27  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_write.c: Small code rearrangement in TIFFWriteScanline()
 	to avoid crash as per bug
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1081.
 
-2006-02-26  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Functions t2p_sample_rgbaa_to_rgb() and
 	t2p_sample_rgba_to_rgb() was used in place of each other, that was
 	resulted in problems with RGBA images with associated alpha.
 	As per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1097
 
-2006-02-23  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirwrite.c: Properly write TIFFTAG_DOTRANGE tag as per
 	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1088.
@@ -65,7 +69,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1080
 
-2006-02-15  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Do not create output file until all option checks
 	will be done. As per bug
@@ -77,7 +81,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1077
 
-2006-02-09  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_tile.c: Fix error reporting in TIFFCheckTile() as per
 	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1063.
@@ -93,7 +97,7 @@
 	* tools/tiff2pdf.c: Fixed support for non-YCbCr encoded JPEG
 	compressed TIFF files, per submission from Dan Cobra. 
 
-2006-02-07  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dirread.c, tif_packbits.c, tif_win32.c}: Properly
 	cast values to avoid warnings. As per bug
@@ -107,13 +111,13 @@
 	_TIFFCheckMalloc() as per bug
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1033.
 
-2006-02-06  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_aux.c: Return static array when fetching default
 	YCbCrCoefficients (another problem, reported a the
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1029 entry).
 
-2006-02-03  Andrey Kiselev  <dron@remotesensing.org>
+2006-02-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Special handling for PageNumber, HalftoneHints,
 	YCbCrSubsampling and DotRange tags as per bugs
@@ -126,7 +130,7 @@
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1026.
 
-2006-01-23  Andrey Kiselev  <dron@remotesensing.org>
+2006-01-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtool related stuff updated from the 2.1a branch.
 
@@ -148,7 +152,7 @@
 	incorrectly, tests were not actually testing the uninstalled
 	libtiff.  Now they are.
 
-2006-01-04  Andrey Kiselev  <dron@remotesensing.org>
+2006-01-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirinfo.c: Change definitions for TIFFTAG_ICCPROFILE,
 	TIFFTAG_PHOTOSHOP, TIFFTAG_RICHTIFFIPTC, TIFFTAG_XMLPACKET: readcount
@@ -162,7 +166,7 @@
 	TIFFTAG_PHOTOSHOP, TIFFTAG_RICHTIFFIPTC, and TIFFTAG_XMLPACKET,
 	and re-sorted tag names in alphabetical order.
 
-2005-12-29  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.8.0 released.
 
@@ -178,7 +182,7 @@
 
 	* html/{index.html, support.hml, libtiff.html}: Cleaned up HTML
 
-2005-12-27  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiffio.h: Added VC_EXTRALEAN definition before including
 	windows.h, to reduce the compile time.
@@ -187,7 +191,7 @@
 
 	* libtiff/tif_jpeg.c: Improve compilation under MinGW.
 
-2005-12-26  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.c, tif_dir.h, tif_dirread.c, tif_dirinfo.c}: 
 	tiffFieldInfo and exifFieldInfo arrays definitions moved back to
@@ -201,13 +205,13 @@
 	errors and used HTML Tidy to tidy up the HTML syntax and
 	formatting.
 
-2005-12-24  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_aux.c, tif_dir.c, tif_dir.h, tif_dirwrite.c,
 	tif_print.c, tif_getimage.c}: Make InkSet, NumberOfInks, DotRange and
 	StoNits tags custom.
 
-2005-12-23  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_aux.c, tif_dir.c, tif_dir.h, tif_print.c}: Make
 	WhitePoint tag custom.
@@ -222,7 +226,7 @@
 	* libtiff/*: Added more 'dual-mode' error handling: Done TIFFWarning 
 	calls in core LibTiff.
 
-2005-12-21  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.c, tif_dir.h, tif_print.c}: Make RichTIFFIPTC,
 	Photoshop and ICCProfile tags custom.
@@ -234,7 +238,7 @@
 	remain compatible with older code: Done TIFFError calls everywhere 
 	except in tools   
 
-2005-12-20  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Added many error reporting messages; fixed integer
 	overflow as per bug
@@ -246,19 +250,19 @@
 	* contrib/addtiffo/*: Major upgrade by Joris to support subsampled
 	YCbCr images in jpeg compressed TIFF files.
 
-2005-12-14  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Return non-zero status when reading fails (again).
 
-2005-12-13  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Return non-zero status when reading fails.
 
-2005-12-12  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.h, tiff.h}: Added more EXIF tags.
 
-2005-12-09  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.c, tif_dir.h, tif_print.c}: Make XMLPacket tag
 	custom.
@@ -271,7 +275,7 @@
 	tiffio.h}: Preliminary support to read custom directories. New
 	functions: TIFFReadCustomDirectory() and TIFFReadEXIFDirectory().
 
-2005-12-07  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dirinfo.c, tif_dirread.c, tif_dir.h, tif_dir.c}:
 	More work to implement custom directory read support.
@@ -280,13 +284,13 @@
 	tif_dir.c, tif_print.c}: Make YCbCrCoefficients and ReferenceBlackWhite
 	tags custom.
 
-2005-12-05  Andrey Kiselev  <dron@remotesensing.org>
+2005-12-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: One more workaround for broken
 	StripByteCounts tag. Handle the case when StripByteCounts array filled
 	with completely wrong values.
 
-2005-11-30  Andrey Kiselev  <dron@remotesensing.org>
+2005-11-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirinfo.c: Release file descriptor in case of failure
 	in the TIFFOpenW() function as per bug
@@ -312,7 +316,7 @@
 	* libtiff/libtiff.def, tiffiop.h, tiffio.h: Made TIFFFreeDirectory
 	public.
 
-2005-10-31  Andrey Kiselev  <dron@remotesensing.org>
+2005-10-31  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/fax2tiff.c: Properly calculate sizes of temporary arrays
 	as per bug
@@ -360,7 +364,7 @@
 	* tif_write.c: fixed setting of planarconfig as per bug report
 	on the mailing list from Joris.
 
-2005-10-07  Andrey Kiselev  <dron@remotesensing.org>
+2005-10-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, configure, nmake.opt, libtiff/{tif_config.h,
 	tif_dirread.c}: Make the default strip size configurable via the
@@ -371,16 +375,16 @@
 	* html/support.html: Fixed link to documentation on Greg Ward's
 	LogLuv TIFF format.
 
-2005-09-28  Andrey Kiselev  <dron@remotesensing.org>
+2005-09-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffdump.c: Fixed crash when reading malformed tags.
 
-2005-09-20  Andrey Kiselev  <dron@remotesensing.org>
+2005-09-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Added missed 'break' statement as per bug
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=932
 
-2005-09-12  Andrey Kiselev  <dron@remotesensing.org>
+2005-09-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.4 released.
 
@@ -412,18 +416,18 @@
 	values (128 bits as 2 64 bits doubles).  GDAL gcore tests now
 	pass on bigendian (macosx) system.
 
-2005-07-28  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_aux.c, tif_dirread.c, tif_fax3.c, tiffiop.h}: Rename
 	CheckMalloc() function to _TIFFCheckMalloc() and make it available
 	globally as an internal helper routine.
 
-2005-07-27  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: More improvements in the "pass by value" part of
 	the custom tags handling code.
 
-2005-07-26  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dirread.c, tif_dirinfo.c}: Do not upcast BYTEs to
 	SHORTs in the TIFFFetchByteArray(). Remove TIFFFetchExtraSamples()
@@ -438,26 +442,26 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=39
 
-2005-07-25  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_print.c: Fixed printing of the BYTE and SBYTE arrays.
 
 	* tools/tiffdump.c: Added support for TIFF_IFD datatype.
 
-2005-07-21  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_write.c: Do not check the PlanarConfiguration field in
 	the TIFFWriteCheck() function in case of single band images (as per
 	TIFF spec).
 
-2005-07-12  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* SConstruct, libtiff/SConstruct: Added the first very preliminary
 	support for SCons software building tool (http://www.scons.org/).
 	This is experimental infrastructure and it will exist along with the
 	autotools mechanics.
 
-2005-07-07  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* port/{getopt.c, strcasecmp.c, strtoul.c}: Update modules from
 	the NetBSD source tree (the old	4-clause BSD license changed to
@@ -468,7 +472,7 @@
 
 	* port/dummy.c: Make the dummy function static.
 
-2005-07-06  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Fixed WhitePoint tag copying.
 
@@ -476,14 +480,14 @@
 	Make FieldOfViewCotangent, MatrixWorldToScreen, MatrixWorldToCamera,
 	ImageFullWidth, ImageFullLength and PrimaryChromaticities tags custom.
 
-2005-07-04  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.3 released.
 
 	* configure, configure.ac: Do not use empty -R option when linking
 	with --enable-rpath.
 
-2005-07-01  Andrey Kiselev  <dron@remotesensing.org>
+2005-07-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffiop.h, tif_open.c}: Added open option 'h' to avoid
 	reading the first IFD when needed. As per bug
@@ -493,7 +497,7 @@
 	* libtiff/tif_color.c: Better use of TIFFmin() macro to avoid side
 	effects.
 
-2005-06-23  Andrey Kiselev  <dron@remotesensing.org>
+2005-06-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Print two characters per loop in the
 	t2p_write_pdf_trailer(). As per bug
@@ -512,22 +516,22 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=855
 
-2005-06-14  Andrey Kiselev  <dron@remotesensing.org>
+2005-06-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirinfo.c: Added support for ClipPath, XClipPathUnits
 	and YClipPathUnits tags.
 
-2005-06-07  Andrey Kiselev  <dron@remotesensing.org>
+2005-06-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* contrib/addtiffo/tif_ovrcache.c: Properly extract tile/strip size;
 	use pixel sized shift in contigous case.
 
-2005-06-06  Andrey Kiselev  <dron@remotesensing.org>
+2005-06-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* contrib/addtiffo/{tif_overview.c, tif_ovrcache.c, tif_ovrcache.h}:
 	Make overviews working for contiguos images.
 
-2005-06-03  Andrey Kiselev  <dron@remotesensing.org>
+2005-06-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_open.c: Replace runtime endianess check with the compile
 	time one.
@@ -535,7 +539,7 @@
 	* libtiff/tif_predict.c: Floating point predictor now works on
 	big-endian hosts.
 
-2005-06-01  Andrey Kiselev  <dron@remotesensing.org>
+2005-06-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Use _TIFFsetString() function when read custom
 	ASCII values.
@@ -551,7 +555,7 @@
 	* libtiff/tif_jpeg.c: Initialize JPEGTables array with zero after
 	allocating.
 
-2005-05-26  Andrey Kiselev  <dron@remotesensing.org>
+2005-05-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, libtiff/Makefile.am: Added workaround for
 	OpenBSD/MirOS soname problem as per bug
@@ -564,7 +568,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=845
 
-2005-05-25  Andrey Kiselev  <dron@remotesensing.org>
+2005-05-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/ppm2tiff.c: Fixed format string when read PPM file header with
 	the fscanf() function. As per bug
@@ -607,7 +611,7 @@
 	stripbytecount[0] if it appears bogus to ignore if stripoffset[0] is
 	zero. This is a common case with GDAL indicating a "null" tile/strip.
 
-2005-05-17  Andrey Kiselev  <dron@remotesensing.org>
+2005-05-17  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffsplit.c: Check for JPEGTables tag presence before copying.
 
@@ -620,7 +624,7 @@
 
 	* libtiff/tif_jpeg.c: added LIB_JPEG_MK1 support in JPEGDecodeRaw().
 
-2005-05-06  Andrey Kiselev  <dron@remotesensing.org>
+2005-05-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 	* tools/tiff2pdfr.c, man/tiff2pdf.1: Calculate the tile width properly;
 	added new option '-b' to use interpolation in output PDF files (Bruno
 	Ledoux).
@@ -632,22 +636,22 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=843
 
-2005-04-27  Andrey Kiselev  <dron@remotesensing.org>
+2005-04-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffdither.c: Copy the PhotometricInterpretation tag from the
 	input file.
 
-2005-04-15  Andrey Kiselev  <dron@remotesensing.org>
+2005-04-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_predict.c: Added ability to encode floating point
 	predictor, as per TIFF Technical Note 3.
 
-2005-04-14  Andrey Kiselev  <dron@remotesensing.org>
+2005-04-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_predict.h, tif_predict.c}: Added ability to decode
 	floating point predictor, as per TIFF Technical Note 3.
 
-2005-04-13  Andrey Kiselev  <dron@remotesensing.org>
+2005-04-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffio.h, tiffiop.h, tif_dir.c, tif_read.c, tif_swab.c}:
 	Added _TIFFSwab24BitData() and TIFFSwabArrayOfLong() functions used to
@@ -655,7 +659,7 @@
 
 	* libtiff/tiff.h: Added predictor constants.
 
-2005-04-08  Andrey Kiselev  <dron@remotesensing.org>
+2005-04-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffiop.h, tif_dir.c}: Use uint32 type for appropriate
 	values in _TIFFVSetField() function. Inspired by the bug
@@ -667,7 +671,7 @@
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=816
 
-2005-03-30  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_open.c: Do not read header in case the output file
 	should be truncated (Ron).
@@ -677,17 +681,17 @@
 
 	* libtiff/{tiff.h, tif_dirinfo.c}: Fixes in EXIF tag ordering (Ron).
 
-2005-03-22  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, libtiff/Makefile.am: Use libtool machinery to pass
 	rpath option.
 
-2005-03-21  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.c, tif_print.c}: Handle all data types in custom
 	tags.
 
-2005-03-18  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-18  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/dirinfo.c: Added DNG tags.
 
@@ -704,7 +708,7 @@
 
 	* man/TIFFGetField.3tiff: Add a note about autoregistered tags.
 
-2005-03-17  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-17  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* nmake.opt: Build with Win32 CRT library by default.
 
@@ -715,16 +719,16 @@
 
 	* libtiff/{tiff.h, tif_dirinfo.c, tiffiop.h}: Added EXIF related tags.
 
-2005-03-15  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.2 released.
 
-2005-03-09  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcmp.c: Added ability to compare the 32-bit integer and
 	floating point data; complain on unsupported bit depths.
 
-2005-03-05  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tif_stream.cxx: Use ios namespace instead of ios_base to support
 	GCC 2.95.
@@ -733,7 +737,7 @@
 	Lee Howard for HylaFax DCS tag
 	(see http://bugzilla.remotesensing.org/show_bug.cgi?id=771)
 
-2005-03-04  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure, configure.ac: Use -rpath option instead of -R as per bug
 
@@ -755,7 +759,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=785
 
-2005-03-03  Andrey Kiselev  <dron@remotesensing.org>
+2005-03-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: More logic to guess missed strip size as per
 	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=705
@@ -765,7 +769,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=786
 
-2005-02-04  Andrey Kiselev  <dron@remotesensing.org>
+2005-02-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiff.h: Changed the int8 definition to be always signed char
 	as per bug
@@ -783,7 +787,7 @@
 	display more correctly.  Images display brighter than they should
 	on a Sun workstation.
 
-2005-02-03  Andrey Kiselev  <dron@remotesensing.org>
+2005-02-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Estimate strip size in case of wrong or
 	suspicious values in the tags. As per bugs
@@ -803,7 +807,7 @@
 	* libtiff/tiff.h (TIFFTAG_TILEWIDTH): Corrected description.
 	(TIFFTAG_TILELENGTH): Corrected description.
 
-2005-01-30  Andrey Kiselev  <dron@remotesensing.org>
+2005-01-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac: Fixes for --with-docdir option as per bug
 
@@ -817,7 +821,7 @@
 	* libtiff/tif_stream.cxx: Fixes for C++ stream interface from
 	Michael Rinne and Edward Lam.
 
-2005-01-15  Andrey Kiselev  <dron@remotesensing.org>
+2005-01-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac: Make the documentation directory location configurable
 	via the --with-docdir option (as suggested by Jeremy C. Reed).
@@ -837,7 +841,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=739
 	
-2005-01-12  Andrey Kiselev  <dron@remotesensing.org>
+2005-01-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_jpeg.c: Added ability to read/write the fax specific
 	TIFFTAG_FAXRECVPARAMS, TIFFTAG_FAXSUBADDRESS and TIFFTAG_FAXRECVTIME
@@ -855,7 +859,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=689
 
-2005-01-11  Andrey Kiselev  <dron@remotesensing.org>
+2005-01-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiffio.h: Move the color conversion routines in the 'extern
 	"C"' section as per bug
@@ -877,7 +881,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=730
 
-2005-01-05  Andrey Kiselev  <dron@remotesensing.org>
+2005-01-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffdump.c: Fixed problem when read broken TIFFs with the
 	wrong tag counts (Dmitry V. Levin, Martin Pitt).
@@ -885,7 +889,7 @@
 	* configure.ac: Replace --disable-c++ with the --disable-cxx option as
 	per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=730
 
-2004-12-25  Andrey Kiselev  <dron@remotesensing.org>
+2004-12-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_getimage.c: More fixes for multiple-alpha-channelled
 	RGB-images as per bug
@@ -896,7 +900,7 @@
 	* tools/tiffset.c: Convert character option to integer value as per
 	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=725
 
-2004-12-20  Andrey Kiselev  <dron@remotesensing.org>
+2004-12-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.1 released.
 
@@ -907,7 +911,7 @@
 	* libtiff/tiff.h: Revert back libtiff data type definitions as per
 	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=687
 
-2004-12-19  Andrey Kiselev  <dron@remotesensing.org>
+2004-12-19  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Do not forget about TIFF_VARIABLE2 when
 	checking for tag count in TIFFReadDirectory() function. As per bug
@@ -933,7 +937,7 @@
 	libtoolize.  Also add '-I .' to aclocal invocation to check
 	current directory for macros.
 
-2004-12-10  Andrey Kiselev  <dron@remotesensing.org>
+2004-12-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirwrite.c: Always write TIFFTAG_SUBIFD using LONG type
 	as per bugs
@@ -944,7 +948,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=704
 
-2004-12-04  Andrey Kiselev  <dron@remotesensing.org>
+2004-12-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* nmake.opt: Link with the user32.lib in windowed mode. As per bug
 
@@ -960,7 +964,7 @@
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=680
 	
-2004-12-03  Andrey Kiselev  <dron@remotesensing.org>
+2004-12-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.c, tif_dirread.c}: Remove TIFFReassignTagToIgnore()
 	call from the TIFFReadDirectory() function. TIFFReassignTagToIgnore
@@ -975,7 +979,7 @@
 	compilation with the heavily modified version of libjpeg delivered
 	with Cygwin.
 
-2004-11-29  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Properly handle tags, which have the uint32
 	counts. As per bug
@@ -986,7 +990,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=690
 
-2004-11-28  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_unix.c: Make UNIX module compilable (and usable)
 	on Windows.
@@ -997,7 +1001,7 @@
 
 	* libtiff/makefile.vc: make it easier to rename the libtiff DLL. 
 
-2004-11-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* man/libtiff.3tiff: Improvements in the "LIST OF ROUTINES" table as
 	per bug
@@ -1017,13 +1021,13 @@
 
 	* html/document.html: Updated Adobe web links as per email from Joris.
 
-2004-11-21  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffio.hxx, tiffio.h}: C++ stream interface moved to new
 	file tiffio.hxx. We don't have any C++ in tiffio.h, those who want to
 	use C++ streams should #include <tiffio.hxx>.
 
-2004-11-13  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiff.h: Added Adobe DNG tags.
 
@@ -1033,23 +1037,23 @@
 	be compliant with the latest standard. Appropriate additions in
 	makefiles now completed.
 
-2004-11-11  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffset.c, libtiff/tif_dirinfo.c: Properly handle the
 	different tag types. As per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=600
 
-2004-11-10  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_aux.c: Set the appropriate ReferenceBlackWhite array for
 	YCbCr image which lacks that tag (noted by Hans Petter Selasky).
 
-2004-11-09  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_color.c: Division by zero fixed (Hans Petter Selasky).
 
-2004-11-07  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_stream.cxx, tiffio.h}: Added C++ stream interface
 	contributed by Edward Lam (see
@@ -1062,7 +1066,7 @@
 	is bad. This is the callers responsibility.
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=651
 
-2004-11-05  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffio.h, tif_win32.c, libtiff.def}: Added TIFFOpenW()
 	function to work with the double byte strings (used to represent
@@ -1085,7 +1089,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=660
 
-2004-11-04  Andrey Kiselev  <dron@remotesensing.org>
+2004-11-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirinfo.c: Change definition for TIFFTAG_EXTRASAMPLES
 	field. The caller should supply a count when setting this field. As
@@ -1104,7 +1108,7 @@
 
 	* tools/tiff2rgba.c: removed extra newlines in usage message.
 
-2004-10-30  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* libtiff/tif_dirwrite.c: Improvements in tag writing code.
 
@@ -1116,7 +1120,7 @@
 	* libtiff/tiffiop.h: added fallback definition of assert() if we
 	don't have assert.h.
 
-2004-10-29  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_fax3.c: Fixed case with the wrong decode routines
 	choosing when the incorrect Group4Options tag set. As per bug
@@ -1127,7 +1131,7 @@
 	wrong type when writing the TIFF_BYTE/TIFF_SBYTE tags in
 	TIFFWriteNormalTag().
 
-2004-10-28  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps.c: Fixed wrong variable data type when read Resolution
 	tags (Peter Fales).
@@ -1141,19 +1145,19 @@
 	* libtiff/libtiff.def: Added several more entry points required
 	to link fax2tiff.c against the DLL on windows. 
 
-2004-10-27  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure, configure.ac: Added --enable-rpath option to embed linker
 	paths into library binary.
 
-2004-10-26  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffset.c: Check the malloc return value (Dmitry V. Levin).
 
 	* libtiff/{tif_strip.c, tif_tile.c}: Zero division problem fixed
 	(Vladimir Nadvornik, Dmitry V. Levin).
 
-2004-10-16  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.0 released.
 
@@ -1164,7 +1168,7 @@
 	sometimes incurs an INT32 typedef conflict between MinGW's
 	basetsd.h and libjpeg's jmorecfg.h.
 
-2004-10-15  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* man/bmp2tiff.1: Added manual page for bmp2tiff utility.
 
@@ -1179,22 +1183,22 @@
 	* man/tiffsplit.1: Fixed to indicate using aaa-zzz, not aa-zz.
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=635
 
-2004-10-12  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dirread.c, tif_jpeg.c, tif_luv.c, tif_ojpeg.c,
 	tif_pixarlog.c, tif_write.c}: Handle the zero strip/tile sizes
 	properly (Dmitry V. Levin, Marcus Meissner).
 
-2004-10-11  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirinfo.c: Type of the TIFFTAG_SUBIFD field changed
 	to TIFF_IFD.
 
-2004-10-10  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/bmp2tif.c: Check the space allocation results.
 
-2004-10-09  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Initialize td_tilewidth and td_tilelength fields
 	of the TIFFDirectory structure with the 0 instead of -1 to avoid
@@ -1219,12 +1223,12 @@
 	* contrib/iptcutil/README: Added the missing README which goes
 	along with iptcutil.
 
-2004-10-03  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_compress.c: Improved error reporting in
 	TIFFGetConfiguredCODECs() (Dmitry V. Levin).
 
-2004-10-02  Andrey Kiselev  <dron@remotesensing.org>
+2004-10-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.0beta2 released.
 
@@ -1246,7 +1250,7 @@
 	TIFFTAG_BYTE instead of TIFFTAG_UNDEFINED to comply with the info
 	in the Adobe XMP Specification.
 
-2004-09-29  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_jpeg.c, tif_pixarlog.c}: Use _TIFFmemset() instead of
 	memset().
@@ -1254,12 +1258,12 @@
 	* libtiff/{tif_dirread.c, tif_strip.c, tif_tile.c}: Applied patches
 	from Dmitry V. Levin to fix possible integer overflow problems.
 
-2004-09-28  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_getimage.c: Check for allocated buffers before clearing
 	(Dmitry V. Levin).
 
-2004-09-26  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.h, tif_dir.c, tif_dirread.c, tif_write.c}:
 	Optimize checking for the strip bounds. 
@@ -1269,7 +1273,7 @@
 	overflow now. Properly handle this case in TIFFReadDirectory()
 	(patches from Dmitry V. Levin).
 
-2004-09-25  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dirinfo.c, tif_strip.c, tif_tile.c}: Use TIFFhowmany8()
 	macro where appropriate.
@@ -1287,7 +1291,7 @@
 	Potential memory leak fixed in TIFFReadDirectory(), _TIFFVSetField(),
 	TIFFGrowStrips() (found by Dmitry V. Levin).
 
-2004-09-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffio.h, tif_compress.c}: Added TIFFGetConfiguredCODECs()
 	to get the list of configured codecs.
@@ -1295,21 +1299,21 @@
 	* libtiff/{tiffiop.h, tif_dirread.c}: More overflow fixes from
 	Dmitry V. Levin.
 
-2004-09-23  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Applied patch from Dmitry V. Levin to fix
 	possible integer overflow in CheckMalloc() function.
 
-2004-09-22  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffiop.h, tif_strip.c}: Use TIFFhowmany8() macro instead
 	of plain TIFFhowmany() where appropriate.
 
-2004-09-21  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_getimage.c: Initialize arrays after space allocation.
 
-2004-09-19  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-19  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.0beta released.
 
@@ -1322,7 +1326,7 @@
 	updates.  The CVS commit message is extracted from this ChangeLog
 	file.
 
-2004-09-14  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, configure, aclocal.m4, libtiff/{mkspans.c, tif_fax3.c,
 	tif_getimage.c, tif_luv.c, tif_lzw.c, tif_ojpeg.c, tif_packbits.c,
@@ -1351,7 +1355,7 @@
 	ensure that the libtiff that we built is used rather than some other
 	libtiff installed on the system.
 
-2004-09-12  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, acinclude.m4, aclocal.m4: New macros to detect GLUT
 	libraries.
@@ -1375,7 +1379,7 @@
 	* html/internals.html: Split off a discussion of adding new tags
 	into addingtags.html.
 
-2004-09-10  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* test/{ascii_tag.c, long_tag.c}: Preliminary test suite added.
 
@@ -1401,12 +1405,12 @@
 	* tools/tiff2ps.c, tools/tiffmedian.c: fiddle with include files
 	to avoid compile warnings about getopt() and a few other things.
 
-2004-09-02  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Use memcpy() function instead of pointer
 	assigning magic in TIFFFetchFloat().
 
-2004-09-01  Andrey Kiselev  <dron@remotesensing.org>
+2004-09-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffio.h, tif_open.c}: Applied patches from Joris Van Damme
 	to avoid requirement for tiffiop.h inclusion in some applications. See
@@ -1418,14 +1422,14 @@
 
 	* tools/fax2tiff.c: Use the new functions in the code.
 
-2004-08-25  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Initialize arrays properly.
 
 	* tools/tiff2ps.c: Avoid zero division in setupPageState() function;
 	properly initialize array in PSDataBW().
 
-2004-08-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: More fixes for bug
 
@@ -1433,7 +1437,7 @@
 
 	from Ross Finlayson.
 
-2004-08-23  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps.c: Fixed problem with uninitialized values.
 
@@ -1444,7 +1448,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=590
 
-2004-08-20  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Applied patch from Ross Finlayson that checks
 	that the input file has compression, photometric interpretation,
@@ -1453,57 +1457,57 @@
 	* libtiff/tif_dirread.c: Fixed problem in TIFFReadDirectory() in the
 	code, responsible for tag data type checking.
 
-2004-08-19  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-19  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffiop.h, tif_dirinfo.c}: Fixed problem with the static
 	variable as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=593
 
-2004-08-16  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/ras2tiff.c: Fixed issue with missed big-endian checks as per
 	bug http://bugzilla.remotesensing.org/show_bug.cgi?id=586
 
-2004-08-01  Andrey Kiselev  <dron@remotesensing.org>
+2004-08-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_config.h.in, tif_config.h.vc}: config.h.in and
 	config.h.vc files renamed in the tif_config.h.in and tif_config.h.vc.
 
-2004-07-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-07-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_lzw.c: LZW compression code is merged back from the
 	separate package. All libtiff tools are updated to not advertise an
 	abcence of LZW support.
 
-2004-07-12  Andrey Kiselev  <dron@remotesensing.org>
+2004-07-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiffio.h: Revert thandle_t back to void* type.
 
-2004-07-11  Andrey Kiselev  <dron@remotesensing.org>
+2004-07-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_read.c, tif_tile.c, tif_strip.c}: Fixes in error
 	messages, as suggested by Bernd Herd.
 
-2004-07-03  Andrey Kiselev  <dron@remotesensing.org>
+2004-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Call TIFFError() instead of producing warnings
 	when setting custom tags by value. Reported by Eric Fieleke.
 
-2004-06-14  Andrey Kiselev  <dron@remotesensing.org>
+2004-06-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/bmp2tiff.c: Add missed RawsPerStrip setting.
 
-2004-06-08  Andrey Kiselev  <dron@remotesensing.org>
+2004-06-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/bmp2tiff.c: Added new utility to convert Windows BMP files
 	into TIFFs.
 
-2004-06-07  Andrey Kiselev  <dron@remotesensing.org>
+2004-06-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.7.0alpha released.
 
-2004-06-06  Andrey Kiselev  <dron@remotesensing.org>
+2004-06-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiff.h, tif_dirwrite.c, tif_fax3.c, tif_packbits.c,}: Get rid
 	of ugly 64-bit hacks, replace them with the clever (autoconf based )
@@ -1512,7 +1516,7 @@
 	* libtiff/tiffio.h: Define thandle_t as int, not void* (may cause
 	problems in 64-bit environment).
 
-2004-06-05  Andrey Kiselev  <dron@remotesensing.org>
+2004-06-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffset.c: tiffset now can set any libtiff supported tags.
 	Tags can be supplied by the mnemonic name or number.
@@ -1520,19 +1524,19 @@
 	* libtiff/{tiffio.h, tif_dir.h, tif_dirinfo.c,}: Added two new
 	functions TIFFFindFieldInfoByName() and TIFFFieldWithName().
 
-2004-05-27  Andrey Kiselev  <dron@remotesensing.org>
+2004-05-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_ojpeg.c: Fixed problem with duplicated SOI and SOF
 	markers as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=581
 
-2004-05-24  Andrey Kiselev  <dron@remotesensing.org>
+2004-05-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffsplit.c: Don't forget to copy Photometric
 	Interpretation tag.
 
-2004-05-20  Andrey Kiselev  <dron@remotesensing.org>
+2004-05-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_open.c, tiffio.h}: New function added:
 	TIFFIsBigEndian(). Function returns nonzero if given was file written
@@ -1553,46 +1557,46 @@
 
 	* tools/tiffcp.c: close output file on normal exit.
 
-2004-05-17  Andrey Kiselev  <dron@remotesensing.org>
+2004-05-17  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_fax3.c: Avoid reading CCITT compression options
 	if compression type mismatches. See
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=565
 
-2004-04-30  Andrey Kiselev  <dron@remotesensing.org>
+2004-04-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_strip.c: Never return 0 from the
 	TIFFNumberOfStrips().
 
-2004-04-29  Andrey Kiselev  <dron@remotesensing.org>
+2004-04-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Workaround for broken TIFF writers which
 	store single SampleFormat value for multisampled images. See
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=562
 
-2004-04-25  Andrey Kiselev  <dron@remotesensing.org>
+2004-04-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, libtiff/{tiff.h, config.h.in}: Added tests for int8,
 	int16 and int32 types to avoid complains on some compilers. Details at
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=39
 
-2004-04-20  Andrey Kiselev  <dron@remotesensing.org>
+2004-04-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Fixed problem with unaligned access as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=555
 
-2004-04-14  Andrey Kiselev  <dron@remotesensing.org>
+2004-04-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_write.c: Allow in-place updating of the compressed
 	images (don't work properly with all codecs). For details see GDAL bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=534
 
-2004-04-06  Andrey Kiselev  <dron@remotesensing.org>
+2004-04-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_jpeg.c: Workaround for wrong sampling factors used
 	in the Intergarph JPEG compressed TIFF images as per bug:
@@ -1604,7 +1608,7 @@
 	* libtiff/tif_open.c: close clientdata if TIFFClientOpen() fails
 	via bad2. 
 
-2004-03-26  Andrey Kiselev  <dron@remotesensing.org>
+2004-03-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Properly set Photometric Interpretation in case of
 	JPEG compression of grayscale images.
@@ -1612,11 +1616,11 @@
 	* tools/tiffcp.c: Don't emit warnings when Orientation tag does not
 	present in the input image.
 
-2004-03-19  Andrey Kiselev  <dron@remotesensing.org>
+2004-03-19  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* {many}: The first attempt to switch to autotools.
 
-2004-03-03  Andrey Kiselev  <dron@remotesensing.org>
+2004-03-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_open.c: Use dummy mmap/munmap functions in
 	TIFFClientOpen() when the appropriate client functions was not
@@ -1627,7 +1631,7 @@
 	* tools/ycbcr.c: fixed main() declaration as per:
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=513
 
-2004-02-26  Andrey Kiselev  <dron@remotesensing.org>
+2004-02-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffsplit.c: Copy JPEGTables tag contents for JPEG compressed 
 	images. Reported by Artem Mirolubov.
@@ -1642,7 +1646,7 @@
 	* libtiff/tif_codec.c: Fixed typo in TIFFInitPackBits name as per:
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=494
 
-2004-02-05  Andrey Kiselev  <dron@remotesensing.org>
+2004-02-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_fax3.c: Fixed problem with CCITT encoding modes as per
 	bug
@@ -1657,7 +1661,7 @@
 	TIFFRGBAImageOK, and TIFFNumberOfDirectories as suggested by 
 	Scott Reynolds. 
 
-2004-01-29  Andrey Kiselev  <dron@remotesensing.org>
+2004-01-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiff.h: Fixed tag definitions for TIFFTAG_YCLIPPATHUNITS
 	and TIFFTAG_INDEXED as per bug
@@ -1678,7 +1682,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=468
 
-2004-01-28  Andrey Kiselev  <dron@remotesensing.org>
+2004-01-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{libtiff.def, tif_close.c, tiffio.h, tif_open.c}: Separate
 	TIFFCleanup() from the TIFFClose() in order to fix the bug
@@ -1699,14 +1703,14 @@
 	should be declared as passcount=FALSE, but I don't want to change
 	that without a careful review. 
 
-2004-01-20  Andrey Kiselev  <dron@remotesensing.org>
+2004-01-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_write.c: Fixed reporting size of the buffer in case of
 	stripped image in TIFFWriteBufferSetup(). As per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=460
 
-2004-01-11  Andrey Kiselev  <dron@remotesensing.org>
+2004-01-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Incomplete cleanup in TIFFFreeDirectory(),
 	patch from Gerben Koopmans.
@@ -1714,12 +1718,12 @@
 	* libtiff/tif_dirread.c: Check field_passcount value before setting
 	the value of undefined type, patch from Gerben Koopmans.
 
-2004-01-02  Andrey Kiselev  <dron@remotesensing.org>
+2004-01-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Fixed problem with wrong Photometric setting for
 	non-RGB images.
 
-2003-12-31  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-31  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_win32.c: Fixed problem with _TIFFrealloc() when the NULL
 	pointer passed. Patch supplied by Larry Grill.
@@ -1727,21 +1731,21 @@
 	* libtiff/{tiff.h, tif_fax3.c}:Fixes for AMD 64 platform as
 	suggested by Jeremy C. Reed.
 
-2003-12-26  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.6.1 released.
 
-2003-12-24  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* config.guess, config.sub: Updated from the recent upstream.
 
-2003-12-22  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_color, tif_getimage.c, tiffio.h}, man/TIFFcolor.3t:
 	More cleanups in color conversion interface, added appropriate manual
 	page.
 
-2003-12-19  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-19  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_extension.c, tif_dirinfo.c, tiff.h}: Warnings fixed as
 	per bug
@@ -1759,19 +1763,19 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=120
 
-2003-12-07  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_getimage.c, tiffio.h}: Avoid warnings.
 
 	* libtiff/makefile.vc, tools/makefile.vc: Support for IJG JPEG
 	library.
 
-2003-12-06  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_getimage.c, tif_aux.c}: Read WhitePoint tag from the
 	file and properly use it for CIE Lab->RGB transform.
 
-2003-12-04  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_getimage.c, tif_color.c, tiffio.h}: YCbCr->RGB
 	conversion routines now in the tif_color.c module. New function
@@ -1779,7 +1783,7 @@
 
 	* libtiff/tif_dirwrite.c: Handle TIFF_IFD tag type correctly.
 
-2003-12-03  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_getimage.c, tif_color.c, tiffio.h}: Improvements in
 	CIE Lab conversion code. Start moving YCbCr stuff to the tif_color.c
@@ -1795,7 +1799,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=322
 
-2003-12-02  Andrey Kiselev  <dron@remotesensing.org>
+2003-12-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Fixed order of the parameters in TIFFError()
 	function calls as per bug
@@ -1806,7 +1810,7 @@
 
 	* tools/tiff2pdf.c:  Some bugs fixed.
 
-2003-11-27  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_luv.c: Fixed bug in 48-bit to 24-bit conversion routine,
 	reported by Antonio Scuri.
@@ -1820,7 +1824,7 @@
 
 	* /man/tiff2pdf.1:  File added to repository.
 
-2003-11-26  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* Makefile.in, /tools/{Makefile.in, makefile.vc}:
 	 Added support fpr tiff2pdf utility.
@@ -1829,11 +1833,11 @@
 
 	* /tools/tiff2pdf.c:  File added to repository.
 
-2003-11-22  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* /tools/raw2tiff.c: sqrtf() replaced with sqrt().
 
-2003-11-21  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* /tools/raw2tiff.c: #include <getopt.h> removed.
 
@@ -1850,7 +1854,7 @@
 	Added new function TIFFIsCODECConfigured(), suggested by Ross
 	Finlayson.
 
-2003-11-18  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-18  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirinfo.c: Implemented binary search in
 	_TIFFMergeFieldInfo(). Patch supplied by Ross Finlayson.
@@ -1863,12 +1867,12 @@
 	* tif_dirread.c: do not mark all anonymously defined tags to be 
 	IGNOREd.  
 
-2003-11-17  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-17  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* contrib/pds/{tif_pdsdirread.c, tif_pdsdirwrite.c}: Use
 	TIFFDataWidth() function insted of tiffDataWidth array.
 
-2003-11-16  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiff.h, tif_dirinfo.c}: Added support for IFD (13)
 	datatype, intruduced in "Adobe PageMaker TIFF Tech. Notes".
@@ -1877,7 +1881,7 @@
 
 	* Makefile.in: fixed missing backslash for tif_color.c in list.
 
-2003-11-13  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_color.c, tif_getimage.c, tiffio.h, Makefile.in}:
 	New color space conversion code: CIE L*a*b* 1976 images now supported
@@ -1885,7 +1889,7 @@
 	module tif_color.c. Eventually all color conversion functions should
 	be moved there.
 
-2003-11-12  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/{ras2tiff.c, rasterfile.h}: Properly determine SUN Rasterfiles
 	with the reverse byte order (it is reported by the magic header
@@ -1894,7 +1898,7 @@
 	* tools/raw2tiff.c, man/raw2tiff.1: Few improvements in correlation
 	calculation function. Guessing mechanics now documented in manual page.
 
-2003-11-11  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/raw2tiff.c: Implemented image size guessing using
 	correlation coefficient calculation between two neighbour lines.
@@ -1906,29 +1910,29 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=387
 
-2003-11-09  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* libtiff/tiffiop.h: New macros: TIFFmax, TIFFmin and TIFFrint.
 	
-2003-11-07  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffio.h, tif_strip.c}, man/{TIFFstrip.3t, libtiff.3t}:
 	Added TIFFRawStripSize() function as suggested by Chris Hanson.
 
-2003-11-03  Andrey Kiselev  <dron@remotesensing.org>
+2003-11-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_lzw.c, tif_fax3.c}: Proper support for update mode as
 	per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=424
 
-2003-10-29  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/libtiff.def: Added TIFFReadRGBAImageOriented.
 
 	* html/build.html: Added note about GNU make requirement.
 
-2003-10-25  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* Makefile.in: Fixes in using MAKEFLAGS as per bug
 
@@ -1937,21 +1941,21 @@
 	* port/install.sh.in: Option -p added to the mkdir command to create
 	all directory tree structure before installing.
 
-2003-10-18  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-18  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* /tools/tiff2ps.c: #include <strings.h> replaced with the
 	#include <string.h>.
 
-2003-10-16  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* Makefile.in: Add an absolute path to the test_pics.sh call.
 
-2003-10-12  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiffcomp.h: #define _BSDTYPES_DEFINED when defining BSD
 	typedefs.
 
-2003-10-09  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure, libtiff/{Makefile.in, mkversion.c}:
 	Relative buildings fixed.
@@ -1959,18 +1963,18 @@
 	* tools/Makefile.in: Added "-I../libtiff" to the tiffset building
 	rule.
 
-2003-10-07  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* Makefile.in: Added missed v3.6.0.html.
 
 	* libtiff/tiffio.h: Typo fixed: ORIENTATION_BOTTOMLEFT replaced with
 	ORIENTATION_BOTLEFT.
 
-2003-10-04  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* 3.6.0 final release.
 
-2003-10-03  Andrey Kiselev  <dron@remotesensing.org>
+2003-10-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_getimage.c, tiffio.h}, man/TIFFReadRGBAImage.3t: New
 	function TIFFReadRGBAImageOriented() implemented to retrieve raster
@@ -1988,7 +1992,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=404
 
-2003-09-30  Andrey Kiselev  <dron@remotesensing.org>
+2003-09-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Check field counter against number of fields
 	in order to fix
@@ -1999,27 +2003,27 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=342
 
-2003-09-25  Andrey Kiselev  <dron@remotesensing.org>
+2003-09-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tiffiop.h, tif_dirread.c, tif_dir.c, tif_open.c,
 	tif_close.c}: Store a list of opened IFD to prevent looping as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=383
 
-2003-09-23  Andrey Kiselev  <dron@remotesensing.org>
+2003-09-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: More fixes for	EstimateStripByteCounts(). See
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=358
 
-2003-08-21  Andrey Kiselev  <dron@remotesensing.org>
+2003-08-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffmedian.c: int declaration replaced with the uint32 to
 	support large images as per bug
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=382
 
-2003-08-12  Andrey Kiselev  <dron@remotesensing.org>
+2003-08-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
  	* libtiff/Makefile.in: Fixed problem with building in different
 	directory.
@@ -2029,7 +2033,7 @@
 	* libtiff/tif_dirwrite.c: More fixes for custom tags code
 	from Ashley Dreier.
 
-2003-08-07  Andrey Kiselev  <dron@remotesensing.org>
+2003-08-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps.c: Added page size setting when creating PS Level 2.
 	Patch submitted by Balatoni Denes (with corrections from Tom
@@ -2044,7 +2048,7 @@
 	* libtiff/tif_print.c: Fixed problem with float tags reading, support
 	for printing RATIONAL and BYTE tags added.
 
-2003-08-05  Andrey Kiselev  <dron@remotesensing.org>
+2003-08-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_lzw.c: Move LZW codec state block allocation back to
 	TIFFInitLZW(), because its initialization in LZWSetupDecode() cause
@@ -2079,7 +2083,7 @@
 	* tools/tiffsplit.c: increased the maximum number of pages that
 	can be split.  Patch provided by Andrew J. Montalenti.
 
-2003-07-11  Andrey Kiselev  <dron@remotesensing.org>
+2003-07-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/raw2tiff.c: Added option `-p' to explicitly select color
 	space of input image data. Closes
@@ -2093,11 +2097,11 @@
 	tif_packbits.c, tif_predict.c, tif_print.c, tif_swab.c, tif_thunder.c:
 	avoid casting warning at /W4. 
 
-2003-07-03  Andrey Kiselev  <dron@remotesensing.org>
+2003-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/thumbnail.c: Memory leak fixed as reported by Robert S. Kissel.
 
-2003-06-30  Andrey Kiselev  <dron@remotesensing.org>
+2003-06-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_pixarlog.c: Unused variables removed.
 
@@ -2122,7 +2126,7 @@
 	* libtiff/tif_dirread.c: Don't ignore custom fields that are
 	autodefined.  Not sure how this got to be like this.
 
-2003-06-18  Andrey Kiselev  <dron@remotesensing.org>
+2003-06-18  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* 3.6.0 Beta2 released.
 
@@ -2134,7 +2138,7 @@
 	`-z' option now can be used to set the number of reported different
 	bytes.
 	
-2003-06-09  Andrey Kiselev  <dron@remotesensing.org>
+2003-06-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c, man/tiffcp.1: Added possibility to specify value -1
 	to -r option to get the entire image as one strip. See
@@ -2143,7 +2147,7 @@
 
 	for details.
 
-2003-06-04  Andrey Kiselev  <dron@remotesensing.org>
+2003-06-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Set the correct RowsPerStrip and PageNumber
 	values as per bug
@@ -2156,29 +2160,29 @@
 	be a full height tile for tiled images.  Also changed error to just
 	be a warning.
 
-2003-05-25  Andrey Kiselev  <dron@remotesensing.org>
+2003-05-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/fax2tiff.c: Page numbering fixed, as per bug
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=341
 
-2003-05-20  Andrey Kiselev  <dron@remotesensing.org>
+2003-05-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* contrib/ojpeg/{Makefile.in, jdhuff.h, jinclude.h, ojpeg.c, README},
 	configure, Makefile.in:	Switched back to the old behaviour. Likely
 	better solution should be found for OJPEG support.
 
-2003-05-11  Andrey Kiselev  <dron@remotesensing.org>
+2003-05-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/mkversion.c: Fixed problem with wrong string size when
 	reading RELEASE-DATE file.
 
-2003-05-07  Andrey Kiselev  <dron@remotesensing.org>
+2003-05-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps.c: Fixed bug in Ascii85EncodeBlock() function: array
 	index was out of range.
 
-2003-05-06  Andrey Kiselev  <dron@remotesensing.org>
+2003-05-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* contrib/ojpeg/{Makefile.in, jdhuff.h, jinclude.h, ojpeg.c, README},
 	configure, Makefile.in:	Improved libtiff compilation with OJPEG
@@ -2189,7 +2193,7 @@
 	* libtiff/tif_aux.c: Properly handle TIFFTAG_PREDICTOR in
 	TIFFVGetFieldDefaulted() function.
 
-2003-05-05  Andrey Kiselev  <dron@remotesensing.org>
+2003-05-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/ppm2tiff.c: PPM header parser improved: now able to skip
 	comments.
@@ -2202,7 +2206,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=331
 
-2003-04-29  Andrey Kiselev  <dron@remotesensing.org>
+2003-04-29  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps.c, man/tiff2ps.1: Add ability to generate PS Level 3.
 	It basically allows one to use the /flateDecode filter for ZIP
@@ -2215,13 +2219,13 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=325
 
-2003-04-17  Andrey Kiselev  <dron@remotesensing.org>
+2003-04-17  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Removed additional check for StripByteCounts
 	due to problems with multidirectory images. Quality of error messages
 	improved.
 
-2003-04-16  Andrey Kiselev  <dron@remotesensing.org>
+2003-04-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Fixed problem with colorspace conversion for JPEG
 	encoded images. See bug entries
@@ -2237,7 +2241,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=320
 
-2003-03-12  Andrey Kiselev  <dron@remotesensing.org>
+2003-03-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/{fax2ps.c, fax2tiff.c, gif2tiff.c, pal2rgb.c, ppm2tiff.c,
 	ras2tiff.c, raw2tiff.c, rgb2ycbcr.c, thumbnail.c, tiff2bw.c,
@@ -2249,7 +2253,7 @@
 	* port/install.sh.in: Fixed problems with install producing paths
 	like ///usr/local/lib on cygwin.
 
-2003-02-27  Andrey Kiselev  <dron@remotesensing.org>
+2003-02-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/fax2tiff.c, man/fax2tiff.1: New switch (-X) to set width of
 	raw input page. Patch supplied by Julien Gaulmin. See
@@ -2266,15 +2270,15 @@
 	* libtiff/tif_lzw.c: fixed so that decoder state isn't allocated till
 	LZWSetupDecode().  Needed to read LZW files in "r+" mode.
 
-2003-02-07  Andrey Kiselev  <dron@remotesensing.org>
+2003-02-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/ppm2tiff.c: Fixed problem with too many arguments.
 
-2003-02-04  Andrey Kiselev  <dron@remotesensing.org>
+2003-02-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/raw2tiff.c: Memory leak fixed.
 
-2003-02-03  Andrey Kiselev  <dron@remotesensing.org>
+2003-02-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/fax2tiff.c, man/fax2tiff.1: Applied patch from Julien Gaulmin
 	(thanks, Julien!). More switches for fax2tiff tool for better control
@@ -2299,7 +2303,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=198
 
-2003-01-31  Andrey Kiselev  <dron@remotesensing.org>
+2003-01-31  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* config.guess, config.sub: Updated to recent upstream versions.
 
@@ -2307,7 +2311,7 @@
 
 	* cut 3.6.0 Beta release.
 
-2002-12-20  Andrey Kiselev  <dron@remotesensing.org>
+2002-12-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* tools/fax2ps.c, man/fax2ps.1: Page size was determined
 	in wrong way as per bug
@@ -2346,7 +2350,7 @@
 	* Makefile.in: added tif_extension.c to file list as per 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=218.
 
-2002-10-11  Andrey Kiselev  <dron@remotesensing.org>
+2002-10-11  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* configure, config.site, libtiff/{tif_unix.c, Makefile.in}: Fix for
 	large files (>2GiB) supporting. New option in the config.site:
@@ -2361,7 +2365,7 @@
 
 	* libtiff/Makefile.in: added direct rule for tiffvers.h for release.
 
-2002-10-07  Andrey Kiselev  <dron@remotesensing.org>
+2002-10-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 	* tools/tiff2ps.c, man/tiff2ps.1: Applied patch form Sebastian Eken
 	(thanks, Sebastian!). New switches:
 	-b # for a bottom margin of # inches
@@ -2392,7 +2396,7 @@
 
 	* libtiff/tiff.h: added COMPRESSION_JP2000.
 
-2002-10-02  Andrey Kiselev  <dron@remotesensing.org>
+2002-10-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Another fix for the fetching SBYTE arrays
 	by the TIFFFetchByteArray() function. Should finally resolve
@@ -2410,12 +2414,12 @@
 	* configure, libtiff/Makefile.in: Added SCO OpenServer 5.0.6 support
 	from John H. DuBois III.  
 
-2002-09-15  Andrey Kiselev  <dron@remotesensing.org>
+2002-09-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* Makefile.in, /man/{raw2tiff.1, Makefile.in, libtiff.3}: Added
 	manual page for raw2tiff(1) tool.
 	
-2002-09-12  Andrey Kiselev  <dron@remotesensing.org>
+2002-09-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* /libtiff/{tiffio.h, tif_dir.h}: TIFFDataWidth() declaration moved to
 	the tiffio.h header file.
@@ -2433,13 +2437,13 @@
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=80
 
-2002-09-02  Andrey Kiselev  <dron@remotesensing.org>
+2002-09-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* /libtiff/tif_dirread.c: Fixed problem with SBYTE type data fetching
 	in TIFFFetchByteArray(). Problem described at
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=52
 
-2002-08-22  Andrey Kiselev  <dron@remotesensing.org>
+2002-08-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* /libtiff/tif_dirinfo.c: Further additions to free custom fields
 	in _TIFFSetupFieldInfo() function.
@@ -2455,7 +2459,7 @@
 	LZWDecodeCompat(). Fixes
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=115
 
-2002-08-16  Andrey Kiselev  <dron@remotesensing.org>
+2002-08-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* /libtiff/{Makefile.vc, libtiff.def}:
 	Missed declarations added.
@@ -2475,7 +2479,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=169
 
-2002-08-10  Andrey Kiselev  <dron@remotesensing.org>
+2002-08-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* /tools/{raw2tiff.c, Makefile.in, Makefile.lcc, Makefile.vc}:
 	New tool: raw2tiff --- raw images to TIFF converter. No manual page yet.
@@ -2499,7 +2503,7 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=129
 
-2002-06-22  Andrey Kiselev  <dron@remotesensing.org>
+2002-06-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* /tools/tiff2ps.c: Added workaround for some software that may crash
 	when last strip of image contains fewer number of scanlines than
@@ -2507,7 +2511,7 @@
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=164
 	for explanation.
 
-2002-06-21  Andrey Kiselev  <dron@remotesensing.org>
+2002-06-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps, man/tiff2ps.1: New functionality for tiff2ps utility:
 	splitting long images in several pages. See
@@ -2526,44 +2530,44 @@
 
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=156
 
-2002-05-10  Andrey Kiselev  <dron@remotesensing.org>
+2002-05-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps: New commandline switches to override resolution
 	units obtained from the input file. Closes
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=131
 
-2002-04-26  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* libtiff/libtiff.def: Added missed declaration.
 	
-2002-04-22  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* tools/fax2tiff.c: Updated to reflect latest changes in libtiff.
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=125
 
-2002-04-20  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* libtiff/tif_open.c: Pointers to custom procedures
 	in TIFFClientOpen() are checked to be not NULL-pointers.
 	
-2002-04-18  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-18  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* libtiff/libtiff.def: Added missed declarations.
 
 	* libtiff/tif_pixarlog.c: Updated for using tif_tagmethods structure.
 
-2002-04-16  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_lzw.c: Additional checks for data integrity introduced.
 	Should finally close
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=100
 	
-2002-04-10  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps: Division by zero fixed.
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=88
 
-2002-04-09  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-09  Andrey Kiselev  <dron@ak4719.spb.edu>
 	
 	* libtiff/: tif_dirwrite.c, tif_write.c, tiffio.h:
 	TIFFCheckpointDirectory() routine added.
@@ -2572,7 +2576,7 @@
 	* man/: TIFFWriteDirectory.3t,  Makefile.in: Added description
 	for the new function.
 
-2002-04-08  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/: tif_codec.c, tif_compress.c, tiffiop.h: Introduced
 	additional members tif->tif_decodestatus and tif->tif_encodestatus
@@ -2590,7 +2594,7 @@
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=119 in case
 	of _cvs_00000-00.tif, _cvs_00000-01.tif and _cvs_00000-02.tif.
 
-2002-04-04  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/: tif_lzw.c: Assertions in LZWDecode and LZWDecodeCompat
 	replaced by warnings. Now libtiff should read corrupted LZW-compressed
@@ -2607,7 +2611,7 @@
 	for variable length FIELD_CUSTOM values.  Was int * but should be
 	u_short *.
 
-2002-04-01  Andrey Kiselev  <dron@remotesensing.org>
+2002-04-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/: tifcp.c: Added support for 'Orientation' tag in tiffcp
 	utility (at cpStripToTile routine).
@@ -2633,20 +2637,20 @@
 	CLIPPATH, XCLIPPATHUNITS, YCLIPPATHUNITS, OPIIMAGEID, OPIPROXY and
 	INDEXED. Added PHOTOMETRIC tag value from TIFF technote 4 ICCLAB (=9).
 
-2002-03-26  Andrey Kiselev  <dron@remotesensing.org>
+2002-03-26  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/: tif_getimage.c: TIFFReadRGBAStrip and TIFFReadRGBATile
 	now also uses TIFFRGBAImageOK before reading. This is additional fix
 	for http://bugzilla.remotesensing.org/show_bug.cgi?id=110
 
-2002-03-25  Andrey Kiselev  <dron@remotesensing.org>
+2002-03-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/: tif_getimage.c: Additional check for supported
 	codecs added in TIFFRGBAImageOK and TIFFReadRGBAImage now uses
 	TIFFRGBAImageOK before reading.
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=110
 
-2002-03-15  Andrey Kiselev  <dron@remotesensing.org>
+2002-03-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/: tif_dir.c, tif_dir.h, tif_dirinfo.c, tif_dirread.c,
 	tif_dirwrite.c: Added routine TIFFDataWidth for detrmining
@@ -2656,21 +2660,21 @@
 	won't work when tags with uknown sizes founded.
 	Closes http://bugzilla.remotesensing.org/show_bug.cgi?id=109
 
-2002-03-13  Andrey Kiselev  <dron@remotesensing.org>
+2002-03-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_getimage.c: Added support for correct handling
 	`Orientation' tag in gtTileContig. Should be added in other gt*
 	functions as well, but I have not images for testing yet. Partially
 	resolves http://bugzilla.remotesensing.org/show_bug.cgi?id=23
 
-2002-03-10  Andrey Kiselev  <dron@remotesensing.org>
+2002-03-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/: tif_dirinfo.c, tif_dirwrite.c: Added possibility to
 	read broken TIFFs with LONG type used for TIFFTAG_COMPRESSION,
 	TIFFTAG_BITSPERSAMPLE, TIFFTAG_PHOTOMETRIC.  Closes
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=99
 
-2002-03-08  Andrey Kiselev  <dron@remotesensing.org>
+2002-03-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/Makefile.in, tools/Makefile.in: Shared library will not
 	be stripped when installing, utility binaries will do.	Closes

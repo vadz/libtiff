@@ -25,7 +25,7 @@ dnl OF THIS SOFTWARE.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([LibTIFF Software], 3.8.0, [tiff@lists.maptools.org], tiff)
+AC_INIT([LibTIFF Software], 3.8.1, [tiff@lists.maptools.org], tiff)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(m4)
 AC_LANG(C)
@@ -41,7 +41,7 @@ dnl Versioning.
 dnl Don't fill the ALPHA_VERSION field, if not applicable.
 LIBTIFF_MAJOR_VERSION=3
 LIBTIFF_MINOR_VERSION=8
-LIBTIFF_MICRO_VERSION=0
+LIBTIFF_MICRO_VERSION=1
 LIBTIFF_ALPHA_VERSION=
 LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
 dnl This will be used with the 'make release' target
@@ -78,6 +78,7 @@ VL_PROG_CC_WARNINGS()
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_LIBTOOL
+AC_LIBTOOL_WIN32_DLL
 
 dnl Checks for libraries.
 AC_CHECK_LIB([c], [main])
