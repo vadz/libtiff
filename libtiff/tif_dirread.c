@@ -245,8 +245,8 @@ TIFFReadDirectory(TIFF* tif)
 		if (dp->tdir_tag < tif->tif_fieldinfo[fix]->field_tag) {
 			if (!diroutoforderwarning) {
 				TIFFWarningExt(tif->tif_clientdata, module,
-"%s: invalid TIFF directory; tags are not sorted in ascending order",
-                                            tif->tif_name);
+	"%s: invalid TIFF directory; tags are not sorted in ascending order",
+					       tif->tif_name);
 				diroutoforderwarning = 1;
 			}
 			fix = 0;			/* O(n^2) */
@@ -257,16 +257,19 @@ TIFFReadDirectory(TIFF* tif)
 		if (fix >= tif->tif_nfields ||
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
 
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExt(tif->tif_clientdata,
+						       module,
                         "%s: unknown field with tag %d (0x%x) encountered",
-                                tif->tif_name, dp->tdir_tag, dp->tdir_tag,
-                                dp->tdir_type);
+						       tif->tif_name,
+						       dp->tdir_tag,
+						       dp->tdir_tag,
+						       dp->tdir_type);
 
-                    TIFFMergeFieldInfo( tif,
-                                        _TIFFCreateAnonFieldInfo( tif,
-                                              dp->tdir_tag,
-					      (TIFFDataType) dp->tdir_type ),
-                                        1 );
+                    TIFFMergeFieldInfo(tif,
+                                       _TIFFCreateAnonFieldInfo(tif,
+						dp->tdir_tag,
+						(TIFFDataType) dp->tdir_type),
+				       1 );
                     fix = 0;
                     while (fix < tif->tif_nfields &&
                            tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
@@ -365,10 +368,6 @@ TIFFReadDirectory(TIFF* tif)
 		MissingRequired(tif, "ImageLength");
 		goto bad;
 	}
-	if (!TIFFFieldSet(tif, FIELD_PLANARCONFIG)) {
-		MissingRequired(tif, "PlanarConfiguration");
-		goto bad;
-	}
 	/* 
  	 * Setup appropriate structures (by strip or by tile)
 	 */
@@ -383,8 +382,9 @@ TIFFReadDirectory(TIFF* tif)
 		tif->tif_flags |= TIFF_ISTILED;
 	}
 	if (!td->td_nstrips) {
-		TIFFErrorExt(tif->tif_clientdata, module, "%s: cannot handle zero number of %s",
-			  tif->tif_name, isTiled(tif) ? "tiles" : "strips");
+		TIFFErrorExt(tif->tif_clientdata, module,
+			     "%s: cannot handle zero number of %s",
+			     tif->tif_name, isTiled(tif) ? "tiles" : "strips");
 		goto bad;
 	}
 	td->td_stripsperimage = td->td_nstrips;
@@ -392,7 +392,7 @@ TIFFReadDirectory(TIFF* tif)
 		td->td_stripsperimage /= td->td_samplesperpixel;
 	if (!TIFFFieldSet(tif, FIELD_STRIPOFFSETS)) {
 		MissingRequired(tif,
-		    isTiled(tif) ? "TileOffsets" : "StripOffsets");
+				isTiled(tif) ? "TileOffsets" : "StripOffsets");
 		goto bad;
 	}
 
