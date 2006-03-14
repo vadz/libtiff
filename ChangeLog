@@ -1,3 +1,9 @@
+2006-03-14  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dirread.c: Do not check the PlanarConfig tag presence
+	in TIFFReadDirectory, because it is always set at the start of
+	function and we allow TIFFs without that tag set.
+
 2005-03-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.8.1 released.
