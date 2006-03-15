@@ -1850,9 +1850,6 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 
 	assert(scheme == COMPRESSION_JPEG);
 
-	if ((tif->tif_flags & TIFF_CODERSETUP) == 0)
-		JPEGCleanup(tif);
-
 	/*
 	 * Allocate state block so tag methods have storage to record values.
 	 */
