@@ -1727,9 +1727,6 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	 * Make the rows hold at least one scanline, but fill specified amount
 	 * of data if possible.
 	 */
-#ifndef STRIP_SIZE_DEFAULT
-# define STRIP_SIZE_DEFAULT 8192
-#endif
 	if (rowbytes > STRIP_SIZE_DEFAULT) {
 		stripbytes = rowbytes;
 		rowsperstrip = 1;
@@ -1739,7 +1736,6 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	}
         else
             return;
-#undef STRIP_SIZE_DEFAULT
 
 	/* 
 	 * never increase the number of strips in an image

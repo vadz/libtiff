@@ -199,9 +199,6 @@ TIFFDefaultStripSize(TIFF* tif, uint32 request)
 	return (*tif->tif_defstripsize)(tif, request);
 }
 
-#ifndef STRIP_SIZE_DEFAULT
-# define STRIP_SIZE_DEFAULT 8192
-#endif
 uint32
 _TIFFDefaultStripSize(TIFF* tif, uint32 s)
 {
@@ -217,7 +214,6 @@ _TIFFDefaultStripSize(TIFF* tif, uint32 s)
 	}
 	return (s);
 }
-#undef STRIP_SIZE_DEFAULT
 
 /*
  * Return the number of bytes to read/write in a call to
