@@ -1,3 +1,16 @@
+2006-03-15  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/raw2tiff.c: Do not set RowsPerStrip larger than ImageLength.
+	As per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1110
+
+	* libtiff/tiffiop.h: dblparam_t typedef removed; GLOBALDATA macro
+	removed; move here the STRIP_SIZE_DEFAULT macro definition.
+
+	* libtiff/{tif_dirread.c, tif_strip.c}: Removed STRIP_SIZE_DEFAULT
+	macro definition.
+
+	* libtiff/tif_dir.c: Use double type instead of dblparam_t.
+
 2006-03-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Do not check the PlanarConfig tag presence
