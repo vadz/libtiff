@@ -226,16 +226,16 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		td->td_maxsamplevalue = (uint16) va_arg(ap, int);
 		break;
 	case TIFFTAG_SMINSAMPLEVALUE:
-		td->td_sminsamplevalue = (double) va_arg(ap, dblparam_t);
+		td->td_sminsamplevalue = va_arg(ap, double);
 		break;
 	case TIFFTAG_SMAXSAMPLEVALUE:
-		td->td_smaxsamplevalue = (double) va_arg(ap, dblparam_t);
+		td->td_smaxsamplevalue = va_arg(ap, double);
 		break;
 	case TIFFTAG_XRESOLUTION:
-		td->td_xresolution = (float) va_arg(ap, dblparam_t);
+		td->td_xresolution = (float) va_arg(ap, double);
 		break;
 	case TIFFTAG_YRESOLUTION:
-		td->td_yresolution = (float) va_arg(ap, dblparam_t);
+		td->td_yresolution = (float) va_arg(ap, double);
 		break;
 	case TIFFTAG_PLANARCONFIG:
 		v = va_arg(ap, uint32);
@@ -244,10 +244,10 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		td->td_planarconfig = (uint16) v;
 		break;
 	case TIFFTAG_XPOSITION:
-		td->td_xposition = (float) va_arg(ap, dblparam_t);
+		td->td_xposition = (float) va_arg(ap, double);
 		break;
 	case TIFFTAG_YPOSITION:
-		td->td_yposition = (float) va_arg(ap, dblparam_t);
+		td->td_yposition = (float) va_arg(ap, double);
 		break;
 	case TIFFTAG_RESOLUTIONUNIT:
 		v = va_arg(ap, uint32);
