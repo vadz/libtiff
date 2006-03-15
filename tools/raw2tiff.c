@@ -270,8 +270,13 @@ main(int argc, char* argv[])
 	}
 	bufsize = width * nbands * depth;
 	buf1 = (unsigned char *)_TIFFmalloc(bufsize);
-	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP,
-		     TIFFDefaultStripSize(out, rowsperstrip));
+
+	rowsperstrip = TIFFDefaultStripSize(out, rowsperstrip);
+	if (rowsperstrip > length) {
+		rowsperstrip = length;
+	}
+	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip );
+
 	lseek(fd, hdr_size, SEEK_SET);		/* Skip the file header */
 	for (row = 0; row < length; row++) {
 		switch(interleaving) {
