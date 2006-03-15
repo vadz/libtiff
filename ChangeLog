@@ -1,5 +1,8 @@
 2006-03-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* libtiff/tif_jpeg.c: Do not cleanup codec state in TIFFInitJPEG(). As
+	per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1119
+
 	* tools/raw2tiff.c: Do not set RowsPerStrip larger than ImageLength.
 	As per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1110
 
