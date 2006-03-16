@@ -1,3 +1,14 @@
+2006-03-16  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tiffiop.h: Added decalration for
+	_TIFFSetDefaultCompressionState().
+
+	* libtiff/{tif_jpeg.c, tif_fax3.c, tif_zip.c, tif_pixarlog.c,
+	tif_lzw.c, tif_luv.c}: Use _TIFFSetDefaultCompressionState() in all
+	codec cleanup methods. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1120
+
 2006-03-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_jpeg.c: Do not cleanup codec state in TIFFInitJPEG(). As
