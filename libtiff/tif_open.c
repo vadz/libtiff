@@ -29,8 +29,6 @@
  */
 #include "tiffiop.h"
 
-void _TIFFSetDefaultCompressionState(TIFF* tif);
-
 static const long typemask[13] = {
 	(long)0L,		/* TIFF_NOTYPE */
 	(long)0x000000ffL,	/* TIFF_BYTE */
