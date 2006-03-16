@@ -1004,16 +1004,18 @@ LZWCleanup(TIFF* tif)
 {
 	(void)TIFFPredictorCleanup(tif);
 
-	if (tif->tif_data) {
-		if (DecoderState(tif)->dec_codetab)
-			_TIFFfree(DecoderState(tif)->dec_codetab);
+	assert(tif->tif_data != 0);
 
-		if (EncoderState(tif)->enc_hashtab)
-			_TIFFfree(EncoderState(tif)->enc_hashtab);
+	if (DecoderState(tif)->dec_codetab)
+		_TIFFfree(DecoderState(tif)->dec_codetab);
 
-		_TIFFfree(tif->tif_data);
-		tif->tif_data = NULL;
-	}
+	if (EncoderState(tif)->enc_hashtab)
+		_TIFFfree(EncoderState(tif)->enc_hashtab);
+
+	_TIFFfree(tif->tif_data);
+	tif->tif_data = NULL;
+
+	_TIFFSetDefaultCompressionState(tif);
 }
 
 int

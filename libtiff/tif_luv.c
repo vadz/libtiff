@@ -1460,12 +1460,17 @@ LogLuvCleanup(TIFF* tif)
 {
 	LogLuvState* sp = (LogLuvState *)tif->tif_data;
 
-	if (sp) {
-		if (sp->tbuf)
-			_TIFFfree(sp->tbuf);
-		_TIFFfree(sp);
-		tif->tif_data = NULL;
-	}
+	assert(sp != 0);
+
+	tif->tif_tagmethods.vgetfield = sp->vgetparent;
+	tif->tif_tagmethods.vsetfield = sp->vsetparent;
+
+	if (sp->tbuf)
+		_TIFFfree(sp->tbuf);
+	_TIFFfree(sp);
+	tif->tif_data = NULL;
+
+	_TIFFSetDefaultCompressionState(tif);
 }
 
 static int
@@ -1592,7 +1597,8 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 
 	return (1);
 bad:
-	TIFFErrorExt(tif->tif_clientdata, module, "%s: No space for LogLuv state block", tif->tif_name);
+	TIFFErrorExt(tif->tif_clientdata, module,
+		     "%s: No space for LogLuv state block", tif->tif_name);
 	return (0);
 }
 #endif /* LOGLUV_SUPPORT */

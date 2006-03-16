@@ -1084,6 +1084,8 @@ Fax3Cleanup(TIFF* tif)
 		_TIFFfree(Fax3State(tif)->subaddress);
 	_TIFFfree(tif->tif_data);
 	tif->tif_data = NULL;
+
+	_TIFFSetDefaultCompressionState(tif);
 }
 
 #define	FIELD_BADFAXLINES	(FIELD_CODEC+0)

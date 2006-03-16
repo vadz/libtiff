@@ -1532,6 +1532,8 @@ JPEGCleanup(TIFF* tif)
 		_TIFFfree(sp->jpegtables);
 	_TIFFfree(tif->tif_data);	/* release local state */
 	tif->tif_data = NULL;
+
+	_TIFFSetDefaultCompressionState(tif);
 }
 
 static int

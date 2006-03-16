@@ -266,6 +266,8 @@ ZIPCleanup(TIFF* tif)
 	}
 	_TIFFfree(sp);
 	tif->tif_data = NULL;
+
+	_TIFFSetDefaultCompressionState(tif);
 }
 
 static int
