@@ -1,3 +1,11 @@
+2006-03-17  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/fax2tiff.c: Fixed wrong TIFFerror() invocations as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1125
+
+	* tools/fax2ps.c: Fixed reading the input stream from stdin as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1124
+
 2006-03-16  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tiffiop.h: Added decalration for
