@@ -1765,7 +1765,7 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 	tstrip_t stripcount=0;
 #endif
 #ifdef OJPEG_SUPPORT
-        uint32 k=0;
+        tsize_t k = 0;
 #endif
 
 	if(t2p->pdf_transcode == T2P_TRANSCODE_RAW){
@@ -3049,7 +3049,7 @@ int t2p_process_ojpeg_tables(T2P* t2p, TIFF* input){
 			t2p->t2p_error = T2P_ERR_ERROR;
 		return(0);
 	}
-	if(q_length < (64 * t2p->tiff_samplesperpixel)){
+	if(q_length < (64U * t2p->tiff_samplesperpixel)){
 		TIFFError(TIFF2PDF_MODULE, 
 			"Bad JPEGQTables field in OJPEG image %s", 
 			TIFFFileName(input));
@@ -3228,9 +3228,9 @@ int t2p_process_ojpeg_tables(T2P* t2p, TIFF* input){
 		ojpegdata[t2p->pdf_ojpegdatalength++]= i & 0xff;
 		if(proc==JPEGPROC_BASELINE){
 			ojpegdata[t2p->pdf_ojpegdatalength] |= 
-				( ( (i>(table_count-1)) ? (table_count-1) : i) << 4) & 0xf0;
+				( ( (i>(table_count-1U)) ? (table_count-1U) : i) << 4U) & 0xf0;
 			ojpegdata[t2p->pdf_ojpegdatalength++] |= 
-				( (i>(table_count-1)) ? (table_count-1) : i) & 0x0f;
+				( (i>(table_count-1U)) ? (table_count-1U) : i) & 0x0f;
 		} else {
 			ojpegdata[t2p->pdf_ojpegdatalength++] =  (i << 4) & 0xf0;
 		}
