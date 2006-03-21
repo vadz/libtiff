@@ -555,8 +555,8 @@ tiffcp(TIFF* in, TIFF* out)
 	if (compression == COMPRESSION_JPEG) {
 	    uint16 input_compression, input_photometric;
 
-            if ( TIFFGetField( in, TIFFTAG_COMPRESSION, &input_compression )
-                 && input_compression == COMPRESSION_JPEG ) {
+            if (TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression)
+                 && input_compression == COMPRESSION_JPEG) {
                 TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
             }
 	    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric)) {
@@ -635,9 +635,13 @@ tiffcp(TIFF* in, TIFF* out)
 		 * use the library default.
 		 */
 		if (rowsperstrip == (uint32) 0) {
-			if (!TIFFGetField(in, TIFFTAG_ROWSPERSTRIP,&rowsperstrip))
+			if (!TIFFGetField(in, TIFFTAG_ROWSPERSTRIP,
+					  &rowsperstrip)) {
 				rowsperstrip =
 					TIFFDefaultStripSize(out, rowsperstrip);
+			}
+			if (rowsperstrip > length)
+				rowsperstrip = length;
 		}
 		else if (rowsperstrip == (uint32) -1)
 			rowsperstrip = length;
