@@ -1,3 +1,21 @@
+2006-03-21  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/libtiff.def: Added missed exports as per bug
+	http://bugzilla.remotesensing.org/attachment.cgi?id=337
+
+	* contrib/addtiffo/Makefile.vc, libtiff/Makefile.vc, port/Makefile.vc,
+	tools/Makefile.vc: Makefiles improvements as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1128
+
+	* nmake.opt libtiff/{tif_config.h.vc, tif_unix.c, tiffio.h},
+	tools/{fax2ps.c, fax2tiff.c, tiff2pdf.c}: Fixed win32 I/O functions
+	usage as per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1127
+
+	* libtiff/tif_strip.c: Take subsampling in account when calculating
+	TIFFScanlineSize().
+
+	* tools/tiffcp.c: Do not set RowsPerStrip bigger than image length.
+
 2006-03-17  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/fax2tiff.c: Fixed wrong TIFFerror() invocations as per bug
