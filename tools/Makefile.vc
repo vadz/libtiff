@@ -46,4 +46,5 @@ tiffgt.exe:
 	$(CC) $(CFLAGS) tiffgt.c $(EXTRA_OBJ) $(LIBS)
 
 clean:
-	-del *.exe *.obj
+	-del *.exe
+	-del *.obj

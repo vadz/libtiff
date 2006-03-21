@@ -38,5 +38,6 @@ libport.lib:	$(OBJ)
 	$(AR) /out:libport.lib $(OBJ)
 
 clean:
-	-del *.obj *.lib
+	-del *.obj
+	-del *.lib
 
