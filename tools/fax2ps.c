@@ -383,7 +383,11 @@ main(int argc, char** argv)
 	while ((n = read(fileno(stdin), buf, sizeof (buf))) > 0)
 	    write(fileno(fd), buf, n);
 	lseek(fileno(fd), 0, SEEK_SET);
+#if defined(_WIN32) && defined(USE_WIN32_FILEIO)
+	tif = TIFFFdOpen(_get_osfhandle(fileno(fd)), "temp", "r");
+#else
 	tif = TIFFFdOpen(fileno(fd), "temp", "r");
+#endif
 	if (tif) {
 	    fax2ps(tif, npages, pages, "<stdin>");
 	    TIFFClose(tif);

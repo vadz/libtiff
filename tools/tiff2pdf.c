@@ -45,7 +45,7 @@
 #if defined(VMS)
 #define unlink remove
 #endif
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(USE_WIN32_FILEIO)
 #include <windows.h>
 #include <tchar.h>
 #define unlink DeleteFileA
@@ -666,10 +666,9 @@ int main(int argc, char** argv){
 			TIFFSeekFile(output, (toff_t) 0, SEEK_SET);
 		}
 	} else {
-#ifndef _WIN32
+#if !defined(_WIN32) || defined(AVOID_WIN32_FILEIO)
 		output = TIFFFdOpen((int)fileno(tmpfile()), "-", "w");
-#endif
-#ifdef _WIN32
+#else
 		{
 			TCHAR temppath[MAX_PATH];
 			TCHAR tempfile[MAX_PATH];
@@ -696,11 +695,10 @@ int main(int argc, char** argv){
 		output->tif_readproc=t2p_empty_readproc;
 		output->tif_seekproc=t2p_empty_seekproc;
 		output->tif_closeproc=t2p_empty_closeproc;
-#ifndef _WIN32		
+#if !defined(_WIN32) || defined(AVOID_WIN32_FILEIO)
 		close(output->tif_fd);
 		output->tif_fd=(int)fileno(stdout);
-#endif
-#ifdef _WIN32
+#else
 		CloseHandle((HANDLE) output->tif_fd);
 		output->tif_fd=(int)GetStdHandle(STD_OUTPUT_HANDLE);
 #endif

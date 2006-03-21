@@ -264,7 +264,11 @@ main(int argc, char* argv[])
 			    "%s: %s: Can not open\n", argv[0], argv[optind]);
 			continue;
 		}
+#if defined(_WIN32) && defined(USE_WIN32_FILEIO)
+                TIFFSetClientdata(faxTIFF, (thandle_t)_get_osfhandle(fileno(in)));
+#else
                 TIFFSetClientdata(faxTIFF, (thandle_t)fileno(in));
+#endif
 		TIFFSetFileName(faxTIFF, (const char*)argv[optind]);
 		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, xsize);
 		TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 1);
