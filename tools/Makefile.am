@@ -57,6 +57,10 @@ endif
 
 EXTRA_PROGRAMS = sgi2tiff sgisv ycbcr
 
+if HAVE_RPATH
+AM_LDFLAGS = $(LIBDIR)
+endif
+
 bmp2tiff_SOURCES = bmp2tiff.c
 bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 
