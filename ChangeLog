@@ -1,3 +1,10 @@
+2006-03-23  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff 3.8.2 released.
+
+	* tools/Makefile.am: Use runtime paths linker flags when rpath
+	option enabled.
+
 2006-03-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/libtiff.def: Added missed exports as per bug
