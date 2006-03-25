@@ -1,5 +1,9 @@
 2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
+	* libtiff/{tif_jpeg.c, tif_strip.c}: bugfix of tif_jpeg decode raw
+
+2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
 	* libtiff/tif_getimage.c: bugfix/rewrite of putcontig8bitYCbCr22tile
 
 	* libtiff/tif_getimage.c: added putcontig8bitYCbCr12tile

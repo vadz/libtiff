@@ -228,13 +228,13 @@ TIFFScanlineSize(TIFF* tif)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 	tsize_t scanline;
-	
+
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG) {
 		if (td->td_photometric == PHOTOMETRIC_YCBCR
 		    && !isUpSampled(tif)) {
 			uint16 ycbcrsubsampling[2];
 
-			TIFFGetField(tif, TIFFTAG_YCBCRSUBSAMPLING, 
+			TIFFGetField(tif, TIFFTAG_YCBCRSUBSAMPLING,
 				     ycbcrsubsampling + 0,
 				     ycbcrsubsampling + 1);
 
@@ -265,6 +265,24 @@ TIFFScanlineSize(TIFF* tif)
 	return ((tsize_t) TIFFhowmany8(multiply(tif, scanline,
 						td->td_bitspersample,
 						"TIFFScanlineSize")));
+}
+
+/*
+ * Some stuff depends on this older version of TIFFScanlineSize
+ * TODO: resolve this
+ */
+tsize_t
+TIFFOldScanlineSize(TIFF* tif)
+{
+	TIFFDirectory *td = &tif->tif_dir;
+	tsize_t scanline;
+
+	scanline = multiply (tif, td->td_bitspersample, td->td_imagewidth,
+			     "TIFFScanlineSize");
+	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
+		scanline = multiply (tif, scanline, td->td_samplesperpixel,
+				     "TIFFScanlineSize");
+	return ((tsize_t) TIFFhowmany8(scanline));
 }
 
 /*
