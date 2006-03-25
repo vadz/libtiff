@@ -54,27 +54,27 @@ TIFFCleanup(TIFF* tif)
 	TIFFFreeDirectory(tif);
 
 	if (tif->tif_dirlist)
-	    _TIFFfree(tif->tif_dirlist);
-	    
+		_TIFFfree(tif->tif_dirlist);
+
 	/* Clean up client info links */
 	while( tif->tif_clientinfo )
 	{
-	    TIFFClientInfoLink *link = tif->tif_clientinfo;
+		TIFFClientInfoLink *link = tif->tif_clientinfo;
 
-	    tif->tif_clientinfo = link->next;
-	    _TIFFfree( link->name );
-	    _TIFFfree( link );
+		tif->tif_clientinfo = link->next;
+		_TIFFfree( link->name );
+		_TIFFfree( link );
 	}
 
 	if (tif->tif_rawdata && (tif->tif_flags&TIFF_MYBUFFER))
-	    _TIFFfree(tif->tif_rawdata);
+		_TIFFfree(tif->tif_rawdata);
 	if (isMapped(tif))
-	    TIFFUnmapFileContents(tif, tif->tif_base, tif->tif_size);
+		TIFFUnmapFileContents(tif, tif->tif_base, tif->tif_size);
 
 	/* Clean up custom fields */
-	if (tif->tif_nfields > 0) 
+	if (tif->tif_nfields > 0)
 	{
-	    size_t  i;
+		size_t  i;
 
 	    for (i = 0; i < tif->tif_nfields; i++) 
 	    {

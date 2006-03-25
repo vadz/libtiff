@@ -118,26 +118,27 @@ TIFFReadDirectory(TIFF* tif)
 		if (!SeekOK(tif, tif->tif_diroff)) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%s: Seek error accessing TIFF directory",
-                            tif->tif_name);
+			    tif->tif_name);
 			return (0);
 		}
 		if (!ReadOK(tif, &dircount, sizeof (uint16))) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%s: Can not read TIFF directory count",
-                            tif->tif_name);
+			    tif->tif_name);
 			return (0);
 		}
 		if (tif->tif_flags & TIFF_SWAB)
 			TIFFSwabShort(&dircount);
-		dir = (TIFFDirEntry *)_TIFFCheckMalloc(tif, dircount,
-						       sizeof (TIFFDirEntry),
-						"to read TIFF directory");
+		dir = (TIFFDirEntry *)_TIFFCheckMalloc(tif,
+						  dircount,
+						  sizeof (TIFFDirEntry),
+						  "to read TIFF directory");
 		if (dir == NULL)
 			return (0);
 		if (!ReadOK(tif, dir, dircount*sizeof (TIFFDirEntry))) {
 			TIFFErrorExt(tif->tif_clientdata, module,
-                                  "%.100s: Can not read TIFF directory",
-                                  tif->tif_name);
+			    "%.100s: Can not read TIFF directory",
+			    tif->tif_name);
 			goto bad;
 		}
 		/*
@@ -150,26 +151,25 @@ TIFFReadDirectory(TIFF* tif)
 		if (off + sizeof (uint16) > tif->tif_size) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%s: Can not read TIFF directory count",
-                            tif->tif_name);
+							tif->tif_name);
 			return (0);
 		} else
 			_TIFFmemcpy(&dircount, tif->tif_base + off, sizeof (uint16));
 		off += sizeof (uint16);
 		if (tif->tif_flags & TIFF_SWAB)
 			TIFFSwabShort(&dircount);
-		dir = (TIFFDirEntry *)_TIFFCheckMalloc(tif, dircount,
-						       sizeof (TIFFDirEntry),
-						"to read TIFF directory");
+		dir = (TIFFDirEntry *)_TIFFCheckMalloc(tif,
+		    dircount, sizeof (TIFFDirEntry), "to read TIFF directory");
 		if (dir == NULL)
 			return (0);
 		if (off + dircount*sizeof (TIFFDirEntry) > tif->tif_size) {
 			TIFFErrorExt(tif->tif_clientdata, module,
-                                  "%s: Can not read TIFF directory",
-                                  tif->tif_name);
+			    "%s: Can not read TIFF directory",
+			    tif->tif_name);
 			goto bad;
 		} else {
 			_TIFFmemcpy(dir, tif->tif_base + off,
-				    dircount*sizeof (TIFFDirEntry));
+			    dircount*sizeof (TIFFDirEntry));
 		}
 		off += dircount* sizeof (TIFFDirEntry);
 		if (off + sizeof (uint32) <= tif->tif_size)
@@ -216,7 +216,7 @@ TIFFReadDirectory(TIFF* tif)
 	 *
 	 * It sure would have been nice if Aldus had really thought
 	 * this stuff through carefully.
-	 */ 
+	 */
 	for (dp = dir, n = dircount; n > 0; n--, dp++) {
 		if (tif->tif_flags & TIFF_SWAB) {
 			TIFFSwabArrayOfShort(&dp->tdir_tag, 2);
@@ -236,7 +236,7 @@ TIFFReadDirectory(TIFF* tif)
 
 		if (fix >= tif->tif_nfields || dp->tdir_tag == IGNORE)
 			continue;
-               
+
 		/*
 		 * Silicon Beach (at least) writes unordered
 		 * directory tags (violating the spec).  Handle
@@ -245,14 +245,14 @@ TIFFReadDirectory(TIFF* tif)
 		if (dp->tdir_tag < tif->tif_fieldinfo[fix]->field_tag) {
 			if (!diroutoforderwarning) {
 				TIFFWarningExt(tif->tif_clientdata, module,
-	"%s: invalid TIFF directory; tags are not sorted in ascending order",
-					       tif->tif_name);
+"%s: invalid TIFF directory; tags are not sorted in ascending order",
+					    tif->tif_name);
 				diroutoforderwarning = 1;
 			}
 			fix = 0;			/* O(n^2) */
 		}
 		while (fix < tif->tif_nfields &&
-		       tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
+		    tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
 			fix++;
 		if (fix >= tif->tif_nfields ||
 		    tif->tif_fieldinfo[fix]->field_tag != dp->tdir_tag) {
@@ -288,10 +288,10 @@ TIFFReadDirectory(TIFF* tif)
 		 */
 		fip = tif->tif_fieldinfo[fix];
 		while (dp->tdir_type != (unsigned short) fip->field_type
-                       && fix < tif->tif_nfields) {
+		    && fix < tif->tif_nfields) {
 			if (fip->field_type == TIFF_ANY)	/* wildcard */
 				break;
-                        fip = tif->tif_fieldinfo[++fix];
+			fip = tif->tif_fieldinfo[++fix];
 			if (fix >= tif->tif_nfields ||
 			    fip->field_tag != dp->tdir_tag) {
 				TIFFWarningExt(tif->tif_clientdata, module,
@@ -414,11 +414,11 @@ TIFFReadDirectory(TIFF* tif)
 			 * one value per sample.  Because of this, we
 			 * accept the tag if one value is supplied.
 			 *
-                         * The MinSampleValue, MaxSampleValue, BitsPerSample
-                         * DataType and SampleFormat tags are supposed to be
-                         * written as one value/sample, but some vendors
-                         * incorrectly write one value only -- so we accept
-                         * that as well (yech). Other vendors write correct
+			 * The MinSampleValue, MaxSampleValue, BitsPerSample
+			 * DataType and SampleFormat tags are supposed to be
+			 * written as one value/sample, but some vendors
+			 * incorrectly write one value only -- so we accept
+			 * that as well (yech). Other vendors write correct
 			 * value for NumberOfSamples, but incorrect one for
 			 * BitsPerSample and friends, and we will read this
 			 * too.
@@ -638,15 +638,15 @@ TIFFReadDirectory(TIFF* tif)
 
 	if (!TIFFFieldSet(tif, FIELD_COMPRESSION))
 		TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
-        /*
-         * Some manufacturers make life difficult by writing
+	/*
+	 * Some manufacturers make life difficult by writing
 	 * large amounts of uncompressed data as a single strip.
 	 * This is contrary to the recommendations of the spec.
-         * The following makes an attempt at breaking such images
+	 * The following makes an attempt at breaking such images
 	 * into strips closer to the recommended 8k bytes.  A
 	 * side effect, however, is that the RowsPerStrip tag
 	 * value may be changed.
-         */
+	 */
 	if (td->td_nstrips == 1 && td->td_compression == COMPRESSION_NONE &&
 	    (tif->tif_flags & (TIFF_STRIPCHOP|TIFF_ISTILED)) == TIFF_STRIPCHOP)
 		ChopUpSingleUncompressedStrip(tif);

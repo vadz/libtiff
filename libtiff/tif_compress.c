@@ -144,7 +144,7 @@ _TIFFSetDefaultCompressionState(TIFF* tif)
 	tif->tif_cleanup = _TIFFvoid;
 	tif->tif_defstripsize = _TIFFDefaultStripSize;
 	tif->tif_deftilesize = _TIFFDefaultTileSize;
-	tif->tif_flags &= ~TIFF_NOBITREV;
+	tif->tif_flags &= ~(TIFF_NOBITREV|TIFF_NOREADRAW);
 }
 
 int

@@ -1890,63 +1890,55 @@ DECLAREContigPutFunc(putcontig8bitYCbCr41tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
 {
-    uint32* cp1 = cp+w+toskew;
-    int32 incr = 2*toskew+w;
-
-    (void) y;
-    fromskew = (fromskew * 6) / 2;
-    if ((h & 1) == 0 && (w & 1) == 0) {
-        for (; h >= 2; h -= 2) {
-            x = w>>1;
-            do {
-                int32 Cb = pp[4];
-                int32 Cr = pp[5];
-
-                YCbCrtoRGB(cp [0], pp[0]);
-                YCbCrtoRGB(cp [1], pp[1]);
-                YCbCrtoRGB(cp1[0], pp[2]);
-                YCbCrtoRGB(cp1[1], pp[3]);
-
-                cp += 2, cp1 += 2;
-                pp += 6;
-            } while (--x);
-            cp += incr, cp1 += incr;
-            pp += fromskew;
-        }
-    } else {
-        while (h > 0) {
-            for (x = w; x > 0;) {
-                int32 Cb = pp[4];
-                int32 Cr = pp[5];
-                switch (x) {
-                default:
-                    switch (h) {
-                    default: YCbCrtoRGB(cp1[1], pp[ 3]); /* FALLTHROUGH */
-                    case 1:  YCbCrtoRGB(cp [1], pp[ 1]); /* FALLTHROUGH */
-                    }                                    /* FALLTHROUGH */
-                case 1:
-                    switch (h) {
-                    default: YCbCrtoRGB(cp1[0], pp[ 2]); /* FALLTHROUGH */
-                    case 1:  YCbCrtoRGB(cp [0], pp[ 0]); /* FALLTHROUGH */
-                    }                                    /* FALLTHROUGH */
-                }
-                if (x < 2) {
-                    cp += x; cp1 += x;
-                    x = 0;
-                }
-                else {
-                    cp += 2; cp1 += 2;
-                    x -= 2;
-                }
-                pp += 6;
-            }
-            if (h <= 2)
-                break;
-            h -= 2;
-            cp += incr, cp1 += incr;
-            pp += fromskew;
-        }
-    }
+	uint32* cp2;
+	fromskew = (fromskew / 2) * 6;
+	cp2 = cp+w+toskew;
+	while (h>=2) {
+		x = w;
+		while (x>=2) {
+			uint32 Cb = pp[4];
+			uint32 Cr = pp[5];
+			YCbCrtoRGB(cp[0], pp[0]);
+			YCbCrtoRGB(cp[1], pp[1]);
+			YCbCrtoRGB(cp2[0], pp[2]);
+			YCbCrtoRGB(cp2[1], pp[3]);
+			cp += 2;
+			cp2 += 2;
+			pp += 6;
+			x -= 2;
+		}
+		if (x==1) {
+			uint32 Cb = pp[4];
+			uint32 Cr = pp[5];
+			YCbCrtoRGB(cp[0], pp[0]);
+			YCbCrtoRGB(cp2[0], pp[2]);
+			cp ++ ;
+			cp2 ++ ;
+			pp += 6;
+		}
+		cp += toskew*2+w;
+		cp2 += toskew*2+w;
+		pp += fromskew;
+		h-=2;
+	}
+	if (h==1) {
+		x = w;
+		while (x>=2) {
+			uint32 Cb = pp[4];
+			uint32 Cr = pp[5];
+			YCbCrtoRGB(cp[0], pp[0]);
+			YCbCrtoRGB(cp[1], pp[1]);
+			cp += 2;
+			cp2 += 2;
+			pp += 6;
+			x -= 2;
+		}
+		if (x==1) {
+			uint32 Cb = pp[4];
+			uint32 Cr = pp[5];
+			YCbCrtoRGB(cp[0], pp[0]);
+		}
+	}
 }
 
 /*
@@ -1954,35 +1946,71 @@ DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
 {
-    (void) y;
-    fromskew = (fromskew * 4) / 2;
-    do {
-	x = w>>1;
+	(void) y;
+	fromskew = (fromskew * 4) / 2;
 	do {
-	    int32 Cb = pp[2];
-	    int32 Cr = pp[3];
+		x = w>>1;
+		do {
+			int32 Cb = pp[2];
+			int32 Cr = pp[3];
 
-	    YCbCrtoRGB(cp[0], pp[0]); 
-	    YCbCrtoRGB(cp[1], pp[1]);
+			YCbCrtoRGB(cp[0], pp[0]);
+			YCbCrtoRGB(cp[1], pp[1]);
 
-	    cp += 2;
-	    pp += 4;
-	} while (--x);
+			cp += 2;
+			pp += 4;
+		} while (--x);
 
-        if( (w&1) != 0 )
-        {
-	    int32 Cb = pp[2];
-	    int32 Cr = pp[3];
-            
-            YCbCrtoRGB(cp [0], pp[0]);
+		if( (w&1) != 0 )
+		{
+			int32 Cb = pp[2];
+			int32 Cr = pp[3];
 
-	    cp += 1;
-	    pp += 4;
-        }
+			YCbCrtoRGB(cp[0], pp[0]);
 
-	cp += toskew;
-	pp += fromskew;
-    } while (--h);
+			cp += 1;
+			pp += 4;
+		}
+
+		cp += toskew;
+		pp += fromskew;
+	} while (--h);
+}
+
+/*
+ * 8-bit packed YCbCr samples w/ 1,2 subsampling => RGB
+ */
+DECLAREContigPutFunc(putcontig8bitYCbCr12tile)
+{
+	uint32* cp2;
+	fromskew = (fromskew / 2) * 4;
+	cp2 = cp+w+toskew;
+	while (h>=2) {
+		x = w;
+		do {
+			uint32 Cb = pp[2];
+			uint32 Cr = pp[3];
+			YCbCrtoRGB(cp[0], pp[0]);
+			YCbCrtoRGB(cp2[0], pp[1]);
+			cp ++;
+			cp2 ++;
+			pp += 4;
+		} while (--x);
+		cp += toskew*2+w;
+		cp2 += toskew*2+w;
+		pp += fromskew;
+		h-=2;
+	}
+	if (h==1) {
+		x = w;
+		do {
+			uint32 Cb = pp[2];
+			uint32 Cr = pp[3];
+			YCbCrtoRGB(cp[0], pp[0]);
+			cp ++;
+			pp += 4;
+		} while (--x);
+	}
 }
 
 /*
@@ -1990,23 +2018,23 @@ DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
  */
 DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 {
-    (void) y;
-    fromskew *= 3;
-    do {
-        x = w; /* was x = w>>1; patched 2000/09/25 warmerda@home.com */ 
+	(void) y;
+	fromskew *= 3;
 	do {
-	    int32 Cb = pp[1];
-	    int32 Cr = pp[2];
+		x = w; /* was x = w>>1; patched 2000/09/25 warmerda@home.com */
+		do {
+			int32 Cb = pp[1];
+			int32 Cr = pp[2];
 
-	    YCbCrtoRGB(*cp++, pp[0]);
+			YCbCrtoRGB(*cp++, pp[0]);
 
-	    pp += 3;
-	} while (--x);
-	cp += toskew;
-	pp += fromskew;
-    } while (--h);
+			pp += 3;
+		} while (--x);
+		cp += toskew;
+		pp += fromskew;
+	} while (--h);
 }
-#undef	YCbCrtoRGB
+#undef YCbCrtoRGB
 
 static tileContigRoutine
 initYCbCrConversion(TIFFRGBAImage* img)
@@ -2042,6 +2070,8 @@ initYCbCrConversion(TIFFRGBAImage* img)
 	 * must always be <= horizontal subsampling; so
 	 * there are only a few possibilities and we just
 	 * enumerate the cases.
+	 * Joris: added support for the [1,2] case, nonetheless, to accomodate
+	 * some OJPEG files
 	 */
 	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
 	switch ((hs<<4)|vs) {
@@ -2050,6 +2080,7 @@ initYCbCrConversion(TIFFRGBAImage* img)
 		case 0x41: return (putcontig8bitYCbCr41tile);
 		case 0x22: return (putcontig8bitYCbCr22tile);
 		case 0x21: return (putcontig8bitYCbCr21tile);
+		case 0x12: return (putcontig8bitYCbCr12tile);
 		case 0x11: return (putcontig8bitYCbCr11tile);
 	}
 

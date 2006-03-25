@@ -1032,7 +1032,7 @@ TIFFDefaultDirectory(TIFF* tif)
 
 	size_t tiffFieldInfoCount;
 	const TIFFFieldInfo *tiffFieldInfo =
-		_TIFFGetFieldInfo(&tiffFieldInfoCount);
+	    _TIFFGetFieldInfo(&tiffFieldInfoCount);
 	_TIFFSetupFieldInfo(tif, tiffFieldInfo, tiffFieldInfoCount);
 
 	_TIFFmemset(td, 0, sizeof (*td));
@@ -1053,7 +1053,7 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_ycbcrsubsampling[1] = 2;
 	td->td_ycbcrpositioning = YCBCRPOSITION_CENTERED;
 	tif->tif_postdecode = _TIFFNoPostDecode;
-        tif->tif_foundfield = NULL;
+	tif->tif_foundfield = NULL;
 	tif->tif_tagmethods.vsetfield = _TIFFVSetField;
 	tif->tif_tagmethods.vgetfield = _TIFFVGetField;
 	tif->tif_tagmethods.printdir = NULL;
@@ -1074,12 +1074,12 @@ TIFFDefaultDirectory(TIFF* tif)
 	 */
 	tif->tif_flags &= ~TIFF_DIRTYDIRECT;
 
-        /*
-         * As per http://bugzilla.remotesensing.org/show_bug.cgi?id=19
-         * we clear the ISTILED flag when setting up a new directory.
-         * Should we also be clearing stuff like INSUBIFD?
-         */
-        tif->tif_flags &= ~TIFF_ISTILED;
+	/*
+	 * As per http://bugzilla.remotesensing.org/show_bug.cgi?id=19
+	 * we clear the ISTILED flag when setting up a new directory.
+	 * Should we also be clearing stuff like INSUBIFD?
+	 */
+	tif->tif_flags &= ~TIFF_ISTILED;
 
 	return (1);
 }
@@ -1087,59 +1087,59 @@ TIFFDefaultDirectory(TIFF* tif)
 static int
 TIFFAdvanceDirectory(TIFF* tif, uint32* nextdir, toff_t* off)
 {
-    static const char module[] = "TIFFAdvanceDirectory";
-    uint16 dircount;
-    if (isMapped(tif))
-    {
-        toff_t poff=*nextdir;
-        if (poff+sizeof(uint16) > tif->tif_size)
-        {
+	static const char module[] = "TIFFAdvanceDirectory";
+	uint16 dircount;
+	if (isMapped(tif))
+	{
+		toff_t poff=*nextdir;
+		if (poff+sizeof(uint16) > tif->tif_size)
+		{
 			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
-                      tif->tif_name);
-            return (0);
-        }
-        _TIFFmemcpy(&dircount, tif->tif_base+poff, sizeof (uint16));
-        if (tif->tif_flags & TIFF_SWAB)
-            TIFFSwabShort(&dircount);
-        poff+=sizeof (uint16)+dircount*sizeof (TIFFDirEntry);
-        if (off != NULL)
-            *off = poff;
-        if (((toff_t) (poff+sizeof (uint32))) > tif->tif_size)
-        {
+			    tif->tif_name);
+			return (0);
+		}
+		_TIFFmemcpy(&dircount, tif->tif_base+poff, sizeof (uint16));
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabShort(&dircount);
+		poff+=sizeof (uint16)+dircount*sizeof (TIFFDirEntry);
+		if (off != NULL)
+			*off = poff;
+		if (((toff_t) (poff+sizeof (uint32))) > tif->tif_size)
+		{
 			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
-                      tif->tif_name);
-            return (0);
-        }
-        _TIFFmemcpy(nextdir, tif->tif_base+poff, sizeof (uint32));
-        if (tif->tif_flags & TIFF_SWAB)
-            TIFFSwabLong(nextdir);
-        return (1);
-    }
-    else
-    {
-        if (!SeekOK(tif, *nextdir) ||
-            !ReadOK(tif, &dircount, sizeof (uint16))) {
+			    tif->tif_name);
+			return (0);
+		}
+		_TIFFmemcpy(nextdir, tif->tif_base+poff, sizeof (uint32));
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabLong(nextdir);
+		return (1);
+	}
+	else
+	{
+		if (!SeekOK(tif, *nextdir) ||
+		    !ReadOK(tif, &dircount, sizeof (uint16))) {
 			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
-                      tif->tif_name);
-            return (0);
-        }
-        if (tif->tif_flags & TIFF_SWAB)
-            TIFFSwabShort(&dircount);
-        if (off != NULL)
-            *off = TIFFSeekFile(tif,
-                                dircount*sizeof (TIFFDirEntry), SEEK_CUR);
-        else
-            (void) TIFFSeekFile(tif,
-                                dircount*sizeof (TIFFDirEntry), SEEK_CUR);
-        if (!ReadOK(tif, nextdir, sizeof (uint32))) {
+			    tif->tif_name);
+			return (0);
+		}
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabShort(&dircount);
+		if (off != NULL)
+			*off = TIFFSeekFile(tif,
+			    dircount*sizeof (TIFFDirEntry), SEEK_CUR);
+		else
+			(void) TIFFSeekFile(tif,
+			    dircount*sizeof (TIFFDirEntry), SEEK_CUR);
+		if (!ReadOK(tif, nextdir, sizeof (uint32))) {
 			TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
-                      tif->tif_name);
-            return (0);
-        }
-        if (tif->tif_flags & TIFF_SWAB)
-            TIFFSwabLong(nextdir);
-        return (1);
-    }
+			    tif->tif_name);
+			return (0);
+		}
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabLong(nextdir);
+		return (1);
+	}
 }
 
 /*

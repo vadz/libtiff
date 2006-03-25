@@ -100,31 +100,31 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 	 */
 	if (done)
 	{
-	    if (tif->tif_flags & TIFF_POSTENCODE) {
-		    tif->tif_flags &= ~TIFF_POSTENCODE;
-		    if (!(*tif->tif_postencode)(tif)) {
+		if (tif->tif_flags & TIFF_POSTENCODE) {
+			tif->tif_flags &= ~TIFF_POSTENCODE;
+			if (!(*tif->tif_postencode)(tif)) {
 				TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-				"Error post-encoding before directory write");
-			    return (0);
-		    }
-	    }
-	    (*tif->tif_close)(tif);		/* shutdown encoder */
-	    /*
-	     * Flush any data that might have been written
-	     * by the compression close+cleanup routines.
-	     */
-	    if (tif->tif_rawcc > 0 && !TIFFFlushData1(tif)) {
+				    "Error post-encoding before directory write");
+				return (0);
+			}
+		}
+		(*tif->tif_close)(tif);		/* shutdown encoder */
+		/*
+		 * Flush any data that might have been written
+		 * by the compression close+cleanup routines.
+		 */
+		if (tif->tif_rawcc > 0 && !TIFFFlushData1(tif)) {
 			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			"Error flushing data before directory write");
-		    return (0);
-	    }
-	    if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
-		    _TIFFfree(tif->tif_rawdata);
-		    tif->tif_rawdata = NULL;
-		    tif->tif_rawcc = 0;
-		    tif->tif_rawdatasize = 0;
-	    }
-	    tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP);
+			    "Error flushing data before directory write");
+			return (0);
+		}
+		if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
+			_TIFFfree(tif->tif_rawdata);
+			tif->tif_rawdata = NULL;
+			tif->tif_rawcc = 0;
+			tif->tif_rawdatasize = 0;
+		}
+		tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP);
 	}
 
 	td = &tif->tif_dir;
@@ -137,7 +137,7 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 	for (b = 0; b <= FIELD_LAST; b++)
 		if (TIFFFieldSet(tif, b) && b != FIELD_CUSTOM)
 			nfields += (b < FIELD_SUBFILETYPE ? 2 : 1);
-        nfields += td->td_customValueCount;
+	nfields += td->td_customValueCount;
 	dirsize = nfields * sizeof (TIFFDirEntry);
 	data = (char*) _TIFFmalloc(dirsize);
 	if (data == NULL) {
@@ -176,30 +176,30 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 	for (fi = 0, nfi = tif->tif_nfields; nfi > 0; nfi--, fi++) {
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[fi];
 
-                /*
-                ** For custom fields, we test to see if the custom field
-                ** is set or not.  For normal fields, we just use the
-                ** FieldSet test. 
-                */
-                if( fip->field_bit == FIELD_CUSTOM )
-                {
-                    int ci, is_set = FALSE;
+		/*
+		 * For custom fields, we test to see if the custom field
+		 * is set or not.  For normal fields, we just use the
+		 * FieldSet test.
+		*/
+		if( fip->field_bit == FIELD_CUSTOM )
+		{
+			int ci, is_set = FALSE;
 
-                    for( ci = 0; ci < td->td_customValueCount; ci++ )
-                        is_set |= (td->td_customValues[ci].info == fip);
+			for( ci = 0; ci < td->td_customValueCount; ci++ )
+				is_set |= (td->td_customValues[ci].info == fip);
 
-                    if( !is_set )
-                        continue;
-                }
+			if( !is_set )
+				continue;
+		}
 		else if (!FieldSet(fields, fip->field_bit))
-                    continue;
+			continue;
 
 
-                /*
-                ** Handle other fields.
-                */
+		/*
+		 * Handle other fields.
+		 */
 		switch (fip->field_bit)
-                {
+		{
 		case FIELD_STRIPOFFSETS:
 			/*
 			 * We use one field bit for both strip and tile
@@ -234,8 +234,7 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 			dir->tdir_tag = (uint16) tag;
 			dir->tdir_type = (uint16) TIFF_LONG;
 			dir->tdir_count = (uint32) td->td_nstrips;
-			if (!TIFFWriteLongArray(tif, dir,
-						td->td_stripbytecount))
+			if (!TIFFWriteLongArray(tif, dir, td->td_stripbytecount))
 				goto bad;
 			break;
 		case FIELD_ROWSPERSTRIP:
@@ -346,8 +345,8 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		}
 		dir++;
                 
-                if( fip->field_bit != FIELD_CUSTOM )
-                    ResetFieldBit(fields, fip->field_bit);
+		if( fip->field_bit != FIELD_CUSTOM )
+			ResetFieldBit(fields, fip->field_bit);
 	}
 
 	/*

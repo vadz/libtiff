@@ -45,7 +45,7 @@ DumpModeEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
 		if (tif->tif_rawcc + n > tif->tif_rawdatasize)
 			n = tif->tif_rawdatasize - tif->tif_rawcc;
 
-                assert( n > 0 );
+		assert( n > 0 );
                 
 		/*
 		 * Avoid copy if client has setup raw

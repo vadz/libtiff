@@ -198,7 +198,7 @@ TIFFClientOpen(
 	 */
 	tif->tif_flags = FILLORDER_MSB2LSB;
 	if (m == O_RDONLY )
-            tif->tif_flags |= TIFF_MAPPED;
+		tif->tif_flags |= TIFF_MAPPED;
 
 #ifdef STRIPCHOP_DEFAULT
 	if (m == O_RDONLY || m == O_RDWR)
@@ -398,7 +398,7 @@ TIFFClientOpen(
 		TIFFErrorExt(tif->tif_clientdata, name,
 		    "Not a TIFF file, bad version number %d (0x%x)",
 		    tif->tif_header.tiff_version,
-		    tif->tif_header.tiff_version); 
+		    tif->tif_header.tiff_version);
 		goto bad;
 	}
 	tif->tif_flags |= TIFF_MYBUFFER;
