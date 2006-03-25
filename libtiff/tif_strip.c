@@ -121,12 +121,12 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 		 * horizontal/vertical subsampling area include
 		 * YCbCr data for the extended image.
 		 */
-                uint16 ycbcrsubsampling[2];
-                tsize_t w, scanline, samplingarea;
+		uint16 ycbcrsubsampling[2];
+		tsize_t w, scanline, samplingarea;
 
-                TIFFGetField( tif, TIFFTAG_YCBCRSUBSAMPLING, 
-                              ycbcrsubsampling + 0, 
-                              ycbcrsubsampling + 1 );
+		TIFFGetField( tif, TIFFTAG_YCBCRSUBSAMPLING,
+			      ycbcrsubsampling + 0,
+			      ycbcrsubsampling + 1 );
 
 		samplingarea = ycbcrsubsampling[0]*ycbcrsubsampling[1];
 		if (samplingarea == 0) {
@@ -283,6 +283,57 @@ TIFFOldScanlineSize(TIFF* tif)
 		scanline = multiply (tif, scanline, td->td_samplesperpixel,
 				     "TIFFScanlineSize");
 	return ((tsize_t) TIFFhowmany8(scanline));
+}
+
+/*
+ * Return the number of bytes to read/write in a call to
+ * one of the scanline-oriented i/o routines.  Note that
+ * this number may be 1/samples-per-pixel if data is
+ * stored as separate planes.
+ * The ScanlineSize in case of YCbCrSubsampling is defined as the
+ * strip size divided by the strip height, i.e. the size of a pack of vertical
+ * subsampling lines divided by vertical subsampling. It should thus make
+ * sense when multiplied by a multiple of vertical subsampling.
+ * Some stuff depends on this newer version of TIFFScanlineSize
+ * TODO: resolve this
+ */
+tsize_t
+TIFFNewScanlineSize(TIFF* tif)
+{
+	TIFFDirectory *td = &tif->tif_dir;
+	tsize_t scanline;
+
+	if (td->td_planarconfig == PLANARCONFIG_CONTIG) {
+		if (td->td_photometric == PHOTOMETRIC_YCBCR
+		    && !isUpSampled(tif)) {
+			uint16 ycbcrsubsampling[2];
+
+			TIFFGetField(tif, TIFFTAG_YCBCRSUBSAMPLING,
+				     ycbcrsubsampling + 0,
+				     ycbcrsubsampling + 1);
+
+			if (ycbcrsubsampling[0]*ycbcrsubsampling[1] == 0) {
+				TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+					     "Invalid YCbCr subsampling");
+				return 0;
+			}
+
+			return((tsize_t) ((((td->td_imagewidth+ycbcrsubsampling[0]-1)
+					    /ycbcrsubsampling[0])
+					   *(ycbcrsubsampling[0]*ycbcrsubsampling[1]+2)
+					   *td->td_bitspersample+7)
+					  /8)/ycbcrsubsampling[1]);
+
+		} else {
+			scanline = multiply(tif, td->td_imagewidth,
+					    td->td_samplesperpixel,
+					    "TIFFScanlineSize");
+		}
+	} else
+		scanline = td->td_imagewidth;
+	return ((tsize_t) TIFFhowmany8(multiply(tif, scanline,
+						td->td_bitspersample,
+						"TIFFScanlineSize")));
 }
 
 /*

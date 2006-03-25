@@ -1,5 +1,15 @@
 2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
+	* libtiff/tif_jpeg.c: strip size related bugfix in encode raw
+
+	* libtiff/tif_strip.c: temporarilly added two new versions of
+	  - TIFFNewScanlineSize: proposed new version, after all related
+	    issues and side-effects are sorted out
+	  - TIFFOldScanlineSize: old version, from prior to 2006-03-21 change
+	This needs further sorting out.
+
+2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
 	* contrib/addtiffo/tif_ovrcache.c: bugfix to correctly pass size
 	of last truncated strip data to TIFFWriteEncodedStrip
 

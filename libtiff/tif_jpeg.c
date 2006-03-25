@@ -1049,7 +1049,8 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 
 			sp->scancount ++;
 			tif->tif_row += sp->v_sampling;
-			/* increment/decrement of buf and cc is still incorrect, but should not matter */
+			/* increment/decrement of buf and cc is still incorrect, but should not matter
+			 * TODO: resolve this */
 			buf += sp->bytesperline;
 			cc -= sp->bytesperline;
 			nrows -= sp->v_sampling;
@@ -1198,9 +1199,9 @@ JPEGSetupEncode(TIFF* tif)
         /* BITS_IN_JSAMPLE now permits 8 and 12 --- dgilbert */
 	if (td->td_bitspersample != 8 && td->td_bitspersample != 12) 
 #else
-	if (td->td_bitspersample != BITS_IN_JSAMPLE ) 
+	if (td->td_bitspersample != BITS_IN_JSAMPLE )
 #endif
-        {
+	{
 		TIFFErrorExt(tif->tif_clientdata, module, "BitsPerSample %d not allowed for JPEG",
 			  (int) td->td_bitspersample);
 		return (0);
@@ -1278,7 +1279,7 @@ JPEGPreEncode(TIFF* tif, tsample_t s)
 		segment_height = td->td_imagelength - tif->tif_row;
 		if (segment_height > td->td_rowsperstrip)
 			segment_height = td->td_rowsperstrip;
-		sp->bytesperline = TIFFScanlineSize(tif);
+		sp->bytesperline = TIFFOldScanlineSize(tif);
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE && s > 0) {
 		/* for PC 2, scale down the strip/tile size
@@ -1416,18 +1417,25 @@ JPEGEncodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 	int clumpoffset, ci, xpos, ypos;
 	jpeg_component_info* compptr;
 	int samples_per_clump = sp->samplesperclump;
+	tsize_t bytesperclumpline;
 
 	(void) s;
 	assert(sp != NULL);
-	/* data is expected to be supplied in multiples of a scanline */
-	nrows = cc / sp->bytesperline;
-	if (cc % sp->bytesperline)
+	/* data is expected to be supplied in multiples of a clumpline */
+	/* a clumpline is equivalent to v_sampling desubsampled scanlines */
+	/* TODO: the following calculation of bytesperclumpline, should substitute calculation of sp->bytesperline, except that it is per v_sampling lines */
+	bytesperclumpline = (((sp->cinfo.c.image_width+sp->h_sampling-1)/sp->h_sampling)
+			     *(sp->h_sampling*sp->v_sampling+2)*sp->cinfo.c.data_precision+7)
+			    /8;
+
+	nrows = ( cc / bytesperclumpline ) * sp->v_sampling;
+	if (cc % bytesperclumpline)
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name, "fractional scanline discarded");
 
 	/* Cb,Cr both have sampling factors 1, so this is correct */
 	clumps_per_line = sp->cinfo.c.comp_info[1].downsampled_width;
 
-	while (nrows-- > 0) {
+	while (nrows > 0) {
 		/*
 		 * Fastest way to separate the data is to make one pass
 		 * over the scanline for each row of each component.
@@ -1472,9 +1480,9 @@ JPEGEncodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 				return (0);
 			sp->scancount = 0;
 		}
-		if (nrows > 0)
-			tif->tif_row++;
+		tif->tif_row += sp->v_sampling;
 		buf += sp->bytesperline;
+		nrows -= sp->v_sampling;
 	}
 	return (1);
 }
@@ -1703,7 +1711,6 @@ JPEGVGetField(TIFF* tif, ttag_t tag, va_list ap)
 		case TIFFTAG_YCBCRSUBSAMPLING:
 			JPEGFixupTestSubsampling( tif );
 			return (*sp->vgetparent)(tif, tag, ap);
-			break;
 		case TIFFTAG_FAXRECVPARAMS:
 			*va_arg(ap, uint32*) = sp->recvparams;
 			break;
