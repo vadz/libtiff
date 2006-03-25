@@ -1,5 +1,10 @@
 2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
+	* contrib/addtiffo/tif_ovrcache.c: bugfix to correctly pass size
+	of last truncated strip data to TIFFWriteEncodedStrip
+
+2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
 	* libtiff/{tif_jpeg.c, tif_strip.c}: bugfix of tif_jpeg decode raw
 
 2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
