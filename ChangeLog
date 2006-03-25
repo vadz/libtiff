@@ -1,3 +1,12 @@
+2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* tif_getimage.c: bugfix/rewrite of putcontig8bitYCbCr22tile
+
+	* tif_getimage.c: added putcontig8bitYCbCr12tile
+
+	* tif_read.c: added support for new TIFF_NOREADRAW flag to prepare
+	the path for new tif_ojpeg.c
+
 2006-03-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.8.2 released.
