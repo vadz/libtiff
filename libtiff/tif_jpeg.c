@@ -1545,11 +1545,44 @@ JPEGCleanup(TIFF* tif)
 	_TIFFSetDefaultCompressionState(tif);
 }
 
+static void 
+JPEGResetUpsampled( TIFF* tif )
+{
+    JPEGState* sp = JState(tif);
+    TIFFDirectory* td = &tif->tif_dir;
+
+    /*
+     * Mark whether returned data is up-sampled or not
+     * so TIFFStripSize and TIFFTileSize return values
+     * that reflect the true amount of data.
+     */
+    tif->tif_flags &= ~TIFF_UPSAMPLED;
+    if (td->td_planarconfig == PLANARCONFIG_CONTIG) {
+        if (td->td_photometric == PHOTOMETRIC_YCBCR &&
+            sp->jpegcolormode == JPEGCOLORMODE_RGB) {
+            tif->tif_flags |= TIFF_UPSAMPLED;
+        } else {
+#ifdef notdef
+            if (td->td_ycbcrsubsampling[0] != 1 ||
+                td->td_ycbcrsubsampling[1] != 1)
+                ; /* XXX what about up-sampling? */
+#endif
+        }
+    }
+
+    /*
+     * Must recalculate cached tile size
+     * in case sampling state changed.
+     *
+     * Should we really be doing this now if image size isn't set? 
+     */
+    tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;
+}
+
 static int
 JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 {
 	JPEGState* sp = JState(tif);
-	TIFFDirectory* td = &tif->tif_dir;
 	uint32 v32;
 
 	assert(sp != NULL);
@@ -1571,34 +1604,21 @@ JPEGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		return (1);			/* pseudo tag */
 	case TIFFTAG_JPEGCOLORMODE:
 		sp->jpegcolormode = va_arg(ap, int);
-		/*
-		 * Mark whether returned data is up-sampled or not
-		 * so TIFFStripSize and TIFFTileSize return values
-		 * that reflect the true amount of data.
-		 */
-		tif->tif_flags &= ~TIFF_UPSAMPLED;
-		if (td->td_planarconfig == PLANARCONFIG_CONTIG) {
-		    if (td->td_photometric == PHOTOMETRIC_YCBCR &&
-		      sp->jpegcolormode == JPEGCOLORMODE_RGB) {
-			tif->tif_flags |= TIFF_UPSAMPLED;
-		    } else {
-			if (td->td_ycbcrsubsampling[0] != 1 ||
-			    td->td_ycbcrsubsampling[1] != 1)
-			    ; /* XXX what about up-sampling? */
-		    }
-		}
-		/*
-		 * Must recalculate cached tile size
-		 * in case sampling state changed.
-		 */
-		tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;
+                JPEGResetUpsampled( tif );
 		return (1);			/* pseudo tag */
+	case TIFFTAG_PHOTOMETRIC:
+        {
+                int ret_value = (*sp->vsetparent)(tif, tag, ap);
+                JPEGResetUpsampled( tif );
+                return ret_value;
+        }
 	case TIFFTAG_JPEGTABLESMODE:
 		sp->jpegtablesmode = va_arg(ap, int);
 		return (1);			/* pseudo tag */
 	case TIFFTAG_YCBCRSUBSAMPLING:
                 /* mark the fact that we have a real ycbcrsubsampling! */
 		sp->ycbcrsampling_fetched = 1;
+                /* should we be recomputing upsampling info here? */
 		return (*sp->vsetparent)(tif, tag, ap);
 	case TIFFTAG_FAXRECVPARAMS:
 		sp->recvparams = va_arg(ap, uint32);

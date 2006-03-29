@@ -1,3 +1,10 @@
+2006-03-29  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: JPEGVSetField() so that altering the photometric
+	interpretation causes the "upsampled" flag to be recomputed.  Fixes
+	peculiar bug where photometric flag had to be set before jpegcolormode
+	flag.
+
 2006-03-25  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/tif_jpeg.c: strip size related bugfix in encode raw
