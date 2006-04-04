@@ -10,7 +10,7 @@
    The code is carefully crafted to robustly read all gathered JPEG-in-TIFF
    testfiles, and anticipate as much as possible all other... But still, it may
    fail on some. If you encounter problems, please report them on the TIFF
-   mailing list and/or to Joris Van Damme <info@awaresystems.be>
+   mailing list and/or to Joris Van Damme <info@awaresystems.be>.
 
    Please read the file called "TIFF Technical Note #2" if you need to be
    convinced this compression scheme is bad and breaks TIFF. That document
@@ -25,7 +25,7 @@
    the LibJpeg library. This version no longer requires that. Remember to
    remove the hack if you update from the old version.
 
-   Copyright (c) Joris Van Damme
+   Copyright (c) Joris Van Damme <info@awaresystems.be>
    Copyright (c) AWare Systems <http://www.awaresystems.be/>
 
    The licence agreement for this file is the same as the rest of the LibTiff
@@ -55,6 +55,8 @@
  * 	libjpeg, with longjump stuff, are encapsulated in dedicated functions. When
  * 	JPEG_ENCAP_EXTERNAL is defined, these encapsulating functions are declared external
  * 	to this unit, and can be defined elsewhere to use stuff other then longjump.
+ * 	The default mode, without JPEG_ENCAP_EXTERNAL, implements the call encapsulators
+ * 	here, internally, with normal longjump.
  * SETJMP, LONGJMP, JMP_BUF: On some machines/environments a longjump equivalent is
  * 	conviniently available, but still it may be worthwhile to use _setjmp or sigsetjmp
  * 	in place of plain setjmp. These macros will make it easier. It is useless
@@ -108,11 +110,12 @@ static const TIFFFieldInfo ojpeg_field_info[] = {
 	{TIFFTAG_JPEGRESTARTINTERVAL,1,1,TIFF_SHORT,FIELD_OJPEG_JPEGRESTARTINTERVAL,FALSE,FALSE,"JpegRestartInterval"},
 };
 
-#include "jpeglib.h"
-#include "jerror.h"
 #ifndef LIBJPEG_ENCAP_EXTERNAL
 #include <setjmp.h>
 #endif
+
+#include "jpeglib.h"
+#include "jerror.h"
 
 typedef struct jpeg_error_mgr jpeg_error_mgr;
 typedef struct jpeg_common_struct jpeg_common_struct;
@@ -305,9 +308,9 @@ static void jpeg_encap_unwind(TIFF* tif);
 static void OJPEGLibjpegJpegErrorMgrOutputMessage(jpeg_common_struct* cinfo);
 static void OJPEGLibjpegJpegErrorMgrErrorExit(jpeg_common_struct* cinfo);
 static void OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo);
-static uint8 OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo);
+static boolean OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo);
 static void OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_bytes);
-static uint8 OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired);
+static boolean OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired);
 static void OJPEGLibjpegJpegSourceMgrTermSource(jpeg_decompress_struct* cinfo);
 
 int
@@ -654,6 +657,7 @@ static int
 OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
+	(void)s;
 	if (sp->libjpeg_jpeg_query_style==0)
 	{
 		if (OJPEGDecodeRaw(tif,buf,cc)==0)
@@ -2183,6 +2187,8 @@ OJPEGWriteStreamCompressed(TIFF* tif, void** mem, uint32* len)
 			case osibsEof:
 				sp->out_state=ososEoi;
 				break;
+			default:
+				break;
 		}
 	}
 	return(1);
@@ -2286,7 +2292,7 @@ OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo)
 	(void)cinfo;
 }
 
-static uint8
+static boolean
 OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo)
 {
 	TIFF* tif=(TIFF*)cinfo->client_data;
@@ -2312,7 +2318,7 @@ OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_b
 	jpeg_encap_unwind(tif);
 }
 
-static uint8
+static boolean
 OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired)
 {
 	TIFF* tif=(TIFF*)cinfo->client_data;
