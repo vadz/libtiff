@@ -58,14 +58,15 @@ typedef	struct tiff TIFF;
  *     32-bit file offsets being the most important, and to ensure
  *     that it is unsigned, rather than signed.
  */
-typedef	uint32 ttag_t;		/* directory tag */
-typedef	uint16 tdir_t;		/* directory index */
-typedef	uint16 tsample_t;	/* sample number */
-typedef	uint32 tstrip_t;	/* strip number */
-typedef uint32 ttile_t;		/* tile number */
-typedef	int32 tsize_t;		/* i/o size in bytes */
-typedef	void* tdata_t;		/* image data ref */
-typedef	uint32 toff_t;		/* file offset */
+typedef uint32 ttag_t;          /* directory tag */
+typedef uint16 tdir_t;          /* directory index */
+typedef uint16 tsample_t;       /* sample number */
+typedef uint32 tstrile_t;       /* strip or tile number */
+typedef tstrile_t tstrip_t;     /* strip number */
+typedef tstrile_t ttile_t;      /* tile number */
+typedef int32 tsize_t;          /* i/o size in bytes */
+typedef void* tdata_t;          /* image data ref */
+typedef uint32 toff_t;          /* file offset */
 
 #if !defined(__WIN32__) && (defined(_WIN32) || defined(WIN32))
 #define __WIN32__

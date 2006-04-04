@@ -1,3 +1,20 @@
+2006-04-04  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* libtiff/tiffio.h: added new type tstrile_t
+
+	* libtiff/tif_dir.h: changed types of td_stripsperimage and td_nstrips 
+	to new tstrile_t, types of td_stripoffset and td_stripbytecount to 
+	toff_t*
+
+	* libtiff/tif_ojpeg.c: totally new implementation
+
+	* libtiff/tif_dirread.c: added several hacks to suit new support of 
+	OJPEG
+
+	* libtiff/tif_getimage.c: removed TIFFTAG_JPEGCOLORMODE handling
+	of OJPEG images in favor of tif_getimage.c native handling of
+	YCbCr and desubsampling
+
 2006-03-29  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: JPEGVSetField() so that altering the photometric
@@ -10,6 +27,7 @@
 	* libtiff/tif_jpeg.c: strip size related bugfix in encode raw
 
 	* libtiff/tif_strip.c: temporarilly added two new versions of
+	TIFFScanlineSize
 	  - TIFFNewScanlineSize: proposed new version, after all related
 	    issues and side-effects are sorted out
 	  - TIFFOldScanlineSize: old version, from prior to 2006-03-21 change

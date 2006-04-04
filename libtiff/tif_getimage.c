@@ -350,7 +350,6 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 				/* can rely on libjpeg to convert to RGB */
 				/* XXX should restore current state on exit */
 				switch (compress) {
-					case COMPRESSION_OJPEG:
 					case COMPRESSION_JPEG:
 						TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
 						img->photometric = PHOTOMETRIC_RGB;
