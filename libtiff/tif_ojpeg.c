@@ -241,8 +241,8 @@ static int OJPEGPreDecode(TIFF* tif, tsample_t s);
 static int OJPEGPreDecodeSkipRaw(TIFF* tif);
 static int OJPEGPreDecodeSkipScanlines(TIFF* tif);
 static int OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s);
-static int OJPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s);
-static int OJPEGDecodeScanlines(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s);
+static int OJPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc);
+static int OJPEGDecodeScanlines(TIFF* tif, tidata_t buf, tsize_t cc);
 static void OJPEGPostDecode(TIFF* tif, tidata_t buf, tsize_t cc);
 static int OJPEGSetupEncode(TIFF* tif);
 static int OJPEGPreEncode(TIFF* tif, tsample_t s);
@@ -302,13 +302,13 @@ static int jpeg_read_raw_data_encap(OJPEGState* sp, jpeg_decompress_struct* cinf
 static void jpeg_encap_unwind(TIFF* tif);
 #endif
 
-void OJPEGLibjpegJpegErrorMgrOutputMessage(jpeg_common_struct* cinfo);
-void OJPEGLibjpegJpegErrorMgrErrorExit(jpeg_common_struct* cinfo);
-void OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo);
-uint8 OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo);
-void OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_bytes);
-uint8 OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired);
-void OJPEGLibjpegJpegSourceMgrTermSource(jpeg_decompress_struct* cinfo);
+static void OJPEGLibjpegJpegErrorMgrOutputMessage(jpeg_common_struct* cinfo);
+static void OJPEGLibjpegJpegErrorMgrErrorExit(jpeg_common_struct* cinfo);
+static void OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo);
+static uint8 OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo);
+static void OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_bytes);
+static uint8 OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired);
+static void OJPEGLibjpegJpegSourceMgrTermSource(jpeg_decompress_struct* cinfo);
 
 int
 TIFFInitOJPEG(TIFF* tif, int scheme)
@@ -490,6 +490,7 @@ OJPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	uint8 m;
+	(void)flags;
 	assert(sp!=NULL);
 	if (TIFFFieldSet(tif,FIELD_OJPEG_JPEGINTERCHANGEFORMAT))
 		fprintf(fd,"  JpegInterchangeFormat: %lu\n",(unsigned long)sp->jpeg_interchange_format);
@@ -655,19 +656,19 @@ OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	if (sp->libjpeg_jpeg_query_style==0)
 	{
-		if (OJPEGDecodeRaw(tif,buf,cc,s)==0)
+		if (OJPEGDecodeRaw(tif,buf,cc)==0)
 			return(0);
 	}
 	else
 	{
-		if (OJPEGDecodeScanlines(tif,buf,cc,s)==0)
+		if (OJPEGDecodeScanlines(tif,buf,cc)==0)
 			return(0);
 	}
 	return(1);
 }
 
 static int
-OJPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
+OJPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc)
 {
 	static const char module[]="OJPEGDecodeRaw";
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
@@ -722,7 +723,7 @@ OJPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 }
 
 static int
-OJPEGDecodeScanlines(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
+OJPEGDecodeScanlines(TIFF* tif, tidata_t buf, tsize_t cc)
 {
 	static const char module[]="OJPEGDecodeScanlines";
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
@@ -750,6 +751,8 @@ static void
 OJPEGPostDecode(TIFF* tif, tidata_t buf, tsize_t cc)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
+	(void)buf;
+	(void)cc;
 	sp->write_curstrile++;
 	if (sp->write_curstrile%tif->tif_dir.td_stripsperimage==0)
 	{
@@ -771,6 +774,7 @@ static int
 OJPEGPreEncode(TIFF* tif, tsample_t s)
 {
 	static const char module[]="OJPEGPreEncode";
+	(void)s;
 	TIFFErrorExt(tif->tif_clientdata,module,"OJPEG encoding not supported; use new-style JPEG compression instead");
 	return(0);
 }
@@ -779,6 +783,9 @@ static int
 OJPEGEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 {
 	static const char module[]="OJPEGEncode";
+	(void)buf;
+	(void)cc;
+	(void)s;
 	TIFFErrorExt(tif->tif_clientdata,module,"OJPEG encoding not supported; use new-style JPEG compression instead");
 	return(0);
 }
@@ -895,9 +902,6 @@ OJPEGReadHeaderInfo(TIFF* tif)
 {
 	static const char module[]="OJPEGReadHeaderInfo";
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
-	uint8 m;
-	uint16 n;
-	uint32 o;
 	assert(sp->readheader_done==0);
 	sp->image_width=tif->tif_dir.td_imagewidth;
 	sp->image_length=tif->tif_dir.td_imagelength;
@@ -2203,7 +2207,6 @@ static void
 OJPEGWriteStreamEoi(TIFF* tif, void** mem, uint32* len)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
-	uint8 m;
 	assert(OJPEG_BUFFER>=2);
 	sp->out_buffer[0]=255;
 	sp->out_buffer[1]=JPEG_MARKER_EOI;
@@ -2280,6 +2283,7 @@ OJPEGLibjpegJpegErrorMgrErrorExit(jpeg_common_struct* cinfo)
 static void
 OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo)
 {
+	(void)cinfo;
 }
 
 static uint8
@@ -2299,26 +2303,29 @@ OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo)
 	return(1);
 }
 
-void
+static void
 OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_bytes)
 {
 	TIFF* tif=(TIFF*)cinfo->client_data;
+	(void)num_bytes;
 	TIFFErrorExt(tif->tif_clientdata,"LibJpeg","Unexpected error");
 	jpeg_encap_unwind(tif);
 }
 
-uint8
+static uint8
 OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired)
 {
 	TIFF* tif=(TIFF*)cinfo->client_data;
+	(void)desired;
 	TIFFErrorExt(tif->tif_clientdata,"LibJpeg","Unexpected error");
 	jpeg_encap_unwind(tif);
 	return(0);
 }
 
-void
+static void
 OJPEGLibjpegJpegSourceMgrTermSource(jpeg_decompress_struct* cinfo)
 {
+	(void)cinfo;
 }
 
 #endif
