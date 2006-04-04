@@ -110,6 +110,9 @@ static const TIFFFieldInfo ojpeg_field_info[] = {
 
 #include "jpeglib.h"
 #include "jerror.h"
+#ifndef LIBJPEG_ENCAP_EXTERNAL
+#include <setjmp.h>
+#endif
 
 typedef struct jpeg_error_mgr jpeg_error_mgr;
 typedef struct jpeg_common_struct jpeg_common_struct;
@@ -2212,72 +2215,48 @@ OJPEGWriteStreamEoi(TIFF* tif, void** mem, uint32* len)
 static int
 jpeg_create_decompress_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo)
 {
-	SETJMP(sp->exit_jmpbuf)?
-		return(0):
-		{
-			jpeg_create_decompress(cinfo);
-			return(1);
-		}
+	return(SETJMP(sp->exit_jmpbuf)?0:(jpeg_create_decompress(cinfo),1));
 }
 #endif
 
 #ifndef LIBJPEG_ENCAP_EXTERNAL
 static int
-jpeg_read_header_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo, uint8 require_image);
+jpeg_read_header_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo, uint8 require_image)
 {
-	SETJMP(sp->exit_jmpbuf)?
-		return(0):
-		{
-			jpeg_read_header(cinfo,require_image);
-			return(1);
-		}
+	return(SETJMP(sp->exit_jmpbuf)?0:(jpeg_read_header(cinfo,require_image),1));
 }
 #endif
 
 #ifndef LIBJPEG_ENCAP_EXTERNAL
 static int
-jpeg_start_decompress_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo);
+jpeg_start_decompress_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo)
 {
-	SETJMP(sp->exit_jmpbuf)?
-		return(0):
-		{
-			jpeg_start_decompress(cinfo);
-			return(1);
-		}
+	return(SETJMP(sp->exit_jmpbuf)?0:(jpeg_start_decompress(cinfo),1));
 }
 #endif
 
 #ifndef LIBJPEG_ENCAP_EXTERNAL
 static int
-jpeg_read_scanlines_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo, void* scanlines, uint32 max_lines);
+jpeg_read_scanlines_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo, void* scanlines, uint32 max_lines)
 {
-	SETJMP(sp->exit_jmpbuf)?
-		return(0):
-		{
-			jpeg_read_scanlines(cinfo,scanlines,max_lines);
-			return(1);
-		}
+	return(SETJMP(sp->exit_jmpbuf)?0:(jpeg_read_scanlines(cinfo,scanlines,max_lines),1));
 }
 #endif
 
 #ifndef LIBJPEG_ENCAP_EXTERNAL
 static int
-jpeg_read_raw_data_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo, void* data, uint32 max_lines);
+jpeg_read_raw_data_encap(OJPEGState* sp, jpeg_decompress_struct* cinfo, void* data, uint32 max_lines)
 {
-	SETJMP(sp->exit_jmpbuf)?
-		return(0):
-		{
-			jpeg_read_raw_data(cinfo,data,max_lines);
-			return(1);
-		}
+	return(SETJMP(sp->exit_jmpbuf)?0:(jpeg_read_raw_data(cinfo,data,max_lines),1));
 }
 #endif
 
 #ifndef LIBJPEG_ENCAP_EXTERNAL
 static void
-jpeg_encap_unwind(TIFF* tif);
+jpeg_encap_unwind(TIFF* tif)
 {
-	LONGJMP(tif->exit_jmpbuf,1);
+	OJPEGState* sp=(OJPEGState*)tif->tif_data;
+	LONGJMP(sp->exit_jmpbuf,1);
 }
 #endif
 
@@ -2334,6 +2313,7 @@ OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desi
 	TIFF* tif=(TIFF*)cinfo->client_data;
 	TIFFErrorExt(tif->tif_clientdata,"LibJpeg","Unexpected error");
 	jpeg_encap_unwind(tif);
+	return(0);
 }
 
 void
