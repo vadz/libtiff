@@ -1,3 +1,12 @@
+2006-04-07  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* libtiff/tif_getimage.c: replaced usage of TIFFScanlineSize in 
+	gtStripContig with TIFFNewScanlineSize so as to fix buggy behaviour
+	on subsampled images - this ought to get sorted when we feel brave 
+	enough to replace TIFFScanlineSize alltogether
+
+	* libtiff/tif_ojpeg.c: fixed bug in OJPEGReadSkip
+
 2006-04-04  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/tiffio.h: added new type tstrile_t

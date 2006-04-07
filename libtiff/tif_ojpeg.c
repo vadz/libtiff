@@ -1930,7 +1930,7 @@ OJPEGReadSkip(OJPEGState* sp, uint16 len)
 	uint16 n;
 	m=len;
 	n=m;
-	if (n<sp->in_buffer_togo)
+	if (n>sp->in_buffer_togo)
 		n=sp->in_buffer_togo;
 	sp->in_buffer_cur+=n;
 	sp->in_buffer_togo-=n;
@@ -1939,7 +1939,7 @@ OJPEGReadSkip(OJPEGState* sp, uint16 len)
 	{
 		assert(sp->in_buffer_togo==0);
 		n=m;
-		if (n<sp->in_buffer_file_togo)
+		if (n>sp->in_buffer_file_togo)
 			n=sp->in_buffer_file_togo;
 		sp->in_buffer_file_pos+=n;
 		sp->in_buffer_file_togo-=n;

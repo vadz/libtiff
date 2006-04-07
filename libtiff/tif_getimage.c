@@ -808,7 +808,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     }
 
     TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
-    scanline = TIFFScanlineSize(tif);
+    scanline = TIFFNewScanlineSize(tif);
     fromskew = (w < imagewidth ? imagewidth - w : 0);
     for (row = 0; row < h; row += nrow) 
     {
