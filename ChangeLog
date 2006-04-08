@@ -1,3 +1,8 @@
+2006-04-08  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* libtiff/tif_ojpeg.c: resolved memory leak that was a consequence
+	of inappropriate use of jpeg_abort instead of jpeg_destroy
+
 2006-04-07  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/tif_getimage.c: replaced usage of TIFFScanlineSize in 
