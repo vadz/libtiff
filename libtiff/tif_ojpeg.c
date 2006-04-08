@@ -43,7 +43,82 @@
    contact <info@awaresystems.be>.
 */
 
-/* TODO: explain how codec works here */
+/* What is what, and what is not?
+
+   This decoder starts with an input stream, that is essentially the JpegInterchangeFormat
+   stream, if any, followed by the strile data, if any. This stream is read in
+   OJPEGReadByte and related functions.
+
+   It analyzes the start of this stream, until it encounters non-marker data, i.e.
+   compressed image data. Some of the header markers it sees have no actual content,
+   like the SOI marker, and APP/COM markers that really shouldn't even be there. Some
+   other markers do have content, and the valuable bits and pieces of information
+   in these markers are saved, checking all to verify that the stream is more or
+   less within expected bounds. This happens inside the OJPEGReadHeaderInfoSecStreamXxx
+   functions.
+
+   Some OJPEG imagery contains no valid JPEG header markers. This situation is picked
+   up on if we've seen no SOF marker when we're at the start of the compressed image
+   data. In this case, the tables are read from JpegXxxTables tags, and the other
+   bits and pieces of information is initialized to its most basic value. This is
+   implemented in the OJPEGReadHeaderInfoSecTablesXxx functions.
+
+   When this is complete, a good and valid JPEG header can be assembled, and this is
+   passed through to LibJpeg. When that's done, the remainder of the input stream, i.e.
+   the compressed image data, can be passed through unchanged. This is done in
+   OJPEGWriteStream functions.
+
+   LibTiff rightly expects to know the subsampling values before decompression. Just like
+   in new-style JPEG-in-TIFF, though, or even more so, actually, the YCbCrsubsampling
+   tag is notoriously unreliable. To correct these tag values with the ones inside
+   the JPEG stream, the first part of the input stream is pre-scanned in
+   OJPEGSubsamplingCorrect, making no note of any other data, reporting no warnings
+   or errors, up to the point where either these values are read, or it's clear they
+   aren't there. This means that some of the data is read twice, but we feel speed
+   in correcting these values is important enough to warrant this sacrifice. Allthough
+   there is currently no define or other configuration mechanism to disable this behaviour,
+   the actual header scanning is build to robustly respond with error report if it
+   should encounter an uncorrected mismatch of subsampling values. See
+   OJPEGReadHeaderInfoSecStreamSof.
+
+   The restart interval and restart markers are the most tricky part... The restart
+   interval can be specified in a tag. It can also be set inside the input JPEG stream.
+   It can be used inside the input JPEG stream. If reading from strile data, we've
+   consistenly discovered the need to insert restart markers in between the different
+   striles, as is also probably the most likely interpretation of the original TIFF 6.0
+   specification. With all this setting of interval, and actual use of markers that is not
+   predictable at the time of valid JPEG header assembly, the restart thing may turn
+   out the Achilles heel of this implementation. Fortunately, most OJPEG writer vendors
+   succeed in reading back what they write, which may be the reason why we've been able
+   to discover ways that seem to work.
+
+   Some special provision is made for planarconfig separate OJPEG files. These seem
+   to consistently contain header info, a SOS marker, a plane, SOS marker, plane, SOS,
+   and plane. This may or may not be a valid JPEG configuration, we don't know and don't
+   care. We want LibTiff to be able to access the planes individually, without huge
+   buffering inside LibJpeg, anyway. So we compose headers to feed to LibJpeg, in this
+   case, that allow us to pass a single plane such that LibJpeg sees a valid
+   single-channel JPEG stream. Locating subsequent SOS markers, and thus subsequent
+   planes, is done inside OJPEGReadSecondarySos.
+
+   The benefit of the scheme is... that it works, basically. We know of no other that
+   does. It works without checking software tag, or otherwise going about things in an
+   OJPEG flavor specific manner. Instead, it is a single scheme, that covers the cases
+   with and without JpegInterchangeFormat, with and without striles, with part of
+   the header in JpegInterchangeFormat and remainder in first strile, etc. It is forgiving
+   and robust, may likely work with OJPEG flavors we've not seen yet, and makes most out
+   of the data.
+
+   Another nice side-effect is that a complete JPEG single valid stream is build if
+   planarconfig is not separate (vast majority). We may one day use that to build
+   converters to JPEG, and/or to new-style JPEG compression inside TIFF.
+
+   A dissadvantage is the lack of random access to the individual striles. This is the
+   reason for much of the complicated restart-and-position stuff inside OJPEGPreDecode.
+   Applications would do well accessing all striles in order, as this will result in
+   a single sequential scan of the input stream, and no restarting of LibJpeg decoding
+   session.
+*/
 
 
 #include "tiffiop.h"
