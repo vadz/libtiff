@@ -36,8 +36,8 @@ static	int gtTileContig(TIFFRGBAImage*, uint32*, uint32, uint32);
 static	int gtTileSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
 static	int gtStripContig(TIFFRGBAImage*, uint32*, uint32, uint32);
 static	int gtStripSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
-static	int pickTileContigCase(TIFFRGBAImage*);
-static	int pickTileSeparateCase(TIFFRGBAImage*);
+static	int PickContigCase(TIFFRGBAImage*);
+static	int PickSeparateCase(TIFFRGBAImage*);
 
 static	const char photoTag[] = "PhotometricInterpretation";
 
@@ -428,14 +428,12 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	img->isContig =
 	    !(planarconfig == PLANARCONFIG_SEPARATE && colorchannels > 1);
 	if (img->isContig) {
-		img->get = TIFFIsTiled(tif) ? gtTileContig : gtStripContig;
-		if (!pickTileContigCase(img)) {
+		if (!PickContigCase(img)) {
 			sprintf(emsg, "Sorry, can not handle image");
 			return 0;
 		}
 	} else {
-		img->get = TIFFIsTiled(tif) ? gtTileSeparate : gtStripSeparate;
-		if (!pickTileSeparateCase(img)) {
+		if (!PickSeparateCase(img)) {
 			sprintf(emsg, "Sorry, can not handle image");
 			return 0;
 		}
@@ -968,9 +966,9 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
  * ABGR pixels (i.e. suitable for passing to lrecwrite.)
  *
  * The routines have been created according to the most
- * important cases and optimized.  pickTileContigCase and
- * pickTileSeparateCase analyze the parameters and select
- * the appropriate "put" routine to use.
+ * important cases and optimized.  PickContigCase and
+ * PickSeparateCase analyze the parameters and select
+ * the appropriate "get" and "put" routine to use.
  */
 #define	REPEAT8(op)	REPEAT4(op); REPEAT4(op)
 #define	REPEAT4(op)	REPEAT2(op); REPEAT2(op)
@@ -2044,7 +2042,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 static tileContigRoutine
 initYCbCrConversion(TIFFRGBAImage* img)
 {
-	static char module[] = "initCIELabConversion";
+	static char module[] = "initYCbCrConversion";
 
 	float *luma, *refBlackWhite;
 	uint16 hs, vs;
@@ -2363,73 +2361,91 @@ buildMap(TIFFRGBAImage* img)
  * Select the appropriate conversion routine for packed data.
  */
 static int
-pickTileContigCase(TIFFRGBAImage* img)
+PickContigCase(TIFFRGBAImage* img)
 {
-    tileContigRoutine put = 0;
-
-    if (buildMap(img)) {
-	switch (img->photometric) {
-	case PHOTOMETRIC_RGB:
-	    switch (img->bitspersample) {
-	    case 8:
-		if (!img->Map) {
-		    if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-			put = putRGBAAcontig8bittile;
-		    else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-			put = putRGBUAcontig8bittile;
-		    else
-			put = putRGBcontig8bittile;
-		} else
-		    put = putRGBcontig8bitMaptile;
-		break;
-	    case 16:
-		put = putRGBcontig16bittile;
-		if (!img->Map) {
-		    if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-			put = putRGBAAcontig16bittile;
-		    else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-			put = putRGBUAcontig16bittile;
+	img->get = TIFFIsTiled(img->tif) ? gtTileContig : gtStripContig;
+	img->put.contig = NULL;
+	if (buildMap(img)) {
+		switch (img->photometric) {
+			case PHOTOMETRIC_RGB:
+				switch (img->bitspersample) {
+					case 8:
+						if (!img->Map) {
+							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+								img->put.contig = putRGBAAcontig8bittile;
+							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+								img->put.contig = putRGBUAcontig8bittile;
+							else
+								img->put.contig = putRGBcontig8bittile;
+						} else
+							img->put.contig = putRGBcontig8bitMaptile;
+						break;
+					case 16:
+						img->put.contig = putRGBcontig16bittile;
+						if (!img->Map) {
+							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+								img->put.contig = putRGBAAcontig16bittile;
+							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+								img->put.contig = putRGBUAcontig16bittile;
+						}
+						break;
+				}
+				break;
+			case PHOTOMETRIC_SEPARATED:
+				if (img->bitspersample == 8) {
+					if (!img->Map)
+						img->put.contig = putRGBcontig8bitCMYKtile;
+					else
+						img->put.contig = putRGBcontig8bitCMYKMaptile;
+				}
+				break;
+			case PHOTOMETRIC_PALETTE:
+				switch (img->bitspersample) {
+					case 8:
+						img->put.contig = put8bitcmaptile;
+						break;
+					case 4:
+						img->put.contig = put4bitcmaptile;
+						break;
+					case 2:
+						img->put.contig = put2bitcmaptile;
+						break;
+					case 1:
+						img->put.contig = put1bitcmaptile;
+						break;
+				}
+				break;
+			case PHOTOMETRIC_MINISWHITE:
+			case PHOTOMETRIC_MINISBLACK:
+				switch (img->bitspersample) {
+					case 16:
+						img->put.contig = put16bitbwtile;
+						break;
+					case 8:
+						img->put.contig = putgreytile;
+						break;
+					case 4:
+						img->put.contig = put4bitbwtile;
+						break;
+					case 2:
+						img->put.contig = put2bitbwtile;
+						break;
+					case 1:
+						img->put.contig = put1bitbwtile;
+						break;
+				}
+				break;
+			case PHOTOMETRIC_YCBCR:
+				if (img->bitspersample == 8)
+					img->put.contig = initYCbCrConversion(img);
+				break;
+			case PHOTOMETRIC_CIELAB:
+				if (img->bitspersample == 8)
+					img->put.contig = initCIELabConversion(img);
+				break;
 		}
-		break;
-	    }
-	    break;
-	case PHOTOMETRIC_SEPARATED:
-	    if (img->bitspersample == 8) {
-		if (!img->Map)
-		    put = putRGBcontig8bitCMYKtile;
-		else
-		    put = putRGBcontig8bitCMYKMaptile;
-	    }
-	    break;
-	case PHOTOMETRIC_PALETTE:
-	    switch (img->bitspersample) {
-	    case 8:	put = put8bitcmaptile; break;
-	    case 4: put = put4bitcmaptile; break;
-	    case 2: put = put2bitcmaptile; break;
-	    case 1: put = put1bitcmaptile; break;
-	    }
-	    break;
-	case PHOTOMETRIC_MINISWHITE:
-	case PHOTOMETRIC_MINISBLACK:
-	    switch (img->bitspersample) {
-            case 16: put = put16bitbwtile; break;
-	    case 8:  put = putgreytile; break;
-	    case 4:  put = put4bitbwtile; break;
-	    case 2:  put = put2bitbwtile; break;
-	    case 1:  put = put1bitbwtile; break;
-	    }
-	    break;
-	case PHOTOMETRIC_YCBCR:
-	    if (img->bitspersample == 8)
-		put = initYCbCrConversion(img);
-	    break;
-	case PHOTOMETRIC_CIELAB:
-	    if (img->bitspersample == 8)
-		put = initCIELabConversion(img);
-	    break;
 	}
-    }
-    return ((img->put.contig = put) != 0);
+	return ((img->get!=NULL) && (img->put.contig!=NULL));
 }
 
 /*
@@ -2439,10 +2455,10 @@ pickTileContigCase(TIFFRGBAImage* img)
  *	 to the "packed routines.
  */
 static int
-pickTileSeparateCase(TIFFRGBAImage* img)
+PickSeparateCase(TIFFRGBAImage* img)
 {
-	tileSeparateRoutine put = 0;
-
+	img->get = TIFFIsTiled(img->tif) ? gtTileSeparate : gtStripSeparate;
+	img->put.separate = NULL;
 	if (buildMap(img)) {
 		switch (img->photometric) {
 			case PHOTOMETRIC_RGB:
@@ -2450,28 +2466,28 @@ pickTileSeparateCase(TIFFRGBAImage* img)
 					case 8:
 						if (!img->Map) {
 							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-								put = putRGBAAseparate8bittile;
+								img->put.separate = putRGBAAseparate8bittile;
 							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-								put = putRGBUAseparate8bittile;
+								img->put.separate = putRGBUAseparate8bittile;
 							else
-								put = putRGBseparate8bittile;
+								img->put.separate = putRGBseparate8bittile;
 						} else
-							put = putRGBseparate8bitMaptile;
+							img->put.separate = putRGBseparate8bitMaptile;
 						break;
 					case 16:
-						put = putRGBseparate16bittile;
+						img->put.separate = putRGBseparate16bittile;
 						if (!img->Map) {
 							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-								put = putRGBAAseparate16bittile;
+								img->put.separate = putRGBAAseparate16bittile;
 							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-								put = putRGBUAseparate16bittile;
+								img->put.separate = putRGBUAseparate16bittile;
 						}
 						break;
 				}
 				break;
 		}
 	}
-	return ((img->put.separate = put) != 0);
+	return ((img->get!=NULL) && (img->put.separate!=NULL));
 }
 
 /*

@@ -1,5 +1,15 @@
 2006-04-08  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
+	* libtiff/tif_getimage.c: renamed pickTileContigCase to PickContigCase 
+	and pickTileSeparateCase to PickSeparateCase as both work on strips as 
+	well
+
+	* libtiff/tif_getimage.c: moved img->get selection from 
+	TIFFRGBAImageBegin into PickContigCase and PickSeparateCase to create
+	logical hook for planned functionality extension
+
+2006-04-08  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
 	* libtiff/tif_ojpeg.c: resolved memory leak that was a consequence
 	of inappropriate use of jpeg_abort instead of jpeg_destroy
 
