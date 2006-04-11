@@ -1,3 +1,12 @@
+2006-04-11  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+	
+	* libtiff/tiff_getimage.c: 
+	- When there is no alpha, gtTileSeparate and gtStripSeparate allocated 
+	  buffer for alpha strile and filled it, only to never read it back. 
+	  Removed allocation and fill.
+	- Minor rename of vars in gtTileSeparate and gtStripSeparate 
+	  anticipating planned functionality extension
+
 2006-04-08  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/tif_getimage.c: renamed pickTileContigCase to PickContigCase 
