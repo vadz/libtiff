@@ -1,5 +1,14 @@
 2006-04-11  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 	
+	* libtiff/tiff_getimage.c: Revision of all RGB(A) put routines
+	- Conversion of unassociated alpha to associated alpha now done with
+	  more performant LUT, and calculation more correct
+	- Conversion of 16bit data to 8bit data now done with
+	  more performant LUT, and calculation more correct
+	- Bugfix of handling of 16bit RGB with unassociated alpha
+
+2006-04-11  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+	
 	* libtiff/tiff_getimage.c: 
 	- When there is no alpha, gtTileSeparate and gtStripSeparate allocated 
 	  buffer for alpha strile and filled it, only to never read it back. 

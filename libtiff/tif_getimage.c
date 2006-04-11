@@ -32,14 +32,17 @@
 #include "tiffiop.h"
 #include <stdio.h>
 
-static	int gtTileContig(TIFFRGBAImage*, uint32*, uint32, uint32);
-static	int gtTileSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
-static	int gtStripContig(TIFFRGBAImage*, uint32*, uint32, uint32);
-static	int gtStripSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
-static	int PickContigCase(TIFFRGBAImage*);
-static	int PickSeparateCase(TIFFRGBAImage*);
+static int gtTileContig(TIFFRGBAImage*, uint32*, uint32, uint32);
+static int gtTileSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
+static int gtStripContig(TIFFRGBAImage*, uint32*, uint32, uint32);
+static int gtStripSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
+static int PickContigCase(TIFFRGBAImage*);
+static int PickSeparateCase(TIFFRGBAImage*);
 
-static	const char photoTag[] = "PhotometricInterpretation";
+static int BuildMapUaToAa(TIFFRGBAImage* img);
+static int BuildMapBitdepth16To8(TIFFRGBAImage* img);
+
+static const char photoTag[] = "PhotometricInterpretation";
 
 /* 
  * Helper constants used in Orientation tag handling
@@ -202,6 +205,10 @@ TIFFRGBAImageEnd(TIFFRGBAImage* img)
 		_TIFFfree(img->ycbcr), img->ycbcr = NULL;
 	if (img->cielab)
 		_TIFFfree(img->cielab), img->cielab = NULL;
+	if (img->UaToAa)
+		_TIFFfree(img->UaToAa), img->UaToAa = NULL;
+	if (img->Bitdepth16To8)
+		_TIFFfree(img->Bitdepth16To8), img->Bitdepth16To8 = NULL;
 
 	if( img->redcmap ) {
 		_TIFFfree( img->redcmap );
@@ -422,6 +429,8 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	img->PALmap = NULL;
 	img->ycbcr = NULL;
 	img->cielab = NULL;
+	img->UaToAa = NULL;
+	img->Bitdepth16To8 = NULL;
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &img->width);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &img->height);
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ORIENTATION, &img->orientation);
@@ -1026,6 +1035,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 #define	PACK4(r,g,b,a)	\
 	((uint32)(r)|((uint32)(g)<<8)|((uint32)(b)<<16)|((uint32)(a)<<24))
 #define W2B(v) (((v)>>8)&0xff)
+/* TODO: PACKW should have been made redundant in favor of Bitdepth16To8 LUT */
 #define	PACKW(r,g,b)	\
 	((uint32)W2B(r)|((uint32)W2B(g)<<8)|((uint32)W2B(b)<<16)|A1)
 #define	PACKW4(r,g,b,a)	\
@@ -1227,26 +1237,6 @@ DECLAREContigPutFunc(putRGBcontig8bittile)
 }
 
 /*
- * 8-bit packed samples, w/ Map => RGB
- */
-DECLAREContigPutFunc(putRGBcontig8bitMaptile)
-{
-    TIFFRGBValue* Map = img->Map;
-    int samplesperpixel = img->samplesperpixel;
-
-    (void) y;
-    fromskew *= samplesperpixel;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;) {
-	    *cp++ = PACK(Map[pp[0]], Map[pp[1]], Map[pp[2]]);
-	    pp += samplesperpixel;
-	}
-	pp += fromskew;
-	cp += toskew;
-    }
-}
-
-/*
  * 8-bit packed samples => RGBA w/ associated alpha
  * (known to have Map == NULL)
  */
@@ -1271,23 +1261,24 @@ DECLAREContigPutFunc(putRGBAAcontig8bittile)
  */
 DECLAREContigPutFunc(putRGBUAcontig8bittile)
 {
-    int samplesperpixel = img->samplesperpixel;
-
-    (void) y;
-    fromskew *= samplesperpixel;
-    while (h-- > 0) {
-	uint32 r, g, b, a;
-	for (x = w; x-- > 0;) {
-	    a = pp[3];
-	    r = (pp[0] * a) / 255;
-	    g = (pp[1] * a) / 255;
-	    b = (pp[2] * a) / 255;
-	    *cp++ = PACK4(r,g,b,a);
-	    pp += samplesperpixel;
+	int samplesperpixel = img->samplesperpixel;
+	(void) y;
+	fromskew *= samplesperpixel;
+	while (h-- > 0) {
+		uint32 r, g, b, a;
+		uint8* m;
+		for (x = w; x-- > 0;) {
+			a = pp[3];
+			m = img->UaToAa+(a<<8);
+			r = m[pp[0]];
+			g = m[pp[1]];
+			b = m[pp[2]];
+			*cp++ = PACK4(r,g,b,a);
+			pp += samplesperpixel;
+		}
+		cp += toskew;
+		pp += fromskew;
 	}
-	cp += toskew;
-	pp += fromskew;
-    }
 }
 
 /*
@@ -1295,19 +1286,20 @@ DECLAREContigPutFunc(putRGBUAcontig8bittile)
  */
 DECLAREContigPutFunc(putRGBcontig16bittile)
 {
-    int samplesperpixel = img->samplesperpixel;
-    uint16 *wp = (uint16 *)pp;
-
-    (void) y;
-    fromskew *= samplesperpixel;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;) {
-	    *cp++ = PACKW(wp[0], wp[1], wp[2]);
-	    wp += samplesperpixel;
+	int samplesperpixel = img->samplesperpixel;
+	uint16 *wp = (uint16 *)pp;
+	(void) y;
+	fromskew *= samplesperpixel;
+	while (h-- > 0) {
+		for (x = w; x-- > 0;) {
+			*cp++ = PACK(img->Bitdepth16To8[wp[0]],
+			    img->Bitdepth16To8[wp[1]],
+			    img->Bitdepth16To8[wp[2]]);
+			wp += samplesperpixel;
+		}
+		cp += toskew;
+		wp += fromskew;
 	}
-	cp += toskew;
-	wp += fromskew;
-    }
 }
 
 /*
@@ -1316,19 +1308,21 @@ DECLAREContigPutFunc(putRGBcontig16bittile)
  */
 DECLAREContigPutFunc(putRGBAAcontig16bittile)
 {
-    int samplesperpixel = img->samplesperpixel;
-    uint16 *wp = (uint16 *)pp;
-
-    (void) y;
-    fromskew *= samplesperpixel;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;) {
-	    *cp++ = PACKW4(wp[0], wp[1], wp[2], wp[3]);
-	    wp += samplesperpixel;
+	int samplesperpixel = img->samplesperpixel;
+	uint16 *wp = (uint16 *)pp;
+	(void) y;
+	fromskew *= samplesperpixel;
+	while (h-- > 0) {
+		for (x = w; x-- > 0;) {
+			*cp++ = PACK4(img->Bitdepth16To8[wp[0]],
+			    img->Bitdepth16To8[wp[1]],
+			    img->Bitdepth16To8[wp[2]],
+			    img->Bitdepth16To8[wp[3]]);
+			wp += samplesperpixel;
+		}
+		cp += toskew;
+		wp += fromskew;
 	}
-	cp += toskew;
-	wp += fromskew;
-    }
 }
 
 /*
@@ -1337,32 +1331,25 @@ DECLAREContigPutFunc(putRGBAAcontig16bittile)
  */
 DECLAREContigPutFunc(putRGBUAcontig16bittile)
 {
-    int samplesperpixel = img->samplesperpixel;
-    uint16 *wp = (uint16 *)pp;
-
-    (void) y;
-    fromskew *= samplesperpixel;
-    while (h-- > 0) {
-	uint32 r,g,b,a;
-	/*
-	 * We shift alpha down four bits just in case unsigned
-	 * arithmetic doesn't handle the full range.
-	 * We still have plenty of accuracy, since the output is 8 bits.
-	 * So we have (r * 0xffff) * (a * 0xfff)) = r*a * (0xffff*0xfff)
-	 * Since we want r*a * 0xff for eight bit output,
-	 * we divide by (0xffff * 0xfff) / 0xff == 0x10eff.
-	 */
-	for (x = w; x-- > 0;) {
-	    a = wp[3] >> 4; 
-	    r = (wp[0] * a) / 0x10eff;
-	    g = (wp[1] * a) / 0x10eff;
-	    b = (wp[2] * a) / 0x10eff;
-	    *cp++ = PACK4(r,g,b,a);
-	    wp += samplesperpixel;
+	int samplesperpixel = img->samplesperpixel;
+	uint16 *wp = (uint16 *)pp;
+	(void) y;
+	fromskew *= samplesperpixel;
+	while (h-- > 0) {
+		uint32 r,g,b,a;
+		uint8* m;
+		for (x = w; x-- > 0;) {
+			a = img->Bitdepth16To8[wp[3]];
+			m = img->UaToAa+(a<<8);
+			r = m[img->Bitdepth16To8[wp[0]]];
+			g = m[img->Bitdepth16To8[wp[1]]];
+			b = m[img->Bitdepth16To8[wp[2]]];
+			*cp++ = PACK4(r,g,b,a);
+			wp += samplesperpixel;
+		}
+		cp += toskew;
+		wp += fromskew;
 	}
-	cp += toskew;
-	wp += fromskew;
-    }
 }
 
 /*
@@ -1441,32 +1428,16 @@ DECLARESepPutFunc(putRGBseparate8bittile)
 }
 
 /*
- * 8-bit unpacked samples => RGB
- */
-DECLARESepPutFunc(putRGBseparate8bitMaptile)
-{
-    TIFFRGBValue* Map = img->Map;
-
-    (void) y; (void) a;
-    while (h-- > 0) {
-	for (x = w; x > 0; x--)
-	    *cp++ = PACK(Map[*r++], Map[*g++], Map[*b++]);
-	SKEW(r, g, b, fromskew);
-	cp += toskew;
-    }
-}
-
-/*
  * 8-bit unpacked samples => RGBA w/ associated alpha
  */
 DECLARESepPutFunc(putRGBAAseparate8bittile)
 {
-    (void) img; (void) x; (void) y;
-    while (h-- > 0) {
-	UNROLL8(w, NOP, *cp++ = PACK4(*r++, *g++, *b++, *a++));
-	SKEW4(r, g, b, a, fromskew);
-	cp += toskew;
-    }
+	(void) img; (void) x; (void) y;
+	while (h-- > 0) {
+		UNROLL8(w, NOP, *cp++ = PACK4(*r++, *g++, *b++, *a++));
+		SKEW4(r, g, b, a, fromskew);
+		cp += toskew;
+	}
 }
 
 /*
@@ -1474,19 +1445,21 @@ DECLARESepPutFunc(putRGBAAseparate8bittile)
  */
 DECLARESepPutFunc(putRGBUAseparate8bittile)
 {
-    (void) img; (void) y;
-    while (h-- > 0) {
-	uint32 rv, gv, bv, av;
-	for (x = w; x-- > 0;) {
-	    av = *a++;
-	    rv = (*r++ * av) / 255;
-	    gv = (*g++ * av) / 255;
-	    bv = (*b++ * av) / 255;
-	    *cp++ = PACK4(rv,gv,bv,av);
+	(void) img; (void) y;
+	while (h-- > 0) {
+		uint32 rv, gv, bv, av;
+		uint8* m;
+		for (x = w; x-- > 0;) {
+			av = *a++;
+			m = img->UaToAa+(av<<8);
+			rv = m[*r++];
+			gv = m[*g++];
+			bv = m[*b++];
+			*cp++ = PACK4(rv,gv,bv,av);
+		}
+		SKEW4(r, g, b, a, fromskew);
+		cp += toskew;
 	}
-	SKEW4(r, g, b, a, fromskew);
-	cp += toskew;
-    }
 }
 
 /*
@@ -1494,17 +1467,18 @@ DECLARESepPutFunc(putRGBUAseparate8bittile)
  */
 DECLARESepPutFunc(putRGBseparate16bittile)
 {
-    uint16 *wr = (uint16*) r;
-    uint16 *wg = (uint16*) g;
-    uint16 *wb = (uint16*) b;
-
-    (void) img; (void) y; (void) a;
-    while (h-- > 0) {
-	for (x = 0; x < w; x++)
-	    *cp++ = PACKW(*wr++, *wg++, *wb++);
-	SKEW(wr, wg, wb, fromskew);
-	cp += toskew;
-    }
+	uint16 *wr = (uint16*) r;
+	uint16 *wg = (uint16*) g;
+	uint16 *wb = (uint16*) b;
+	(void) img; (void) y; (void) a;
+	while (h-- > 0) {
+		for (x = 0; x < w; x++)
+			*cp++ = PACK(img->Bitdepth16To8[*wr++],
+			    img->Bitdepth16To8[*wg++],
+			    img->Bitdepth16To8[*wb++]);
+		SKEW(wr, wg, wb, fromskew);
+		cp += toskew;
+	}
 }
 
 /*
@@ -1512,18 +1486,20 @@ DECLARESepPutFunc(putRGBseparate16bittile)
  */
 DECLARESepPutFunc(putRGBAAseparate16bittile)
 {
-    uint16 *wr = (uint16*) r;
-    uint16 *wg = (uint16*) g;
-    uint16 *wb = (uint16*) b;
-    uint16 *wa = (uint16*) a;
-
-    (void) img; (void) y;
-    while (h-- > 0) {
-	for (x = 0; x < w; x++)
-	    *cp++ = PACKW4(*wr++, *wg++, *wb++, *wa++);
-	SKEW4(wr, wg, wb, wa, fromskew);
-	cp += toskew;
-    }
+	uint16 *wr = (uint16*) r;
+	uint16 *wg = (uint16*) g;
+	uint16 *wb = (uint16*) b;
+	uint16 *wa = (uint16*) a;
+	(void) img; (void) y;
+	while (h-- > 0) {
+		for (x = 0; x < w; x++)
+			*cp++ = PACK4(img->Bitdepth16To8[*wr++],
+			    img->Bitdepth16To8[*wg++],
+			    img->Bitdepth16To8[*wb++],
+			    img->Bitdepth16To8[*wa++]);
+		SKEW4(wr, wg, wb, wa, fromskew);
+		cp += toskew;
+	}
 }
 
 /*
@@ -1531,32 +1507,25 @@ DECLARESepPutFunc(putRGBAAseparate16bittile)
  */
 DECLARESepPutFunc(putRGBUAseparate16bittile)
 {
-    uint16 *wr = (uint16*) r;
-    uint16 *wg = (uint16*) g;
-    uint16 *wb = (uint16*) b;
-    uint16 *wa = (uint16*) a;
-
-    (void) img; (void) y;
-    while (h-- > 0) {
-	uint32 r,g,b,a;
-	/*
-	 * We shift alpha down four bits just in case unsigned
-	 * arithmetic doesn't handle the full range.
-	 * We still have plenty of accuracy, since the output is 8 bits.
-	 * So we have (r * 0xffff) * (a * 0xfff)) = r*a * (0xffff*0xfff)
-	 * Since we want r*a * 0xff for eight bit output,
-	 * we divide by (0xffff * 0xfff) / 0xff == 0x10eff.
-	 */
-	for (x = w; x-- > 0;) {
-	    a = *wa++ >> 4; 
-	    r = (*wr++ * a) / 0x10eff;
-	    g = (*wg++ * a) / 0x10eff;
-	    b = (*wb++ * a) / 0x10eff;
-	    *cp++ = PACK4(r,g,b,a);
+	uint16 *wr = (uint16*) r;
+	uint16 *wg = (uint16*) g;
+	uint16 *wb = (uint16*) b;
+	uint16 *wa = (uint16*) a;
+	(void) img; (void) y;
+	while (h-- > 0) {
+		uint32 r,g,b,a;
+		uint8* m;
+		for (x = w; x-- > 0;) {
+			a = img->Bitdepth16To8[*wa++];
+			m = img->UaToAa+(a<<8);
+			r = m[img->Bitdepth16To8[*wr++]];
+			g = m[img->Bitdepth16To8[*wg++]];
+			b = m[img->Bitdepth16To8[*wb++]];
+			*cp++ = PACK4(r,g,b,a);
+		}
+		SKEW4(wr, wg, wb, wa, fromskew);
+		cp += toskew;
 	}
-	SKEW4(wr, wg, wb, wa, fromskew);
-	cp += toskew;
-    }
 }
 
 /*
@@ -2366,41 +2335,52 @@ PickContigCase(TIFFRGBAImage* img)
 {
 	img->get = TIFFIsTiled(img->tif) ? gtTileContig : gtStripContig;
 	img->put.contig = NULL;
-	if (buildMap(img)) {
-		switch (img->photometric) {
-			case PHOTOMETRIC_RGB:
-				switch (img->bitspersample) {
-					case 8:
-						if (!img->Map) {
-							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-								img->put.contig = putRGBAAcontig8bittile;
-							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-								img->put.contig = putRGBUAcontig8bittile;
-							else
-								img->put.contig = putRGBcontig8bittile;
-						} else
-							img->put.contig = putRGBcontig8bitMaptile;
-						break;
-					case 16:
-						img->put.contig = putRGBcontig16bittile;
-						if (!img->Map) {
-							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-								img->put.contig = putRGBAAcontig16bittile;
-							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-								img->put.contig = putRGBUAcontig16bittile;
-						}
-						break;
-				}
-				break;
-			case PHOTOMETRIC_SEPARATED:
+	switch (img->photometric) {
+		case PHOTOMETRIC_RGB:
+			switch (img->bitspersample) {
+				case 8:
+					if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+						img->put.contig = putRGBAAcontig8bittile;
+					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+					{
+						if (BuildMapUaToAa(img))
+							img->put.contig = putRGBUAcontig8bittile;
+					}
+					else
+						img->put.contig = putRGBcontig8bittile;
+					break;
+				case 16:
+					if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+					{
+						if (BuildMapBitdepth16To8(img))
+							img->put.contig = putRGBAAcontig16bittile;
+					}
+					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+					{
+						if (BuildMapBitdepth16To8(img) &&
+						    BuildMapUaToAa(img))
+							img->put.contig = putRGBUAcontig16bittile;
+					}
+					else
+					{
+						if (BuildMapBitdepth16To8(img))
+							img->put.contig = putRGBcontig16bittile;
+					}
+					break;
+			}
+			break;
+		case PHOTOMETRIC_SEPARATED:
+			if (buildMap(img)) {
 				if (img->bitspersample == 8) {
 					if (!img->Map)
 						img->put.contig = putRGBcontig8bitCMYKtile;
 					else
 						img->put.contig = putRGBcontig8bitCMYKMaptile;
 				}
-				break;
-			case PHOTOMETRIC_PALETTE:
+			}
+			break;
+		case PHOTOMETRIC_PALETTE:
+			if (buildMap(img)) {
 				switch (img->bitspersample) {
 					case 8:
 						img->put.contig = put8bitcmaptile;
@@ -2415,9 +2395,11 @@ PickContigCase(TIFFRGBAImage* img)
 						img->put.contig = put1bitcmaptile;
 						break;
 				}
-				break;
-			case PHOTOMETRIC_MINISWHITE:
-			case PHOTOMETRIC_MINISBLACK:
+			}
+			break;
+		case PHOTOMETRIC_MINISWHITE:
+		case PHOTOMETRIC_MINISBLACK:
+			if (buildMap(img)) {
 				switch (img->bitspersample) {
 					case 16:
 						img->put.contig = put16bitbwtile;
@@ -2435,16 +2417,20 @@ PickContigCase(TIFFRGBAImage* img)
 						img->put.contig = put1bitbwtile;
 						break;
 				}
-				break;
-			case PHOTOMETRIC_YCBCR:
+			}
+			break;
+		case PHOTOMETRIC_YCBCR:
+			if (buildMap(img)) {
 				if (img->bitspersample == 8)
 					img->put.contig = initYCbCrConversion(img);
-				break;
-			case PHOTOMETRIC_CIELAB:
+			}
+			break;
+		case PHOTOMETRIC_CIELAB:
+			if (buildMap(img)) {
 				if (img->bitspersample == 8)
 					img->put.contig = initCIELabConversion(img);
 				break;
-		}
+			}
 	}
 	return ((img->get!=NULL) && (img->put.contig!=NULL));
 }
@@ -2460,36 +2446,85 @@ PickSeparateCase(TIFFRGBAImage* img)
 {
 	img->get = TIFFIsTiled(img->tif) ? gtTileSeparate : gtStripSeparate;
 	img->put.separate = NULL;
-	if (buildMap(img)) {
-		switch (img->photometric) {
-			case PHOTOMETRIC_RGB:
-				switch (img->bitspersample) {
-					case 8:
-						if (!img->Map) {
-							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-								img->put.separate = putRGBAAseparate8bittile;
-							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-								img->put.separate = putRGBUAseparate8bittile;
-							else
-								img->put.separate = putRGBseparate8bittile;
-						} else
-							img->put.separate = putRGBseparate8bitMaptile;
-						break;
-					case 16:
-						img->put.separate = putRGBseparate16bittile;
-						if (!img->Map) {
-							if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
-								img->put.separate = putRGBAAseparate16bittile;
-							else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
-								img->put.separate = putRGBUAseparate16bittile;
-						}
-						break;
-				}
-				break;
-		}
+	switch (img->photometric) {
+		case PHOTOMETRIC_RGB:
+			switch (img->bitspersample) {
+				case 8:
+					if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+						img->put.separate = putRGBAAseparate8bittile;
+					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+					{
+						if (BuildMapUaToAa(img))
+							img->put.separate = putRGBUAseparate8bittile;
+					}
+					else
+						img->put.separate = putRGBseparate8bittile;
+					break;
+				case 16:
+					if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
+					{
+						if (BuildMapBitdepth16To8(img))
+							img->put.separate = putRGBAAseparate16bittile;
+					}
+					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
+					{
+						if (BuildMapBitdepth16To8(img) &&
+						    BuildMapUaToAa(img))
+							img->put.separate = putRGBUAseparate16bittile;
+					}
+					else
+					{
+						if (BuildMapBitdepth16To8(img))
+							img->put.separate = putRGBseparate16bittile;
+					}
+					break;
+			}
+			break;
 	}
 	return ((img->get!=NULL) && (img->put.separate!=NULL));
 }
+
+static int
+BuildMapUaToAa(TIFFRGBAImage* img)
+{
+	static const char module[]="BuildMapUaToAa";
+	uint8* m;
+	uint16 na,nv;
+	assert(img->UaToAa==NULL);
+	img->UaToAa=_TIFFmalloc(65536);
+	if (img->UaToAa==NULL)
+	{
+		TIFFErrorExt(img->tif,module,"Out of memory");
+		return(0);
+	}
+	m=img->UaToAa;
+	for (na=0; na<256; na++)
+	{
+		for (nv=0; nv<256; nv++)
+			*m++=(nv*na+127)/255;
+	}
+	return(1);
+}
+
+static int
+BuildMapBitdepth16To8(TIFFRGBAImage* img)
+{
+	static const char module[]="BuildMapBitdepth16To8";
+	uint8* m;
+	uint32 n;
+	assert(img->Bitdepth16To8==NULL);
+	img->Bitdepth16To8=_TIFFmalloc(65536);
+	if (img->Bitdepth16To8==NULL)
+	{
+		TIFFErrorExt(img->tif,module,"Out of memory");
+		return(0);
+	}
+	m=img->Bitdepth16To8;
+	for (n=0; n<65536; n++)
+		*m++=(n+128)/257;
+	return(1);
+}
+
 
 /*
  * Read a whole strip off data from the file, and convert to RGBA form.

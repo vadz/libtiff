@@ -217,7 +217,10 @@ struct _TIFFRGBAImage {
 	uint32** BWmap;				/* black&white map */
 	uint32** PALmap;			/* palette image map */
 	TIFFYCbCrToRGB* ycbcr;			/* YCbCr conversion state */
-        TIFFCIELabToRGB* cielab;		/* CIE L*a*b conversion state */
+	TIFFCIELabToRGB* cielab;		/* CIE L*a*b conversion state */
+
+	uint8* UaToAa;                          /* Unassociated alpha to associated alpha convertion LUT */
+	uint8* Bitdepth16To8;                   /* LUT for conversion from 16bit to 8bit values */
 
         int	row_offset;
         int     col_offset;
