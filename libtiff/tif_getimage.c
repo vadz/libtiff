@@ -131,11 +131,12 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 			*/
 			break;
 		case PHOTOMETRIC_YCBCR:
-			if (td->td_planarconfig != PLANARCONFIG_CONTIG) {
-				sprintf(emsg, "Sorry, can not handle YCbCr images with %s=%d",
-				    "Planarconfiguration", td->td_planarconfig);
-				return (0);
-			}
+			/*
+			 * TODO: if at all meaningful and useful, make more complete
+			 * support check here, or better still, refactor to let supporting
+			 * code decide whether there is support and what meaningfull
+			 * error to return
+			 */
 			break;
 		case PHOTOMETRIC_RGB:
 			if (colorchannels < 3) {
@@ -350,17 +351,17 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			}
 			break;
 		case PHOTOMETRIC_YCBCR:
-			if (planarconfig != PLANARCONFIG_CONTIG) {
-				sprintf(emsg, "Sorry, can not handle YCbCr images with %s=%d",
-				    "Planarconfiguration", planarconfig);
-				return (0);
-			}
 			/* It would probably be nice to have a reality check here. */
 			if (planarconfig == PLANARCONFIG_CONTIG)
 				/* can rely on libjpeg to convert to RGB */
 				/* XXX should restore current state on exit */
 				switch (compress) {
 					case COMPRESSION_JPEG:
+						/*
+						 * TODO: when complete tests verify complete desubsampling
+						 * and YCbCr handling, remove use of TIFFTAG_JPEGCOLORMODE in
+						 * favor of tif_getimage.c native handling
+						 */
 						TIFFSetField(tif, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
 						img->photometric = PHOTOMETRIC_RGB;
 						break;
@@ -368,6 +369,12 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 						/* do nothing */;
 						break;
 				}
+			/*
+			 * TODO: if at all meaningful and useful, make more complete
+			 * support check here, or better still, refactor to let supporting
+			 * code decide whether there is support and what meaningfull
+			 * error to return
+			 */
 			break;
 		case PHOTOMETRIC_RGB:
 			if (colorchannels < 3) {
@@ -1035,7 +1042,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 #define	PACK4(r,g,b,a)	\
 	((uint32)(r)|((uint32)(g)<<8)|((uint32)(b)<<16)|((uint32)(a)<<24))
 #define W2B(v) (((v)>>8)&0xff)
-/* TODO: PACKW should have been made redundant in favor of Bitdepth16To8 LUT */
+/* TODO: PACKW should have be made redundant in favor of Bitdepth16To8 LUT */
 #define	PACKW(r,g,b)	\
 	((uint32)W2B(r)|((uint32)W2B(g)<<8)|((uint32)W2B(b)<<16)|A1)
 #define	PACKW4(r,g,b,a)	\
@@ -2007,57 +2014,53 @@ DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 		pp += fromskew;
 	} while (--h);
 }
+
+/*
+ * 8-bit packed YCbCr samples w/ no subsampling => RGB
+ */
+DECLARESepPutFunc(putseparate8bitYCbCr11tile)
+{
+	/* TODO: naming of input vars is still off, change obfuscating declaration inside define, or resolve obfuscation */
+	while (h-- > 0) {
+		x = w;
+		do {
+			uint32 dr, dg, db;
+			TIFFYCbCrtoRGB(img->ycbcr,*r++,*g++,*b++,&dr,&dg,&db);
+			*cp++ = PACK(dr,dg,db);
+		} while (--x);
+		SKEW(r, g, b, fromskew);
+		cp += toskew;
+	}
+}
 #undef YCbCrtoRGB
 
-static tileContigRoutine
+static int
 initYCbCrConversion(TIFFRGBAImage* img)
 {
 	static char module[] = "initYCbCrConversion";
 
 	float *luma, *refBlackWhite;
-	uint16 hs, vs;
 
 	if (img->ycbcr == NULL) {
-	    img->ycbcr = (TIFFYCbCrToRGB*) _TIFFmalloc(
+		img->ycbcr = (TIFFYCbCrToRGB*) _TIFFmalloc(
 		    TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))
 		    + 4*256*sizeof (TIFFRGBValue)
 		    + 2*256*sizeof (int)
 		    + 3*256*sizeof (int32)
-	    );
-	    if (img->ycbcr == NULL) {
+		    );
+		if (img->ycbcr == NULL) {
 			TIFFErrorExt(img->tif->tif_clientdata, module,
-			      "No space for YCbCr->RGB conversion state");
-		    return (NULL);
-	    }
+			    "No space for YCbCr->RGB conversion state");
+			return (0);
+		}
 	}
 
 	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRCOEFFICIENTS, &luma);
 	TIFFGetFieldDefaulted(img->tif, TIFFTAG_REFERENCEBLACKWHITE,
-			      &refBlackWhite);
+	    &refBlackWhite);
 	if (TIFFYCbCrToRGBInit(img->ycbcr, luma, refBlackWhite) < 0)
-		return NULL;
-
-	/*
-	 * The 6.0 spec says that subsampling must be
-	 * one of 1, 2, or 4, and that vertical subsampling
-	 * must always be <= horizontal subsampling; so
-	 * there are only a few possibilities and we just
-	 * enumerate the cases.
-	 * Joris: added support for the [1,2] case, nonetheless, to accomodate
-	 * some OJPEG files
-	 */
-	TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
-	switch ((hs<<4)|vs) {
-		case 0x44: return (putcontig8bitYCbCr44tile);
-		case 0x42: return (putcontig8bitYCbCr42tile);
-		case 0x41: return (putcontig8bitYCbCr41tile);
-		case 0x22: return (putcontig8bitYCbCr22tile);
-		case 0x21: return (putcontig8bitYCbCr21tile);
-		case 0x12: return (putcontig8bitYCbCr12tile);
-		case 0x11: return (putcontig8bitYCbCr11tile);
-	}
-
-	return (NULL);
+		return(0);
+	return (1);
 }
 
 static tileContigRoutine
@@ -2420,9 +2423,45 @@ PickContigCase(TIFFRGBAImage* img)
 			}
 			break;
 		case PHOTOMETRIC_YCBCR:
-			if (buildMap(img)) {
-				if (img->bitspersample == 8)
-					img->put.contig = initYCbCrConversion(img);
+			if (img->bitspersample == 8)
+			{
+				if (initYCbCrConversion(img)!=0)
+				{
+					uint16 hs, vs;
+					/*
+					 * The 6.0 spec says that subsampling must be
+					 * one of 1, 2, or 4, and that vertical subsampling
+					 * must always be <= horizontal subsampling; so
+					 * there are only a few possibilities and we just
+					 * enumerate the cases.
+					 * Joris: added support for the [1,2] case, nonetheless, to accomodate
+					 * some OJPEG files
+					 */
+					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
+					switch ((hs<<4)|vs) {
+						case 0x44:
+							img->put.contig = putcontig8bitYCbCr44tile;
+							break;
+						case 0x42:
+							img->put.contig = putcontig8bitYCbCr42tile;
+							break;
+						case 0x41:
+							img->put.contig = putcontig8bitYCbCr41tile;
+							break;
+						case 0x22:
+							img->put.contig = putcontig8bitYCbCr22tile;
+							break;
+						case 0x21:
+							img->put.contig = putcontig8bitYCbCr21tile;
+							break;
+						case 0x12:
+							img->put.contig = putcontig8bitYCbCr12tile;
+							break;
+						case 0x11:
+							img->put.contig = putcontig8bitYCbCr11tile;
+							break;
+					}
+				}
 			}
 			break;
 		case PHOTOMETRIC_CIELAB:
@@ -2478,6 +2517,22 @@ PickSeparateCase(TIFFRGBAImage* img)
 							img->put.separate = putRGBseparate16bittile;
 					}
 					break;
+			}
+			break;
+		case PHOTOMETRIC_YCBCR:
+			if ((img->bitspersample==8) && (img->samplesperpixel==3))
+			{
+				if (initYCbCrConversion(img)!=0)
+				{
+					uint16 hs, vs;
+					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
+					switch ((hs<<4)|vs) {
+						case 0x11:
+							img->put.separate = putseparate8bitYCbCr11tile;
+							break;
+						/* TODO: add other cases here */
+					}
+				}
 			}
 			break;
 	}
