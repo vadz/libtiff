@@ -1871,6 +1871,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr41tile)
 DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
 {
 	uint32* cp2;
+	(void) y;
 	fromskew = (fromskew / 2) * 6;
 	cp2 = cp+w+toskew;
 	while (h>=2) {
@@ -1963,6 +1964,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
 DECLAREContigPutFunc(putcontig8bitYCbCr12tile)
 {
 	uint32* cp2;
+	(void) y;
 	fromskew = (fromskew / 2) * 4;
 	cp2 = cp+w+toskew;
 	while (h>=2) {
@@ -2020,6 +2022,8 @@ DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
  */
 DECLARESepPutFunc(putseparate8bitYCbCr11tile)
 {
+	(void) y;
+	(void) a;
 	/* TODO: naming of input vars is still off, change obfuscating declaration inside define, or resolve obfuscation */
 	while (h-- > 0) {
 		x = w;

@@ -354,6 +354,7 @@ extern	int TIFFReadCustomDirectory(TIFF*, toff_t, const TIFFFieldInfo[],
 extern	int TIFFReadEXIFDirectory(TIFF*, toff_t);
 extern	tsize_t TIFFScanlineSize(TIFF*);
 extern	tsize_t TIFFOldScanlineSize(TIFF*);
+extern	tsize_t TIFFNewScanlineSize(TIFF*);
 extern	tsize_t TIFFRasterScanlineSize(TIFF*);
 extern	tsize_t TIFFStripSize(TIFF*);
 extern	tsize_t TIFFRawStripSize(TIFF*, tstrip_t);
