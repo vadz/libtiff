@@ -110,9 +110,9 @@ CHECK_JPEG_YCBCR_SUBSAMPLING = 1
 #
 # Pick debug or optimized build flags.  We default to an optimized build
 # with no debugging information.
-# NOTE: /GX option required if you want to build the C++ stream API
+# NOTE: /EHsc option required if you want to build the C++ stream API
 #
-OPTFLAGS =	/Ox /MD /GX /W3
+OPTFLAGS =	/Ox /MD /EHsc /W3 /D_CRT_SECURE_NO_DEPRECATE
 #OPTFLAGS = 	/Zi 
 
 #

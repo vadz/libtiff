@@ -1,3 +1,8 @@
+2006-04-18  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* nmake.opt: use /EHsc for VS2005 compatibility.  Also define
+	_CRT_SECURE_NO_DEPRECATE to avoid noise on VS2005. 
+
 2006-04-12  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* libtiff/tif_getimage.c: Added support for planarconfig separate
