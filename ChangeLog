@@ -1,3 +1,18 @@
+2006-04-20  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/{fax2ps.c, fax2tiff.c, ppm2tiff.c, ras2tiff.c, tiff2pdf.c}:
+	Properly set the binary mode for stdin stream as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1141
+
+	* man/{bmp2tiff.1, fax2ps.1, fax2tiff.1, gif2tiff.1, ras2tiff.1,
+	raw2tiff.1, rgb2ycbcr.1, sgi2tiff.1, tiff2bw.1, tiff2pdf.1, tiff2ps.1,
+	tiff2rgba.1, tiffcmp.1, tiffcp.1, tiffdither.1,	tiffdump.1, tiffgt.1,
+	tiffset.1}: Improvements in page formatting as per bug
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1140
+
+	* html/tools.html, html/man/Makefile.am, tools/tiff2pdf.c: Fixed
+	typos as per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1139
+
 2006-04-18  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* nmake.opt: use /EHsc for VS2005 compatibility.  Also define
