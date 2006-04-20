@@ -35,16 +35,18 @@
 # include <unistd.h>
 #endif
 
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif
+
 #include "tiffio.h"
 
 #ifndef HAVE_GETOPT
 extern int getopt(int, char**, char*);
-#endif
-
-#if defined(_WINDOWS) || defined(MSDOS)
-#define BINMODE "b"
-#else
-#define	BINMODE
 #endif
 
 #define	streq(a,b)	(strcmp(a,b) == 0)
@@ -116,7 +118,7 @@ main(int argc, char* argv[])
 	 */
 	if (argc - optind > 1) {
 		infile = argv[optind++];
-		in = fopen(infile, "r" BINMODE);
+		in = fopen(infile, "rb");
 		if (in == NULL) {
 			fprintf(stderr, "%s: Can not open.\n", infile);
 			return (-1);
@@ -124,6 +126,9 @@ main(int argc, char* argv[])
 	} else {
 		infile = "<stdin>";
 		in = stdin;
+#if defined(HAVE_SETMODE) && defined(O_BINARY)
+		setmode(fileno(stdin), O_BINARY);
+#endif
 	}
 
 	if (fgetc(in) != 'P')

@@ -40,7 +40,7 @@ GETOPT=	getopt.o
 CONF_LIBRARY=\
 	${NULL}
 COPTS=	-Oloop -cwagshf -d1 -b0 -v -DNDEBUG -rr -j135i
-CFLAGS=	${COPTS} ${IPATH} -DBINMODE='"b"'
+CFLAGS=	${COPTS} ${IPATH}
 #
 LIBTIFF=..\libtiff\tiffrnb.lib
 LIBS=	-l${LIBTIFF} -lm

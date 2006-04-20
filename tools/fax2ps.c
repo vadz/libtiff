@@ -35,6 +35,10 @@
 # include <unistd.h>
 #endif
 
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
 #ifdef HAVE_IO_H
 # include <io.h>
 #endif
@@ -380,6 +384,9 @@ main(int argc, char** argv)
 	    fclose(fd);
 	    exit(-2);
 	}
+#if defined(HAVE_SETMODE) && defined(O_BINARY)
+	setmode(fileno(stdin), O_BINARY);
+#endif
 	while ((n = read(fileno(stdin), buf, sizeof (buf))) > 0)
 	    write(fileno(fd), buf, n);
 	lseek(fileno(fd), 0, SEEK_SET);
