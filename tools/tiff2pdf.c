@@ -385,23 +385,21 @@ tsize_t t2p_write_pdf_trailer(T2P*, TIFF*);
     options:
     -o: output to file name
 
-    -j  compress with JPEG (requires libjpeg configured with libtiff)
-    -z  compress with Zip/Deflate (requires zlib configured with libtiff)
+    -j: compress with JPEG (requires libjpeg configured with libtiff)
+    -z: compress with Zip/Deflate (requires zlib configured with libtiff)
     -q: compression quality
-    -n  no compressed data passthrough
-    -d  do not compress (decompress)
-
-	-i  invert colors
-	
+    -n: no compressed data passthrough
+    -d: do not compress (decompress)
+    -i: invert colors
     -u: set distance unit, 'i' for inch, 'm' for centimeter
     -x: set x resolution default
     -y: set y resolution default
     -w: width in units
     -l: length in units
     -r: 'd' for resolution default, 'o' for resolution override
-    -p: paper size, eg "letter", "legal", "A4"
-    -f  set PDF "Fit Window" user preference
-    -b set PDF "Interpolate" user preference
+    -p: paper size, eg "letter", "legal", "a4"
+    -f: set pdf "fit window" user preference
+    -b:	set PDF "Interpolate" user preference
     -e: date, overrides image or current date/time default, YYYYMMDDHHMMSS
     -c: creator, overrides image software default
     -a: author, overrides image artist default
@@ -409,7 +407,7 @@ tsize_t t2p_write_pdf_trailer(T2P*, TIFF*);
     -s: subject, overrides image image description default
     -k: keywords
 
-    -h  usage
+    -h: usage
 
     examples:
 
@@ -747,14 +745,15 @@ void tiff2pdf_usage(){
 	"options:",
 	" -o: output to file name",
 #ifdef JPEG_SUPPORT
-	" -j  compress with JPEG", 
+	" -j: compress with JPEG", 
 #endif
 #ifdef ZIP_SUPPORT
-	" -z  compress with Zip/Deflate",
+	" -z: compress with Zip/Deflate",
 #endif
 	" -q: compression quality",
-	" -n  no compressed data passthrough",
-	" -d  do not compress (decompress)",
+	" -n: no compressed data passthrough",
+	" -d: do not compress (decompress)",
+	" -i: invert colors",
 	" -u: set distance unit, 'i' for inch, 'm' for centimeter",
 	" -x: set x resolution default in dots per unit",
 	" -y: set y resolution default in dots per unit",
@@ -762,15 +761,15 @@ void tiff2pdf_usage(){
 	" -l: length in units",
 	" -r: 'd' for resolution default, 'o' for resolution override",
 	" -p: paper size, eg \"letter\", \"legal\", \"A4\"",
-	" -f  set PDF \"Fit Window\" user preference",
+	" -f: set PDF \"Fit Window\" user preference",
 	" -e: date, overrides image or current date/time default, YYYYMMDDHHMMSS",
 	" -c: sets document creator, overrides image software default",
 	" -a: sets document author, overrides image artist default",
 	" -t: sets document title, overrides image document name default",
 	" -s: sets document subject, overrides image image description default",
 	" -k: sets document keywords",
-	" -b set PDF \"Interpolate\" user preference",
-	" -h  usage",
+	" -b: set PDF \"Interpolate\" user preference",
+	" -h: usage",
 	NULL
 	};
 	int i=0;
