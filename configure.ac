@@ -93,7 +93,7 @@ case "$target_os" in
 esac
 
 dnl Checks for header files.
-AC_CHECK_HEADERS([assert.h fcntl.h limits.h malloc.h search.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([assert.h fcntl.h io.h limits.h malloc.h search.h sys/time.h unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -114,7 +114,7 @@ AC_CHECK_TYPES([int8, int16, int32],,,
 ])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor isascii memmove memset mmap pow sqrt strchr strrchr strstr strtol])
+AC_CHECK_FUNCS([floor isascii memmove memset mmap pow setmode sqrt strchr strrchr strstr strtol])
 
 dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)
