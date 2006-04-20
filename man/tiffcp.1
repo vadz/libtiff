@@ -60,7 +60,7 @@ in a file, but it is explicitly intended to not alter or convert
 the image data content in any way.
 .SH OPTIONS
 .TP
-.B \-b image
+.BI \-b " image"
 subtract the following monochrome image from all others
 processed.  This can be used to remove a noise bias
 from a set of images.  This bias image is typically an
@@ -185,7 +185,7 @@ is specified),
 attempts to set the rows/strip
 that no more than 8 kilobytes of data appear in a strip. If you specify
 special value
-.B -1
+.B \-1
 it will results in infinite number of the rows per strip. The entire image
 will be the one strip in that case.
 .TP
@@ -208,18 +208,22 @@ that no more than 8 kilobytes of data appear in a tile.
 attempts to set the tile dimensions so
 that no more than 8 kilobytes of data appear in a tile.
 .TP
-.B \-,={character}
-substitute {character} for ',' in parsing image directory indices
+.BI \-,= character
+substitute
+.I character
+for `,' in parsing image directory indices
 in files.  This is necessary if filenames contain commas.
-Note that ',=' with whitespace immediately following will disable
-the special meaning of the ',' entirely.  See examples.
+Note that
+.B \-,=
+with whitespace immediately following will disable
+the special meaning of the `,' entirely.  See examples.
 .SH EXAMPLES
 The following concatenates two files and writes the result using 
 .SM LZW
 encoding:
 .RS
 .nf
-tiffcp -c lzw a.tif b.tif result.tif
+tiffcp \-c lzw a.tif b.tif result.tif
 .fi
 .RE
 .PP
@@ -228,39 +232,41 @@ To convert a G3 1d-encoded
 to a single strip of G4-encoded data the following might be used:
 .RS
 .nf
-tiffcp -c g4 -r 10000 g3.tif g4.tif
+tiffcp \-c g4 \-r 10000 g3.tif g4.tif
 .fi
 .RE
 (1000 is just a number that is larger than the number of rows in
 the source file.)
 
 To extract a selected set of images from a multi-image
-TIFF file, the file name may be immediately followed by a ',' 
+TIFF file, the file name may be immediately followed by a `,' 
 separated list of image directory indices.  The first image
 is always in directory 0.  Thus, to copy the 1st and 3rd
-images of image file "album.tif" to "result.tif":
+images of image file ``album.tif'' to ``result.tif'':
 .RS
 .nf
 tiffcp album.tif,0,2 result.tif
 .fi
 .RE
 
-Given file "CCD.tif" whose first image is a noise bias
+Given file ``CCD.tif'' whose first image is a noise bias
 followed by images which include that bias,
 subtract the noise from all those images following it
 (while decompressing) with the command:
 .RS
 .nf
-tiffcp -c none -b CCD.tif CCD.tif,1, result.tif
+tiffcp \-c none \-b CCD.tif CCD.tif,1, result.tif
 .fi
 .RE
 
-If the file above were named "CCD,X.tif", the "-,=" option would
+If the file above were named ``CCD,X.tif'', the
+.B \-,=
+option would
 be required to correctly parse this filename with image numbers,
 as follows:
 .RS
 .nf
-tiffcp -c none -,=% -b CCD,X.tif CCD,X%1%.tif result.tif
+tiffcp \-c none \-,=% \-b CCD,X.tif CCD,X%1%.tif result.tif
 .SH "SEE ALSO"
 .BR pal2rgb (1),
 .BR tiffinfo (1),
