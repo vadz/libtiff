@@ -32,6 +32,7 @@ docfiles = \
 	COPYRIGHT \
 	ChangeLog \
 	README \
+	README.vms \
 	RELEASE-DATE \
 	TODO \
 	VERSION
@@ -41,6 +42,7 @@ EXTRA_DIST = \
 	Makefile.vc \
 	SConstruct \
 	autogen.sh \
+	configure.com \
 	nmake.opt
 
 dist_doc_DATA = $(docfiles)
