@@ -1,3 +1,12 @@
+2006-04-21  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiff2pdf.c: Unified line ending characters (always use '\n')
+	as per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1163
+
+	* README.vms, Makefile.am, configure.com, libtiff/{Makefile.am,
+	tif_config.h-vms, tif_stream.cxx, tif_vms.c, tiffconf.h-vms}:
+	Added support for OpenVMS by Alexey Chupahin, elvis_75@mail.ru.
+
 2006-04-20  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/{fax2ps.c, fax2tiff.c, ppm2tiff.c, ras2tiff.c, tiff2pdf.c}:
