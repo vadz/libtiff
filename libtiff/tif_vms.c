@@ -339,15 +339,15 @@ asm("_$$PsectAttributes_NOSHR$$_TIFFerrorHandler")
 /* IEEE floting point handling */
 
 typedef	struct ieeedouble {
-	unsigned long	mant2;			/* fix NDR: full 8-byte swap */
-	unsigned long	mant	: 20,
-			exp	: 11,
-			sign	: 1;
+	u_long	mant2;			/* fix NDR: full 8-byte swap */
+	u_long	mant	: 20,
+		exp	: 11,
+		sign	: 1;
 } ieeedouble;
 typedef	struct ieeefloat {
-	unsigned long	mant	: 23,
-			exp	: 8,
-			sign	: 1;
+	u_long	mant	: 23,
+		exp	: 8,
+		sign	: 1;
 } ieeefloat;
 
 /* 
@@ -356,18 +356,18 @@ typedef	struct ieeefloat {
  */
 
 typedef	struct {
-	unsigned long	mant1	: 7,
-			exp	: 8,
-			sign	: 1,
-			mant2	: 16,
-			mant3   : 16,
-			mant4   : 16;
+	u_long	mant1	: 7,
+		exp	: 8,
+		sign	: 1,
+		mant2	: 16,
+		mant3   : 16,
+		mant4   : 16;
 } nativedouble;
 typedef	struct {
-	unsigned long	mant1	: 7,
-			exp	: 8,
-			sign	: 1,
-			mant2	: 16;
+	u_long	mant1	: 7,
+		exp	: 8,
+		sign	: 1,
+		mant2	: 16;
 } nativefloat;
 
 typedef	union {
@@ -544,7 +544,7 @@ dtoieee(double *dp)
  * conversion operations.
  */
 void
-TIFFCvtIEEEFloatToNative(TIFF* tif, unsigned int n, float* f)
+TIFFCvtIEEEFloatToNative(TIFF* tif, u_int n, float* f)
 {
 	float_t* fp = (float_t*) f;
 
@@ -555,7 +555,7 @@ TIFFCvtIEEEFloatToNative(TIFF* tif, unsigned int n, float* f)
 }
 
 void
-TIFFCvtNativeToIEEEFloat(TIFF* tif, unsigned int n, float* f)
+TIFFCvtNativeToIEEEFloat(TIFF* tif, u_int n, float* f)
 {
 	float_t* fp = (float_t*) f;
 
@@ -565,7 +565,7 @@ TIFFCvtNativeToIEEEFloat(TIFF* tif, unsigned int n, float* f)
 	}
 }
 void
-TIFFCvtIEEEDoubleToNative(TIFF* tif, unsigned int n, double* f)
+TIFFCvtIEEEDoubleToNative(TIFF* tif, u_int n, double* f)
 {
 	double_t* fp = (double_t*) f;
 
@@ -576,7 +576,7 @@ TIFFCvtIEEEDoubleToNative(TIFF* tif, unsigned int n, double* f)
 }
 
 void
-TIFFCvtNativeToIEEEDouble(TIFF* tif, unsigned int n, double* f)
+TIFFCvtNativeToIEEEDouble(TIFF* tif, u_int n, double* f)
 {
 	double_t* fp = (double_t*) f;
 
@@ -586,5 +586,3 @@ TIFFCvtNativeToIEEEDouble(TIFF* tif, unsigned int n, double* f)
 	}
 }
 #endif
-
-/* vim: set ts=8 sts=8 sw=8 noet: */
