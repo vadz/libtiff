@@ -4714,17 +4714,16 @@ _LT_EOF
       case $host_os in
       solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
       *)
-	# The compiler driver will combine linker options so we
-	# cannot just pass the convenience library names through
-	# without $wl, iff we do not link with $LD.
-	# Luckily, gcc supports the same syntax we need for Sun Studio.
+	# The compiler driver will combine and reorder linker options,
+	# but understands `-z linker_flag'.  GCC discards it without `$wl',
+	# but is careful enough not to reorder.
 	# Supported since Solaris 2.6 (maybe 2.5.1?)
-	case $wlarc in
-	'')
-	  _LT_TAGVAR(whole_archive_flag_spec, $1)='-z allextract$convenience -z defaultextract' ;;
-	*)
-	  _LT_TAGVAR(whole_archive_flag_spec, $1)='${wl}-z ${wl}allextract`for conv in $convenience\"\"; do test -n \"$conv\" && new_convenience=\"$new_convenience,$conv\"; done; $ECHO \"$new_convenience\"` ${wl}-z ${wl}defaultextract' ;;
-	esac ;;
+	if test "$GCC" = yes; then
+	  _LT_TAGVAR(whole_archive_flag_spec, $1)='${wl}-z ${wl}allextract$convenience ${wl}-z ${wl}defaultextract'
+	else
+	  _LT_TAGVAR(whole_archive_flag_spec, $1)='-z allextract$convenience -z defaultextract'
+	fi
+	;;
       esac
       _LT_TAGVAR(link_all_deplibs, $1)=yes
       ;;
@@ -5936,15 +5935,10 @@ if test "$_lt_caught_CXX_error" != yes; then
   	    case $host_os in
   	      solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
   	      *)
-  	        # The C++ compiler is used as linker so we must use $wl
-  	        # flag to pass the commands to the underlying system
-  	        # linker. We must also pass each convenience library through
-  	        # to the system linker between allextract/defaultextract.
-  	        # The C++ compiler will combine linker options so we
-  	        # cannot just pass the convenience library names through
-  	        # without $wl.
+		# The compiler driver will combine and reorder linker options,
+		# but understands `-z linker_flag'.
   	        # Supported since Solaris 2.6 (maybe 2.5.1?)
-  	        _LT_TAGVAR(whole_archive_flag_spec, $1)='${wl}-z ${wl}allextract`for conv in $convenience\"\"; do test -n \"$conv\" && new_convenience=\"$new_convenience,$conv\"; done; $ECHO \"$new_convenience\"` ${wl}-z ${wl}defaultextract'
+		_LT_TAGVAR(whole_archive_flag_spec, $1)='-z allextract$convenience -z defaultextract'
   	        ;;
   	    esac
   	    _LT_TAGVAR(link_all_deplibs, $1)=yes
@@ -5991,6 +5985,12 @@ if test "$_lt_caught_CXX_error" != yes; then
   	      fi
 
   	      _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-R $wl$libdir'
+	      case $host_os in
+		solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
+		*)
+		  _LT_TAGVAR(whole_archive_flag_spec, $1)='${wl}-z ${wl}allextract$convenience ${wl}-z ${wl}defaultextract'
+		  ;;
+	      esac
   	    fi
   	    ;;
         esac

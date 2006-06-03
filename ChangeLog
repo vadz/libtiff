@@ -1,3 +1,8 @@
+2006-06-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/{tif_dirinfo.c, tif_print.c} : Fix crash in
+	TIFFPrintDirectory().  Joris Van Damme authored the fix.
+
 2006-04-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Unified line ending characters (always use '\n')

@@ -146,7 +146,7 @@
  * 	absolutely no effect. That is why most people insist the EGYPTIANWALK is a bit silly.
  */
 
-/* define LIBJPEG_ENCAP_EXTERNAL */
+/* #define LIBJPEG_ENCAP_EXTERNAL */
 #define SETJMP(jbuf) setjmp(jbuf)
 #define LONGJMP(jbuf,code) longjmp(jbuf,code)
 #define JMP_BUF jmp_buf

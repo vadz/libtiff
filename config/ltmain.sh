@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2248 2006/01/21 17:40:19) 2.1a
+# ltmain.sh (GNU libtool 1.2259 2006/02/03 20:43:24) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -59,12 +59,12 @@
 # When reporting a bug, please describe a test case to reproduce it and
 # include the following information:
 #
-#       host-triplet:	powerpc-apple-darwin8.2.0
+#       host-triplet:	sparc-sun-solaris2.9
 #       shell:		$SHELL
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2248 2006/01/21 17:40:19) 2.1a
+#       $progname:		(GNU libtool 1.2259 2006/02/03 20:43:24) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2248 2006/01/21 17:40:19"
-package_revision=1.2248
+TIMESTAMP=" 1.2259 2006/02/03 20:43:24"
+package_revision=1.2259
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -87,10 +87,34 @@ if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
   # Zsh 3.x and 4.x performs word splitting on ${1+"$@"}, which
   # is contrary to our usage.  Disable this feature.
   alias -g '${1+"$@"}'='"$@"'
-elif test -n "${BASH_VERSION+set}" && (set -o posix) >/dev/null 2>&1; then
+  setopt NO_GLOB_SUBST
+elif (set -o posix) >/dev/null 2>&1; then
   set -o posix
 fi
+BIN_SH=xpg4; export BIN_SH # for Tru64
 DUALCASE=1; export DUALCASE # for MKS sh
+
+
+# PATH needs CR
+# Avoid depending upon Character Ranges.
+as_cr_letters='abcdefghijklmnopqrstuvwxyz'
+as_cr_LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+as_cr_Letters=$as_cr_letters$as_cr_LETTERS
+as_cr_digits='0123456789'
+as_cr_alnum=$as_cr_Letters$as_cr_digits
+
+# The user is always right.
+if test "${PATH_SEPARATOR+set}" != set; then
+  echo "#! /bin/sh" >conf$$.sh
+  echo  "exit 0"   >>conf$$.sh
+  chmod +x conf$$.sh
+  if (PATH="/nonexistent;."; conf$$.sh) >/dev/null 2>&1; then
+    PATH_SEPARATOR=';'
+  else
+    PATH_SEPARATOR=:
+  fi
+  rm -f conf$$.sh
+fi
 
 # Support unset when possible.
 if ( (MAIL=60; unset MAIL) || exit) >/dev/null 2>&1; then
@@ -100,8 +124,34 @@ else
 fi
 
 
+# Find who we are.  Look in the path if we contain no path at all
+# relative or not.
+case $0 in
+  *[\\/]* ) as_myself=$0 ;;
+  *) as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  test -r "$as_dir/$0" && as_myself=$as_dir/$0 && break
+done
+
+     ;;
+esac
+# We did not find ourselves, most probably we were run as `sh COMMAND'
+# in which case we are not to be found in the path.
+if test "x$as_myself" = x; then
+  as_myself=$0
+fi
+if test ! -f "$as_myself"; then
+  { echo "$as_me: error: cannot find myself; rerun with an absolute file name" >&2
+   { (exit 1); exit 1; }; }
+fi
+
 # Work around bugs in pre-3.0 UWIN ksh.
-$as_unset ENV MAIL MAILPATH
+for as_var in ENV MAIL MAILPATH
+do ($as_unset $as_var) >/dev/null 2>&1 && $as_unset $as_var
+done
 PS1='$ '
 PS2='> '
 PS4='+ '
@@ -115,7 +165,7 @@ do
   if (set +x; test -z "`(eval $as_var=C; export $as_var) 2>&1`"); then
     eval $as_var=C; export $as_var
   else
-    $as_unset $as_var
+    ($as_unset $as_var) >/dev/null 2>&1 && $as_unset $as_var
   fi
 done
 
@@ -152,15 +202,15 @@ $as_unset CDPATH
 
 : ${CP="cp -f"}
 : ${ECHO="echo"}
-: ${EGREP="grep -E"}
-: ${FGREP="grep -F"}
-: ${GREP="grep"}
+: ${EGREP="/usr/local/bin/grep -E"}
+: ${FGREP="/usr/local/bin/grep -F"}
+: ${GREP="/usr/local/bin/grep"}
 : ${LN_S="ln -s"}
 : ${MAKE="make"}
 : ${MKDIR="mkdir"}
 : ${MV="mv -f"}
 : ${RM="rm -f"}
-: ${SED="/usr/bin/sed"}
+: ${SED="/usr/local/bin/sed"}
 : ${SHELL="${CONFIG_SHELL-/bin/sh}"}
 : ${Xsed="$SED -e 1s/^X//"}
 
@@ -4043,11 +4093,13 @@ func_mode_link ()
 
 	if test "$linkmode,$pass" = "prog,link"; then
 	  if test -n "$library_names" &&
-	     { test "$prefer_static_libs" = no || test -z "$old_library"; }; then
+	     { { test "$prefer_static_libs" = no ||
+	         test "$prefer_static_libs,$installed" = "built,yes"; } ||
+	       test -z "$old_library"; }; then
 	    # We need to hardcode the library path
 	    if test -n "$shlibpath_var" && test -z "$avoidtemprpath" ; then
 	      # Make sure the rpath contains only unique directories.
-	      case "$temp_rpath " in
+	      case "$temp_rpath:" in
 	      *"$absdir:"*) ;;
 	      *) temp_rpath="$temp_rpath$absdir:" ;;
 	      esac
@@ -7337,3 +7389,4 @@ build_old_libs=`case $build_libtool_libs in yes) echo no;; *) echo yes;; esac`
 # mode:shell-script
 # sh-indentation:2
 # End:
+# vi:sw=2

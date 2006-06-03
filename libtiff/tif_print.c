@@ -509,7 +509,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
             for(i = 0; i < count; i++) {
                 ttag_t  tag = TIFFGetTagListEntry(tif, i);
                 const TIFFFieldInfo *fip;
-                uint16 value_count;
+                uint32 value_count;
                 int mem_alloc = 0;
                 void *raw_data;
 
