@@ -149,7 +149,7 @@
 /* Set the native cpu bit order (FILLORDER_LSB2MSB or FILLORDER_MSB2LSB) */
 #undef HOST_FILLORDER
 
-/* Support JBIG compression (requires JBIG-KIT library) */
+/* Support ISO JBIG compression (requires JBIG-KIT library) */
 #undef JBIG_SUPPORT
 
 /* Support JPEG compression (requires IJG JPEG library) */
