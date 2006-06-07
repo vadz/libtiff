@@ -53,8 +53,12 @@
 
 #include "tiffio.h"
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 #if defined(VMS)
-#define unlink delete
+# define unlink delete
 #endif
 
 #define	streq(a,b)	(strcmp(a,b) == 0)
@@ -387,6 +391,7 @@ char* stuff[] = {
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
 " -c zip[:opts]	compress output with deflate encoding",
 " -c jpeg[:opts]	compress output with JPEG encoding",
+" -c jbig	compress output with ISO JBIG encoding",
 " -c packbits	compress output with packbits encoding",
 " -c g3[:opts]	compress output with CCITT Group 3 encoding",
 " -c g4		compress output with CCITT Group 4 encoding",
