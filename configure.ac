@@ -392,7 +392,7 @@ dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(old-jpeg,
 	      AS_HELP_STRING([--disable-old-jpeg],
 			     [disable support for Old JPEG compresson (read-only, enabled by default)]),
-	      [HAVE_OJPEG=no], [HAVE_OJPEG=yes])
+	      [HAVE_OJPEG=${enableval}], [HAVE_OJPEG=yes])
 
 if test "$HAVE_JPEG" = "yes" -a "$HAVE_OJPEG" = "yes" ; then
   AC_DEFINE(OJPEG_SUPPORT, 1,

@@ -14824,7 +14824,7 @@ fi
 
 # Check whether --enable-old-jpeg was given.
 if test "${enable_old_jpeg+set}" = set; then
-  enableval=$enable_old_jpeg; HAVE_OJPEG=no
+  enableval=$enable_old_jpeg; HAVE_OJPEG=${enableval}
 else
   HAVE_OJPEG=yes
 fi
