@@ -149,6 +149,9 @@
 /* Set the native cpu bit order (FILLORDER_LSB2MSB or FILLORDER_MSB2LSB) */
 #undef HOST_FILLORDER
 
+/* Support JBIG compression (requires JBIG-KIT library) */
+#undef JBIG_SUPPORT
+
 /* Support JPEG compression (requires IJG JPEG library) */
 #undef JPEG_SUPPORT
 
@@ -171,8 +174,7 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
 
-/* Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation
-   fails with unpatched IJG JPEG library) */
+/* Support Old JPEG compresson (read-only) */
 #undef OJPEG_SUPPORT
 
 /* Name of package */
