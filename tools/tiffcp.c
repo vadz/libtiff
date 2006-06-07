@@ -357,6 +357,8 @@ processCompressOptions(char* opt)
 		if (cp)
 			defpredictor = atoi(cp+1);
 		defcompression = COMPRESSION_ADOBE_DEFLATE;
+	} else if (strneq(opt, "jbig", 4)) {
+		defcompression = COMPRESSION_JBIG;
 	} else
 		return (0);
 	return (1);
@@ -659,6 +661,12 @@ tiffcp(TIFF* in, TIFF* out)
 	case COMPRESSION_JPEG:
 		TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
 		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
+		break;
+	case COMPRESSION_JBIG:
+		CopyTag(TIFFTAG_FAXRECVPARAMS, 1, TIFF_LONG);
+		CopyTag(TIFFTAG_FAXRECVTIME, 1, TIFF_LONG);
+		CopyTag(TIFFTAG_FAXSUBADDRESS, 1, TIFF_ASCII);
+		CopyTag(TIFFTAG_FAXDCS, 1, TIFF_ASCII);
 		break;
 	case COMPRESSION_LZW:
 	case COMPRESSION_ADOBE_DEFLATE:
