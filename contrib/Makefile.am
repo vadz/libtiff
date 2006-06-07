@@ -25,5 +25,5 @@
 
 EXTRA_DIST = README
 
-SUBDIRS = acorn addtiffo dbs iptcutil mac-cw mac-mpw mfs ojpeg pds ras stream tags win_dib
+SUBDIRS = acorn addtiffo dbs iptcutil mac-cw mac-mpw mfs pds ras stream tags win_dib
 
