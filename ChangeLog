@@ -1,3 +1,15 @@
+2006-06-07  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* {configure, configure.ac, libtiff/tif_jbig.c, tools/tiffcp.c}: Added
+	support for JBIG compression scheme (34661 code) contributed by Lee
+	Howard. As per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=896
+
+	* configure, configure.ac: OJPEG support enabled by default.
+
+	* contrib/ojpeg/: Removed. New OJPEG support does not need this patch.
+
 2006-06-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/{tif_dirinfo.c, tif_print.c} : Fix crash in
