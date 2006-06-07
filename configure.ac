@@ -84,12 +84,12 @@ AC_LIBTOOL_WIN32_DLL
 dnl Checks for libraries.
 AC_CHECK_LIB([c], [main])
 
-dnl We don't need to add math library at all targets
-case "$target_os" in
+dnl We don't need to add math library to all targets
+case "${host_os}" in
     cygwin* | mingw32* | beos* | darwin*)
         ;;
     *)
-	AC_CHECK_LIB(m,main,,,)
+	AC_CHECK_LIB(m,sin,,,)
         ;;
 esac
 
@@ -390,15 +390,67 @@ dnl Check for Old JPEG.
 dnl ---------------------------------------------------------------------------
 
 AC_ARG_ENABLE(old-jpeg,
-	      AS_HELP_STRING([--enable-old-jpeg],
-			     [enable support for Old JPEG compresson (read contrib/ojpeg/README first! Compilation fails with unpatched IJG JPEG library)]),
-	      [HAVE_OJPEG=$enableval], [HAVE_OJPEG=no])
+	      AS_HELP_STRING([--disable-old-jpeg],
+			     [disable support for Old JPEG compresson (read-only, enabled by default)]),
+	      [HAVE_OJPEG=no], [HAVE_OJPEG=yes])
 
 if test "$HAVE_JPEG" = "yes" -a "$HAVE_OJPEG" = "yes" ; then
   AC_DEFINE(OJPEG_SUPPORT, 1,
-	    [Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation fails with unpatched IJG JPEG library)])
+	    [Support Old JPEG compresson (read-only)])
 else
   HAVE_OJPEG=no
+fi
+
+dnl ---------------------------------------------------------------------------
+dnl Check for JBIG-KIT.
+dnl ---------------------------------------------------------------------------
+
+HAVE_JBIG=no
+
+AC_ARG_ENABLE(jbig,
+	      AS_HELP_STRING([--disable-jbig],
+			     [disable JBIG-KIT usage (required for ISO JBIG compression, enabled by default)]),,)
+AC_ARG_WITH(jbig-include-dir,
+	    AS_HELP_STRING([--with-jbig-include-dir=DIR],
+			   [location of JBIG-KIT headers]),,)
+AC_ARG_WITH(jbig-lib-dir,
+	    AS_HELP_STRING([--with-jbig-lib-dir=DIR],
+			   [location of JBIG-KIT library binary]),,)
+
+if test "x$enable_jbig" != "xno" ; then
+
+  if test "x$with_jbig_lib_dir" != "x" ; then
+    LDFLAGS="-L$with_jbig_lib_dir $LDFLAGS"
+  
+  fi
+  
+  AC_CHECK_LIB(jbig, jbg_dec_init, [jbig_lib=yes], [jbig_lib=no],)
+  if test "$jbig_lib" = "no" -a "x$with_jbig_lib_dir" != "x" ; then
+    AC_MSG_ERROR([JBIG-KIT library not found at $with_jbig_lib_dir])
+  fi
+    
+  if test "x$with_jbig_include_dir" != "x" ; then
+    CPPFLAGS="-I$with_jbig_include_dir $CPPFLAGS"
+  fi
+  AC_CHECK_HEADER(jbig.h, [jbig_h=yes], [jbig_h=no])
+  if test "$jbig_h" = "no" -a "x$with_jbig_include_dir" != "x" ; then
+    AC_MSG_ERROR([JBIG-KIT library headers not found at $with_jbig_include_dir])
+  fi
+
+  if test "$jbig_lib" = "yes" -a "$jbig_h" = "yes" ; then
+    HAVE_JBIG=yes
+  fi
+
+fi
+
+if test "$HAVE_JBIG" = "yes" ; then
+  AC_DEFINE(JBIG_SUPPORT,1,[Support ISO JBIG compression (requires JBIG-KIT library)])
+  LIBS="-ljbig $LIBS"
+
+  if test "$HAVE_RPATH" = "yes" -a "x$with_jbig_lib_dir" != "x" ; then
+    LIBDIR="-R $with_jbig_lib_dir $LIBDIR"
+  fi
+
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -518,7 +570,6 @@ AC_CONFIG_FILES([Makefile \
 		 contrib/mac-cw/Makefile \
 		 contrib/mac-mpw/Makefile \
 		 contrib/mfs/Makefile \
-		 contrib/ojpeg/Makefile \
 		 contrib/pds/Makefile \
 		 contrib/ras/Makefile \
 		 contrib/stream/Makefile \
@@ -561,6 +612,7 @@ LOC_MSG([  ZLIB support:                       ${HAVE_ZLIB}])
 LOC_MSG([  Pixar log-format algorithm:         ${HAVE_PIXARLOG}])
 LOC_MSG([  JPEG support:                       ${HAVE_JPEG}])
 LOC_MSG([  Old JPEG support:                   ${HAVE_OJPEG}])
+LOC_MSG([  ISO JBIG support:                   ${HAVE_JBIG}])
 LOC_MSG()
 LOC_MSG([  C++ support:                        ${HAVE_CXX}])
 LOC_MSG()
