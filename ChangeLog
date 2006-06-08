@@ -1,3 +1,23 @@
+2006-06-08  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_open.c, tif_dirread.c, tiffiop.h}: Move IFD looping
+	checking code in the separate function TIFFCheckDirOffset().
+
+	* libtiff/tif_aux.c: Added _TIFFCheckRealloc() function.
+
+	* tools/tiffcmp.c: Fixed floating point comparison logic as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1191
+
+	* libtiff/tif_fax3.c: Fixed problems in fax decoder as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1194
+
+	* tools/tiff2pdf.c: Fixed buffer overflow condition in
+	t2p_write_pdf_string() as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1196
+
 2006-06-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* {configure, configure.ac, libtiff/tif_jbig.c, tools/tiffcp.c}: Added
