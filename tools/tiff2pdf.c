@@ -3669,16 +3669,17 @@ tsize_t t2p_write_pdf_name(char* name, TIFF* output){
 	
 tsize_t t2p_write_pdf_string(char* pdfstr, TIFF* output){
 
-	tsize_t written=0;
-	uint32 i=0;
-	char buffer[5];
-	uint32 len=0;
+	tsize_t written = 0;
+	uint32 i = 0;
+	char buffer[64];
+	uint32 len = 0;
 	
-	len=strlen(pdfstr);
+	len = strlen(pdfstr);
 	written += TIFFWriteFile(output, (tdata_t) "(", 1);
-	for (i=0;i<len;i++){
+	for (i=0; i<len; i++) {
 		if((pdfstr[i]&0x80) || (pdfstr[i]==127) || (pdfstr[i]<32)){
 			sprintf(buffer, "\\%.3o", pdfstr[i]);
+			buffer[sizeof(buffer) - 1] = '\0';
 			written += TIFFWriteFile(output, (tdata_t) buffer, 4);
 		} else {
 			switch (pdfstr[i]){
