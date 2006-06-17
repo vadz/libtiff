@@ -681,11 +681,14 @@ TIFFReadDirectory(TIFF* tif)
 		} else if (td->td_planarconfig == PLANARCONFIG_CONTIG
 			   && td->td_nstrips > 2
 			   && td->td_compression == COMPRESSION_NONE
-			   && td->td_stripbytecount[0] != td->td_stripbytecount[1]) {
+			   && td->td_stripbytecount[0] != td->td_stripbytecount[1]
+                           && td->td_stripbytecount[0] != 0 
+                           && td->td_stripbytecount[1] != 0 ) {
 			/*
-			 * XXX: Some vendors fill StripByteCount array with absolutely
-			 * wrong values (it can be equal to StripOffset array, for
-			 * example). Catch this case here.
+			 * XXX: Some vendors fill StripByteCount array with 
+                         * absolutely wrong values (it can be equal to 
+                         * StripOffset array, for example). Catch this case 
+                         * here.
 			 */
 			TIFFWarningExt(tif->tif_clientdata, module,
 		"%s: Wrong \"%s\" field, ignoring and calculating from imagelength",
@@ -1016,6 +1019,11 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
                                                                > filesize)
 			td->td_stripbytecount[i] =
 			    filesize - td->td_stripoffset[i];
+	} else if( isTiled(tif) ) {
+		uint32 bytespertile = TIFFTileSize(tif);
+
+		for (i = 0; i < td->td_nstrips; i++)
+                    td->td_stripbytecount[i] = bytespertile;
 	} else {
 		uint32 rowbytes = TIFFScanlineSize(tif);
 		uint32 rowsperstrip = td->td_imagelength/td->td_stripsperimage;

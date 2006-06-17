@@ -1,3 +1,11 @@
+2006-06-17  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_readdir.c: Added case in EstimateStripByteCounts() for tiled
+	files.  Modified TIFFReadDirectory() to not invoke 
+	EstimateStripByteCounts() for case where entry 0 and 1 are unequal
+	but one of them is zero. 
+	  http://bugzilla.remotesensing.org/show_bug.cgi?id=1204
+
 2006-06-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_open.c, tif_dirread.c, tiffiop.h}: Move IFD looping
