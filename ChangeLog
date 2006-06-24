@@ -1,3 +1,11 @@
+2006-06-24  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dirinfo.c: Added missed EXIF tag ColorSpace (40961).
+
+	* libtiff/tif_dirread.c: Move IFD fetching code in the separate
+	function TIFFFetchDirectory() avoiding code duplication in
+	TIFFReadDirectory() and TIFFReadCustomDirectory().
+
 2006-06-19  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2pdf.c: Fix handling of -q values.
