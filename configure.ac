@@ -451,6 +451,9 @@ if test "$HAVE_JBIG" = "yes" ; then
     LIBDIR="-R $with_jbig_lib_dir $LIBDIR"
   fi
 
+  # Older versions of jbigkit lack jbg_newlen
+  AC_CHECK_FUNCS([jbg_newlen])
+
 fi
 
 dnl ---------------------------------------------------------------------------

@@ -88,6 +88,8 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
         }
 
         jbg_dec_init(&decoder);
+
+#if defined(HAVE_JBG_NEWLEN)
         jbg_newlen(tif->tif_rawdata, tif->tif_rawdatasize);
         /*
          * I do not check the return status of jbg_newlen because even if this
@@ -99,6 +101,7 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
          * PostScript.  As long as the actual image length is contained in the
          * BIE header jbg_dec_in should succeed.
          */
+#endif /* HAVE_JBG_NEWLEN */
 
         decodeStatus = jbg_dec_in(&decoder, tif->tif_rawdata,
                                   tif->tif_rawdatasize, NULL);

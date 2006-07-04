@@ -8,6 +8,9 @@
    machine */
 #define HAVE_IEEEFP 1
 
+/* Define to 1 if you have the `jbg_newlen' function. */
+#define HAVE_JBG_NEWLEN 1
+
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
 

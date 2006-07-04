@@ -55,6 +55,9 @@
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
 
+/* Define to 1 if you have the `jbg_newlen' function. */
+#undef HAVE_JBG_NEWLEN
+
 /* Define to 1 if you have the `lfind' function. */
 #undef HAVE_LFIND
 
