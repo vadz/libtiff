@@ -114,7 +114,9 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		 * Flush any data that might have been written
 		 * by the compression close+cleanup routines.
 		 */
-		if (tif->tif_rawcc > 0 && !TIFFFlushData1(tif)) {
+		if (tif->tif_rawcc > 0 
+                    && (tif->tif_flags & TIFF_BEENWRITING) != 0
+                    && !TIFFFlushData1(tif)) {
 			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 			    "Error flushing data before directory write");
 			return (0);
@@ -194,7 +196,6 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		}
 		else if (!FieldSet(fields, fip->field_bit))
 			continue;
-
 
 		/*
 		 * Handle other fields.
@@ -711,7 +712,12 @@ TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
 		{ 
                     char* cp;
                     if (fip->field_passcount)
-                        TIFFGetField(tif, fip->field_tag, &wc, &cp);
+                    {
+                        if( wc == (uint16) TIFF_VARIABLE2 )
+                            TIFFGetField(tif, fip->field_tag, &wc2, &cp);
+                        else
+                            TIFFGetField(tif, fip->field_tag, &wc, &cp);
+                    }
                     else
                         TIFFGetField(tif, fip->field_tag, &cp);
 

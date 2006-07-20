@@ -1,3 +1,16 @@
+2006-07-19  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_dirwrite.c: take care not to flush out buffer of strip/tile
+	data in _TIFFWriteDirectory if TIFF_BEENWRITING not set.  Relates
+	to bug report by Peng Gao with black strip at bottom of images.
+
+2006-07-12  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_dirwrite.c: make sure to use uint32 for wordcount in 
+	TIFFWriteNormanTag if writecount is VARIABLE2 for ASCII fields.
+	It already seems to have been done for other field types.  Needed
+	for "tiffset" on files with geotiff ascii text.
+
 2006-07-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* {configure.ac, libtiff/tif_config.h.vc, libtiff/tif_jbig.c}
