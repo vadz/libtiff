@@ -102,6 +102,7 @@ TIFFOpen(const char* name, const char* mode)
 {
 	static const char module[] = "TIFFOpen";
 	int m, fd;
+        TIFF *ret;
 
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
@@ -112,6 +113,12 @@ TIFFOpen(const char* name, const char* mode)
 		return ((TIFF*)0);
 	}
 	return (TIFFFdOpen(fd, name, mode));
+
+        ret = TIFFFdOpen(fd, name, mode);
+
+        if (ret == NULL) close(fd);
+
+        return ret;
 }
 
 #ifdef __GNUC__
