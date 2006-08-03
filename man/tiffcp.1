@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFCP 1 "September 20, 2005" "libtiff"
+.TH TIFFCP 1 "August 03, 2006" "libtiff"
 .SH NAME
 tiffcp \- copy (and possibly convert) a
 .SM TIFF
@@ -238,14 +238,21 @@ tiffcp \-c g4 \-r 10000 g3.tif g4.tif
 (1000 is just a number that is larger than the number of rows in
 the source file.)
 
-To extract a selected set of images from a multi-image
-TIFF file, the file name may be immediately followed by a `,' 
-separated list of image directory indices.  The first image
-is always in directory 0.  Thus, to copy the 1st and 3rd
-images of image file ``album.tif'' to ``result.tif'':
+To extract a selected set of images from a multi-image TIFF file, the file
+name may be immediately followed by a `,' separated list of image directory
+indices.  The first image is always in directory 0.  Thus, to copy the 1st and
+3rd images of image file ``album.tif'' to ``result.tif'':
 .RS
 .nf
 tiffcp album.tif,0,2 result.tif
+.fi
+.RE
+
+A trailing comma denotes remaining images in sequence.  The following command
+will copy all image with except the first one:
+.RS
+.nf
+tiffcp album.tif,1, result.tif
 .fi
 .RE
 
