@@ -80,11 +80,11 @@ OBJ	= \
 
 all:	libtiff.lib $(DLLNAME)
 
-tif_config.h:	tif_config.h.vc
-	copy tif_config.h.vc tif_config.h
+tif_config.h:	tif_config.vc.h
+	copy tif_config.vc.h tif_config.h
 
-tiffconf.h:	tiffconf.h.vc
-	copy tiffconf.h.vc tiffconf.h
+tiffconf.h:	tiffconf.vc.h
+	copy tiffconf.vc.h tiffconf.h
 
 libtiff.lib:	tif_config.h tiffconf.h $(OBJ)
 	$(AR) /out:libtiff.lib $(OBJ) $(LIBS)

@@ -29,8 +29,8 @@ LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 EXTRA_DIST = Makefile.vc \
 	     SConstruct \
 	     tif_config.h-vms \
-	     tif_config.h.vc \
-	     tiffconf.h.vc \
+	     tif_config.vc.h \
+	     tiffconf.vc.h \
 	     libtiff.def \
 	     $(EXTRA_SRCS)
 
