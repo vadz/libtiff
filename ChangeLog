@@ -1,3 +1,11 @@
+2006-09-27  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_lzw.c, libtiff/tif_zip.c: Fixed problems with mixing
+	encoding and decoding on the same read-write TIFF handle.  The LZW
+	code can now maintain encode and decode state at the same time. The
+	ZIP code will switch back and forth as needed.  
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=757
+
 2006-09-20  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff: Rename config.h.vc and tif_config.h.vc to config.vc.h and 
