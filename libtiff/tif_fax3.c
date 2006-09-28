@@ -1138,6 +1138,7 @@ static int
 Fax3VSetField(TIFF* tif, ttag_t tag, va_list ap)
 {
 	Fax3BaseState* sp = Fax3State(tif);
+	const TIFFFieldInfo* fip;
 
 	assert(sp != 0);
 	assert(sp->vsetparent != 0);
@@ -1145,10 +1146,10 @@ Fax3VSetField(TIFF* tif, ttag_t tag, va_list ap)
 	switch (tag) {
 	case TIFFTAG_FAXMODE:
 		sp->mode = va_arg(ap, int);
-		return (1);			/* NB: pseudo tag */
+		return 1;			/* NB: pseudo tag */
 	case TIFFTAG_FAXFILLFUNC:
 		DecoderState(tif)->fill = va_arg(ap, TIFFFaxFillFunc);
-		return (1);			/* NB: pseudo tag */
+		return 1;			/* NB: pseudo tag */
 	case TIFFTAG_GROUP3OPTIONS:
 		/* XXX: avoid reading options if compression mismatches. */
 		if (tif->tif_dir.td_compression == COMPRESSION_CCITTFAX3)
@@ -1183,9 +1184,14 @@ Fax3VSetField(TIFF* tif, ttag_t tag, va_list ap)
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
-	TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
+	
+	if ((fip = _TIFFFieldWithTag(tif, tag)))
+		TIFFSetFieldBit(tif, fip->field_bit);
+	else
+		return 0;
+
 	tif->tif_flags |= TIFF_DIRTYDIRECT;
-	return (1);
+	return 1;
 }
 
 static int

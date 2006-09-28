@@ -99,17 +99,21 @@ NeXTDecode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 			unsigned long imagewidth = tif->tif_dir.td_imagewidth;
 
 			/*
-			 * The scanline is composed of a sequence
-			 * of constant color ``runs''.  We shift
-			 * into ``run mode'' and interpret bytes
-			 * as codes of the form <color><npixels>
-			 * until we've filled the scanline.
+			 * The scanline is composed of a sequence of constant
+			 * color ``runs''.  We shift into ``run mode'' and
+			 * interpret bytes as codes of the form
+			 * <color><npixels> until we've filled the scanline.
 			 */
 			op = row;
 			for (;;) {
 				grey = (n>>6) & 0x3;
 				n &= 0x3f;
-				while (n-- > 0)
+				/*
+				 * Ensure the run does not exceed the scanline
+				 * bounds, potentially resulting in a security
+				 * issue.
+				 */
+				while (n-- > 0 && npixels < imagewidth)
 					SETPIXEL(op, grey);
 				if (npixels >= (int) imagewidth)
 					break;
