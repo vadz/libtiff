@@ -67,7 +67,7 @@ typedef	struct {
 	tstrile_t td_stripsperimage;
 	tstrile_t td_nstrips;            /* size of offset & bytecount arrays */
 	toff_t* td_stripoffset;
-	toff_t* td_stripbytecount;
+	toff_t* td_stripbytecount;	 /* FIXME: it should be tsize_t array */
 	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */
 	uint16  td_nsubifd;
 	uint32* td_subifd;
