@@ -152,6 +152,7 @@ typedef	struct {
 
 	TIFFVGetMethod	vgetparent;	/* super-class method */
 	TIFFVSetMethod	vsetparent;	/* super-class method */
+	TIFFPrintMethod printdir;	/* super-class method */
 	TIFFStripMethod	defsparent;	/* super-class method */
 	TIFFTileMethod	deftparent;	/* super-class method */
 					/* pseudo-tag fields */
@@ -1567,6 +1568,7 @@ JPEGCleanup(TIFF* tif)
 
 	tif->tif_tagmethods.vgetfield = sp->vgetparent;
 	tif->tif_tagmethods.vsetfield = sp->vsetparent;
+	tif->tif_tagmethods.printdir = sp->printdir;
 
 	if( sp->cinfo_initialized )
 	    TIFFjpeg_destroy(sp);	/* release libjpeg resources */
@@ -1924,7 +1926,8 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	tif->tif_data = (tidata_t) _TIFFmalloc(sizeof (JPEGState));
 
 	if (tif->tif_data == NULL) {
-		TIFFErrorExt(tif->tif_clientdata, "TIFFInitJPEG", "No space for JPEG state block");
+		TIFFErrorExt(tif->tif_clientdata,
+			     "TIFFInitJPEG", "No space for JPEG state block");
 		return (0);
 	}
         _TIFFmemset( tif->tif_data, 0, sizeof(JPEGState));
@@ -1941,6 +1944,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	tif->tif_tagmethods.vgetfield = JPEGVGetField; /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
 	tif->tif_tagmethods.vsetfield = JPEGVSetField; /* hook for codec tags */
+	sp->printdir = tif->tif_tagmethods.printdir;
 	tif->tif_tagmethods.printdir = JPEGPrintDir;   /* hook for codec tags */
 
 	/* Default values for codec-specific fields */
