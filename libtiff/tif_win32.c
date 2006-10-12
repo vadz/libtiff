@@ -51,11 +51,10 @@ _tiffWriteProc(thandle_t fd, tdata_t buf, tsize_t size)
 static toff_t
 _tiffSeekProc(thandle_t fd, toff_t off, int whence)
 {
-	DWORD dwMoveMethod, dwMoveHigh;
+        ULARGE_INTEGER li;
+	DWORD dwMoveMethod;
 
-        /* we use this as a special code, so avoid accepting it */
-        if( off == 0xFFFFFFFF )
-            return 0xFFFFFFFF;
+	li.QuadPart = off;
         
 	switch(whence)
 	{
@@ -72,9 +71,8 @@ _tiffSeekProc(thandle_t fd, toff_t off, int whence)
 		dwMoveMethod = FILE_BEGIN;
 		break;
 	}
-        dwMoveHigh = 0;
-	return ((toff_t)SetFilePointer(fd, (LONG) off, (PLONG)&dwMoveHigh,
-                                       dwMoveMethod));
+	return ((toff_t)SetFilePointer(fd, (LONG) li.LowPart,
+				       (PLONG)&li.HighPart, dwMoveMethod));
 }
 
 static int
