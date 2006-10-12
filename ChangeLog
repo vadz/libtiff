@@ -1,3 +1,19 @@
+2006-10-12  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_fax3.c: Save the state of printdir codec dependent
+	method.
+
+	* libtiff/tif_jpeg.c: Save the state of printdir codec dependent method
+	as per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1273
+
+	* libtiff/tif_win32.c: Fixed problem with offset value manipulation
+	as per bug http://bugzilla.remotesensing.org/show_bug.cgi?id=1322
+
+	* libtiff/{tif_read.c, tif_jpeg.c, tif_dir.c}: More fixes for
+	vulnerabilities, reported in Gentoo bug ():
+
+	http://bugs.gentoo.org/show_bug.cgi?id=142383
+
 2006-09-28  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_fax3.c, tif_next.c, tif_pixarlog.c}: Fixed multiple
