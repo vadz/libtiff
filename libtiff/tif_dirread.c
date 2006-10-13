@@ -82,7 +82,7 @@ TIFFReadDirectory(TIFF* tif)
 	const TIFFFieldInfo* fip;
 	size_t fix;
 	uint16 dircount;
-	int diroutoforderwarning = 0;
+	int diroutoforderwarning = 0, compressionknown = 0;
 
 	tif->tif_diroff = tif->tif_nextdiroff;
 	/*
@@ -195,6 +195,21 @@ TIFFReadDirectory(TIFF* tif)
 						dp->tdir_tag,
 						(TIFFDataType) dp->tdir_type),
 				       1 );
+					/*
+					 * creating anonymous fields prior to
+					 * knowing the compression algorithm
+					 * (ie, when the field info has been
+					 * merged) could cause crashes with
+					 * pathological directories.
+					 */
+					if (compressionknown) {
+						TIFFMergeFieldInfo(tif,
+						_TIFFCreateAnonFieldInfo(tif,
+						dp->tdir_tag,
+						(TIFFDataType) dp->tdir_type),
+						1);
+					} else
+						goto ignore;
                     fix = 0;
                     while (fix < tif->tif_nfields &&
                            tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
@@ -251,6 +266,8 @@ TIFFReadDirectory(TIFF* tif)
 				    dp->tdir_type, dp->tdir_offset);
 				if (!TIFFSetField(tif, dp->tdir_tag, (uint16)v))
 					goto bad;
+				else
+					compressionknown = 1;
 				break;
 			/* XXX: workaround for broken TIFFs */
 			} else if (dp->tdir_type == TIFF_LONG) {
@@ -870,9 +887,9 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 {
 	static const char module[] = "EstimateStripByteCounts";
 
-	register TIFFDirEntry *dp;
-	register TIFFDirectory *td = &tif->tif_dir;
-	uint16 i;
+	TIFFDirEntry *dp;
+	TIFFDirectory *td = &tif->tif_dir;
+	uint32 strip;
 
 	if (td->td_stripbytecount)
 		_TIFFfree(td->td_stripbytecount);
@@ -904,8 +921,8 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		space = filesize - space;
 		if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 			space /= td->td_samplesperpixel;
-		for (i = 0; i < td->td_nstrips; i++)
-			td->td_stripbytecount[i] = space;
+		for (strip = 0; strip < td->td_nstrips; strip++)
+			td->td_stripbytecount[strip] = space;
 		/*
 		 * This gross hack handles the case were the offset to
 		 * the last strip is past the place where we think the strip
@@ -913,21 +930,21 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		 * it's safe to assume that we've overestimated the amount
 		 * of data in the strip and trim this number back accordingly.
 		 */ 
-		i--;
-		if (((toff_t)(td->td_stripoffset[i]+td->td_stripbytecount[i]))
-                                                               > filesize)
-			td->td_stripbytecount[i] =
-			    filesize - td->td_stripoffset[i];
-	} else if( isTiled(tif) ) {
+		strip--;
+		if (((toff_t)(td->td_stripoffset[strip]+
+			      td->td_stripbytecount[strip])) > filesize)
+			td->td_stripbytecount[strip] =
+			    filesize - td->td_stripoffset[strip];
+	} else if (isTiled(tif)) {
 		uint32 bytespertile = TIFFTileSize(tif);
 
-		for (i = 0; i < td->td_nstrips; i++)
-                    td->td_stripbytecount[i] = bytespertile;
+		for (strip = 0; strip < td->td_nstrips; strip++)
+                    td->td_stripbytecount[strip] = bytespertile;
 	} else {
 		uint32 rowbytes = TIFFScanlineSize(tif);
 		uint32 rowsperstrip = td->td_imagelength/td->td_stripsperimage;
-		for (i = 0; i < td->td_nstrips; i++)
-			td->td_stripbytecount[i] = rowbytes*rowsperstrip;
+		for (strip = 0; strip < td->td_nstrips; strip++)
+			td->td_stripbytecount[strip] = rowbytes * rowsperstrip;
 	}
 	TIFFSetFieldBit(tif, FIELD_STRIPBYTECOUNTS);
 	if (!TIFFFieldSet(tif, FIELD_ROWSPERSTRIP))
@@ -1015,7 +1032,7 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 /*
  * Read IFD structure from the specified offset. If the pointer to
  * nextdiroff variable has been specified, read it too. Function returns a
- * number of read directory or 0 if failed.
+ * number of fields in the directory or 0 if failed.
  */
 static uint16
 TIFFFetchDirectory(TIFF* tif, toff_t diroff, TIFFDirEntry **pdir,
@@ -1067,7 +1084,17 @@ TIFFFetchDirectory(TIFF* tif, toff_t diroff, TIFFDirEntry **pdir,
 	} else {
 		toff_t off = tif->tif_diroff;
 
-		if (off + sizeof (uint16) > tif->tif_size) {
+		/*
+		 * Check for integer overflow when validating the dir_off,
+		 * otherwise a very high offset may cause an OOB read and
+		 * crash the client. Make two comparisons instead of
+		 *
+		 *  off + sizeof(uint16) > tif->tif_size
+		 *
+		 * to avoid overflow.
+		 */
+		if (tif->tif_size < sizeof (uint16) ||
+		    off > tif->tif_size - sizeof(uint16)) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 				"%s: Can not read TIFF directory count",
 				tif->tif_name);
@@ -1304,6 +1331,18 @@ TIFFFetchShortArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
 static int
 TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir)
 {
+	/*
+	 * Prevent overflowing the v stack arrays below by performing a sanity
+	 * check on tdir_count, this should never be greater than two.
+	 */
+	if (dir->tdir_count > 2) {
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
+		"unexpected count for field \"%s\", %lu, expected 2; ignored",
+			_TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
+			dir->tdir_count);
+		return 0;
+	}
+
 	switch (dir->tdir_type) {
 		case TIFF_BYTE:
 		case TIFF_SBYTE:
@@ -1396,15 +1435,13 @@ TIFFFetchDoubleArray(TIFF* tif, TIFFDirEntry* dir, double* v)
 }
 
 /*
- * Fetch an array of ANY values.  The actual values are
- * returned as doubles which should be able hold all the
- * types.  Yes, there really should be an tany_t to avoid
- * this potential non-portability ...  Note in particular
- * that we assume that the double return value vector is
- * large enough to read in any fundamental type.  We use
- * that vector as a buffer to read in the base type vector
- * and then convert it in place to double (from end
- * to front of course).
+ * Fetch an array of ANY values.  The actual values are returned as doubles
+ * which should be able hold all the types.  Yes, there really should be an
+ * tany_t to avoid this potential non-portability ...  Note in particular that
+ * we assume that the double return value vector is large enough to read in
+ * any fundamental type.  We use that vector as a buffer to read in the base
+ * type vector and then convert it in place to double (from end to front of
+ * course).
  */
 static int
 TIFFFetchAnyArray(TIFF* tif, TIFFDirEntry* dir, double* v)
