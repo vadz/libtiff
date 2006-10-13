@@ -1,3 +1,13 @@
+2006-10-13  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dir.c: More fixes for vulnerabilities, reported
+	in Gentoo bug ():
+	
+	http://bugs.gentoo.org/show_bug.cgi?id=142383
+
+	* libtiff/contrib/dbs/xtiff/xtiff.c: Make xtiff utility compilable.
+	Though it is still far from the state of being working and useful.
+
 2006-10-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_fax3.c: Save the state of printdir codec dependent
