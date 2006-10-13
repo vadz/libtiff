@@ -47,6 +47,7 @@ tools:	lib
 	cd ..
 
 clean:
+	-del *.exe.manifest
 	cd port
 	$(MAKE) /f Makefile.vc clean
 	cd..
@@ -57,3 +58,8 @@ clean:
 	$(MAKE) /f Makefile.vc clean
 	cd ..
 
+	-del *.ilk
+	-del *.dll.manifest
+	-del *.exe.manifest
+	-del *.exp
+	-del *.pdb
