@@ -1888,11 +1888,10 @@ TIFFFetchRefBlackWhite(TIFF* tif, TIFFDirEntry* dir)
 }
 
 /*
- * Replace a single strip (tile) of uncompressed data by
- * multiple strips (tiles), each approximately 8Kbytes.
- * This is useful for dealing with large images or
- * for dealing with machines with a limited amount
- * memory.
+ * Replace a single strip (tile) of uncompressed data by multiple strips
+ * (tiles), each approximately STRIP_SIZE_DEFAULT bytes. This is useful for
+ * dealing with large images or for dealing with machines with a limited
+ * amount memory.
  */
 static void
 ChopUpSingleUncompressedStrip(TIFF* tif)
