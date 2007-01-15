@@ -30,6 +30,10 @@
  */
 #include "tiffiop.h"
 
+#ifdef _WIN32_WCE
+#include <windows.h>
+#endif
+
 static tsize_t
 _tiffReadProc(thandle_t fd, tdata_t buf, tsize_t size)
 {
@@ -161,6 +165,8 @@ TIFFFdOpen(int ifd, const char* name, const char* mode)
 	return (tif);
 }
 
+#ifndef _WIN32_WCE
+
 /*
  * Open a TIFF file for read/writing.
  */
@@ -270,6 +276,9 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 	return tif;
 }
 
+#endif /* ndef _WIN32_WCE */
+
+
 tdata_t
 _TIFFmalloc(tsize_t s)
 {
@@ -332,6 +341,8 @@ _TIFFmemcmp(const tdata_t p1, const tdata_t p2, tsize_t c)
 	return (iTmp);
 }
 
+#ifndef _WIN32_WCE
+
 static void
 Win32WarningHandler(const char* module, const char* fmt, va_list ap)
 {
@@ -386,5 +397,7 @@ Win32ErrorHandler(const char* module, const char* fmt, va_list ap)
 #endif        
 }
 TIFFErrorHandler _TIFFerrorHandler = Win32ErrorHandler;
+
+#endif /* ndef _WIN32_WCE */
 
 /* vim: set ts=8 sts=8 sw=8 noet: */

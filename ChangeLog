@@ -1,3 +1,15 @@
+2007-01-15  Mateusz Loskot <mateusz@loskot.net>
+
+	* Submitted libtiff port for Windows CE platform
+	* libtiff/tif_config.wince.h: Added configuration header for WinCE.
+	* libtiff/tiffconf.wince.h: Ported old configuration header for WinCE.
+	* libtiff/tif_wince.c: Added WinCE-specific implementation of some
+	functons from tif_win32.c.
+	* libtiff/tif_win32.c: Disabled some functions already reimplemented in tif_wince.c.
+	* libtiff/tiffiop.h, port/lfind.c: Added conditional include of some
+	standard header files for Windows CE build.
+	* tools/tiffinfoce.c: Ported tiffinfo utility for Windows CE.
+
 2006-11-19  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_write.c: TIFFAppendToStrip() - clear sorted flag if 
