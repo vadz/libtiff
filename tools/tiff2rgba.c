@@ -349,34 +349,34 @@ cvt_whole_image( TIFF *in, TIFF *out )
     }
 
     /*
-    ** Do we want to strip away alpha components?
-    */
-    if( no_alpha )
+     * Do we want to strip away alpha components?
+     */
+    if (no_alpha)
     {
-        int	pixel_count = width * height;
-        unsigned char *src, *dst;
+        int pixel_count = width * height;
+	uint32 *src = raster;
+        unsigned char *dst = (unsigned char *) raster;
 
-        src = (unsigned char *) raster;
-        dst = (unsigned char *) raster;
-        while( pixel_count > 0 )
+        while (pixel_count > 0)
         {
-            *(dst++) = *(src++);
-            *(dst++) = *(src++);
-            *(dst++) = *(src++);
-            src++;
-            pixel_count--;
+	    uint32 temp = *src++;
+            *(dst++) = TIFFGetR(temp);
+            *(dst++) = TIFFGetG(temp);
+            *(dst++) = TIFFGetB(temp);
+	    pixel_count--;
         }
     }
 
-    /* Write out the result in strips */
-
-    for( row = 0; row < height; row += rowsperstrip )
+    /*
+     * Write out the result in strips
+     */
+    for (row = 0; row < height; row += rowsperstrip)
     {
         unsigned char * raster_strip;
         int	rows_to_write;
         int	bytes_per_pixel;
 
-        if( no_alpha )
+        if (no_alpha)
         {
             raster_strip = ((unsigned char *) raster) + 3 * row * width;
             bytes_per_pixel = 3;
