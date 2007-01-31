@@ -181,6 +181,15 @@ cvt_by_tile( TIFF *in, TIFF *out )
                 break;
             }
 
+
+	    /*
+	     * XXX: raster array has 4-byte unsigned integer type, that is why
+	     * we should rearrange it here.
+	     */
+#if HOST_BIGENDIAN
+	    TIFFSwabArrayOfLong(raster, tile_width * tile_height);
+#endif
+
             /*
              * For some reason the TIFFReadRGBATile() function chooses the
              * lower left corner as the origin.  Vertically mirror scanlines.
@@ -270,6 +279,14 @@ cvt_by_strip( TIFF *in, TIFF *out )
             break;
         }
 
+	/*
+	 * XXX: raster array has 4-byte unsigned integer type, that is why
+	 * we should rearrange it here.
+	 */
+#if HOST_BIGENDIAN
+	TIFFSwabArrayOfLong(raster, width * rowsperstrip);
+#endif
+
         /*
          * Figure out the number of scanlines actually in this strip.
          */
@@ -349,21 +366,28 @@ cvt_whole_image( TIFF *in, TIFF *out )
     }
 
     /*
+     * XXX: raster array has 4-byte unsigned integer type, that is why
+     * we should rearrange it here.
+     */
+#if HOST_BIGENDIAN
+    TIFFSwabArrayOfLong(raster, width * height);
+#endif
+
+    /*
      * Do we want to strip away alpha components?
      */
     if (no_alpha)
     {
         int pixel_count = width * height;
-	uint32 *src = raster;
-        unsigned char *dst = (unsigned char *) raster;
+        unsigned char *src, *dst;
 
+	src = dst = (unsigned char *) raster;
         while (pixel_count > 0)
         {
-	    uint32 temp = *src++;
-            *(dst++) = TIFFGetR(temp);
-            *(dst++) = TIFFGetG(temp);
-            *(dst++) = TIFFGetB(temp);
-	    pixel_count--;
+	    *(dst++) = *(src++);
+	    *(dst++) = *(src++);
+	    *(dst++) = *(src++);
+	    src++, pixel_count--;
         }
     }
 
