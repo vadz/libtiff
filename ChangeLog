@@ -1,3 +1,10 @@
+2007-01-31  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tif2rgba.c: This utility does not work properly on big-endian
+	architectures. It was fixed including the bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1149
+
 2007-01-15  Mateusz Loskot <mateusz@loskot.net>
 
 	* Submitted libtiff port for Windows CE platform
