@@ -24,7 +24,8 @@
  * OF THIS SOFTWARE.
  */
 
-#include "tiffcomp.h"
+#include <string.h>
+#include <stdio.h>
 
 /*
  * Hack program to construct tables used to find
@@ -35,8 +36,8 @@ dumparray(name, runs)
 	char *name;
 	unsigned char runs[256];
 {
-	register int i;
-	register char *sep;
+	int i;
+	char *sep;
 	printf("static unsigned char %s[256] = {\n", name);
 	sep = "    ";
 	for (i = 0; i < 256; i++) {
