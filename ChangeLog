@@ -1,5 +1,10 @@
 2007-02-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* libtiff/tif_dir.c: Workaround for incorrect TIFFs with
+	ExtraSamples == 999 produced by Corel Draw. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1490
+
 	* libtiff/{tif_dirread.c, tif_read.c}: Type of the byte counters
 	changed from tsize_t to uint32 to be able to work with data arrays
 	larger than 2GB. Fixes bug
