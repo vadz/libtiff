@@ -1933,8 +1933,8 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 				"for chopped \"StripOffsets\" array");
 	if (newcounts == NULL || newoffsets == NULL) {
 	        /*
-		 * Unable to allocate new strip information, give
-		 * up and use the original one strip information.
+		 * Unable to allocate new strip information, give up and use
+		 * the original one strip information.
 		 */
 		if (newcounts != NULL)
 			_TIFFfree(newcounts);
@@ -1947,7 +1947,7 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	 * that reflect the broken-up format.
 	 */
 	for (strip = 0; strip < nstrips; strip++) {
-		if (stripbytes > (tsize_t) bytecount)
+		if ((uint32)stripbytes > bytecount)
 			stripbytes = bytecount;
 		newcounts[strip] = stripbytes;
 		newoffsets[strip] = offset;
