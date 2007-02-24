@@ -1,3 +1,10 @@
+2007-02-24  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffcrop.c, man/tiffcrop.1: New tiffcrop utility contributed
+	by Richard Nolde. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1383
+
 2007-02-22  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dir.c: Workaround for incorrect TIFFs with

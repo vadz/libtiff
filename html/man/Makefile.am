@@ -86,6 +86,7 @@ docfiles = \
 	tiff2rgba.1.html \
 	tiffcmp.1.html \
 	tiffcp.1.html \
+	tiffcrop.1.html \
 	tiffdither.1.html \
 	tiffdump.1.html \
 	tiffgt.1.html \
@@ -111,7 +112,9 @@ index: $(docfiles)
 manpages = $(docfiles:.html=)
 
 .PHONY: htmldoc
-htmldoc: index
+htmldoc: $(docfiles)
+
+$(docfiles): index
 	for i in $(manpages); do					\
 		${GROFF} $(MANSRCDIR)/$$i > $(HTMLMANDIR)/$$i.html;	\
 	done

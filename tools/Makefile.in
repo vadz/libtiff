@@ -67,9 +67,9 @@ bin_PROGRAMS = bmp2tiff$(EXEEXT) fax2ps$(EXEEXT) fax2tiff$(EXEEXT) \
 	ras2tiff$(EXEEXT) raw2tiff$(EXEEXT) rgb2ycbcr$(EXEEXT) \
 	thumbnail$(EXEEXT) tiff2bw$(EXEEXT) tiff2pdf$(EXEEXT) \
 	tiff2ps$(EXEEXT) tiff2rgba$(EXEEXT) tiffcmp$(EXEEXT) \
-	tiffcp$(EXEEXT) tiffdither$(EXEEXT) tiffdump$(EXEEXT) \
-	tiffinfo$(EXEEXT) tiffmedian$(EXEEXT) tiffset$(EXEEXT) \
-	tiffsplit$(EXEEXT) $(am__EXEEXT_1)
+	tiffcp$(EXEEXT) tiffcrop$(EXEEXT) tiffdither$(EXEEXT) \
+	tiffdump$(EXEEXT) tiffinfo$(EXEEXT) tiffmedian$(EXEEXT) \
+	tiffset$(EXEEXT) tiffsplit$(EXEEXT) $(am__EXEEXT_1)
 @HAVE_OPENGL_TRUE@am__append_1 = tiffgt
 EXTRA_PROGRAMS = sgi2tiff$(EXEEXT) sgisv$(EXEEXT) ycbcr$(EXEEXT)
 subdir = tools
@@ -145,6 +145,9 @@ tiffcmp_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_tiffcp_OBJECTS = tiffcp.$(OBJEXT)
 tiffcp_OBJECTS = $(am_tiffcp_OBJECTS)
 tiffcp_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+am_tiffcrop_OBJECTS = tiffcrop.$(OBJEXT)
+tiffcrop_OBJECTS = $(am_tiffcrop_OBJECTS)
+tiffcrop_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_tiffdither_OBJECTS = tiffdither.$(OBJEXT)
 tiffdither_OBJECTS = $(am_tiffdither_OBJECTS)
 tiffdither_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
@@ -187,19 +190,19 @@ SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) $(fax2tiff_SOURCES) \
 	$(ras2tiff_SOURCES) $(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) \
 	sgi2tiff.c sgisv.c $(thumbnail_SOURCES) $(tiff2bw_SOURCES) \
 	$(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) $(tiff2rgba_SOURCES) \
-	$(tiffcmp_SOURCES) $(tiffcp_SOURCES) $(tiffdither_SOURCES) \
-	$(tiffdump_SOURCES) $(tiffgt_SOURCES) $(tiffinfo_SOURCES) \
-	$(tiffmedian_SOURCES) $(tiffset_SOURCES) $(tiffsplit_SOURCES) \
-	ycbcr.c
+	$(tiffcmp_SOURCES) $(tiffcp_SOURCES) $(tiffcrop_SOURCES) \
+	$(tiffdither_SOURCES) $(tiffdump_SOURCES) $(tiffgt_SOURCES) \
+	$(tiffinfo_SOURCES) $(tiffmedian_SOURCES) $(tiffset_SOURCES) \
+	$(tiffsplit_SOURCES) ycbcr.c
 DIST_SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) \
 	$(fax2tiff_SOURCES) $(gif2tiff_SOURCES) $(pal2rgb_SOURCES) \
 	$(ppm2tiff_SOURCES) $(ras2tiff_SOURCES) $(raw2tiff_SOURCES) \
 	$(rgb2ycbcr_SOURCES) sgi2tiff.c sgisv.c $(thumbnail_SOURCES) \
 	$(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) \
 	$(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) $(tiffcp_SOURCES) \
-	$(tiffdither_SOURCES) $(tiffdump_SOURCES) $(tiffgt_SOURCES) \
-	$(tiffinfo_SOURCES) $(tiffmedian_SOURCES) $(tiffset_SOURCES) \
-	$(tiffsplit_SOURCES) ycbcr.c
+	$(tiffcrop_SOURCES) $(tiffdither_SOURCES) $(tiffdump_SOURCES) \
+	$(tiffgt_SOURCES) $(tiffinfo_SOURCES) $(tiffmedian_SOURCES) \
+	$(tiffset_SOURCES) $(tiffsplit_SOURCES) ycbcr.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -383,6 +386,8 @@ tiffcmp_SOURCES = tiffcmp.c
 tiffcmp_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffcp_SOURCES = tiffcp.c
 tiffcp_LDADD = $(LIBTIFF) $(LIBPORT)
+tiffcrop_SOURCES = tiffcrop.c
+tiffcrop_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffdither_SOURCES = tiffdither.c
 tiffdither_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffdump_SOURCES = tiffdump.c
@@ -514,6 +519,9 @@ tiffcmp$(EXEEXT): $(tiffcmp_OBJECTS) $(tiffcmp_DEPENDENCIES)
 tiffcp$(EXEEXT): $(tiffcp_OBJECTS) $(tiffcp_DEPENDENCIES) 
 	@rm -f tiffcp$(EXEEXT)
 	$(LINK) $(tiffcp_LDFLAGS) $(tiffcp_OBJECTS) $(tiffcp_LDADD) $(LIBS)
+tiffcrop$(EXEEXT): $(tiffcrop_OBJECTS) $(tiffcrop_DEPENDENCIES) 
+	@rm -f tiffcrop$(EXEEXT)
+	$(LINK) $(tiffcrop_LDFLAGS) $(tiffcrop_OBJECTS) $(tiffcrop_LDADD) $(LIBS)
 tiffdither$(EXEEXT): $(tiffdither_OBJECTS) $(tiffdither_DEPENDENCIES) 
 	@rm -f tiffdither$(EXEEXT)
 	$(LINK) $(tiffdither_LDFLAGS) $(tiffdither_OBJECTS) $(tiffdither_LDADD) $(LIBS)
@@ -563,6 +571,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiff2rgba.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffcmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffcp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffcrop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffdither.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffdump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffgt-tiffgt.Po@am__quote@

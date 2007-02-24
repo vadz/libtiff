@@ -478,18 +478,8 @@ dnl Check for OpenGL and GLUT.
 dnl ---------------------------------------------------------------------------
 
 HAVE_OPENGL=no
-HAVE_XAW=no
 
 AC_PATH_XTRA
-
-ICE_FIND_ATHENA
-
-if test "$no_xaw" != "yes" ; then
-  HAVE_XAW=yes
-fi
-
-AM_CONDITIONAL(HAVE_XAW, test "$HAVE_XAW" = "yes")
-
 
 AX_CHECK_GL
 AX_CHECK_GLU
@@ -501,6 +491,20 @@ if test "$no_x" != "yes" -a "$no_gl" != "yes" \
 fi
 
 AM_CONDITIONAL(HAVE_OPENGL, test "$HAVE_OPENGL" = "yes")
+
+dnl ---------------------------------------------------------------------------
+dnl Check for X Athena Widgets
+dnl ---------------------------------------------------------------------------
+
+dnl HAVE_XAW=no
+
+dnl ICE_FIND_ATHENA
+
+dnl if test "$no_xaw" != "yes" ; then
+dnl   HAVE_XAW=yes
+dnl fi
+
+dnl AM_CONDITIONAL(HAVE_XAW, test "$HAVE_XAW" = "yes")
 
 dnl ===========================================================================
 dnl ``Orthogonal Features''
@@ -574,6 +578,7 @@ AC_SUBST(LIBDIR)
 AC_CONFIG_HEADERS([libtiff/tif_config.h libtiff/tiffconf.h])
 
 AC_CONFIG_FILES([Makefile \
+		 build/Makefile \
 		 contrib/Makefile \
 		 contrib/acorn/Makefile \
 		 contrib/addtiffo/Makefile \
@@ -629,7 +634,7 @@ LOC_MSG([  ISO JBIG support:                   ${HAVE_JBIG}])
 LOC_MSG()
 LOC_MSG([  C++ support:                        ${HAVE_CXX}])
 LOC_MSG()
-LOC_MSG([  X Athena Widgets support:           ${HAVE_XAW}])
+dnl LOC_MSG([  X Athena Widgets support:           ${HAVE_XAW}])
 LOC_MSG([  OpenGL support:                     ${HAVE_OPENGL}])
 LOC_MSG()
 

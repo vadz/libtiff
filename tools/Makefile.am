@@ -45,6 +45,7 @@ bin_PROGRAMS = \
 	tiff2rgba \
 	tiffcmp \
 	tiffcp \
+	tiffcrop \
 	tiffdither \
 	tiffdump \
 	tiffinfo \
@@ -108,6 +109,9 @@ tiffcmp_LDADD = $(LIBTIFF) $(LIBPORT)
 
 tiffcp_SOURCES = tiffcp.c
 tiffcp_LDADD = $(LIBTIFF) $(LIBPORT)
+
+tiffcrop_SOURCES = tiffcrop.c
+tiffcrop_LDADD = $(LIBTIFF) $(LIBPORT)
 
 tiffdither_SOURCES = tiffdither.c
 tiffdither_LDADD = $(LIBTIFF) $(LIBPORT)

@@ -9,15 +9,15 @@
 
 # Generated from ltversion.in; do not edit by hand
 
-# serial 2305 ltversion.m4
+# serial 2410 ltversion.m4
 # This file is part of GNU Libtool
 
 m4_define([LT_PACKAGE_VERSION], [2.1a])
-m4_define([LT_PACKAGE_REVISION], [1.2305])
+m4_define([LT_PACKAGE_REVISION], [1.2410])
 
 AC_DEFUN([LTVERSION_VERSION],
 [macro_version='2.1a'
-macro_revision='1.2305'
+macro_revision='1.2410'
 _LT_DECL(, macro_version, 0, [Which release of libtool.m4 was used?])
 _LT_DECL(, macro_revision, 0)
 ])

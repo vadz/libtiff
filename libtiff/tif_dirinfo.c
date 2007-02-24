@@ -710,7 +710,7 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 
 	if (tif->tif_foundfield && tif->tif_foundfield->field_tag == tag &&
 	    (dt == TIFF_ANY || dt == tif->tif_foundfield->field_type))
-		return (tif->tif_foundfield);
+		return tif->tif_foundfield;
 	/* NB: use sorted search (e.g. binary search) */
 	if(dt != TIFF_ANY) {
             TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0};
@@ -725,14 +725,14 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 						   tif->tif_nfields,
 						   sizeof(TIFFFieldInfo *), 
 						   tagCompare);
-	    return (ret) ? (*ret) : NULL;
+	    return ret ? *ret : NULL;
         } else for (i = 0, n = tif->tif_nfields; i < n; i++) {
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		if (fip->field_tag == tag &&
 		    (dt == TIFF_ANY || fip->field_type == dt))
 			return (tif->tif_foundfield = fip);
 	}
-	return ((const TIFFFieldInfo *)0);
+	return (const TIFFFieldInfo *)0;
 }
 
 const TIFFFieldInfo*
@@ -775,8 +775,8 @@ _TIFFFieldWithTag(TIFF* tif, ttag_t tag)
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	if (!fip) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFFieldWithTag",
-			  "Internal error, unknown tag 0x%x",
-                          (unsigned int) tag);
+			     "Internal error, unknown tag 0x%x",
+			     (unsigned int) tag);
 		assert(fip != NULL);
 		/*NOTREACHED*/
 	}
@@ -790,7 +790,7 @@ _TIFFFieldWithName(TIFF* tif, const char *field_name)
 		_TIFFFindFieldInfoByName(tif, field_name, TIFF_ANY);
 	if (!fip) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFFieldWithName",
-			  "Internal error, unknown tag %s", field_name);
+			     "Internal error, unknown tag %s", field_name);
 		assert(fip != NULL);
 		/*NOTREACHED*/
 	}

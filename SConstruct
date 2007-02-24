@@ -76,7 +76,7 @@ Export([ 'env', 'idir_prefix', 'idir_lib', 'idir_bin', 'idir_inc', 'idir_doc' ])
 
 # Now proceed to system feature checks
 target_cpu, target_vendor, target_kernel, target_os = \
-    os.popen("./config.guess").readlines()[0].split("-")
+    os.popen("./config/config.guess").readlines()[0].split("-")
 
 def Define(context, key, have):
     import SCons.Conftest

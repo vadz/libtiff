@@ -47,7 +47,7 @@ EXTRA_DIST = \
 
 dist_doc_DATA = $(docfiles)
 
-SUBDIRS = port libtiff tools contrib test man html
+SUBDIRS = port libtiff tools build contrib test man html
 
 release:
 	(rm -f RELEASE-DATE && echo $(LIBTIFF_RELEASE_DATE) > RELEASE-DATE)
