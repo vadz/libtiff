@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFCP 1 "August 03, 2006" "libtiff"
+.TH TIFFCP 1 "February 24, 2007" "libtiff"
 .SH NAME
 tiffcp \- copy (and possibly convert) a
 .SM TIFF
@@ -147,6 +147,9 @@ while
 will force data to be written with the FillOrder tag set to
 .SM MSB2LSB.
 .TP
+.B \-i
+Ignore non-fatal read errors and continue processing of the input file.
+.TP
 .B \-l
 Specify the length of a tile (in pixels).
 .I tiffcp
@@ -194,19 +197,18 @@ Force the output file to be written with data organized in strips
 (rather than tiles).
 .TP
 .B \-t
-Force the output file to be written with data organized in tiles
-(rather than strips).
-options can be used to force the resultant image to be written
-as strips or tiles of data, respectively.
+Force the output file to be written with data organized in tiles (rather than
+strips). options can be used to force the resultant image to be written as
+strips or tiles of data, respectively.
 .TP
 .B \-w
 Specify the width of a tile (in pixels).
 .I tiffcp
-attempts to set the tile dimensions so
-that no more than 8 kilobytes of data appear in a tile.
+attempts to set the tile dimensions so that no more than 8 kilobytes of data
+appear in a tile.
 .I tiffcp
-attempts to set the tile dimensions so
-that no more than 8 kilobytes of data appear in a tile.
+attempts to set the tile dimensions so that no more than 8 kilobytes of data
+appear in a tile.
 .TP
 .BI \-,= character
 substitute
