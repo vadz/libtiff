@@ -647,7 +647,7 @@ tiffcp(TIFF* in, TIFF* out)
 				rowsperstrip =
 					TIFFDefaultStripSize(out, rowsperstrip);
 			}
-			if (rowsperstrip > length)
+			if (rowsperstrip > length && rowsperstrip != (uint32)-1)
 				rowsperstrip = length;
 		}
 		else if (rowsperstrip == (uint32) -1)
