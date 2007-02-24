@@ -47,32 +47,29 @@
 #endif
 
 #ifndef NULL
-#define NULL ((void*)0)
+# define NULL ((void*)0)
 #endif
 
-#if defined(VMS)
-#define unlink remove
-#endif
-#if defined(_WIN32) && defined(USE_WIN32_FILEIO)
-#include <windows.h>
-#include <tchar.h>
-#define unlink DeleteFileA
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
 #endif
 
 #define TIFF2PDF_MODULE "tiff2pdf"
 #define T2P_VERSION "d"
 
+#define PS_UNIT_SIZE	72.0F
+
 /* This type is of PDF color spaces. */
-typedef enum{
-	T2P_CS_BILEVEL=0x01, /* Bilevel, black and white */
-	T2P_CS_GRAY=0x02, /* Single channel */
-	T2P_CS_RGB=0x04, /* Three channel tristimulus RGB */
-	T2P_CS_CMYK=0x08, /* Four channel CMYK print inkset */
-	T2P_CS_LAB=0x10, /* Three channel L*a*b* color space */
-	T2P_CS_PALETTE=0x1000 /* One of the above with a color map */
-	, T2P_CS_CALGRAY=0x20 /* Calibrated single channel */
-	, T2P_CS_CALRGB=0x40 /* Calibrated three channel tristimulus RGB */
-	, T2P_CS_ICCBASED=0x80 /* ICC profile color specification */
+typedef enum {
+	T2P_CS_BILEVEL = 0x01,	/* Bilevel, black and white */
+	T2P_CS_GRAY = 0x02,	/* Single channel */
+	T2P_CS_RGB = 0x04,	/* Three channel tristimulus RGB */
+	T2P_CS_CMYK = 0x08,	/* Four channel CMYK print inkset */
+	T2P_CS_LAB = 0x10,	/* Three channel L*a*b* color space */
+	T2P_CS_PALETTE = 0x1000,/* One of the above with a color map */
+	T2P_CS_CALGRAY = 0x20,	/* Calibrated single channel */
+	T2P_CS_CALRGB = 0x40,	/* Calibrated three channel tristimulus RGB */
+	T2P_CS_ICCBASED = 0x80	/* ICC profile color specification */
 } t2p_cs_t;
 
 /* This type is of PDF compression types.  */
@@ -514,12 +511,12 @@ int main(int argc, char** argv){
 			case 'w': 
 				t2p->pdf_overridepagesize=1;
 				t2p->pdf_defaultpagewidth = 
-					((float)atof(optarg) * 72.0F) / (t2p->pdf_centimeters?2.54F:1.0F);
+					((float)atof(optarg) * PS_UNIT_SIZE) / (t2p->pdf_centimeters?2.54F:1.0F);
 				break;
 			case 'l': 
 				t2p->pdf_overridepagesize=1;
 				t2p->pdf_defaultpagelength = 
-					((float)atof(optarg) * 72.0F) / (t2p->pdf_centimeters?2.54F:1.0F);
+					((float)atof(optarg) * PS_UNIT_SIZE) / (t2p->pdf_centimeters?2.54F:1.0F);
 				break;
 			case 'r': 
 				if(optarg[0]=='o'){
@@ -1159,8 +1156,9 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 }
 
 /*
-	This function is used by qsort to sort a T2P_PAGE* array of page structures by page number.
-*/
+ * This function is used by qsort to sort a T2P_PAGE* array of page structures
+ * by page number.
+ */
 
 int t2p_cmp_t2p_page(const void* e1, const void* e2){
 
@@ -1598,13 +1596,15 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
         if(TIFFGetField(input, TIFFTAG_YRESOLUTION, &(t2p->tiff_yres) ) == 0){
                 t2p->tiff_yres=0.0;
         }
-	TIFFGetFieldDefaulted(input, TIFFTAG_RESOLUTIONUNIT, &(t2p->tiff_resunit) );
-	if(t2p->tiff_resunit==RESUNIT_CENTIMETER){
-		t2p->tiff_xres*=2.54F;
-		t2p->tiff_yres*=2.54F;
-	} else if (t2p->tiff_resunit!=RESUNIT_INCH && t2p->pdf_centimeters!=0){
-		t2p->tiff_xres*=2.54F;
-		t2p->tiff_yres*=2.54F;
+	TIFFGetFieldDefaulted(input, TIFFTAG_RESOLUTIONUNIT,
+			      &(t2p->tiff_resunit));
+	if(t2p->tiff_resunit == RESUNIT_CENTIMETER) {
+		t2p->tiff_xres *= 2.54F;
+		t2p->tiff_yres *= 2.54F;
+	} else if (t2p->tiff_resunit != RESUNIT_INCH
+		   && t2p->pdf_centimeters != 0) {
+		t2p->tiff_xres *= 2.54F;
+		t2p->tiff_yres *= 2.54F;
 	}
 
 	t2p_compose_pdf_page(t2p);
@@ -4233,19 +4233,25 @@ void t2p_compose_pdf_page(T2P* t2p){
 	
 	t2p->pdf_xres = t2p->tiff_xres;
 	t2p->pdf_yres = t2p->tiff_yres;
-	if(t2p->pdf_overrideres){
+	if(t2p->pdf_overrideres) {
 		t2p->pdf_xres = t2p->pdf_defaultxres;
 		t2p->pdf_yres = t2p->pdf_defaultyres;
 	}
-	if(t2p->pdf_xres==0.0){
+	if(t2p->pdf_xres == 0.0)
 		t2p->pdf_xres = t2p->pdf_defaultxres;
-	}
-	if(t2p->pdf_yres==0.0){
+	if(t2p->pdf_yres == 0.0)
 		t2p->pdf_yres = t2p->pdf_defaultyres;
+	if (t2p->tiff_resunit != RESUNIT_CENTIMETER	/* RESUNIT_NONE and */
+	    && t2p->tiff_resunit != RESUNIT_INCH) {	/* other cases */
+		t2p->pdf_imagewidth = ((float)(t2p->tiff_width))/t2p->pdf_xres;
+		t2p->pdf_imagelength = ((float)(t2p->tiff_length))/t2p->pdf_yres;
+	} else {
+		t2p->pdf_imagewidth = 
+			((float)(t2p->tiff_width))*PS_UNIT_SIZE/t2p->pdf_xres;
+		t2p->pdf_imagelength = 
+			((float)(t2p->tiff_length))*PS_UNIT_SIZE/t2p->pdf_yres;
 	}
-	t2p->pdf_imagewidth=((float)(t2p->tiff_width)) *72.0F / t2p->pdf_xres;
-	t2p->pdf_imagelength=((float)(t2p->tiff_length)) *72.0F / t2p->pdf_yres;
-	if(t2p->pdf_overridepagesize != 0){
+	if(t2p->pdf_overridepagesize != 0) {
 		t2p->pdf_pagewidth = t2p->pdf_defaultpagewidth;
 		t2p->pdf_pagelength = t2p->pdf_defaultpagelength;
 	} else {
