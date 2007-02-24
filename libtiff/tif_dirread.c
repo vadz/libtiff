@@ -58,6 +58,7 @@ static	int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*);
 static	int TIFFFetchShortArray(TIFF*, TIFFDirEntry*, uint16*);
 static	int TIFFFetchStripThing(TIFF*, TIFFDirEntry*, long, uint32**);
 static	int TIFFFetchRefBlackWhite(TIFF*, TIFFDirEntry*);
+static	int TIFFFetchSubjectDistance(TIFF*, TIFFDirEntry*);
 static	float TIFFFetchFloat(TIFF*, TIFFDirEntry*);
 static	int TIFFFetchFloatArray(TIFF*, TIFFDirEntry*, float*);
 static	int TIFFFetchDoubleArray(TIFF*, TIFFDirEntry*, double*);
@@ -509,7 +510,7 @@ TIFFReadDirectory(TIFF* tif)
 		}
 	}
 	/*
-	 * Joris: OJPEG hack:
+	 * OJPEG hack:
 	 * - If a) compression is OJPEG, and b) photometric tag is missing,
 	 * then we consistently find that photometric should be YCbCr
 	 * - If a) compression is OJPEG, and b) photometric tag says it's RGB,
@@ -580,7 +581,7 @@ TIFFReadDirectory(TIFF* tif)
 		goto bad;
 	}
 	/*
-	 * Joris: OJPEG hack:
+	 * OJPEG hack:
 	 * We do no further messing with strip/tile offsets/bytecounts in OJPEG
 	 * TIFFs
 	 */
@@ -860,7 +861,17 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 				goto ignore;
 		}
 
-		(void) TIFFFetchNormalTag(tif, dp);
+		/*
+		 * EXIF tags which need to be specifically processed.
+		 */
+		switch (dp->tdir_tag) {
+			case EXIFTAG_SUBJECTDISTANCE:
+				(void) TIFFFetchSubjectDistance(tif, dp);
+				break;
+			default:
+				(void) TIFFFetchNormalTag(tif, dp);
+				break;
+		}
 	}
 	
 	if (dir)
@@ -1226,9 +1237,8 @@ cvtRational(TIFF* tif, TIFFDirEntry* dir, uint32 num, uint32 denom, float* rv)
 }
 
 /*
- * Fetch a rational item from the file
- * at offset off and return the value
- * as a floating point number.
+ * Fetch a rational item from the file at offset off and return the value as a
+ * floating point number.
  */
 static float
 TIFFFetchRational(TIFF* tif, TIFFDirEntry* dir)
@@ -1241,9 +1251,8 @@ TIFFFetchRational(TIFF* tif, TIFFDirEntry* dir)
 }
 
 /*
- * Fetch a single floating point value
- * from the offset field and return it
- * as a native float.
+ * Fetch a single floating point value from the offset field and return it as
+ * a native float.
  */
 static float
 TIFFFetchFloat(TIFF* tif, TIFFDirEntry* dir)
@@ -1885,6 +1894,30 @@ TIFFFetchRefBlackWhite(TIFF* tif, TIFFDirEntry* dir)
 	if (cp)
 		_TIFFfree(cp);
 	return (ok);
+}
+
+/*
+ * Fetch and set the SubjectDistance EXIF tag.
+ */
+static int
+TIFFFetchSubjectDistance(TIFF* tif, TIFFDirEntry* dir)
+{
+	uint32 l[2];
+	float v;
+	int ok = 0;
+
+	if (TIFFFetchData(tif, dir, (char *)l)
+	    && cvtRational(tif, dir, l[0], l[1], &v)) {
+		/*
+		 * XXX: Numerator 0xFFFFFFFF means that we have infinite
+		 * distance. Indicate that with a negative floating point
+		 * SubjectDistance value.
+		 */
+		ok = TIFFSetField(tif, dir->tdir_tag,
+				  (l[0] != 0xFFFFFFFF) ? v : -v);
+	}
+
+	return ok;
 }
 
 /*
