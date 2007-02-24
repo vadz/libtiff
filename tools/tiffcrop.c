@@ -70,6 +70,10 @@
 
 #include "tiffio.h"
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 #define	streq(a,b)	(strcmp((a),(b)) == 0)
 #define	strneq(a,b,n)	(strncmp((a),(b),(n)) == 0)
 
@@ -436,15 +440,15 @@ main(int argc, char* argv[])
       case 'Z': /* zones of an image X:Y read as zone X of Y */
 		crop_data.crop_mode |= CROP_ZONES;
 		for (i = 0, opt_ptr = strtok (optarg, ",");
-                   ((opt_ptr != NULL) &&  (i < MAX_ZONES));
-                    (opt_ptr = strtok (NULL, ",")), i++)
-                    {
-		    crop_data.zones++;
-		    opt_offset = index(opt_ptr, ':');
-                    *opt_offset = '\0';
-                    crop_data.zonelist[i].position = atoi(opt_ptr);
-                    crop_data.zonelist[i].total    = atoi(opt_offset + 1);
-                    }
+		     ((opt_ptr != NULL) &&  (i < MAX_ZONES));
+		     (opt_ptr = strtok (NULL, ",")), i++)
+			{
+			    crop_data.zones++;
+			    opt_offset = strchr(opt_ptr, ':');
+			    *opt_offset = '\0';
+			    crop_data.zonelist[i].position = atoi(opt_ptr);
+			    crop_data.zonelist[i].total = atoi(opt_offset + 1);
+			}
 		break;
       case '?':	usage();
 		/*NOTREACHED*/
@@ -2325,14 +2329,19 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 
            zwidth = crop->zonelist[i].x2 - crop->zonelist[i].x1  + 1;
 
-           /* Storing size of individual buffers in case we want to create a separte IFD for each zone */
-           buffsize = (ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength));
+           /* 
+	    * Storing size of individual buffers in case we want to create
+	    * a separte IFD for each zone
+	    */
+           buffsize = (uint32)
+		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
-           crop->combined_length += zlength;
-           crop->combined_width = zwidth;
+           crop->combined_length += (uint32)zlength;
+           crop->combined_width = (uint32)zwidth;
 #ifdef DEBUG
-	   fprintf (stderr, "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
+	   fprintf (stderr,
+"Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
                     i + 1, (uint32)zwidth, (uint32)zlength,
   	            crop->zonelist[i].x1, crop->zonelist[i].x2, 
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
@@ -2362,15 +2371,20 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 
            zlength = crop->zonelist[i].y2 - crop->zonelist[i].y1 + 1;
 
-           /* Storing size of individual buffers in case we want to create a separte IFD for each zone */
-           buffsize = (ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength));
+           /* 
+	    * Storing size of individual buffers in case we want to create
+	    * a separte IFD for each zone
+	    */
+           buffsize = (uint32)
+		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
-           crop->combined_length += zlength;
-           crop->combined_width = zwidth;
+           crop->combined_length += (uint32)zlength;
+           crop->combined_width = (uint32)zwidth;
 
 #ifdef DEBUG
-	   fprintf (stderr, "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
+	   fprintf (stderr,
+"Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
                     i + 1, (uint32)zwidth, (uint32)zlength,
 	            crop->zonelist[i].x1, crop->zonelist[i].x2,
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
@@ -2385,8 +2399,12 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
            zwidth =  (offsets.crop_width * 1.0) / total;
            zlength = offsets.crop_length;
 
-           /* Storing size of individual buffers in case we want to create a separte IFD for each zone */
-           buffsize = (ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength));
+           /*
+	    * Storing size of individual buffers in case we want to create
+	    * a separte IFD for each zone
+	    */
+           buffsize = (uint32)
+		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
 
            crop->zonelist[i].x1 = offsets.rmargin - (uint32)(offsets.endx - (zwidth * seg));
            crop->zonelist[i].x2 = offsets.rmargin - (uint32)(offsets.endx - (zwidth * (seg - 1)));
@@ -2394,11 +2412,12 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
            crop->zonelist[i].y2 = offsets.endy;
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
-           crop->combined_length += zlength;
-           crop->combined_width = zwidth;
+           crop->combined_length += (uint32)zlength;
+           crop->combined_width = (uint32)zwidth;
 
 #ifdef DEBUG
-	   fprintf (stderr, "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
+	   fprintf (stderr,
+"Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
                     i + 1, (uint32)zwidth, (uint32)zlength,
 	            crop->zonelist[i].x1, crop->zonelist[i].x2, 
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
@@ -2424,16 +2443,21 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 
            zlength = crop->zonelist[i].y2 - crop->zonelist[i].y1 + 1;
 
-           /* Storing size of individual buffers in case we want to create a separte IFD for each zone */
-           buffsize = (ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength));
+           /*
+	    * Storing size of individual buffers in case we want to create
+	    * a separte IFD for each zone
+	    */
+           buffsize = (uint32)
+		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
 
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
-           crop->combined_length += zlength;
-           crop->combined_width = zwidth;
+           crop->combined_length += (uint32)zlength;
+           crop->combined_width = (uint32)zwidth;
 
 #ifdef DEBUG
-	   fprintf (stderr, "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n", 
+	   fprintf (stderr,
+"Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n", 
 		    i + 1, (uint32)zwidth, (uint32)zlength,
 	            crop->zonelist[i].x1, crop->zonelist[i].x2, 
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
