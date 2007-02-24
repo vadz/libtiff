@@ -29,7 +29,11 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.11  2005-09-13 14:13:42  dron
+ * Revision 1.12  2007-02-24 17:14:14  dron
+ * Properly handle tags with TIFF_VARIABLE writecount. As per bug
+ * http://bugzilla.remotesensing.org/show_bug.cgi?id=1350
+ *
+ * Revision 1.11  2005/09/13 14:13:42  dron
  * Avoid warnings.
  *
  * Revision 1.10  2005/02/24 14:47:11  fwarmerdam
@@ -109,7 +113,8 @@ main(int argc, char* argv[])
                 if (TIFFSetField(tiff, fip->field_tag, argv[arg_index]) != 1)
                     fprintf( stderr, "Failed to set %s=%s\n",
                              fip->field_name, argv[arg_index] );
-            } else if (fip->field_writecount > 0) {
+            } else if (fip->field_writecount > 0
+		       || fip->field_writecount == TIFF_VARIABLE) {
                 int     ret = 1;
                 short   wc;
 
