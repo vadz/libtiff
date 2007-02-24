@@ -114,7 +114,7 @@ manpages = $(docfiles:.html=)
 .PHONY: htmldoc
 htmldoc: $(docfiles)
 
-$(docfiles): index
+$(docfiles):
 	for i in $(manpages); do					\
 		${GROFF} $(MANSRCDIR)/$$i > $(HTMLMANDIR)/$$i.html;	\
 	done
