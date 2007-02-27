@@ -1,3 +1,10 @@
+2007-02-27  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dirread.c: Use uint32 type instead of tsize_t in byte
+	counters in TIFFFetchData(). Should finally fix the issue
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=890
+
 2007-02-24  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffset.c: Properly handle tags with TIFF_VARIABLE writecount.
