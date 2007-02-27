@@ -1152,11 +1152,17 @@ TIFFFetchDirectory(TIFF* tif, toff_t diroff, TIFFDirEntry **pdir,
 static tsize_t
 TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 {
-	int w = TIFFDataWidth((TIFFDataType) dir->tdir_type);
-	tsize_t cc = dir->tdir_count * w;
+	uint32 w = TIFFDataWidth((TIFFDataType) dir->tdir_type);
+	/* 
+	 * FIXME: butecount should have tsize_t type, but for now libtiff
+	 * defines tsize_t as a signed 32-bit integer and we are losing
+	 * ability to read arrays larger than 2^31 bytes. So we are using
+	 * uint32 instead of tsize_t here.
+	 */
+	uint32 cc = dir->tdir_count * w;
 
 	/* Check for overflow. */
-	if (!dir->tdir_count || !w || cc / w != (tsize_t)dir->tdir_count)
+	if (!dir->tdir_count || !w || cc / w != dir->tdir_count)
 		goto bad;
 
 	if (!isMapped(tif)) {
@@ -1166,9 +1172,9 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 			goto bad;
 	} else {
 		/* Check for overflow. */
-		if ((tsize_t)dir->tdir_offset + cc < (tsize_t)dir->tdir_offset
-		    || (tsize_t)dir->tdir_offset + cc < cc
-		    || (tsize_t)dir->tdir_offset + cc > (tsize_t)tif->tif_size)
+		if (dir->tdir_offset + cc < dir->tdir_offset
+		    || dir->tdir_offset + cc < cc
+		    || dir->tdir_offset + cc > tif->tif_size)
 			goto bad;
 		_TIFFmemcpy(cp, tif->tif_base + dir->tdir_offset, cc);
 	}
