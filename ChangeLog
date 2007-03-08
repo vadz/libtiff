@@ -1,5 +1,13 @@
 2007-03-07  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 	
+	* libtiff/tif_getimage.c: workaround for 'Fractional scanline' error reading
+	OJPEG images with rowsperstrip that is not a multiple of vertical subsampling
+	factor. This bug is mentioned in:
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1390
+	http://www.asmail.be/msg0054766825.html 
+
+2007-03-07  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+	
 	* libtiff/tif_win32.c: made inclusion of windows.h unconditional
 
 	* libtiff/tif_win32.c: replaced preprocessor indication for consiously

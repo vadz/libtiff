@@ -431,6 +431,8 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			    photoTag, img->photometric);
 			return (0);
 	}
+	img->SubsamplingHor = 1;
+	img->SubsamplingVer = 1;
 	img->Map = NULL;
 	img->BWmap = NULL;
 	img->PALmap = NULL;
@@ -800,7 +802,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 {
 	TIFF* tif = img->tif;
 	tileContigRoutine put = img->put.contig;
-	uint32 row, y, nrow, rowstoread;
+	uint32 row, y, nrow, nrowsub, rowstoread;
 	uint32 pos;
 	unsigned char* buf;
 	uint32 rowsperstrip;
@@ -832,10 +834,13 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	{
 		rowstoread = rowsperstrip - (row + img->row_offset) % rowsperstrip;
 		nrow = (row + rowstoread > h ? h - row : rowstoread);
+		nrowsub = nrow;
+		if ((nrowsub%(img->SubsamplingVer))!=0)
+			nrowsub+=img->SubsamplingVer-nrowsub%(img->SubsamplingVer);
 		if (TIFFReadEncodedStrip(tif,
 		    TIFFComputeStrip(tif,row+img->row_offset, 0),
 		    buf,
-		    ((row + img->row_offset)%rowsperstrip + nrow) * scanline) < 0
+		    ((row + img->row_offset)%rowsperstrip + nrowsub) * scanline) < 0
 		    && img->stoponerr)
 		{
 			ret = 0;
@@ -2431,7 +2436,6 @@ PickContigCase(TIFFRGBAImage* img)
 			{
 				if (initYCbCrConversion(img)!=0)
 				{
-					uint16 hs, vs;
 					/*
 					 * The 6.0 spec says that subsampling must be
 					 * one of 1, 2, or 4, and that vertical subsampling
@@ -2441,8 +2445,8 @@ PickContigCase(TIFFRGBAImage* img)
 					 * Joris: added support for the [1,2] case, nonetheless, to accomodate
 					 * some OJPEG files
 					 */
-					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &hs, &vs);
-					switch ((hs<<4)|vs) {
+					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &img->SubsamplingHor, &img->SubsamplingVer);
+					switch ((img->SubsamplingHor<<4)|img->SubsamplingVer) {
 						case 0x44:
 							img->put.contig = putcontig8bitYCbCr44tile;
 							break;
