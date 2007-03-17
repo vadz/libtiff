@@ -623,26 +623,29 @@ TIFFDataWidth(TIFFDataType type)
 {
 	switch(type)
 	{
-	case 0:  /* nothing */
-	case 1:  /* TIFF_BYTE */
-	case 2:  /* TIFF_ASCII */
-	case 6:  /* TIFF_SBYTE */
-	case 7:  /* TIFF_UNDEFINED */
-		return 1;
-	case 3:  /* TIFF_SHORT */
-	case 8:  /* TIFF_SSHORT */
-		return 2;
-	case 4:  /* TIFF_LONG */
-	case 9:  /* TIFF_SLONG */
-	case 11: /* TIFF_FLOAT */
-        case 13: /* TIFF_IFD */
-		return 4;
-	case 5:  /* TIFF_RATIONAL */
-	case 10: /* TIFF_SRATIONAL */
-	case 12: /* TIFF_DOUBLE */
-		return 8;
-	default:
-		return 0; /* will return 0 for unknown types */
+		case 0:  /* nothing */
+		case TIFF_BYTE:
+		case TIFF_ASCII:
+		case TIFF_SBYTE:
+		case TIFF_UNDEFINED:
+			return 1;
+		case TIFF_SHORT:
+		case TIFF_SSHORT:
+			return 2;
+		case TIFF_LONG:
+		case TIFF_SLONG:
+		case TIFF_FLOAT:
+		case TIFF_IFD:
+			return 4;
+		case TIFF_RATIONAL:
+		case TIFF_SRATIONAL:
+		case TIFF_DOUBLE:
+		case TIFF_LONG8:
+		case TIFF_SLONG8:
+		case TIFF_IFD8:
+			return 8;
+		default:
+			return 0; /* will return 0 for unknown types */
 	}
 }
 
@@ -656,7 +659,8 @@ TIFFDataWidth(TIFFDataType type)
 int
 _TIFFDataSize(TIFFDataType type)
 {
-	switch (type) {
+	switch (type)
+	{
 		case TIFF_BYTE:
 		case TIFF_SBYTE:
 		case TIFF_ASCII:
@@ -673,6 +677,9 @@ _TIFFDataSize(TIFFDataType type)
 		case TIFF_SRATIONAL:
 		    return 4;
 		case TIFF_DOUBLE:
+		case TIFF_LONG8:
+		case TIFF_SLONG8:
+		case TIFF_IFD8:
 		    return 8;
 		default:
 		    return 0;

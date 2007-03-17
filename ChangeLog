@@ -1,3 +1,7 @@
+2007-03-17  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* start of BigTIFF upgrade - CVS HEAD unstable until further notice
+
 2007-03-07  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 	
 	* libtiff/tif_getimage.c: workaround for 'Fractional scanline' error reading

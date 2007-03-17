@@ -156,11 +156,11 @@ typedef	struct {
 #define	FIELD_LAST			(32*FIELD_SETLONGS-1)
 
 #define	TIFFExtractData(tif, type, v) \
-    ((uint32) ((tif)->tif_header.tiff_magic == TIFF_BIGENDIAN ? \
-        ((v) >> (tif)->tif_typeshift[type]) & (tif)->tif_typemask[type] : \
+    ((uint32) ((tif)->tif_header.common.tiff_magic == TIFF_BIGENDIAN ? \
+	((v) >> (tif)->tif_typeshift[type]) & (tif)->tif_typemask[type] : \
 	(v) & (tif)->tif_typemask[type]))
 #define	TIFFInsertData(tif, type, v) \
-    ((uint32) ((tif)->tif_header.tiff_magic == TIFF_BIGENDIAN ? \
+    ((uint32) ((tif)->tif_header.common.tiff_magic == TIFF_BIGENDIAN ? \
         ((v) & (tif)->tif_typemask[type]) << (tif)->tif_typeshift[type] : \
 	(v) & (tif)->tif_typemask[type]))
 

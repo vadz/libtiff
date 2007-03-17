@@ -93,10 +93,10 @@ typedef	uint32 (*TIFFStripMethod)(TIFF*, uint32);
 typedef	void (*TIFFTileMethod)(TIFF*, uint32*, uint32*);
 
 struct tiff {
-	char*		tif_name;	/* name of open file */
-	int		tif_fd;		/* open file descriptor */
-	int		tif_mode;	/* open mode (O_*) */
-	uint32		tif_flags;
+	char*           tif_name;	/* name of open file */
+	int             tif_fd;		/* open file descriptor */
+	int             tif_mode;	/* open mode (O_*) */
+	uint32          tif_flags;
 #define	TIFF_FILLORDER		0x00003	/* natural bit fill order for machine */
 #define	TIFF_DIRTYHEADER	0x00004	/* header must be written on close */
 #define	TIFF_DIRTYDIRECT	0x00008	/* current directory must be written */
@@ -110,23 +110,29 @@ struct tiff {
 #define	TIFF_MAPPED		0x00800	/* file is mapped into memory */
 #define	TIFF_POSTENCODE		0x01000	/* need call to postencode routine */
 #define	TIFF_INSUBIFD		0x02000	/* currently writing a subifd */
-#define	TIFF_UPSAMPLED		0x04000	/* library is doing data up-sampling */ 
+#define	TIFF_UPSAMPLED		0x04000	/* library is doing data up-sampling */
 #define	TIFF_STRIPCHOP		0x08000	/* enable strip chopping support */
 #define	TIFF_HEADERONLY		0x10000	/* read header only, do not process */
 					/* the first directory */
 #define TIFF_NOREADRAW		0x20000 /* skip reading of raw uncompressed */
 					/* image data */
 #define	TIFF_INCUSTOMIFD	0x40000	/* currently writing a custom IFD */
-	toff_t		tif_diroff;	/* file offset of current directory */
-	toff_t		tif_nextdiroff;	/* file offset of following directory */
-	toff_t*		tif_dirlist;	/* list of offsets to already seen */
+#define TIFF_BIGTIFF		0x80000 /* read/write bigtiff */
+	uint64          tif_diroff;	/* file offset of current directory */
+	uint64          tif_nextdiroff;	/* file offset of following directory */
+	uint64*         tif_dirlist;	/* list of offsets to already seen */
 					/* directories to prevent IFD looping */
 	tsize_t		tif_dirlistsize;/* number of entires in offset list */
 	uint16		tif_dirnumber;  /* number of already seen directories */
 	TIFFDirectory	tif_dir;	/* internal rep of current directory */
 	TIFFDirectory	tif_customdir;	/* custom IFDs are separated from
 					   the main ones */
-	TIFFHeader	tif_header;	/* file's header block */
+	union {
+		TIFFHeaderCommon common;
+		TIFFHeaderClassic classic;
+		TIFFHeaderBig big;
+	} tif_header;
+	uint16          tif_header_size; /* file's header block and its length */
 	const int*	tif_typeshift;	/* data type shift counts */
 	const long*	tif_typemask;	/* data type masks */
 	uint32		tif_row;	/* current scanline */
@@ -170,7 +176,7 @@ struct tiff {
 	tsize_t		tif_rawcc;	/* bytes unread from raw buffer */
 /* memory-mapped file support */
 	tidata_t	tif_base;	/* base of mapped file */
-	toff_t		tif_size;	/* size of mapped file region (bytes)
+	uint64          tif_size;	/* size of mapped file region (bytes)
 					   FIXME: it should be tsize_t */
 	TIFFMapFileProc	tif_mapproc;	/* map file method */
 	TIFFUnmapFileProc tif_unmapproc;/* unmap file method */
