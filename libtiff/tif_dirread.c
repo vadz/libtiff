@@ -54,10 +54,10 @@ static uint16 TIFFFetchDirectoryBig(TIFF* tif, uint64 diroff, TIFFDirEntryBig** 
 static uint32 TIFFFetchData(TIFF*, TIFFDirEntryUnion*, char*);
 static uint32 TIFFFetchString(TIFF*, TIFFDirEntryUnion*, char*);
 static float TIFFFetchRational(TIFF*, TIFFDirEntryUnion*);
-static int TIFFFetchNormalTag(TIFF*, TIFFDirEntry*);
-static int TIFFFetchPerSampleShorts(TIFF*, TIFFDirEntry*, uint16*);
-static int TIFFFetchPerSampleLongs(TIFF*, TIFFDirEntry*, uint32*);
-static int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*);
+static int TIFFFetchNormalTag(TIFF*, TIFFDirEntryUnion*);
+static int TIFFFetchPerSampleShorts(TIFF*, TIFFDirEntryUnion*, uint16*);
+static int TIFFFetchPerSampleLongs(TIFF*, TIFFDirEntryUnion*, uint32*);
+static int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntryUnion*, double*);
 static int TIFFFetchShortArray(TIFF*, TIFFDirEntry*, uint16*);
 static int TIFFFetchStripThing(TIFF*, TIFFDirEntry*, long, uint32**);
 static int TIFFFetchRefBlackWhite(TIFF*, TIFFDirEntry*);
@@ -1807,225 +1807,243 @@ TIFFFetchAnyArray(TIFF* tif, TIFFDirEntry* dir, double* v)
  * Fetch a tag that is not handled by special case code.
  */
 static int
-TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
+TIFFFetchNormalTag(TIFF* tif, TIFFDirEntryUnion* dp)
 {
 	static const char mesg[] = "to fetch tag value";
 	int ok = 0;
-	const TIFFFieldInfo* fip = _TIFFFieldWithTag(tif, dp->tdir_tag);
+	const TIFFFieldInfo* fip = _TIFFFieldWithTag(tif, dp->common.tdir_tag);
+	uint64 count;
 
-	if (dp->tdir_count > 1) {		/* array of values */
+	if (!(tif->tif_flags&TIFF_BIGTIFF))
+		count = dp->classic.tdir_count;
+	else
+		count = dp->big.tdir_count;
+	if (count > 1) {
+		/* array of values */
 		char* cp = NULL;
 
 		switch (dp->tdir_type) {
-		case TIFF_BYTE:
-		case TIFF_SBYTE:
-			cp = (char *)_TIFFCheckMalloc(tif,
-			    dp->tdir_count, sizeof (uint8), mesg);
-			ok = cp && TIFFFetchByteArray(tif, dp, (uint8*) cp);
-			break;
-		case TIFF_SHORT:
-		case TIFF_SSHORT:
-			cp = (char *)_TIFFCheckMalloc(tif,
-			    dp->tdir_count, sizeof (uint16), mesg);
-			ok = cp && TIFFFetchShortArray(tif, dp, (uint16*) cp);
-			break;
-		case TIFF_LONG:
-		case TIFF_SLONG:
-			cp = (char *)_TIFFCheckMalloc(tif,
-			    dp->tdir_count, sizeof (uint32), mesg);
-			ok = cp && TIFFFetchLongArray(tif, dp, (uint32*) cp);
-			break;
-		case TIFF_RATIONAL:
-		case TIFF_SRATIONAL:
-			cp = (char *)_TIFFCheckMalloc(tif,
-			    dp->tdir_count, sizeof (float), mesg);
-			ok = cp && TIFFFetchRationalArray(tif, dp, (float*) cp);
-			break;
-		case TIFF_FLOAT:
-			cp = (char *)_TIFFCheckMalloc(tif,
-			    dp->tdir_count, sizeof (float), mesg);
-			ok = cp && TIFFFetchFloatArray(tif, dp, (float*) cp);
-			break;
-		case TIFF_DOUBLE:
-			cp = (char *)_TIFFCheckMalloc(tif,
-			    dp->tdir_count, sizeof (double), mesg);
-			ok = cp && TIFFFetchDoubleArray(tif, dp, (double*) cp);
-			break;
-		case TIFF_ASCII:
-		case TIFF_UNDEFINED:		/* bit of a cheat... */
-			/*
-			 * Some vendors write strings w/o the trailing
-			 * NULL byte, so always append one just in case.
-			 */
-			cp = (char *)_TIFFCheckMalloc(tif, dp->tdir_count + 1,
-						      1, mesg);
-			if( (ok = (cp && TIFFFetchString(tif, dp, cp))) != 0 )
-				cp[dp->tdir_count] = '\0';	/* XXX */
-			break;
+			case TIFF_BYTE:
+			case TIFF_SBYTE:
+				cp = (char *)_TIFFCheckMalloc(tif,
+				    count, sizeof (uint8), mesg);
+				ok = cp && TIFFFetchByteArray(tif, dp, (uint8*) cp);
+				break;
+			case TIFF_SHORT:
+			case TIFF_SSHORT:
+				cp = (char *)_TIFFCheckMalloc(tif,
+				    count, sizeof (uint16), mesg);
+				ok = cp && TIFFFetchShortArray(tif, dp, (uint16*) cp);
+				break;
+			case TIFF_LONG:
+			case TIFF_SLONG:
+				cp = (char *)_TIFFCheckMalloc(tif,
+				    count, sizeof (uint32), mesg);
+				ok = cp && TIFFFetchLongArray(tif, dp, (uint32*) cp);
+				break;
+			case TIFF_RATIONAL:
+			case TIFF_SRATIONAL:
+				cp = (char *)_TIFFCheckMalloc(tif,
+				    count, sizeof (float), mesg);
+				ok = cp && TIFFFetchRationalArray(tif, dp, (float*) cp);
+				break;
+			case TIFF_FLOAT:
+				cp = (char *)_TIFFCheckMalloc(tif,
+				    count, sizeof (float), mesg);
+				ok = cp && TIFFFetchFloatArray(tif, dp, (float*) cp);
+				break;
+			case TIFF_DOUBLE:
+				cp = (char *)_TIFFCheckMalloc(tif,
+				    count, sizeof (double), mesg);
+				ok = cp && TIFFFetchDoubleArray(tif, dp, (double*) cp);
+				break;
+			case TIFF_ASCII:
+			case TIFF_UNDEFINED:		/* bit of a cheat... */
+				/*
+				 * Some vendors write strings w/o the trailing
+				 * NULL byte, so always append one just in case.
+				 */
+				cp = (char *)_TIFFCheckMalloc(tif, count + 1,
+				    1, mesg);
+				if( (ok = (cp && TIFFFetchString(tif, dp, cp))) != 0 )
+					cp[count] = '\0';	/* XXX */
+				break;
 		}
 		if (ok) {
 			ok = (fip->field_passcount ?
-			    TIFFSetField(tif, dp->tdir_tag, dp->tdir_count, cp)
-			  : TIFFSetField(tif, dp->tdir_tag, cp));
+			    TIFFSetField(tif, dp->common.tdir_tag, count, cp)
+			    : TIFFSetField(tif, dp->common.tdir_tag, cp));
 		}
 		if (cp != NULL)
 			_TIFFfree(cp);
 	} else if (CheckDirCount(tif, dp, 1)) {	/* singleton value */
-		switch (dp->tdir_type) {
-		case TIFF_BYTE:
-		case TIFF_SBYTE:
-		case TIFF_SHORT:
-		case TIFF_SSHORT:
-			/*
-			 * If the tag is also acceptable as a LONG or SLONG
-			 * then TIFFSetField will expect an uint32 parameter
-			 * passed to it (through varargs).  Thus, for machines
-			 * where sizeof (int) != sizeof (uint32) we must do
-			 * a careful check here.  It's hard to say if this
-			 * is worth optimizing.
-			 *
-			 * NB: We use TIFFFieldWithTag here knowing that
-			 *     it returns us the first entry in the table
-			 *     for the tag and that that entry is for the
-			 *     widest potential data type the tag may have.
-			 */
-			{ TIFFDataType type = fip->field_type;
-			  if (type != TIFF_LONG && type != TIFF_SLONG) {
-				uint16 v = (uint16)
-			   TIFFExtractData(tif, dp->tdir_type, dp->tdir_offset);
-				ok = (fip->field_passcount ?
-				    TIFFSetField(tif, dp->tdir_tag, 1, &v)
-				  : TIFFSetField(tif, dp->tdir_tag, v));
+		switch (dp->common.tdir_type) {
+			case TIFF_BYTE:
+			case TIFF_SBYTE:
+			case TIFF_SHORT:
+			case TIFF_SSHORT:
+				/*
+				 * If the tag is also acceptable as a LONG or SLONG
+				 * then TIFFSetField will expect an uint32 parameter
+				 * passed to it (through varargs).  Thus, for machines
+				 * where sizeof (int) != sizeof (uint32) we must do
+				 * a careful check here.  It's hard to say if this
+				 * is worth optimizing.
+				 *
+				 * NB: We use TIFFFieldWithTag here knowing that
+				 *     it returns us the first entry in the table
+				 *     for the tag and that that entry is for the
+				 *     widest potential data type the tag may have.
+				 */
+				{
+					TIFFDataType type = fip->field_type;
+					if (type != TIFF_LONG && type != TIFF_SLONG) {
+						uint16 v = (uint16)
+						TIFFExtractData(tif, dp->common.tdir_type, dp->tdir_offset dddd);
+						ok = (fip->field_passcount ?
+						    TIFFSetField(tif, dp->common.tdir_tag, 1, &v)
+						    : TIFFSetField(tif, dp->common.tdir_tag, v));
+						break;
+					}
+				}
+				/* fall thru... */
+			case TIFF_LONG:
+			case TIFF_SLONG:
+				{
+					uint32 v32 = TIFFExtractData(tif, dp->common.tdir_type, dp->tdir_offset ddd);
+					ok = (fip->field_passcount ?
+					    TIFFSetField(tif, dp->common.tdir_tag, 1, &v32)
+					    : TIFFSetField(tif, dp->common.tdir_tag, v32));
+				}
 				break;
-			  }
-			}
-			/* fall thru... */
-		case TIFF_LONG:
-		case TIFF_SLONG:
-			{ uint32 v32 =
-		    TIFFExtractData(tif, dp->tdir_type, dp->tdir_offset);
-			  ok = (fip->field_passcount ? 
-			      TIFFSetField(tif, dp->tdir_tag, 1, &v32)
-			    : TIFFSetField(tif, dp->tdir_tag, v32));
-			}
-			break;
-		case TIFF_RATIONAL:
-		case TIFF_SRATIONAL:
-		case TIFF_FLOAT:
-			{ float v = (dp->tdir_type == TIFF_FLOAT ? 
-			      TIFFFetchFloat(tif, dp)
-			    : TIFFFetchRational(tif, dp));
-			  ok = (fip->field_passcount ?
-			      TIFFSetField(tif, dp->tdir_tag, 1, &v)
-			    : TIFFSetField(tif, dp->tdir_tag, v));
-			}
-			break;
-		case TIFF_DOUBLE:
-			{ double v;
-			  ok = (TIFFFetchDoubleArray(tif, dp, &v) &&
-			    (fip->field_passcount ?
-			      TIFFSetField(tif, dp->tdir_tag, 1, &v)
-			    : TIFFSetField(tif, dp->tdir_tag, v))
-			  );
-			}
-			break;
-		case TIFF_ASCII:
-		case TIFF_UNDEFINED:		/* bit of a cheat... */
-			{ char c[2];
-			  if( (ok = (TIFFFetchString(tif, dp, c) != 0)) != 0 ) {
-				c[1] = '\0';		/* XXX paranoid */
-				ok = (fip->field_passcount ?
-					TIFFSetField(tif, dp->tdir_tag, 1, c)
-				      : TIFFSetField(tif, dp->tdir_tag, c));
-			  }
-			}
-			break;
+			case TIFF_RATIONAL:
+			case TIFF_SRATIONAL:
+			case TIFF_FLOAT:
+				{
+					float v = (dp->common.tdir_type == TIFF_FLOAT ?
+					    TIFFFetchFloat(tif, dp)
+					    : TIFFFetchRational(tif, dp));
+					ok = (fip->field_passcount ?
+					    TIFFSetField(tif, dp->common.tdir_tag, 1, &v)
+					    : TIFFSetField(tif, dp->common.tdir_tag, v));
+				}
+				break;
+			case TIFF_DOUBLE:
+				{
+					double v;
+					ok = (TIFFFetchDoubleArray(tif, dp, &v) &&
+					    (fip->field_passcount ?
+					    TIFFSetField(tif, dp->common.tdir_tag, 1, &v)
+					    : TIFFSetField(tif, dp->common.tdir_tag, v))
+					    );
+				}
+				break;
+			case TIFF_ASCII:
+			case TIFF_UNDEFINED:        /* bit of a cheat... */
+				{
+					char c[2];
+					if ( (ok = (TIFFFetchString(tif, dp, c) != 0)) != 0 ) {
+						c[1] = '\0';        /* XXX paranoid */
+						ok = (fip->field_passcount ?
+						    TIFFSetField(tif, dp->common.tdir_tag, 1, c)
+						    : TIFFSetField(tif, dp->common.tdir_tag, c));
+					}
+				}
+				break;
 		}
 	}
 	return (ok);
 }
 
-#define	NITEMS(x)	(sizeof (x) / sizeof (x[0]))
+#define NITEMS(x) (sizeof (x) / sizeof (x[0]))
 /*
  * Fetch samples/pixel short values for 
  * the specified tag and verify that
  * all values are the same.
  */
 static int
-TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, uint16* pl)
+TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntryUnion* dir, uint16* pl)
 {
-    uint16 samples = tif->tif_dir.td_samplesperpixel;
-    int status = 0;
-
-    if (CheckDirCount(tif, dir, (uint32) samples)) {
-        uint16 buf[10];
-        uint16* v = buf;
-
-        if (dir->tdir_count > NITEMS(buf))
-            v = (uint16*) _TIFFCheckMalloc(tif, dir->tdir_count, sizeof(uint16),
-                                      "to fetch per-sample values");
-        if (v && TIFFFetchShortArray(tif, dir, v)) {
-            uint16 i;
-            int check_count = dir->tdir_count;
-            if( samples < check_count )
-                check_count = samples;
-
-            for (i = 1; i < check_count; i++)
-                if (v[i] != v[0]) {
+	uint16 samples = tif->tif_dir.td_samplesperpixel;
+	int status = 0;
+	if (CheckDirCount(tif, dir, (uint32) samples)) {
+		uint16 buf[10];
+		uint16* v = buf;
+		uint64 count;
+		if (!(tif->tif_flags&TIFF_BIGTIFF))
+			count = dir->classic.tdir_count;
+		else
+			count = dir->big.tdir_count;
+		if (count > NITEMS(buf))
+			v = (uint16*) _TIFFCheckMalloc(tif, count, sizeof(uint16),
+			    "to fetch per-sample values");
+		if (v && TIFFFetchShortArray(tif, dir, v)) {
+			uint16 i;
+			uint16 check_count;
+			if ((uint64)samples<=count)
+				check_count=samples;
+			else
+				check_count=(uint16)count;
+			for (i=1; i<check_count; i++)
+				if (v[i] != v[0]) {
 					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-                              "Cannot handle different per-sample values for field \"%s\"",
-                              _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-                    goto bad;
-                }
-            *pl = v[0];
-            status = 1;
-        }
-      bad:
-        if (v && v != buf)
-            _TIFFfree(v);
-    }
-    return (status);
+					    "Cannot handle different per-sample values for field \"%s\"",
+					    _TIFFFieldWithTag(tif, dir->common.tdir_tag)->field_name);
+					goto bad;
+				}
+			*pl = v[0];
+			status = 1;
+		}
+	bad:
+		if (v && v != buf)
+			_TIFFfree(v);
+	}
+	return (status);
 }
 
 /*
- * Fetch samples/pixel long values for 
+ * Fetch samples/pixel long values for
  * the specified tag and verify that
  * all values are the same.
  */
 static int
-TIFFFetchPerSampleLongs(TIFF* tif, TIFFDirEntry* dir, uint32* pl)
+TIFFFetchPerSampleLongs(TIFF* tif, TIFFDirEntryUnion* dir, uint32* pl)
 {
-    uint16 samples = tif->tif_dir.td_samplesperpixel;
-    int status = 0;
-
-    if (CheckDirCount(tif, dir, (uint32) samples)) {
-        uint32 buf[10];
-        uint32* v = buf;
-
-        if (dir->tdir_count > NITEMS(buf))
-            v = (uint32*) _TIFFCheckMalloc(tif, dir->tdir_count, sizeof(uint32),
-                                      "to fetch per-sample values");
-        if (v && TIFFFetchLongArray(tif, dir, v)) {
-            uint16 i;
-            int check_count = dir->tdir_count;
-
-            if( samples < check_count )
-                check_count = samples;
-            for (i = 1; i < check_count; i++)
-                if (v[i] != v[0]) {
+	uint16 samples = tif->tif_dir.td_samplesperpixel;
+	int status = 0;
+	if (CheckDirCount(tif, dir, (uint32) samples)) {
+		uint32 buf[10];
+		uint32* v = buf;
+		uint64 count;
+		if (!(tif->tif_flags&TIFF_BIGTIFF))
+			count = dir->classic.tdir_count;
+		else
+			count = dir->big.tdir_count;
+		if (count > NITEMS(buf))
+			v = (uint32*) _TIFFCheckMalloc(tif, count, sizeof(uint32),
+			    "to fetch per-sample values");
+		if (v && TIFFFetchLongArray(tif, dir, v)) {
+			uint16 i;
+			uint16 check_count;
+			if ((uint64)samples<=count)
+				check_count=samples;
+			else
+				check_count=(uint16)count;
+			for (i=1; i<check_count; i++)
+				if (v[i] != v[0]) {
 					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-                              "Cannot handle different per-sample values for field \"%s\"",
-                              _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-                    goto bad;
-                }
-            *pl = v[0];
-            status = 1;
-        }
-      bad:
-        if (v && v != buf)
-            _TIFFfree(v);
-    }
-    return (status);
+					    "Cannot handle different per-sample values for field \"%s\"",
+					    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
+					goto bad;
+				}
+			*pl = v[0];
+			status = 1;
+		}
+	bad:
+		if (v && v != buf)
+			_TIFFfree(v);
+	}
+	return (status);
 }
 
 /*
@@ -2035,37 +2053,41 @@ TIFFFetchPerSampleLongs(TIFF* tif, TIFFDirEntry* dir, uint32* pl)
 static int
 TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
 {
-    uint16 samples = tif->tif_dir.td_samplesperpixel;
-    int status = 0;
-
-    if (CheckDirCount(tif, dir, (uint32) samples)) {
-        double buf[10];
-        double* v = buf;
-
-        if (dir->tdir_count > NITEMS(buf))
-            v = (double*) _TIFFCheckMalloc(tif, dir->tdir_count, sizeof (double),
-                                      "to fetch per-sample values");
-        if (v && TIFFFetchAnyArray(tif, dir, v)) {
-            uint16 i;
-            int check_count = dir->tdir_count;
-            if( samples < check_count )
-                check_count = samples;
-
-            for (i = 1; i < check_count; i++)
-                if (v[i] != v[0]) {
-                    TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-                              "Cannot handle different per-sample values for field \"%s\"",
-                              _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-                    goto bad;
-                }
-            *pl = v[0];
-            status = 1;
-        }
-      bad:
-        if (v && v != buf)
-            _TIFFfree(v);
-    }
-    return (status);
+	uint16 samples = tif->tif_dir.td_samplesperpixel;
+	int status = 0;
+	if (CheckDirCount(tif, dir, (uint32) samples)) {
+		double buf[10];
+		double* v = buf;
+		uint64 count;
+		if (!(tif->tif_flags&TIFF_BIGTIFF))
+			count = dir->classic.tdir_count;
+		else
+			count = dir->big.tdir_count;
+		if (count > NITEMS(buf))
+			v = (double*) _TIFFCheckMalloc(tif, count, sizeof(double),
+			    "to fetch per-sample values");
+		if (v && TIFFFetchAnyArray(tif, dir, v)) {
+			uint16 i;
+			uint16 check_count;
+			if ((uint64)samples<=count)
+				check_count=samples;
+			else
+				check_count=(uint16)count;
+			for (i=1; i<check_count; i++)
+				if (v[i] != v[0]) {
+					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+					    "Cannot handle different per-sample values for field \"%s\"",
+					    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
+					goto bad;
+				}
+			*pl = v[0];
+			status = 1;
+		}
+	bad:
+		if (v && v != buf)
+			_TIFFfree(v);
+	}
+	return (status);
 }
 #undef NITEMS
 
