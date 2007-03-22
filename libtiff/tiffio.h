@@ -281,12 +281,12 @@ extern	TIFFCodec* TIFFGetConfiguredCODECs(void);
  * Auxiliary functions.
  */
 
-extern	tdata_t _TIFFmalloc(tsize_t);
-extern	tdata_t _TIFFrealloc(tdata_t, tsize_t);
-extern	void _TIFFmemset(tdata_t, int, tsize_t);
-extern	void _TIFFmemcpy(tdata_t, const tdata_t, tsize_t);
-extern	int _TIFFmemcmp(const tdata_t, const tdata_t, tsize_t);
-extern	void _TIFFfree(tdata_t);
+extern tdata_t _TIFFmalloc(tsize_t s);
+extern tdata_t _TIFFrealloc(tdata_t p, tsize_t s);
+extern void _TIFFmemset(tdata_t p, int v, tsize_t c);
+extern void _TIFFmemcpy(tdata_t d, const tdata_t s, tsize_t c);
+extern int _TIFFmemcmp(const tdata_t p1, const tdata_t p2, tsize_t c);
+extern void _TIFFfree(tdata_t p);
 
 /*
 ** Stuff, related to tag handling and creating custom tags.
@@ -473,6 +473,7 @@ extern void TIFFSwabDouble(double*);
 extern void TIFFSwabArrayOfShort(uint16*, unsigned long);
 extern void TIFFSwabArrayOfTriples(uint8*, unsigned long);
 extern void TIFFSwabArrayOfLong(uint32*, unsigned long);
+extern void TIFFSwabArrayOfLong8(uint64*, unsigned long);
 extern void TIFFSwabArrayOfDouble(double*, unsigned long);
 extern void TIFFReverseBits(unsigned char *, unsigned long);
 extern const unsigned char* TIFFGetBitRevTable(int);

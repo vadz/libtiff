@@ -134,13 +134,29 @@ typedef struct {
 	uint16 tdir_tag;        /* see below */
 	uint16 tdir_type;       /* data type; see below */
 	uint32 tdir_count;      /* number of items; length in spec */
-	uint32 tdir_offset;     /* byte offset to field data */
+	union {
+		uint8 vu8[4];
+		int8 vs8[4];
+		uint16 vu16[2];
+		int16 vs16[2];
+		uint32 vu32;
+		int32 vs32;
+	} tdir_offset;          /* byte offset to field data, or actual value */
 } TIFFDirEntryClassic;
 typedef struct {
 	uint16 tdir_tag;        /* see below */
 	uint16 tdir_type;       /* data type; see below */
 	uint64 tdir_count;      /* number of items; length in spec */
-	uint64 tdir_offset;     /* byte offset to field data */
+	union {
+		uint8 vu8[8];
+		int8 vs8[8];
+		uint16 vu16[4];
+		int16 vs16[4];
+		uint32 vu32[2];
+		int32 vs32[2];
+		uint64 vu64;
+		int64 vs64;
+	} tdir_offset;          /* byte offset to field data, or actual value */
 } TIFFDirEntryBig;
 typedef union {
 	TIFFDirEntryCommon common;
