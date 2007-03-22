@@ -126,6 +126,8 @@ typedef struct {
  * field to save space.  If the value is less than 4 bytes, it is
  * left-justified in the offset field.
  */
+#pragma pack(push)
+#pragma pack(1)
 typedef struct {
 	uint16 tdir_tag;        /* see below */
 	uint16 tdir_type;       /* data type; see below */
@@ -158,6 +160,7 @@ typedef struct {
 		int64 vs64;
 	} tdir_offset;          /* byte offset to field data, or actual value */
 } TIFFDirEntryBig;
+#pragma pack(pop)
 typedef union {
 	TIFFDirEntryCommon common;
 	TIFFDirEntryClassic classic;
