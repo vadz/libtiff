@@ -1122,7 +1122,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 			_TIFFmemcpy(&dircount, tif->tif_base+poff, sizeof (uint16));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabShort(&dircount);
-			poff+=sizeof (uint16)+dircount*sizeof (TIFFDirEntryClassic);
+			poff+=sizeof (uint16)+dircount*12;
 			if (off != NULL)
 				*off = poff;
 			if (((uint64) (poff+sizeof (uint32))) > tif->tif_size)
@@ -1155,7 +1155,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 				return(0);
 			}
 			dircount16 = (uint16)dircount64;
-			poff+=sizeof (uint64)+dircount16*sizeof (TIFFDirEntryBig);
+			poff+=sizeof (uint64)+dircount16*20;
 			if (off != NULL)
 				*off = poff;
 			if (((uint64) (poff+sizeof (uint64))) > tif->tif_size)
@@ -1186,10 +1186,10 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 				TIFFSwabShort(&dircount);
 			if (off != NULL)
 				*off = TIFFSeekFile(tif,
-				    dircount*sizeof (TIFFDirEntryClassic), SEEK_CUR);
+				    dircount*12, SEEK_CUR);
 			else
 				(void) TIFFSeekFile(tif,
-				    dircount*sizeof (TIFFDirEntryClassic), SEEK_CUR);
+				    dircount*12, SEEK_CUR);
 			if (!ReadOK(tif, &nextdir32, sizeof (uint32))) {
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
@@ -1219,10 +1219,10 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 			dircount16 = (uint16)dircount64;
 			if (off != NULL)
 				*off = TIFFSeekFile(tif,
-				    dircount16*sizeof (TIFFDirEntryBig), SEEK_CUR);
+				    dircount16*20, SEEK_CUR);
 			else
 				(void) TIFFSeekFile(tif,
-				    dircount16*sizeof (TIFFDirEntryBig), SEEK_CUR);
+				    dircount16*20, SEEK_CUR);
 			if (!ReadOK(tif, nextdir, sizeof (uint64))) {
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
