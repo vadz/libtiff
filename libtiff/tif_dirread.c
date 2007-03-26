@@ -41,7 +41,9 @@ extern void TIFFCvtIEEEFloatToNative(TIFF*, uint32, float*);
 extern void TIFFCvtIEEEDoubleToNative(TIFF*, uint32, double*);
 #endif
 
-static int EstimateStripByteCounts(TIFF*, TIFFDirEntry*, uint16);
+static int EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
+static int EstimateStripByteCountsClassic(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
+static int EstimateStripByteCountsBig(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
 static void MissingRequired(TIFF*, const char*);
 static int TIFFCheckDirOffset(TIFF* tif, uint64 diroff);
 static int CheckDirCount(TIFF*, TIFFDirEntry*, uint32);
@@ -61,7 +63,7 @@ static float TIFFFetchFloat(TIFF*, TIFFDirEntry*);
 static int TIFFFetchFloatArray(TIFF*, TIFFDirEntry*, float*);
 static int TIFFFetchDoubleArray(TIFF*, TIFFDirEntry*, double*);
 static int TIFFFetchAnyArray(TIFF*, TIFFDirEntry*, double*);
-static int TIFFFetchShortPair(TIFF*, TIFFDirEntry*);
+static int TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dp, int recover);
 static void ChopUpSingleUncompressedStrip(TIFF*);
 
 /* dddddddddddddddddddddddddd */
@@ -122,7 +124,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong(int32 value
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64 value);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, uint32 size, void* dest);
-static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, char* tagname);
+static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, char* module, char* tagname, int recover);
 
 static void TIFFReadDirectoryCheckOrder(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
 static TIFFDirEntry* TIFFReadDirectoryFindEntry(TIFF* tif, TIFFDirEntry* dir, uint16 dircount, uint16 tagid);
@@ -1158,10 +1160,35 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, u
 	return(TIFFReadDirEntryErrOk);
 }
 
-static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, char* tagname)
+static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, char* module, char* tagname, int recover)
 {
-	assert(0);
+	if (!recover)
+	{
+		switch (err)
+		{
+			case TIFFReadDirEntryErrPsdif:
+				TIFFErrorExt(tif->tif_clientdata,module,"Cannot handle different values per sample for \"%s\"",tagname);
+				break;
+			default:
+				assert(0);
+				break;
+		}
+	}
+	else
+	{
+		switch (err)
+		{
+			case TIFFReadDirEntryErrPsdif:
+				TIFFWarningExt(tif->tif_clientdata,module,"Cannot handle different values per sample for \"%s\"; tag ignored",tagname);
+				break;
+			default:
+				assert(0);
+				break;
+		}
+	}
 }
+
+/* PODD */
 
 /*
  * Read the next TIFF directory from a file and convert it to the internal
@@ -1251,7 +1278,7 @@ TIFFReadDirectory(TIFF* tif)
 			err=TIFFReadDirEntryPersampleShort(tif,dp,&value);
 		if (err!=TIFFReadDirEntryErrOk)
 		{
-			TIFFReadDirEntryOutputErr(tif,err,"Compression");
+			TIFFReadDirEntryOutputErr(tif,err,module,"Compression",0);
 			goto bad;
 		}
 		if (!TIFFSetField(tif,TIFFTAG_COMPRESSION,value))
@@ -1455,7 +1482,7 @@ TIFFReadDirectory(TIFF* tif)
 						err=TIFFReadDirEntryPersampleShort(tif,dp,&value);
 					if (err!=TIFFReadDirEntryErrOk)
 					{
-						TIFFReadDirEntryOutputErr(tif,err,_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name);
+						TIFFReadDirEntryOutputErr(tif,err,module,_TIFFFieldWithTag(tif,dp->tdir_tag)->field_name,0);
 						goto bad;
 					}
 					if (!TIFFSetField(tif,dp->tdir_tag,value))
@@ -1528,7 +1555,7 @@ TIFFReadDirectory(TIFF* tif)
 			case TIFFTAG_HALFTONEHINTS:
 			case TIFFTAG_YCBCRSUBSAMPLING:
 			case TIFFTAG_DOTRANGE:
-				(void) TIFFFetchShortPair(tif, dp);
+				(void) TIFFFetchShortPair(tif,dp,1);
 				break;
 			case TIFFTAG_REFERENCEBLACKWHITE:
 				(void) TIFFFetchRefBlackWhite(tif, dp);
@@ -2740,42 +2767,32 @@ TIFFFetchShortArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
  * or SHORT type and this function works with both ones.
  */
 static int
-TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir)
+TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir, int recover)
 {
-	assert(0);
-	#ifdef NDEF
-
-	/*
-	 * Prevent overflowing the v stack arrays below by performing a sanity
-	 * check on tdir_count, this should never be greater than two.
-	 */
-	if (dir->tdir_count > 2) {
-		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
-		"unexpected count for field \"%s\", %lu, expected 2; ignored",
-			_TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
-			dir->tdir_count);
+	static const char module[] = "TIFFFetchShortPair";
+	enum TIFFReadDirEntryErr err;
+	uint16* data;
+	if (dir->tdir_count!=2)
+	{
+		TIFFWarningExt(tif->tif_clientdata,module,
+		    "Unexpected count for field \"%s\", %llu, expected 2; ignored",
+		    _TIFFFieldWithTag(tif,dir->tdir_tag)->field_name,
+		    dir->tdir_count);
 		return 0;
 	}
-
-	switch (dir->tdir_type) {
-		case TIFF_BYTE:
-		case TIFF_SBYTE:
-			{
-			uint8 v[4];
-			return TIFFFetchByteArray(tif, dir, v)
-				&& TIFFSetField(tif, dir->tdir_tag, v[0], v[1]);
-			}
-		case TIFF_SHORT:
-		case TIFF_SSHORT:
-			{
-			uint16 v[2];
-			return TIFFFetchShortArray(tif, dir, v)
-				&& TIFFSetField(tif, dir->tdir_tag, v[0], v[1]);
-			}
-		default:
-			return 0;
+	err=TIFFReadDirEntryShortArray(tif,dir,&data);
+	if (err!=TIFFReadDirEntryErrOk)
+	{
+		TIFFReadDirEntryOutputErr(tif,err,module,_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name,recover);
+		return 0;
 	}
-	#endif
+	if (!TIFFSetField(tif,dir->tdir_tag,data))
+	{
+		_TIFFfree(data);
+		return 0;
+	}
+	_TIFFfree(data);
+	return 1;
 }
 
 /*
@@ -3034,13 +3051,15 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_UNDEFINED:
 				err=TIFFReadDirEntryByteArray(tif,dp,(uint8**)(&data));
 				break;
+			default:
+				data=0;
 		}
 		if (err!=TIFFReadDirEntryErrOk)
 			ok=1;
-		else
+		else if (data!=0)
 		{
 			if (fip->field_passcount)
-				ok=TIFFSetField(tif,dp->tdir_tag,dp->tdir_count,data);
+				ok=TIFFSetField(tif,dp->tdir_tag,(uint32)dp->tdir_count,data);
 			else
 				ok=TIFFSetField(tif,dp->tdir_tag,data);
 			_TIFFfree(data);
@@ -3290,12 +3309,13 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
 static int
 TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, long nstrips, uint64** lpp)
 {
+	static const char module[] = "TIFFFetchStripThing";
 	enum TIFFReadDirEntryErr err;
 	uint64* data;
 	err=TIFFReadDirEntryLong8Array(tif,dir,&data);
 	if (err!=TIFFReadDirEntryErrOk)
 	{
-		TIFFReadDirEntryOutputErr(tif,err,_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name);
+		TIFFReadDirEntryOutputErr(tif,err,module,_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name,0);
 		return 0;
 	}
 	if (dir->tdir_count!=(uint64)nstrips)
