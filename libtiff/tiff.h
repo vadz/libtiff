@@ -122,9 +122,9 @@ typedef struct {
  * disjoint and may appear anywhere in the file (so long as they are
  * placed on a word boundary).
  *
- * If the value is 4 bytes or less, then it is placed in the offset
- * field to save space.  If the value is less than 4 bytes, it is
- * left-justified in the offset field.
+ * If the value is 4 bytes or less, in ClassicTIFF, or 8 bytes or less in
+ * BigTIFF, then it is placed in the offset field to save space. If so,
+ * it is left-justified in the offset field.
  */
 typedef struct {
 	uint16 tdir_tag;        /* see below */
