@@ -480,7 +480,7 @@ Fax3SetupState(TIFF* tif)
 		rowbytes = TIFFTileRowSize(tif);
 		rowpixels = td->td_tilewidth;
 	} else {
-		rowbytes = TIFFScanlineSize(tif);
+		rowbytes = TIFFScanlineSize(tif);  ddd
 		rowpixels = td->td_imagewidth;
 	}
 	sp->rowbytes = (uint32) rowbytes;
@@ -493,7 +493,7 @@ Fax3SetupState(TIFF* tif)
 	    td->td_compression == COMPRESSION_CCITTFAX4
 	);
 
-	nruns = needsRefLine ? 2*TIFFroundup(rowpixels,32) : rowpixels;
+	nruns = needsRefLine ? 2*TIFFroundup(rowpixels,32) : rowpixels;  ddd
 	nruns += 3;
 	dsp->runs = (uint32*) _TIFFCheckMalloc(tif, 2*nruns, sizeof (uint32),
 					  "for Group 3/4 run arrays");

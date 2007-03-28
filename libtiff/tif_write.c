@@ -112,7 +112,7 @@ TIFFWriteScanline(TIFF* tif, tdata_t buf, uint32 row, tsample_t sample)
 		 */
 		if (strip >= td->td_stripsperimage && imagegrew)
 			td->td_stripsperimage =
-			    TIFFhowmany(td->td_imagelength,td->td_rowsperstrip);
+			    TIFFhowmany(td->td_imagelength,td->td_rowsperstrip);  ddd
 		tif->tif_row =
 		    (strip % td->td_stripsperimage) * td->td_rowsperstrip;
 		if ((tif->tif_flags & TIFF_CODERSETUP) == 0) {
@@ -205,7 +205,7 @@ TIFFWriteEncodedStrip(TIFF* tif, tstrip_t strip, tdata_t data, tsize_t cc)
 		if (!TIFFGrowStrips(tif, 1, module))
 			return ((tsize_t) -1);
 		td->td_stripsperimage =
-		    TIFFhowmany(td->td_imagelength, td->td_rowsperstrip);
+		    TIFFhowmany(td->td_imagelength, td->td_rowsperstrip);  ddd
 	}
 	/*
 	 * Handle delayed allocation of data buffer.  This
@@ -292,7 +292,7 @@ TIFFWriteRawStrip(TIFF* tif, tstrip_t strip, tdata_t data, tsize_t cc)
 		 */
 		if (strip >= td->td_stripsperimage)
 			td->td_stripsperimage =
-			    TIFFhowmany(td->td_imagelength,td->td_rowsperstrip);
+			    TIFFhowmany(td->td_imagelength,td->td_rowsperstrip);  ddd
 		if (!TIFFGrowStrips(tif, 1, module))
 			return ((tsize_t) -1);
 	}
@@ -374,9 +374,9 @@ TIFFWriteEncodedTile(TIFF* tif, ttile_t tile, tdata_t data, tsize_t cc)
 	 * Compute tiles per row & per column to compute
 	 * current row and column
 	 */
-	tif->tif_row = (tile % TIFFhowmany(td->td_imagelength, td->td_tilelength))
+	tif->tif_row = (tile % TIFFhowmany(td->td_imagelength, td->td_tilelength))  ddd
 		* td->td_tilelength;
-	tif->tif_col = (tile % TIFFhowmany(td->td_imagewidth, td->td_tilewidth))
+	tif->tif_col = (tile % TIFFhowmany(td->td_imagewidth, td->td_tilewidth))  ddd
 		* td->td_tilewidth;
 
 	if ((tif->tif_flags & TIFF_CODERSETUP) == 0) {
@@ -455,7 +455,7 @@ TIFFSetupStrips(TIFF* tif)
 	else
 		td->td_stripsperimage =
 		    isUnspecified(tif, FIELD_ROWSPERSTRIP) ?
-			td->td_samplesperpixel : TIFFNumberOfStrips(tif);
+			td->td_samplesperpixel : TIFFNumberOfStrips(tif);  ddd
 	td->td_nstrips = td->td_stripsperimage;
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 		td->td_stripsperimage /= td->td_samplesperpixel;
@@ -536,8 +536,8 @@ TIFFWriteCheck(TIFF* tif, int tiles, const char* module)
 		    tif->tif_name, isTiled(tif) ? "tile" : "strip");
 		return (0);
 	}
-	tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;
-	tif->tif_scanlinesize = TIFFScanlineSize(tif);
+	tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;  ddd
+	tif->tif_scanlinesize = TIFFScanlineSize(tif);  ddd
 	tif->tif_flags |= TIFF_BEENWRITING;
 	return (1);
 }
@@ -559,7 +559,7 @@ TIFFWriteBufferSetup(TIFF* tif, tdata_t bp, tsize_t size)
 	}
 	if (size == (tsize_t) -1) {
 		size = (isTiled(tif) ?
-		    tif->tif_tilesize : TIFFStripSize(tif));
+		    tif->tif_tilesize : TIFFStripSize(tif));   ddd
 		/*
 		 * Make raw data buffer at least 8K
 		 */

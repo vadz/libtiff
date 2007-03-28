@@ -235,9 +235,12 @@ struct tiff {
 #endif
 
 /* NB: the uint32 casts are to silence certain ANSI-C compilers */
-#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
-#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
-#define	TIFFroundup(x, y) (TIFFhowmany(x,y)*(y))
+#define TIFFhowmany_32(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
+#define TIFFhowmany8_32(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
+#define TIFFroundup_32(x, y) (TIFFhowmany_32(x,y)*(y))
+#define TIFFhowmany_64(x, y) ((((uint64)(x))+(((uint64)(y))-1))/((uint64)(y)))
+#define TIFFhowmany8_64(x) (((x)&0x07)?((uint64)(x)>>3)+1:(uint64)(x)>>3)
+#define TIFFroundup_64(x, y) (TIFFhowmany_64(x,y)*(y))
 
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))
 #define TIFFmin(A,B) ((A)<(B)?(A):(B))
@@ -247,46 +250,46 @@ struct tiff {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-extern	int _TIFFgetMode(const char*, const char*);
-extern	int _TIFFNoRowEncode(TIFF*, tidata_t, tsize_t, tsample_t);
-extern	int _TIFFNoStripEncode(TIFF*, tidata_t, tsize_t, tsample_t);
-extern	int _TIFFNoTileEncode(TIFF*, tidata_t, tsize_t, tsample_t);
-extern	int _TIFFNoRowDecode(TIFF*, tidata_t, tsize_t, tsample_t);
-extern	int _TIFFNoStripDecode(TIFF*, tidata_t, tsize_t, tsample_t);
-extern	int _TIFFNoTileDecode(TIFF*, tidata_t, tsize_t, tsample_t);
-extern	void _TIFFNoPostDecode(TIFF*, tidata_t, tsize_t);
-extern  int  _TIFFNoPreCode (TIFF*, tsample_t); 
-extern	int _TIFFNoSeek(TIFF*, uint32);
-extern	void _TIFFSwab16BitData(TIFF*, tidata_t, tsize_t);
-extern	void _TIFFSwab24BitData(TIFF*, tidata_t, tsize_t);
-extern	void _TIFFSwab32BitData(TIFF*, tidata_t, tsize_t);
-extern	void _TIFFSwab64BitData(TIFF*, tidata_t, tsize_t);
-extern	int TIFFFlushData1(TIFF*);
-extern	int TIFFDefaultDirectory(TIFF*);
-extern	void _TIFFSetDefaultCompressionState(TIFF*);
-extern	int TIFFSetCompressionScheme(TIFF*, int);
-extern	int TIFFSetDefaultCompressionState(TIFF*);
-extern	uint32 _TIFFDefaultStripSize(TIFF*, uint32);
-extern	void _TIFFDefaultTileSize(TIFF*, uint32*, uint32*);
-extern	int _TIFFDataSize(TIFFDataType);
+extern int _TIFFgetMode(const char*, const char*);
+extern int _TIFFNoRowEncode(TIFF*, tidata_t, tsize_t, tsample_t);
+extern int _TIFFNoStripEncode(TIFF*, tidata_t, tsize_t, tsample_t);
+extern int _TIFFNoTileEncode(TIFF*, tidata_t, tsize_t, tsample_t);
+extern int _TIFFNoRowDecode(TIFF*, tidata_t, tsize_t, tsample_t);
+extern int _TIFFNoStripDecode(TIFF*, tidata_t, tsize_t, tsample_t);
+extern int _TIFFNoTileDecode(TIFF*, tidata_t, tsize_t, tsample_t);
+extern void _TIFFNoPostDecode(TIFF*, tidata_t, tsize_t);
+extern int  _TIFFNoPreCode (TIFF*, tsample_t);
+extern int _TIFFNoSeek(TIFF*, uint32);
+extern void _TIFFSwab16BitData(TIFF*, tidata_t, tsize_t);
+extern void _TIFFSwab24BitData(TIFF*, tidata_t, tsize_t);
+extern void _TIFFSwab32BitData(TIFF*, tidata_t, tsize_t);
+extern void _TIFFSwab64BitData(TIFF*, tidata_t, tsize_t);
+extern int TIFFFlushData1(TIFF*);
+extern int TIFFDefaultDirectory(TIFF*);
+extern void _TIFFSetDefaultCompressionState(TIFF*);
+extern int TIFFSetCompressionScheme(TIFF*, int);
+extern int TIFFSetDefaultCompressionState(TIFF*);
+extern uint32 _TIFFDefaultStripSize(TIFF*, uint32);
+extern void _TIFFDefaultTileSize(TIFF*, uint32*, uint32*);
+extern int _TIFFDataSize(TIFFDataType);
 
-extern	void _TIFFsetByteArray(void**, void*, uint32);
-extern	void _TIFFsetString(char**, char*);
-extern	void _TIFFsetShortArray(uint16**, uint16*, uint32);
-extern	void _TIFFsetLongArray(uint32**, uint32*, uint32);
-extern	void _TIFFsetFloatArray(float**, float*, uint32);
-extern	void _TIFFsetDoubleArray(double**, double*, uint32);
+extern void _TIFFsetByteArray(void**, void*, uint32);
+extern void _TIFFsetString(char**, char*);
+extern void _TIFFsetShortArray(uint16**, uint16*, uint32);
+extern void _TIFFsetLongArray(uint32**, uint32*, uint32);
+extern void _TIFFsetFloatArray(float**, float*, uint32);
+extern void _TIFFsetDoubleArray(double**, double*, uint32);
 
-extern	void _TIFFprintAscii(FILE*, const char*);
-extern	void _TIFFprintAsciiTag(FILE*, const char*, const char*);
+extern void _TIFFprintAscii(FILE*, const char*);
+extern void _TIFFprintAsciiTag(FILE*, const char*, const char*);
 
-extern	TIFFErrorHandler _TIFFwarningHandler;
-extern	TIFFErrorHandler _TIFFerrorHandler;
-extern	TIFFErrorHandlerExt _TIFFwarningHandlerExt;
-extern	TIFFErrorHandlerExt _TIFFerrorHandlerExt;
+extern TIFFErrorHandler _TIFFwarningHandler;
+extern TIFFErrorHandler _TIFFerrorHandler;
+extern TIFFErrorHandlerExt _TIFFwarningHandlerExt;
+extern TIFFErrorHandlerExt _TIFFerrorHandlerExt;
 
-extern	tdata_t _TIFFCheckMalloc(TIFF*, size_t, size_t, const char*);
-extern	tdata_t _TIFFCheckRealloc(TIFF*, tdata_t, size_t, size_t, const char*);
+extern tdata_t _TIFFCheckMalloc(TIFF*, size_t, size_t, const char*);
+extern tdata_t _TIFFCheckRealloc(TIFF*, tdata_t, size_t, size_t, const char*);
 
 extern	int TIFFInitDumpMode(TIFF*, int);
 #ifdef PACKBITS_SUPPORT

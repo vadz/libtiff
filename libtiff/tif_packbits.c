@@ -46,7 +46,7 @@ PackBitsPreEncode(TIFF* tif, tsample_t s)
 	if (isTiled(tif))
 		*(tsize_t*)tif->tif_data = TIFFTileRowSize(tif);
 	else
-		*(tsize_t*)tif->tif_data = TIFFScanlineSize(tif);
+		*(tsize_t*)tif->tif_data = TIFFScanlineSize(tif);  ddd
 	return (1);
 }
 

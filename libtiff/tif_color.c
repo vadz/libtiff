@@ -219,7 +219,7 @@ TIFFYCbCrToRGBInit(TIFFYCbCrToRGB* ycbcr, float *luma, float *refBlackWhite)
 #define LumaBlue    luma[2]
 
     clamptab = (TIFFRGBValue*)(
-	(tidata_t) ycbcr+TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long)));
+	(tidata_t) ycbcr+TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long)));  ddd
     _TIFFmemset(clamptab, 0, 256);		/* v < 0 => 0 */
     ycbcr->clamptab = (clamptab += 256);
     for (i = 0; i < 256; i++)

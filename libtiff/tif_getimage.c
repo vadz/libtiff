@@ -592,12 +592,12 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
     uint32 nrow;
     int ret = 1, flip;
 
-    buf = (unsigned char*) _TIFFmalloc(TIFFTileSize(tif));
+    buf = (unsigned char*) _TIFFmalloc(TIFFTileSize(tif));  ddd
     if (buf == 0) {
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "No space for tile buffer");
 		return (0);
     }
-    _TIFFmemset(buf, 0, TIFFTileSize(tif));
+    _TIFFmemset(buf, 0, TIFFTileSize(tif));  ddd
     TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tw);
     TIFFGetField(tif, TIFFTAG_TILELENGTH, &th);
 
@@ -691,7 +691,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	uint32 nrow;
 	int ret = 1, flip;
 
-	tilesize = TIFFTileSize(tif);
+	tilesize = TIFFTileSize(tif);  ddd
 	buf = (unsigned char*) _TIFFmalloc((alpha?4:3)*tilesize);
 	if (buf == 0) {
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "No space for tile buffer");
@@ -811,12 +811,12 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	int32 fromskew, toskew;
 	int ret = 1, flip;
 
-	buf = (unsigned char*) _TIFFmalloc(TIFFStripSize(tif));
+	buf = (unsigned char*) _TIFFmalloc(TIFFStripSize(tif));   ddd
 	if (buf == 0) {
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "No space for strip buffer");
 		return (0);
 	}
-	_TIFFmemset(buf, 0, TIFFStripSize(tif));
+	_TIFFmemset(buf, 0, TIFFStripSize(tif));  ddd
 
 	flip = setorientation(img);
 	if (flip & FLIP_VERTICALLY) {
@@ -828,7 +828,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	}
 
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
-	scanline = TIFFNewScanlineSize(tif);
+	scanline = TIFFScanlineSize(tif);
 	fromskew = (w < imagewidth ? imagewidth - w : 0);
 	for (row = 0; row < h; row += nrow)
 	{
@@ -895,7 +895,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	int alpha = img->alpha;
 	int ret = 1, flip;
 
-	stripsize = TIFFStripSize(tif);
+	stripsize = TIFFStripSize(tif);  ddd
 	p0 = buf = (unsigned char *)_TIFFmalloc((alpha?4:3)*stripsize);
 	if (buf == 0) {
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "No space for tile buffer");
@@ -917,7 +917,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	}
 
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
-	scanline = TIFFScanlineSize(tif);
+	scanline = TIFFScanlineSize(tif);  ddd
 	fromskew = (w < imagewidth ? imagewidth - w : 0);
 	for (row = 0; row < h; row += nrow)
 	{
@@ -2052,7 +2052,7 @@ initYCbCrConversion(TIFFRGBAImage* img)
 
 	if (img->ycbcr == NULL) {
 		img->ycbcr = (TIFFYCbCrToRGB*) _TIFFmalloc(
-		    TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))
+		    TIFFroundup(sizeof (TIFFYCbCrToRGB), sizeof (long))  ddd
 		    + 4*256*sizeof (TIFFRGBValue)
 		    + 2*256*sizeof (int)
 		    + 3*256*sizeof (int32)

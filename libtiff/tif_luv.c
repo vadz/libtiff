@@ -342,7 +342,7 @@ LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 static int
 LogLuvDecodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 {
-	tsize_t rowlen = TIFFScanlineSize(tif);
+	tsize_t rowlen = TIFFScanlineSize(tif);  ddd
 
 	assert(cc%rowlen == 0);
 	while (cc && (*tif->tif_decoderow)(tif, bp, rowlen, s))
@@ -595,7 +595,7 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 static int
 LogLuvEncodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 {
-	tsize_t rowlen = TIFFScanlineSize(tif);
+	tsize_t rowlen = TIFFScanlineSize(tif);  ddd
 
 	assert(cc%rowlen == 0);
 	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
@@ -1513,8 +1513,8 @@ LogLuvVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		/*
 		 * Must recalculate sizes should bits/sample change.
 		 */
-		tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;
-		tif->tif_scanlinesize = TIFFScanlineSize(tif);
+		tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;   ddd
+		tif->tif_scanlinesize = TIFFScanlineSize(tif);  ddd
 		return (1);
 	case TIFFTAG_SGILOGENCODE:
 		sp->encode_meth = va_arg(ap, int);

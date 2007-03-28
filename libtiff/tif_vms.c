@@ -145,7 +145,7 @@ _tiffMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
 	 */
 	size = _tiffSizeProc(fd);
 	status = sys$crmpsc(inadr, retadr, 0, SEC$M_EXPREG, 0,0,0, channel,
-		TIFFhowmany(size,512), 0,0,0);
+		TIFFhowmany(size,512), 0,0,0);  ddd
 	if ((status&1) == 0){
 		sys$dassgn(channel);
 		return(0);

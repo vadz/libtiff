@@ -32,7 +32,7 @@
 #include "tiffiop.h"
 
 static uint32
-summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)
+summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)  ddd
 {
 	/*
 	 * XXX: We are using casting to uint32 here, because sizeof(size_t)
@@ -49,7 +49,7 @@ summarize(TIFF* tif, size_t summand1, size_t summand2, const char* where)
 }
 
 static uint32
-multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)
+multiply(TIFF* tif, size_t nmemb, size_t elem_size, const char* where)  ddd
 {
 	uint32	bytes = nmemb * elem_size;
 
@@ -82,9 +82,9 @@ TIFFComputeTile(TIFF* tif, uint32 x, uint32 y, uint32 z, tsample_t s)
 	if (dz == (uint32) -1)
 		dz = td->td_imagedepth;
 	if (dx != 0 && dy != 0 && dz != 0) {
-		uint32 xpt = TIFFhowmany(td->td_imagewidth, dx); 
-		uint32 ypt = TIFFhowmany(td->td_imagelength, dy); 
-		uint32 zpt = TIFFhowmany(td->td_imagedepth, dz); 
+		uint32 xpt = TIFFhowmany(td->td_imagewidth, dx); ddd
+		uint32 ypt = TIFFhowmany(td->td_imagelength, dy); ddd
+		uint32 zpt = TIFFhowmany(td->td_imagedepth, dz);     ddd
 
 		if (td->td_planarconfig == PLANARCONFIG_SEPARATE) 
 			tile = (xpt*ypt*zpt)*s +
@@ -157,12 +157,12 @@ TIFFNumberOfTiles(TIFF* tif)
 	if (dz == (uint32) -1)
 		dz = td->td_imagedepth;
 	ntiles = (dx == 0 || dy == 0 || dz == 0) ? 0 :
-	    multiply(tif, multiply(tif, TIFFhowmany(td->td_imagewidth, dx),
-				   TIFFhowmany(td->td_imagelength, dy),
+	    multiply(tif, multiply(tif, TIFFhowmany(td->td_imagewidth, dx), ddd  ddd ddd
+				   TIFFhowmany(td->td_imagelength, dy),  ddd
 				   "TIFFNumberOfTiles"),
-		     TIFFhowmany(td->td_imagedepth, dz), "TIFFNumberOfTiles");
+		     TIFFhowmany(td->td_imagedepth, dz), "TIFFNumberOfTiles"); ddd
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
-		ntiles = multiply(tif, ntiles, td->td_samplesperpixel,
+		ntiles = multiply(tif, ntiles, td->td_samplesperpixel,  ddd
 				  "TIFFNumberOfTiles");
 	return (ntiles);
 }
@@ -178,19 +178,19 @@ TIFFTileRowSize(TIFF* tif)
 	
 	if (td->td_tilelength == 0 || td->td_tilewidth == 0)
 		return ((tsize_t) 0);
-	rowsize = multiply(tif, td->td_bitspersample, td->td_tilewidth,
+	rowsize = multiply(tif, td->td_bitspersample, td->td_tilewidth,  ddd
 			   "TIFFTileRowSize");
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
-		rowsize = multiply(tif, rowsize, td->td_samplesperpixel,
+		rowsize = multiply(tif, rowsize, td->td_samplesperpixel,  ddd
 				   "TIFFTileRowSize");
-	return ((tsize_t) TIFFhowmany8(rowsize));
+	return ((tsize_t) TIFFhowmany8(rowsize));  ddd
 }
 
 /*
  * Compute the # bytes in a variable length, row-aligned tile.
  */
 tsize_t
-TIFFVTileSize(TIFF* tif, uint32 nrows)
+TIFFVTileSize(TIFF* tif, uint32 nrows)  ddd
 {
 	TIFFDirectory *td = &tif->tif_dir;
 	tsize_t tilesize;
@@ -210,9 +210,9 @@ TIFFVTileSize(TIFF* tif, uint32 nrows)
 		 * YCbCr data for the extended image.
 		 */
 		tsize_t w =
-		    TIFFroundup(td->td_tilewidth, td->td_ycbcrsubsampling[0]);
+		    TIFFroundup(td->td_tilewidth, td->td_ycbcrsubsampling[0]);  ddd
 		tsize_t rowsize =
-		    TIFFhowmany8(multiply(tif, w, td->td_bitspersample,
+		    TIFFhowmany8(multiply(tif, w, td->td_bitspersample,  ddd  ddd
 					  "TIFFVTileSize"));
 		tsize_t samplingarea =
 		    td->td_ycbcrsubsampling[0]*td->td_ycbcrsubsampling[1];
@@ -220,24 +220,24 @@ TIFFVTileSize(TIFF* tif, uint32 nrows)
 			TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Invalid YCbCr subsampling");
 			return 0;
 		}
-		nrows = TIFFroundup(nrows, td->td_ycbcrsubsampling[1]);
+		nrows = TIFFroundup(nrows, td->td_ycbcrsubsampling[1]);  ddd
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
-		tilesize = multiply(tif, nrows, rowsize, "TIFFVTileSize");
-		tilesize = summarize(tif, tilesize,
-				     multiply(tif, 2, tilesize / samplingarea,
+		tilesize = multiply(tif, nrows, rowsize, "TIFFVTileSize");  ddd
+		tilesize = summarize(tif, tilesize,  ddd
+				     multiply(tif, 2, tilesize / samplingarea,  ddd
 					      "TIFFVTileSize"),
 				     "TIFFVTileSize");
 	} else
-		tilesize = multiply(tif, nrows, TIFFTileRowSize(tif),
+		tilesize = multiply(tif, nrows, TIFFTileRowSize(tif),  ddd
 				    "TIFFVTileSize");
 	return ((tsize_t)
-	    multiply(tif, tilesize, td->td_tiledepth, "TIFFVTileSize"));
+	    multiply(tif, tilesize, td->td_tiledepth, "TIFFVTileSize"));  ddd
 }
 
 /*
  * Compute the # bytes in a row-aligned tile.
  */
-tsize_t
+uint64
 TIFFTileSize(TIFF* tif)
 {
 	return (TIFFVTileSize(tif, tif->tif_dir.td_tilelength));
@@ -265,9 +265,9 @@ _TIFFDefaultTileSize(TIFF* tif, uint32* tw, uint32* th)
 		*th = 256;
 	/* roundup to a multiple of 16 per the spec */
 	if (*tw & 0xf)
-		*tw = TIFFroundup(*tw, 16);
+		*tw = TIFFroundup(*tw, 16);  ddd
 	if (*th & 0xf)
-		*th = TIFFroundup(*th, 16);
+		*th = TIFFroundup(*th, 16);  ddd
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */

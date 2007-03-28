@@ -89,7 +89,7 @@ PredictorSetup(TIFF* tif)
 	if (isTiled(tif))
 		sp->rowsize = TIFFTileRowSize(tif);
 	else
-		sp->rowsize = TIFFScanlineSize(tif);
+		sp->rowsize = TIFFScanlineSize(tif);  ddd
 
 	return 1;
 }

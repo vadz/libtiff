@@ -153,7 +153,7 @@ TIFFReadEncodedStrip(TIFF* tif, tstrip_t strip, tdata_t buf, tsize_t size)
 	    (nrows = td->td_imagelength % td->td_rowsperstrip) == 0)
 		nrows = td->td_rowsperstrip;
 
-	stripsize = TIFFVStripSize(tif, nrows);
+	stripsize = TIFFVStripSize(tif, nrows);  ddd
 	if (size == (tsize_t) -1)
 		size = stripsize;
 	else if (size > stripsize)
@@ -342,7 +342,7 @@ TIFFFillStrip(TIFF* tif, tstrip_t strip)
 					return (0);
 				}
 				if (!TIFFReadBufferSetup(tif, 0,
-				    TIFFroundup(bytecount, 1024)))
+				    TIFFroundup(bytecount, 1024)))  ddd
 					return (0);
 			}
 			if ((uint32)TIFFReadRawStrip1(tif, strip,
@@ -565,7 +565,7 @@ TIFFFillTile(TIFF* tif, ttile_t tile)
 					return (0);
 				}
 				if (!TIFFReadBufferSetup(tif, 0,
-				    TIFFroundup(bytecount, 1024)))
+				    TIFFroundup(bytecount, 1024)))  ddd
 					return (0);
 			}
 			if ((uint32)TIFFReadRawTile1(tif, tile,
@@ -605,7 +605,7 @@ TIFFReadBufferSetup(TIFF* tif, tdata_t bp, tsize_t size)
 		tif->tif_rawdata = (tidata_t) bp;
 		tif->tif_flags &= ~TIFF_MYBUFFER;
 	} else {
-		tif->tif_rawdatasize = TIFFroundup(size, 1024);
+		tif->tif_rawdatasize = TIFFroundup(size, 1024);  ddd
 		tif->tif_rawdata = (tidata_t) _TIFFmalloc(tif->tif_rawdatasize);
 		tif->tif_flags |= TIFF_MYBUFFER;
 	}
@@ -665,10 +665,10 @@ TIFFStartTile(TIFF* tif, ttile_t tile)
 	}
 	tif->tif_curtile = tile;
 	tif->tif_row =
-	    (tile % TIFFhowmany(td->td_imagewidth, td->td_tilewidth)) *
+	    (tile % TIFFhowmany(td->td_imagewidth, td->td_tilewidth)) * ddd
 		td->td_tilelength;
 	tif->tif_col =
-	    (tile % TIFFhowmany(td->td_imagelength, td->td_tilelength)) *
+	    (tile % TIFFhowmany(td->td_imagelength, td->td_tilelength)) * ddd
 		td->td_tilewidth;
 	if (tif->tif_flags&TIFF_NOREADRAW)
 	{

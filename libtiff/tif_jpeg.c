@@ -713,15 +713,15 @@ JPEGPreDecode(TIFF* tif, tsample_t s)
 	} else {
 		if (segment_height > td->td_rowsperstrip)
 			segment_height = td->td_rowsperstrip;
-		sp->bytesperline = TIFFOldScanlineSize(tif);
+		sp->bytesperline = TIFFScanlineSize(tif);
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE && s > 0) {
 		/*
 		 * For PC 2, scale down the expected strip/tile size
 		 * to match a downsampled component
 		 */
-		segment_width = TIFFhowmany(segment_width, sp->h_sampling);
-		segment_height = TIFFhowmany(segment_height, sp->v_sampling);
+		segment_width = TIFFhowmany(segment_width, sp->h_sampling); ddd
+		segment_height = TIFFhowmany(segment_height, sp->v_sampling); ddd
 	}
 	if (sp->cinfo.d.image_width < segment_width ||
 	    sp->cinfo.d.image_height < segment_height) {
@@ -1313,14 +1313,14 @@ JPEGPreEncode(TIFF* tif, tsample_t s)
 		segment_height = td->td_imagelength - tif->tif_row;
 		if (segment_height > td->td_rowsperstrip)
 			segment_height = td->td_rowsperstrip;
-		sp->bytesperline = TIFFOldScanlineSize(tif);
+		sp->bytesperline = TIFFScanlineSize(tif);
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE && s > 0) {
 		/* for PC 2, scale down the strip/tile size
 		 * to match a downsampled component
 		 */
-		segment_width = TIFFhowmany(segment_width, sp->h_sampling);
-		segment_height = TIFFhowmany(segment_height, sp->v_sampling);
+		segment_width = TIFFhowmany(segment_width, sp->h_sampling); ddd
+		segment_height = TIFFhowmany(segment_height, sp->v_sampling); ddd
 	}
 	if (segment_width > 65535 || segment_height > 65535) {
 		TIFFErrorExt(tif->tif_clientdata, module, "Strip/tile too large for JPEG");
@@ -1609,7 +1609,7 @@ JPEGResetUpsampled( TIFF* tif )
 	 * Must recalculate cached tile size in case sampling state changed.
 	 * Should we really be doing this now if image size isn't set? 
 	 */
-	tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;
+	tif->tif_tilesize = isTiled(tif) ? TIFFTileSize(tif) : (tsize_t) -1;   ddd
 }
 
 static int
@@ -1820,7 +1820,7 @@ JPEGDefaultStripSize(TIFF* tif, uint32 s)
 
 	s = (*sp->defsparent)(tif, s);
 	if (s < td->td_imagelength)
-		s = TIFFroundup(s, td->td_ycbcrsubsampling[1] * DCTSIZE);
+		s = TIFFroundup(s, td->td_ycbcrsubsampling[1] * DCTSIZE);  ddd
 	return (s);
 }
 
@@ -1831,8 +1831,8 @@ JPEGDefaultTileSize(TIFF* tif, uint32* tw, uint32* th)
 	TIFFDirectory *td = &tif->tif_dir;
 
 	(*sp->deftparent)(tif, tw, th);
-	*tw = TIFFroundup(*tw, td->td_ycbcrsubsampling[0] * DCTSIZE);
-	*th = TIFFroundup(*th, td->td_ycbcrsubsampling[1] * DCTSIZE);
+	*tw = TIFFroundup(*tw, td->td_ycbcrsubsampling[0] * DCTSIZE);  ddd
+	*th = TIFFroundup(*th, td->td_ycbcrsubsampling[1] * DCTSIZE);  ddd
 }
 
 /*
