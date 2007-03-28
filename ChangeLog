@@ -1,6 +1,6 @@
-2007-03-17  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+2007-03-28  Frank Warmerdam  <warmerdam@pobox.com>
 
-	* start of BigTIFF upgrade - CVS HEAD unstable until further notice
+	* libtiff/tif_fax3.c: "inline static" -> "static inline" for IRIC CC.
 
 2007-03-07  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 	
