@@ -138,7 +138,7 @@ struct tiff {
 	uint32          tif_row;	/* current scanline */
 	tdir_t          tif_curdir;	/* current directory (index) */
 	uint32          tif_curstrip;	/* current strip for read/write */
-	toff_t		tif_curoff;	/* current offset for read/write */
+	uint64          tif_curoff;	/* current offset for read/write */
 	toff_t		tif_dataoff;	/* current offset for writing dir */
 /* SubIFD support */
 	uint16		tif_nsubifd;	/* remaining subifds to write */
