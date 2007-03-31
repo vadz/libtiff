@@ -64,11 +64,11 @@ typedef struct {
 	/* even though the name is misleading, td_stripsperimage is the number
 	 * of striles (=strips or tiles) per plane, and td_nstrips the total
 	 * number of striles */
-	tstrile_t td_stripsperimage;
-	tstrile_t td_nstrips;            /* size of offset & bytecount arrays */
+	uint32  td_stripsperimage;  
+	uint32  td_nstrips;            /* size of offset & bytecount arrays */
 	uint64* td_stripoffset;
 	uint64* td_stripbytecount;
-	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */
+	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */  
 	uint16  td_nsubifd;
 	uint32* td_subifd;
 	/* YCbCr parameters */

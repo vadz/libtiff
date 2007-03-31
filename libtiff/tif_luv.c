@@ -181,7 +181,7 @@ struct logLuvState {
  * Decode a string of 16-bit gray pixels.
  */
 static int
-LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
+LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, uint16 s)
 {
 	LogLuvState* sp = DecoderState(tif);
 	int shft, i, npixels;
@@ -204,7 +204,7 @@ LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	_TIFFmemset((tdata_t) tp, 0, npixels*sizeof (tp[0]));
 
 	bp = (unsigned char*) tif->tif_rawcp;
-	cc = tif->tif_rawcc;
+	cc = tif->tif_rawcc;  ddd
 					/* get each byte string */
 	for (shft = 2*8; (shft -= 8) >= 0; ) {
 		for (i = 0; i < npixels && cc > 0; )
@@ -224,13 +224,13 @@ LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		"LogL16Decode: Not enough data at row %d (short %d pixels)",
 			    tif->tif_row, npixels - i);
 			tif->tif_rawcp = (tidata_t) bp;
-			tif->tif_rawcc = cc;
+			tif->tif_rawcc = cc;  ddd
 			return (0);
 		}
 	}
 	(*sp->tfunc)(sp, op, npixels);
 	tif->tif_rawcp = (tidata_t) bp;
-	tif->tif_rawcc = cc;
+	tif->tif_rawcc = cc;  ddd
 	return (1);
 }
 
@@ -238,7 +238,7 @@ LogL16Decode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
  * Decode a string of 24-bit pixels.
  */
 static int
-LogLuvDecode24(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
+LogLuvDecode24(TIFF* tif, tidata_t op, tsize_t occ, uint16 s)
 {
 	LogLuvState* sp = DecoderState(tif);
 	int cc, i, npixels;
@@ -258,14 +258,14 @@ LogLuvDecode24(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	}
 					/* copy to array of uint32 */
 	bp = (unsigned char*) tif->tif_rawcp;
-	cc = tif->tif_rawcc;
+	cc = tif->tif_rawcc;  ddd
 	for (i = 0; i < npixels && cc > 0; i++) {
 		tp[i] = bp[0] << 16 | bp[1] << 8 | bp[2];
 		bp += 3;
 		cc -= 3;
 	}
 	tif->tif_rawcp = (tidata_t) bp;
-	tif->tif_rawcc = cc;
+	tif->tif_rawcc = cc;  ddd
 	if (i != npixels) {
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 	    "LogLuvDecode24: Not enough data at row %d (short %d pixels)",
@@ -280,7 +280,7 @@ LogLuvDecode24(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
  * Decode a string of 32-bit pixels.
  */
 static int
-LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
+LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, uint16 s)
 {
 	LogLuvState* sp;
 	int shft, i, npixels;
@@ -304,7 +304,7 @@ LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	_TIFFmemset((tdata_t) tp, 0, npixels*sizeof (tp[0]));
 
 	bp = (unsigned char*) tif->tif_rawcp;
-	cc = tif->tif_rawcc;
+	cc = tif->tif_rawcc;  ddd
 					/* get each byte string */
 	for (shft = 4*8; (shft -= 8) >= 0; ) {
 		for (i = 0; i < npixels && cc > 0; )
@@ -324,13 +324,13 @@ LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		"LogLuvDecode32: Not enough data at row %d (short %d pixels)",
 			    tif->tif_row, npixels - i);
 			tif->tif_rawcp = (tidata_t) bp;
-			tif->tif_rawcc = cc;
+			tif->tif_rawcc = cc;  ddd
 			return (0);
 		}
 	}
 	(*sp->tfunc)(sp, op, npixels);
 	tif->tif_rawcp = (tidata_t) bp;
-	tif->tif_rawcc = cc;
+	tif->tif_rawcc = cc;  ddd
 	return (1);
 }
 
@@ -340,12 +340,12 @@ LogLuvDecode32(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
  * is row by row.
  */
 static int
-LogLuvDecodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogLuvDecodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	tsize_t rowlen = TIFFScanlineSize(tif);  ddd
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_decoderow)(tif, bp, rowlen, s))
+	while (cc && (*tif->tif_decoderow)(tif, bp, rowlen, s))  ddd
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -356,12 +356,12 @@ LogLuvDecodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
  * is row by row.
  */
 static int
-LogLuvDecodeTile(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogLuvDecodeTile(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
-	tsize_t rowlen = TIFFTileRowSize(tif);
+	tsize_t rowlen = TIFFTileRowSize(tif);  ddd
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_decoderow)(tif, bp, rowlen, s))
+	while (cc && (*tif->tif_decoderow)(tif, bp, rowlen, s))  ddd
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -370,7 +370,7 @@ LogLuvDecodeTile(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
  * Encode a row of 16-bit pixels.
  */
 static int
-LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	LogLuvState* sp = EncoderState(tif);
 	int shft, i, j, npixels;
@@ -392,16 +392,16 @@ LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	}
 					/* compress each byte string */
 	op = tif->tif_rawcp;
-	occ = tif->tif_rawdatasize - tif->tif_rawcc;
+	occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 	for (shft = 2*8; (shft -= 8) >= 0; )
 		for (i = 0; i < npixels; i += rc) {
 			if (occ < 4) {
 				tif->tif_rawcp = op;
-				tif->tif_rawcc = tif->tif_rawdatasize - occ;
+				tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 				if (!TIFFFlushData1(tif))
 					return (-1);
 				op = tif->tif_rawcp;
-				occ = tif->tif_rawdatasize - tif->tif_rawcc;
+				occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 			}
 			mask = 0xff << shft;		/* find next run */
 			for (beg = i; beg < npixels; beg += rc) {
@@ -429,11 +429,11 @@ LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 				if ((j = beg-i) > 127) j = 127;
 				if (occ < j+3) {
                                     tif->tif_rawcp = op;
-                                    tif->tif_rawcc = tif->tif_rawdatasize - occ;
+				    tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
                                     if (!TIFFFlushData1(tif))
                                         return (-1);
                                     op = tif->tif_rawcp;
-                                    occ = tif->tif_rawdatasize - tif->tif_rawcc;
+				    occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 				}
 				*op++ = (tidataval_t) j; occ--;
 				while (j--) {
@@ -449,7 +449,7 @@ LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 				rc = 0;
 		}
 	tif->tif_rawcp = op;
-	tif->tif_rawcc = tif->tif_rawdatasize - occ;
+	tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 
 	return (0);
 }
@@ -458,7 +458,7 @@ LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
  * Encode a row of 24-bit pixels.
  */
 static int
-LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	LogLuvState* sp = EncoderState(tif);
 	int i, npixels, occ;
@@ -478,15 +478,15 @@ LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	}
 					/* write out encoded pixels */
 	op = tif->tif_rawcp;
-	occ = tif->tif_rawdatasize - tif->tif_rawcc;
+	occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 	for (i = npixels; i--; ) {
 		if (occ < 3) {
 			tif->tif_rawcp = op;
-			tif->tif_rawcc = tif->tif_rawdatasize - occ;
+			tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 			if (!TIFFFlushData1(tif))
 				return (-1);
 			op = tif->tif_rawcp;
-			occ = tif->tif_rawdatasize - tif->tif_rawcc;
+			occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 		}
 		*op++ = (tidataval_t)(*tp >> 16);
 		*op++ = (tidataval_t)(*tp >> 8 & 0xff);
@@ -494,7 +494,7 @@ LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 		occ -= 3;
 	}
 	tif->tif_rawcp = op;
-	tif->tif_rawcc = tif->tif_rawdatasize - occ;
+	tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 
 	return (0);
 }
@@ -503,7 +503,7 @@ LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
  * Encode a row of 32-bit pixels.
  */
 static int
-LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	LogLuvState* sp = EncoderState(tif);
 	int shft, i, j, npixels;
@@ -526,16 +526,16 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	}
 					/* compress each byte string */
 	op = tif->tif_rawcp;
-	occ = tif->tif_rawdatasize - tif->tif_rawcc;
+	occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 	for (shft = 4*8; (shft -= 8) >= 0; )
 		for (i = 0; i < npixels; i += rc) {
 			if (occ < 4) {
 				tif->tif_rawcp = op;
-				tif->tif_rawcc = tif->tif_rawdatasize - occ;
+				tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 				if (!TIFFFlushData1(tif))
 					return (-1);
 				op = tif->tif_rawcp;
-				occ = tif->tif_rawdatasize - tif->tif_rawcc;
+				occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 			}
 			mask = 0xff << shft;		/* find next run */
 			for (beg = i; beg < npixels; beg += rc) {
@@ -563,11 +563,11 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 				if ((j = beg-i) > 127) j = 127;
 				if (occ < j+3) {
 					tif->tif_rawcp = op;
-					tif->tif_rawcc = tif->tif_rawdatasize - occ;
+					tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 					if (!TIFFFlushData1(tif))
 						return (-1);
 					op = tif->tif_rawcp;
-					occ = tif->tif_rawdatasize - tif->tif_rawcc;
+					occ = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
 				}
 				*op++ = (tidataval_t) j; occ--;
 				while (j--) {
@@ -583,7 +583,7 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 				rc = 0;
 		}
 	tif->tif_rawcp = op;
-	tif->tif_rawcc = tif->tif_rawdatasize - occ;
+	tif->tif_rawcc = tif->tif_rawdatasize - occ;  ddd
 
 	return (0);
 }
@@ -593,12 +593,12 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
  * avoid encoding runs across row boundaries.
  */
 static int
-LogLuvEncodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogLuvEncodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	tsize_t rowlen = TIFFScanlineSize(tif);  ddd
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
+	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)  ddd
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -608,12 +608,12 @@ LogLuvEncodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
  * avoid encoding runs across row boundaries.
  */
 static int
-LogLuvEncodeTile(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+LogLuvEncodeTile(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
-	tsize_t rowlen = TIFFTileRowSize(tif);
+	tsize_t rowlen = TIFFTileRowSize(tif);  ddd
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
+	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)  ddd
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -1314,13 +1314,13 @@ LogLuvSetupDecode(TIFF* tif)
 	LogLuvState* sp = DecoderState(tif);
 	TIFFDirectory* td = &tif->tif_dir;
 
-	tif->tif_postdecode = _TIFFNoPostDecode;
+	tif->tif_postdecode = _TIFFNoPostDecode;  
 	switch (td->td_photometric) {
 	case PHOTOMETRIC_LOGLUV:
 		if (!LogLuvInitState(tif))
 			break;
 		if (td->td_compression == COMPRESSION_SGILOG24) {
-			tif->tif_decoderow = LogLuvDecode24;
+			tif->tif_decoderow = LogLuvDecode24;  ddd
 			switch (sp->user_datafmt) {
 			case SGILOGDATAFMT_FLOAT:
 				sp->tfunc = Luv24toXYZ;
@@ -1333,7 +1333,7 @@ LogLuvSetupDecode(TIFF* tif)
 				break;
 			}
 		} else {
-			tif->tif_decoderow = LogLuvDecode32;
+			tif->tif_decoderow = LogLuvDecode32;  ddd
 			switch (sp->user_datafmt) {
 			case SGILOGDATAFMT_FLOAT:
 				sp->tfunc = Luv32toXYZ;
@@ -1350,7 +1350,7 @@ LogLuvSetupDecode(TIFF* tif)
 	case PHOTOMETRIC_LOGL:
 		if (!LogL16InitState(tif))
 			break;
-		tif->tif_decoderow = LogL16Decode;
+		tif->tif_decoderow = LogL16Decode;  ddd
 		switch (sp->user_datafmt) {
 		case SGILOGDATAFMT_FLOAT:
 			sp->tfunc = L16toY;
@@ -1380,7 +1380,7 @@ LogLuvSetupEncode(TIFF* tif)
 		if (!LogLuvInitState(tif))
 			break;
 		if (td->td_compression == COMPRESSION_SGILOG24) {
-			tif->tif_encoderow = LogLuvEncode24;
+			tif->tif_encoderow = LogLuvEncode24;  ddd
 			switch (sp->user_datafmt) {
 			case SGILOGDATAFMT_FLOAT:
 				sp->tfunc = Luv24fromXYZ;
@@ -1394,7 +1394,7 @@ LogLuvSetupEncode(TIFF* tif)
 				goto notsupported;
 			}
 		} else {
-			tif->tif_encoderow = LogLuvEncode32;
+			tif->tif_encoderow = LogLuvEncode32;  ddd
 			switch (sp->user_datafmt) {
 			case SGILOGDATAFMT_FLOAT:
 				sp->tfunc = Luv32fromXYZ;
@@ -1412,7 +1412,7 @@ LogLuvSetupEncode(TIFF* tif)
 	case PHOTOMETRIC_LOGL:
 		if (!LogL16InitState(tif))
 			break;
-		tif->tif_encoderow = LogL16Encode;
+		tif->tif_encoderow = LogL16Encode;  ddd
 		switch (sp->user_datafmt) {
 		case SGILOGDATAFMT_FLOAT:
 			sp->tfunc = L16fromY;
@@ -1579,11 +1579,11 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 	 *     in at setup time.
 	 */
 	tif->tif_setupdecode = LogLuvSetupDecode;
-	tif->tif_decodestrip = LogLuvDecodeStrip;
-	tif->tif_decodetile = LogLuvDecodeTile;
+	tif->tif_decodestrip = LogLuvDecodeStrip;  ddd
+	tif->tif_decodetile = LogLuvDecodeTile;  ddd
 	tif->tif_setupencode = LogLuvSetupEncode;
-	tif->tif_encodestrip = LogLuvEncodeStrip;
-	tif->tif_encodetile = LogLuvEncodeTile;
+	tif->tif_encodestrip = LogLuvEncodeStrip;  ddd
+	tif->tif_encodetile = LogLuvEncodeTile;  ddd
 	tif->tif_close = LogLuvClose;
 	tif->tif_cleanup = LogLuvCleanup;
 

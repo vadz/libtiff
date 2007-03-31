@@ -81,8 +81,8 @@ typedef	struct {
 #define	DecoderState(tif)	ZState(tif)
 #define	EncoderState(tif)	ZState(tif)
 
-static	int ZIPEncode(TIFF*, tidata_t, tsize_t, tsample_t);
-static	int ZIPDecode(TIFF*, tidata_t, tsize_t, tsample_t);
+static	int ZIPEncode(TIFF*, tidata_t, tsize_t, uint16);
+static	int ZIPDecode(TIFF*, tidata_t, tsize_t, uint16);
 
 static int
 ZIPSetupDecode(TIFF* tif)
@@ -111,7 +111,7 @@ ZIPSetupDecode(TIFF* tif)
  * Setup state for decoding a strip.
  */
 static int
-ZIPPreDecode(TIFF* tif, tsample_t s)
+ZIPPreDecode(TIFF* tif, uint16 s)
 {
 	ZIPState* sp = DecoderState(tif);
 
@@ -122,12 +122,12 @@ ZIPPreDecode(TIFF* tif, tsample_t s)
             ZIPSetupDecode(tif);
 
 	sp->stream.next_in = tif->tif_rawdata;
-	sp->stream.avail_in = tif->tif_rawcc;
+	sp->stream.avail_in = tif->tif_rawcc;  ddd
 	return (inflateReset(&sp->stream) == Z_OK);
 }
 
 static int
-ZIPDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
+ZIPDecode(TIFF* tif, tidata_t op, tsize_t occ, uint16 s)
 {
 	ZIPState* sp = DecoderState(tif);
 	static const char module[] = "ZIPDecode";
@@ -190,7 +190,7 @@ ZIPSetupEncode(TIFF* tif)
  * Reset encoding state at the start of a strip.
  */
 static int
-ZIPPreEncode(TIFF* tif, tsample_t s)
+ZIPPreEncode(TIFF* tif, uint16 s)
 {
 	ZIPState *sp = EncoderState(tif);
 
@@ -200,7 +200,7 @@ ZIPPreEncode(TIFF* tif, tsample_t s)
             ZIPSetupEncode(tif);
 
 	sp->stream.next_out = tif->tif_rawdata;
-	sp->stream.avail_out = tif->tif_rawdatasize;
+	sp->stream.avail_out = tif->tif_rawdatasize;  ddd
 	return (deflateReset(&sp->stream) == Z_OK);
 }
 
@@ -208,7 +208,7 @@ ZIPPreEncode(TIFF* tif, tsample_t s)
  * Encode a chunk of pixels.
  */
 static int
-ZIPEncode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+ZIPEncode(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	ZIPState *sp = EncoderState(tif);
 	static const char module[] = "ZIPEncode";
@@ -226,10 +226,10 @@ ZIPEncode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 			return (0);
 		}
 		if (sp->stream.avail_out == 0) {
-			tif->tif_rawcc = tif->tif_rawdatasize;
+			tif->tif_rawcc = tif->tif_rawdatasize;  ddd
 			TIFFFlushData1(tif);
 			sp->stream.next_out = tif->tif_rawdata;
-			sp->stream.avail_out = tif->tif_rawdatasize;
+			sp->stream.avail_out = tif->tif_rawdatasize;  ddd
 		}
 	} while (sp->stream.avail_in > 0);
 	return (1);
@@ -252,13 +252,13 @@ ZIPPostEncode(TIFF* tif)
 		switch (state) {
 		case Z_STREAM_END:
 		case Z_OK:
-		    if ((int)sp->stream.avail_out != (int)tif->tif_rawdatasize)
+		    if ((int)sp->stream.avail_out != (int)tif->tif_rawdatasize)  ddd
                     {
-			    tif->tif_rawcc =
-				tif->tif_rawdatasize - sp->stream.avail_out;
+			    tif->tif_rawcc =  ddd
+				tif->tif_rawdatasize - sp->stream.avail_out;  ddd
 			    TIFFFlushData1(tif);
 			    sp->stream.next_out = tif->tif_rawdata;
-			    sp->stream.avail_out = tif->tif_rawdatasize;
+			    sp->stream.avail_out = tif->tif_rawdatasize;  ddd
 		    }
 		    break;
 		default:
@@ -378,15 +378,15 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	 */
 	tif->tif_setupdecode = ZIPSetupDecode;
 	tif->tif_predecode = ZIPPreDecode;
-	tif->tif_decoderow = ZIPDecode;
-	tif->tif_decodestrip = ZIPDecode;
-	tif->tif_decodetile = ZIPDecode;
+	tif->tif_decoderow = ZIPDecode;  ddd
+	tif->tif_decodestrip = ZIPDecode;  ddd
+	tif->tif_decodetile = ZIPDecode;  ddd
 	tif->tif_setupencode = ZIPSetupEncode;
 	tif->tif_preencode = ZIPPreEncode;
 	tif->tif_postencode = ZIPPostEncode;
-	tif->tif_encoderow = ZIPEncode;
-	tif->tif_encodestrip = ZIPEncode;
-	tif->tif_encodetile = ZIPEncode;
+	tif->tif_encoderow = ZIPEncode;  ddd
+	tif->tif_encodestrip = ZIPEncode;  ddd
+	tif->tif_encodetile = ZIPEncode;  ddd
 	tif->tif_cleanup = ZIPCleanup;
 	/*
 	 * Setup predictor setup.

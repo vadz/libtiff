@@ -73,21 +73,22 @@ multiply_64(TIFF* tif, uint64 nmemb, uint64 elem_size, const char* where)
 /*
  * Compute which strip a (row,sample) value is in.
  */
-tstrip_t
-TIFFComputeStrip(TIFF* tif, uint32 row, tsample_t sample)
+uint32
+TIFFComputeStrip(TIFF* tif, uint32 row, uint16 sample)
 {
+	static const char module[] = "TIFFComputeStrip";
 	TIFFDirectory *td = &tif->tif_dir;
 	tstrip_t strip;
 
 	strip = row / td->td_rowsperstrip;
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE) {
 		if (sample >= td->td_samplesperpixel) {
-			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%lu: Sample out of range, max %lu",
 			    (unsigned long) sample, (unsigned long) td->td_samplesperpixel);
-			return ((tstrip_t) 0);
+			return (0);
 		}
-		strip += sample*td->td_stripsperimage;
+		strip += (uint32)sample*td->td_stripsperimage;
 	}
 	return (strip);
 }
@@ -150,7 +151,7 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 		samplingblocks_hor=TIFFhowmany_32(td->td_imagewidth,ycbcrsubsampling[0]);
 		samplingblocks_ver=TIFFhowmany_32(nrows,ycbcrsubsampling[1]);
 		samplingrow_samples=multiply_64(tif,samplingblocks_hor,samplingblock_samples,module);
-		samplingrow_size=TIFFhowmany_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module),8);
+		samplingrow_size=TIFFhowmany8_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module));
 		return(multiply_64(tif,samplingrow_size,samplingblocks_ver,module));
 	} else
 		return(multiply_64(tif,nrows,TIFFScanlineSize(tif),module));
@@ -160,17 +161,19 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 /*
  * Compute the # bytes in a raw strip.
  */
-tsize_t
-TIFFRawStripSize(TIFF* tif, tstrip_t strip)
+uint64
+TIFFRawStripSize(TIFF* tif, uint32 strip)
 {
+	static const char module[] = "TIFFRawStripSize";
 	TIFFDirectory* td = &tif->tif_dir;
-	tsize_t bytecount = td->td_stripbytecount[strip];
+	uint64 bytecount = td->td_stripbytecount[strip];
 
-	if (bytecount <= 0) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			  "%lu: Invalid strip byte count, strip %lu",
-			  (unsigned long) bytecount, (unsigned long) strip);
-		bytecount = (tsize_t) -1;
+	if (bytecount == 0)
+	{
+		TIFFErrorExt(tif->tif_clientdata, module,
+			  "%llu: Invalid strip byte count, strip %lu",
+			  (unsigned long long) bytecount, (unsigned long) strip);
+		bytecount = (uint64) -1;
 	}
 
 	return bytecount;

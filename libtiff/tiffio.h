@@ -261,7 +261,7 @@ extern "C" {
 #endif
 typedef void (*TIFFErrorHandler)(const char*, const char*, va_list);
 typedef void (*TIFFErrorHandlerExt)(thandle_t, const char*, const char*, va_list);
-typedef uint32 (*TIFFReadWriteProc)(thandle_t, tdata_t, uint32);
+typedef uint64 (*TIFFReadWriteProc)(thandle_t, void*, uint64);
 typedef uint64 (*TIFFSeekProc)(thandle_t, uint64, int);
 typedef int (*TIFFCloseProc)(thandle_t);
 typedef uint64 (*TIFFSizeProc)(thandle_t);
@@ -354,9 +354,9 @@ extern int TIFFReadEXIFDirectory(TIFF*, toff_t);
 extern uint64 TIFFScanlineSize(TIFF*);
 extern uint64 TIFFRasterScanlineSize(TIFF*);
 extern uint64 TIFFStripSize(TIFF*);
-extern tsize_t TIFFRawStripSize(TIFF*, tstrip_t);
+extern uint64 TIFFRawStripSize(TIFF* tif, uint32 strip);
 extern uint64 TIFFVStripSize(TIFF* tif, uint32 nrows);
-extern tsize_t TIFFTileRowSize(TIFF*);
+extern uint64 TIFFTileRowSize(TIFF* tif);
 extern uint64 TIFFTileSize(TIFF*);
 extern uint64 TIFFVTileSize(TIFF*, uint32);
 extern uint32 TIFFDefaultStripSize(TIFF*, uint32);
@@ -383,10 +383,10 @@ extern uint32 TIFFCurrentRow(TIFF*);
 extern tdir_t TIFFCurrentDirectory(TIFF*);
 extern tdir_t TIFFNumberOfDirectories(TIFF*);
 extern uint32 TIFFCurrentDirOffset(TIFF*);
-extern tstrip_t TIFFCurrentStrip(TIFF*);
+extern uint32 TIFFCurrentStrip(TIFF*);
 extern ttile_t TIFFCurrentTile(TIFF*);
-extern int TIFFReadBufferSetup(TIFF*, tdata_t, tsize_t);
-extern int TIFFWriteBufferSetup(TIFF*, tdata_t, tsize_t);
+extern int TIFFReadBufferSetup(TIFF* tif, void* bp, uint64 size);
+extern int TIFFWriteBufferSetup(TIFF* tif, void* bp, uint64 size);
 extern int TIFFSetupStrips(TIFF *);
 extern int TIFFWriteCheck(TIFF*, int, const char *);
 extern void TIFFFreeDirectory(TIFF*);
@@ -403,21 +403,21 @@ extern int TIFFRewriteDirectory(TIFF *);
 extern int TIFFReassignTagToIgnore(enum TIFFIgnoreSense, int);
 
 #if defined(c_plusplus) || defined(__cplusplus)
-extern	void TIFFPrintDirectory(TIFF*, FILE*, long = 0);
-extern	int TIFFReadScanline(TIFF*, tdata_t, uint32, tsample_t = 0);
-extern	int TIFFWriteScanline(TIFF*, tdata_t, uint32, tsample_t = 0);
-extern	int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int = 0);
-extern	int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*,
-				      int = ORIENTATION_BOTLEFT, int = 0);
+extern void TIFFPrintDirectory(TIFF*, FILE*, long = 0);
+extern int TIFFReadScanline(TIFF* tif, void* buf, uint32 row, uint16 sample = 0);
+extern int TIFFWriteScanline(TIFF* tif, void* buf, uint32 row, uint16 sample = 0);
+extern int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int = 0);
+extern int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*,
+    int = ORIENTATION_BOTLEFT, int = 0);
 #else
-extern	void TIFFPrintDirectory(TIFF*, FILE*, long);
-extern	int TIFFReadScanline(TIFF*, tdata_t, uint32, tsample_t);
-extern	int TIFFWriteScanline(TIFF*, tdata_t, uint32, tsample_t);
-extern	int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int);
-extern	int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*, int, int);
+extern void TIFFPrintDirectory(TIFF*, FILE*, long);
+extern int TIFFReadScanline(TIFF* tif, void* buf, uint32 row, uint16 sample);
+extern int TIFFWriteScanline(TIFF* tif, void* buf, uint32 row, uint16 sample);
+extern int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int);
+extern int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*, int, int);
 #endif
 
-extern	int TIFFReadRGBAStrip(TIFF*, tstrip_t, uint32 * );
+extern	int TIFFReadRGBAStrip(TIFF*, uint32, uint32 * );
 extern	int TIFFReadRGBATile(TIFF*, uint32, uint32, uint32 * );
 extern	int TIFFRGBAImageOK(TIFF*, char [1024]);
 extern	int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
@@ -434,32 +434,30 @@ extern	TIFF* TIFFClientOpen(const char*, const char*,
 	    TIFFSeekProc, TIFFCloseProc,
 	    TIFFSizeProc,
 	    TIFFMapFileProc, TIFFUnmapFileProc);
-extern	const char* TIFFFileName(TIFF*);
-extern	const char* TIFFSetFileName(TIFF*, const char *);
-extern	void TIFFError(const char*, const char*, ...);
-extern	void TIFFErrorExt(thandle_t, const char*, const char*, ...);
-extern	void TIFFWarning(const char*, const char*, ...);
-extern	void TIFFWarningExt(thandle_t, const char*, const char*, ...);
-extern	TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler);
-extern	TIFFErrorHandlerExt TIFFSetErrorHandlerExt(TIFFErrorHandlerExt);
-extern	TIFFErrorHandler TIFFSetWarningHandler(TIFFErrorHandler);
-extern	TIFFErrorHandlerExt TIFFSetWarningHandlerExt(TIFFErrorHandlerExt);
-extern	TIFFExtendProc TIFFSetTagExtender(TIFFExtendProc);
-extern	ttile_t TIFFComputeTile(TIFF*, uint32, uint32, uint32, tsample_t);
-extern	int TIFFCheckTile(TIFF*, uint32, uint32, uint32, tsample_t);
-extern	ttile_t TIFFNumberOfTiles(TIFF*);
-extern	tsize_t TIFFReadTile(TIFF*,
-	    tdata_t, uint32, uint32, uint32, tsample_t);
-extern	tsize_t TIFFWriteTile(TIFF*,
-	    tdata_t, uint32, uint32, uint32, tsample_t);
-extern	tstrip_t TIFFComputeStrip(TIFF*, uint32, tsample_t);
+extern const char* TIFFFileName(TIFF*);
+extern const char* TIFFSetFileName(TIFF*, const char *);
+extern void TIFFError(const char*, const char*, ...);
+extern void TIFFErrorExt(thandle_t, const char*, const char*, ...);
+extern void TIFFWarning(const char*, const char*, ...);
+extern void TIFFWarningExt(thandle_t, const char*, const char*, ...);
+extern TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler);
+extern TIFFErrorHandlerExt TIFFSetErrorHandlerExt(TIFFErrorHandlerExt);
+extern TIFFErrorHandler TIFFSetWarningHandler(TIFFErrorHandler);
+extern TIFFErrorHandlerExt TIFFSetWarningHandlerExt(TIFFErrorHandlerExt);
+extern TIFFExtendProc TIFFSetTagExtender(TIFFExtendProc);
+extern uint32 TIFFComputeTile(TIFF* tif, uint32 x, uint32 y, uint32 z, uint16 s);
+extern int TIFFCheckTile(TIFF* tif, uint32 x, uint32 y, uint32 z, uint16 s);
+extern uint32 TIFFNumberOfTiles(TIFF*);
+extern uint64 TIFFReadTile(TIFF* tif, void* buf, uint32 x, uint32 y, uint32 z, uint16 s);
+extern uint64 TIFFWriteTile(TIFF* tif, void* buf, uint32 x, uint32 y, uint32 z, uint16 s);
+extern uint32 TIFFComputeStrip(TIFF*, uint32, uint16);
 extern uint32 TIFFNumberOfStrips(TIFF*);
-extern tsize_t TIFFReadEncodedStrip(TIFF*, tstrip_t, tdata_t, tsize_t);
-extern tsize_t TIFFReadRawStrip(TIFF*, tstrip_t, tdata_t, tsize_t);
-extern tsize_t TIFFReadEncodedTile(TIFF*, ttile_t, tdata_t, tsize_t);
-extern tsize_t TIFFReadRawTile(TIFF*, ttile_t, tdata_t, tsize_t);
-extern tsize_t TIFFWriteEncodedStrip(TIFF*, tstrip_t, tdata_t, tsize_t);
-extern tsize_t TIFFWriteRawStrip(TIFF*, tstrip_t, tdata_t, tsize_t);
+extern uint64 TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, uint64 size);
+extern uint64 TIFFReadRawStrip(TIFF* tif, uint32 strip, void* buf, uint64 size);
+extern uint64 TIFFReadEncodedTile(TIFF* tif, uint32 tile, void* buf, uint64 size);
+extern uint64 TIFFReadRawTile(TIFF* tif, uint32 tile, void* buf, uint64 size);
+extern uint64 TIFFWriteEncodedStrip(TIFF* tif, uint32 strip, void* data, uint64 cc);
+extern uint64 TIFFWriteRawStrip(TIFF* tif, uint32 strip, void* data, uint64 cc);
 extern tsize_t TIFFWriteEncodedTile(TIFF*, ttile_t, tdata_t, tsize_t);
 extern tsize_t TIFFWriteRawTile(TIFF*, ttile_t, tdata_t, tsize_t);
 extern int TIFFDataWidth(TIFFDataType);    /* table of tag datatype widths */
@@ -468,12 +466,12 @@ extern void TIFFSwabShort(uint16*);
 extern void TIFFSwabLong(uint32*);
 extern void TIFFSwabLong8(uint64*);
 extern void TIFFSwabDouble(double*);
-extern void TIFFSwabArrayOfShort(uint16*, unsigned long);
-extern void TIFFSwabArrayOfTriples(uint8*, unsigned long);
-extern void TIFFSwabArrayOfLong(uint32*, unsigned long);
+extern void TIFFSwabArrayOfShort(uint16* wp, uint64 n);
+extern void TIFFSwabArrayOfTriples(uint8* tp, uint64 n);
+extern void TIFFSwabArrayOfLong(uint32* lp, uint64 n);
 extern void TIFFSwabArrayOfLong8(uint64*, unsigned long);
-extern void TIFFSwabArrayOfDouble(double*, unsigned long);
-extern void TIFFReverseBits(unsigned char *, unsigned long);
+extern void TIFFSwabArrayOfDouble(double* dp, uint64 n);
+extern void TIFFReverseBits(uint8* cp, uint64 n);
 extern const unsigned char* TIFFGetBitRevTable(int);
 
 #ifdef LOGLUV_PUBLIC

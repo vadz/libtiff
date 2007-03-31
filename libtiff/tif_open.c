@@ -178,7 +178,7 @@ TIFFClientOpen(
 	tif->tif_mode = m &~ (O_CREAT|O_TRUNC);
 	tif->tif_curdir = (tdir_t) -1;		/* non-existent directory */
 	tif->tif_curoff = 0;
-	tif->tif_curstrip = (tstrip_t) -1;	/* invalid strip */
+	tif->tif_curstrip = (uint32) -1;	/* invalid strip */
 	tif->tif_row = (uint32) -1;		/* read/write pre-increment */
 	tif->tif_clientdata = clientdata;
 	if (!readproc || !writeproc || !seekproc || !closeproc || !sizeproc) {
@@ -489,7 +489,7 @@ TIFFClientOpen(
 	!TIFFMapFileContents(tif, (tdata_t*) &tif->tif_base, &tif->tif_size))
 			tif->tif_flags &= ~TIFF_MAPPED;
 		if (TIFFReadDirectory(tif)) {
-			tif->tif_rawcc = -1;
+			tif->tif_rawcc = (uint64)-1;
 			tif->tif_flags |= TIFF_BUFFERSETUP;
 			return (tif);
 		}
@@ -626,7 +626,7 @@ TIFFCurrentDirectory(TIFF* tif)
 /*
  * Return current strip.
  */
-tstrip_t
+uint32
 TIFFCurrentStrip(TIFF* tif)
 {
 	return (tif->tif_curstrip);

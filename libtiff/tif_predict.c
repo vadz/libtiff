@@ -41,10 +41,10 @@ static	void horDiff8(TIFF*, tidata_t, tsize_t);
 static	void horDiff16(TIFF*, tidata_t, tsize_t);
 static	void fpAcc(TIFF*, tidata_t, tsize_t);
 static	void fpDiff(TIFF*, tidata_t, tsize_t);
-static	int PredictorDecodeRow(TIFF*, tidata_t, tsize_t, tsample_t);
-static	int PredictorDecodeTile(TIFF*, tidata_t, tsize_t, tsample_t);
-static	int PredictorEncodeRow(TIFF*, tidata_t, tsize_t, tsample_t);
-static	int PredictorEncodeTile(TIFF*, tidata_t, tsize_t, tsample_t);
+static	int PredictorDecodeRow(TIFF*, tidata_t, tsize_t, uint16);
+static	int PredictorDecodeTile(TIFF*, tidata_t, tsize_t, uint16);
+static	int PredictorEncodeRow(TIFF*, tidata_t, tsize_t, uint16);
+static	int PredictorEncodeTile(TIFF*, tidata_t, tsize_t, uint16);
 
 static int
 PredictorSetup(TIFF* tif)
@@ -87,7 +87,7 @@ PredictorSetup(TIFF* tif)
 	 * Calculate the scanline/tile-width size in bytes.
 	 */
 	if (isTiled(tif))
-		sp->rowsize = TIFFTileRowSize(tif);
+		sp->rowsize = TIFFTileRowSize(tif);  ddd
 	else
 		sp->rowsize = TIFFScanlineSize(tif);  ddd
 
@@ -112,12 +112,12 @@ PredictorSetupDecode(TIFF* tif)
 		 * Override default decoding method with one that does the
 		 * predictor stuff.
 		 */
-		sp->coderow = tif->tif_decoderow;
-		tif->tif_decoderow = PredictorDecodeRow;
-		sp->codestrip = tif->tif_decodestrip;
-		tif->tif_decodestrip = PredictorDecodeTile;
-		sp->codetile = tif->tif_decodetile;
-		tif->tif_decodetile = PredictorDecodeTile;
+		sp->coderow = tif->tif_decoderow;  ddd
+		tif->tif_decoderow = PredictorDecodeRow;  ddd
+		sp->codestrip = tif->tif_decodestrip;  ddd
+		tif->tif_decodestrip = PredictorDecodeTile;  ddd
+		sp->codetile = tif->tif_decodetile;  ddd
+		tif->tif_decodetile = PredictorDecodeTile;  ddd
 		/*
 		 * If the data is horizontally differenced 16-bit data that
 		 * requires byte-swapping, then it must be byte swapped before
@@ -139,19 +139,19 @@ PredictorSetupDecode(TIFF* tif)
 		 * Override default decoding method with one that does the
 		 * predictor stuff.
 		 */
-		sp->coderow = tif->tif_decoderow;
-		tif->tif_decoderow = PredictorDecodeRow;
-		sp->codestrip = tif->tif_decodestrip;
-		tif->tif_decodestrip = PredictorDecodeTile;
-		sp->codetile = tif->tif_decodetile;
-		tif->tif_decodetile = PredictorDecodeTile;
+		sp->coderow = tif->tif_decoderow;  ddd
+		tif->tif_decoderow = PredictorDecodeRow;  ddd
+		sp->codestrip = tif->tif_decodestrip;  ddd
+		tif->tif_decodestrip = PredictorDecodeTile;  ddd
+		sp->codetile = tif->tif_decodetile;  ddd
+		tif->tif_decodetile = PredictorDecodeTile;  ddd
 		/*
 		 * The data should not be swapped outside of the floating
 		 * point predictor, the accumulation routine should return
 		 * byres in the native order.
 		 */
 		if (tif->tif_flags & TIFF_SWAB) {
-			tif->tif_postdecode = _TIFFNoPostDecode;
+			tif->tif_postdecode = _TIFFNoPostDecode;  
 		}
 		/*
 		 * Allocate buffer to keep the decoded bytes before
@@ -180,12 +180,12 @@ PredictorSetupEncode(TIFF* tif)
 		 * Override default encoding method with one that does the
 		 * predictor stuff.
 		 */
-		sp->coderow = tif->tif_encoderow;
-		tif->tif_encoderow = PredictorEncodeRow;
-		sp->codestrip = tif->tif_encodestrip;
-		tif->tif_encodestrip = PredictorEncodeTile;
-		sp->codetile = tif->tif_encodetile;
-		tif->tif_encodetile = PredictorEncodeTile;
+		sp->coderow = tif->tif_encoderow;  ddd
+		tif->tif_encoderow = PredictorEncodeRow;  ddd
+		sp->codestrip = tif->tif_encodestrip;  ddd
+		tif->tif_encodestrip = PredictorEncodeTile;  ddd
+		sp->codetile = tif->tif_encodetile;  ddd
+		tif->tif_encodetile = PredictorEncodeTile;  ddd
 	}
 	
 	else if (sp->predictor == 3) {
@@ -194,12 +194,12 @@ PredictorSetupEncode(TIFF* tif)
 		 * Override default encoding method with one that does the
 		 * predictor stuff.
 		 */
-		sp->coderow = tif->tif_encoderow;
-		tif->tif_encoderow = PredictorEncodeRow;
-		sp->codestrip = tif->tif_encodestrip;
-		tif->tif_encodestrip = PredictorEncodeTile;
-		sp->codetile = tif->tif_encodetile;
-		tif->tif_encodetile = PredictorEncodeTile;
+		sp->coderow = tif->tif_encoderow;  ddd
+		tif->tif_encoderow = PredictorEncodeRow;  ddd
+		sp->codestrip = tif->tif_encodestrip;  dddd
+		tif->tif_encodestrip = PredictorEncodeTile;  ddd
+		sp->codetile = tif->tif_encodetile;  ddd
+		tif->tif_encodetile = PredictorEncodeTile;  ddd
 	}
 
 	return 1;
@@ -266,7 +266,7 @@ swabHorAcc16(TIFF* tif, tidata_t cp0, tsize_t cc)
 	tsize_t wc = cc / 2;
 
 	if (wc > stride) {
-		TIFFSwabArrayOfShort(wp, wc);
+		TIFFSwabArrayOfShort(wp, wc);  ddd
 		wc -= stride;
 		do {
 			REPEAT4(stride, wp[stride] += wp[0]; wp++)
@@ -332,7 +332,7 @@ fpAcc(TIFF* tif, tidata_t cp0, tsize_t cc)
  * Decode a scanline and apply the predictor routine.
  */
 static int
-PredictorDecodeRow(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
+PredictorDecodeRow(TIFF* tif, tidata_t op0, tsize_t occ0, uint16 s)
 {
 	TIFFPredictorState *sp = PredictorState(tif);
 
@@ -355,7 +355,7 @@ PredictorDecodeRow(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
  * strip/tile dimensions.
  */
 static int
-PredictorDecodeTile(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
+PredictorDecodeTile(TIFF* tif, tidata_t op0, tsize_t occ0, uint16 s)
 {
 	TIFFPredictorState *sp = PredictorState(tif);
 
@@ -476,7 +476,7 @@ fpDiff(TIFF* tif, tidata_t cp0, tsize_t cc)
 }
 
 static int
-PredictorEncodeRow(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+PredictorEncodeRow(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	TIFFPredictorState *sp = PredictorState(tif);
 
@@ -490,7 +490,7 @@ PredictorEncodeRow(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 }
 
 static int
-PredictorEncodeTile(TIFF* tif, tidata_t bp0, tsize_t cc0, tsample_t s)
+PredictorEncodeTile(TIFF* tif, tidata_t bp0, tsize_t cc0, uint16 s)
 {
 	TIFFPredictorState *sp = PredictorState(tif);
 	tsize_t cc = cc0, rowsize;

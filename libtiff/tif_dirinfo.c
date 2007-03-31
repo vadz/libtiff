@@ -692,7 +692,7 @@ _TIFFDataSize(TIFFDataType type)
 TIFFDataType
 _TIFFSampleToTagType(TIFF* tif)
 {
-	uint32 bps = TIFFhowmany8(tif->tif_dir.td_bitspersample);  ddd
+	uint32 bps = TIFFhowmany8_32(tif->tif_dir.td_bitspersample);
 
 	switch (tif->tif_dir.td_sampleformat) {
 	case SAMPLEFORMAT_IEEEFP:

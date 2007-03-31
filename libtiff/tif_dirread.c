@@ -73,7 +73,7 @@ static int TIFFFetchPerSampleShorts(TIFF*, TIFFDirEntry*, uint16*);
 static int TIFFFetchPerSampleLongs(TIFF*, TIFFDirEntry*, uint32*);
 static int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*);
 static int TIFFFetchShortArray(TIFF*, TIFFDirEntry*, uint16*);
-static int TIFFFetchStripThing(TIFF*, TIFFDirEntry*, long, uint64**);
+static int TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp);
 static int TIFFFetchRefBlackWhite(TIFF*, TIFFDirEntry*);
 static int TIFFFetchSubjectDistance(TIFF*, TIFFDirEntry*);
 static float TIFFFetchFloat(TIFF*, TIFFDirEntry*);
@@ -1328,7 +1328,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEn
 				double* mb;
 				uint32 n;
 				if (tif->tif_flags&TIFF_SWAB)
-					TIFFSwabArrayOfLong((uint32*)origdata,count);
+					TIFFSwabArrayOfLong((uint32*)origdata,count);  
 				TIFFCvtIEEEFloatToNative(tif,count,(float*)origdata);
 				ma=(float*)origdata;
 				mb=(double*)data;
@@ -1904,13 +1904,13 @@ TIFFReadDirectory(TIFF* tif)
 	 * Setup appropriate structures (by strip or by tile)
 	 */
 	if (!TIFFFieldSet(tif, FIELD_TILEDIMENSIONS)) {
-		tif->tif_dir.td_nstrips = TIFFNumberOfStrips(tif);  ddd
+		tif->tif_dir.td_nstrips = TIFFNumberOfStrips(tif);  
 		tif->tif_dir.td_tilewidth = tif->tif_dir.td_imagewidth;
 		tif->tif_dir.td_tilelength = tif->tif_dir.td_rowsperstrip;
 		tif->tif_dir.td_tiledepth = tif->tif_dir.td_imagedepth;
 		tif->tif_flags &= ~TIFF_ISTILED;
 	} else {
-		tif->tif_dir.td_nstrips = TIFFNumberOfTiles(tif);
+		tif->tif_dir.td_nstrips = TIFFNumberOfTiles(tif);  
 		tif->tif_flags |= TIFF_ISTILED;
 	}
 	if (!tif->tif_dir.td_nstrips) {
@@ -1997,12 +1997,12 @@ TIFFReadDirectory(TIFF* tif)
 				break;
 			case TIFFTAG_STRIPOFFSETS:
 			case TIFFTAG_TILEOFFSETS:
-				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripoffset))
+				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripoffset))  
 					goto bad;
 				break;
 			case TIFFTAG_STRIPBYTECOUNTS:
 			case TIFFTAG_TILEBYTECOUNTS:
-				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))
+				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))  
 					goto bad;
 				break;
 			case TIFFTAG_COLORMAP:
@@ -2158,7 +2158,7 @@ TIFFReadDirectory(TIFF* tif)
 			if ((tif->tif_dir.td_planarconfig == PLANARCONFIG_CONTIG &&
 			    tif->tif_dir.td_nstrips > 1) ||
 			    (tif->tif_dir.td_planarconfig == PLANARCONFIG_SEPARATE &&
-			     tif->tif_dir.td_nstrips != tif->tif_dir.td_samplesperpixel)) {
+			     tif->tif_dir.td_nstrips != tif->tif_dir.td_samplesperpixel)) {  
 			    MissingRequired(tif, "StripByteCounts");
 			    goto bad;
 			}
@@ -2209,7 +2209,7 @@ TIFFReadDirectory(TIFF* tif)
 			   && tif->tif_dir.td_compression == COMPRESSION_NONE
 			   && tif->tif_dir.td_stripbytecount[0] != tif->tif_dir.td_stripbytecount[1]
 			   && tif->tif_dir.td_stripbytecount[0] != 0
-                           && tif->tif_dir.td_stripbytecount[1] != 0 ) {
+			   && tif->tif_dir.td_stripbytecount[1] != 0 ) {
 			/*
 			 * XXX: Some vendors fill StripByteCount array with 
                          * absolutely wrong values (it can be equal to 
@@ -2241,7 +2241,7 @@ TIFFReadDirectory(TIFF* tif)
 	 * function in tif_write.c.
 	 */
 	if (tif->tif_dir.td_nstrips > 1) {
-		tstrip_t strip;
+		uint32 strip;
 
 		tif->tif_dir.td_stripbytecountsorted = 1;
 		for (strip = 1; strip < tif->tif_dir.td_nstrips; strip++) {
@@ -2264,7 +2264,7 @@ TIFFReadDirectory(TIFF* tif)
 	 * side effect, however, is that the RowsPerStrip tag
 	 * value may be changed.
 	 */
-	if (tif->tif_dir.td_nstrips == 1 && tif->tif_dir.td_compression == COMPRESSION_NONE &&
+	if (tif->tif_dir.td_nstrips == 1 && tif->tif_dir.td_compression == COMPRESSION_NONE &&  
 	    (tif->tif_flags & (TIFF_STRIPCHOP|TIFF_ISTILED)) == TIFF_STRIPCHOP)
 		ChopUpSingleUncompressedStrip(tif);
 
@@ -2272,12 +2272,12 @@ TIFFReadDirectory(TIFF* tif)
 	 * Reinitialize i/o since we are starting on a new directory.
 	 */
 	tif->tif_row = (uint32) -1;
-	tif->tif_curstrip = (tstrip_t) -1;
+	tif->tif_curstrip = (uint32) -1;
 	tif->tif_col = (uint32) -1;
-	tif->tif_curtile = (ttile_t) -1;
-	tif->tif_tilesize = (tsize_t) -1;
+	tif->tif_curtile = (uint32) -1;
+	tif->tif_tilesize = (uint64) -1;
 
-	tif->tif_scanlinesize = TIFFScanlineSize(tif);  ddd
+	tif->tif_scanlinesize = TIFFScanlineSize(tif);
 	if (!tif->tif_scanlinesize) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 		    "Cannot handle zero scanline size");
@@ -2285,7 +2285,7 @@ TIFFReadDirectory(TIFF* tif)
 	}
 
 	if (isTiled(tif)) {
-		tif->tif_tilesize = TIFFTileSize(tif);  ddd
+		tif->tif_tilesize = TIFFTileSize(tif);
 		if (!tif->tif_tilesize) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			     "Cannot handle zero tile size");
@@ -2478,8 +2478,6 @@ TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
 				       exifFieldInfoCount);
 }
 
-/* PODD */
-
 static int
 EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 {
@@ -2544,12 +2542,12 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		if (td->td_stripoffset[strip]+td->td_stripbytecount[strip] > filesize)
 			td->td_stripbytecount[strip] = filesize - td->td_stripoffset[strip];
 	} else if (isTiled(tif)) {
-		uint32 bytespertile = TIFFTileSize(tif);  ddd
+		uint64 bytespertile = TIFFTileSize(tif);
 
 		for (strip = 0; strip < td->td_nstrips; strip++)
 		    td->td_stripbytecount[strip] = bytespertile;
 	} else {
-		uint32 rowbytes = TIFFScanlineSize(tif);  ddd
+		uint64 rowbytes = TIFFScanlineSize(tif);
 		uint32 rowsperstrip = td->td_imagelength/td->td_stripsperimage;
 		for (strip = 0; strip < td->td_nstrips; strip++)
 			td->td_stripbytecount[strip] = rowbytes * rowsperstrip;
@@ -2931,20 +2929,20 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 		switch (dir->common.tdir_type) {
 		case TIFF_SHORT:
 		case TIFF_SSHORT:
-			TIFFSwabArrayOfShort((uint16*) cp, count);
+			TIFFSwabArrayOfShort((uint16*) cp, count);  ddd
 			break;
 		case TIFF_LONG:
 		case TIFF_SLONG:
 		case TIFF_FLOAT:
 		case TIFF_IFD:
-			TIFFSwabArrayOfLong((uint32*) cp, count);
+			TIFFSwabArrayOfLong((uint32*) cp, count);  ddd
 			break;
 		case TIFF_RATIONAL:
 		case TIFF_SRATIONAL:
-			TIFFSwabArrayOfLong((uint32*) cp, 2*count);
+			TIFFSwabArrayOfLong((uint32*) cp, 2*count);  ddd
 			break;
 		case TIFF_DOUBLE:
-			TIFFSwabArrayOfDouble((double*) cp, count);
+			TIFFSwabArrayOfDouble((double*) cp, count);  ddd
 			break;
 		case TIFF_LONG8:
 		case TIFF_SLONG8:
@@ -3693,7 +3691,7 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
  * While this routine says "strips", in fact it's also used for tiles.
  */
 static int
-TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, long nstrips, uint64** lpp)
+TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp)
 {
 	static const char module[] = "TIFFFetchStripThing";
 	enum TIFFReadDirEntryErr err;
@@ -3788,7 +3786,10 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	uint64 bytecount = td->td_stripbytecount[0];
 	uint64 offset = td->td_stripoffset[0];
 	uint64 rowbytes = TIFFVTileSize(tif, 1), stripbytes;
-	tstrip_t strip, nstrips, rowsperstrip;
+	uint32 strip;
+	uint64 nstrips64;
+	uint32 nstrips32;
+	uint32 rowsperstrip;
 	uint64* newcounts;
 	uint64* newoffsets;
 
@@ -3811,13 +3812,14 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	 */
 	if (rowsperstrip >= td->td_rowsperstrip)
 		return;
-	nstrips = (tstrip_t) TIFFhowmany(bytecount, stripbytes);  ddd
-	if( nstrips == 0 ) /* something is wonky, do nothing. */
+	nstrips64 = TIFFhowmany_64(bytecount, stripbytes);
+	if ((nstrips64==0)||(nstrips64>0xFFFFFFFF)) /* something is wonky, do nothing. */
 	    return;
+	nstrips32 = (uint32)nstrips64;
 
-	newcounts = (uint64*) _TIFFCheckMalloc(tif, nstrips, sizeof (uint64),
+	newcounts = (uint64*) _TIFFCheckMalloc(tif, nstrips32, sizeof (uint64),
 				"for chopped \"StripByteCounts\" array");
-	newoffsets = (uint64*) _TIFFCheckMalloc(tif, nstrips, sizeof (uint64),
+	newoffsets = (uint64*) _TIFFCheckMalloc(tif, nstrips32, sizeof (uint64),
 				"for chopped \"StripOffsets\" array");
 	if (newcounts == NULL || newoffsets == NULL) {
 		/*
@@ -3834,7 +3836,7 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	 * Fill the strip information arrays with new bytecounts and offsets
 	 * that reflect the broken-up format.
 	 */
-	for (strip = 0; strip < nstrips; strip++) {
+	for (strip = 0; strip < nstrips32; strip++) {
 		if (stripbytes > bytecount)
 			stripbytes = bytecount;
 		newcounts[strip] = stripbytes;
@@ -3845,7 +3847,7 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	/*
 	 * Replace old single strip info with multi-strip info.
 	 */
-	td->td_stripsperimage = td->td_nstrips = nstrips;
+	td->td_stripsperimage = td->td_nstrips = nstrips32;  
 	TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
 
 	_TIFFfree(td->td_stripbytecount);

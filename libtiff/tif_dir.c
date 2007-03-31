@@ -167,7 +167,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 			if (td->td_bitspersample == 16)
 				tif->tif_postdecode = _TIFFSwab16BitData;
 			else if (td->td_bitspersample == 24)
-				tif->tif_postdecode = _TIFFSwab24BitData;
+				tif->tif_postdecode = _TIFFSwab24BitData;  
 			else if (td->td_bitspersample == 32)
 				tif->tif_postdecode = _TIFFSwab32BitData;
 			else if (td->td_bitspersample == 64)
@@ -342,13 +342,13 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
                 /*  Try to fix up the SWAB function for complex data. */
                 if( td->td_sampleformat == SAMPLEFORMAT_COMPLEXINT 
                     && td->td_bitspersample == 32
-                    && tif->tif_postdecode == _TIFFSwab32BitData )
-                    tif->tif_postdecode = _TIFFSwab16BitData;
+		    && tif->tif_postdecode == _TIFFSwab32BitData )
+		    tif->tif_postdecode = _TIFFSwab16BitData;  
                 else if( (td->td_sampleformat == SAMPLEFORMAT_COMPLEXINT 
                           || td->td_sampleformat == SAMPLEFORMAT_COMPLEXIEEEFP)
                          && td->td_bitspersample == 64
-                         && tif->tif_postdecode == _TIFFSwab64BitData )
-                    tif->tif_postdecode = _TIFFSwab32BitData;
+			 && tif->tif_postdecode == _TIFFSwab64BitData )  
+		    tif->tif_postdecode = _TIFFSwab32BitData;  
 		break;
 	case TIFFTAG_IMAGEDEPTH:
 		td->td_imagedepth = va_arg(ap, uint32);
@@ -750,11 +750,11 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             break;
 	case TIFFTAG_STRIPOFFSETS:
 	case TIFFTAG_TILEOFFSETS:
-            *va_arg(ap, uint32**) = td->td_stripoffset;
-            break;
+	    *va_arg(ap, uint64**) = td->td_stripoffset;
+	    break;
 	case TIFFTAG_STRIPBYTECOUNTS:
 	case TIFFTAG_TILEBYTECOUNTS:
-            *va_arg(ap, uint32**) = td->td_stripbytecount;
+	    *va_arg(ap, uint64**) = td->td_stripbytecount;  
             break;
 	case TIFFTAG_MATTEING:
             *va_arg(ap, uint16*) =
@@ -1035,7 +1035,7 @@ TIFFCreateDirectory(TIFF* tif)
     tif->tif_nextdiroff = 0;
     tif->tif_curoff = 0;
     tif->tif_row = (uint32) -1;
-    tif->tif_curstrip = (tstrip_t) -1;
+    tif->tif_curstrip = (uint32) -1;
 
     return 0;
 }
@@ -1063,14 +1063,14 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_tilewidth = 0;
 	td->td_tilelength = 0;
 	td->td_tiledepth = 1;
-	td->td_stripbytecountsorted = 1; /* Our own arrays always sorted. */
+	td->td_stripbytecountsorted = 1; /* Our own arrays always sorted. */  
 	td->td_resolutionunit = RESUNIT_INCH;
 	td->td_sampleformat = SAMPLEFORMAT_UINT;
 	td->td_imagedepth = 1;
 	td->td_ycbcrsubsampling[0] = 2;
 	td->td_ycbcrsubsampling[1] = 2;
 	td->td_ycbcrpositioning = YCBCRPOSITION_CENTERED;
-	tif->tif_postdecode = _TIFFNoPostDecode;
+	tif->tif_postdecode = _TIFFNoPostDecode;  
 	tif->tif_foundfield = NULL;
 	tif->tif_tagmethods.vsetfield = _TIFFVSetField;
 	tif->tif_tagmethods.vgetfield = _TIFFVGetField;
@@ -1394,7 +1394,7 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	tif->tif_nextdiroff = 0;		/* next write must be at end */
 	tif->tif_curoff = 0;
 	tif->tif_row = (uint32) -1;
-	tif->tif_curstrip = (tstrip_t) -1;
+	tif->tif_curstrip = (uint32) -1;
 	return (1);
 }
 

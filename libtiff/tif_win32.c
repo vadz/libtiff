@@ -32,22 +32,24 @@
 
 #include <windows.h>
 
-static uint32
-_tiffReadProc(thandle_t fd, tdata_t buf, uint32 size)
+static uint64
+_tiffReadProc(thandle_t fd, void* buf, uint64 size)
 {
 	DWORD dwSizeRead;
-	if (!ReadFile(fd, buf, size, &dwSizeRead, NULL))
+	assert((uint32)size==size);
+	if (!ReadFile(fd, buf, (uint32)size, &dwSizeRead, NULL))
 		return(0);
-	return ((tsize_t) dwSizeRead);
+	return ((uint64) dwSizeRead);
 }
 
-static uint32
-_tiffWriteProc(thandle_t fd, tdata_t buf, uint32 size)
+static uint64
+_tiffWriteProc(thandle_t fd, void* buf, uint64 size)
 {
 	DWORD dwSizeWritten;
-	if (!WriteFile(fd, buf, size, &dwSizeWritten, NULL))
+	assert((uint32)size==size);
+	if (!WriteFile(fd, buf, (uint32)size, &dwSizeWritten, NULL))
 		return(0);
-	return ((tsize_t) dwSizeWritten);
+	return ((uint64) dwSizeWritten);
 }
 
 static uint64
@@ -73,7 +75,7 @@ _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 		dwMoveMethod = FILE_BEGIN;
 		break;
 	}
-	return ((toff_t)SetFilePointer(fd, (LONG) li.LowPart,
+	return ((uint64)SetFilePointer(fd, (LONG) li.LowPart,
 				       (PLONG)&li.HighPart, dwMoveMethod));
 }
 
@@ -86,7 +88,9 @@ _tiffCloseProc(thandle_t fd)
 static uint64
 _tiffSizeProc(thandle_t fd)
 {
-	return ((toff_t)GetFileSize(fd, NULL));
+	ULARGE_INTEGER m;
+	m.LowPart=GetFileSize(fd,&m.HighPart);
+	return(m.QuadPart);
 }
 
 static int

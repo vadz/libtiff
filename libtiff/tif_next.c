@@ -46,7 +46,7 @@
 #define WHITE   	((1<<2)-1)
 
 static int
-NeXTDecode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
+NeXTDecode(TIFF* tif, tidata_t buf, tsize_t occ, uint16 s)
 {
 	unsigned char *bp, *op;
 	tsize_t cc;
@@ -63,8 +63,8 @@ NeXTDecode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		*op++ = 0xff;
 
 	bp = (unsigned char *)tif->tif_rawcp;
-	cc = tif->tif_rawcc;
-	scanline = tif->tif_scanlinesize;
+	cc = tif->tif_rawcc;  ddd
+	scanline = tif->tif_scanlinesize;  ddd
 	for (row = buf; occ > 0; occ -= scanline, row += scanline) {
 		n = *bp++, cc--;
 		switch (n) {
@@ -125,7 +125,7 @@ NeXTDecode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 		}
 	}
 	tif->tif_rawcp = (tidata_t) bp;
-	tif->tif_rawcc = cc;
+	tif->tif_rawcc = cc;  ddd
 	return (1);
 bad:
 	TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "NeXTDecode: Not enough data for scanline %ld",
@@ -137,9 +137,9 @@ int
 TIFFInitNeXT(TIFF* tif, int scheme)
 {
 	(void) scheme;
-	tif->tif_decoderow = NeXTDecode;
-	tif->tif_decodestrip = NeXTDecode;
-	tif->tif_decodetile = NeXTDecode;
+	tif->tif_decoderow = NeXTDecode;  ddd
+	tif->tif_decodestrip = NeXTDecode;  ddd
+	tif->tif_decodetile = NeXTDecode;  ddd
 	return (1);
 }
 #endif /* NEXT_SUPPORT */

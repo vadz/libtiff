@@ -35,18 +35,18 @@
  * Encode a hunk of pixels.
  */
 static int
-DumpModeEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+DumpModeEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) s;
 	while (cc > 0) {
-		tsize_t n;
+		uint64 n;
 
 		n = cc;
 		if (tif->tif_rawcc + n > tif->tif_rawdatasize)
 			n = tif->tif_rawdatasize - tif->tif_rawcc;
 
 		assert( n > 0 );
-                
+
 		/*
 		 * Avoid copy if client has setup raw
 		 * data buffer to avoid extra copy.
@@ -68,13 +68,13 @@ DumpModeEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
  * Decode a hunk of pixels.
  */
 static int
-DumpModeDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
+DumpModeDecode(TIFF* tif, uint8* buf, uint64 cc, uint16 s)
 {
 	(void) s;
-	if (tif->tif_rawcc < cc) {
+	if (tif->tif_rawcc < cc) {  
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-		    "DumpModeDecode: Not enough data for scanline %d",
-		    tif->tif_row);
+		    "DumpModeDecode: Not enough data for scanline %lud",
+		    (unsigned long) tif->tif_row);
 		return (0);
 	}
 	/*

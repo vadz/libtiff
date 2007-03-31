@@ -49,21 +49,21 @@ TIFFNoEncode(TIFF* tif, const char* method)
 }
 
 int
-_TIFFNoRowEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+_TIFFNoRowEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoEncode(tif, "scanline"));
 }
 
 int
-_TIFFNoStripEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+_TIFFNoStripEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoEncode(tif, "strip"));
 }
 
 int
-_TIFFNoTileEncode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+_TIFFNoTileEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoEncode(tif, "tile"));
@@ -86,21 +86,21 @@ TIFFNoDecode(TIFF* tif, const char* method)
 }
 
 int
-_TIFFNoRowDecode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+_TIFFNoRowDecode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoDecode(tif, "scanline"));
 }
 
 int
-_TIFFNoStripDecode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+_TIFFNoStripDecode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoDecode(tif, "strip"));
 }
 
 int
-_TIFFNoTileDecode(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+_TIFFNoTileDecode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoDecode(tif, "tile"));
@@ -116,7 +116,7 @@ _TIFFNoSeek(TIFF* tif, uint32 off)
 }
 
 int
-_TIFFNoPreCode(TIFF* tif, tsample_t s)
+_TIFFNoPreCode(TIFF* tif, uint16 s)
 {
 	(void) tif; (void) s;
 	return (1);
@@ -131,16 +131,16 @@ _TIFFSetDefaultCompressionState(TIFF* tif)
 	tif->tif_decodestatus = TRUE;
 	tif->tif_setupdecode = _TIFFtrue;
 	tif->tif_predecode = _TIFFNoPreCode;
-	tif->tif_decoderow = _TIFFNoRowDecode;
+	tif->tif_decoderow = _TIFFNoRowDecode;  
 	tif->tif_decodestrip = _TIFFNoStripDecode;
-	tif->tif_decodetile = _TIFFNoTileDecode;
+	tif->tif_decodetile = _TIFFNoTileDecode;  
 	tif->tif_encodestatus = TRUE;
 	tif->tif_setupencode = _TIFFtrue;
 	tif->tif_preencode = _TIFFNoPreCode;
 	tif->tif_postencode = _TIFFtrue;
 	tif->tif_encoderow = _TIFFNoRowEncode;
 	tif->tif_encodestrip = _TIFFNoStripEncode;
-	tif->tif_encodetile = _TIFFNoTileEncode;
+	tif->tif_encodetile = _TIFFNoTileEncode;  
 	tif->tif_close = _TIFFvoid;
 	tif->tif_seek = _TIFFNoSeek;
 	tif->tif_cleanup = _TIFFvoid;

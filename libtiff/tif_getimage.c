@@ -624,7 +624,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
                 break;
             }
 	    
-            pos = ((row+img->row_offset) % th) * TIFFTileRowSize(tif);
+	    pos = ((row+img->row_offset) % th) * TIFFTileRowSize(tif);  ddd
 
     	    if (col + tw > w) 
             {
@@ -749,7 +749,7 @@ gtTileSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 				}
 			}
 
-			pos = ((row+img->row_offset) % th) * TIFFTileRowSize(tif);
+			pos = ((row+img->row_offset) % th) * TIFFTileRowSize(tif);  ddd
 
 			if (col + tw > w)
 			{
@@ -837,8 +837,8 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 		nrowsub = nrow;
 		if ((nrowsub%(img->SubsamplingVer))!=0)
 			nrowsub+=img->SubsamplingVer-nrowsub%(img->SubsamplingVer);
-		if (TIFFReadEncodedStrip(tif,
-		    TIFFComputeStrip(tif,row+img->row_offset, 0),
+		if (TIFFReadEncodedStrip(tif,   ddd
+		    TIFFComputeStrip(tif,row+img->row_offset, 0),  ddd
 		    buf,
 		    ((row + img->row_offset)%rowsperstrip + nrowsub) * scanline) < 0
 		    && img->stoponerr)
@@ -924,21 +924,21 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 		rowstoread = rowsperstrip - (row + img->row_offset) % rowsperstrip;
 		nrow = (row + rowstoread > h ? h - row : rowstoread);
 		offset_row = row + img->row_offset;
-		if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 0),
+		if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 0),   ddd
 		    p0, ((row + img->row_offset)%rowsperstrip + nrow) * scanline) < 0
 		    && img->stoponerr)
 		{
 			ret = 0;
 			break;
 		}
-		if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 1),
+		if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 1),  ddd
 		    p1, ((row + img->row_offset)%rowsperstrip + nrow) * scanline) < 0
 		    && img->stoponerr)
 		{
 			ret = 0;
 			break;
 		}
-		if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 2),
+		if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 2),  ddd
 		    p2, ((row + img->row_offset)%rowsperstrip + nrow) * scanline) < 0
 		    && img->stoponerr)
 		{
@@ -947,7 +947,7 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 		}
 		if (alpha)
 		{
-			if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 3),
+			if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, offset_row, 3),  ddd
 			    pa, ((row + img->row_offset)%rowsperstrip + nrow) * scanline) < 0
 			    && img->stoponerr)
 			{

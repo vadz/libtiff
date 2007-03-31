@@ -34,7 +34,7 @@
 #include <stdio.h>
 
 static int
-PackBitsPreEncode(TIFF* tif, tsample_t s)
+PackBitsPreEncode(TIFF* tif, uint16 s)
 {
 	(void) s;
 
@@ -44,7 +44,7 @@ PackBitsPreEncode(TIFF* tif, tsample_t s)
 	 * Calculate the scanline/tile-width size in bytes.
 	 */
 	if (isTiled(tif))
-		*(tsize_t*)tif->tif_data = TIFFTileRowSize(tif);
+		*(tsize_t*)tif->tif_data = TIFFTileRowSize(tif);  ddd
 	else
 		*(tsize_t*)tif->tif_data = TIFFScanlineSize(tif);  ddd
 	return (1);
@@ -69,7 +69,7 @@ typedef unsigned char tidata;
  * Encode a run of pixels.
  */
 static int
-PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
+PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, uint16 s)
 {
 	unsigned char* bp = (unsigned char*) buf;
 	tidata_t op, ep, lastliteral;
@@ -79,7 +79,7 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 
 	(void) s;
 	op = tif->tif_rawcp;
-	ep = tif->tif_rawdata + tif->tif_rawdatasize;
+	ep = tif->tif_rawdata + tif->tif_rawdatasize;  ddd
 	state = BASE;
 	lastliteral = 0;
 	while (cc > 0) {
@@ -99,7 +99,7 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 			 */
 			if (state == LITERAL || state == LITERAL_RUN) {
 				slop = op - lastliteral;
-				tif->tif_rawcc += lastliteral - tif->tif_rawcp;
+				tif->tif_rawcc += lastliteral - tif->tif_rawcp;  ddd
 				if (!TIFFFlushData1(tif))
 					return (-1);
 				op = tif->tif_rawcp;
@@ -107,7 +107,7 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 					*op++ = *lastliteral++;
 				lastliteral = tif->tif_rawcp;
 			} else {
-				tif->tif_rawcc += op - tif->tif_rawcp;
+				tif->tif_rawcc += op - tif->tif_rawcp;  ddd
 				if (!TIFFFlushData1(tif))
 					return (-1);
 				op = tif->tif_rawcp;
@@ -183,7 +183,7 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 			goto again;
 		}
 	}
-	tif->tif_rawcc += op - tif->tif_rawcp;
+	tif->tif_rawcc += op - tif->tif_rawcp;  ddd
 	tif->tif_rawcp = op;
 	return (1);
 }
@@ -196,7 +196,7 @@ PackBitsEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
  * when it was encoded by strips.
  */
 static int
-PackBitsEncodeChunk(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+PackBitsEncodeChunk(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	tsize_t rowsize = *(tsize_t*)tif->tif_data;
 
@@ -215,7 +215,7 @@ PackBitsEncodeChunk(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 }
 
 static int
-PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
+PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, uint16 s)
 {
 	char *bp;
 	tsize_t cc;
@@ -224,7 +224,7 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 
 	(void) s;
 	bp = (char*) tif->tif_rawcp;
-	cc = tif->tif_rawcc;
+	cc = tif->tif_rawcc;  ddd
 	while (cc > 0 && (long)occ > 0) {
 		n = (long) *bp++, cc--;
 		/*
@@ -264,7 +264,7 @@ PackBitsDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 		}
 	}
 	tif->tif_rawcp = (tidata_t) bp;
-	tif->tif_rawcc = cc;
+	tif->tif_rawcc = cc;  ddd
 	if (occ > 0) {
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "PackBitsDecode: Not enough data for scanline %ld",
@@ -278,14 +278,14 @@ int
 TIFFInitPackBits(TIFF* tif, int scheme)
 {
 	(void) scheme;
-	tif->tif_decoderow = PackBitsDecode;
-	tif->tif_decodestrip = PackBitsDecode;
-	tif->tif_decodetile = PackBitsDecode;
+	tif->tif_decoderow = PackBitsDecode;  ddd
+	tif->tif_decodestrip = PackBitsDecode;  ddd
+	tif->tif_decodetile = PackBitsDecode;  ddd
 	tif->tif_preencode = PackBitsPreEncode;
         tif->tif_postencode = PackBitsPostEncode;
-	tif->tif_encoderow = PackBitsEncode;
-	tif->tif_encodestrip = PackBitsEncodeChunk;
-	tif->tif_encodetile = PackBitsEncodeChunk;
+	tif->tif_encoderow = PackBitsEncode;  ddd
+	tif->tif_encodestrip = PackBitsEncodeChunk;   ddd
+	tif->tif_encodetile = PackBitsEncodeChunk;  ddd
 	return (1);
 }
 #endif /* PACKBITS_SUPPORT */

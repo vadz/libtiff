@@ -271,7 +271,7 @@ typedef struct {
 	} sos_end[3];
 	uint8 readheader_done;
 	uint8 writeheader_done;
-	tsample_t write_cursample;
+	uint16 write_cursample;
 	tstrile_t write_curstrile;
 	uint8 libjpeg_session_active;
 	uint8 libjpeg_jpeg_query_style;
@@ -315,22 +315,22 @@ static int OJPEGVSetField(TIFF* tif, ttag_t tag, va_list ap);
 static void OJPEGPrintDir(TIFF* tif, FILE* fd, long flags);
 
 static int OJPEGSetupDecode(TIFF* tif);
-static int OJPEGPreDecode(TIFF* tif, tsample_t s);
+static int OJPEGPreDecode(TIFF* tif, uint16 s);
 static int OJPEGPreDecodeSkipRaw(TIFF* tif);
 static int OJPEGPreDecodeSkipScanlines(TIFF* tif);
-static int OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s);
+static int OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, uint16 s);
 static int OJPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc);
 static int OJPEGDecodeScanlines(TIFF* tif, tidata_t buf, tsize_t cc);
 static void OJPEGPostDecode(TIFF* tif, tidata_t buf, tsize_t cc);
 static int OJPEGSetupEncode(TIFF* tif);
-static int OJPEGPreEncode(TIFF* tif, tsample_t s);
-static int OJPEGEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s);
+static int OJPEGPreEncode(TIFF* tif, uint16 s);
+static int OJPEGEncode(TIFF* tif, tidata_t buf, tsize_t cc, uint16 s);
 static int OJPEGPostEncode(TIFF* tif);
 static void OJPEGCleanup(TIFF* tif);
 
 static void OJPEGSubsamplingCorrect(TIFF* tif);
 static int OJPEGReadHeaderInfo(TIFF* tif);
-static int OJPEGReadSecondarySos(TIFF* tif, tsample_t s);
+static int OJPEGReadSecondarySos(TIFF* tif, uint16 s);
 static int OJPEGWriteHeaderInfo(TIFF* tif);
 static void OJPEGLibjpegSessionAbort(TIFF* tif);
 
@@ -410,16 +410,16 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
 	/* tif codec methods */
 	tif->tif_setupdecode=OJPEGSetupDecode;
 	tif->tif_predecode=OJPEGPreDecode;
-	tif->tif_postdecode=OJPEGPostDecode;
-	tif->tif_decoderow=OJPEGDecode;
-	tif->tif_decodestrip=OJPEGDecode;
-	tif->tif_decodetile=OJPEGDecode;
+	tif->tif_postdecode=OJPEGPostDecode;  ddd
+	tif->tif_decoderow=OJPEGDecode;  ddd
+	tif->tif_decodestrip=OJPEGDecode;  ddd
+	tif->tif_decodetile=OJPEGDecode;  ddd
 	tif->tif_setupencode=OJPEGSetupEncode;
 	tif->tif_preencode=OJPEGPreEncode;
 	tif->tif_postencode=OJPEGPostEncode;
-	tif->tif_encoderow=OJPEGEncode;
-	tif->tif_encodestrip=OJPEGEncode;
-	tif->tif_encodetile=OJPEGEncode;
+	tif->tif_encoderow=OJPEGEncode;  ddd
+	tif->tif_encodestrip=OJPEGEncode;  ddd
+	tif->tif_encodetile=OJPEGEncode;  ddd
 	tif->tif_cleanup=OJPEGCleanup;
 	tif->tif_data=(tidata_t)sp;
 	/* tif tag methods */
@@ -610,7 +610,7 @@ OJPEGSetupDecode(TIFF* tif)
 }
 
 static int
-OJPEGPreDecode(TIFF* tif, tsample_t s)
+OJPEGPreDecode(TIFF* tif, uint16 s)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	tstrile_t m;
@@ -640,7 +640,7 @@ OJPEGPreDecode(TIFF* tif, tsample_t s)
 	{
 		sp->plane_sample_offset=s;
 		sp->write_cursample=s;
-		sp->write_curstrile=s*tif->tif_dir.td_stripsperimage;
+		sp->write_curstrile=s*tif->tif_dir.td_stripsperimage;  ddd
 		if ((sp->in_buffer_file_pos_log==0) ||
 		    (sp->in_buffer_file_pos-sp->in_buffer_togo!=sp->sos_end[s].in_buffer_file_pos))
 		{
@@ -729,7 +729,7 @@ OJPEGPreDecodeSkipScanlines(TIFF* tif)
 }
 
 static int
-OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
+OJPEGDecode(TIFF* tif, tidata_t buf, tsize_t cc, uint16 s)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	(void)s;
@@ -833,7 +833,7 @@ OJPEGPostDecode(TIFF* tif, tidata_t buf, tsize_t cc)
 	(void)buf;
 	(void)cc;
 	sp->write_curstrile++;
-	if (sp->write_curstrile%tif->tif_dir.td_stripsperimage==0)
+	if (sp->write_curstrile%tif->tif_dir.td_stripsperimage==0)  ddd
 	{
 		assert(sp->libjpeg_session_active!=0);
 		OJPEGLibjpegSessionAbort(tif);
@@ -850,7 +850,7 @@ OJPEGSetupEncode(TIFF* tif)
 }
 
 static int
-OJPEGPreEncode(TIFF* tif, tsample_t s)
+OJPEGPreEncode(TIFF* tif, uint16 s)
 {
 	static const char module[]="OJPEGPreEncode";
 	(void)s;
@@ -859,7 +859,7 @@ OJPEGPreEncode(TIFF* tif, tsample_t s)
 }
 
 static int
-OJPEGEncode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
+OJPEGEncode(TIFF* tif, tidata_t buf, tsize_t cc, uint16 s)
 {
 	static const char module[]="OJPEGEncode";
 	(void)buf;
@@ -1038,7 +1038,7 @@ OJPEGReadHeaderInfo(TIFF* tif)
 }
 
 static int
-OJPEGReadSecondarySos(TIFF* tif, tsample_t s)
+OJPEGReadSecondarySos(TIFF* tif, uint16 s)
 {
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	uint8 m;
@@ -1210,7 +1210,7 @@ OJPEGReadHeaderInfoSec(TIFF* tif)
 	}
 	sp->in_buffer_source=osibsNotSetYet;
 	sp->in_buffer_next_strile=0;
-	sp->in_buffer_strile_count=tif->tif_dir.td_nstrips;   
+	sp->in_buffer_strile_count=tif->tif_dir.td_nstrips;  ddd 
 	sp->in_buffer_file_togo=0;
 	sp->in_buffer_togo=0;
 	do
@@ -1896,14 +1896,14 @@ OJPEGReadBufferFill(OJPEGState* sp)
 					sp->in_buffer_source=osibsEof;
 				else
 				{
-					sp->in_buffer_file_pos=sp->tif->tif_dir.td_stripoffset[sp->in_buffer_next_strile];  
+					sp->in_buffer_file_pos=sp->tif->tif_dir.td_stripoffset[sp->in_buffer_next_strile];  ddd
 					if (sp->in_buffer_file_pos!=0)
 					{
 						if (sp->in_buffer_file_pos>=sp->file_size)
 							sp->in_buffer_file_pos=0;
 						else
 						{
-							sp->in_buffer_file_togo=sp->tif->tif_dir.td_stripbytecount[sp->in_buffer_next_strile];  
+							sp->in_buffer_file_togo=sp->tif->tif_dir.td_stripbytecount[sp->in_buffer_next_strile];  ddd
 							if (sp->in_buffer_file_togo==0)
 								sp->in_buffer_file_pos=0;
 							else if (sp->in_buffer_file_pos+sp->in_buffer_file_togo>sp->file_size)

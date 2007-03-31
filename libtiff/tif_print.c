@@ -595,16 +595,16 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		(*tif->tif_tagmethods.printdir)(tif, fd, flags);
 	if ((flags & TIFFPRINT_STRIPS) &&
 	    TIFFFieldSet(tif,FIELD_STRIPOFFSETS)) {
-		tstrip_t s;
+		uint32 s;
 
 		fprintf(fd, "  %lu %s:\n",
-		    (long) td->td_nstrips,
+		    (long) td->td_nstrips,  ddd
 		    isTiled(tif) ? "Tiles" : "Strips");
-		for (s = 0; s < td->td_nstrips; s++)
+		for (s = 0; s < td->td_nstrips; s++)  ddd
 			fprintf(fd, "    %3lu: [%8lu, %8lu]\n",
-			    (unsigned long) s,
-			    (unsigned long) td->td_stripoffset[s],
-			    (unsigned long) td->td_stripbytecount[s]);
+			    (unsigned long) s,  ddd
+			    (unsigned long) td->td_stripoffset[s],  ddd
+			    (unsigned long) td->td_stripbytecount[s]);  ddd
 	}
 }
 

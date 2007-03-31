@@ -72,7 +72,7 @@ ThunderDecode(TIFF* tif, tidata_t op, tsize_t maxpixels)
 	tsize_t npixels;
 
 	bp = (unsigned char *)tif->tif_rawcp;
-	cc = tif->tif_rawcc;
+	cc = tif->tif_rawcc;  ddd
 	lastpixel = 0;
 	npixels = 0;
 	while (cc > 0 && npixels < maxpixels) {
@@ -119,7 +119,7 @@ ThunderDecode(TIFF* tif, tidata_t op, tsize_t maxpixels)
 		}
 	}
 	tif->tif_rawcp = (tidata_t) bp;
-	tif->tif_rawcc = cc;
+	tif->tif_rawcc = cc;  ddd
 	if (npixels != maxpixels) {
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "ThunderDecode: %s data at scanline %ld (%lu != %lu)",
@@ -131,7 +131,7 @@ ThunderDecode(TIFF* tif, tidata_t op, tsize_t maxpixels)
 }
 
 static int
-ThunderDecodeRow(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
+ThunderDecodeRow(TIFF* tif, tidata_t buf, tsize_t occ, uint16 s)
 {
 	tidata_t row = buf;
 	
@@ -139,8 +139,8 @@ ThunderDecodeRow(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
 	while ((long)occ > 0) {
 		if (!ThunderDecode(tif, row, tif->tif_dir.td_imagewidth))
 			return (0);
-		occ -= tif->tif_scanlinesize;
-		row += tif->tif_scanlinesize;
+		occ -= tif->tif_scanlinesize;  ddd
+		row += tif->tif_scanlinesize;  ddd
 	}
 	return (1);
 }
@@ -149,8 +149,8 @@ int
 TIFFInitThunderScan(TIFF* tif, int scheme)
 {
 	(void) scheme;
-	tif->tif_decoderow = ThunderDecodeRow;
-	tif->tif_decodestrip = ThunderDecodeRow;
+	tif->tif_decoderow = ThunderDecodeRow;  ddd
+	tif->tif_decodestrip = ThunderDecodeRow;  ddd
 	return (1);
 }
 #endif /* THUNDER_SUPPORT */

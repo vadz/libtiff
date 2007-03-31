@@ -590,8 +590,8 @@ PixarLogMakeTables(PixarLogState *sp)
 #define	DecoderState(tif)	((PixarLogState*) (tif)->tif_data)
 #define	EncoderState(tif)	((PixarLogState*) (tif)->tif_data)
 
-static	int PixarLogEncode(TIFF*, tidata_t, tsize_t, tsample_t);
-static	int PixarLogDecode(TIFF*, tidata_t, tsize_t, tsample_t);
+static	int PixarLogEncode(TIFF*, tidata_t, tsize_t, uint16);
+static	int PixarLogDecode(TIFF*, tidata_t, tsize_t, uint16);
 
 #define N(a)   (sizeof(a)/sizeof(a[0]))
 #define PIXARLOGDATAFMT_UNKNOWN	-1
@@ -654,7 +654,7 @@ PixarLogSetupDecode(TIFF* tif)
 
 	/* Make sure no byte swapping happens on the data
 	 * after decompression. */
-	tif->tif_postdecode = _TIFFNoPostDecode;
+	tif->tif_postdecode = _TIFFNoPostDecode;  
 
 	/* for some reason, we can't do this in TIFFInitPixarLog */
 
@@ -689,19 +689,19 @@ PixarLogSetupDecode(TIFF* tif)
  * Setup state for decoding a strip.
  */
 static int
-PixarLogPreDecode(TIFF* tif, tsample_t s)
+PixarLogPreDecode(TIFF* tif, uint16 s)
 {
 	PixarLogState* sp = DecoderState(tif);
 
 	(void) s;
 	assert(sp != NULL);
 	sp->stream.next_in = tif->tif_rawdata;
-	sp->stream.avail_in = tif->tif_rawcc;
+	sp->stream.avail_in = tif->tif_rawcc;  ddd
 	return (inflateReset(&sp->stream) == Z_OK);
 }
 
 static int
-PixarLogDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
+PixarLogDecode(TIFF* tif, tidata_t op, tsize_t occ, uint16 s)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 	PixarLogState* sp = DecoderState(tif);
@@ -766,7 +766,7 @@ PixarLogDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	up = sp->tbuf;
 	/* Swap bytes in the data if from a different endian machine. */
 	if (tif->tif_flags & TIFF_SWAB)
-		TIFFSwabArrayOfShort(up, nsamples);
+		TIFFSwabArrayOfShort(up, nsamples);  ddd
 
 	/* 
 	 * if llen is not an exact multiple of nsamples, the decode operation
@@ -864,14 +864,14 @@ PixarLogSetupEncode(TIFF* tif)
  * Reset encoding state at the start of a strip.
  */
 static int
-PixarLogPreEncode(TIFF* tif, tsample_t s)
+PixarLogPreEncode(TIFF* tif, uint16 s)
 {
 	PixarLogState *sp = EncoderState(tif);
 
 	(void) s;
 	assert(sp != NULL);
 	sp->stream.next_out = tif->tif_rawdata;
-	sp->stream.avail_out = tif->tif_rawdatasize;
+	sp->stream.avail_out = tif->tif_rawdatasize;  ddd
 	return (deflateReset(&sp->stream) == Z_OK);
 }
 
@@ -1043,7 +1043,7 @@ horizontalDifference8(unsigned char *ip, int n, int stride,
  * Encode a chunk of pixels.
  */
 static int
-PixarLogEncode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+PixarLogEncode(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 	PixarLogState *sp = EncoderState(tif);
@@ -1110,10 +1110,10 @@ PixarLogEncode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 			return (0);
 		}
 		if (sp->stream.avail_out == 0) {
-			tif->tif_rawcc = tif->tif_rawdatasize;
+			tif->tif_rawcc = tif->tif_rawdatasize;  ddd
 			TIFFFlushData1(tif);
 			sp->stream.next_out = tif->tif_rawdata;
-			sp->stream.avail_out = tif->tif_rawdatasize;
+			sp->stream.avail_out = tif->tif_rawdatasize;  ddd
 		}
 	} while (sp->stream.avail_in > 0);
 	return (1);
@@ -1138,12 +1138,12 @@ PixarLogPostEncode(TIFF* tif)
 		switch (state) {
 		case Z_STREAM_END:
 		case Z_OK:
-		    if (sp->stream.avail_out != (uint32)tif->tif_rawdatasize) {
-			    tif->tif_rawcc =
-				tif->tif_rawdatasize - sp->stream.avail_out;
+		    if (sp->stream.avail_out != (uint32)tif->tif_rawdatasize) {  ddd
+			    tif->tif_rawcc =  ddd
+				tif->tif_rawdatasize - sp->stream.avail_out;  ddd
 			    TIFFFlushData1(tif);
 			    sp->stream.next_out = tif->tif_rawdata;
-			    sp->stream.avail_out = tif->tif_rawdatasize;
+			    sp->stream.avail_out = tif->tif_rawdatasize;  ddd
 		    }
 		    break;
 		default:
@@ -1310,15 +1310,15 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	 */
 	tif->tif_setupdecode = PixarLogSetupDecode;
 	tif->tif_predecode = PixarLogPreDecode;
-	tif->tif_decoderow = PixarLogDecode;
-	tif->tif_decodestrip = PixarLogDecode;
-	tif->tif_decodetile = PixarLogDecode;
+	tif->tif_decoderow = PixarLogDecode;  ddd
+	tif->tif_decodestrip = PixarLogDecode;  ddd
+	tif->tif_decodetile = PixarLogDecode;  ddd
 	tif->tif_setupencode = PixarLogSetupEncode;
 	tif->tif_preencode = PixarLogPreEncode;
 	tif->tif_postencode = PixarLogPostEncode;
-	tif->tif_encoderow = PixarLogEncode;
-	tif->tif_encodestrip = PixarLogEncode;
-	tif->tif_encodetile = PixarLogEncode;
+	tif->tif_encoderow = PixarLogEncode;  ddd
+	tif->tif_encodestrip = PixarLogEncode;  ddd
+	tif->tif_encodetile = PixarLogEncode;  ddd
 	tif->tif_close = PixarLogClose;
 	tif->tif_cleanup = PixarLogCleanup;
 

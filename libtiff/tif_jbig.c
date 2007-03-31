@@ -75,7 +75,7 @@ static int JBIGSetupDecode(TIFF* tif)
         return 1;
 }
 
-static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
+static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, uint16 s)
 {
         struct jbg_dec_state decoder;
         int decodeStatus = 0;
@@ -84,13 +84,13 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
 
         if (isFillOrder(tif, tif->tif_dir.td_fillorder))
         {
-                TIFFReverseBits(tif->tif_rawdata, tif->tif_rawdatasize);
+		TIFFReverseBits(tif->tif_rawdata, tif->tif_rawdatasize);  ddd
         }
 
         jbg_dec_init(&decoder);
 
 #if defined(HAVE_JBG_NEWLEN)
-        jbg_newlen(tif->tif_rawdata, tif->tif_rawdatasize);
+	jbg_newlen(tif->tif_rawdata, tif->tif_rawdatasize);  ddd
         /*
          * I do not check the return status of jbg_newlen because even if this
          * function fails it does not necessarily mean that decoding the image
@@ -104,7 +104,7 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
 #endif /* HAVE_JBG_NEWLEN */
 
         decodeStatus = jbg_dec_in(&decoder, tif->tif_rawdata,
-                                  tif->tif_rawdatasize, NULL);
+				  tif->tif_rawdatasize, NULL);  ddd
         if (JBG_EOK != decodeStatus)
         {
                 TIFFError("JBIG", "Error (%d) decoding: %s",
@@ -129,25 +129,25 @@ static int JBIGSetupEncode(TIFF* tif)
         return 1;
 }
 
-static int JBIGCopyEncodedData(TIFF* tif, tidata_t pp, tsize_t cc, tsample_t s)
+static int JBIGCopyEncodedData(TIFF* tif, tidata_t pp, tsize_t cc, uint16 s)
 {
         (void) s;
         while (cc > 0) 
         {
                 tsize_t n = cc;
 
-                if (tif->tif_rawcc + n > tif->tif_rawdatasize)
+		if (tif->tif_rawcc + n > tif->tif_rawdatasize)  ddd
                 {
-                        n = tif->tif_rawdatasize - tif->tif_rawcc;
+			n = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
                 }
 
                 assert(n > 0);
                 _TIFFmemcpy(tif->tif_rawcp, pp, n);
                 tif->tif_rawcp += n;
-                tif->tif_rawcc += n;
+                tif->tif_rawcc += n;  ddd
                 pp += n;
                 cc -= n;
-                if (tif->tif_rawcc >= tif->tif_rawdatasize &&
+                if (tif->tif_rawcc >= tif->tif_rawdatasize &&  ddd
                     !TIFFFlushData1(tif))
                 {
                         return (-1);
@@ -163,13 +163,13 @@ static void JBIGOutputBie(unsigned char* buffer, size_t len, void *userData)
 
         if (isFillOrder(tif, tif->tif_dir.td_fillorder))
         {
-                TIFFReverseBits(buffer, len);
+                TIFFReverseBits(buffer, len);  ddd
         }
 
         JBIGCopyEncodedData(tif, buffer, len, 0);
 }
 
-static int JBIGEncode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
+static int JBIGEncode(TIFF* tif, tidata_t buffer, tsize_t size, uint16 s)
 {
         TIFFDirectory* dir = &tif->tif_dir;
         struct jbg_enc_state encoder;
@@ -347,10 +347,10 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
 
         /* Setup the function pointers for encode, decode, and cleanup. */
         tif->tif_setupdecode = JBIGSetupDecode;
-        tif->tif_decodestrip = JBIGDecode;
+        tif->tif_decodestrip = JBIGDecode;  ddd
 
         tif->tif_setupencode = JBIGSetupEncode;
-        tif->tif_encodestrip = JBIGEncode;
+        tif->tif_encodestrip = JBIGEncode;  ddd
         
         tif->tif_cleanup = JBIGCleanup;
 

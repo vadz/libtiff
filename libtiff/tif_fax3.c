@@ -126,6 +126,7 @@ typedef struct {
 /*
  * Load any state that may be changed during decoding.
  */
+ ddd
 #define	CACHE_STATE(tif, sp) do {					\
     BitAcc = sp->data;							\
     BitsAvail = sp->bit;						\
@@ -136,6 +137,7 @@ typedef struct {
 /*
  * Save state possibly changed during decoding.
  */
+ ddd
 #define	UNCACHE_STATE(tif, sp) do {					\
     sp->bit = BitsAvail;						\
     sp->data = BitAcc;							\
@@ -148,7 +150,7 @@ typedef struct {
  * Setup state for decoding a strip.
  */
 static int
-Fax3PreDecode(TIFF* tif, tsample_t s)
+Fax3PreDecode(TIFF* tif, uint16 s)
 {
 	Fax3CodecState* sp = DecoderState(tif);
 
@@ -230,7 +232,7 @@ Fax3PrematureEOF(const char* module, TIFF* tif, uint32 line, uint32 a0)
  * Decode the requested amount of G3 1D-encoded data.
  */
 static int
-Fax3Decode1D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
+Fax3Decode1D(TIFF* tif, tidata_t buf, tsize_t occ, uint16 s)
 {
 	DECLARE_STATE(tif, sp, "Fax3Decode1D");
 
@@ -269,7 +271,7 @@ Fax3Decode1D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
  * Decode the requested amount of G3 2D-encoded data.
  */
 static int
-Fax3Decode2D(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
+Fax3Decode2D(TIFF* tif, tidata_t buf, tsize_t occ, uint16 s)
 {
 	DECLARE_STATE_2D(tif, sp, "Fax3Decode2D");
 	int is1D;			/* current line is 1d/2d-encoded */
@@ -477,7 +479,7 @@ Fax3SetupState(TIFF* tif)
 	 * Calculate the scanline/tile widths.
 	 */
 	if (isTiled(tif)) {
-		rowbytes = TIFFTileRowSize(tif);
+		rowbytes = TIFFTileRowSize(tif);  ddd
 		rowpixels = td->td_tilewidth;
 	} else {
 		rowbytes = TIFFScanlineSize(tif);  ddd
@@ -506,9 +508,9 @@ Fax3SetupState(TIFF* tif)
 		dsp->refruns = NULL;
 	if (td->td_compression == COMPRESSION_CCITTFAX3
 	    && is2DEncoding(dsp)) {	/* NB: default is 1D routine */
-		tif->tif_decoderow = Fax3Decode2D;
-		tif->tif_decodestrip = Fax3Decode2D;
-		tif->tif_decodetile = Fax3Decode2D;
+		tif->tif_decoderow = Fax3Decode2D;  ddd
+		tif->tif_decodestrip = Fax3Decode2D;  ddd
+		tif->tif_decodetile = Fax3Decode2D;  ddd
 	}
 
 	if (needsRefLine) {		/* 2d encoding */
@@ -537,6 +539,7 @@ Fax3SetupState(TIFF* tif)
  * CCITT Group 3 FAX Encoding.
  */
 
+ ddd
 #define	Fax3FlushBits(tif, sp) {				\
 	if ((tif)->tif_rawcc >= (tif)->tif_rawdatasize)		\
 		(void) TIFFFlushData1(tif);			\
@@ -544,6 +547,7 @@ Fax3SetupState(TIFF* tif)
 	(tif)->tif_rawcc++;					\
 	(sp)->data = 0, (sp)->bit = 8;				\
 }
+ddd
 #define	_FlushBits(tif) {					\
 	if ((tif)->tif_rawcc >= (tif)->tif_rawdatasize)		\
 		(void) TIFFFlushData1(tif);			\
@@ -686,7 +690,7 @@ Fax3PutEOL(TIFF* tif)
  * Reset encoding state at the start of a strip.
  */
 static int
-Fax3PreEncode(TIFF* tif, tsample_t s)
+Fax3PreEncode(TIFF* tif, uint16 s)
 {
 	Fax3CodecState* sp = EncoderState(tif);
 
@@ -1007,7 +1011,7 @@ Fax3Encode2DRow(TIFF* tif, unsigned char* bp, unsigned char* rp, uint32 bits)
  * Encode a buffer of pixels.
  */
 static int
-Fax3Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+Fax3Encode(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	Fax3CodecState* sp = EncoderState(tif);
 
@@ -1350,15 +1354,15 @@ InitCCITTFax3(TIFF* tif)
 	 */
 	tif->tif_setupdecode = Fax3SetupState;
 	tif->tif_predecode = Fax3PreDecode;
-	tif->tif_decoderow = Fax3Decode1D;
-	tif->tif_decodestrip = Fax3Decode1D;
-	tif->tif_decodetile = Fax3Decode1D;
+	tif->tif_decoderow = Fax3Decode1D;  ddd
+	tif->tif_decodestrip = Fax3Decode1D;  ddd
+	tif->tif_decodetile = Fax3Decode1D;  ddd
 	tif->tif_setupencode = Fax3SetupState;
 	tif->tif_preencode = Fax3PreEncode;
 	tif->tif_postencode = Fax3PostEncode;
-	tif->tif_encoderow = Fax3Encode;
-	tif->tif_encodestrip = Fax3Encode;
-	tif->tif_encodetile = Fax3Encode;
+	tif->tif_encoderow = Fax3Encode;  ddd
+	tif->tif_encodestrip = Fax3Encode;  ddd
+	tif->tif_encodetile = Fax3Encode;  ddd
 	tif->tif_close = Fax3Close;
 	tif->tif_cleanup = Fax3Cleanup;
 
@@ -1390,7 +1394,7 @@ TIFFInitCCITTFax3(TIFF* tif, int scheme)
  * Decode the requested amount of G4-encoded data.
  */
 static int
-Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
+Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, uint16 s)
 {
 	DECLARE_STATE_2D(tif, sp, "Fax4Decode");
 
@@ -1438,7 +1442,7 @@ Fax4Decode(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
  * Encode the requested amount of data.
  */
 static int
-Fax4Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
+Fax4Encode(TIFF* tif, tidata_t bp, tsize_t cc, uint16 s)
 {
 	Fax3CodecState *sp = EncoderState(tif);
 
@@ -1473,12 +1477,12 @@ TIFFInitCCITTFax4(TIFF* tif, int scheme)
 	if (InitCCITTFax3(tif)) {		/* reuse G3 support */
 		_TIFFMergeFieldInfo(tif, fax4FieldInfo, N(fax4FieldInfo));
 
-		tif->tif_decoderow = Fax4Decode;
-		tif->tif_decodestrip = Fax4Decode;
-		tif->tif_decodetile = Fax4Decode;
-		tif->tif_encoderow = Fax4Encode;
-		tif->tif_encodestrip = Fax4Encode;
-		tif->tif_encodetile = Fax4Encode;
+		tif->tif_decoderow = Fax4Decode;  ddd
+		tif->tif_decodestrip = Fax4Decode;  ddd
+		tif->tif_decodetile = Fax4Decode;  ddd
+		tif->tif_encoderow = Fax4Encode;  ddd
+		tif->tif_encodestrip = Fax4Encode;  ddd
+		tif->tif_encodetile = Fax4Encode;  ddd
 		tif->tif_postencode = Fax4PostEncode;
 		/*
 		 * Suppress RTC at the end of each strip.
@@ -1497,7 +1501,7 @@ TIFFInitCCITTFax4(TIFF* tif, int scheme)
  * Decode the requested amount of RLE-encoded data.
  */
 static int
-Fax3DecodeRLE(TIFF* tif, tidata_t buf, tsize_t occ, tsample_t s)
+Fax3DecodeRLE(TIFF* tif, tidata_t buf, tsize_t occ, uint16 s)
 {
 	DECLARE_STATE(tif, sp, "Fax3DecodeRLE");
 	int mode = sp->b.mode;
@@ -1546,9 +1550,9 @@ TIFFInitCCITTRLE(TIFF* tif, int scheme)
 {
 	(void) scheme;
 	if (InitCCITTFax3(tif)) {		/* reuse G3 support */
-		tif->tif_decoderow = Fax3DecodeRLE;
-		tif->tif_decodestrip = Fax3DecodeRLE;
-		tif->tif_decodetile = Fax3DecodeRLE;
+		tif->tif_decoderow = Fax3DecodeRLE;  ddd
+		tif->tif_decodestrip = Fax3DecodeRLE;  ddd
+		tif->tif_decodetile = Fax3DecodeRLE;  ddd
 		/*
 		 * Suppress RTC+EOLs when encoding and byte-align data.
 		 */
@@ -1563,9 +1567,9 @@ TIFFInitCCITTRLEW(TIFF* tif, int scheme)
 {
 	(void) scheme;
 	if (InitCCITTFax3(tif)) {		/* reuse G3 support */
-		tif->tif_decoderow = Fax3DecodeRLE;
-		tif->tif_decodestrip = Fax3DecodeRLE;
-		tif->tif_decodetile = Fax3DecodeRLE;
+		tif->tif_decoderow = Fax3DecodeRLE;  ddd
+		tif->tif_decodestrip = Fax3DecodeRLE;  ddd
+		tif->tif_decodetile = Fax3DecodeRLE;  ddd
 		/*
 		 * Suppress RTC+EOLs when encoding and word-align data.
 		 */
