@@ -66,8 +66,8 @@ typedef struct {
 	 * number of striles */
 	uint32  td_stripsperimage;  
 	uint32  td_nstrips;            /* size of offset & bytecount arrays */
-	uint64* td_stripoffset;
-	uint64* td_stripbytecount;
+	uint64_new* td_stripoffset;
+	uint64_new* td_stripbytecount;
 	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */  
 	uint16  td_nsubifd;
 	uint32* td_subifd;
@@ -177,16 +177,15 @@ typedef struct {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-extern	const TIFFFieldInfo *_TIFFGetFieldInfo(size_t *);
-extern	const TIFFFieldInfo *_TIFFGetExifFieldInfo(size_t *);
-extern	void _TIFFSetupFieldInfo(TIFF*, const TIFFFieldInfo[], size_t);
-extern	void _TIFFPrintFieldInfo(TIFF*, FILE*);
-extern	TIFFDataType _TIFFSampleToTagType(TIFF*);
-extern  const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo( TIFF *tif,
-							   ttag_t tag,
-							   TIFFDataType dt );
-extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo( TIFF *tif, ttag_t tag,
-                                                 TIFFDataType dt );
+extern const TIFFFieldInfo *_TIFFGetFieldInfo(size_t *);
+extern const TIFFFieldInfo *_TIFFGetExifFieldInfo(size_t *);
+extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfo unfo[], uint32 n);
+extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
+extern TIFFDataType _TIFFSampleToTagType(TIFF*);
+extern const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag,
+    TIFFDataType dt);
+extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo(TIFF *tif, uint32 tag,
+    TIFFDataType dt);
 
 #define _TIFFMergeFieldInfo	    TIFFMergeFieldInfo
 #define _TIFFFindFieldInfo	    TIFFFindFieldInfo

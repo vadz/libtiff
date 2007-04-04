@@ -79,14 +79,14 @@ static const int litTypeshift[13] = {
  * Dummy functions to fill the omitted client procedures.
  */
 static int
-_tiffDummyMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
+_tiffDummyMapProc(thandle_t fd, void** pbase, tmsize_t* psize)
 {
 	(void) fd; (void) pbase; (void) psize;
 	return (0);
 }
 
 static void
-_tiffDummyUnmapProc(thandle_t fd, tdata_t base, toff_t size)
+_tiffDummyUnmapProc(thandle_t fd, void* base, tmsize_t size)
 {
 	(void) fd; (void) base; (void) size;
 }
@@ -161,8 +161,9 @@ TIFFClientOpen(
 	assert(sizeof(int16)==2);
 	assert(sizeof(uint32)==4);
 	assert(sizeof(int32)==4);
-	assert(sizeof(uint64)==8);
-	assert(sizeof(int64)==8);
+	assert(sizeof(uint64_new)==8);
+	assert(sizeof(int64_new)==8);
+	assert(sizeof(tmsize_t)==sizeof(void*));
 
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
@@ -176,7 +177,7 @@ TIFFClientOpen(
 	tif->tif_name = (char *)tif + sizeof (TIFF);
 	strcpy(tif->tif_name, name);
 	tif->tif_mode = m &~ (O_CREAT|O_TRUNC);
-	tif->tif_curdir = (tdir_t) -1;		/* non-existent directory */
+	tif->tif_curdir = (uint16) -1;		/* non-existent directory */
 	tif->tif_curoff = 0;
 	tif->tif_curstrip = (uint32) -1;	/* invalid strip */
 	tif->tif_row = (uint32) -1;		/* read/write pre-increment */
@@ -365,7 +366,7 @@ TIFFClientOpen(
 		 * on Solaris.
 		 */
 		TIFFSeekFile( tif, 0, SEEK_SET );
-		if (!WriteOK(tif, &tif->tif_header, tif->tif_header_size)) {
+		if (!WriteOK(tif, &tif->tif_header, (tmsize_t)(tif->tif_header_size))) {
 			TIFFErrorExt(tif->tif_clientdata, name,
 				     "Error writing TIFF header");
 			goto bad;
@@ -486,10 +487,10 @@ TIFFClientOpen(
 		 * 'm' flag in the open mode (see above).
 		 */
 		if ((tif->tif_flags & TIFF_MAPPED) &&
-	!TIFFMapFileContents(tif, (tdata_t*) &tif->tif_base, &tif->tif_size))
+		    !TIFFMapFileContents(tif,(void**)(&tif->tif_base),&tif->tif_size))
 			tif->tif_flags &= ~TIFF_MAPPED;
 		if (TIFFReadDirectory(tif)) {
-			tif->tif_rawcc = (uint64)-1;
+			tif->tif_rawcc = (tmsize_t)-1;  
 			tif->tif_flags |= TIFF_BUFFERSETUP;
 			return (tif);
 		}
@@ -617,7 +618,7 @@ TIFFCurrentRow(TIFF* tif)
 /*
  * Return index of the current directory.
  */
-tdir_t
+uint16
 TIFFCurrentDirectory(TIFF* tif)
 {
 	return (tif->tif_curdir);
@@ -635,7 +636,7 @@ TIFFCurrentStrip(TIFF* tif)
 /*
  * Return current tile.
  */
-ttile_t
+uint32
 TIFFCurrentTile(TIFF* tif)
 {
 	return (tif->tif_curtile);

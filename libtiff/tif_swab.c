@@ -56,7 +56,7 @@ TIFFSwabLong(uint32* lp)
 
 #ifndef TIFFSwabLong8
 void
-TIFFSwabLong8(uint64* lp)
+TIFFSwabLong8(uint64_new* lp)
 {
 	register unsigned char* cp = (unsigned char*) lp;
 	unsigned char t;
@@ -70,7 +70,7 @@ TIFFSwabLong8(uint64* lp)
 
 #ifndef TIFFSwabArrayOfShort
 void
-TIFFSwabArrayOfShort(register uint16* wp, uint64 n)
+TIFFSwabArrayOfShort(register uint16* wp, tmsize_t n)
 {
 	register unsigned char* cp;
 	register unsigned char t;
@@ -86,7 +86,7 @@ TIFFSwabArrayOfShort(register uint16* wp, uint64 n)
 
 #ifndef TIFFSwabArrayOfTriples
 void
-TIFFSwabArrayOfTriples(register uint8* tp, uint64 n)
+TIFFSwabArrayOfTriples(register uint8* tp, tmsize_t n)  
 {
 	unsigned char* cp;
 	unsigned char t;
@@ -102,7 +102,7 @@ TIFFSwabArrayOfTriples(register uint8* tp, uint64 n)
 
 #ifndef TIFFSwabArrayOfLong
 void
-TIFFSwabArrayOfLong(register uint32* lp, uint64 n)
+TIFFSwabArrayOfLong(register uint32* lp, tmsize_t n)  
 {
 	register unsigned char *cp;
 	register unsigned char t;
@@ -119,7 +119,7 @@ TIFFSwabArrayOfLong(register uint32* lp, uint64 n)
 
 #ifndef TIFFSwabArrayOfLong8
 void
-TIFFSwabArrayOfLong8(register uint64* lp, register unsigned long n)
+TIFFSwabArrayOfLong8(register uint64_new* lp, tmsize_t n)  
 {
 	register unsigned char *cp;
 	register unsigned char t;
@@ -150,12 +150,12 @@ TIFFSwabDouble(double *dp)
 
 #ifndef TIFFSwabArrayOfDouble
 void
-TIFFSwabArrayOfDouble(double* dp, uint64 n)
+TIFFSwabArrayOfDouble(double* dp, tmsize_t n)  
 {
 	register uint32* lp = (uint32*) dp;
         register uint32 t;
 
-	TIFFSwabArrayOfLong(lp, n + n);
+	TIFFSwabArrayOfLong(lp, n + n);  
         while (n-- > 0) {
 		t = lp[0]; lp[0] = lp[1]; lp[1] = t;
                 lp += 2;
@@ -248,7 +248,7 @@ TIFFGetBitRevTable(int reversed)
 }
 
 void
-TIFFReverseBits(uint8* cp, uint64 n)
+TIFFReverseBits(uint8* cp, tmsize_t n)  
 {
 	for (; n > 8; n -= 8) {
 		cp[0] = TIFFBitRevTable[cp[0]];

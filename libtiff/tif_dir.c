@@ -46,7 +46,7 @@ setByteArray(void** vpp, void* vp, size_t nmemb, size_t elem_size)
 	if (*vpp)
 		_TIFFfree(*vpp), *vpp = 0;
 	if (vp) {
-		tsize_t	bytes = nmemb * elem_size;
+		tmsize_t bytes = nmemb * elem_size;
 		if (elem_size && bytes / elem_size == nmemb)
 			*vpp = (void*) _TIFFmalloc(bytes);
 		if (*vpp)
@@ -134,7 +134,7 @@ bad:
 }
 
 static int
-_TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
+_TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	static const char module[] = "_TIFFVSetField";
 
@@ -184,7 +184,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		 * setup.
 		 */
 		if (TIFFFieldSet(tif, FIELD_COMPRESSION)) {
-			if (td->td_compression == v)
+			if ((uint32)td->td_compression == v)
 				break;
 			(*tif->tif_cleanup)(tif);
 			tif->tif_flags &= ~TIFF_CODERSETUP;
@@ -482,7 +482,7 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 	    if (fip->field_type == TIFF_ASCII)
 		    _TIFFsetString((char **)&tv->value, va_arg(ap, char *));
 	    else {
-		tv->value = _TIFFCheckMalloc(tif, tv_size, tv->count,
+		tv->value = _TIFFCheckMalloc(tif, tv_size, tv->count,  
 					     "Tag Value");
 		if (!tv->value) {
 		    status = 0;
@@ -609,7 +609,7 @@ badvalue32:
  * on the format of the data that is written.
  */
 static int
-OkToChangeTag(TIFF* tif, ttag_t tag)
+OkToChangeTag(TIFF* tif, uint32 tag)
 {
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	if (!fip) {			/* unknown tag */
@@ -641,7 +641,7 @@ OkToChangeTag(TIFF* tif, ttag_t tag)
  * updated.
  */
 int
-TIFFSetField(TIFF* tif, ttag_t tag, ...)
+TIFFSetField(TIFF* tif, uint32 tag, ...)
 {
 	va_list ap;
 	int status;
@@ -659,14 +659,14 @@ TIFFSetField(TIFF* tif, ttag_t tag, ...)
  * top of the library.
  */
 int
-TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
+TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	return OkToChangeTag(tif, tag) ?
 	    (*tif->tif_tagmethods.vsetfield)(tif, tag, ap) : 0;
 }
 
 static int
-_TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
+_TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 {
     TIFFDirectory* td = &tif->tif_dir;
     int            ret_val = 1;
@@ -750,11 +750,11 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
             break;
 	case TIFFTAG_STRIPOFFSETS:
 	case TIFFTAG_TILEOFFSETS:
-	    *va_arg(ap, uint64**) = td->td_stripoffset;
+	    *va_arg(ap, uint64_new**) = td->td_stripoffset;
 	    break;
 	case TIFFTAG_STRIPBYTECOUNTS:
 	case TIFFTAG_TILEBYTECOUNTS:
-	    *va_arg(ap, uint64**) = td->td_stripbytecount;  
+	    *va_arg(ap, uint64_new**) = td->td_stripbytecount;  
             break;
 	case TIFFTAG_MATTEING:
             *va_arg(ap, uint16*) =
@@ -940,7 +940,7 @@ _TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
  * internal directory structure.
  */
 int
-TIFFGetField(TIFF* tif, ttag_t tag, ...)
+TIFFGetField(TIFF* tif, uint32 tag, ...)
 {
 	int status;
 	va_list ap;
@@ -958,7 +958,7 @@ TIFFGetField(TIFF* tif, ttag_t tag, ...)
  * top of the library.
  */
 int
-TIFFVGetField(TIFF* tif, ttag_t tag, va_list ap)
+TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	return (fip && (isPseudoTag(tag) || TIFFFieldSet(tif, fip->field_bit)) ?
@@ -1103,12 +1103,12 @@ TIFFDefaultDirectory(TIFF* tif)
 }
 
 static int
-TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
+TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 {
 	static const char module[] = "TIFFAdvanceDirectory";
 	if (isMapped(tif))
 	{
-		uint64 poff=*nextdir;
+		uint64_new poff=*nextdir;
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
 		{
 			uint16 dircount;
@@ -1119,34 +1119,34 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 				    tif->tif_name);
 				return (0);
 			}
-			_TIFFmemcpy(&dircount, tif->tif_base+poff, sizeof (uint16));
+			_TIFFmemcpy(&dircount, tif->tif_base+(tmsize_t)poff, sizeof (uint16));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabShort(&dircount);
 			poff+=sizeof (uint16)+dircount*12;
 			if (off != NULL)
 				*off = poff;
-			if (((uint64) (poff+sizeof (uint32))) > tif->tif_size)
+			if (((uint64_new) (poff+sizeof (uint32))) > tif->tif_size)
 			{
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
 				return (0);
 			}
-			_TIFFmemcpy(&nextdir32, tif->tif_base+poff, sizeof (uint32));
+			_TIFFmemcpy(&nextdir32, tif->tif_base+(tmsize_t)poff, sizeof (uint32));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong(&nextdir32);
 			*nextdir=nextdir32;
 		}
 		else
 		{
-			uint64 dircount64;
+			uint64_new dircount64;
 			uint16 dircount16;
-			if (poff+sizeof(uint64) > tif->tif_size)
+			if (poff+sizeof(uint64_new) > tif->tif_size)
 			{
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
 				    tif->tif_name);
 				return (0);
 			}
-			_TIFFmemcpy(&dircount64, tif->tif_base+poff, sizeof (uint64));
+			_TIFFmemcpy(&dircount64, tif->tif_base+(tmsize_t)poff, sizeof (uint64_new));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>0xFFFF)
@@ -1155,16 +1155,16 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 				return(0);
 			}
 			dircount16 = (uint16)dircount64;
-			poff+=sizeof (uint64)+dircount16*20;
+			poff+=sizeof (uint64_new)+dircount16*20;
 			if (off != NULL)
 				*off = poff;
-			if (((uint64) (poff+sizeof (uint64))) > tif->tif_size)
+			if (((uint64_new) (poff+sizeof (uint64_new))) > tif->tif_size)
 			{
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
 				return (0);
 			}
-			_TIFFmemcpy(nextdir, tif->tif_base+poff, sizeof (uint64));
+			_TIFFmemcpy(nextdir, tif->tif_base+(tmsize_t)poff, sizeof (uint64_new));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong8(nextdir);
 		}
@@ -1201,10 +1201,10 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 		}
 		else
 		{
-			uint64 dircount64;
+			uint64_new dircount64;
 			uint16 dircount16;
 			if (!SeekOK(tif, *nextdir) ||
-			    !ReadOK(tif, &dircount64, sizeof (uint64))) {
+			    !ReadOK(tif, &dircount64, sizeof (uint64_new))) {
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
 				    tif->tif_name);
 				return (0);
@@ -1223,7 +1223,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 			else
 				(void) TIFFSeekFile(tif,
 				    dircount16*20, SEEK_CUR);
-			if (!ReadOK(tif, nextdir, sizeof (uint64))) {
+			if (!ReadOK(tif, nextdir, sizeof (uint64_new))) {
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
 				return (0);
@@ -1238,11 +1238,11 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 /*
  * Count the number of directories in a file.
  */
-tdir_t
+uint16
 TIFFNumberOfDirectories(TIFF* tif)
 {
-	toff_t nextdir;
-	tdir_t n;
+	uint64_new nextdir;
+	uint16 n;
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
 	else
@@ -1258,10 +1258,10 @@ TIFFNumberOfDirectories(TIFF* tif)
  * NB: Directories are numbered starting at 0.
  */
 int
-TIFFSetDirectory(TIFF* tif, tdir_t dirn)
+TIFFSetDirectory(TIFF* tif, uint16 dirn)
 {
-	toff_t nextdir;
-	tdir_t n;
+	uint64_new nextdir;
+	uint16 n;
 
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
@@ -1326,12 +1326,12 @@ TIFFLastDirectory(TIFF* tif)
  * Unlink the specified directory from the directory chain.
  */
 int
-TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
+TIFFUnlinkDirectory(TIFF* tif, uint16 dirn)
 {
 	static const char module[] = "TIFFUnlinkDirectory";
-	toff_t nextdir;
-	toff_t off;
-	tdir_t n;
+	uint64_new nextdir;
+	uint64_new off;
+	uint16 n;
 
 	if (tif->tif_mode == O_RDONLY) {
 		TIFFErrorExt(tif->tif_clientdata, module,
@@ -1369,7 +1369,7 @@ TIFFUnlinkDirectory(TIFF* tif, tdir_t dirn)
 	 */
 	(void) TIFFSeekFile(tif, off, SEEK_SET);
 	if (tif->tif_flags & TIFF_SWAB)
-		TIFFSwabLong(&nextdir);
+		TIFFSwabLong8(&nextdir);
 	if (!WriteOK(tif, &nextdir, sizeof (uint32))) {
 		TIFFErrorExt(tif->tif_clientdata, module, "Error writing directory link");
 		return (0);

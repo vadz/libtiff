@@ -62,18 +62,15 @@ static int EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount
 static int EstimateStripByteCountsClassic(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
 static int EstimateStripByteCountsBig(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
 static void MissingRequired(TIFF*, const char*);
-static int TIFFCheckDirOffset(TIFF* tif, uint64 diroff);
+static int TIFFCheckDirOffset(TIFF* tif, uint64_new diroff);
 static int CheckDirCount(TIFF*, TIFFDirEntry*, uint32);
-static uint16 TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir, uint64* nextdiroff);
+static uint16 TIFFFetchDirectory(TIFF* tif, uint64_new diroff, TIFFDirEntry** pdir, uint64_new* nextdiroff);
 static uint32 TIFFFetchData(TIFF*, TIFFDirEntry*, char*);
 static uint32 TIFFFetchString(TIFF*, TIFFDirEntry*, char*);
 static float TIFFFetchRational(TIFF*, TIFFDirEntry*);
 static int TIFFFetchNormalTag(TIFF*, TIFFDirEntry*);
-static int TIFFFetchPerSampleShorts(TIFF*, TIFFDirEntry*, uint16*);
-static int TIFFFetchPerSampleLongs(TIFF*, TIFFDirEntry*, uint32*);
-static int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*);
 static int TIFFFetchShortArray(TIFF*, TIFFDirEntry*, uint16*);
-static int TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp);
+static int TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64_new** lpp);
 static int TIFFFetchRefBlackWhite(TIFF*, TIFFDirEntry*);
 static int TIFFFetchSubjectDistance(TIFF*, TIFFDirEntry*);
 static float TIFFFetchFloat(TIFF*, TIFFDirEntry*);
@@ -102,7 +99,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong(TIFF* tif, TIFFDirEntry* di
 static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* direntry, uint32* count, void** value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryByteArray(TIFF* tif, TIFFDirEntry* direntry, uint8** value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryShortArray(TIFF* tif, TIFFDirEntry* direntry, uint16** value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEntry* direntry, uint64** value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEntry* direntry, uint64_new** value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEntry* direntry, float** value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEntry* direntry, double** value);
 
@@ -115,40 +112,40 @@ static void TIFFReadDirEntryCheckedShort(TIFF* tif, TIFFDirEntry* direntry, uint
 static void TIFFReadDirEntryCheckedSshort(TIFF* tif, TIFFDirEntry* direntry, int16* value);
 static void TIFFReadDirEntryCheckedLong(TIFF* tif, TIFFDirEntry* direntry, uint32* value);
 static void TIFFReadDirEntryCheckedSlong(TIFF* tif, TIFFDirEntry* direntry, int32* value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirEntry* direntry, uint64* value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSlong8(TIFF* tif, TIFFDirEntry* direntry, int64* value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirEntry* direntry, uint64_new* value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSlong8(TIFF* tif, TIFFDirEntry* direntry, int64_new* value);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSbyte(int8 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteShort(uint16 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSshort(int16 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteLong(uint32 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSlong(int32 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteLong8(uint64 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSlong8(int64 value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteLong8(uint64_new value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSlong8(int64_new value);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSbyte(int8 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSshort(int16 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortLong(uint32 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSlong(int32 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortLong8(uint64 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSlong8(int64 value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortLong8(uint64_new value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSlong8(int64_new value);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSbyte(int8 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSshort(int16 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongLong8(uint64 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong8(int64 value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongLong8(uint64_new value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong8(int64_new value);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Sbyte(int8 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Sshort(int16 value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong(int32 value);
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64 value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64_new value);
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, uint32 size, void* dest);
-static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, char* module, char* tagname, int recover);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64_new offset, uint32 size, void* dest);
+static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, const char* module, const char* tagname, int recover);
 
 static void TIFFReadDirectoryCheckOrder(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
 static TIFFDirEntry* TIFFReadDirectoryFindEntry(TIFF* tif, TIFFDirEntry* dir, uint16 dircount, uint16 tagid);
-static void TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint16* fii);
+static void TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint32* fii);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryShort(TIFF* tif, TIFFDirEntry* direntry, uint16* value)
 {
@@ -209,7 +206,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShort(TIFF* tif, TIFFDirEntry* d
 			}
 		case TIFF_LONG8:
 			{
-				uint64 m;
+				uint64_new m;
 				err=TIFFReadDirEntryCheckedLong8(tif,direntry,&m);
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
@@ -221,7 +218,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShort(TIFF* tif, TIFFDirEntry* d
 			}
 		case TIFF_SLONG8:
 			{
-				int64 m;
+				int64_new m;
 				err=TIFFReadDirEntryCheckedSlong8(tif,direntry,&m);
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
@@ -292,7 +289,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong(TIFF* tif, TIFFDirEntry* di
 			}
 		case TIFF_LONG8:
 			{
-				uint64 m;
+				uint64_new m;
 				err=TIFFReadDirEntryCheckedLong8(tif,direntry,&m);
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
@@ -304,7 +301,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong(TIFF* tif, TIFFDirEntry* di
 			}
 		case TIFF_SLONG8:
 			{
-				int64 m;
+				int64_new m;
 				err=TIFFReadDirEntryCheckedSlong8(tif,direntry,&m);
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
@@ -330,7 +327,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		*value=0;
 		return(TIFFReadDirEntryErrOk);
 	}
-	if ((uint64)(4*1024*1024/typesize)<direntry->tdir_count)
+	if ((uint64_new)(4*1024*1024/typesize)<direntry->tdir_count)
 		return(TIFFReadDirEntryErrSizesan);
 	*count=(uint32)direntry->tdir_count;
 	datasize=(*count)*typesize;
@@ -348,7 +345,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 			offset=direntry->tdir_offset;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong(&offset);
-			err=TIFFReadDirEntryData(tif,(uint64)offset,datasize,data);
+			err=TIFFReadDirEntryData(tif,(uint64_new)offset,datasize,data);
 			if (err!=TIFFReadDirEntryErrOk)
 			{
 				_TIFFfree(data);
@@ -363,7 +360,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		else
 		{
 			enum TIFFReadDirEntryErr err;
-			uint64 offset;
+			uint64_new offset;
 			offset=direntry->tdir_offset;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong8(&offset);
@@ -512,10 +509,10 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryByteArray(TIFF* tif, TIFFDirEntr
 			break;
 		case TIFF_LONG8:
 			{
-				uint64* ma;
+				uint64_new* ma;
 				uint8* mb;
 				uint32 n;
-				ma=(uint64*)origdata;
+				ma=(uint64_new*)origdata;
 				mb=(uint8*)data;
 				for (n=0; n<count; n++)
 				{
@@ -530,15 +527,15 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryByteArray(TIFF* tif, TIFFDirEntr
 			break;
 		case TIFF_SLONG8:
 			{
-				int64* ma;
+				int64_new* ma;
 				uint8* mb;
 				uint32 n;
-				ma=(int64*)origdata;
+				ma=(int64_new*)origdata;
 				mb=(uint8*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
-						TIFFSwabLong8((uint64*)ma);
+						TIFFSwabLong8((uint64_new*)ma);
 					err=TIFFReadDirEntryCheckRangeByteSlong8(*ma);
 					if (err!=TIFFReadDirEntryErrOk)
 						break;
@@ -585,7 +582,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShortArray(TIFF* tif, TIFFDirEnt
 		case TIFF_SHORT:
 			*value=(uint16*)origdata;
 			if (tif->tif_flags&TIFF_SWAB)
-				TIFFSwabArrayOfShort(*value,count);
+				TIFFSwabArrayOfShort(*value,count);  
 			return(TIFFReadDirEntryErrOk);
 		case TIFF_SSHORT:
 			{
@@ -681,10 +678,10 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShortArray(TIFF* tif, TIFFDirEnt
 			break;
 		case TIFF_LONG8:
 			{
-				uint64* ma;
+				uint64_new* ma;
 				uint16* mb;
 				uint32 n;
-				ma=(uint64*)origdata;
+				ma=(uint64_new*)origdata;
 				mb=(uint16*)data;
 				for (n=0; n<count; n++)
 				{
@@ -699,15 +696,15 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShortArray(TIFF* tif, TIFFDirEnt
 			break;
 		case TIFF_SLONG8:
 			{
-				int64* ma;
+				int64_new* ma;
 				uint16* mb;
 				uint32 n;
-				ma=(int64*)origdata;
+				ma=(int64_new*)origdata;
 				mb=(uint16*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
-						TIFFSwabLong8((uint64*)ma);
+						TIFFSwabLong8((uint64_new*)ma);
 					err=TIFFReadDirEntryCheckRangeShortSlong8(*ma);
 					if (err!=TIFFReadDirEntryErrOk)
 						break;
@@ -726,12 +723,12 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShortArray(TIFF* tif, TIFFDirEnt
 	return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEntry* direntry, uint64** value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEntry* direntry, uint64_new** value)
 {
 	enum TIFFReadDirEntryErr err;
 	uint32 count;
 	void* origdata;
-	uint64* data;
+	uint64_new* data;
 	switch (direntry->tdir_type)
 	{
 		case TIFF_BYTE:
@@ -752,19 +749,19 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 	switch (direntry->tdir_type)
 	{
 		case TIFF_LONG8:
-			*value=(uint64*)origdata;
+			*value=(uint64_new*)origdata;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabArrayOfLong8(*value,count);
 			return(TIFFReadDirEntryErrOk);
 		case TIFF_SLONG8:
 			{
-				int64* m;
+				int64_new* m;
 				uint32 n;
-				m=(int64*)origdata;
+				m=(int64_new*)origdata;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
-						TIFFSwabLong8((uint64*)m);
+						TIFFSwabLong8((uint64_new*)m);
 					err=TIFFReadDirEntryCheckRangeLong8Slong8(*m);
 					if (err!=TIFFReadDirEntryErrOk)
 					{
@@ -773,11 +770,11 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 					}
 					m++;
 				}
-				*value=(uint64*)origdata;
+				*value=(uint64_new*)origdata;
 				return(TIFFReadDirEntryErrOk);
 			}
 	}
-	data=(uint64*)_TIFFmalloc(count*8);
+	data=(uint64_new*)_TIFFmalloc(count*8);
 	if (data==0)
 	{
 		_TIFFfree(origdata);
@@ -788,52 +785,52 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 		case TIFF_BYTE:
 			{
 				uint8* ma;
-				uint64* mb;
+				uint64_new* mb;
 				uint32 n;
 				ma=(uint8*)origdata;
-				mb=(uint64*)data;
+				mb=(uint64_new*)data;
 				for (n=0; n<count; n++)
-					*mb++=(uint64)(*ma++);
+					*mb++=(uint64_new)(*ma++);
 			}
 			break;
 		case TIFF_SBYTE:
 			{
 				int8* ma;
-				uint64* mb;
+				uint64_new* mb;
 				uint32 n;
 				ma=(int8*)origdata;
-				mb=(uint64*)data;
+				mb=(uint64_new*)data;
 				for (n=0; n<count; n++)
 				{
 					err=TIFFReadDirEntryCheckRangeLong8Sbyte(*ma);
 					if (err!=TIFFReadDirEntryErrOk)
 						break;
-					*mb++=(uint64)(*ma++);
+					*mb++=(uint64_new)(*ma++);
 				}
 			}
 			break;
 		case TIFF_SHORT:
 			{
 				uint16* ma;
-				uint64* mb;
+				uint64_new* mb;
 				uint32 n;
 				ma=(uint16*)origdata;
-				mb=(uint64*)data;
+				mb=(uint64_new*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
 						TIFFSwabShort(ma);
-					*mb++=(uint64)(*ma++);
+					*mb++=(uint64_new)(*ma++);
 				}
 			}
 			break;
 		case TIFF_SSHORT:
 			{
 				int16* ma;
-				uint64* mb;
+				uint64_new* mb;
 				uint32 n;
 				ma=(int16*)origdata;
-				mb=(uint64*)data;
+				mb=(uint64_new*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
@@ -841,32 +838,32 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 					err=TIFFReadDirEntryCheckRangeLong8Sshort(*ma);
 					if (err!=TIFFReadDirEntryErrOk)
 						break;
-					*mb++=(uint64)(*ma++);
+					*mb++=(uint64_new)(*ma++);
 				}
 			}
 			break;
 		case TIFF_LONG:
 			{
 				uint32* ma;
-				uint64* mb;
+				uint64_new* mb;
 				uint32 n;
 				ma=(uint32*)origdata;
-				mb=(uint64*)data;
+				mb=(uint64_new*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
 						TIFFSwabLong(ma);
-					*mb++=(uint64)(*ma++);
+					*mb++=(uint64_new)(*ma++);
 				}
 			}
 			break;
 		case TIFF_SLONG:
 			{
 				int32* ma;
-				uint64* mb;
+				uint64_new* mb;
 				uint32 n;
 				ma=(int32*)origdata;
-				mb=(uint64*)data;
+				mb=(uint64_new*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
@@ -874,7 +871,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 					err=TIFFReadDirEntryCheckRangeLong8Slong(*ma);
 					if (err!=TIFFReadDirEntryErrOk)
 						break;
-					*mb++=(uint64)(*ma++);
+					*mb++=(uint64_new)(*ma++);
 				}
 			}
 			break;
@@ -894,7 +891,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 	enum TIFFReadDirEntryErr err;
 	uint32 count;
 	void* origdata;
-	double* data;
+	float* data;
 	switch (direntry->tdir_type)
 	{
 		case TIFF_BYTE:
@@ -920,7 +917,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 	{
 		case TIFF_FLOAT:
 			if (tif->tif_flags&TIFF_SWAB)
-				TIFFSwabArrayOfLong((uint32*)origdata,count);
+				TIFFSwabArrayOfLong((uint32*)origdata,count);  
 			TIFFCvtIEEEDoubleToNative(tif,count,(float*)origdata);
 			*value=(float*)origdata;
 			return(TIFFReadDirEntryErrOk);
@@ -1017,10 +1014,10 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 			break;
 		case TIFF_LONG8:
 			{
-				uint64* ma;
+				uint64_new* ma;
 				float* mb;
 				uint32 n;
-				ma=(uint64*)origdata;
+				ma=(uint64_new*)origdata;
 				mb=(float*)data;
 				for (n=0; n<count; n++)
 				{
@@ -1032,15 +1029,15 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 			break;
 		case TIFF_SLONG8:
 			{
-				int64* ma;
+				int64_new* ma;
 				float* mb;
 				uint32 n;
-				ma=(int64*)origdata;
+				ma=(int64_new*)origdata;
 				mb=(float*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
-						TIFFSwabLong8((uint64*)ma);
+						TIFFSwabLong8((uint64_new*)ma);
 					*mb++=(float)(*ma++);
 				}
 			}
@@ -1099,7 +1096,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 				float* mb;
 				uint32 n;
 				if (tif->tif_flags&TIFF_SWAB)
-					TIFFSwabArrayOfLong8((uint64*)origdata,count);
+					TIFFSwabArrayOfLong8((uint64_new*)origdata,count);
 				TIFFCvtIEEEDoubleToNative(tif,count,(double*)origdata);
 				ma=(double*)origdata;
 				mb=(float*)data;
@@ -1149,7 +1146,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEn
 	{
 		case TIFF_DOUBLE:
 			if (tif->tif_flags&TIFF_SWAB)
-				TIFFSwabArrayOfLong8((uint64*)origdata,count);
+				TIFFSwabArrayOfLong8((uint64_new*)origdata,count);
 			TIFFCvtIEEEDoubleToNative(tif,count,(double*)origdata);
 			*value=(double*)origdata;
 			return(TIFFReadDirEntryErrOk);
@@ -1246,10 +1243,10 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEn
 			break;
 		case TIFF_LONG8:
 			{
-				uint64* ma;
+				uint64_new* ma;
 				double* mb;
 				uint32 n;
-				ma=(uint64*)origdata;
+				ma=(uint64_new*)origdata;
 				mb=(double*)data;
 				for (n=0; n<count; n++)
 				{
@@ -1261,15 +1258,15 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEn
 			break;
 		case TIFF_SLONG8:
 			{
-				int64* ma;
+				int64_new* ma;
 				double* mb;
 				uint32 n;
-				ma=(int64*)origdata;
+				ma=(int64_new*)origdata;
 				mb=(double*)data;
 				for (n=0; n<count; n++)
 				{
 					if (tif->tif_flags&TIFF_SWAB)
-						TIFFSwabLong8((uint64*)ma);
+						TIFFSwabLong8((uint64_new*)ma);
 					*mb++=(double)(*ma++);
 				}
 			}
@@ -1353,7 +1350,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleShort(TIFF* tif, TIFFDi
 	uint16* m;
 	uint16* na;
 	uint16 nb;
-	if (direntry->tdir_count!=(uint64)tif->tif_dir.td_samplesperpixel)
+	if (direntry->tdir_count!=(uint64_new)tif->tif_dir.td_samplesperpixel)
 		return(TIFFReadDirEntryErrCount);
 	err=TIFFReadDirEntryShortArray(tif,direntry,&m);
 	if (err!=TIFFReadDirEntryErrOk)
@@ -1381,7 +1378,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleDouble(TIFF* tif, TIFFD
 	double* m;
 	double* na;
 	uint16 nb;
-	if (direntry->tdir_count!=(uint64)tif->tif_dir.td_samplesperpixel)
+	if (direntry->tdir_count!=(uint64_new)tif->tif_dir.td_samplesperpixel)
 		return(TIFFReadDirEntryErrCount);
 	err=TIFFReadDirEntryDoubleArray(tif,direntry,&m);
 	if (err!=TIFFReadDirEntryErrOk)
@@ -1441,7 +1438,7 @@ static void TIFFReadDirEntryCheckedSlong(TIFF* tif, TIFFDirEntry* direntry, int3
 		TIFFSwabLong((uint32*)value);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirEntry* direntry, uint64* value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirEntry* direntry, uint64_new* value)
 {
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
@@ -1461,7 +1458,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirE
 	return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSlong8(TIFF* tif, TIFFDirEntry* direntry, int64* value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSlong8(TIFF* tif, TIFFDirEntry* direntry, int64_new* value)
 {
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
@@ -1475,9 +1472,9 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSlong8(TIFF* tif, TIFFDir
 			return(err);
 	}
 	else
-		*value=*(int64*)(&direntry->tdir_offset);
+		*value=*(int64_new*)(&direntry->tdir_offset);
 	if (tif->tif_flags&TIFF_SWAB)
-		TIFFSwabLong8((uint64*)value);
+		TIFFSwabLong8((uint64_new*)value);
 	return(TIFFReadDirEntryErrOk);
 }
 
@@ -1521,7 +1518,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSlong(int32 value)
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteLong8(uint64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteLong8(uint64_new value)
 {
 	if (value>0xFF)
 		return(TIFFReadDirEntryErrRange);
@@ -1529,7 +1526,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteLong8(uint64 value
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSlong8(int64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeByteSlong8(int64_new value)
 {
 	if ((value<0)||(value>0xFF))
 		return(TIFFReadDirEntryErrRange);
@@ -1569,7 +1566,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSlong(int32 value
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortLong8(uint64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortLong8(uint64_new value)
 {
 	if (value>0xFFFF)
 		return(TIFFReadDirEntryErrRange);
@@ -1577,7 +1574,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortLong8(uint64 valu
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSlong8(int64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeShortSlong8(int64_new value)
 {
 	if ((value<0)||(value>0xFFFF))
 		return(TIFFReadDirEntryErrRange);
@@ -1601,7 +1598,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSshort(int16 value
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongLong8(uint64_new value)
 {
 	if (value>0xFFFFFFFF)
 		return(TIFFReadDirEntryErrRange);
@@ -1609,7 +1606,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongLong8(uint64 value
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong8(int64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong8(int64_new value)
 {
 	if ((value<0)||(value>0xFFFFFFFF))
 		return(TIFFReadDirEntryErrRange);
@@ -1641,7 +1638,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong(int32 value
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64 value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64_new value)
 {
 	if (value<0)
 		return(TIFFReadDirEntryErrRange);
@@ -1649,7 +1646,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64 valu
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, uint32 size, void* dest)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64_new offset, uint32 size, void* dest)
 {
 	if (!isMapped(tif)) {
 		if (!SeekOK(tif,offset))
@@ -1661,12 +1658,12 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, u
 		    (offset+size<size)||
 		    (offset+size>tif->tif_size))
 			return(TIFFReadDirEntryErrIo);
-		_TIFFmemcpy(dest,tif->tif_base+offset,size);
+		_TIFFmemcpy(dest,tif->tif_base+(tmsize_t)offset,size);
 	}
 	return(TIFFReadDirEntryErrOk);
 }
 
-static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, char* module, char* tagname, int recover)
+static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, const char* module, const char* tagname, int recover)
 {
 	if (!recover)
 	{
@@ -1707,7 +1704,7 @@ TIFFReadDirectory(TIFF* tif)
 	TIFFDirEntry* dp;
 	uint16 di;
 	const TIFFFieldInfo* fip;
-	uint16 fii;
+	uint32 fii;
 	tif->tif_diroff=tif->tif_nextdiroff;
 	if (!TIFFCheckDirOffset(tif,tif->tif_nextdiroff))
 		return 0;           /* last offset or bad offset (IFD looping) */
@@ -1792,7 +1789,7 @@ TIFFReadDirectory(TIFF* tif)
 		if (dp->tdir_tag!=IGNORE)
 		{
 			TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
-			if (fii==0xFFFF)
+			if (fii==(uint32)(-1))
 			{
 				TIFFWarningExt(tif->tif_clientdata,module,
 				    "Unknown field with tag %d (0x%x) encountered",
@@ -1801,7 +1798,7 @@ TIFFReadDirectory(TIFF* tif)
 				    _TIFFCreateAnonFieldInfo(tif,dp->tdir_tag,
 				    (TIFFDataType)dp->tdir_type),1);
 				TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
-				assert(fii!=0xFFFF);
+				assert(fii!=(uint32)(-1));
 			}
 			fip=tif->tif_fieldinfo[fii];
 			if (fip->field_bit==FIELD_IGNORE)
@@ -1813,7 +1810,7 @@ TIFFReadDirectory(TIFF* tif)
 				{
 					fii++;
 					if ((fii==tif->tif_nfields)||
-					    (tif->tif_fieldinfo[fii]->field_tag!=dp->tdir_tag))
+					    (tif->tif_fieldinfo[fii]->field_tag!=(uint32)dp->tdir_tag))
 					{
 						fii=0xFFFF;
 						break;
@@ -2014,7 +2011,7 @@ TIFFReadDirectory(TIFF* tif)
 					uint32 incrementpersample;
 					uint16* value;
 					countpersample=(1L<<tif->tif_dir.td_bitspersample);
-					if ((dp->tdir_tag==TIFFTAG_TRANSFERFUNCTION)&&(dp->tdir_count==(uint64)countpersample))
+					if ((dp->tdir_tag==TIFFTAG_TRANSFERFUNCTION)&&(dp->tdir_count==(uint64_new)countpersample))
 					{
 						countrequired=countpersample;
 						incrementpersample=0;
@@ -2024,7 +2021,7 @@ TIFFReadDirectory(TIFF* tif)
 						countrequired=3*countpersample;
 						incrementpersample=countpersample;
 					}
-					if (dp->tdir_count!=(uint64)countrequired)
+					if (dp->tdir_count!=(uint64_new)countrequired)
 						err=TIFFReadDirEntryErrCount;
 					else
 						err=TIFFReadDirEntryShortArray(tif,dp,&value);
@@ -2158,7 +2155,7 @@ TIFFReadDirectory(TIFF* tif)
 			if ((tif->tif_dir.td_planarconfig == PLANARCONFIG_CONTIG &&
 			    tif->tif_dir.td_nstrips > 1) ||
 			    (tif->tif_dir.td_planarconfig == PLANARCONFIG_SEPARATE &&
-			     tif->tif_dir.td_nstrips != tif->tif_dir.td_samplesperpixel)) {  
+			     tif->tif_dir.td_nstrips != (uint32)tif->tif_dir.td_samplesperpixel)) {
 			    MissingRequired(tif, "StripByteCounts");
 			    goto bad;
 			}
@@ -2187,7 +2184,7 @@ TIFFReadDirectory(TIFF* tif)
 		       tif->tif_dir.td_stripbytecount[0] > TIFFGetFileSize(tif) - tif->tif_dir.td_stripoffset[0]) || \
 		      (tif->tif_mode == O_RDONLY && \
 		       tif->tif_dir.td_compression == COMPRESSION_NONE && \
-		       tif->tif_dir.td_stripbytecount[0] < TIFFScanlineSize(tif) * tif->tif_dir.td_imagelength) )
+		       tif->tif_dir.td_stripbytecount[0] < TIFFScanlineSize64(tif) * tif->tif_dir.td_imagelength) )
 
 		} else if (tif->tif_dir.td_nstrips == 1
 			   && tif->tif_dir.td_stripoffset[0] != 0
@@ -2275,7 +2272,7 @@ TIFFReadDirectory(TIFF* tif)
 	tif->tif_curstrip = (uint32) -1;
 	tif->tif_col = (uint32) -1;
 	tif->tif_curtile = (uint32) -1;
-	tif->tif_tilesize = (uint64) -1;
+	tif->tif_tilesize = (tmsize_t) -1;
 
 	tif->tif_scanlinesize = TIFFScanlineSize(tif);
 	if (!tif->tif_scanlinesize) {
@@ -2339,22 +2336,22 @@ TIFFReadDirectoryFindEntry(TIFF* tif, TIFFDirEntry* dir, uint16 dircount, uint16
 }
 
 static void
-TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint16* fii)
+TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint32* fii)
 {
 	int32 ma,mb,mc;
 	ma=-1;
-	mc=tif->tif_nfields;
+	mc=(int32)tif->tif_nfields;
 	while (1)
 	{
 		if (ma+1==mc)
 		{
-			*fii=0xFFFF;
+			*fii=(uint32)(-1);
 			return;
 		}
 		mb=(ma+mc)/2;
-		if (tif->tif_fieldinfo[mb]->field_tag==tagid)
+		if (tif->tif_fieldinfo[mb]->field_tag==(uint32)tagid)
 			break;
-		if (tif->tif_fieldinfo[mb]->field_tag<tagid)
+		if (tif->tif_fieldinfo[mb]->field_tag<(uint32)tagid)
 			ma=mb;
 		else
 			mc=mb;
@@ -2363,7 +2360,7 @@ TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint16* fii)
 	{
 		if (mb==0)
 			break;
-		if (tif->tif_fieldinfo[mb-1]->field_tag!=tagid)
+		if (tif->tif_fieldinfo[mb-1]->field_tag!=(uint32)tagid)
 			break;
 		mb--;
 	}
@@ -2375,8 +2372,8 @@ TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint16* fii)
  * The code is very similar to TIFFReadDirectory().
  */
 int
-TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfo info[],
-    size_t n)
+TIFFReadCustomDirectory(TIFF* tif, uint64_new diroff, const TIFFFieldInfo info[],
+    uint32 n)
 {
 	static const char module[] = "TIFFReadCustomDirectory";
 	TIFFDirEntry* dir;
@@ -2384,7 +2381,7 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfo info[],
 	TIFFDirEntry* dp;
 	uint16 di;
 	const TIFFFieldInfo* fip;
-	uint16 fii;
+	uint32 fii;
 	_TIFFSetupFieldInfo(tif,info,n);
 	dircount=TIFFFetchDirectory(tif,diroff,&dir,NULL);
 	if (!dircount)
@@ -2419,7 +2416,7 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfo info[],
 			{
 				fii++;
 				if ((fii==tif->tif_nfields)||
-				    (tif->tif_fieldinfo[fii]->field_tag!=dp->tdir_tag))
+				    (tif->tif_fieldinfo[fii]->field_tag!=(uint32)dp->tdir_tag))
 				{
 					fii=0xFFFF;
 					break;
@@ -2469,9 +2466,9 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfo info[],
  * function to read it.
  */
 int
-TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
+TIFFReadEXIFDirectory(TIFF* tif, uint64_new diroff)
 {
-	size_t exifFieldInfoCount;
+	uint32 exifFieldInfoCount;
 	const TIFFFieldInfo *exifFieldInfo =
 		_TIFFGetExifFieldInfo(&exifFieldInfoCount);
 	return TIFFReadCustomDirectory(tif, diroff, exifFieldInfo,
@@ -2489,12 +2486,12 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 
 	if (td->td_stripbytecount)
 		_TIFFfree(td->td_stripbytecount);
-	td->td_stripbytecount = (uint64*)
-	    _TIFFCheckMalloc(tif, td->td_nstrips, sizeof (uint64),
+	td->td_stripbytecount = (uint64_new*)
+	    _TIFFCheckMalloc(tif, td->td_nstrips, sizeof (uint64_new),
 		"for \"StripByteCounts\" array");
 	if (td->td_compression != COMPRESSION_NONE) {
-		uint64 space;
-		uint64 filesize;
+		uint64_new space;
+		uint64_new filesize;
 		uint16 n;
 		filesize = TIFFGetFileSize(tif);
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
@@ -2505,7 +2502,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		for (dp = dir, n = dircount; n > 0; n--, dp++)
 		{
 			uint32 typewidth = TIFFDataWidth((TIFFDataType) dp->tdir_type);
-			uint64 datasize;
+			uint64_new datasize;
 			typewidth = TIFFDataWidth((TIFFDataType) dp->tdir_type);
 			if (typewidth == 0) {
 				TIFFErrorExt(tif->tif_clientdata, module,
@@ -2513,7 +2510,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 				    dp->tdir_type);
 				return -1;
 			}
-			datasize=(uint64)typewidth*dp->tdir_count;
+			datasize=(uint64_new)typewidth*dp->tdir_count;
 			if (!(tif->tif_flags&TIFF_BIGTIFF))
 			{
 				if (datasize<=4)
@@ -2542,12 +2539,12 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 		if (td->td_stripoffset[strip]+td->td_stripbytecount[strip] > filesize)
 			td->td_stripbytecount[strip] = filesize - td->td_stripoffset[strip];
 	} else if (isTiled(tif)) {
-		uint64 bytespertile = TIFFTileSize(tif);
+		uint64_new bytespertile = TIFFTileSize64(tif);
 
 		for (strip = 0; strip < td->td_nstrips; strip++)
 		    td->td_stripbytecount[strip] = bytespertile;
 	} else {
-		uint64 rowbytes = TIFFScanlineSize(tif);
+		uint64_new rowbytes = TIFFScanlineSize64(tif);
 		uint32 rowsperstrip = td->td_imagelength/td->td_stripsperimage;
 		for (strip = 0; strip < td->td_nstrips; strip++)
 			td->td_stripbytecount[strip] = rowbytes * rowsperstrip;
@@ -2575,7 +2572,7 @@ MissingRequired(TIFF* tif, const char* tagname)
  * seen directories and check every IFD offset against that list.
  */
 static int
-TIFFCheckDirOffset(TIFF* tif, uint64 diroff)
+TIFFCheckDirOffset(TIFF* tif, uint64_new diroff)
 {
 	uint16 n;
 
@@ -2590,17 +2587,14 @@ TIFFCheckDirOffset(TIFF* tif, uint64 diroff)
 	tif->tif_dirnumber++;
 
 	if (tif->tif_dirnumber > tif->tif_dirlistsize) {
-		uint64* new_dirlist;
+		uint64_new* new_dirlist;
 
 		/*
 		 * XXX: Reduce memory allocation granularity of the dirlist
 		 * array.
 		 */
-		new_dirlist = (uint64*)_TIFFCheckRealloc(tif,
-							  tif->tif_dirlist,
-							  tif->tif_dirnumber,
-							  2 * sizeof(uint64),
-							  "for IFD list");
+		new_dirlist = (uint64_new*)_TIFFCheckRealloc(tif, tif->tif_dirlist,
+		    tif->tif_dirnumber, 2 * sizeof(uint64_new), "for IFD list");
 		if (!new_dirlist)
 			return 0;
 		tif->tif_dirlistsize = 2 * tif->tif_dirnumber;
@@ -2619,13 +2613,13 @@ TIFFCheckDirOffset(TIFF* tif, uint64 diroff)
 static int
 CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 {
-	if ((uint64)count > dir->tdir_count) {
+	if ((uint64_new)count > dir->tdir_count) {
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 		    "incorrect count for field \"%s\" (%llu, expecting %lu); tag ignored",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
 		return (0);
-	} else if ((uint64)count < dir->tdir_count) {
+	} else if ((uint64_new)count < dir->tdir_count) {
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 		    "incorrect count for field \"%s\" (%llu, expecting %lu); tag trimmed",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
@@ -2641,8 +2635,8 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
  * number of fields in the directory or 0 if failed.
  */
 static uint16
-TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
-    uint64 *nextdiroff)
+TIFFFetchDirectory(TIFF* tif, uint64_new diroff, TIFFDirEntry** pdir,
+    uint64_new *nextdiroff)
 {
 	static const char module[] = "TIFFFetchDirectoryClassic";
 
@@ -2684,8 +2678,8 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 			}
 			dirsize = 12;
 		} else {
-			uint64 dircount64;
-			if (!ReadOK(tif, &dircount64, sizeof (uint64))) {
+			uint64_new dircount64;
+			if (!ReadOK(tif, &dircount64, sizeof (uint64_new))) {
 				TIFFErrorExt(tif->tif_clientdata, module,
 					"%s: Can not read TIFF directory count",
 					tif->tif_name);
@@ -2728,14 +2722,14 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 					TIFFSwabLong(&nextdiroff32);
 				*nextdiroff=nextdiroff32;
 			} else {
-				if (!ReadOK(tif, nextdiroff, sizeof(uint64)))
+				if (!ReadOK(tif, nextdiroff, sizeof(uint64_new)))
 					*nextdiroff = 0;
 				if (tif->tif_flags&TIFF_SWAB)
 					TIFFSwabLong8(nextdiroff);
 			}
 		}
 	} else {
-		toff_t off = tif->tif_diroff;
+		tmsize_t off = tif->tif_diroff;
 
 		/*
 		 * Check for integer overflow when validating the dir_off,
@@ -2771,18 +2765,18 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 		}
 		else
 		{
-			uint64 dircount64;
-			if (tif->tif_size < sizeof (uint64) ||
-			    off > tif->tif_size - sizeof(uint64)) {
+			uint64_new dircount64;
+			if (tif->tif_size < sizeof (uint64_new) ||
+			    off > tif->tif_size - sizeof(uint64_new)) {
 				TIFFErrorExt(tif->tif_clientdata, module,
 					"%s: Can not read TIFF directory count",
 					tif->tif_name);
 				return 0;
 			} else {
 				_TIFFmemcpy(&dircount64, tif->tif_base + off,
-					    sizeof(uint64));
+					    sizeof(uint64_new));
 			}
-			off += sizeof (uint64);
+			off += sizeof (uint64_new);
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>4096)
@@ -2794,7 +2788,7 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 			dircount16 = (uint16)dircount64;
 			dirsize = 20;
 		}
-		origdir = _TIFFCheckMalloc(tif, dircount16,
+		origdir = _TIFFCheckMalloc(tif, dircount16,  
 						dirsize,
 						"to read TIFF directory");
 		if (origdir == NULL)
@@ -2826,9 +2820,9 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 			}
 			else
 			{
-				if (off + sizeof (uint64) <= tif->tif_size) {
+				if (off + sizeof (uint64_new) <= tif->tif_size) {
 					_TIFFmemcpy(nextdiroff, tif->tif_base + off,
-						    sizeof (uint64));
+						    sizeof (uint64_new));
 				}
 				else
 					*nextdiroff = 0;
@@ -2861,19 +2855,19 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 		{
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong((uint32*)ma);
-			mb->tdir_count=(uint64)(*(uint32*)ma);
+			mb->tdir_count=(uint64_new)(*(uint32*)ma);
 			((uint32*)ma)++;
-			*(uint32*)(&mb->tdir_offset)=(uint64)(*(uint32*)ma);
+			*(uint32*)(&mb->tdir_offset)=(uint64_new)(*(uint32*)ma);
 			((uint32*)ma)++;
 		}
 		else
 		{
 			if (tif->tif_flags&TIFF_SWAB)
-				TIFFSwabLong8((uint64*)ma);
-			mb->tdir_count=*(uint64*)ma;
-			((uint64*)ma)++;
-			mb->tdir_offset=*(uint64*)ma;
-			((uint64*)ma)++;
+				TIFFSwabLong8((uint64_new*)ma);
+			mb->tdir_count=*(uint64_new*)ma;
+			((uint64_new*)ma)++;
+			mb->tdir_offset=*(uint64_new*)ma;
+			((uint64_new*)ma)++;
 		}
 		mb++;
 	}
@@ -2947,7 +2941,7 @@ TIFFFetchData(TIFF* tif, TIFFDirEntry* dir, char* cp)
 		case TIFF_LONG8:
 		case TIFF_SLONG8:
 		case TIFF_IFD8:
-			TIFFSwabArrayOfLong8((uint64*) cp, count);
+			TIFFSwabArrayOfLong8((uint64*) cp, count);  ddd
 		}
 	}
 	return (size);
@@ -3206,7 +3200,7 @@ TIFFFetchRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 	int ok = 0;
 	uint32* l;
 
-	l = (uint32*)_TIFFCheckMalloc(tif,
+	l = (uint32*)_TIFFCheckMalloc(tif,  ddd
 	    dir->tdir_count, TIFFDataWidth((TIFFDataType) dir->tdir_type),
 	    "to fetch array of rationals");
 	if (l) {
@@ -3375,7 +3369,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_SBYTE:
 				assert(0);
 				#ifdef NDEF
-				cp = (char *)_TIFFCheckMalloc(tif,
+				cp = (char *)_TIFFCheckMalloc(tif,  ddd
 				    dp->tdir_count, sizeof (uint8), mesg);
 				ok = cp && TIFFFetchByteArray(tif, dp, (uint8*) cp);
 				break;
@@ -3386,7 +3380,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_SSHORT:
 				assert(0);
 				#ifdef NDEF
-				cp = (char *)_TIFFCheckMalloc(tif,
+				cp = (char *)_TIFFCheckMalloc(tif,  ddd
 				    dp->tdir_count, sizeof (uint16), mesg);
 				ok = cp && TIFFFetchShortArray(tif, dp, (uint16*) cp);
 				break;
@@ -3395,7 +3389,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_SLONG:
 				assert(0);
 				#ifdef NDEF
-				cp = (char *)_TIFFCheckMalloc(tif,
+				cp = (char *)_TIFFCheckMalloc(tif,  ddd
 				    dp->tdir_count, sizeof (uint32), mesg);
 				ok = cp && TIFFFetchLongArray(tif, dp, (uint32*) cp);
 				break;
@@ -3404,7 +3398,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_SRATIONAL:
 				assert(0);
 				#ifdef NDEF
-				cp = (char *)_TIFFCheckMalloc(tif,
+				cp = (char *)_TIFFCheckMalloc(tif,  ddd
 				    dp->tdir_count, sizeof (float), mesg);
 				ok = cp && TIFFFetchRationalArray(tif, dp, (float*) cp);
 				break;
@@ -3412,7 +3406,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_FLOAT:
 				assert(0);
 				#ifdef NDEF
-				cp = (char *)_TIFFCheckMalloc(tif,
+				cp = (char *)_TIFFCheckMalloc(tif,  ddd
 				    dp->tdir_count, sizeof (float), mesg);
 				ok = cp && TIFFFetchFloatArray(tif, dp, (float*) cp);
 				break;
@@ -3420,7 +3414,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_DOUBLE:
 				assert(0);
 				#ifdef NDEF
-				cp = (char *)_TIFFCheckMalloc(tif,
+				cp = (char *)_TIFFCheckMalloc(tif,  ddd
 				    dp->tdir_count, sizeof (double), mesg);
 				ok = cp && TIFFFetchDoubleArray(tif, dp, (double*) cp);
 				break;
@@ -3541,180 +3535,35 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 	return (ok);
 }
 
-#define NITEMS(x) (sizeof (x) / sizeof (x[0]))
-/*
- * Fetch samples/pixel short values for 
- * the specified tag and verify that
- * all values are the same.
- */
-static int
-TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, uint16* pl)
-{
-	assert(0);
-	#ifdef NDEF
-	uint16 samples = tif->tif_dir.td_samplesperpixel;
-	int status = 0;
-	if (CheckDirCount(tif, dir, (uint32) samples)) {
-		uint16 buf[10];
-		uint16* v = buf;
-		uint64 count;
-		if (!(tif->tif_flags&TIFF_BIGTIFF))
-			count = dir->classic.tdir_count;
-		else
-			count = dir->big.tdir_count;
-		if (count > NITEMS(buf))
-			v = (uint16*) _TIFFCheckMalloc(tif, count, sizeof(uint16),
-			    "to fetch per-sample values");
-		if (v && TIFFFetchShortArray(tif, dir, v)) {
-			uint16 i;
-			uint16 check_count;
-			if ((uint64)samples<=count)
-				check_count=samples;
-			else
-				check_count=(uint16)count;
-			for (i=1; i<check_count; i++)
-				if (v[i] != v[0]) {
-					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-					    "Cannot handle different per-sample values for field \"%s\"",
-					    _TIFFFieldWithTag(tif, dir->common.tdir_tag)->field_name);
-					goto bad;
-				}
-			*pl = v[0];
-			status = 1;
-		}
-	bad:
-		if (v && v != buf)
-			_TIFFfree(v);
-	}
-	return (status);
-	#endif
-}
-
-/*
- * Fetch samples/pixel long values for
- * the specified tag and verify that
- * all values are the same.
- */
-static int
-TIFFFetchPerSampleLongs(TIFF* tif, TIFFDirEntry* dir, uint32* pl)
-{
-	assert(0);
-	#ifdef NDEF
-	uint16 samples = tif->tif_dir.td_samplesperpixel;
-	int status = 0;
-	if (CheckDirCount(tif, dir, (uint32) samples)) {
-		uint32 buf[10];
-		uint32* v = buf;
-		uint64 count;
-		if (!(tif->tif_flags&TIFF_BIGTIFF))
-			count = dir->classic.tdir_count;
-		else
-			count = dir->big.tdir_count;
-		if (count > NITEMS(buf))
-			v = (uint32*) _TIFFCheckMalloc(tif, count, sizeof(uint32),
-			    "to fetch per-sample values");
-		if (v && TIFFFetchLongArray(tif, dir, v)) {
-			uint16 i;
-			uint16 check_count;
-			if ((uint64)samples<=count)
-				check_count=samples;
-			else
-				check_count=(uint16)count;
-			for (i=1; i<check_count; i++)
-				if (v[i] != v[0]) {
-					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-					    "Cannot handle different per-sample values for field \"%s\"",
-					    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-					goto bad;
-				}
-			*pl = v[0];
-			status = 1;
-		}
-	bad:
-		if (v && v != buf)
-			_TIFFfree(v);
-	}
-	return (status);
-	#endif
-}
-
-/*
- * Fetch samples/pixel ANY values for the specified tag and verify that all
- * values are the same.
- */
-static int
-TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
-{
-	assert(0);
-	#ifdef NDEF
-	uint16 samples = tif->tif_dir.td_samplesperpixel;
-	int status = 0;
-	if (CheckDirCount(tif, dir, (uint32) samples)) {
-		double buf[10];
-		double* v = buf;
-		uint64 count;
-		if (!(tif->tif_flags&TIFF_BIGTIFF))
-			count = dir->classic.tdir_count;
-		else
-			count = dir->big.tdir_count;
-		if (count > NITEMS(buf))
-			v = (double*) _TIFFCheckMalloc(tif, count, sizeof(double),
-			    "to fetch per-sample values");
-		if (v && TIFFFetchAnyArray(tif, dir, v)) {
-			uint16 i;
-			uint16 check_count;
-			if ((uint64)samples<=count)
-				check_count=samples;
-			else
-				check_count=(uint16)count;
-			for (i=1; i<check_count; i++)
-				if (v[i] != v[0]) {
-					TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-					    "Cannot handle different per-sample values for field \"%s\"",
-					    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-					goto bad;
-				}
-			*pl = v[0];
-			status = 1;
-		}
-	bad:
-		if (v && v != buf)
-			_TIFFfree(v);
-	}
-	return (status);
-	#endif
-}
-#undef NITEMS
-
 /*
  * Fetch a set of offsets or lengths.
  * While this routine says "strips", in fact it's also used for tiles.
  */
 static int
-TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp)
+TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64_new** lpp)
 {
 	static const char module[] = "TIFFFetchStripThing";
 	enum TIFFReadDirEntryErr err;
-	uint64* data;
+	uint64_new* data;
 	err=TIFFReadDirEntryLong8Array(tif,dir,&data);
 	if (err!=TIFFReadDirEntryErrOk)
 	{
 		TIFFReadDirEntryOutputErr(tif,err,module,_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name,0);
 		return 0;
 	}
-	if (dir->tdir_count!=(uint64)nstrips)
+	if (dir->tdir_count!=(uint64_new)nstrips)
 	{
-		uint64* resizeddata;
-		resizeddata=(uint64*)_TIFFCheckMalloc(tif,nstrips,sizeof(uint64),"for strip array");
+		uint64_new* resizeddata;
+		resizeddata=(uint64_new*)_TIFFCheckMalloc(tif,nstrips,sizeof(uint64_new),"for strip array");  
 		if (resizeddata==0)
 			return 0;
-		if (dir->tdir_count<(uint64)nstrips)
+		if (dir->tdir_count<(uint64_new)nstrips)
 		{
-			_TIFFmemcpy(resizeddata,data,(uint32)dir->tdir_count*sizeof(uint64));
-			_TIFFmemset(resizeddata+(uint32)dir->tdir_count,0,(nstrips-(uint32)dir->tdir_count)*sizeof(uint64));
+			_TIFFmemcpy(resizeddata,data,(uint32)dir->tdir_count*sizeof(uint64_new));
+			_TIFFmemset(resizeddata+(uint32)dir->tdir_count,0,(nstrips-(uint32)dir->tdir_count)*sizeof(uint64_new));
 		}
 		else
-			_TIFFmemcpy(resizeddata,data,nstrips*sizeof(uint64));
+			_TIFFmemcpy(resizeddata,data,nstrips*sizeof(uint64_new));
 		_TIFFfree(data);
 		data=resizeddata;
 	}
@@ -3783,15 +3632,15 @@ static void
 ChopUpSingleUncompressedStrip(TIFF* tif)
 {
 	register TIFFDirectory *td = &tif->tif_dir;
-	uint64 bytecount = td->td_stripbytecount[0];
-	uint64 offset = td->td_stripoffset[0];
-	uint64 rowbytes = TIFFVTileSize(tif, 1), stripbytes;
+	uint64_new bytecount = td->td_stripbytecount[0];
+	uint64_new offset = td->td_stripoffset[0];
+	uint64_new rowbytes = TIFFVTileSize64(tif, 1), stripbytes;
 	uint32 strip;
-	uint64 nstrips64;
+	uint64_new nstrips64;
 	uint32 nstrips32;
 	uint32 rowsperstrip;
-	uint64* newcounts;
-	uint64* newoffsets;
+	uint64_new* newcounts;
+	uint64_new* newoffsets;
 
 	/*
 	 * Make the rows hold at least one scanline, but fill specified amount
@@ -3817,9 +3666,9 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	    return;
 	nstrips32 = (uint32)nstrips64;
 
-	newcounts = (uint64*) _TIFFCheckMalloc(tif, nstrips32, sizeof (uint64),
+	newcounts = (uint64_new*) _TIFFCheckMalloc(tif, nstrips32, sizeof (uint64_new),
 				"for chopped \"StripByteCounts\" array");
-	newoffsets = (uint64*) _TIFFCheckMalloc(tif, nstrips32, sizeof (uint64),
+	newoffsets = (uint64_new*) _TIFFCheckMalloc(tif, nstrips32, sizeof (uint64_new),
 				"for chopped \"StripOffsets\" array");
 	if (newcounts == NULL || newoffsets == NULL) {
 		/*

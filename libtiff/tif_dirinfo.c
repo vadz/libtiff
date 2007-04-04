@@ -95,6 +95,8 @@ tiffFieldInfo[] = {
       0,	0,	"StripOffsets" },
     { TIFFTAG_STRIPOFFSETS,	-1,-1,	TIFF_SHORT,	FIELD_STRIPOFFSETS,
       0,	0,	"StripOffsets" },
+    { TIFFTAG_STRIPOFFSETS,	-1,-1,	TIFF_LONG8,	FIELD_STRIPOFFSETS,
+      0,	0,	"StripOffsets" },
     { TIFFTAG_ORIENTATION,	 1, 1,	TIFF_SHORT,	FIELD_ORIENTATION,
       0,	0,	"Orientation" },
     { TIFFTAG_SAMPLESPERPIXEL,	 1, 1,	TIFF_SHORT,	FIELD_SAMPLESPERPIXEL,
@@ -106,6 +108,8 @@ tiffFieldInfo[] = {
     { TIFFTAG_STRIPBYTECOUNTS,	-1,-1,	TIFF_LONG,	FIELD_STRIPBYTECOUNTS,
       0,	0,	"StripByteCounts" },
     { TIFFTAG_STRIPBYTECOUNTS,	-1,-1,	TIFF_SHORT,	FIELD_STRIPBYTECOUNTS,
+      0,	0,	"StripByteCounts" },
+    { TIFFTAG_STRIPBYTECOUNTS,	-1,-1,	TIFF_LONG8,	FIELD_STRIPBYTECOUNTS,
       0,	0,	"StripByteCounts" },
     { TIFFTAG_MINSAMPLEVALUE,	-2,-1,	TIFF_SHORT,	FIELD_MINSAMPLEVALUE,
       1,	0,	"MinSampleValue" },
@@ -165,13 +169,21 @@ tiffFieldInfo[] = {
       0,	0,	"TileLength" },
     { TIFFTAG_TILEOFFSETS,	-1, 1,	TIFF_LONG,	FIELD_STRIPOFFSETS,
       0,	0,	"TileOffsets" },
+    { TIFFTAG_TILEOFFSETS,	-1, 1,	TIFF_LONG8,	FIELD_STRIPOFFSETS,
+      0,	0,	"TileOffsets" },
     { TIFFTAG_TILEBYTECOUNTS,	-1, 1,	TIFF_LONG,	FIELD_STRIPBYTECOUNTS,
       0,	0,	"TileByteCounts" },
     { TIFFTAG_TILEBYTECOUNTS,	-1, 1,	TIFF_SHORT,	FIELD_STRIPBYTECOUNTS,
       0,	0,	"TileByteCounts" },
+    { TIFFTAG_TILEBYTECOUNTS,	-1, 1,	TIFF_LONG8,	FIELD_STRIPBYTECOUNTS,
+      0,	0,	"TileByteCounts" },
     { TIFFTAG_SUBIFD,		-1,-1,	TIFF_IFD,	FIELD_SUBIFD,
       1,	1,	"SubIFD" },
     { TIFFTAG_SUBIFD,		-1,-1,	TIFF_LONG,	FIELD_SUBIFD,
+      1,	1,	"SubIFD" },
+    { TIFFTAG_SUBIFD,		-1,-1,	TIFF_IFD8,	FIELD_SUBIFD,
+      1,	1,	"SubIFD" },
+    { TIFFTAG_SUBIFD,		-1,-1,	TIFF_LONG8,	FIELD_SUBIFD,
       1,	1,	"SubIFD" },
     { TIFFTAG_INKSET,		 1, 1,	TIFF_SHORT,	FIELD_CUSTOM,
       0,	0,	"InkSet" },
@@ -261,16 +273,34 @@ tiffFieldInfo[] = {
       0,    1,   "Photoshop" },
     { TIFFTAG_EXIFIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"EXIFIFDOffset" },
+    { TIFFTAG_EXIFIFD,		1, 1,	TIFF_IFD,	FIELD_CUSTOM,
+      0,	0,	"EXIFIFDOffset" },
+    { TIFFTAG_EXIFIFD,		1, 1,	TIFF_LONG8,	FIELD_CUSTOM,
+      0,	0,	"EXIFIFDOffset" },
+    { TIFFTAG_EXIFIFD,		1, 1,	TIFF_IFD8,	FIELD_CUSTOM,
+      0,	0,	"EXIFIFDOffset" },
     { TIFFTAG_ICCPROFILE,	-3, -3,	TIFF_UNDEFINED,	FIELD_CUSTOM,
       0,	1,	"ICC Profile" },
     { TIFFTAG_GPSIFD,		1, 1,	TIFF_LONG,	FIELD_CUSTOM,
+      0,	0,	"GPSIFDOffset" },
+    { TIFFTAG_GPSIFD,		1, 1,	TIFF_IFD,	FIELD_CUSTOM,
+      0,	0,	"GPSIFDOffset" },
+    { TIFFTAG_GPSIFD,		1, 1,	TIFF_LONG8,	FIELD_CUSTOM,
+      0,	0,	"GPSIFDOffset" },
+    { TIFFTAG_GPSIFD,		1, 1,	TIFF_IFD8,	FIELD_CUSTOM,
       0,	0,	"GPSIFDOffset" },
     { TIFFTAG_STONITS,		 1, 1,	TIFF_DOUBLE,	FIELD_CUSTOM,
       0,	0,	"StoNits" },
     { TIFFTAG_INTEROPERABILITYIFD, 1, 1, TIFF_LONG,	FIELD_CUSTOM,
       0,	0,	"InteroperabilityIFDOffset" },
+    { TIFFTAG_INTEROPERABILITYIFD, 1, 1, TIFF_IFD,	FIELD_CUSTOM,
+      0,	0,	"InteroperabilityIFDOffset" },
+    { TIFFTAG_INTEROPERABILITYIFD, 1, 1, TIFF_LONG8,	FIELD_CUSTOM,
+      0,	0,	"InteroperabilityIFDOffset" },
+    { TIFFTAG_INTEROPERABILITYIFD, 1, 1, TIFF_IFD8,	FIELD_CUSTOM,
+      0,	0,	"InteroperabilityIFDOffset" },
 /* begin DNG tags */
-    { TIFFTAG_DNGVERSION,	4, 4,	TIFF_BYTE,	FIELD_CUSTOM, 
+    { TIFFTAG_DNGVERSION,	4, 4,	TIFF_BYTE,	FIELD_CUSTOM,
       0,	0,	"DNGVersion" },
     { TIFFTAG_DNGBACKWARDVERSION, 4, 4,	TIFF_BYTE,	FIELD_CUSTOM, 
       0,	0,	"DNGBackwardVersion" },
@@ -526,10 +556,10 @@ _TIFFGetExifFieldInfo(size_t *size)
 }
 
 void
-_TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfo info[], size_t n)
+_TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n)
 {
 	if (tif->tif_fieldinfo) {
-		size_t  i;
+		uint32 i;
 
 		for (i = 0; i < tif->tif_nfields; i++) 
 		{
@@ -569,10 +599,10 @@ tagNameCompare(const void* a, const void* b)
 }
 
 void
-_TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
+_TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n)
 {
 	TIFFFieldInfo** tp;
-	int i;
+	uint32 i;
 
         tif->tif_foundfield = NULL;
 
@@ -590,14 +620,14 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 		*tp++ = (TIFFFieldInfo*) (info + i);	/* XXX */
 
         /* Sort the field info by tag number */
-        qsort(tif->tif_fieldinfo, tif->tif_nfields += n,
+	qsort(tif->tif_fieldinfo, tif->tif_nfields += n,
 	      sizeof (TIFFFieldInfo*), tagCompare);
 }
 
 void
 _TIFFPrintFieldInfo(TIFF* tif, FILE* fd)
 {
-	size_t i;
+	uint32 i;
 
 	fprintf(fd, "%s: \n", tif->tif_name);
 	for (i = 0; i < tif->tif_nfields; i++) {
@@ -711,7 +741,7 @@ _TIFFSampleToTagType(TIFF* tif)
 }
 
 const TIFFFieldInfo*
-_TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
+_TIFFFindFieldInfo(TIFF* tif, uint32 tag, TIFFDataType dt)
 {
 	int i, n;
 
@@ -733,7 +763,7 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 						   sizeof(TIFFFieldInfo *), 
 						   tagCompare);
 	    return ret ? *ret : NULL;
-        } else for (i = 0, n = tif->tif_nfields; i < n; i++) {
+	} else for (i = 0, n = tif->tif_nfields; i < n; i++) { 
 		const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 		if (fip->field_tag == tag &&
 		    (dt == TIFF_ANY || fip->field_type == dt))
@@ -745,7 +775,7 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 const TIFFFieldInfo*
 _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 {
-	int i, n;
+	uint32 i, n;
 
 	if (tif->tif_foundfield
 	    && streq(tif->tif_foundfield->field_name, field_name)
@@ -753,31 +783,33 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 		return (tif->tif_foundfield);
 	/* NB: use sorted search (e.g. binary search) */
 	if(dt != TIFF_ANY) {
-            TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0};
+	    TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0};
 	    TIFFFieldInfo* pkey = &key;
 	    const TIFFFieldInfo **ret;
+	    size_t nfields;
 
-            key.field_name = (char *)field_name;
-            key.field_type = dt;
+	    key.field_name = (char *)field_name;
+	    key.field_type = dt;
+	    nfields = tif->tif_nfields;
 
-            ret = (const TIFFFieldInfo **) lfind(&pkey,
-						 tif->tif_fieldinfo, 
-						 &tif->tif_nfields,
+	    ret = (const TIFFFieldInfo **) lfind(&pkey,
+						 tif->tif_fieldinfo,
+						 &nfields,
 						 sizeof(TIFFFieldInfo *),
 						 tagNameCompare);
 	    return (ret) ? (*ret) : NULL;
-        } else
+	} else
 		for (i = 0, n = tif->tif_nfields; i < n; i++) {
 			const TIFFFieldInfo* fip = tif->tif_fieldinfo[i];
 			if (streq(fip->field_name, field_name) &&
 			    (dt == TIFF_ANY || fip->field_type == dt))
 				return (tif->tif_foundfield = fip);
-		}
+		}                                                                                       
 	return ((const TIFFFieldInfo *)0);
 }
 
 const TIFFFieldInfo*
-_TIFFFieldWithTag(TIFF* tif, ttag_t tag)
+_TIFFFieldWithTag(TIFF* tif, uint32 tag)
 {
 	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	if (!fip) {
@@ -805,7 +837,7 @@ _TIFFFieldWithName(TIFF* tif, const char *field_name)
 }
 
 const TIFFFieldInfo*
-_TIFFFindOrRegisterFieldInfo( TIFF *tif, ttag_t tag, TIFFDataType dt )
+_TIFFFindOrRegisterFieldInfo( TIFF *tif, uint32 tag, TIFFDataType dt )
 
 {
     const TIFFFieldInfo *fld;
@@ -821,7 +853,7 @@ _TIFFFindOrRegisterFieldInfo( TIFF *tif, ttag_t tag, TIFFDataType dt )
 }
 
 TIFFFieldInfo*
-_TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
+_TIFFCreateAnonFieldInfo(TIFF *tif, uint32 tag, TIFFDataType field_type)
 {
 	TIFFFieldInfo *fld;
 	(void) tif;

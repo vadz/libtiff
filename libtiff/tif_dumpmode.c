@@ -35,11 +35,11 @@
  * Encode a hunk of pixels.
  */
 static int
-DumpModeEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+DumpModeEncode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) s;
 	while (cc > 0) {
-		uint64 n;
+		tmsize_t n;
 
 		n = cc;
 		if (tif->tif_rawcc + n > tif->tif_rawdatasize)
@@ -68,10 +68,10 @@ DumpModeEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
  * Decode a hunk of pixels.
  */
 static int
-DumpModeDecode(TIFF* tif, uint8* buf, uint64 cc, uint16 s)
+DumpModeDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 {
 	(void) s;
-	if (tif->tif_rawcc < cc) {  
+	if (tif->tif_rawcc < cc) {
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "DumpModeDecode: Not enough data for scanline %lud",
 		    (unsigned long) tif->tif_row);
@@ -84,7 +84,7 @@ DumpModeDecode(TIFF* tif, uint8* buf, uint64 cc, uint16 s)
 	if (tif->tif_rawcp != buf)
 		_TIFFmemcpy(buf, tif->tif_rawcp, cc);
 	tif->tif_rawcp += cc;
-	tif->tif_rawcc -= cc;
+	tif->tif_rawcc -= cc;  
 	return (1);
 }
 
@@ -111,7 +111,7 @@ TIFFInitDumpMode(TIFF* tif, int scheme)
 	tif->tif_decodetile = DumpModeDecode;
 	tif->tif_encoderow = DumpModeEncode;
 	tif->tif_encodestrip = DumpModeEncode;
-	tif->tif_encodetile = DumpModeEncode;
+	tif->tif_encodetile = DumpModeEncode; 
 	tif->tif_seek = DumpModeSeek;
 	return (1);
 }

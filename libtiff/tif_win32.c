@@ -32,33 +32,35 @@
 
 #include <windows.h>
 
-static uint64
-_tiffReadProc(thandle_t fd, void* buf, uint64 size)
+static tmsize_t
+_tiffReadProc(thandle_t fd, void* buf, tmsize_t size)
 {
 	DWORD dwSizeRead;
+	/* TODO: support size datatype that is 64bit on 64bit systems */
 	assert((uint32)size==size);
 	if (!ReadFile(fd, buf, (uint32)size, &dwSizeRead, NULL))
 		return(0);
-	return ((uint64) dwSizeRead);
+	return ((tmsize_t)dwSizeRead);
 }
 
-static uint64
-_tiffWriteProc(thandle_t fd, void* buf, uint64 size)
+static tmsize_t
+_tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 {
 	DWORD dwSizeWritten;
+	/* TODO: support size datatype that is 64bit on 64bit systems */
 	assert((uint32)size==size);
 	if (!WriteFile(fd, buf, (uint32)size, &dwSizeWritten, NULL))
 		return(0);
-	return ((uint64) dwSizeWritten);
+	return ((tmsize_t)dwSizeWritten);
 }
 
-static uint64
-_tiffSeekProc(thandle_t fd, uint64 off, int whence)
+static uint64_new
+_tiffSeekProc(thandle_t fd, uint64_new off, int whence)
 {
-	ULARGE_INTEGER li;
+	LARGE_INTEGER off_in, off_out;
 	DWORD dwMoveMethod;
 
-	li.QuadPart = off;
+	off_in.QuadPart = off;
 
 	switch(whence)
 	{
@@ -75,8 +77,9 @@ _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 		dwMoveMethod = FILE_BEGIN;
 		break;
 	}
-	return ((uint64)SetFilePointer(fd, (LONG) li.LowPart,
-				       (PLONG)&li.HighPart, dwMoveMethod));
+	if (SetFilePointerEx(fd, off_in, &off_out, dwMoveMethod)==0)
+		off_out.QuadPart=0;
+	return(off_out.QuadPart);
 }
 
 static int
@@ -85,7 +88,7 @@ _tiffCloseProc(thandle_t fd)
 	return (CloseHandle(fd) ? 0 : -1);
 }
 
-static uint64
+static uint64_new
 _tiffSizeProc(thandle_t fd)
 {
 	ULARGE_INTEGER m;
@@ -94,7 +97,7 @@ _tiffSizeProc(thandle_t fd)
 }
 
 static int
-_tiffDummyMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
+_tiffDummyMapProc(thandle_t fd, void** pbase, tmsize_t* psize)
 {
 	(void) fd;
 	(void) pbase;
@@ -114,26 +117,29 @@ _tiffDummyMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
  * with Visual C++ 5.0
  */
 static int
-_tiffMapProc(thandle_t fd, tdata_t* pbase, toff_t* psize)
+_tiffMapProc(thandle_t fd, void** pbase, tmsize_t* psize)
 {
-	toff_t size;
+	uint64_new size;
+	tmsize_t sizem;
 	HANDLE hMapFile;
 
-	if ((size = _tiffSizeProc(fd)) == 0xFFFFFFFF)
+	size = _tiffSizeProc(fd);
+	sizem = (tmsize_t)size;
+	if ((uint64_new)sizem!=size)
 		return (0);
-	hMapFile = CreateFileMapping(fd, NULL, PAGE_READONLY, 0, size, NULL);
+	hMapFile = CreateFileMapping(fd, NULL, PAGE_READONLY, 0, sizem, NULL);
 	if (hMapFile == NULL)
 		return (0);
 	*pbase = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, 0);
 	CloseHandle(hMapFile);
 	if (*pbase == NULL)
 		return (0);
-	*psize = size;
+	*psize = sizem;
 	return(1);
 }
 
 static void
-_tiffDummyUnmapProc(thandle_t fd, tdata_t base, toff_t size)
+_tiffDummyUnmapProc(thandle_t fd, void* base, tmsize_t size)
 {
 	(void) fd;
 	(void) base;
@@ -141,7 +147,7 @@ _tiffDummyUnmapProc(thandle_t fd, tdata_t base, toff_t size)
 }
 
 static void
-_tiffUnmapProc(thandle_t fd, tdata_t base, toff_t size)
+_tiffUnmapProc(thandle_t fd, void* base, tmsize_t size)
 {
 	UnmapViewOfFile(base);
 }
@@ -281,62 +287,62 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 #endif /* ndef _WIN32_WCE */
 
 
-tdata_t
-_TIFFmalloc(tsize_t s)
+void*
+_TIFFmalloc(tmsize_t s)
 {
-	return ((tdata_t)GlobalAlloc(GMEM_FIXED, s));
+	return ((void*)GlobalAlloc(GMEM_FIXED, s));
 }
 
 void
-_TIFFfree(tdata_t p)
+_TIFFfree(void* p)
 {
-	GlobalFree(p);
+	GlobalFree((HGLOBAL)p);
 	return;
 }
 
-tdata_t
-_TIFFrealloc(tdata_t p, tsize_t s)
+void*
+_TIFFrealloc(void* p, tmsize_t s)
 {
 	void* pvTmp;
-	tsize_t old;
+	tmsize_t old;
 
 	if(p == NULL)
-		return ((tdata_t)GlobalAlloc(GMEM_FIXED, s));
+		return ((void*)GlobalAlloc(GMEM_FIXED, s));
 
 	old = GlobalSize(p);
 
 	if (old>=s) {
-		if ((pvTmp = GlobalAlloc(GMEM_FIXED, s)) != NULL) {
+		if ((pvTmp = (void*)GlobalAlloc(GMEM_FIXED, s)) != NULL) {
 			CopyMemory(pvTmp, p, s);
-			GlobalFree(p);
+			GlobalFree((HGLOBAL)p);
 		}
 	} else {
-		if ((pvTmp = GlobalAlloc(GMEM_FIXED, s)) != NULL) {
+		if ((pvTmp = (void*)GlobalAlloc(GMEM_FIXED, s)) != NULL) {
 			CopyMemory(pvTmp, p, old);
-			GlobalFree(p);
+			GlobalFree((HGLOBAL)p);
 		}
 	}
-	return ((tdata_t)pvTmp);
+	return (pvTmp);
 }
 
 void
-_TIFFmemset(void* p, int v, tsize_t c)
+_TIFFmemset(void* p, int v, tmsize_t c)
 {
 	FillMemory(p, c, (BYTE)v);
 }
 
 void
-_TIFFmemcpy(void* d, const tdata_t s, tsize_t c)
+_TIFFmemcpy(void* d, const void* s, tmsize_t c)
 {
 	CopyMemory(d, s, c);
 }
 
 int
-_TIFFmemcmp(const tdata_t p1, const tdata_t p2, tsize_t c)
+_TIFFmemcmp(const void* p1, const void* p2, tmsize_t c)
 {
 	register const BYTE *pb1 = (const BYTE *) p1;
 	register const BYTE *pb2 = (const BYTE *) p2;
-	register DWORD dwTmp = c;
+	register tmsize_t dwTmp = c;
 	register int iTmp;
 	for (iTmp = 0; dwTmp-- && !iTmp; iTmp = (int)*pb1++ - (int)*pb2++)
 		;

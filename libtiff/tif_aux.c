@@ -33,12 +33,12 @@
 #include "tif_predict.h"
 #include <math.h>
 
-tdata_t
-_TIFFCheckRealloc(TIFF* tif, tdata_t buffer,
-		  size_t nmemb, size_t elem_size, const char* what)
+void*
+_TIFFCheckRealloc(TIFF* tif, void* buffer,
+		  tmsize_t nmemb, tmsize_t elem_size, const char* what)
 {
-	tdata_t cp = NULL;
-	tsize_t	bytes = nmemb * elem_size;
+	void* cp = NULL;
+	tmsize_t bytes = nmemb * elem_size;
 
 	/*
 	 * XXX: Check for integer overflow.
@@ -53,20 +53,20 @@ _TIFFCheckRealloc(TIFF* tif, tdata_t buffer,
 	return cp;
 }
 
-tdata_t
-_TIFFCheckMalloc(TIFF* tif, size_t nmemb, size_t elem_size, const char* what)
+void*
+_TIFFCheckMalloc(TIFF* tif, tmsize_t nmemb, tmsize_t elem_size, const char* what)
 {
-	return _TIFFCheckRealloc(tif, NULL, nmemb, elem_size, what);
+	return _TIFFCheckRealloc(tif, NULL, nmemb, elem_size, what);  
 }
 
 static int
 TIFFDefaultTransferFunction(TIFFDirectory* td)
 {
 	uint16 **tf = td->td_transferfunction;
-	tsize_t i, n, nbytes;
+	tmsize_t i, n, nbytes;
 
 	tf[0] = tf[1] = tf[2] = 0;
-	if (td->td_bitspersample >= sizeof(tsize_t) * 8 - 2)
+	if (td->td_bitspersample >= sizeof(tmsize_t) * 8 - 2)
 		return 0;
 
 	n = 1<<td->td_bitspersample;
@@ -109,7 +109,7 @@ bad:
  *	place in the library -- in TIFFDefaultDirectory.
  */
 int
-TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
+TIFFVGetFieldDefaulted(TIFF* tif, uint32 tag, va_list ap)
 {
 	TIFFDirectory *td = &tif->tif_dir;
 
@@ -261,7 +261,7 @@ TIFFVGetFieldDefaulted(TIFF* tif, ttag_t tag, va_list ap)
  * value if the tag is not present in the directory.
  */
 int
-TIFFGetFieldDefaulted(TIFF* tif, ttag_t tag, ...)
+TIFFGetFieldDefaulted(TIFF* tif, uint32 tag, ...)
 {
 	int ok;
 	va_list ap;

@@ -139,7 +139,7 @@ TIFFFdOpen(int fd, const char* name, const char* mode)
 {
 	TIFF* tif;
 
-	tif = TIFFClientOpen(name, mode, (thandle_t) fd,
+	tif = TIFFClientOpen(name, mode, (thandle_t) fd,  ddd
 	    _tiffReadProc, _tiffWriteProc, _tiffSeekProc, _tiffCloseProc,
 	    _tiffSizeProc, _tiffMapProc, _tiffUnmapProc);
 	if (tif)

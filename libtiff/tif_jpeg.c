@@ -713,7 +713,7 @@ JPEGPreDecode(TIFF* tif, uint16 s)
 	} else {
 		if (segment_height > td->td_rowsperstrip)
 			segment_height = td->td_rowsperstrip;
-		sp->bytesperline = TIFFScanlineSize(tif);
+		sp->bytesperline = TIFFScanlineSize(tif);  ddd
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE && s > 0) {
 		/*
@@ -1313,7 +1313,7 @@ JPEGPreEncode(TIFF* tif, uint16 s)
 		segment_height = td->td_imagelength - tif->tif_row;
 		if (segment_height > td->td_rowsperstrip)
 			segment_height = td->td_rowsperstrip;
-		sp->bytesperline = TIFFScanlineSize(tif);
+		sp->bytesperline = TIFFScanlineSize(tif);  ddd
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE && s > 0) {
 		/* for PC 2, scale down the strip/tile size

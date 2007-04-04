@@ -83,8 +83,8 @@ typedef long int32;
 #endif
 typedef unsigned long uint32;   /* sizeof (uint32) must == 4 */
 #endif
-typedef unsigned long long uint64;
-typedef signed long long int64;
+typedef unsigned long long uint64_new;
+typedef signed long long int64_new;
 
 /* For TIFFReassignTagToIgnore */
 enum TIFFIgnoreSense /* IGNORE tag table */
@@ -111,7 +111,7 @@ typedef struct {
 	uint16 tiff_version;    /* TIFF version number */
 	uint16 tiff_offsetsize; /* size of offsets, should be 8 */
 	uint16 tiff_unused;     /* unused word, should be 0 */
-	uint64 tiff_diroff;     /* byte offset to first directory */
+	uint64_new tiff_diroff;     /* byte offset to first directory */
 } TIFFHeaderBig;
 
 
@@ -129,8 +129,8 @@ typedef struct {
 typedef struct {
 	uint16 tdir_tag;        /* see below */
 	uint16 tdir_type;       /* data type; see below */
-	uint64 tdir_count;      /* number of items; length in spec */
-	uint64 tdir_offset;
+	uint64_new tdir_count;      /* number of items; length in spec */
+	uint64_new tdir_offset;
 } TIFFDirEntry;
 
 /*

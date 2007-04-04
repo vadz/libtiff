@@ -112,7 +112,7 @@ _TIFFPrintField(FILE* fd, const TIFFFieldInfo *fip,
 }
 
 static int
-_TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
+_TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 		      uint32 value_count, void *raw_data)
 {
 	TIFFDirectory *td = &tif->tif_dir;
@@ -507,7 +507,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 
             count = (short) TIFFGetTagListCount(tif);
             for(i = 0; i < count; i++) {
-                ttag_t  tag = TIFFGetTagListEntry(tif, i);
+                uint32 tag = TIFFGetTagListEntry(tif, i);
                 const TIFFFieldInfo *fip;
                 uint32 value_count;
                 int mem_alloc = 0;
@@ -600,11 +600,11 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd, "  %lu %s:\n",
 		    (long) td->td_nstrips,  ddd
 		    isTiled(tif) ? "Tiles" : "Strips");
-		for (s = 0; s < td->td_nstrips; s++)  ddd
-			fprintf(fd, "    %3lu: [%8lu, %8lu]\n",
-			    (unsigned long) s,  ddd
-			    (unsigned long) td->td_stripoffset[s],  ddd
-			    (unsigned long) td->td_stripbytecount[s]);  ddd
+		for (s = 0; s < td->td_nstrips; s++)
+			fprintf(fd, "    %3lu: [%8llu, %8llu]\n",
+			    (unsigned long) s,
+			    (unsigned long long) td->td_stripoffset[s],
+			    (unsigned long long) td->td_stripbytecount[s]);
 	}
 }
 

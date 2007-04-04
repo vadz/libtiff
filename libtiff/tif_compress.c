@@ -49,21 +49,21 @@ TIFFNoEncode(TIFF* tif, const char* method)
 }
 
 int
-_TIFFNoRowEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+_TIFFNoRowEncode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoEncode(tif, "scanline"));
 }
 
 int
-_TIFFNoStripEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+_TIFFNoStripEncode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoEncode(tif, "strip"));
 }
 
 int
-_TIFFNoTileEncode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+_TIFFNoTileEncode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoEncode(tif, "tile"));
@@ -86,21 +86,21 @@ TIFFNoDecode(TIFF* tif, const char* method)
 }
 
 int
-_TIFFNoRowDecode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+_TIFFNoRowDecode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoDecode(tif, "scanline"));
 }
 
 int
-_TIFFNoStripDecode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+_TIFFNoStripDecode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoDecode(tif, "strip"));
 }
 
 int
-_TIFFNoTileDecode(TIFF* tif, uint8* pp, uint64 cc, uint16 s)
+_TIFFNoTileDecode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 {
 	(void) pp; (void) cc; (void) s;
 	return (TIFFNoDecode(tif, "tile"));
@@ -139,7 +139,7 @@ _TIFFSetDefaultCompressionState(TIFF* tif)
 	tif->tif_preencode = _TIFFNoPreCode;
 	tif->tif_postencode = _TIFFtrue;
 	tif->tif_encoderow = _TIFFNoRowEncode;
-	tif->tif_encodestrip = _TIFFNoStripEncode;
+	tif->tif_encodestrip = _TIFFNoStripEncode;  
 	tif->tif_encodetile = _TIFFNoTileEncode;  
 	tif->tif_close = _TIFFvoid;
 	tif->tif_seek = _TIFFNoSeek;
@@ -197,9 +197,9 @@ TIFFRegisterCODEC(uint16 scheme, const char* name, TIFFInitMethod init)
 	    _TIFFmalloc(sizeof (codec_t) + sizeof (TIFFCodec) + strlen(name)+1);
 
 	if (cd != NULL) {
-		cd->info = (TIFFCodec*) ((tidata_t) cd + sizeof (codec_t));
+		cd->info = (TIFFCodec*) ((uint8*) cd + sizeof (codec_t));
 		cd->info->name = (char*)
-		    ((tidata_t) cd->info + sizeof (TIFFCodec));
+		    ((uint8*) cd->info + sizeof (TIFFCodec));
 		strcpy(cd->info->name, name);
 		cd->info->scheme = scheme;
 		cd->info->init = init;
@@ -269,7 +269,7 @@ TIFFGetConfiguredCODECs()
 				return NULL;
 			}
 			codecs = new_codecs;
-			_TIFFmemcpy(codecs + i - 1, (const tdata_t)c, sizeof(TIFFCodec));
+			_TIFFmemcpy(codecs + i - 1, (const void*)c, sizeof(TIFFCodec));
 			i++;
 		}
 	}
