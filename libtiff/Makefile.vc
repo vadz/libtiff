@@ -98,3 +98,4 @@ clean:
 	-del *.lib
 	-del *.dll
 	-del *.exe
+	-del *.pdb
