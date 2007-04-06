@@ -1,3 +1,12 @@
+2007-04-06  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: Changed JPEGInitializeLibJPEG() so that it
+	will convert from decompressor to compressor or compress to decompress
+	if required by the force arguments.  This works around a problem in
+	where the JPEGFixupTestSubsampling() may cause a decompressor to 
+	be setup on a directory when later a compressor is required with the
+	force flag set.  Occurs with the addtiffo program for instance. 
+
 2007-04-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcrop.c, man/tiffcrop.1: Significant update in
