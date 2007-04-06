@@ -1,5 +1,10 @@
 2007-04-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* libtiff/tif_dirwrite.c: Fixed swapping of byte arrays stored
+	in-place in tag offsets as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1363
+
 	* tools/tiffcrop.c, man/tiffcrop.1: Significant update in
 	functionality from Richard Nolde. As per bug
 	
