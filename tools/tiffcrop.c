@@ -2,6 +2,8 @@
 
 /* tiffcrop.c -- a port of tiffcp.c extended to include cropping of selections
  *
+ * Original code:
+ *
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
  *
@@ -24,34 +26,45 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  *
- * Richard Nolde  10/2006 Add support for the options below to extract 
+ * Richard Nolde  Updated 2/2007 Add support for the options below to extract 
  * sections of image(s) and to modify the whole image or selected portion
  * with rotations, mirroring, and colorscale/colormap inversion of selected
  * types of TIFF images when appropriate
  *
  * Options: 
- * -u units     [in, cm, px ] inches, centimeters or pixels
- * -x #         horizontal dimension of region to extract expressed in current
+ * -U units     [in, cm, px ] inches, centimeters or pixels
+ * -H #         set horizontal resolution of output images to #
+ * -V #         set vertical resolution of output images to #
+ * -J #         set horizontal margin of output page to # expressed in current
  *              units
- * -y #         vertical dimension of region to extract expressed in current
+ * -K #         set vertical margin of output page to # expressed in current
  *              units
- * -e t|l|r|b   edge to use as origin
+ * -X #         horizontal dimension of region to extract expressed in current
+ *              units
+ * -Y #         vertical dimension of region to extract expressed in current
+ *              units
+ * -O orient    orientation for output image, portrait, landscape, auto
+ * -P page      page size for output image segments, eg letter, legal, tabloid,
+ *              etc.
+ * -S cols:rows divide the image into equal sized segments using cols across
+ *              and rows down
+ * -E t|l|r|b   edge to use as origin
  * -m #,#,#,#   margins from edges for selection: top, left, bottom, right
  *              (commas separated)
- * -z #:#,#:#   up to six zones of the image designated as zone X of Y,
+ * -Z #:#,#:#   zones of the image designated as zone X of Y, 
  *              eg 1:3 would be first of three equal portions measured
  *              from reference edge
- * -n odd|even|#,#-#,#|last sequences and ranges of images within file to
- *              process the words odd or even may be used to specify all odd
- *              or even numbered images the word last may be used in place
- *              of a number in the sequence to indicate the final image in
- *              the file without knowing how many images there are
+ * -N odd|even|#,#-#,#|last sequences and ranges of images within file
+ *              to process the words odd or even may be used to specify
+ *              all odd or even numbered images the word last may be used
+ *              in place of a number in the sequence to indicate the final
+ *              image in the file without knowing how many images there are
  * -R #         rotate image or crop selection by 90,180,or 270 degrees
  *              clockwise  
  * -F h|v       flip (mirror) image or crop selection horizontally
- *              or vertically
- * -I           invert the colormap, black to white, for bilevel
- *              and grayscale images
+ *              or vertically 
+ * -I           invert the colormap, black to white, for bilevel and grayscale
+ *              images
  */
 
 #include "tif_config.h"
@@ -68,20 +81,28 @@
 # include <unistd.h>
 #endif
 
-#include "tiffio.h"
-
 #ifndef HAVE_GETOPT
 extern int getopt(int, char**, char*);
+#endif
+
+#include "tiffio.h"
+
+#if defined(VMS)
+# define unlink delete
 #endif
 
 #define	streq(a,b)	(strcmp((a),(b)) == 0)
 #define	strneq(a,b,n)	(strncmp((a),(b),(n)) == 0)
 
+/* NB: the uint32 casts are to silence certain ANSI-C compilers */
+#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
+#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
+
 #define	TRUE	1
 #define	FALSE	0
 
 /*
- * Definitions and data structures required to support cropping and image
+ * Definitions and data structures required to support cropping and inmage
  * manipulations.
  */
 
@@ -89,6 +110,7 @@ extern int getopt(int, char**, char*);
 #define EDGE_LEFT     2
 #define EDGE_BOTTOM   3
 #define EDGE_RIGHT    4
+
 #define MIRROR_HORIZ  1
 #define MIRROR_VERT   2
 
@@ -104,7 +126,8 @@ extern int getopt(int, char**, char*);
 #define STRIP    1
 #define TILE     2
 
-#define MAX_ZONES     6  /* number of sections on a singel page */
+#define MAX_ZONES    32  /* number of sections to extract from a single page */
+#define MAX_SECTIONS 64  /* number of sections from one page to write to output */
 #define MAX_IMAGES  256  /* number of images in descrete list */
 
 /* Offsets into buffer for margins and fixed width and length */
@@ -131,33 +154,142 @@ struct  pageseg {
   uint32 x2;        /* index of right edge */
   uint32 y1;        /* index of top edge */
   uint32 y2;        /* index of bottom edge */
-  int    total;     /* total equal sized divisions of crop area */
-  int    position;  /* ordinal of segment to be extracted */
   uint32 buffsize;  /* size of buffer needed to hold the cropped region */
+  int    position;  /* ordinal of segment to be extracted */
+  int    total;     /* total equal sized divisions of crop area */
 };
 
 /* Cropping parameters from command line and image data */
 struct crop_mask {
+  double width;           /* Selection width for master crop region in requested units */
+  double length;          /* Selection length for master crop region in requesed units */
+  double margins[4];      /* Top, left, bottom, right margins */
+  float  xres;            /* Horizontal resolution read from image*/
+  float  yres;            /* Vertical resolution read from image */
+  uint32 combined_width;  /* Width of combined cropped zones */
+  uint32 combined_length; /* Length of combined cropped zones */
+  uint32 bufftotal;       /* size of buffer needed to hold all the cropped region */
+  uint32 zones;           /* Number of zones requested */
   uint16 crop_mode;       /* Crop options to be applied */
   uint16 res_unit;        /* Resolution unit for margins and selections */
   uint16 edge_ref;        /* Reference edge from which zones are calculated */
   uint16 rotation;        /* Clockwise rotation of the extracted region or image */
   uint16 mirror;          /* Mirror extracted region or image horizontally or vertically */
   uint16 invert;          /* Invert the color map of image or region */
-  double width;           /* Selection width for master crop region in requested units */
-  double length;          /* Selection length for master crop region in requesed units */
-  double margins[4];      /* Top, left, bottom, right margins */
-  uint32 combined_width;  /* Width of combined cropped zones */
-  uint32 combined_length; /* Length of combined cropped zones */
-  uint32 bufftotal;       /* size of buffer needed to hold all the cropped region */
-  int    zones;           /* Number of zones requested */
   struct pageseg zonelist[MAX_ZONES]; /* Zones within page or master crop region */
 };
 
-/* 
- * Global variables saving state of the program.
- */
-static  int outtiled = -1;
+#define MAX_PAPERNAMES 49
+#define MAX_PAPERNAME_LENGTH 15
+#define DEFAULT_RESUNIT      RESUNIT_INCH
+#define DEFAULT_PAGE_HEIGHT   14.0
+#define DEFAULT_PAGE_WIDTH     8.5
+#define DEFAULT_RESOLUTION   300
+#define DEFAULT_PAPER_SIZE  "legal"
+
+#define ORIENTATION_NONE       0
+#define ORIENTATION_PORTRAIT   1
+#define ORIENTATION_LANDSCAPE  2
+#define ORIENTATION_SEASCAPE   4
+#define ORIENTATION_AUTO      16
+
+#define PAGE_MODE_NONE         0
+#define PAGE_MODE_RESOLUTION   1
+#define PAGE_MODE_PAPERSIZE    2
+#define PAGE_MODE_MARGINS      4
+#define PAGE_MODE_ROWSCOLS     8
+
+
+struct paperdef {
+  char   name[MAX_PAPERNAME_LENGTH];
+  double width;
+  double length;
+  double asratio;
+  };
+
+/* Paper Size       Width   Length  Aspect Ratio */
+struct paperdef PaperTable[MAX_PAPERNAMES] = {
+  {"default",         8.500,  14.000,  0.607},
+  {"pa4",             8.264,  11.000,  0.751},
+  {"letter",          8.500,  11.000,  0.773},
+  {"legal",           8.500,  14.000,  0.607},
+  {"half-letter",     8.500,   5.514,  1.542},
+  {"executive",       7.264,  10.528,  0.690},
+  {"tabloid",        11.000,  17.000,  0.647},
+  {"11x17",          11.000,  17.000,  0.647},
+  {"ledger",         17.000,  11.000,  1.545},
+  {"archa",           9.000,  12.000,  0.750},
+  {"archb",          12.000,  18.000,  0.667},
+  {"archc",          18.000,  24.000,  0.750},
+  {"archd",          24.000,  36.000,  0.667},
+  {"arche",          36.000,  48.000,  0.750},
+  {"csheet",         17.000,  22.000,  0.773},
+  {"dsheet",         22.000,  34.000,  0.647},
+  {"esheet",         34.000,  44.000,  0.773},
+  {"superb",         11.708,  17.042,  0.687},
+  {"commercial",      4.139,   9.528,  0.434},
+  {"monarch",         3.889,   7.528,  0.517},
+  {"envelope-dl",     4.333,   8.681,  0.499},
+  {"envelope-c5",     6.389,   9.028,  0.708},
+  {"europostcard",    4.139,   5.833,  0.710},
+  {"a0",             33.111,  46.806,  0.707},
+  {"a1",             23.389,  33.111,  0.706},
+  {"a2",             16.542,  23.389,  0.707},
+  {"a3",             11.694,  16.542,  0.707},
+  {"a4",              8.264,  11.694,  0.707},
+  {"a5",              5.833,   8.264,  0.706},
+  {"a6",              4.125,   5.833,  0.707},
+  {"a7",              2.917,   4.125,  0.707},
+  {"a8",              2.056,   2.917,  0.705},
+  {"a9",              1.458,   2.056,  0.709},
+  {"a10",             1.014,   1.458,  0.695},
+  {"b0",             39.375,  55.667,  0.707},
+  {"b1",             27.833,  39.375,  0.707},
+  {"b2",             19.681,  27.833,  0.707},
+  {"b3",             13.903,  19.681,  0.706},
+  {"b4",              9.847,  13.903,  0.708},
+  {"b5",              6.931,   9.847,  0.704},
+  {"b6",              4.917,   6.931,  0.709},
+  {"c0",             36.097,  51.069,  0.707},
+  {"c1",             25.514,  36.097,  0.707},
+  {"c2",             18.028,  25.514,  0.707},
+  {"c3",             12.750,  18.028,  0.707},
+  {"c4",              9.014,  12.750,  0.707},
+  {"c5",              6.375,   9.014,  0.707},
+  {"c6",              4.486,   6.375,  0.704},
+  {"",                0.000,   0.000,  1.000},
+};
+
+/* Structure to define in input image parameters */
+struct image_data {
+  float  xres;
+  float  yres;
+  uint32 width;
+  uint32 length;
+  uint16 res_unit;
+  uint16 bps;
+  uint16 spp;
+  uint16 planar;
+  uint16 photometric;
+};
+
+/* Structure to define the output image modifiers */
+struct pagedef {
+  char          name[16];
+  double        width;    /* width in pixels */
+  double        length;   /* length in pixels */
+  double        hmargin;  /* margins to subtract from width of sections */
+  double        vmargin;  /* margins to subtract from height of sections */
+  double        hres;     /* horizontal resolution for output */
+  double        vres;     /* vertical resolution for output */
+  uint32        mode;     /* bitmask of modifiers to page format */
+  uint16        res_unit; /* resolution unit for output image */
+  unsigned int  rows;     /* number of section rows */
+  unsigned int  cols;     /* number of section cols */
+  unsigned int  orient;   /* portrait, landscape, seascape, auto */
+};
+
+static  int    outtiled = -1;
 static  uint32 tilewidth;
 static  uint32 tilelength;
 
@@ -168,33 +300,48 @@ static	uint16 fillorder;
 static	uint16 orientation;
 static	uint32 rowsperstrip;
 static	uint32 g3opts;
-static	int ignore = FALSE;		/* if true, ignore read errors */
+static	int    ignore = FALSE;		/* if true, ignore read errors */
 static	uint32 defg3opts = (uint32) -1;
-static	int quality = 75;		/* JPEG quality */
-static	int jpegcolormode = JPEGCOLORMODE_RGB;
+static	int    quality = 75;		/* JPEG quality */
+static	int    jpegcolormode = JPEGCOLORMODE_RGB;
 static	uint16 defcompression = (uint16) -1;
 static	uint16 defpredictor = (uint16) -1;
-static  TIFF* bias = NULL;
-static  int pageNum = 0;
 
-/* 
- * Helper functions declarations.
- */
 static	int processCompressOptions(char*);
-static	int tiffcp(TIFF*, TIFF*);
 static	void usage(void);
 
-static  int initCropMasks (struct crop_mask *cps);
-static  int computeOffsets(uint16, float, float, uint32, uint32, 
-			   struct crop_mask *, struct offset *);
-static  int getCropOffsets(TIFF*, struct crop_mask *);
-static  int loadImage(TIFF*, unsigned char **);
-static  int extractCropRegions(TIFF *, struct crop_mask *, unsigned char *, unsigned char *);
-static  int createCroppedImage(TIFF*, struct crop_mask *, unsigned char **, unsigned char **);
-static  int rotateImage(uint16, uint16, uint16, uint32 *, uint32 *, unsigned char **);
-static  int mirrorImage(uint16, uint16, uint16, uint32, uint32, unsigned char *);
-static  int invertImage(uint16, uint16, uint16, uint32, uint32, unsigned char *);
-static  int writeCroppedImage(TIFF *, TIFF *, struct crop_mask *, unsigned char *);
+/* New functions by Richard Nolde  not found in tiffcp */
+static  void initImageData (struct image_data *);
+static  void initCropMasks (struct crop_mask *);
+static  void initPageSetup (struct pagedef *, struct pageseg *);
+static  int  get_page_geometry (char *, struct pagedef*);
+static  int  computeInputPixelOffsets(struct crop_mask *, struct image_data *, 
+                                      struct offset *);
+static  int  computeOutputPixelOffsets (struct crop_mask *, struct image_data *,
+					struct pagedef *, struct pageseg *);
+static  int  loadImage(TIFF *, struct image_data *, unsigned char **);
+static  int  getCropOffsets(struct image_data *, struct crop_mask *);
+static  int  extractCropRegions(TIFF *, struct crop_mask *,
+				unsigned char *, unsigned char *);
+static  int  createCroppedImage(TIFF*, struct image_data *, struct crop_mask *, 
+                               unsigned char **, unsigned char **);
+static  int  rotateImage(uint16, struct image_data *, uint32 *, uint32 *,
+			 unsigned char **);
+static  int  mirrorImage(uint16, uint16, uint16, uint32, uint32,
+			 unsigned char *);
+static  int  invertImage(uint16, uint16, uint16, uint32, uint32,
+			 unsigned char *);
+static  int  writeCroppedImage(TIFF *, TIFF *, struct crop_mask *,
+			       unsigned char *);
+static  int  createImageSection(uint32, unsigned char **);
+static  int  extractImageSection(struct image_data *, struct pageseg *, 
+                                 unsigned char *, unsigned char *);
+static  int  writeSingleSection(TIFF *, TIFF *, uint32, uint32,
+				double, double, unsigned char *);
+static  int  writeImageSections(TIFF *, TIFF *, struct image_data *,
+				struct pagedef *, struct pageseg *,
+				unsigned char *, unsigned char **);
+static int   pageNum = 0;
 
 int
 main(int argc, char* argv[])
@@ -205,68 +352,44 @@ main(int argc, char* argv[])
   uint32 deftilelength = (uint32) -1;
   uint32 defrowsperstrip = (uint32) 0;
   uint32 dirnum = 0;
-  uint32 bias_image = 0;
+
   TIFF* in = NULL;
-  TIFF* out;
-  char mode[10];
+  TIFF* out = NULL;
+  char  mode[10];
   char* mp = mode;
-  struct  crop_mask    crop_data;       /* Cropping parameters for image */
-  unsigned char *read_buff    = NULL;   /* input image data buffer */
-  unsigned char *crop_buff    = NULL;   /* crop area buffer */
-  char *opt_offset   = NULL;            /* Postion in string of value sought */
-  char *opt_ptr      = NULL;        /* Pointer to next token in option set */
-  char *sep          = NULL;            /* pointer to a token separator */
-  uint32 start, end, image_count = 0, next_image = 0;
-  uint32 imagelist[MAX_IMAGES + 1];     /* individually specified images */
-  uint32 i, j;
-  int c;
+  int   c;
+
+  /** RJN additions **/
+  struct image_data   image;     /* Image parameters for one image */
+  struct crop_mask    crop_data; /* Cropping parameters for all images */
+  struct pagedef      page;      /* Page definition for output pages */
+  struct pageseg sections[MAX_SECTIONS]; /* Sections of one output page */
+  unsigned char *read_buff    = NULL;      /* Input image data buffer */
+  unsigned char *crop_buff    = NULL;      /* Crop area buffer */
+  unsigned char *sect_buff    = NULL;      /* Image section buffer */
+  unsigned char *sect_src     = NULL;      /* Image section buffer pointer */
+  char *opt_offset   = NULL;    /* Position in string of value sought */
+  char *opt_ptr      = NULL;    /* Pointer to next token in option set */
+  char *sep          = NULL;    /* Pointer to a token separator */
+  unsigned int  i, j, start, end;
+  unsigned int  image_count = 0;
+  unsigned int  next_image  = 0;
+  unsigned int  imagelist[MAX_IMAGES + 1]; /* individually specified images */
 
   extern int optind;
   extern char* optarg;
 
+  initImageData(&image);
   initCropMasks(&crop_data);
+  initPageSetup(&page, sections);
 
   *mp++ = 'w';
   *mp = '\0';
-  while ((c = getopt(argc, argv, "ab:c:d:f:il:p:r:st:w:BLMCE:F:IN:m:R:U:X:Y:")) != -1)
+  while ((c = getopt(argc, argv, "ac:d:f:il:m:p:r:st:w:BCE:F:H:IJ:K:LMN:O:P:R:S:U:V:X:Y:Z:")) != -1)
     switch (c) {
-      case 'b': if (bias) {  /* this file is bias image subtracted from others */
-                  fputs ("Only 1 bias image may be specified\n", stderr);
-                  exit (-2);
-                }
-                {
-                uint16    samples = (uint16) -1;
-                char *biasFn = optarg;
-	        sep = strpbrk(biasFn, ":");
-	        if (sep)
-                  {
-                  *sep = '\0';
-                  bias_image = atoi(sep +1);
-		  }
-                bias = TIFFOpen (biasFn, "r");
-                if (!bias)
-                  exit (-5);
-                if (bias_image) {
-                  if (!TIFFSetDirectory(bias, bias_image))
-                    {
-		    fputs ("Invalid IFD for bias image", stderr);
-                    exit (-7);
-                    }
-		  } 
-                if (TIFFIsTiled (bias)) {
-                  fputs ("Bias image must be organized in strips\n", stderr);
-                  exit (-7);
-                }
-	        TIFFGetField(bias, TIFFTAG_SAMPLESPERPIXEL, &samples);
-                if (samples != 1) {
-                  fputs ("Bias image must be monochrome\n", stderr);
-                  exit (-7);
-                  }
-	        }
-                break;
-      case 'a': mode[0] = 'a'; 	/* append to output */
+      case 'a': mode[0] = 'a';	/* append to output */
 		break;
-      case 'c':	if (!processCompressOptions(optarg)) 	/* compression scheme */
+      case 'c':	if (!processCompressOptions(optarg))	/* compression scheme */
 		   usage();
 		break;
       case 'd':	dirnum = strtoul(optarg, NULL, 0); /* initial directory offset */
@@ -278,7 +401,7 @@ main(int argc, char* argv[])
 		else
 		  usage();
 		break;
-      case 'i':	ignore = TRUE; 		/* ignore errors */
+      case 'i':	ignore = TRUE;		/* ignore errors */
 		break;
       case 'l':	outtiled = TRUE;	 /* tile length */
 		deftilelength = atoi(optarg);
@@ -314,7 +437,7 @@ main(int argc, char* argv[])
       case 'C': *mp++ = 'c'; *mp = '\0';
 		break;
       /* image manipulation routine options */
-      case 'm': /* margins to exclude from selection*/
+      case 'm': /* margins to exclude from selection, uppercase M was already used */
 		/* order of values must be TOP, LEFT, BOTTOM, RIGHT */
 		crop_data.crop_mode |= CROP_MARGINS;
                 for (i = 0, opt_ptr = strtok (optarg, ",:");
@@ -323,6 +446,9 @@ main(int argc, char* argv[])
                     {
 		    crop_data.margins[i] = atof(opt_ptr);
                     }
+		break;
+      case 'D':	/* down sample */
+		fprintf (stderr, "Down sampling not yet implemented\n");
 		break;
       case 'E':	/* edge reference */
 		switch (tolower(optarg[0]))
@@ -338,7 +464,7 @@ main(int argc, char* argv[])
 		  default:  fprintf (stderr, "Edge reference must be top, bottom, left, or right.\n");
 			    usage();
 		  }
-	        break;
+		break;
       case 'F': /* flip eg mirror image or cropped segment, M was already used */
 		crop_data.crop_mode |= CROP_MIRROR;
 		switch (tolower(optarg[0]))
@@ -348,11 +474,23 @@ main(int argc, char* argv[])
                   case  'v': crop_data.mirror = MIRROR_VERT;
                              break;
 		  default:   fprintf (stderr, "Flip mode must be h or v.\n");
-	                     usage();
+			     usage();
 		  }
+		break;
+      case 'H': /* set horizontal resolution to new value */
+		page.hres = atof (optarg);
+                page.mode |= PAGE_MODE_RESOLUTION;
 		break;
       case 'I': /* invert the color space, eg black to white */
 		crop_data.crop_mode |= CROP_INVERT;
+		break;
+      case 'J': /* horizontal margin for sectioned ouput pages */ 
+		page.hmargin = atof(optarg);
+                page.mode |= PAGE_MODE_MARGINS;
+		break;
+      case 'K': /* vertical margin for sectioned ouput pages*/ 
+                page.vmargin = atof(optarg);
+                page.mode |= PAGE_MODE_MARGINS;
 		break;
       case 'N':	/* list of images to process */
                 for (i = 0, opt_ptr = strtok (optarg, ",");
@@ -377,10 +515,10 @@ main(int argc, char* argv[])
 			   imagelist[i++] = j;
                            image_count = MAX_IMAGES / 2;
                            break;
-		         }
+			 }
 		       else
                          {
- 			 if (streq(opt_ptr, "last"))
+			 if (streq(opt_ptr, "last"))
 			   imagelist[i++] = MAX_IMAGES;
 			 else  /* single value between commas */
 			   {
@@ -399,11 +537,51 @@ main(int argc, char* argv[])
 			       imagelist[i++] = j;
 			     }
 			   }
-		         }
+			 }
 		      }
 		    }
-                 image_count = i;
-		 break;
+                image_count = i;
+		break;
+      case 'O': /* page orientation */ 
+		switch (tolower(optarg[0]))
+                  {
+		  case  'a': page.orient = ORIENTATION_AUTO;
+                             break;
+		  case  'p': page.orient = ORIENTATION_PORTRAIT;
+                             break;
+		  case  'l': page.orient = ORIENTATION_LANDSCAPE;
+                             break;
+		  default:  fprintf (stderr, 
+                            "Orientation must be portrait, landscape, or auto.\n\n");
+			    usage();
+		  }
+		break;
+      case 'P': /* page size selection */ 
+                if (get_page_geometry (optarg, &page))
+                  {
+		  if (!strcmp(optarg, "list"))
+                    {
+		    fprintf (stderr, "Name            Width   Length (in inches)\n");
+                    for (i = 0; i < MAX_PAPERNAMES - 1; i++)
+                      fprintf (stderr, "%-15.15s %5.2f   %5.2f%s", 
+			       PaperTable[i].name, PaperTable[i].width, 
+                               PaperTable[i].length, i % 2 ? "       " : "\n");
+                    fprintf (stderr, "\n\n");
+		    exit (-1);                   
+                    }
+     
+		  fprintf (stderr, "Invalid papersize %s\n\n", optarg);
+                  fprintf (stderr, "Select one of:\n");
+                  for (i = 0; i < MAX_PAPERNAMES; i++)
+                    fprintf (stderr, "%-15.15s%s", PaperTable[i].name, i % 5 ? "  " : "\n");
+                  fprintf (stderr, "\n\n");
+		  exit (-1);
+		  }
+		else
+                  {
+                  page.mode |= PAGE_MODE_PAPERSIZE;
+		  }
+		break;
       case 'R': /* rotate image or cropped segment */
 		crop_data.crop_mode |= CROP_ROTATE;
 		switch (strtoul(optarg, NULL, 0))
@@ -414,20 +592,57 @@ main(int argc, char* argv[])
                              break;
                   case  270: crop_data.rotation = (uint16)270;
                              break;
-		  default:  fprintf (stderr,
-                    "Rotation must be 90, 180, or 270 degrees clockwise.\n");
+		  default:  fprintf (stderr, 
+                            "Rotation must be 90, 180, or 270 degrees clockwise.\n\n");
 			    usage();
 		  }
 		break;
+      case 'S':	/* subdivide into Cols:Rows sections, eg 3,2 would be 3 across and 2 down */
+		sep = strpbrk(optarg, ",:");
+		if (sep)
+                  {
+                  *sep = '\0';
+                  page.cols = atoi(optarg);
+                  page.rows = atoi(sep +1);
+		  }
+                else
+                  {
+                  page.cols = atoi(optarg);
+                  page.rows = atoi(optarg);
+		  }
+                if ((page.cols * page.rows) > MAX_SECTIONS)
+                  {
+		  fprintf (stderr, 
+                  "Limit of %d subdivisions, ie rows x columns, exceeded\n", MAX_SECTIONS);
+		  exit (-1);
+                  }
+                page.mode |= PAGE_MODE_ROWSCOLS;
+		break;
       case 'U':	/* units for measurements and offsets */
 		if (streq(optarg, "in"))
+                  {
 		  crop_data.res_unit = RESUNIT_INCH;
+		  page.res_unit = RESUNIT_INCH;
+		  }
 		else if (streq(optarg, "cm"))
+		  {
 		  crop_data.res_unit = RESUNIT_CENTIMETER;
+		  page.res_unit = RESUNIT_CENTIMETER;
+		  }
 		else if (streq(optarg, "px"))
-		   crop_data.res_unit = RESUNIT_NONE;
+		  {
+		  crop_data.res_unit = RESUNIT_NONE;
+		  page.res_unit = RESUNIT_NONE;
+		  }
 		else
+                  {
+		  fprintf (stderr, "Illegal unit of measure: %s\n\n", optarg);
 		  usage();
+		  }
+		break;
+      case 'V': /* set vertical resolution to new value */
+		page.vres = atof (optarg);
+                page.mode |= PAGE_MODE_RESOLUTION;
 		break;
       case 'X':	/* selection width */
 		crop_data.crop_mode |= CROP_WIDTH;
@@ -440,15 +655,21 @@ main(int argc, char* argv[])
       case 'Z': /* zones of an image X:Y read as zone X of Y */
 		crop_data.crop_mode |= CROP_ZONES;
 		for (i = 0, opt_ptr = strtok (optarg, ",");
-		     ((opt_ptr != NULL) &&  (i < MAX_ZONES));
-		     (opt_ptr = strtok (NULL, ",")), i++)
-			{
-			    crop_data.zones++;
-			    opt_offset = strchr(opt_ptr, ':');
-			    *opt_offset = '\0';
-			    crop_data.zonelist[i].position = atoi(opt_ptr);
-			    crop_data.zonelist[i].total = atoi(opt_offset + 1);
-			}
+                   ((opt_ptr != NULL) &&  (i < MAX_ZONES));
+                    (opt_ptr = strtok (NULL, ",")), i++)
+                    {
+		    crop_data.zones++;
+		    opt_offset = strchr(opt_ptr, ':');
+                    *opt_offset = '\0';
+                    crop_data.zonelist[i].position = atoi(opt_ptr);
+                    crop_data.zonelist[i].total    = atoi(opt_offset + 1);
+                    }
+                /*  check for remaining elements over MAX_ZONES */
+                if ((opt_ptr != NULL) && (i >= MAX_ZONES))
+                  {
+		  fprintf (stderr, "Zone list exceed limit of %d zones\n", MAX_ZONES);
+		  exit (-1);
+                  }
 		break;
       case '?':	usage();
 		/*NOTREACHED*/
@@ -481,7 +702,7 @@ main(int argc, char* argv[])
     if (dirnum == MAX_IMAGES - 1)
       dirnum = TIFFNumberOfDirectories(in) - 1;
 
-    if (dirnum != 0 && !TIFFSetDirectory(in, dirnum))
+    if (dirnum != 0 && !TIFFSetDirectory(in, (tdir_t)dirnum))
       {
       TIFFError(TIFFFileName(in),"Error, setting subdirectory at %#x", dirnum);
       (void) TIFFClose(out);
@@ -499,38 +720,55 @@ main(int argc, char* argv[])
       tilelength = deftilelength;
       g3opts = defg3opts;
 
+      if (loadImage(in, &image, &read_buff))
+        {
+        TIFFError("main", "Unable to load source image");
+        exit (-1);
+        }
+
       if (crop_data.crop_mode != CROP_NONE)
         {
-	if (getCropOffsets(in, &crop_data))
+	if (getCropOffsets(&image, &crop_data))
           {
           TIFFError("main", "Unable to define crop regions");
           exit (-1);
 	  }
 
-        if (loadImage(in, &read_buff))
-          {
-          TIFFError("main", "Unable to load source image");
-          exit (-1);
-	  }
-        if (createCroppedImage(in, &crop_data, &read_buff, &crop_buff))
+        /* Does this even need to be called if we are not cropping? */
+        if (createCroppedImage(in, &image, &crop_data, &read_buff, &crop_buff))
           {
           TIFFError("main", "Unable to create output image");
           exit (-1);
 	  }
+        }
+
+      /* Check output qualifiers and build loops to break output image into pages */
+      if (page.mode != PAGE_MODE_NONE)
+        {
+	if (crop_data.crop_mode == CROP_NONE)
+	  sect_src = read_buff;
+        else
+	  sect_src = crop_buff;
+
+        if (computeOutputPixelOffsets(&crop_data, &image, &page, sections))
+          {
+          TIFFError("main", "Unable to compute output section data");
+          exit (-1);
+	  }
+
+	if (writeImageSections(in, out, &image, &page, sections, sect_src, &sect_buff))
+          {
+          TIFFError("main", "Unable to write image sections");
+          exit (-1);
+	  }
+        }
+      else
         if (writeCroppedImage(in, out, &crop_data, crop_buff))
           {
           TIFFError("main", "Unable to write new image");
           exit (-1);
 	  }
-        }
-      else
-        { 
-        if (!tiffcp(in, out) || !TIFFWriteDirectory(out))
-          {
-          TIFFClose(out);
-          return (1);
-	  }
-        }
+
       /* No image list specified, just read the next image */
       if (image_count == 0)
         dirnum++;
@@ -543,7 +781,7 @@ main(int argc, char* argv[])
       if (dirnum == MAX_IMAGES - 1)
         dirnum = TIFFNumberOfDirectories(in) - 1;
 
-      if (!TIFFSetDirectory(in, dirnum))
+      if (!TIFFSetDirectory(in, (tdir_t)dirnum))
          break;
       }
     }
@@ -552,10 +790,13 @@ main(int argc, char* argv[])
 
   /* If we did not use the read buffer as the crop buffer */
   if (read_buff)
-        _TIFFfree(read_buff);
+    _TIFFfree(read_buff);
 
   if (crop_buff)
     _TIFFfree(crop_buff);
+
+  if (sect_buff)
+    _TIFFfree(sect_buff);
 
   TIFFClose(out);
 
@@ -635,11 +876,6 @@ char* stuff[] = {
 " -s		write output in strips",
 " -t		write output in tiles",
 " -i		ignore read errors",
-" -b file:#	bias (dark) monochrome image to be subtracted from all others",
-"               Note that bias filename may be of the form filename:#",
-"               where # specifies image file directory for bias filename.",
-" For example:  tiffcrop -b bias.tif:1  esp.tif test.tif",
-"  subtract 2nd image in bias.tif from all images in esp.tiff producing test.tif",
 "",
 " -r #		make each strip have no more than # rows",
 " -w #		set output tile width (pixels)",
@@ -679,11 +915,20 @@ char* stuff[] = {
 " -E t|l|r|b  edge to use as origin for width and length of crop region",
 " -U units    [in, cm, px ] inches, centimeters or pixels",
 "",
-" -M #,#,#,#  margins from edges for selection: top, left, bottom, right separated by commas",
+" -m #,#,#,#  margins from edges for selection: top, left, bottom, right separated by commas",
 " -X #        horizontal dimension of region to extract expressed in current units",
 " -Y #        vertical dimension of region to extract expressed in current units",
 " -Z #:#,#:#  zones of the image designated as position X of Y,",
 "             eg 1:3 would be first of three equal portions measured from reference edge",
+"",
+" -H #        set horizontal resolution of output images to #",
+" -V #        set vertical resolution of output images to #",
+" -J #        set horizontal margin of output page to # expressed in current units",
+" -K #        set verticalal margin of output page to # expressed in current units",
+"",
+" -O orient    orientation for output image, portrait, landscape, auto",
+" -P page      page size for output image segments, eg letter, legal, tabloid, etc",
+" -S cols:rows divide the image into equal sized segments using cols across and rows down",
 "",
 " -F h|v      flip ie mirror image or extracted region horizontally or vertically",
 " -R #        [90,180,or 270] degrees clockwise rotation of image or extracted region",
@@ -706,7 +951,7 @@ usage(void)
 	int i;
 
 	setbuf(stderr, buf);
-        fprintf(stderr, "%s\n\n", TIFFGetVersion());
+        fprintf(stderr, "\n%s\n\n", TIFFGetVersion());
 	for (i = 0; stuff[i] != NULL; i++)
 		fprintf(stderr, "%s\n", stuff[i]);
 	exit(-1);
@@ -821,198 +1066,6 @@ static struct cpTag {
 
 typedef int (*copyFunc)
     (TIFF* in, TIFF* out, uint32 l, uint32 w, uint16 samplesperpixel);
-static	copyFunc pickCopyFunc(TIFF*, TIFF*, uint16, uint16);
-
-static int
-tiffcp(TIFF* in, TIFF* out)
-{
-	uint16 bitspersample, samplesperpixel;
-	copyFunc cf;
-	uint32 width, length;
-	struct cpTag* p;
-
-	CopyField(TIFFTAG_IMAGEWIDTH, width);
-	CopyField(TIFFTAG_IMAGELENGTH, length);
-	CopyField(TIFFTAG_BITSPERSAMPLE, bitspersample);
-	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
-	if (compression != (uint16)-1)
-		TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
-	else
-		CopyField(TIFFTAG_COMPRESSION, compression);
-	if (compression == COMPRESSION_JPEG) {
-	    uint16 input_compression, input_photometric;
-
-            if (TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression)
-                 && input_compression == COMPRESSION_JPEG) {
-                TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
-            }
-	    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric)) {
-		if(input_photometric == PHOTOMETRIC_RGB) {
-			if (jpegcolormode == JPEGCOLORMODE_RGB)
-		    		TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
-					     PHOTOMETRIC_YCBCR);
-			else
-		    		TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
-					     PHOTOMETRIC_RGB);
-		} else
-			TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
-				     input_photometric);
-	    }
-        }
-	else if (compression == COMPRESSION_SGILOG
-		 || compression == COMPRESSION_SGILOG24)
-		TIFFSetField(out, TIFFTAG_PHOTOMETRIC,
-		    samplesperpixel == 1 ?
-			PHOTOMETRIC_LOGL : PHOTOMETRIC_LOGLUV);
-	else
-		CopyTag(TIFFTAG_PHOTOMETRIC, 1, TIFF_SHORT);
-	if (fillorder != 0)
-		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
-	else
-		CopyTag(TIFFTAG_FILLORDER, 1, TIFF_SHORT);
-	/*
-	 * Will copy `Orientation' tag from input image
-	 */
-	TIFFGetFieldDefaulted(in, TIFFTAG_ORIENTATION, &orientation);
-	switch (orientation) {
-		case ORIENTATION_BOTRIGHT:
-		case ORIENTATION_RIGHTBOT:	/* XXX */
-			TIFFWarning(TIFFFileName(in), "using bottom-left orientation");
-			orientation = ORIENTATION_BOTLEFT;
-		/* fall thru... */
-		case ORIENTATION_LEFTBOT:	/* XXX */
-		case ORIENTATION_BOTLEFT:
-			break;
-		case ORIENTATION_TOPRIGHT:
-		case ORIENTATION_RIGHTTOP:	/* XXX */
-		default:
-			TIFFWarning(TIFFFileName(in), "using top-left orientation");
-			orientation = ORIENTATION_TOPLEFT;
-		/* fall thru... */
-		case ORIENTATION_LEFTTOP:	/* XXX */
-		case ORIENTATION_TOPLEFT:
-			break;
-	}
-	TIFFSetField(out, TIFFTAG_ORIENTATION, orientation);
-	/*
-	 * Choose tiles/strip for the output image according to
-	 * the command line arguments (-tiles, -strips) and the
-	 * structure of the input image.
-	 */
-	if (outtiled == -1)
-		outtiled = TIFFIsTiled(in);
-	if (outtiled) {
-		/*
-		 * Setup output file's tile width&height.  If either
-		 * is not specified, use either the value from the
-		 * input image or, if nothing is defined, use the
-		 * library default.
-		 */
-		if (tilewidth == (uint32) -1)
-			TIFFGetField(in, TIFFTAG_TILEWIDTH, &tilewidth);
-		if (tilelength == (uint32) -1)
-			TIFFGetField(in, TIFFTAG_TILELENGTH, &tilelength);
-		TIFFDefaultTileSize(out, &tilewidth, &tilelength);
-		TIFFSetField(out, TIFFTAG_TILEWIDTH, tilewidth);
-		TIFFSetField(out, TIFFTAG_TILELENGTH, tilelength);
-	} else {
-		/*
-		 * RowsPerStrip is left unspecified: use either the
-		 * value from the input image or, if nothing is defined,
-		 * use the library default.
-		 */
-		if (rowsperstrip == (uint32) 0) {
-			if (!TIFFGetField(in, TIFFTAG_ROWSPERSTRIP,
-					  &rowsperstrip)) {
-				rowsperstrip =
-					TIFFDefaultStripSize(out, rowsperstrip);
-			}
-			if (rowsperstrip > length && rowsperstrip != (uint32)-1)
-				rowsperstrip = length;
-		}
-		else if (rowsperstrip == (uint32) -1)
-			rowsperstrip = length;
-		TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
-	}
-	if (config != (uint16) -1)
-		TIFFSetField(out, TIFFTAG_PLANARCONFIG, config);
-	else
-		CopyField(TIFFTAG_PLANARCONFIG, config);
-	if (samplesperpixel <= 4)
-		CopyTag(TIFFTAG_TRANSFERFUNCTION, 4, TIFF_SHORT);
-	CopyTag(TIFFTAG_COLORMAP, 4, TIFF_SHORT);
-/* SMinSampleValue & SMaxSampleValue */
-	switch (compression) {
-	case COMPRESSION_JPEG:
-		TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
-		TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
-		break;
-	case COMPRESSION_LZW:
-	case COMPRESSION_ADOBE_DEFLATE:
-	case COMPRESSION_DEFLATE:
-		if (predictor != (uint16)-1)
-			TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
-		else
-			CopyField(TIFFTAG_PREDICTOR, predictor);
-		break;
-	case COMPRESSION_CCITTFAX3:
-	case COMPRESSION_CCITTFAX4:
-		if (compression == COMPRESSION_CCITTFAX3) {
-			if (g3opts != (uint32) -1)
-				TIFFSetField(out, TIFFTAG_GROUP3OPTIONS,
-				    g3opts);
-			else
-				CopyField(TIFFTAG_GROUP3OPTIONS, g3opts);
-		} else
-			CopyTag(TIFFTAG_GROUP4OPTIONS, 1, TIFF_LONG);
-		CopyTag(TIFFTAG_BADFAXLINES, 1, TIFF_LONG);
-		CopyTag(TIFFTAG_CLEANFAXDATA, 1, TIFF_LONG);
-		CopyTag(TIFFTAG_CONSECUTIVEBADFAXLINES, 1, TIFF_LONG);
-		CopyTag(TIFFTAG_FAXRECVPARAMS, 1, TIFF_LONG);
-		CopyTag(TIFFTAG_FAXRECVTIME, 1, TIFF_LONG);
-		CopyTag(TIFFTAG_FAXSUBADDRESS, 1, TIFF_ASCII);
-		break;
-	}
-	{ uint32 len32;
-	  void** data;
-	  if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &len32, &data))
-		TIFFSetField(out, TIFFTAG_ICCPROFILE, len32, data);
-	}
-	{ uint16 ninks;
-	  const char* inknames;
-	  if (TIFFGetField(in, TIFFTAG_NUMBEROFINKS, &ninks)) {
-		TIFFSetField(out, TIFFTAG_NUMBEROFINKS, ninks);
-		if (TIFFGetField(in, TIFFTAG_INKNAMES, &inknames)) {
-		    int inknameslen = strlen(inknames) + 1;
-		    const char* cp = inknames;
-		    while (ninks > 1) {
-			    cp = strchr(cp, '\0');
-			    if (cp) {
-				    cp++;
-				    inknameslen += (strlen(cp) + 1);
-			    }
-			    ninks--;
-		    }
-		    TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
-		}
-	  }
-	}
-	{
-	  unsigned short pg0, pg1;
-	  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1)) {
-		if (pageNum < 0) /* only one input file */
-			TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
-		else 
-			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
-	  }
-	}
-
-	for (p = tags; p < &tags[NTAGS]; p++)
-		CopyTag(p->tag, p->count, p->type);
-
-	cf = pickCopyFunc(in, out, bitspersample, samplesperpixel);
-	return (cf ? (*cf)(in, out, length, width, samplesperpixel) : FALSE);
-}
 
 /*
  * Copy Functions.
@@ -1030,308 +1083,6 @@ typedef int (*readFunc)(TIFF*, uint8*, uint32, uint32, tsample_t);
 static int x(TIFF* out, \
     uint8* buf, uint32 imagelength, uint32 imagewidth, tsample_t spp)
 typedef int (*writeFunc)(TIFF*, uint8*, uint32, uint32, tsample_t);
-
-/*
- * Contig -> contig by scanline for rows/strip change.
- */
-DECLAREcpFunc(cpContig2ContigByRow)
-{
-	tdata_t buf = _TIFFmalloc(TIFFScanlineSize(in));
-	uint32 row;
-
-	(void) imagewidth; (void) spp;
-	for (row = 0; row < imagelength; row++) {
-		if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore) {
-			TIFFError(TIFFFileName(in),
-				  "Error, can't read scanline %lu",
-				  (unsigned long) row);
-			goto bad;
-		}
-		if (TIFFWriteScanline(out, buf, row, 0) < 0) {
-			TIFFError(TIFFFileName(out),
-				  "Error, can't write scanline %lu",
-				  (unsigned long) row);
-			goto bad;
-		}
-	}
-	_TIFFfree(buf);
-	return 1;
-bad:
-	_TIFFfree(buf);
-	return 0;
-}
-
-
-typedef void biasFn (void *image, void *bias, uint32 pixels);
-
-#define subtract(bits) \
-static void subtract##bits (void *i, void *b, uint32 pixels)\
-{\
-   uint##bits *image = i;\
-   uint##bits *bias = b;\
-   while (pixels--) {\
-     *image = *image > *bias ? *image-*bias : 0;\
-     image++, bias++; \
-   } \
-}
-
-subtract(8)
-subtract(16)
-subtract(32)
-
-static biasFn *lineSubtractFn (unsigned bits)
-{
-    switch (bits) {
-      case  8:  return subtract8;
-      case 16:  return subtract16;
-      case 32:  return subtract32;
-    }
-    return NULL;
-}
-
-/*
- * Contig -> contig by scanline while subtracting a bias image.
- */
-DECLAREcpFunc(cpBiasedContig2Contig)
-{
-	if (spp == 1) {
-	  tsize_t biasSize = TIFFScanlineSize(bias);
-	  tsize_t bufSize = TIFFScanlineSize(in);
-	  tdata_t buf, biasBuf;
-	  uint32 biasWidth = 0, biasLength = 0;
-	  TIFFGetField(bias, TIFFTAG_IMAGEWIDTH, &biasWidth);
-	  TIFFGetField(bias, TIFFTAG_IMAGELENGTH, &biasLength);
-	  if (biasSize == bufSize && 
-	      imagelength == biasLength && imagewidth == biasWidth) {
-		uint16 sampleBits = 0;
-		biasFn *subtractLine;
-		TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &sampleBits);
-		subtractLine = lineSubtractFn (sampleBits);
-		if (subtractLine) {
-			uint32 row;
-			buf = _TIFFmalloc(bufSize);
-			biasBuf = _TIFFmalloc(bufSize);
-			for (row = 0; row < imagelength; row++) {
-				if (TIFFReadScanline(in, buf, row, 0) < 0
-				    && !ignore) {
-					TIFFError(TIFFFileName(in),
-					"Error, can't read scanline %lu",
-					(unsigned long) row);
-					goto bad;
-				}
-				if (TIFFReadScanline(bias, biasBuf, row, 0) < 0
-				    && !ignore) {
-					TIFFError(TIFFFileName(in),
-					"Error, can't read biased scanline %lu",
-					(unsigned long) row);
-					goto bad;
-				}
-				subtractLine (buf, biasBuf, imagewidth);
-				if (TIFFWriteScanline(out, buf, row, 0) < 0) {
-					TIFFError(TIFFFileName(out),
-					"Error, can't write scanline %lu",
-					(unsigned long) row);
-					goto bad;
-				}
-			}
-		
-			_TIFFfree(buf);
-			_TIFFfree(biasBuf);
-			TIFFSetDirectory(bias,
-				TIFFCurrentDirectory(bias)); /* rewind */
-			return 1;
-bad:
-			_TIFFfree(buf);
-			_TIFFfree(biasBuf);
-			return 0;
-	    } else {
-	      TIFFError(TIFFFileName(in),
-			"No support for biasing %d bit pixels\n",
-			sampleBits);
-	      return 0;
-	    }
-	  }
-	  TIFFError(TIFFFileName(in),
-		    "Bias image %s,%d\nis not the same size as %s,%d\n",
-		    TIFFFileName(bias), TIFFCurrentDirectory(bias),
-		    TIFFFileName(in), TIFFCurrentDirectory(in));
-	  return 0;
-	} else {
-	  TIFFError(TIFFFileName(in),
-		    "Can't bias %s,%d as it has >1 Sample/Pixel\n",
-		    TIFFFileName(in), TIFFCurrentDirectory(in));
-	  return 0;
-	}
-
-}
-
-
-/*
- * Strip -> strip for change in encoding.
- */
-DECLAREcpFunc(cpDecodedStrips)
-{
-	tsize_t stripsize  = TIFFStripSize(in);
-	tdata_t buf = _TIFFmalloc(stripsize);
-
-	(void) imagewidth; (void) spp;
-	if (buf) {
-		tstrip_t s, ns = TIFFNumberOfStrips(in);
-		uint32 row = 0;
-		for (s = 0; s < ns; s++) {
-			tsize_t cc = (row + rowsperstrip > imagelength) ?
-			    TIFFVStripSize(in, imagelength - row) : stripsize;
-			if (TIFFReadEncodedStrip(in, s, buf, cc) < 0
-			    && !ignore) {
-				TIFFError(TIFFFileName(in),
-					  "Error, can't read strip %lu",
-					  (unsigned long) s);
-				goto bad;
-			}
-			if (TIFFWriteEncodedStrip(out, s, buf, cc) < 0) {
-				TIFFError(TIFFFileName(out),
-					  "Error, can't write strip %lu",
-					  (unsigned long) s);
-				goto bad;
-			}
-			row += rowsperstrip;
-		}
-		_TIFFfree(buf);
-		return 1;
-	} else {
-		TIFFError(TIFFFileName(in),
-			  "Error, can't allocate memory buffer of size %lu "
-			  "to read strips", (unsigned long) stripsize);
-		return 0;
-	}
-
-bad:
-	_TIFFfree(buf);
-	return 0;
-}
-
-/*
- * Separate -> separate by row for rows/strip change.
- */
-DECLAREcpFunc(cpSeparate2SeparateByRow)
-{
-	tdata_t buf = _TIFFmalloc(TIFFScanlineSize(in));
-	uint32 row;
-	tsample_t s;
-
-	(void) imagewidth;
-	for (s = 0; s < spp; s++) {
-		for (row = 0; row < imagelength; row++) {
-			if (TIFFReadScanline(in, buf, row, s) < 0 && !ignore) {
-				TIFFError(TIFFFileName(in),
-					  "Error, can't read scanline %lu",
-					  (unsigned long) row);
-				goto bad;
-			}
-			if (TIFFWriteScanline(out, buf, row, s) < 0) {
-				TIFFError(TIFFFileName(out),
-					  "Error, can't write scanline %lu",
-					  (unsigned long) row);
-				goto bad;
-			}
-		}
-	}
-	_TIFFfree(buf);
-	return 1;
-bad:
-	_TIFFfree(buf);
-	return 0;
-}
-
-/*
- * Contig -> separate by row.
- */
-DECLAREcpFunc(cpContig2SeparateByRow)
-{
-	tdata_t inbuf = _TIFFmalloc(TIFFScanlineSize(in));
-	tdata_t outbuf = _TIFFmalloc(TIFFScanlineSize(out));
-	register uint8 *inp, *outp;
-	register uint32 n;
-	uint32 row;
-	tsample_t s;
-
-	/* unpack channels */
-	for (s = 0; s < spp; s++) {
-		for (row = 0; row < imagelength; row++) {
-			if (TIFFReadScanline(in, inbuf, row, 0) < 0
-			    && !ignore) {
-				TIFFError(TIFFFileName(in),
-					  "Error, can't read scanline %lu",
-					  (unsigned long) row);
-				goto bad;
-			}
-			inp = ((uint8*)inbuf) + s;
-			outp = (uint8*)outbuf;
-			for (n = imagewidth; n-- > 0;) {
-				*outp++ = *inp;
-				inp += spp;
-			}
-			if (TIFFWriteScanline(out, outbuf, row, s) < 0) {
-				TIFFError(TIFFFileName(out),
-					  "Error, can't write scanline %lu",
-					  (unsigned long) row);
-				goto bad;
-			}
-		}
-	}
-	if (inbuf) _TIFFfree(inbuf);
-	if (outbuf) _TIFFfree(outbuf);
-	return 1;
-bad:
-	if (inbuf) _TIFFfree(inbuf);
-	if (outbuf) _TIFFfree(outbuf);
-	return 0;
-}
-
-/*
- * Separate -> contig by row.
- */
-DECLAREcpFunc(cpSeparate2ContigByRow)
-{
-	tdata_t inbuf = _TIFFmalloc(TIFFScanlineSize(in));
-	tdata_t outbuf = _TIFFmalloc(TIFFScanlineSize(out));
-	register uint8 *inp, *outp;
-	register uint32 n;
-	uint32 row;
-	tsample_t s;
-
-	for (row = 0; row < imagelength; row++) {
-		/* merge channels */
-		for (s = 0; s < spp; s++) {
-			if (TIFFReadScanline(in, inbuf, row, s) < 0
-			    && !ignore) {
-				TIFFError(TIFFFileName(in),
-					  "Error, can't read scanline %lu",
-					  (unsigned long) row);
-				goto bad;
-			}
-			inp = (uint8*)inbuf;
-			outp = ((uint8*)outbuf) + s;
-			for (n = imagewidth; n-- > 0;) {
-				*outp = *inp++;
-				outp += spp;
-			}
-		}
-		if (TIFFWriteScanline(out, outbuf, row, 0) < 0) {
-			TIFFError(TIFFFileName(out),
-				  "Error, can't write scanline %lu",
-				  (unsigned long) row);
-			goto bad;
-		}
-	}
-	if (inbuf) _TIFFfree(inbuf);
-	if (outbuf) _TIFFfree(outbuf);
-	return 1;
-bad:
-	if (inbuf) _TIFFfree(inbuf);
-	if (outbuf) _TIFFfree(outbuf);
-	return 0;
-}
 
 static void
 cpStripToTile(uint8* out, uint8* in,
@@ -1387,38 +1138,6 @@ cpSeparateBufToContigBuf(uint8* out, uint8* in,
 	}
 }
 
-static int
-cpImage(TIFF* in, TIFF* out, readFunc fin, writeFunc fout,
-	uint32 imagelength, uint32 imagewidth, tsample_t spp)
-{
-	int status = 0;
-	tdata_t buf = NULL;
-	tsize_t scanlinesize = TIFFRasterScanlineSize(in);
-        tsize_t bytes = scanlinesize * (tsize_t)imagelength;                                      
-        /*
-         * XXX: Check for integer overflow.
-         */
-        if (scanlinesize
-	    && imagelength
-	    && bytes / (tsize_t)imagelength == scanlinesize) {
-                buf = _TIFFmalloc(bytes);
-		if (buf) {
-			if ((*fin)(in, (uint8*)buf, imagelength, 
-				   imagewidth, spp)) {
-				status = (*fout)(out, (uint8*)buf,
-						 imagelength, imagewidth, spp);
-			}
-			_TIFFfree(buf);
-		} else {
-			TIFFError(TIFFFileName(in),
-				"Error, can't allocate space for image buffer");
-		}
-	} else {
-		TIFFError(TIFFFileName(in), "Error, no space for image buffer");
-	}
-
-	return status;
-}
 
 DECLAREreadFunc(readContigStripsIntoBuffer)
 {
@@ -1773,248 +1492,77 @@ DECLAREwriteFunc(writeBufferToSeparateTiles)
 	return 1;
 }
 
-/*
- * Contig strips -> contig tiles.
- */
-DECLAREcpFunc(cpContigStrips2ContigTiles)
-{
-	return cpImage(in, out,
-	    readContigStripsIntoBuffer,
-	    writeBufferToContigTiles,
-	    imagelength, imagewidth, spp);
-}
 
-/*
- * Contig strips -> separate tiles.
- */
-DECLAREcpFunc(cpContigStrips2SeparateTiles)
-{
-	return cpImage(in, out,
-	    readContigStripsIntoBuffer,
-	    writeBufferToSeparateTiles,
-	    imagelength, imagewidth, spp);
-}
+static int
+get_page_geometry (char *name, struct pagedef *page)
+    {
+    char *ptr;
+    int n; 
 
-/*
- * Separate strips -> contig tiles.
- */
-DECLAREcpFunc(cpSeparateStrips2ContigTiles)
-{
-	return cpImage(in, out,
-	    readSeparateStripsIntoBuffer,
-	    writeBufferToContigTiles,
-	    imagelength, imagewidth, spp);
-}
+    for (ptr = name; *ptr; ptr++)
+      *ptr = (char)tolower((int)*ptr);
 
-/*
- * Separate strips -> separate tiles.
- */
-DECLAREcpFunc(cpSeparateStrips2SeparateTiles)
-{
-	return cpImage(in, out,
-	    readSeparateStripsIntoBuffer,
-	    writeBufferToSeparateTiles,
-	    imagelength, imagewidth, spp);
-}
+    for (n = 0; n < MAX_PAPERNAMES; n++)
+      {
+      if (strcmp(name, PaperTable[n].name) == 0)
+        {
+	page->width = PaperTable[n].width;
+	page->length = PaperTable[n].length;
+        strncpy (page->name, PaperTable[n].name, 15);
+        page->name[15] = '\0';
+        return (0);
+        }
+      }
 
-/*
- * Contig strips -> contig tiles.
- */
-DECLAREcpFunc(cpContigTiles2ContigTiles)
-{
-	return cpImage(in, out,
-	    readContigTilesIntoBuffer,
-	    writeBufferToContigTiles,
-	    imagelength, imagewidth, spp);
-}
+  return (1);
+  }
 
-/*
- * Contig tiles -> separate tiles.
- */
-DECLAREcpFunc(cpContigTiles2SeparateTiles)
-{
-	return cpImage(in, out,
-	    readContigTilesIntoBuffer,
-	    writeBufferToSeparateTiles,
-	    imagelength, imagewidth, spp);
-}
 
-/*
- * Separate tiles -> contig tiles.
- */
-DECLAREcpFunc(cpSeparateTiles2ContigTiles)
-{
-	return cpImage(in, out,
-	    readSeparateTilesIntoBuffer,
-	    writeBufferToContigTiles,
-	    imagelength, imagewidth, spp);
-}
+static void
+initPageSetup (struct pagedef *page, struct pageseg *pagelist)
+   {
+   int i; 
 
-/*
- * Separate tiles -> separate tiles (tile dimension change).
- */
-DECLAREcpFunc(cpSeparateTiles2SeparateTiles)
-{
-	return cpImage(in, out,
-	    readSeparateTilesIntoBuffer,
-	    writeBufferToSeparateTiles,
-	    imagelength, imagewidth, spp);
-}
+   strcpy (page->name, "");
+   page->mode = PAGE_MODE_NONE;
+   page->res_unit = RESUNIT_NONE;
+   page->hres = 0.0;
+   page->vres = 0.0;
+   page->width = 0.0;
+   page->length = 0.0;
+   page->hmargin = 0.0;
+   page->vmargin = 0.0;
+   page->rows = 0;
+   page->cols = 0;
+   page->orient = ORIENTATION_NONE;
 
-/*
- * Contig tiles -> contig tiles (tile dimension change).
- */
-DECLAREcpFunc(cpContigTiles2ContigStrips)
-{
-	return cpImage(in, out,
-	    readContigTilesIntoBuffer,
-	    writeBufferToContigStrips,
-	    imagelength, imagewidth, spp);
-}
+   for (i = 0; i < MAX_SECTIONS; i++)
+     {
+     pagelist[i].x1 = (uint32)0;
+     pagelist[i].x2 = (uint32)0;
+     pagelist[i].y1 = (uint32)0;
+     pagelist[i].y2 = (uint32)0;
+     pagelist[i].buffsize = (uint32)0;
+     pagelist[i].position = 0;
+     pagelist[i].total = 0;
+     }
+   }
 
-/*
- * Contig tiles -> separate strips.
- */
-DECLAREcpFunc(cpContigTiles2SeparateStrips)
-{
-	return cpImage(in, out,
-	    readContigTilesIntoBuffer,
-	    writeBufferToSeparateStrips,
-	    imagelength, imagewidth, spp);
-}
+static void
+initImageData (struct image_data *image)
+  {
+  image->xres = 0.0;
+  image->yres = 0.0;
+  image->width = 0;
+  image->length = 0;
+  image->res_unit = RESUNIT_NONE;
+  image->bps = 0;
+  image->spp = 0;
+  image->planar = 0;
+  image->photometric = 0;
+  };
 
-/*
- * Separate tiles -> contig strips.
- */
-DECLAREcpFunc(cpSeparateTiles2ContigStrips)
-{
-	return cpImage(in, out,
-	    readSeparateTilesIntoBuffer,
-	    writeBufferToContigStrips,
-	    imagelength, imagewidth, spp);
-}
-
-/*
- * Separate tiles -> separate strips.
- */
-DECLAREcpFunc(cpSeparateTiles2SeparateStrips)
-{
-	return cpImage(in, out,
-	    readSeparateTilesIntoBuffer,
-	    writeBufferToSeparateStrips,
-	    imagelength, imagewidth, spp);
-}
-
-/*
- * Select the appropriate copy function to use.
- */
-static copyFunc
-pickCopyFunc(TIFF* in, TIFF* out, uint16 bitspersample, uint16 samplesperpixel)
-{
-	uint16 shortv;
-	uint32 w, l, tw, tl;
-	int bychunk;
-
-	(void) TIFFGetField(in, TIFFTAG_PLANARCONFIG, &shortv);
-	if (shortv != config && bitspersample != 8 && samplesperpixel > 1) {
-		fprintf(stderr,
-"%s: Cannot handle different planar configuration w/ bits/sample != 8\n",
-		    TIFFFileName(in));
-		return (NULL);
-	}
-	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &w);
-	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &l);
-        if (!(TIFFIsTiled(out) || TIFFIsTiled(in))) {
-	    uint32 irps = (uint32) -1L;
-	    TIFFGetField(in, TIFFTAG_ROWSPERSTRIP, &irps);
-            /* if biased, force decoded copying to allow image subtraction */
-	    bychunk = !bias && (rowsperstrip == irps);
-	}else{  /* either in or out is tiled */
-            if (bias) {
-                  fprintf(stderr,
-"%s: Cannot handle tiled configuration w/bias image\n",
-                  TIFFFileName(in));
-                  return (NULL);
-            }
-	    if (TIFFIsTiled(out)) {
-		if (!TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw))
-			tw = w;
-		if (!TIFFGetField(in, TIFFTAG_TILELENGTH, &tl))
-			tl = l;
-		bychunk = (tw == tilewidth && tl == tilelength);
-	    } else {  /* out's not, so in must be tiled */
-		TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
-		TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
-		bychunk = (tw == w && tl == rowsperstrip);
-            }
-	}
-#define	T 1
-#define	F 0
-#define pack(a,b,c,d,e)	((long)(((a)<<11)|((b)<<3)|((c)<<2)|((d)<<1)|(e)))
-	switch(pack(shortv,config,TIFFIsTiled(in),TIFFIsTiled(out),bychunk)) {
-/* Strips -> Tiles */
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   F,T,F):
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   F,T,T):
-		return cpContigStrips2ContigTiles;
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_SEPARATE, F,T,F):
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_SEPARATE, F,T,T):
-		return cpContigStrips2SeparateTiles;
-        case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   F,T,F):
-        case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   F,T,T):
-		return cpSeparateStrips2ContigTiles;
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, F,T,F):
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, F,T,T):
-		return cpSeparateStrips2SeparateTiles;
-/* Tiles -> Tiles */
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   T,T,F):
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   T,T,T):
-		return cpContigTiles2ContigTiles;
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_SEPARATE, T,T,F):
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_SEPARATE, T,T,T):
-		return cpContigTiles2SeparateTiles;
-        case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   T,T,F):
-        case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   T,T,T):
-		return cpSeparateTiles2ContigTiles;
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, T,T,F):
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, T,T,T):
-		return cpSeparateTiles2SeparateTiles;
-/* Tiles -> Strips */
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   T,F,F):
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   T,F,T):
-		return cpContigTiles2ContigStrips;
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_SEPARATE, T,F,F):
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_SEPARATE, T,F,T):
-		return cpContigTiles2SeparateStrips;
-        case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   T,F,F):
-        case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   T,F,T):
-		return cpSeparateTiles2ContigStrips;
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, T,F,F):
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, T,F,T):
-		return cpSeparateTiles2SeparateStrips;
-/* Strips -> Strips */
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   F,F,F):
-		return bias ? cpBiasedContig2Contig : cpContig2ContigByRow;
-	case pack(PLANARCONFIG_CONTIG,   PLANARCONFIG_CONTIG,   F,F,T):
-		return cpDecodedStrips;
-	case pack(PLANARCONFIG_CONTIG, PLANARCONFIG_SEPARATE,   F,F,F):
-	case pack(PLANARCONFIG_CONTIG, PLANARCONFIG_SEPARATE,   F,F,T):
-		return cpContig2SeparateByRow;
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   F,F,F):
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_CONTIG,   F,F,T):
-		return cpSeparate2ContigByRow;
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, F,F,F):
-	case pack(PLANARCONFIG_SEPARATE, PLANARCONFIG_SEPARATE, F,F,T):
-		return cpSeparate2SeparateByRow;
-	}
-#undef pack
-#undef F
-#undef T
-	fprintf(stderr, "tiffcrop: %s: Don't know how to copy/convert image.\n",
-	    TIFFFileName(in));
-	return (NULL);
-}
-
-static int 
+static void
 initCropMasks (struct crop_mask *cps)
    {
    int i;
@@ -2032,7 +1580,7 @@ initCropMasks (struct crop_mask *cps)
    cps->rotation = (uint16)0;
    cps->mirror   = (uint16)0;
    cps->invert   = (uint16)0;
-   cps->zones = 0;
+   cps->zones    = (uint32)0;
    for (i = 0; i < MAX_ZONES; i++)
      {
      cps->zonelist[i].position = 0;
@@ -2042,42 +1590,50 @@ initCropMasks (struct crop_mask *cps)
      cps->zonelist[i].y1 = (uint32)0;
      cps->zonelist[i].y2 = (uint32)0;
      }
-
-   return (0);
    }
 
-/* Compute offsets into the image for margins */
+/* Compute pixel offsets into the image for margins and fixed regions */
 static int
-computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32 img_length, 
-	       struct crop_mask *crop, struct offset *off)
+computeInputPixelOffsets(struct crop_mask *crop, struct image_data *image,
+                         struct offset *off)
   {
+  double scale;
+  float xres, yres;
+  /* Values for these offsets are in pixels from start of image, not bytes
+   * since some images may have more than 8 bits per pixel */
   uint32 tmargin, bmargin, lmargin, rmargin;
   uint32 startx, endx;   /* offsets of first and last columns to extract */
   uint32 starty, endy;   /* offsets of first and last row to extract */
-  uint32 width, length, crop_width, crop_length;
-  double scale;
+  uint32 width, length, crop_width, crop_length; 
 
-  if (res_unit != RESUNIT_INCH && res_unit != RESUNIT_CENTIMETER)
+
+  if (image->res_unit != RESUNIT_INCH && image->res_unit != RESUNIT_CENTIMETER)
     {
     xres = 1.0;
     yres = 1.0;
     if ((crop->res_unit != RESUNIT_NONE) && ((crop->crop_mode & CROP_MARGINS) ||
 	(crop->crop_mode & CROP_LENGTH) || (crop->crop_mode & CROP_WIDTH)))
       {
-      TIFFError("computeOffsets", "Cannot compute margins or fixed size sections without image resolution");
-      TIFFError("computeOffsets", "Specify units in pixels and try again");
+      TIFFError("computeInputPixelOffsets", "Cannot compute margins or fixed size sections without image resolution");
+      TIFFError("computeInputPixelOffsets", "Specify units in pixels and try again");
       return (-1);
       }
     }
+  else
+    {
+    xres = image->xres;
+    yres = image->yres;
+    }
+
   /* Translate user units to image units */
   scale = 1.0;
   switch (crop->res_unit) {
     case RESUNIT_CENTIMETER:
-         if (res_unit == RESUNIT_INCH)
+         if (image->res_unit == RESUNIT_INCH)
 	   scale = 1.0/2.54;
 	 break;
     case RESUNIT_INCH:
-	 if (res_unit == RESUNIT_CENTIMETER)
+	 if (image->res_unit == RESUNIT_CENTIMETER)
 	     scale = 2.54;
 	 break;
     case RESUNIT_NONE: /* Dimensions in pixels */
@@ -2089,15 +1645,17 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
   fprintf (stderr, "Scale: %f  Requested resunit %s, Image resunit %s\n\n",
            scale, (crop->res_unit == RESUNIT_INCH) ? "inch" :
 	   ((crop->res_unit == RESUNIT_CENTIMETER) ? "centimeter" : "pixel"),
-           (res_unit == RESUNIT_INCH) ? "inch" :
-	   ((res_unit == RESUNIT_CENTIMETER) ? "centimeter" : "pixel"));
+           (image->res_unit == RESUNIT_INCH) ? "inch" :
+	   ((image->res_unit == RESUNIT_CENTIMETER) ? "centimeter" : "pixel"));
 #endif
   
-  /* Convert crop margins into offsets into image */
+  /* Convert crop margins into offsets into image
+   * Margins are expressed as pixel rows and columns, not bytes
+   */
   if (crop->crop_mode & CROP_MARGINS)
     {
     if (crop->res_unit != RESUNIT_INCH && crop->res_unit != RESUNIT_CENTIMETER)
-      { /* User specified pixels as reference unit */
+      { /* User has specified pixels as reference unit */
       tmargin = (uint32)(crop->margins[0]);
       lmargin = (uint32)(crop->margins[1]);
       bmargin = (uint32)(crop->margins[2]);
@@ -2111,16 +1669,16 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
       rmargin = (uint32)(crop->margins[3] * scale * xres);
       }
 
-    if ((lmargin + rmargin) > img_width)
+    if ((lmargin + rmargin) > image->width)
       {
-      TIFFError("computeOffsets", "Combined left and right margins exceed image width");
+      TIFFError("computeInputPixelOffsets", "Combined left and right margins exceed image width");
       lmargin = (uint32) 0;
       rmargin = (uint32) 0;
       return (-1);
       }
-    if ((tmargin + bmargin) > img_length)
+    if ((tmargin + bmargin) > image->length)
       {
-      TIFFError("computeOffsets", "Combined top and bottom margins exceed image length"); 
+      TIFFError("computeInputPixelOffsets", "Combined top and bottom margins exceed image length"); 
       tmargin = (uint32) 0; 
       bmargin = (uint32) 0;
       return (-1);
@@ -2134,15 +1692,16 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
     rmargin = (uint32) 0;
     }
 
+  /* Width, height, and margins are expressed as pixel offsets into image */
   if (crop->crop_mode & CROP_WIDTH)
-    width = (uint32)(crop->width * scale * xres);
+    width = (uint32)(crop->width * scale * image->xres);
   else
-    width = img_width - lmargin - rmargin;
+    width = image->width - lmargin - rmargin;
 
   if (crop->crop_mode & CROP_LENGTH)
-    length  = (uint32)(crop->length * scale * yres);
+    length  = (uint32)(crop->length * scale * image->yres);
   else
-    length = img_length - tmargin - bmargin;
+    length = image->length - tmargin - bmargin;
 
   off->tmargin = tmargin;
   off->bmargin = bmargin;
@@ -2150,29 +1709,31 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
   off->rmargin = rmargin;
 
   /* Calculate regions defined by margins, width, and length. 
-   * Coordinates expressed as 1 to imagewidth, imagelength */
+   * Coordinates expressed as 1 to imagewidth, imagelength, not bytes */
   switch (crop->edge_ref) {
-    case EDGE_BOTTOM:          startx = lmargin;
-         if ((startx + width) >= (img_width - rmargin))
-           endx = img_width - rmargin - 1;
+    case EDGE_BOTTOM:
+         startx = lmargin;
+         if ((startx + width) >= (image->width - rmargin))
+           endx = image->width - rmargin - 1;
          else
            endx = startx + width;
 
-         endy = img_length - bmargin - 1;
+         endy = image->length - bmargin - 1;
          if ((endy - length) <= tmargin)
            starty = tmargin;
          else
            starty = endy - length - 1;
          break;
-    case EDGE_RIGHT:         endx = img_width - rmargin - 1;
+    case EDGE_RIGHT:
+         endx = image->width - rmargin - 1;
          if ((endx - width) <= lmargin)
            startx = lmargin;
          else
            startx = endx - width;
 
          starty = tmargin;
-         if ((starty + length) >= (img_length - bmargin))
-           endy = img_length - bmargin - 1;
+         if ((starty + length) >= (image->length - bmargin))
+           endy = image->length - bmargin - 1;
          else
            endy = starty + length;
          break;
@@ -2180,19 +1741,18 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
     case EDGE_LEFT:
     default:
          startx = lmargin;
-         if ((startx + width) >= (img_width - rmargin))
-           endx = img_width - rmargin - 1;
+         if ((startx + width) >= (image->width - rmargin))
+           endx = image->width - rmargin - 1;
          else
            endx = startx + width;
 
          starty = tmargin;
-         if ((starty + length) >= (img_length - bmargin))
-           endy = img_length - bmargin - 1;
+         if ((starty + length) >= (image->length - bmargin))
+           endy = image->length - bmargin - 1;
          else
            endy = starty + length;
          break;
     }
-
   off->startx = startx;
   off->starty = starty;
   off->endx   = endx;
@@ -2203,28 +1763,35 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
 
   if (crop_width <= 0)
     {
-    TIFFError("computeOffsets", "Invalid left/right margins and /or image crop width requested");
+    TIFFError("computeInputPixelOffsets", 
+               "Invalid left/right margins and /or image crop width requested");
     return (-1);
     }
-  if (crop_width > img_width)
-    crop_width = img_width;
+  if (crop_width > image->width)
+    crop_width = image->width;
 
   if (crop_length <= 0)
     {
-    TIFFError("computeOffsets", "Invalid top/bottom margins and /or image crop length requested");
+    TIFFError("computeInputPixelOffsets", 
+              "Invalid top/bottom margins and /or image crop length requested");
     return (-1);
     }
-  if (crop_length > img_length)
-    crop_length = img_length;
+  if (crop_length > image->length)
+    crop_length = image->length;
 
   off->crop_width = crop_width;
   off->crop_length = crop_length;
 
+#ifdef DEBUG
+  fprintf (stderr, "Startx: %d endx: %d Starty: %d endy: %d  Crop width: %d length: %d\n",
+           startx, endx, starty, endy, crop_width, crop_length);
+#endif
+
   return (0);
-  }
+  } /* end computeInputPixelOffsets */
 
 /* 
- * Translate cropping options into offsets for one or more regions in the image.
+ * Translate crop options into pixel offsets for one or more regions of the image.
  * Options are applied in this order: margins, specific width and length, zones,
  * but all are optional. Margins are relative to each edge. Width, length and
  * zones are relative to the specified reference edge. Zones are expressed as
@@ -2234,31 +1801,19 @@ computeOffsets(uint16 res_unit, float xres, float yres, uint32 img_width, uint32
  */
 
 static int
-getCropOffsets(TIFF* in, struct crop_mask *crop)
-{
-  int    i, seg, total, cropbuff = 0;
-  uint32 test, img_width, img_length, buffsize;
-  uint16 spp, bps, res_unit;
-  float  xres, yres;
-  double zwidth, zlength;
-  tdir_t cur_dir;
+getCropOffsets(struct image_data *image, struct crop_mask *crop)
+  {
   struct offset offsets;
+  uint32 i, seg, total, cropbuff = 0;
+  uint32 test, buffsize;
+  double zwidth, zlength;
 
-  TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &img_width);
-  TIFFGetField(in, TIFFTAG_IMAGELENGTH, &img_length);
-  TIFFGetFieldDefaulted(in, TIFFTAG_BITSPERSAMPLE, &bps);
-  TIFFGetFieldDefaulted(in, TIFFTAG_SAMPLESPERPIXEL, &spp);
-  TIFFGetFieldDefaulted(in, TIFFTAG_RESOLUTIONUNIT, &res_unit);
-  TIFFGetField(in, TIFFTAG_XRESOLUTION, &xres);
-  TIFFGetField(in, TIFFTAG_YRESOLUTION, &yres);
-  cur_dir = TIFFCurrentDirectory(in);
-
-  /* Compute offsets if margins or fixed width or length specified */
+  /* Compute pixel offsets if margins or fixed width or length specified */
   if ((crop->crop_mode & CROP_MARGINS) ||
-      (crop->crop_mode & CROP_LENGTH) || 
+      (crop->crop_mode & CROP_LENGTH)  || 
       (crop->crop_mode & CROP_WIDTH))
     {
-    if (computeOffsets(res_unit, xres, yres, img_width, img_length, crop, &offsets))
+    if (computeInputPixelOffsets(crop, image, &offsets))
       {
       TIFFError ("getCropOffsets", "Unable to compute crop margins");
       return (-1);
@@ -2271,12 +1826,12 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
     offsets.lmargin = 0;
     offsets.bmargin = 0;
     offsets.rmargin = 0;
-    offsets.crop_width = img_width;
-    offsets.crop_length = img_length;
+    offsets.crop_width = image->width;
+    offsets.crop_length = image->length;
     offsets.startx = 0;
-    offsets.endx = img_width - 1;
+    offsets.endx = image->width - 1;
     offsets.starty = 0;
-    offsets.endy = img_length - 1;
+    offsets.endy = image->length - 1;
     cropbuff = FALSE;
     }
 
@@ -2292,9 +1847,9 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
     if (cropbuff == FALSE)  /* No margins or fixed width or length areas */
       {
       crop->zones = 0;
-      crop->combined_width  = img_width;
-      crop->combined_length = img_length;
-      /* crop->bufftotal = (ceil)(((img_width * bps + 7 ) / 8) * spp) * (ceil(img_length)); */
+      crop->combined_width  = image->width;
+      crop->combined_length = image->length;
+      /* crop->bufftotal = ceil((image->width * image->bps + 7 ) / (double)8) * image->spp) * image->length); */
       return (0);
       }
     else  /* we need one crop zone for margins and fixed width or length areas */
@@ -2322,28 +1877,28 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 
            crop->zonelist[i].x1 = offsets.startx + (uint32)(offsets.crop_width * 1.0 * (seg - 1) / total);
            test = offsets.startx + (uint32)(offsets.crop_width * 1.0 * seg / total);
-           if (test > img_width)
-             crop->zonelist[i].x2 = img_width;
+           if (test > image->width)
+             crop->zonelist[i].x2 = image->width;
            else
              crop->zonelist[i].x2 = test;
 
            zwidth = crop->zonelist[i].x2 - crop->zonelist[i].x1  + 1;
 
-           /* 
-	    * Storing size of individual buffers in case we want to create
-	    * a separte IFD for each zone
-	    */
+           /*
+            * Storing size of individual buffers in case we want to create
+            * a separte IFD for each zone
+            */
            buffsize = (uint32)
-		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
+		   ((ceil)(((zwidth * image->bps + 7 ) / 8) * image->spp)
+		    * (ceil(zlength)));
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
            crop->combined_length += (uint32)zlength;
            crop->combined_width = (uint32)zwidth;
 #ifdef DEBUG
-	   fprintf (stderr,
-"Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
+	   fprintf (stderr, "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
                     i + 1, (uint32)zwidth, (uint32)zlength,
-  	            crop->zonelist[i].x1, crop->zonelist[i].x2, 
+		    crop->zonelist[i].x1, crop->zonelist[i].x2, 
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
 #endif
 	   }
@@ -2364,30 +1919,30 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 	     crop->zonelist[i].y1 = test;
 
            test = offsets.endy - (uint32)(offsets.crop_length * 1.0 * (seg - 1) / total);
-           if (test > img_length)
-             crop->zonelist[i].y2 = img_length;
+           if (test > image->length)
+             crop->zonelist[i].y2 = image->length;
            else 
              crop->zonelist[i].y2 = test;
 
            zlength = crop->zonelist[i].y2 - crop->zonelist[i].y1 + 1;
 
-           /* 
-	    * Storing size of individual buffers in case we want to create
-	    * a separte IFD for each zone
-	    */
+           /* Storing size of individual buffers in case we want 
+              to create a separte IFD for each zone
+            */
            buffsize = (uint32)
-		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
+		   ((ceil)(((zwidth * image->bps + 7 ) / 8) * image->spp)
+		    * (ceil(zlength)));
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
            crop->combined_length += (uint32)zlength;
            crop->combined_width = (uint32)zwidth;
 
 #ifdef DEBUG
-	   fprintf (stderr,
+   fprintf (stderr, 
 "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
-                    i + 1, (uint32)zwidth, (uint32)zlength,
-	            crop->zonelist[i].x1, crop->zonelist[i].x2,
-                    crop->zonelist[i].y1, crop->zonelist[i].y2);
+            i + 1, (uint32)zwidth, (uint32)zlength,
+	    crop->zonelist[i].x1, crop->zonelist[i].x2,
+            crop->zonelist[i].y1, crop->zonelist[i].y2);
 #endif
 	   }
          break;
@@ -2404,7 +1959,8 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 	    * a separte IFD for each zone
 	    */
            buffsize = (uint32)
-		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
+		   ((ceil)(((zwidth * image->bps + 7 ) / 8) * image->spp)
+		    * (ceil(zlength)));
 
            crop->zonelist[i].x1 = offsets.rmargin - (uint32)(offsets.endx - (zwidth * seg));
            crop->zonelist[i].x2 = offsets.rmargin - (uint32)(offsets.endx - (zwidth * (seg - 1)));
@@ -2419,7 +1975,7 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 	   fprintf (stderr,
 "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
                     i + 1, (uint32)zwidth, (uint32)zlength,
-	            crop->zonelist[i].x1, crop->zonelist[i].x2, 
+		    crop->zonelist[i].x1, crop->zonelist[i].x2, 
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
 #endif
 	   }
@@ -2436,8 +1992,8 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 
            crop->zonelist[i].y1 = offsets.starty + (uint32)(offsets.crop_length * 1.0 * (seg - 1) / total);
            test = offsets.starty + (uint32)(offsets.crop_length * 1.0 * seg / total);
- 	   if (test > img_length)
-	     crop->zonelist[i].y2 = img_length;
+	   if (test > image->length)
+	     crop->zonelist[i].y2 = image->length;
            else
 	     crop->zonelist[i].y2 = test - 1;
 
@@ -2448,7 +2004,8 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 	    * a separte IFD for each zone
 	    */
            buffsize = (uint32)
-		   ((ceil)(((zwidth * bps + 7 ) / 8) * spp) * (ceil(zlength)));
+		   ((ceil)(((zwidth * image->bps + 7 ) / 8) * image->spp)
+		    * (ceil(zlength)));
 
            /* crop->zonelist[i].buffsize = buffsize; */
            crop->bufftotal += buffsize;
@@ -2459,37 +2016,282 @@ getCropOffsets(TIFF* in, struct crop_mask *crop)
 	   fprintf (stderr,
 "Zone %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n", 
 		    i + 1, (uint32)zwidth, (uint32)zlength,
-	            crop->zonelist[i].x1, crop->zonelist[i].x2, 
+		    crop->zonelist[i].x1, crop->zonelist[i].x2, 
                     crop->zonelist[i].y1, crop->zonelist[i].y2);
 #endif
            }
          break;
     }
   return (0);
-}
+  } /* end getCropOffsets */
+
 
 static int
-loadImage(TIFF* in, unsigned char **read_ptr)
+computeOutputPixelOffsets (struct crop_mask *crop, struct image_data *image,
+                           struct pagedef *page, struct pageseg *sections)
   {
-  int      readunit = 0;
-  uint16   nstrips, ntiles, planar, bps, spp;
+  double scale;
+  uint32 iwidth, ilength;
+  uint32 owidth, olength;
+  uint32 orows, ocols;                   /* rows and cols for output */
+  uint32 hmargin, vmargin;
+  uint32 x1, x2, y1, y2, line_bytes;
+  unsigned int orientation;
+  uint32 i, j, k;
+ 
+  scale = 1.0;
+  if (page->res_unit == RESUNIT_NONE)
+    page->res_unit = image->res_unit;
+
+  switch (image->res_unit) {
+    case RESUNIT_CENTIMETER:
+         if (page->res_unit == RESUNIT_INCH)
+	   scale = 1.0/2.54;
+	 break;
+    case RESUNIT_INCH:
+	 if (page->res_unit == RESUNIT_CENTIMETER)
+	     scale = 2.54;
+	 break;
+    case RESUNIT_NONE: /* Dimensions in pixels */
+    default:
+    break;
+    }
+
+  /* get width, height, resolutions of input image selection */
+  if (crop->combined_width > 0)
+    iwidth = crop->combined_width;
+  else
+    iwidth = image->width;
+  if (crop->combined_length > 0)
+    ilength = crop->combined_length;
+  else
+    ilength = image->length;
+
+  if (page->hres <= 1.0)
+    page->hres = image->xres;
+  if (page->vres <= 1.0)
+    page->vres = image->yres;
+
+  if ((page->hres < 1.0) || (page->vres < 1.0))
+    {
+    TIFFError("computeOutputPixelOffsets",
+    "Invalid horizontal or vertical resolution specified or read from input image");
+    return (1);
+    }
+
+#ifdef DEBUG
+  fprintf (stderr, "Page size: %s, Vres: %3.2f, Hres: %3.2f, "
+                   "Hmargin: %3.2f, Vmargin: %3.2f\n",
+	   page->name, page->vres, page->hres,
+           page->hmargin, page->vmargin);
+  fprintf (stderr, "Res_unit: %d, Scale: %3.2f, Page width: %3.2f, length: %3.2f\n", 
+           page->res_unit, scale, page->width, page->length);
+#endif
+
+  /* compute margins at specified unit and resolution */
+  if (page->mode & PAGE_MODE_MARGINS)
+    {
+    if (page->res_unit == RESUNIT_INCH || page->res_unit == RESUNIT_CENTIMETER)
+      { /* inches or centimeters specified */
+      hmargin = (uint32)(page->hmargin * scale * page->hres * ((image->bps + 7)/ 8));
+      vmargin = (uint32)(page->vmargin * scale * page->vres * ((image->bps + 7)/ 8));
+      }
+    else
+      { /* Otherwise user has specified pixels as reference unit */
+      hmargin = (uint32)(page->hmargin * scale * ((image->bps + 7)/ 8));
+      vmargin = (uint32)(page->vmargin * scale * ((image->bps + 7)/ 8));
+      }
+
+    if ((hmargin * 2.0) > (page->width * page->hres))
+      {
+      TIFFError("computeOutputPixelOffsets", 
+                "Combined left and right margins exceed page width");
+      hmargin = (uint32) 0;
+      return (-1);
+      }
+    if ((vmargin * 2.0) > (page->length * page->vres))
+      {
+      TIFFError("computeOutputPixelOffsets", 
+                "Combined top and bottom margins exceed page length"); 
+      vmargin = (uint32) 0; 
+      return (-1);
+      }
+    }
+  else
+    {
+    hmargin = 0;
+    vmargin = 0;
+    }
+
+  if (page->mode & PAGE_MODE_ROWSCOLS )
+    {
+    /* Maybe someday but not for now */
+    if (page->mode & PAGE_MODE_MARGINS)
+      TIFFError("computeOutputPixelOffsets", 
+      "Output margins cannot be specified with rows and columns"); 
+
+    owidth  = TIFFhowmany(iwidth, page->cols);
+    olength = TIFFhowmany(ilength, page->rows);
+    }
+  else
+    {
+    if (page->mode & PAGE_MODE_PAPERSIZE )
+      {
+      owidth  = (uint32)((page->width * page->hres) - (hmargin * 2));
+      olength = (uint32)((page->length * page->vres) - (vmargin * 2));
+      }
+    else
+      {
+      owidth = (uint32)(iwidth - (hmargin * 2 * page->hres));
+      olength = (uint32)(ilength - (vmargin * 2 * page->vres));
+      }
+    }
+
+  if (owidth > iwidth)
+    owidth = iwidth;
+  if (olength > ilength)
+    olength = ilength;
+
+  /* Compute the number of pages required for Portrait or Landscape */
+  switch (page->orient)
+    {
+    case ORIENTATION_NONE:
+    case ORIENTATION_PORTRAIT:
+         ocols = TIFFhowmany(iwidth, owidth);
+         orows = TIFFhowmany(ilength, olength);
+         orientation = ORIENTATION_PORTRAIT;
+         break;
+
+    case ORIENTATION_LANDSCAPE:
+         ocols = TIFFhowmany(iwidth, olength);
+         orows = TIFFhowmany(ilength, owidth);
+         x1 = olength;
+         olength = owidth;
+         owidth = x1;
+         orientation = ORIENTATION_LANDSCAPE;
+         break;
+
+    case ORIENTATION_AUTO:
+    default:
+         x1 = TIFFhowmany(iwidth, owidth);
+         x2 = TIFFhowmany(ilength, olength); 
+         y1 = TIFFhowmany(iwidth, olength);
+         y2 = TIFFhowmany(ilength, owidth); 
+
+         if ( (x1 * x2) < (y1 * y2))
+           { /* Portrait */
+           ocols = x1;
+           orows = x2;
+           orientation = ORIENTATION_PORTRAIT;
+	   }
+         else
+           { /* Landscape */
+           ocols = y1;
+           orows = y2;
+           x1 = olength;
+           olength = owidth;
+           owidth = x1;
+           orientation = ORIENTATION_LANDSCAPE;
+           }
+    }
+
+  if (ocols < 1)
+    ocols = 1;
+  if (orows < 1)
+    orows = 1;
+
+  /* If user did not specify rows and cols, set them from calcuation */
+  if (page->rows < 1)
+    page->rows = orows;
+  if (page->cols < 1)
+    page->cols = ocols;
+
+  line_bytes = TIFFhowmany8(owidth * image->bps) * image->spp;
+
+#ifdef DEBUG
+fprintf (stderr, "\nBest fit:  rows: %d,  cols:  %d,  orientation: %s\n", 
+         orows, ocols,
+         orientation == ORIENTATION_PORTRAIT ? "portrait" : "landscape");
+fprintf (stderr, "Width: %d, Length: %d, Hmargin: %d, Vmargin: %d\n\n",
+	 owidth, olength, hmargin, vmargin);
+#endif
+
+ if ((page->rows * page->cols) > MAX_SECTIONS)
+   {
+   TIFFError("computeOutputPixelOffsets",
+	     "Rows and Columns exceed maximum sections\nIncrease resolution or reduce sections");
+   return (-1);
+   }
+
+  /* build the list of offsets for each output section */
+  for (k = 0, i = 0 && k <= MAX_SECTIONS; i < orows; i++)
+    {
+    y1 = (uint32)(olength * i);
+    y2 = (uint32)(olength * (i +  1) - 1);
+    if (y2 >= ilength)
+      y2 = ilength - 1;
+    for (j = 0; j < ocols; j++, k++)
+      {
+      x1 = (uint32)(owidth * j); 
+      x2 = (uint32)(owidth * (j + 1) - 1);
+      if (x2 >= iwidth)
+        x2 = iwidth - 1;
+      sections[k].x1 = x1;
+      sections[k].x2 = x2;
+      sections[k].y1 = y1;
+      sections[k].y2 = y2;
+      sections[k].buffsize = line_bytes * olength;
+      sections[k].position = k + 1;
+      sections[k].total = orows * ocols;
+#ifdef DEBUG
+     fprintf (stderr, "Sect %d, width: %4d, length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
+                 k + 1, sections[k].x2 - sections[k].x1 + 1, sections[k].y2 - sections[k].y1 + 1,
+		 sections[k].x1, sections[k].x2, sections[k].y1, sections[k].y2);
+#endif
+      } 
+    }
+ 
+  return (0);
+  } /* end computeOutputPixelOffsets */
+
+static int
+loadImage(TIFF* in, struct image_data *image, unsigned char **read_ptr)
+  {
+  float    xres, yres;
+  uint16   nstrips, ntiles, planar, bps, spp, res_unit, photometric;
   uint32   width, length;
+  uint32   stsize, tlsize, buffsize;
   unsigned char *read_buff = NULL;
-  tsize_t  stsize, tlsize, buffsize;
-  static   tsize_t  prev_readsize = 0;
+  unsigned char *new_buff  = NULL;
+  int      readunit = 0;
+  static   uint32  prev_readsize = 0;
 
   TIFFGetFieldDefaulted(in, TIFFTAG_BITSPERSAMPLE, &bps);
   TIFFGetFieldDefaulted(in, TIFFTAG_SAMPLESPERPIXEL, &spp);
   TIFFGetFieldDefaulted(in, TIFFTAG_PLANARCONFIG, &planar);
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric);
   TIFFGetField(in, TIFFTAG_IMAGEWIDTH,  &width);
   TIFFGetField(in, TIFFTAG_IMAGELENGTH, &length);
+  TIFFGetField(in, TIFFTAG_XRESOLUTION, &xres);
+  TIFFGetField(in, TIFFTAG_YRESOLUTION, &yres);
+  TIFFGetFieldDefaulted(in, TIFFTAG_RESOLUTIONUNIT, &res_unit);
 
-  if ((bps == 0) || (spp == 0)) {
-        TIFFError("loadImage",
-                  "Invalid samples per pixel (%d) or bits per sample (%d)",
-                  spp, bps);
-        return (-1);
-  }
+  image->bps = bps;
+  image->spp = spp;
+  image->planar = planar;
+  image->width = width;
+  image->length = length;
+  image->xres = xres;
+  image->yres = yres;
+  image->res_unit = res_unit;
+  image->photometric = photometric;
+
+  if ((bps == 0) || (spp == 0))
+    {
+    TIFFError("loadImage", "Invalid samples per pixel (%d) or bits per sample (%d)",
+	       spp, bps);
+    return (-1);
+    }
 
   if (TIFFIsTiled(in))
     {
@@ -2508,11 +2310,20 @@ loadImage(TIFF* in, unsigned char **read_ptr)
 
   read_buff = *read_ptr;
   if (!read_buff)
-     read_buff = (unsigned char *)_TIFFmalloc(buffsize);
+    read_buff = (unsigned char *)_TIFFmalloc(buffsize);
   else
     {
     if (prev_readsize < buffsize)
-      _TIFFrealloc(read_buff, buffsize);
+      {
+      new_buff = _TIFFrealloc(read_buff, buffsize);
+      if (!new_buff)
+        {
+	free (read_buff);
+        read_buff = (unsigned char *)_TIFFmalloc(buffsize);
+        }
+      else
+        read_buff = new_buff;
+      }
     }
 
   if (!read_buff)
@@ -2530,7 +2341,7 @@ loadImage(TIFF* in, unsigned char **read_ptr)
            {
 	   if (!(readContigStripsIntoBuffer(in, read_buff, length, width, spp)))
 	     {
-	     TIFFError("loadImageImage", "Unable to read contiguous strips into buffer");
+	     TIFFError("loadImage", "Unable to read contiguous strips into buffer");
 	     return (-1);
              }
            }
@@ -2538,7 +2349,7 @@ loadImage(TIFF* in, unsigned char **read_ptr)
            {
            if (!(readSeparateStripsIntoBuffer(in, read_buff, length, width, spp)))
 	     {
-	     TIFFError("loadImageImage", "Unable to read separate strips into buffer");
+	     TIFFError("loadImage", "Unable to read separate strips into buffer");
 	     return (-1);
              }
            }
@@ -2549,7 +2360,7 @@ loadImage(TIFF* in, unsigned char **read_ptr)
            {
 	   if (!(readContigTilesIntoBuffer(in, read_buff, length, width, spp)))
 	     {
-	     TIFFError("loadImageImage", "Unable to read contiguous tiles into buffer");
+	     TIFFError("loadImage", "Unable to read contiguous tiles into buffer");
 	     return (-1);
              }
            }
@@ -2557,12 +2368,12 @@ loadImage(TIFF* in, unsigned char **read_ptr)
            {
 	     if (!(readSeparateTilesIntoBuffer(in, read_buff, length, width, spp)))
 	     {
-	     TIFFError("loadImageImage", "Unable to read separate tiles into buffer");
+	     TIFFError("loadImage", "Unable to read separate tiles into buffer");
 	     return (-1);
              }
            }
          break;
-    default: TIFFError("loadImageImage", "Unsupported image file format");
+    default: TIFFError("loadImage", "Unsupported image file format");
           return (-1);
           break;
     }
@@ -2579,12 +2390,12 @@ return (0);
 static int
 extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, unsigned char *crop_buff)
   {
-  int       i, shift1, shift2, trailing_bits;
-  uint16    bps, spp;
-  uint32    row, first_row, last_row, col, first_col, last_col;
+  uint32    i, j, shift1, shift2, trailing_bits;
+  uint32    row, first_row, last_row, first_col, last_col;
   uint32    src_offset, dst_offset, row_offset, col_offset;
-  uint32    offset1, offset2, full_bytes, j;
+  uint32    offset1, offset2, full_bytes, rowsize;
   uint32    crop_width, crop_length, img_width, img_length;
+  uint16    bps, spp;
   unsigned  char  bytebuff1, bytebuff2;
   unsigned  char *src_ptr, *dst_ptr;
 
@@ -2597,8 +2408,11 @@ extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, 
   dst_ptr = crop_buff;
   src_offset = 0;
   dst_offset = 0;
+  rowsize = spp * ((img_width * bps + 7) / 8);
+
   for (i = 0; i < crop->zones; i++)
     {
+    /* rows, columns, width, length are expressed in pixels */
     first_row = crop->zonelist[i].y1;
     last_row  = crop->zonelist[i].y2;
     first_col = crop->zonelist[i].x1;
@@ -2607,34 +2421,31 @@ extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, 
     crop_width = last_col - first_col + 1;
     crop_length = last_row - first_row + 1;
 
-    full_bytes = spp * (crop_width * bps) / 8;   /* number of COMPLETE bytes per row in crop area */
+    full_bytes = (crop_width * spp * bps) / 8;   /* number of COMPLETE bytes per row in crop area */
     trailing_bits = (crop_width * bps) % 8;
 
     if ((bps % 8) == 0)
       {
+      col_offset = first_col * spp * bps / 8;
       for (row = first_row; row <= last_row; row++)
         {
-	row_offset = row * img_width * spp;
-	for (col = first_col; col <= last_col; col++)
-	  {
-	  col_offset = col * spp;
-          src_ptr = read_buff + row_offset + col_offset;
-          for (j = 0; j < spp; j++)
-            *dst_ptr++ = *src_ptr++;
-	  }
+	/*  row_offset = row * img_width * spp * bps / 8;*/
+	row_offset = row * rowsize;
+        src_offset = row_offset + col_offset;
+        _TIFFmemcpy (crop_buff + dst_offset, read_buff + src_offset, full_bytes);
+        dst_offset += full_bytes;
 	}        
       }
     else
       { /* bps != 8 */
+      shift1  = spp * ((first_col * bps) % 8);
+      shift2  = spp * ((last_col * bps) % 8);
       for (row = first_row; row <= last_row; row++)
         {
         /* pull out the first byte */
-	row_offset = spp * row * ((img_width * bps + 7) / 8);
+	row_offset = row * rowsize;
 	offset1 = row_offset + (first_col * bps / 8);
-        shift1  = spp * ((first_col * bps) % 8);
-
         offset2 = row_offset + (last_col * bps / 8);
-        shift2  = spp * ((last_col * bps) % 8);
 
         bytebuff1 = bytebuff2 = 0;
         if (shift1 == 0) /* the region is byte and sample alligned */
@@ -2644,7 +2455,8 @@ extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, 
 
           if (trailing_bits != 0)
             {
-	    bytebuff2 = read_buff[offset2] & ((unsigned char)255 << (8 - shift2 - (bps * spp)));
+	      /* bytebuff2 = read_buff[offset2] & ((unsigned char)255 << (8 - shift2 - (bps * spp))); */
+	    bytebuff2 = read_buff[offset2] & ((unsigned char)255 << (7 - shift2));
             crop_buff[dst_offset] = bytebuff2;
             dst_offset++;
             }
@@ -2654,8 +2466,8 @@ extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, 
           for (j = 0; j <= full_bytes; j++) 
             {
 	    bytebuff1 = read_buff[offset1 + j] & ((unsigned char)255 >> shift1);
-	    bytebuff2 = read_buff[offset1 + j + 1] & ((unsigned char)255 << (8 - shift1 - (bps * spp)));
-            crop_buff[dst_offset + j] = (bytebuff1 << shift1) | (bytebuff2 >> (8 - shift1 - (bps * spp)));
+	    bytebuff2 = read_buff[offset1 + j + 1] & ((unsigned char)255 << (7 - shift1));
+            crop_buff[dst_offset + j] = (bytebuff1 << shift1) | (bytebuff2 >> (8 - shift1));
             }
           dst_offset += full_bytes;
 
@@ -2663,16 +2475,19 @@ extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, 
             {
 	    if (shift2 > shift1)
               {
-	      bytebuff1 = read_buff[row_offset + full_bytes] & ((unsigned char)255 << (8 - shift2 - (bps * spp)));
+	      bytebuff1 = read_buff[row_offset + full_bytes] & ((unsigned char)255 << (7 - shift2));
               bytebuff2 = bytebuff1 & ((unsigned char)255 << shift1);
-              crop_buff[dst_offset + j] = bytebuff2;
-              }
+              crop_buff[dst_offset] = bytebuff2;
+              /* crop_buff[dst_offset + j] = bytebuff2; */
+	      }
             else
               {
- 	      if (shift2 < shift1)
+	      if (shift2 < shift1)
                 {
-                bytebuff2 = ((unsigned char)255 << (8 - shift2 - (bps * spp)));
-                crop_buff[dst_offset + j] &= bytebuff2;
+		/* bytebuff2 = ((unsigned char)255 << (8 - shift2 - (bps * spp))); 
+                crop_buff[dst_offset + j] &= bytebuff2; */
+                bytebuff2 = ((unsigned char)255 << (shift1 - shift2 - 1));
+                crop_buff[dst_offset] &= bytebuff2;
                 }
               }
 	    }
@@ -2684,33 +2499,580 @@ extractCropRegions(TIFF *in,  struct crop_mask *crop, unsigned char *read_buff, 
   return (0);
   }
 
+
+static int
+extractImageSection(struct image_data *image, struct pageseg *section, 
+                    unsigned char *src_buff, unsigned char *sect_buff)
+  {
+  unsigned  char  bytebuff1, bytebuff2;
+  unsigned  char *src_ptr, *dst_ptr;
+
+  uint32    img_width, img_length, img_rowsize;
+  uint32    j, shift1, shift2, trailing_bits;
+  uint32    row, first_row, last_row, first_col, last_col;
+  uint32    src_offset, dst_offset, row_offset, col_offset;
+  uint32    offset1, offset2, full_bytes;
+  uint32    sect_width, sect_length;
+  uint16    bps, spp;
+
+#ifdef DEBUG2
+  int      k;
+  unsigned char bitset;
+  static char *bitarray = NULL;
+#endif
+
+  img_width = image->width;
+  img_length = image->length;
+  bps = image->bps;
+  spp = image->spp;
+
+  src_ptr = src_buff;
+  dst_ptr = sect_buff;
+  src_offset = 0;
+  dst_offset = 0;
+
+#ifdef DEBUG2
+  if (bitarray == NULL)
+    {
+    if ((bitarray = (char *)malloc(img_width)) == NULL)
+      {
+      fprintf (stderr, "DEBUG: Unable to allocate debugging bitarray\n");
+      return (-1);
+      }
+    }
+#endif
+
+  /* rows, columns, width, length are expressed in pixels */
+  first_row = section->y1;
+  last_row  = section->y2;
+  first_col = section->x1;
+  last_col  = section->x2;
+
+  sect_width = last_col - first_col + 1;
+  sect_length = last_row - first_row + 1;
+  img_rowsize = ((img_width * bps + 7) / 8) * spp;
+  full_bytes = (sect_width * spp * bps) / 8;   /* number of COMPLETE bytes per row in section */
+  trailing_bits = (sect_width * bps) % 8;
+
+#ifdef DEBUG2
+  fprintf (stderr, "First row: %d, last row: %d, First col: %d, last col: %d\n",
+           first_row, last_row, first_col, last_col);
+  fprintf (stderr, "Image width: %d, Image length: %d, bps: %d, spp: %d\n",
+	   img_width, img_length, bps, spp);
+  fprintf (stderr, "Sect  width: %d,  Sect length: %d, full bytes: %d trailing bits %d\n", 
+           sect_width, sect_length, full_bytes, trailing_bits);
+#endif
+
+  if ((bps % 8) == 0)
+    {
+    col_offset = first_col * spp * bps / 8;
+    for (row = first_row; row <= last_row; row++)
+      {
+      /* row_offset = row * img_width * spp * bps / 8; */
+      row_offset = row * img_rowsize;
+      src_offset = row_offset + col_offset;
+#ifdef DEBUG2
+      fprintf (stderr, "Src offset: %8d, Dst offset: %8d\n", src_offset, dst_offset); 
+#endif
+      _TIFFmemcpy (sect_buff + dst_offset, src_buff + src_offset, full_bytes);
+      dst_offset += full_bytes;
+      }        
+    }
+  else
+    { /* bps != 8 */
+    shift1  = spp * ((first_col * bps) % 8);
+    shift2  = spp * ((last_col * bps) % 8);
+    for (row = first_row; row <= last_row; row++)
+      {
+      /* pull out the first byte */
+      row_offset = row * img_rowsize;
+      offset1 = row_offset + (first_col * bps / 8);
+      offset2 = row_offset + (last_col * bps / 8);
+
+#ifdef DEBUG2
+      for (j = 0, k = 7; j < 8; j++, k--)
+        {
+        bitset = *(src_buff + offset1) & (((unsigned char)1 << k)) ? 1 : 0;
+        sprintf(&bitarray[j], (bitset) ? "1" : "0");
+        }
+      sprintf(&bitarray[8], " ");
+      sprintf(&bitarray[9], " ");
+      for (j = 10, k = 7; j < 18; j++, k--)
+        {
+        bitset = *(src_buff + offset2) & (((unsigned char)1 << k)) ? 1 : 0;
+        sprintf(&bitarray[j], (bitset) ? "1" : "0");
+        }
+      bitarray[18] = '\0';
+      fprintf (stderr, "Row: %3d Offset1: %d,  Shift1: %d,    Offset2: %d,  Shift2:  %d\n", 
+               row, offset1, shift1, offset2, shift2); 
+#endif
+      bytebuff1 = bytebuff2 = 0;
+      if (shift1 == 0) /* the region is byte and sample alligned */
+        {
+	_TIFFmemcpy (sect_buff + dst_offset, src_buff + offset1, full_bytes);
+#ifdef DEBUG2
+	fprintf (stderr, "        Alligned data src offset1: %8d, Dst offset: %8d\n", offset1, dst_offset); 
+	sprintf(&bitarray[18], "\n");
+	sprintf(&bitarray[19], "\t");
+        for (j = 20, k = 7; j < 28; j++, k--)
+          {
+          bitset = *(sect_buff + dst_offset) & (((unsigned char)1 << k)) ? 1 : 0;
+          sprintf(&bitarray[j], (bitset) ? "1" : "0");
+          }
+        bitarray[28] = ' ';
+        bitarray[29] = ' ';
+#endif
+        dst_offset += full_bytes;
+
+        if (trailing_bits != 0)
+          {
+	  bytebuff2 = src_buff[offset2] & ((unsigned char)255 << (7 - shift2));
+          sect_buff[dst_offset] = bytebuff2;
+#ifdef DEBUG2
+	  fprintf (stderr, "        Trailing bits src offset:  %8d, Dst offset: %8d\n", 
+                              offset2, dst_offset); 
+          for (j = 30, k = 7; j < 38; j++, k--)
+            {
+            bitset = *(sect_buff + dst_offset) & (((unsigned char)1 << k)) ? 1 : 0;
+            sprintf(&bitarray[j], (bitset) ? "1" : "0");
+            }
+          bitarray[38] = '\0';
+          fprintf (stderr, "\tFirst and last bytes before and after masking:\n\t%s\n\n", bitarray);
+#endif
+          dst_offset++;
+          }
+        }
+      else   /* each destination byte will have to be built from two source bytes*/
+        {
+#ifdef DEBUG2
+	  fprintf (stderr, "        Unalligned data src offset: %8d, Dst offset: %8d\n", offset1 , dst_offset); 
+#endif
+        for (j = 0; j <= full_bytes; j++) 
+          {
+	  bytebuff1 = src_buff[offset1 + j] & ((unsigned char)255 >> shift1);
+	  bytebuff2 = src_buff[offset1 + j + 1] & ((unsigned char)255 << (7 - shift1));
+          sect_buff[dst_offset + j] = (bytebuff1 << shift1) | (bytebuff2 >> (8 - shift1));
+          }
+#ifdef DEBUG2
+	sprintf(&bitarray[18], "\n");
+	sprintf(&bitarray[19], "\t");
+        for (j = 20, k = 7; j < 28; j++, k--)
+          {
+          bitset = *(sect_buff + dst_offset) & (((unsigned char)1 << k)) ? 1 : 0;
+          sprintf(&bitarray[j], (bitset) ? "1" : "0");
+          }
+        bitarray[28] = ' ';
+        bitarray[29] = ' ';
+#endif
+        dst_offset += full_bytes;
+
+        if (trailing_bits != 0)
+          {
+#ifdef DEBUG2
+	    fprintf (stderr, "        Trailing bits   src offset: %8d, Dst offset: %8d\n", offset1 + full_bytes, dst_offset); 
+#endif
+	  if (shift2 > shift1)
+            {
+	    bytebuff1 = src_buff[offset1 + full_bytes] & ((unsigned char)255 << (7 - shift2));
+            bytebuff2 = bytebuff1 & ((unsigned char)255 << shift1);
+            sect_buff[dst_offset] = bytebuff2;
+#ifdef DEBUG2
+	    fprintf (stderr, "        Shift2 > Shift1\n"); 
+#endif
+            }
+          else
+            {
+	    if (shift2 < shift1)
+              {
+              bytebuff2 = ((unsigned char)255 << (shift1 - shift2 - 1));
+	      sect_buff[dst_offset] &= bytebuff2;
+#ifdef DEBUG2
+	      fprintf (stderr, "        Shift2 < Shift1\n"); 
+#endif
+              }
+#ifdef DEBUG2
+            else
+	      fprintf (stderr, "        Shift2 == Shift1\n"); 
+#endif
+            }
+	  }
+#ifdef DEBUG2
+	  sprintf(&bitarray[28], " ");
+	  sprintf(&bitarray[29], " ");
+          for (j = 30, k = 7; j < 38; j++, k--)
+            {
+            bitset = *(sect_buff + dst_offset) & (((unsigned char)1 << k)) ? 1 : 0;
+            sprintf(&bitarray[j], (bitset) ? "1" : "0");
+            }
+          bitarray[38] = '\0';
+          fprintf (stderr, "\tFirst and last bytes before and after masking:\n\t%s\n\n", bitarray);
+#endif
+        dst_offset++;
+        }
+      }
+    }
+
+  return (0);
+  }
+
+
+static int
+writeImageSections(TIFF *in, TIFF *out, struct image_data *image,
+		   struct pagedef *page, struct pageseg *sections,
+		   unsigned char *src_buff, unsigned char **sect_buff_ptr)
+  {
+  double  hres, vres;
+  uint32  i, k, width, length, sectsize;
+  unsigned char *sect_buff = *sect_buff_ptr;
+
+  hres = page->hres;
+  vres = page->vres;
+
+#ifdef DEBUG
+  fprintf(stderr,
+    "Writing %d sections for each original page. Hres: %3.2f Vres: %3.2f\n", 
+          page->rows * page->cols, hres, vres);
+#endif
+  k = page->cols * page->rows;
+  if ((k < 1) || (k > MAX_SECTIONS))
+   {
+   TIFFError("computeOutputPixelOffsets",
+	     "%d Rows and Columns exceed maximum sections\nIncrease resolution or reduce sections", k);
+   return (-1);
+   }
+
+  for (i = 0; i < k; i++)
+    {
+    width  = sections[i].x2 - sections[i].x1 + 1;
+    length = sections[i].y2 - sections[i].y1 + 1;
+    sectsize = (uint32)
+	    ceil((width * image->bps + 7) / (double)8) * image->spp * length;
+    /* allocate a buffer if we don't have one already */
+    if (createImageSection(sectsize, sect_buff_ptr))
+      {
+      TIFFError("writeImageSections", "Unable to allocate section buffer");
+      exit (-1);
+      }
+    sect_buff = *sect_buff_ptr;
+
+#ifdef DEBUG
+    fprintf (stderr, "\nSection: %d, Width: %4d, Length: %4d, x1: %4d  x2: %4d  y1: %4d  y2: %4d\n",
+             i + 1, width, length, sections[i].x1, sections[i].x2, sections[i].y1, sections[i].y2);
+#endif
+
+    if (extractImageSection (image, &sections[i], src_buff, sect_buff))
+      {
+      TIFFError("writeImageSections", "Unable to extract image sections");
+      exit (-1);
+      }
+
+  /* call the write routine here instead of outside the loop */
+    if (writeSingleSection(in, out, width, length, hres, vres, sect_buff))
+      {
+      TIFFError("writeImageSections", "Unable to write image section");
+      exit (-1);
+      }
+    }
+
+  return (0);
+  }
+
+
+static int  
+writeSingleSection(TIFF *in, TIFF *out, uint32 width, uint32 length,
+		   double hres, double vres, unsigned char *sect_buff)
+  {
+  uint16 bps, spp;
+  struct cpTag* p;
+
+#ifdef DEBUG
+  fprintf (stderr,
+"\nWriting single section: Width %d Length: %d Hres: %4.1f, Vres: %4.1f\n\n",
+	   width, length, hres, vres);
+#endif
+  TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
+  TIFFSetField(out, TIFFTAG_IMAGELENGTH, length);
+
+  CopyField(TIFFTAG_BITSPERSAMPLE, bps);
+  CopyField(TIFFTAG_SAMPLESPERPIXEL, spp);
+  if (compression != (uint16)-1)
+    TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
+  else
+    CopyField(TIFFTAG_COMPRESSION, compression);
+
+  if (compression == COMPRESSION_JPEG) {
+    uint16 input_compression, input_photometric;
+
+    if (TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression)
+        && input_compression == COMPRESSION_JPEG) {
+          TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
+        }
+    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric)) {
+	if(input_photometric == PHOTOMETRIC_RGB) {
+	   if (jpegcolormode == JPEGCOLORMODE_RGB)
+	     TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
+	   else
+	     TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	   } else
+	      TIFFSetField(out, TIFFTAG_PHOTOMETRIC, input_photometric);
+	}
+      }
+  else if (compression == COMPRESSION_SGILOG || compression == COMPRESSION_SGILOG24)
+       TIFFSetField(out, TIFFTAG_PHOTOMETRIC, spp == 1 ?
+			PHOTOMETRIC_LOGL : PHOTOMETRIC_LOGLUV);
+       else
+	  CopyTag(TIFFTAG_PHOTOMETRIC, 1, TIFF_SHORT);
+       if (fillorder != 0)
+	  TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
+       else
+	  CopyTag(TIFFTAG_FILLORDER, 1, TIFF_SHORT);
+       /*
+        * Will copy `Orientation' tag from input image
+        */
+  TIFFGetFieldDefaulted(in, TIFFTAG_ORIENTATION, &orientation);
+  switch (orientation) {
+    case ORIENTATION_BOTRIGHT:
+    case ORIENTATION_RIGHTBOT:	/* XXX */
+         TIFFWarning(TIFFFileName(in), "using bottom-left orientation");
+         orientation = ORIENTATION_BOTLEFT;
+         /* fall thru... */
+    case ORIENTATION_LEFTBOT:	/* XXX */
+    case ORIENTATION_BOTLEFT:
+         break;
+    case ORIENTATION_TOPRIGHT:
+    case ORIENTATION_RIGHTTOP:	/* XXX */
+    default:
+         TIFFWarning(TIFFFileName(in), "using top-left orientation");
+         orientation = ORIENTATION_TOPLEFT;
+         /* fall thru... */
+    case ORIENTATION_LEFTTOP:	/* XXX */
+    case ORIENTATION_TOPLEFT:
+         break;
+   }
+  TIFFSetField(out, TIFFTAG_ORIENTATION, orientation);
+	
+  /*
+   * Choose tiles/strip for the output image according to
+   * the command line arguments (-tiles, -strips) and the
+   * structure of the input image.
+   */
+  if (outtiled == -1)
+    outtiled = TIFFIsTiled(in);
+  if (outtiled) {
+    /*
+     * Setup output file's tile width&height.  If either
+     * is not specified, use either the value from the
+     * input image or, if nothing is defined, use the
+     * library default.
+     */
+    if (tilewidth == (uint32) -1)
+      TIFFGetField(in, TIFFTAG_TILEWIDTH, &tilewidth);
+    if (tilelength == (uint32) -1)
+      TIFFGetField(in, TIFFTAG_TILELENGTH, &tilelength);
+
+    if (tilewidth > width)
+      tilewidth = width;
+    if (tilelength > length)
+      tilelength = length;
+
+    TIFFDefaultTileSize(out, &tilewidth, &tilelength);
+    TIFFSetField(out, TIFFTAG_TILEWIDTH, tilewidth);
+    TIFFSetField(out, TIFFTAG_TILELENGTH, tilelength);
+    } else {
+       /*
+	* RowsPerStrip is left unspecified: use either the
+	* value from the input image or, if nothing is defined,
+	* use the library default.
+	*/
+	if (rowsperstrip == (uint32) 0) {
+	  if (!TIFFGetField(in, TIFFTAG_ROWSPERSTRIP, &rowsperstrip)) {
+	      rowsperstrip = TIFFDefaultStripSize(out, rowsperstrip);
+	     }
+	  if (rowsperstrip > length && rowsperstrip != (uint32)-1)
+	       rowsperstrip = length;
+	  }
+	else if (rowsperstrip == (uint32) -1)
+		rowsperstrip = length;
+		TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
+	}
+  if (config != (uint16) -1)
+    TIFFSetField(out, TIFFTAG_PLANARCONFIG, config);
+  else
+    CopyField(TIFFTAG_PLANARCONFIG, config);
+  if (spp <= 4)
+    CopyTag(TIFFTAG_TRANSFERFUNCTION, 4, TIFF_SHORT);
+  CopyTag(TIFFTAG_COLORMAP, 4, TIFF_SHORT);
+
+/* SMinSampleValue & SMaxSampleValue */
+  switch (compression) {
+    case COMPRESSION_JPEG:
+         TIFFSetField(out, TIFFTAG_JPEGQUALITY, quality);
+	 TIFFSetField(out, TIFFTAG_JPEGCOLORMODE, jpegcolormode);
+	 break;
+   case COMPRESSION_LZW:
+   case COMPRESSION_ADOBE_DEFLATE:
+   case COMPRESSION_DEFLATE:
+	if (predictor != (uint16)-1)
+          TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
+	else
+	  CopyField(TIFFTAG_PREDICTOR, predictor);
+	break;
+   case COMPRESSION_CCITTFAX3:
+   case COMPRESSION_CCITTFAX4:
+	if (compression == COMPRESSION_CCITTFAX3) {
+          if (g3opts != (uint32) -1)
+	    TIFFSetField(out, TIFFTAG_GROUP3OPTIONS, g3opts);
+	  else
+	    CopyField(TIFFTAG_GROUP3OPTIONS, g3opts);
+	} else
+	    CopyTag(TIFFTAG_GROUP4OPTIONS, 1, TIFF_LONG);
+	    CopyTag(TIFFTAG_BADFAXLINES, 1, TIFF_LONG);
+	    CopyTag(TIFFTAG_CLEANFAXDATA, 1, TIFF_LONG);
+	    CopyTag(TIFFTAG_CONSECUTIVEBADFAXLINES, 1, TIFF_LONG);
+	    CopyTag(TIFFTAG_FAXRECVPARAMS, 1, TIFF_LONG);
+	    CopyTag(TIFFTAG_FAXRECVTIME, 1, TIFF_LONG);
+	    CopyTag(TIFFTAG_FAXSUBADDRESS, 1, TIFF_ASCII);
+	break;
+   }
+   { uint32 len32;
+     void** data;
+     if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &len32, &data))
+       TIFFSetField(out, TIFFTAG_ICCPROFILE, len32, data);
+   }
+   { uint16 ninks;
+     const char* inknames;
+     if (TIFFGetField(in, TIFFTAG_NUMBEROFINKS, &ninks)) {
+       TIFFSetField(out, TIFFTAG_NUMBEROFINKS, ninks);
+       if (TIFFGetField(in, TIFFTAG_INKNAMES, &inknames)) {
+	 int inknameslen = strlen(inknames) + 1;
+	 const char* cp = inknames;
+	 while (ninks > 1) {
+	   cp = strchr(cp, '\0');
+	   if (cp) {
+	     cp++;
+	     inknameslen += (strlen(cp) + 1);
+	   }
+	   ninks--;
+         }
+	 TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
+       }
+     }
+   }
+   {
+   unsigned short pg0, pg1;
+   if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1)) {
+     if (pageNum < 0) /* only one input file */
+	TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
+     else 
+	TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
+     }
+   }
+
+  for (p = tags; p < &tags[NTAGS]; p++)
+		CopyTag(p->tag, p->count, p->type);
+
+  /* Update these since they are overwritten from input res by loop above */
+  TIFFSetField(out, TIFFTAG_XRESOLUTION, (float)hres);
+  TIFFSetField(out, TIFFTAG_YRESOLUTION, (float)vres);
+
+  /* Compute the tile or strip dimensions and write to disk */
+  if (outtiled)
+    {
+    if (config == PLANARCONFIG_CONTIG)
+      {
+      writeBufferToContigTiles (out, sect_buff, length, width, spp);
+      }
+    else
+      writeBufferToSeparateTiles (out, sect_buff, length, width, spp);
+    }
+  else
+    {
+    if (config == PLANARCONFIG_CONTIG)
+      {
+      writeBufferToContigStrips (out, sect_buff, length, width, spp);
+      }
+    else
+      {
+      writeBufferToSeparateStrips(out, sect_buff, length, width, spp);
+      }
+    }
+
+  if (!TIFFWriteDirectory(out))
+    {
+    TIFFClose(out);
+    return (-1);
+    }
+
+  return (0);
+  } /* end writeSingleSection */
+
+
+/* Create a buffer to write one section at a time */
+static int
+createImageSection(uint32 sectsize, unsigned char **sect_buff_ptr)
+  {
+  unsigned  char *sect_buff = NULL;
+  unsigned  char *new_buff  = NULL;
+  static    uint32  prev_sectsize = 0;
+  
+  sect_buff = *sect_buff_ptr;
+
+  if (!sect_buff)
+    {
+    sect_buff = (unsigned char *)_TIFFmalloc(sectsize);
+    *sect_buff_ptr = sect_buff;
+    _TIFFmemset(sect_buff, 0, sectsize);
+    }
+  else
+    {
+    if (prev_sectsize < sectsize)
+      {
+      new_buff = _TIFFrealloc(sect_buff, sectsize);
+      if (!new_buff)
+        {
+	free (sect_buff);
+        sect_buff = (unsigned char *)_TIFFmalloc(sectsize);
+        }
+      else
+        sect_buff = new_buff;
+
+      _TIFFmemset(sect_buff, 0, sectsize);
+      }
+    }
+
+  if (!sect_buff)
+    {
+    TIFFError("createImageSection", "Unable to allocate/reallocate section buffer");
+    return (-1);
+    }
+  prev_sectsize = sectsize;
+  *sect_buff_ptr = sect_buff;
+
+  return (0);
+  }
+
+
 /* Copy the crop section of the data from the current image into a buffer
  * and adjust the IFD values to reflect the new size. If no cropping is
  * required, use the origial read buffer as the crop buffer.
  */
 static int
-createCroppedImage(TIFF* in, struct crop_mask *crop, unsigned char **read_buff_ptr, unsigned char **crop_buff_ptr)
+createCroppedImage(TIFF* in, struct image_data *image, struct crop_mask *crop, 
+                   unsigned char **read_buff_ptr, unsigned char **crop_buff_ptr)
   {
-  uint32    img_width, img_length;
-  uint16    bps, spp, photometric;
   tsize_t   cropsize;
   unsigned  char *read_buff = NULL;
   unsigned  char *crop_buff = NULL;
+  unsigned  char *new_buff  = NULL;
   static    tsize_t  prev_cropsize = 0;
-  
-  TIFFGetField(in, TIFFTAG_IMAGEWIDTH,  &img_width);
-  TIFFGetField(in, TIFFTAG_IMAGELENGTH, &img_length);
-  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric);
-  TIFFGetFieldDefaulted(in, TIFFTAG_BITSPERSAMPLE, &bps);
-  TIFFGetFieldDefaulted(in, TIFFTAG_SAMPLESPERPIXEL, &spp);
 
   read_buff = *read_buff_ptr;
   if (crop->zones == 0)
     { /* process full image, no crop buffer needed */
     crop_buff = read_buff;
     *crop_buff_ptr = read_buff;
-    crop->combined_width = img_width;
-    crop->combined_length = img_length;
+    crop->combined_width = image->width;
+    crop->combined_length = image->length;
     }   
   else
     { /* one of more crop zones */
@@ -2720,13 +3082,22 @@ createCroppedImage(TIFF* in, struct crop_mask *crop, unsigned char **read_buff_p
       {
       crop_buff = (unsigned char *)_TIFFmalloc(cropsize);
       *crop_buff_ptr = crop_buff;
+      _TIFFmemset(crop_buff, 0, cropsize);
       }
     else
       {
       if (prev_cropsize < cropsize)
         {
-        crop_buff = _TIFFrealloc(crop_buff, cropsize);
-        *crop_buff_ptr = crop_buff;
+        new_buff = _TIFFrealloc(crop_buff, cropsize);
+        if (!new_buff)
+          {
+	  free (crop_buff);
+          crop_buff = (unsigned char *)_TIFFmalloc(cropsize);
+          }
+        else
+          crop_buff = new_buff;
+
+        /* _TIFFmemset(crop_buff, 0, cropsize); */
         }
       }
 
@@ -2735,6 +3106,7 @@ createCroppedImage(TIFF* in, struct crop_mask *crop, unsigned char **read_buff_p
       TIFFError("createCroppedImage", "Unable to allocate/reallocate crop buffer");
       return (-1);
       }
+    *crop_buff_ptr = crop_buff;
 
     if (extractCropRegions(in, crop, read_buff, crop_buff))
       {
@@ -2745,16 +3117,19 @@ createCroppedImage(TIFF* in, struct crop_mask *crop, unsigned char **read_buff_p
 
   if (crop->crop_mode & CROP_INVERT)
     {
-      if (invertImage(photometric, spp, bps, crop->combined_width, crop->combined_length, crop_buff))
+      if (invertImage(image->photometric, image->spp, image->bps, 
+                      crop->combined_width, crop->combined_length, crop_buff))
       {
-      TIFFError("createCroppedImage", "Failed to invert colorspace for image or cropped selection");
+      TIFFError("createCroppedImage", 
+                 "Failed to invert colorspace for image or cropped selection");
       return (-1);
       }
     }
 
   if (crop->crop_mode & CROP_MIRROR)
     {
-    if (mirrorImage(spp, bps, crop->mirror, crop->combined_width, crop->combined_length, crop_buff))
+    if (mirrorImage(image->spp, image->bps, crop->mirror, 
+                    crop->combined_width, crop->combined_length, crop_buff))
       {
       TIFFError("createCroppedImage", "Failed to mirror image or cropped selection %s", 
 	       (crop->rotation == MIRROR_HORIZ) ? "horizontally" : "vertically");
@@ -2764,9 +3139,11 @@ createCroppedImage(TIFF* in, struct crop_mask *crop, unsigned char **read_buff_p
 
   if (crop->crop_mode & CROP_ROTATE) /* rotate should be last as it can reallocate the buffer */
     {
-    if (rotateImage(crop->rotation, spp, bps, &crop->combined_width, &crop->combined_length, crop_buff_ptr))
+    if (rotateImage(crop->rotation, image, &crop->combined_width, 
+                    &crop->combined_length, crop_buff_ptr))
       {
-      TIFFError("createCroppedImage", "Failed to rotate image or cropped selection by %d degrees", crop->rotation);
+      TIFFError("createCroppedImage", 
+                "Failed to rotate image or cropped selection by %d degrees", crop->rotation);
       return (-1);
       }
     }
@@ -2775,7 +3152,7 @@ createCroppedImage(TIFF* in, struct crop_mask *crop, unsigned char **read_buff_p
     *read_buff_ptr = NULL;    /* so we don't try to free it later */
 
   return (0);
-  }
+  } /* end createCroppedImage */
 
 static int  
 writeCroppedImage(TIFF *in, TIFF *out, struct crop_mask *crop, unsigned char *crop_buff)
@@ -2908,14 +3285,14 @@ writeCroppedImage(TIFF *in, TIFF *out, struct crop_mask *crop, unsigned char *cr
    case COMPRESSION_LZW:
    case COMPRESSION_ADOBE_DEFLATE:
    case COMPRESSION_DEFLATE:
-       	if (predictor != (uint16)-1)
+	if (predictor != (uint16)-1)
           TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
 	else
 	  CopyField(TIFFTAG_PREDICTOR, predictor);
 	break;
    case COMPRESSION_CCITTFAX3:
    case COMPRESSION_CCITTFAX4:
-       	if (compression == COMPRESSION_CCITTFAX3) {
+	if (compression == COMPRESSION_CCITTFAX3) {
           if (g3opts != (uint32) -1)
 	    TIFFSetField(out, TIFFTAG_GROUP3OPTIONS, g3opts);
 	  else
@@ -2998,20 +3375,28 @@ writeCroppedImage(TIFF *in, TIFF *out, struct crop_mask *crop, unsigned char *cr
   return (0);
   }
 
-/* Rotate an image by a multiple of 90 degrees clockwise */
-static int
+/* Rotate an image by a multiple of 90 degrees clockwise 
 rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *img_length, unsigned char **crop_buff_ptr)
+*/
+static int
+rotateImage(uint16 rotation, struct image_data *image, uint32 *img_width, 
+            uint32 *img_length, unsigned char **crop_buff_ptr)
   {
-  uint32   i, j, row, col, width, length, full_bytes, trailing_bits;
+  uint32   i, row, col, width, length, full_bytes, trailing_bits;
   uint32   rowsize, colsize, buffsize, row_offset, col_offset, pix_offset;
   unsigned char bitset, bytebuff1, bytebuff2, bytes_per_pixel;
   unsigned char *crop_buff = *crop_buff_ptr;
   unsigned char *src_ptr;
   unsigned char *dst_ptr;
+  uint16   spp, bps;
+  int      j;
   static unsigned char *rotate_buff = NULL;
 
-  width = *img_width;
+  width  = *img_width;
   length = *img_length;
+  spp = image->spp;
+  bps = image->bps;
+
   rowsize = (width * bps + 7) / 8;
   colsize = (length * bps + 7) / 8;
   bytes_per_pixel = (spp * bps + 7) / 8;
@@ -3101,7 +3486,7 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
                       }
 		    }
                   }
-	        }
+		}
               _TIFFfree(crop_buff);
               *(crop_buff_ptr) = rotate_buff;
               break;
@@ -3118,7 +3503,7 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
                     dst_ptr += (spp * colsize);
                     }
                   }
-	        }
+		}
               else
                 {
                 for (row = 0; row < length; row++)
@@ -3130,9 +3515,9 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
                       {
                       if (col + i < width)
 			{
-		        bitset = ((*src_ptr) & (((unsigned char)1 << j)) ? 1 : 0);
-		        *(dst_ptr) |= (bitset << ((row + trailing_bits) % 8));
- 		        dst_ptr += colsize;
+			bitset = ((*src_ptr) & (((unsigned char)1 << j)) ? 1 : 0);
+			*(dst_ptr) |= (bitset << ((row + trailing_bits) % 8));
+			dst_ptr += colsize;
 			}
                       }
                     src_ptr++;
@@ -3144,13 +3529,15 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
 
               *img_width = length;
               *img_length = width;
+              image->width = length;
+              image->length = width;
 	      break;
 
     case 270: if ((bps % 8) == 0) /* byte aligned data */
                 {
                 for (row = 0; row < length; row++)
                   {
-	          dst_ptr = rotate_buff + (spp * rowsize * length) + (row * bytes_per_pixel);
+		  dst_ptr = rotate_buff + (spp * rowsize * length) + (row * bytes_per_pixel);
                   for (col = 0; col < width; col++)
                     {
 		    for (i = 0; i  < bytes_per_pixel; i++)
@@ -3158,7 +3545,7 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
                     dst_ptr -= (spp * colsize);
                     }
                   }
-	        }
+		}
               else
                 {
                 for (row = 0; row < length; row++)
@@ -3170,9 +3557,9 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
                       {
                       if (col + i < width)
 			{
-		        bitset = ((*src_ptr) & (((unsigned char)1 << j)) ? 1 : 0);
-		        dst_ptr -= colsize;
-		        *(dst_ptr) |= (bitset << ( 7 - (row % 8)));
+			bitset = ((*src_ptr) & (((unsigned char)1 << j)) ? 1 : 0);
+			dst_ptr -= colsize;
+			*(dst_ptr) |= (bitset << ( 7 - (row % 8)));
 			}
                       }
                     src_ptr++;
@@ -3185,6 +3572,8 @@ rotateImage(uint16 rotation, uint16 spp, uint16 bps, uint32 *img_width, uint32 *
 
               *img_width = length;
               *img_length = width;
+              image->width = length;
+              image->length = width;
               break;
     default:
               break;
@@ -3199,11 +3588,12 @@ static int
 mirrorImage(uint16 spp, uint16 bps, uint16 mirror, uint32 width, uint32 length, unsigned char *crop_buff)
   {
   uint32   i, j, row, col, full_bytes, trailing_bits;
-  uint32   rowsize, colsize, row_offset, pix_offset;
+  uint32   rowsize, colsize, row_offset, col_offset, pix_offset;
   unsigned char  bytebuff1, bytebuff2, bytes_per_pixel, bitset;
   unsigned char *line_buff = NULL;
   unsigned char *src_ptr;
   unsigned char *dst_ptr;
+  unsigned char workbuff[12];
 
   rowsize = (width * bps + 7) / 8;
   colsize = (length * bps + 7) / 8;
@@ -3218,6 +3608,7 @@ mirrorImage(uint16 spp, uint16 bps, uint16 mirror, uint32 width, uint32 length, 
     case MIRROR_HORIZ :
               if ((bps % 8) == 0) /* byte alligned data */
                 { 
+		/***
                 for (row = 0; row < length; row++)
                     {
 		    row_offset = row * rowsize * spp;
@@ -3234,7 +3625,48 @@ mirrorImage(uint16 spp, uint16 bps, uint16 mirror, uint32 width, uint32 length, 
 		      dst_ptr -= spp;
                       }
                     }
-                }
+		  **/
+		switch (bps / 8)
+                  {
+		  case 2:
+                    for (row = 0; row < length; row++)
+                      {
+		      row_offset = row * rowsize * spp;
+                      src_ptr = crop_buff + row_offset;
+                      dst_ptr = crop_buff + row_offset + (spp * rowsize);
+                      for (col = 0; col < (width / 2); col++)
+                        {
+			col_offset = col * bytes_per_pixel;                     
+			_TIFFmemcpy (workbuff, src_ptr + col_offset, bytes_per_pixel);
+			_TIFFmemcpy (src_ptr + col_offset, dst_ptr - col_offset - bytes_per_pixel, bytes_per_pixel);
+			_TIFFmemcpy (dst_ptr - col_offset - bytes_per_pixel, workbuff, bytes_per_pixel);
+                        }
+                      }
+		    break;
+
+		  case 1:
+                    for (row = 0; row < length; row++)
+                      {
+		      row_offset = row * rowsize * spp;
+                      src_ptr = crop_buff + row_offset;
+                      dst_ptr = src_ptr + (spp * rowsize);
+                      for (col = 0; col < (width / 2); col++)
+                        { 
+			for (i = 0; i  < spp; i++)
+                          {
+			  bytebuff1 = *src_ptr;
+			  *src_ptr++ = *(dst_ptr - spp + i);
+                          *(dst_ptr - spp + i) = bytebuff1;
+			  }
+			dst_ptr -= spp;
+                        }
+                      }
+		    break;
+		  default:  
+                     TIFFError("mirrorImage", "Unsupported bits per pixel");
+                     return (-1);
+		  }
+		}
 	      else
                 { /* non 8 bit per sample  data */
                 if (!(line_buff = (unsigned char *)_TIFFmalloc(spp * rowsize + 1)))
@@ -3259,7 +3691,7 @@ mirrorImage(uint16 spp, uint16 bps, uint16 mirror, uint32 width, uint32 length, 
                         line_buff[rowsize - col] |= (bitset << i);
                         }
 		      }
-		    memcpy (src_ptr, line_buff, spp * rowsize);
+		   _TIFFmemcpy (src_ptr, line_buff, spp * rowsize);
 		    }
                   else
                     {
@@ -3283,7 +3715,7 @@ mirrorImage(uint16 spp, uint16 bps, uint16 mirror, uint32 width, uint32 length, 
                       }
 		    _TIFFmemcpy (crop_buff + row_offset, line_buff, spp * rowsize);
                     }
-	          }
+		  }
                 if (line_buff)
                   _TIFFfree(line_buff);
 		}
@@ -3299,9 +3731,9 @@ mirrorImage(uint16 spp, uint16 bps, uint16 mirror, uint32 width, uint32 length, 
              dst_ptr = crop_buff + (spp * rowsize * (length - 1));
              for (row = 0; row < length / 2; row++)
                {
-	       memcpy(line_buff, src_ptr, spp * rowsize);
-	       memcpy(src_ptr, dst_ptr, spp * rowsize);
-	       memcpy(dst_ptr, line_buff, spp * rowsize);
+	      _TIFFmemcpy(line_buff, src_ptr, spp * rowsize);
+	      _TIFFmemcpy(src_ptr, dst_ptr, spp * rowsize);
+	      _TIFFmemcpy(dst_ptr, line_buff, spp * rowsize);
                src_ptr += (spp * rowsize);
                dst_ptr -= (spp * rowsize);                                 
                }
@@ -3350,27 +3782,27 @@ invertImage(uint16 photometric, uint16 spp, uint16 bps, uint32 width, uint32 len
     case 8: for (row = 0; row < length; row++)
               for (col = 0; col < width; col++)
                 {
-	        *src_ptr = (unsigned char)255 - *src_ptr;
+		*src_ptr = (unsigned char)255 - *src_ptr;
                  src_ptr++;
                 }
             break;
     case 4: for (row = 0; row < length; row++)
               for (col = 0; col < width; col++)
                 {
-	        bytebuff1 = 16 - (*src_ptr & (unsigned char)240 >> 4);
-		bytebuff2 = 16 - (*src_ptr & (unsigned char)15);
-	        *src_ptr = bytebuff1 << 4 & bytebuff2;
+		bytebuff1 = 16 - (unsigned char)(*src_ptr & 240 >> 4);
+		bytebuff2 = 16 - (*src_ptr & 15);
+		*src_ptr = bytebuff1 << 4 & bytebuff2;
                 src_ptr++;
                 }
             break;
     case 2: for (row = 0; row < length; row++)
               for (col = 0; col < width; col++)
                 {
-	        bytebuff1 = 4 - (*src_ptr & (unsigned char)192 >> 6);
-	        bytebuff2 = 4 - (*src_ptr & (unsigned char)48  >> 4);
-	        bytebuff3 = 4 - (*src_ptr & (unsigned char)12  >> 2);
-		bytebuff4 = 4 - (*src_ptr & (unsigned char)3);
-	        *src_ptr = (bytebuff1 << 6) || (bytebuff2 << 4) || (bytebuff3 << 2) || bytebuff4;
+		bytebuff1 = 4 - (unsigned char)(*src_ptr & 192 >> 6);
+		bytebuff2 = 4 - (unsigned char)(*src_ptr & 48  >> 4);
+		bytebuff3 = 4 - (unsigned char)(*src_ptr & 12  >> 2);
+		bytebuff4 = 4 - (unsigned char)(*src_ptr & 3);
+		*src_ptr = (bytebuff1 << 6) || (bytebuff2 << 4) || (bytebuff3 << 2) || bytebuff4;
                 src_ptr++;
                 }
             break;
@@ -3389,3 +3821,4 @@ invertImage(uint16 photometric, uint16 spp, uint16 bps, uint32 width, uint32 len
   }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+
