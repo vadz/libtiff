@@ -1864,8 +1864,18 @@ static int JPEGInitializeLibJPEG( TIFF * tif, int force_encode, int force_decode
     int     data_is_empty = TRUE;
     int     decompress;
 
+
     if(sp->cinfo_initialized)
-        return 1;
+    {
+        if( force_encode && sp->cinfo.comm.is_decompressor )
+            TIFFjpeg_destroy( sp );
+        else if( force_decode && !sp->cinfo.comm.is_decompressor )
+            TIFFjpeg_destroy( sp );
+        else
+            return 1;
+
+        sp->cinfo_initialized = 0;
+    }
 
     /*
      * Do we have tile data already?  Make sure we initialize the
