@@ -1,3 +1,10 @@
+2007-04-06  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffcrop.c, man/tiffcrop.1: Significant update in
+	functionality from Richard Nolde. As per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1525
+
 2007-03-28  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_fax3.c: "inline static" -> "static inline" for IRIC CC.
