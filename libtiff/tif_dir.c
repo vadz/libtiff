@@ -138,7 +138,6 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	static const char module[] = "_TIFFVSetField";
 
-	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 	TIFFDirectory* td = &tif->tif_dir;
 	int status = 1;
 	uint32 v32, i, v;
@@ -391,6 +390,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
         default: {
             TIFFTagValue *tv;
             int tv_size, iCustom;
+	    const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
 
             /*
 	     * This can happen if multiple images are open with different
@@ -414,11 +414,10 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
              * Find the existing entry for this custom value.
              */
             tv = NULL;
-            for(iCustom = 0; iCustom < td->td_customValueCount; iCustom++) {
-                if(td->td_customValues[iCustom].info == fip) {
+            for (iCustom = 0; iCustom < td->td_customValueCount; iCustom++) {
+		    if (td->td_customValues[iCustom].info->field_tag == tag) {
                     tv = td->td_customValues + iCustom;
-                    if(tv->value != NULL)
-                    {
+			    if (tv->value != NULL) {
                         _TIFFfree(tv->value);
                         tv->value = NULL;
                     }
@@ -446,7 +445,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 
 		td->td_customValues = new_customValues;
 
-                tv = td->td_customValues + (td->td_customValueCount-1);
+                tv = td->td_customValues + (td->td_customValueCount - 1);
                 tv->info = fip;
                 tv->value = NULL;
                 tv->count = 0;
@@ -578,7 +577,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
           }
 	}
 	if (status) {
-		TIFFSetFieldBit(tif, fip->field_bit);
+		TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
 		tif->tif_flags |= TIFF_DIRTYDIRECT;
 	}
 
@@ -588,13 +587,15 @@ end:
 badvalue:
 	TIFFErrorExt(tif->tif_clientdata, module,
 		     "%s: Bad value %d for \"%s\" tag",
-		     tif->tif_name, v, fip ? fip->field_name : "Unknown");
+		     tif->tif_name, v,
+		     _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvalue32:
 	TIFFErrorExt(tif->tif_clientdata, module,
 		     "%s: Bad value %ld for \"%s\" tag",
-		     tif->tif_name, v32, fip ? fip->field_name : "Unknown");
+		     tif->tif_name, v32,
+		     _TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 }
