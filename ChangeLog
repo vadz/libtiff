@@ -1,3 +1,17 @@
+2007-04-07  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_dir.h, tif_dirread.c, tif_dirinfo.c, tif_jpeg.c,
+	tif_fax3.c, tif_jbig.c, tif_luv.c, tif_ojpeg.c, tif_pixarlog.c,
+	tif_predict.c, tif_zip.c}: Finally fix bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1274
+
+	by introducing _TIFFMergeFieldInfo() returning integer error status
+	instead of void in case of problems with field merging (e.g., if the
+	field with such a tag already registered). TIFFMergeFieldInfo() in
+	public API remains void. Use _TIFFMergeFieldInfo() everywhere and
+	check returned value.
+
 2007-04-07  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* contrib/addtiffo/tif_overview.c: Fix problems with odd sized output 
