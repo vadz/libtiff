@@ -1,3 +1,8 @@
+2007-04-07  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* contrib/addtiffo/tif_overview.c: Fix problems with odd sized output 
+	blocks in TIFF_DownSample_Subsampled() (bug 1542).
+
 2007-04-06  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Changed JPEGInitializeLibJPEG() so that it
