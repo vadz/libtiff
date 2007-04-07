@@ -49,7 +49,6 @@ typedef struct
 } JBIGState;
 
 #define GetJBIGState(tif) ((JBIGState*)(tif)->tif_data)
-#define N(a) (sizeof (a) / sizeof (a[0]))
 
 #define FIELD_RECVPARAMS        (FIELD_CODEC+0)
 #define FIELD_SUBADDRESS        (FIELD_CODEC+1)
@@ -308,6 +307,16 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
 
 	assert(scheme == COMPRESSION_JBIG);
 
+	/*
+	 * Merge codec-specific tag information.
+	 */
+	if (!_TIFFMergeFieldInfo(tif, jbigFieldInfo,
+				 TIFFArrayCount(jbigFieldInfo))) {
+		TIFFErrorExt(tif->tif_clientdata, "TIFFInitJBIG",
+			     "Merging JBIG codec-specific tags failed");
+		return 0;
+	}
+
         /* Allocate memory for the JBIGState structure.*/
         tif->tif_data = (tdata_t)_TIFFmalloc(sizeof(JBIGState));
         if (tif->tif_data == NULL)
@@ -325,14 +334,10 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
         codec->recvtime = 0;
 
 	/* 
-	 * Register codec private fields with libtiff and setup function
-	 * pointers.
+	 * Override parent get/set field methods.
 	 */
-	_TIFFMergeFieldInfo(tif, jbigFieldInfo, N(jbigFieldInfo));
-
         codec->vgetparent = tif->tif_tagmethods.vgetfield;
         codec->vsetparent = tif->tif_tagmethods.vsetfield;
-
         tif->tif_tagmethods.vgetfield = JBIGVGetField;
         tif->tif_tagmethods.vsetfield = JBIGVSetField;
         tif->tif_tagmethods.printdir = JBIGPrintDir;

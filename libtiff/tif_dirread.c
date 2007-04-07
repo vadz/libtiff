@@ -1791,12 +1791,21 @@ TIFFReadDirectory(TIFF* tif)
 			TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 			if (fii==(uint32)(-1))
 			{
-				TIFFWarningExt(tif->tif_clientdata,module,
-				    "Unknown field with tag %d (0x%x) encountered",
-				    dp->tdir_tag,dp->tdir_tag);
-				TIFFMergeFieldInfo(tif,
-				    _TIFFCreateAnonFieldInfo(tif,dp->tdir_tag,
-				    (TIFFDataType)dp->tdir_type),1);
+				TIFFWarningExt(tif->tif_clientdata, module,
+				"Unknown field with tag %d (0x%x) encountered",
+					       dp->tdir_tag,dp->tdir_tag);
+				if (!_TIFFMergeFieldInfo(tif,
+						_TIFFCreateAnonFieldInfo(tif,
+						dp->tdir_tag,
+						(TIFFDataType) dp->tdir_type),
+						1)) {
+					TIFFErrorExt(tif->tif_clientdata,
+						     module,
+			"Registering anonymous field with tag %d (0x%x) failed",
+						     dp->tdir_tag,
+						     dp->tdir_tag);
+					goto ignore;
+				}
 				TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 				assert(fii!=(uint32)(-1));
 			}
@@ -2397,12 +2406,19 @@ TIFFReadCustomDirectory(TIFF* tif, uint64_new diroff, const TIFFFieldInfo info[]
 		TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 		if (fii==0xFFFF)
 		{
-			TIFFWarningExt(tif->tif_clientdata,module,
-			    "Unknown field with tag %d (0x%x) encountered",
-			    dp->tdir_tag,dp->tdir_tag);
-			TIFFMergeFieldInfo(tif,
-			    _TIFFCreateAnonFieldInfo(tif,dp->tdir_tag,
-			    (TIFFDataType)dp->tdir_type),1);
+			TIFFWarningExt(tif->tif_clientdata, module,
+				"Unknown field with tag %d (0x%x) encountered",
+				       dp->tdir_tag, dp->tdir_tag);
+			if (!_TIFFMergeFieldInfo(tif,
+						 _TIFFCreateAnonFieldInfo(tif,
+						 dp->tdir_tag,
+						 (TIFFDataType) dp->tdir_type),
+						 1)) {
+				TIFFErrorExt(tif->tif_clientdata, module,
+			"Registering anonymous field with tag %d (0x%x) failed",
+					     dp->tdir_tag, dp->tdir_tag);
+				goto ignore;
+			}
 			TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 			assert(fii!=0xFFFF);
 		}
