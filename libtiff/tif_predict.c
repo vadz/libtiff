@@ -516,7 +516,6 @@ static const TIFFFieldInfo predictFieldInfo[] = {
     { TIFFTAG_PREDICTOR,	 1, 1, TIFF_SHORT,	FIELD_PREDICTOR,
       FALSE,	FALSE,	"Predictor" },
 };
-#define	N(a)	(sizeof (a) / sizeof (a[0]))
 
 static int
 PredictorVSetField(TIFF* tif, ttag_t tag, va_list ap)
@@ -583,10 +582,18 @@ TIFFPredictorInit(TIFF* tif)
 	assert(sp != 0);
 
 	/*
-	 * Merge codec-specific tag information and
-	 * override parent get/set field methods.
+	 * Merge codec-specific tag information.
 	 */
-	_TIFFMergeFieldInfo(tif, predictFieldInfo, N(predictFieldInfo));
+	if (!_TIFFMergeFieldInfo(tif, predictFieldInfo,
+				 TIFFArrayCount(predictFieldInfo))) {
+		TIFFErrorExt(tif->tif_clientdata, "TIFFPredictorInit",
+			     "Merging Predictor codec-specific tags failed");
+		return 0;
+	}
+
+	/*
+	 * Override parent get/set field methods.
+	 */
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield =
             PredictorVGetField;/* hook for predictor tag */

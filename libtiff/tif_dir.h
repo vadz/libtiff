@@ -156,11 +156,11 @@ typedef	struct {
 #define	FIELD_LAST			(32*FIELD_SETLONGS-1)
 
 #define	TIFFExtractData(tif, type, v) \
-    ((uint32) ((tif)->tif_header.common.tiff_magic == TIFF_BIGENDIAN ? \
-	((v) >> (tif)->tif_typeshift[type]) & (tif)->tif_typemask[type] : \
+    ((uint32) ((tif)->tif_header.tiff_magic == TIFF_BIGENDIAN ? \
+        ((v) >> (tif)->tif_typeshift[type]) & (tif)->tif_typemask[type] : \
 	(v) & (tif)->tif_typemask[type]))
 #define	TIFFInsertData(tif, type, v) \
-    ((uint32) ((tif)->tif_header.common.tiff_magic == TIFF_BIGENDIAN ? \
+    ((uint32) ((tif)->tif_header.tiff_magic == TIFF_BIGENDIAN ? \
         ((v) & (tif)->tif_typemask[type]) << (tif)->tif_typeshift[type] : \
 	(v) & (tif)->tif_typemask[type]))
 
@@ -180,6 +180,7 @@ extern "C" {
 extern	const TIFFFieldInfo *_TIFFGetFieldInfo(size_t *);
 extern	const TIFFFieldInfo *_TIFFGetExifFieldInfo(size_t *);
 extern	void _TIFFSetupFieldInfo(TIFF*, const TIFFFieldInfo[], size_t);
+extern	int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], int);
 extern	void _TIFFPrintFieldInfo(TIFF*, FILE*);
 extern	TIFFDataType _TIFFSampleToTagType(TIFF*);
 extern  const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo( TIFF *tif,
@@ -188,7 +189,6 @@ extern  const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo( TIFF *tif,
 extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo( TIFF *tif, ttag_t tag,
                                                  TIFFDataType dt );
 
-#define _TIFFMergeFieldInfo	    TIFFMergeFieldInfo
 #define _TIFFFindFieldInfo	    TIFFFindFieldInfo
 #define _TIFFFindFieldInfoByName    TIFFFindFieldInfoByName
 #define _TIFFFieldWithTag	    TIFFFieldWithTag
