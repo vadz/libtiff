@@ -308,7 +308,7 @@ extern	int TIFFInitNeXT(TIFF*, int);
 extern	int TIFFInitLZW(TIFF*, int);
 #endif
 #ifdef OJPEG_SUPPORT
-extern	int TIFFInitOJPEG(TIFF*, int);                                                                    à
+extern	int TIFFInitOJPEG(TIFF*, int);
 #endif
 #ifdef JPEG_SUPPORT
 extern	int TIFFInitJPEG(TIFF*, int);
