@@ -1792,23 +1792,30 @@ TIFFReadDirectory(TIFF* tif)
 			if (fii==(uint32)(-1))
 			{
 				TIFFWarningExt(tif->tif_clientdata, module,
-				"Unknown field with tag %d (0x%x) encountered",
-					       dp->tdir_tag,dp->tdir_tag);
+				    "Unknown field with tag %d (0x%x) encountered",
+				    dp->tdir_tag,dp->tdir_tag);
 				if (!_TIFFMergeFieldInfo(tif,
-						_TIFFCreateAnonFieldInfo(tif,
-						dp->tdir_tag,
-						(TIFFDataType) dp->tdir_type),
-						1)) {
-					TIFFErrorExt(tif->tif_clientdata,
-						     module,
-			"Registering anonymous field with tag %d (0x%x) failed",
-						     dp->tdir_tag,
-						     dp->tdir_tag);
-					goto ignore;
+				    _TIFFCreateAnonFieldInfo(tif,
+				    dp->tdir_tag,
+				    (TIFFDataType) dp->tdir_type),
+				    1))
+				{
+					TIFFWarningExt(tif->tif_clientdata,
+					    module,
+					    "Registering anonymous field with tag %d (0x%x) failed",
+					    dp->tdir_tag,
+					    dp->tdir_tag);
+					dp->tdir_tag=IGNORE;
 				}
-				TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
-				assert(fii!=(uint32)(-1));
+				else
+				{
+					TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
+					assert(fii!=(uint32)(-1));
+				}
 			}
+		}
+		if (dp->tdir_tag!=IGNORE)
+		{
 			fip=tif->tif_fieldinfo[fii];
 			if (fip->field_bit==FIELD_IGNORE)
 				dp->tdir_tag=IGNORE;
@@ -2407,69 +2414,76 @@ TIFFReadCustomDirectory(TIFF* tif, uint64_new diroff, const TIFFFieldInfo info[]
 		if (fii==0xFFFF)
 		{
 			TIFFWarningExt(tif->tif_clientdata, module,
-				"Unknown field with tag %d (0x%x) encountered",
-				       dp->tdir_tag, dp->tdir_tag);
+			    "Unknown field with tag %d (0x%x) encountered",
+			    dp->tdir_tag, dp->tdir_tag);
 			if (!_TIFFMergeFieldInfo(tif,
-						 _TIFFCreateAnonFieldInfo(tif,
-						 dp->tdir_tag,
-						 (TIFFDataType) dp->tdir_type),
-						 1)) {
-				TIFFErrorExt(tif->tif_clientdata, module,
-			"Registering anonymous field with tag %d (0x%x) failed",
-					     dp->tdir_tag, dp->tdir_tag);
-				goto ignore;
-			}
-			TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
-			assert(fii!=0xFFFF);
-		}
-		fip=tif->tif_fieldinfo[fii];
-		if (fip->field_bit==FIELD_IGNORE)
-			dp->tdir_tag=IGNORE;
-		else
-		{
-			/* check data type */
-			while ((fip->field_type!=TIFF_ANY)&&(fip->field_type!=dp->tdir_type))
-			{
-				fii++;
-				if ((fii==tif->tif_nfields)||
-				    (tif->tif_fieldinfo[fii]->field_tag!=(uint32)dp->tdir_tag))
-				{
-					fii=0xFFFF;
-					break;
-				}
-				fip=tif->tif_fieldinfo[fii];
-			}
-			if (fii==0xFFFF)
+			    _TIFFCreateAnonFieldInfo(tif,
+			    dp->tdir_tag,
+			    (TIFFDataType) dp->tdir_type),
+			    1))
 			{
 				TIFFWarningExt(tif->tif_clientdata, module,
-				    "Wrong data type %d for \"%s\"; tag ignored",
-				    dp->tdir_type,fip->field_name);
+				    "Registering anonymous field with tag %d (0x%x) failed",
+				    dp->tdir_tag, dp->tdir_tag);
 				dp->tdir_tag=IGNORE;
 			}
 			else
 			{
-				/* check count if known in advance */
-				if ((fip->field_readcount!=TIFF_VARIABLE)&&
-				    (fip->field_readcount!=TIFF_VARIABLE2))
-				{
-					uint32 expected;
-					if (fip->field_readcount==TIFF_SPP)
-						expected=(uint32)tif->tif_dir.td_samplesperpixel;
-					else
-						expected=(uint32)fip->field_readcount;
-					if (!CheckDirCount(tif,dp,expected))
-						dp->tdir_tag=IGNORE;
-				}
+				TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
+				assert(fii!=0xFFFF);
 			}
 		}
-		switch (dp->tdir_tag)
+		if (dp->tdir_tag!=IGNORE)
 		{
-			case EXIFTAG_SUBJECTDISTANCE:
-				(void) TIFFFetchSubjectDistance(tif,dp);
-				break;
-			default:
-				(void) TIFFFetchNormalTag(tif, dp);
-				break;
+			fip=tif->tif_fieldinfo[fii];
+			if (fip->field_bit==FIELD_IGNORE)
+				dp->tdir_tag=IGNORE;
+			else
+			{
+				/* check data type */
+				while ((fip->field_type!=TIFF_ANY)&&(fip->field_type!=dp->tdir_type))
+				{
+					fii++;
+					if ((fii==tif->tif_nfields)||
+					    (tif->tif_fieldinfo[fii]->field_tag!=(uint32)dp->tdir_tag))
+					{
+						fii=0xFFFF;
+						break;
+					}
+					fip=tif->tif_fieldinfo[fii];
+				}
+				if (fii==0xFFFF)
+				{
+					TIFFWarningExt(tif->tif_clientdata, module,
+					    "Wrong data type %d for \"%s\"; tag ignored",
+					    dp->tdir_type,fip->field_name);
+					dp->tdir_tag=IGNORE;
+				}
+				else
+				{
+					/* check count if known in advance */
+					if ((fip->field_readcount!=TIFF_VARIABLE)&&
+					    (fip->field_readcount!=TIFF_VARIABLE2))
+					{
+						uint32 expected;
+						if (fip->field_readcount==TIFF_SPP)
+							expected=(uint32)tif->tif_dir.td_samplesperpixel;
+						else
+							expected=(uint32)fip->field_readcount;
+						if (!CheckDirCount(tif,dp,expected))
+							dp->tdir_tag=IGNORE;
+					}
+				}
+			}
+			switch (dp->tdir_tag)
+			{
+				case EXIFTAG_SUBJECTDISTANCE:
+					(void) TIFFFetchSubjectDistance(tif,dp);
+					break;
+				default:
+					(void) TIFFFetchNormalTag(tif, dp);
+					break;
+			}
 		}
 	}
 	if (dir)
