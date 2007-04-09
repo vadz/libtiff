@@ -63,6 +63,8 @@ void _TIFFsetShortArray(uint16** wpp, uint16* wp, uint32 n)
     { setByteArray((void**) wpp, (void*) wp, n, sizeof (uint16)); }
 void _TIFFsetLongArray(uint32** lpp, uint32* lp, uint32 n)
     { setByteArray((void**) lpp, (void*) lp, n, sizeof (uint32)); }
+void _TIFFsetLong8Array(uint32** lpp, uint64_new* lp, uint32 n)
+    { setByteArray((void**) lpp, (void*) lp, n, sizeof (uint64_new)); }
 void _TIFFsetFloatArray(float** fpp, float* fp, uint32 n)
     { setByteArray((void**) fpp, (void*) fp, n, sizeof (float)); }
 void _TIFFsetDoubleArray(double** dpp, double* dp, uint32 n)
@@ -355,7 +357,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	case TIFFTAG_SUBIFD:
 		if ((tif->tif_flags & TIFF_INSUBIFD) == 0) {
 			td->td_nsubifd = (uint16) va_arg(ap, int);
-			_TIFFsetLongArray(&td->td_subifd, va_arg(ap, uint32*),
+			_TIFFsetLong8Array(&td->td_subifd, va_arg(ap, uint64_new*),
 			    (long) td->td_nsubifd);
 		} else {
 			TIFFErrorExt(tif->tif_clientdata, module,
