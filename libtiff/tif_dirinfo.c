@@ -591,6 +591,8 @@ TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 int
 _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 {
+	const char module[] = "_TIFFMergeFieldInfo";
+	const char reason[] = "for field info array";
 	TIFFFieldInfo** tp;
 	int i;
 
@@ -598,7 +600,7 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 		const TIFFFieldInfo *fip =
 			_TIFFFindFieldInfo(tif, info[i].field_tag, TIFF_ANY);
 		if (fip) {
-			TIFFErrorExt(tif->tif_clientdata, "_TIFFMergeFieldInfo",
+			TIFFErrorExt(tif->tif_clientdata, module,
 			"Field with tag %lu is already registered as \"%s\"",
 				     (unsigned int) info[i].field_tag,
 				     fip->field_name);
@@ -610,13 +612,19 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 
 	if (tif->tif_nfields > 0) {
 		tif->tif_fieldinfo = (TIFFFieldInfo**)
-		    _TIFFrealloc(tif->tif_fieldinfo,
-			(tif->tif_nfields + n) * sizeof (TIFFFieldInfo*));
+			_TIFFCheckRealloc(tif, tif->tif_fieldinfo,
+					  (tif->tif_nfields + n),
+					  sizeof (TIFFFieldInfo*), reason);
 	} else {
 		tif->tif_fieldinfo = (TIFFFieldInfo**)
-		    _TIFFmalloc(n * sizeof (TIFFFieldInfo*));
+			_TIFFCheckMalloc(tif, n, sizeof (TIFFFieldInfo*),
+					 reason);
 	}
-	assert(tif->tif_fieldinfo != NULL);
+	if (!tif->tif_fieldinfo) {
+		TIFFErrorExt(tif->tif_clientdata, module,
+			     "Failed to allocate field info array");
+		return 0;
+	}
 	tp = tif->tif_fieldinfo + tif->tif_nfields;
 	for (i = 0; i < n; i++)
 		*tp++ = (TIFFFieldInfo*) (info + i);	/* XXX */
@@ -755,7 +763,7 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 					       tif->tif_fieldinfo, 
 					       tif->tif_nfields,
 					       sizeof(TIFFFieldInfo *), 
-	    				       tagCompare);
+					       tagCompare);
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 }
 
@@ -776,9 +784,9 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 
         ret = (const TIFFFieldInfo **) lfind(&pkey,
 					     tif->tif_fieldinfo, 
-	    				     &tif->tif_nfields,
-	    				     sizeof(TIFFFieldInfo *),
-	    				     tagNameCompare);
+					     &tif->tif_nfields,
+					     sizeof(TIFFFieldInfo *),
+					     tagNameCompare);
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 }
 
