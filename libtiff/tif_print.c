@@ -598,7 +598,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		uint32 s;
 
 		fprintf(fd, "  %lu %s:\n",
-		    (long) td->td_nstrips,  ddd
+		    (long) td->td_nstrips,
 		    isTiled(tif) ? "Tiles" : "Strips");
 		for (s = 0; s < td->td_nstrips; s++)
 			fprintf(fd, "    %3lu: [%8llu, %8llu]\n",

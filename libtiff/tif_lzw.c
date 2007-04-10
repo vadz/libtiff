@@ -27,7 +27,7 @@
 #include "tiffiop.h"
 #ifdef LZW_SUPPORT
 /*
- * TIFF Library.
+ * TIFF Library.  
  * Rev 5.0 Lempel-Ziv & Welch Compression Support
  *
  * This code is derived from the compress program whose code is
