@@ -267,7 +267,7 @@ ZIPEncode(TIFF* tif, uint8* bp, tmsize_t cc, uint16 s)
 			tif->tif_rawcc = tif->tif_rawdatasize;
 			TIFFFlushData1(tif);
 			sp->stream.next_out = tif->tif_rawdata;
-			sp->stream.avail_out = (uInt) tif->tif_rawdatasize;
+			sp->stream.avail_out = (uInt) tif->tif_rawdatasize;  /* this is a safe typecast, as check is made already in ZIPPreEncode */
 		}
 	} while (sp->stream.avail_in > 0);
 	return (1);
@@ -295,7 +295,7 @@ ZIPPostEncode(TIFF* tif)
 				tif->tif_rawcc =  tif->tif_rawdatasize - sp->stream.avail_out;
 				TIFFFlushData1(tif);
 				sp->stream.next_out = tif->tif_rawdata;
-				sp->stream.avail_out = (uInt) tif->tif_rawdatasize;
+				sp->stream.avail_out = (uInt) tif->tif_rawdatasize;  /* this is a safe typecast, as check is made already in ZIPPreEncode */
 			}
 			break;
 		default:

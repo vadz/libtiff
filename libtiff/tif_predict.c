@@ -257,6 +257,7 @@ horAcc8(TIFF* tif, uint8* cp0, tmsize_t cc)
 				cp += 4;
 			}
 		} else  {
+			cc -= stride;
 			do {
 				REPEAT4(stride, cp[stride] =
 					(char) (cp[stride] + *cp); cp++)
