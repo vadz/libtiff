@@ -87,8 +87,8 @@ static int ZIPDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s);
 static int
 ZIPSetupDecode(TIFF* tif)
 {
-	ZIPState* sp = DecoderState(tif);
 	static const char module[] = "ZIPSetupDecode";
+	ZIPState* sp = DecoderState(tif);
 
 	assert(sp != NULL);
         
