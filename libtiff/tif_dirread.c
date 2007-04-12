@@ -810,7 +810,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 						 (TIFFDataType) dp->tdir_type),
 						 1))
 			{
-				TIFFWarningExtt(tif->tif_clientdata, module,
+				TIFFWarningExt(tif->tif_clientdata, module,
 			"Registering anonymous field with tag %d (0x%x) failed",
 						dp->tdir_tag, dp->tdir_tag);
 				goto ignore;
