@@ -1921,9 +1921,9 @@ void t2p_read_tiff_size_tile(T2P* t2p, TIFF* input, ttile_t tile){
 }
 
 /*
-	This functions returns a non-zero value when the tile is on the right edge 
-	and does not have full imaged tile width.
-*/
+ * This functions returns a non-zero value when the tile is on the right edge
+ * and does not have full imaged tile width.
+ */
 
 int t2p_tile_is_right_edge(T2P_TILES tiles, ttile_t tile){
 
@@ -1933,15 +1933,12 @@ int t2p_tile_is_right_edge(T2P_TILES tiles, ttile_t tile){
 	} else {
 		return(0);
 	}
-	
-	return(0);
-	
 }
 
 /*
-	This functions returns a non-zero value when the tile is on the bottom edge 
-	and does not have full imaged tile length.
-*/
+ * This functions returns a non-zero value when the tile is on the bottom edge
+ * and does not have full imaged tile length.
+ */
 
 int t2p_tile_is_bottom_edge(T2P_TILES tiles, ttile_t tile){
 
@@ -1951,14 +1948,12 @@ int t2p_tile_is_bottom_edge(T2P_TILES tiles, ttile_t tile){
 	} else {
 		return(0);
 	}
-	
-	return(0);
 }
 
 /*
-	This function returns a non-zero value when the tile is a right edge tile or a bottom 
-	edge tile.
-*/
+ * This function returns a non-zero value when the tile is a right edge tile
+ * or a bottom edge tile.
+ */
 
 int t2p_tile_is_edge(T2P_TILES tiles, ttile_t tile){
 

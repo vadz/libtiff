@@ -1560,7 +1560,7 @@ initImageData (struct image_data *image)
   image->spp = 0;
   image->planar = 0;
   image->photometric = 0;
-  };
+  }
 
 static void
 initCropMasks (struct crop_mask *cps)
