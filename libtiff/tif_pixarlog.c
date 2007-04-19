@@ -1325,8 +1325,8 @@ PixarLogVGetField(TIFF* tif, uint32 tag, va_list ap)
 }
 
 static const TIFFFieldInfo pixarlogFieldInfo[] = {
-    {TIFFTAG_PIXARLOGDATAFMT,0,0,TIFF_ANY,  FIELD_PSEUDO,FALSE,FALSE,""},
-    {TIFFTAG_PIXARLOGQUALITY,0,0,TIFF_ANY,  FIELD_PSEUDO,FALSE,FALSE,""}
+    {TIFFTAG_PIXARLOGDATAFMT,0,0,TIFF_ANY,  TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,FALSE,FALSE,""},
+    {TIFFTAG_PIXARLOGQUALITY,0,0,TIFF_ANY,  TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,FALSE,FALSE,""}
 };
 
 int
@@ -1380,7 +1380,7 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = PixarLogVGetField;   /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = PixarLogVSetField;   /* hook for codec tags */
+	tif->tif_tagmethods.vsetfield = PixarLogVSetField;   /* hook for codec tags */  ddd
 
 	/* Default values for codec-specific fields */
 	sp->quality = Z_DEFAULT_COMPRESSION; /* default comp. level */

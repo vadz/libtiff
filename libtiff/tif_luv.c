@@ -1570,9 +1570,9 @@ LogLuvVGetField(TIFF* tif, uint32 tag, va_list ap)
 }
 
 static const TIFFFieldInfo LogLuvFieldInfo[] = {
-    { TIFFTAG_SGILOGDATAFMT,	  0, 0,	TIFF_SHORT,	FIELD_PSEUDO,
+    { TIFFTAG_SGILOGDATAFMT,	  0, 0,	TIFF_SHORT,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
       TRUE,	FALSE,	"SGILogDataFmt"},
-    { TIFFTAG_SGILOGENCODE,	  0, 0, TIFF_SHORT,	FIELD_PSEUDO,
+    { TIFFTAG_SGILOGENCODE,	  0, 0, TIFF_SHORT,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
       TRUE,	FALSE,	"SGILogEncode"}
 };
 
@@ -1627,7 +1627,7 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = LogLuvVGetField;   /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = LogLuvVSetField;   /* hook for codec tags */
+	tif->tif_tagmethods.vsetfield = LogLuvVSetField;   /* hook for codec tags */  ddd
 
 	return (1);
 bad:

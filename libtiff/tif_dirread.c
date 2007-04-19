@@ -96,6 +96,7 @@ enum TIFFReadDirEntryErr {
 static enum TIFFReadDirEntryErr TIFFReadDirEntryShort(TIFF* tif, TIFFDirEntry* direntry, uint16* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryLong(TIFF* tif, TIFFDirEntry* direntry, uint32* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8(TIFF* tif, TIFFDirEntry* direntry, uint64_new* value);
+static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* direntry, float* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryDouble(TIFF* tif, TIFFDirEntry* direntry, double* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryIfd8(TIFF* tif, TIFFDirEntry* direntry, uint64_new* value);
 
@@ -396,6 +397,108 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8(TIFF* tif, TIFFDirEntry* d
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
 				*value=(uint64_new)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		default:
+			return(TIFFReadDirEntryErrType);
+	}
+}
+
+static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* direntry, float* value)
+{
+	enum TIFFReadDirEntryErr err;
+	if (direntry->tdir_count!=1)
+		return(TIFFReadDirEntryErrCount);
+	switch (direntry->tdir_type)
+	{
+		case TIFF_BYTE:
+			{
+				uint8 m;
+				TIFFReadDirEntryCheckedByte(tif,direntry,&m);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_SBYTE:
+			{
+				int8 m;
+				TIFFReadDirEntryCheckedSbyte(tif,direntry,&m);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_SHORT:
+			{
+				uint16 m;
+				TIFFReadDirEntryCheckedShort(tif,direntry,&m);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_SSHORT:
+			{
+				int16 m;
+				TIFFReadDirEntryCheckedSshort(tif,direntry,&m);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_LONG:
+			{
+				uint32 m;
+				TIFFReadDirEntryCheckedLong(tif,direntry,&m);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_SLONG:
+			{
+				int32 m;
+				TIFFReadDirEntryCheckedSlong(tif,direntry,&m);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_LONG8:
+			{
+				uint64_new m;
+				err=TIFFReadDirEntryCheckedLong8(tif,direntry,&m);
+				if (err!=TIFFReadDirEntryErrOk)
+					return(err);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_SLONG8:
+			{
+				int64_new m;
+				err=TIFFReadDirEntryCheckedSlong8(tif,direntry,&m);
+				if (err!=TIFFReadDirEntryErrOk)
+					return(err);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_RATIONAL:
+			{
+				double m;
+				err=TIFFReadDirEntryCheckedRational(tif,direntry,&m);
+				if (err!=TIFFReadDirEntryErrOk)
+					return(err);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_SRATIONAL:
+			{
+				double m;
+				err=TIFFReadDirEntryCheckedSrational(tif,direntry,&m);
+				if (err!=TIFFReadDirEntryErrOk)
+					return(err);
+				*value=(float)m;
+				return(TIFFReadDirEntryErrOk);
+			}
+		case TIFF_FLOAT:
+			TIFFReadDirEntryCheckedFloat(tif,direntry,value);
+			return(TIFFReadDirEntryErrOk);
+		case TIFF_DOUBLE:
+			{
+				double m;
+				err=TIFFReadDirEntryCheckedDouble(tif,direntry,&m);
+				if (err!=TIFFReadDirEntryErrOk)
+					return(err);
+				*value=(float)m;
 				return(TIFFReadDirEntryErrOk);
 			}
 		default:
@@ -2523,9 +2626,9 @@ TIFFReadDirectory(TIFF* tif)
 /* BEGIN REV 4.0 COMPATIBILITY */
 			case TIFFTAG_OSUBFILETYPE:
 				{
-					uint32 valueo;
+					uint16 valueo;
 					uint32 value;
-					if (TIFFReadDirEntryLong(tif,dp,&valueo)==TIFFReadDirEntryErrOk)
+					if (TIFFReadDirEntryShort(tif,dp,&valueo)==TIFFReadDirEntryErrOk)
 					{
 						switch (valueo)
 						{
@@ -3853,6 +3956,8 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 	assert(fii!=0xFFFFFFFF);
 	fip=tif->tif_fieldinfo[fii];
 
+	assert(0);
+
 	if (dp->tdir_count!=1) {
 		/* array of values */
 		enum TIFFReadDirEntryErr err;
@@ -3897,6 +4002,10 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 				assert(0);
 			case TIFF_RATIONAL:
 				assert(0);
+				/*
+				err=TIFFReadDirEntryFloatArray(tif,dp,(float**)(&data));   ddd double?
+				*/
+				break;
 			case TIFF_SRATIONAL:
 				assert(0);
 				#ifdef NDEF
@@ -4003,8 +4112,18 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			case TIFF_RATIONAL:
 				{
 					enum TIFFReadDirEntryErr err;
-					double v;
-					err=TIFFReadDirEntryDouble(tif,dp,&v);
+					float v;
+					/* ddddddddddddddddddddd */
+					switch (dp->tdir_tag)
+					{
+						case TIFFTAG_XRESOLUTION:
+						case TIFFTAG_YRESOLUTION:
+							break;   /* checked, double is correct parameter type in TIFFSetField call */
+						default:
+							assert(0);   /* unchecked */
+					}
+					/* ddddddddddddddddddddd */
+					err=TIFFReadDirEntryFloat(tif,dp,&v);
 					if (err!=TIFFReadDirEntryErrOk)
 						ok=0;
 					else

@@ -339,7 +339,7 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
         codec->vgetparent = tif->tif_tagmethods.vgetfield;
         codec->vsetparent = tif->tif_tagmethods.vsetfield;
         tif->tif_tagmethods.vgetfield = JBIGVGetField;
-        tif->tif_tagmethods.vsetfield = JBIGVSetField;
+        tif->tif_tagmethods.vsetfield = JBIGVSetField;  ddd
         tif->tif_tagmethods.printdir = JBIGPrintDir;
 
         /*

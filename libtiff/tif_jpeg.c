@@ -184,22 +184,22 @@ static int JPEGInitializeLibJPEG(TIFF * tif, int force_encode, int force_decode)
 #define	FIELD_FAXDCS		(FIELD_CODEC+4)
 
 static const TIFFFieldInfo jpegFieldInfo[] = {
-    { TIFFTAG_JPEGTABLES,	 -3,-3,	TIFF_UNDEFINED,	FIELD_JPEGTABLES,
+    { TIFFTAG_JPEGTABLES,	 -3,-3,	TIFF_UNDEFINED,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_JPEGTABLES,
       FALSE,	TRUE,	"JPEGTables" },
-    { TIFFTAG_JPEGQUALITY,	 0, 0,	TIFF_ANY,	FIELD_PSEUDO,
+    { TIFFTAG_JPEGQUALITY,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
       TRUE,	FALSE,	"" },
-    { TIFFTAG_JPEGCOLORMODE,	 0, 0,	TIFF_ANY,	FIELD_PSEUDO,
+    { TIFFTAG_JPEGCOLORMODE,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
       FALSE,	FALSE,	"" },
-    { TIFFTAG_JPEGTABLESMODE,	 0, 0,	TIFF_ANY,	FIELD_PSEUDO,
+    { TIFFTAG_JPEGTABLESMODE,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
       FALSE,	FALSE,	"" },
     /* Specific for JPEG in faxes */
-    { TIFFTAG_FAXRECVPARAMS,	 1, 1, TIFF_LONG,	FIELD_RECVPARAMS,
+    { TIFFTAG_FAXRECVPARAMS,	 1, 1, TIFF_LONG,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_RECVPARAMS,
       TRUE,	FALSE,	"FaxRecvParams" },
-    { TIFFTAG_FAXSUBADDRESS,	-1,-1, TIFF_ASCII,	FIELD_SUBADDRESS,
+    { TIFFTAG_FAXSUBADDRESS,	-1,-1, TIFF_ASCII,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_SUBADDRESS,
       TRUE,	FALSE,	"FaxSubAddress" },
-    { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	FIELD_RECVTIME,
+    { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_RECVTIME,
       TRUE,	FALSE,	"FaxRecvTime" },
-    { TIFFTAG_FAXDCS,		-1, -1, TIFF_ASCII,	FIELD_FAXDCS,
+    { TIFFTAG_FAXDCS,		-1, -1, TIFF_ASCII,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_FAXDCS,
 	  TRUE,	FALSE,	"FaxDcs" },
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
@@ -1959,7 +1959,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = JPEGVGetField; /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = JPEGVSetField; /* hook for codec tags */
+	tif->tif_tagmethods.vsetfield = JPEGVSetField; /* hook for codec tags */  ddd
 	sp->printdir = tif->tif_tagmethods.printdir;
 	tif->tif_tagmethods.printdir = JPEGPrintDir;   /* hook for codec tags */
 

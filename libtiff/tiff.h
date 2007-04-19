@@ -167,6 +167,19 @@ typedef enum {
 	TIFF_IFD8 = 18,       /* BigTIFF 64-bit unsigned integer (offset) */
 } TIFFDataType;
 
+typedef enum {
+	TIFF_SETGET_UNDEFINED = 0,
+	TIFF_SETGET_ASCII = 1,
+	TIFF_SETGET_UINT16 = 2,
+	TIFF_SETGET_UINT32 = 3,
+	TIFF_SETGET_UINT64 = 4,
+	TIFF_SETGET_FLOAT = 5,
+	TIFF_SETGET_DOUBLE = 6,
+	TIFF_SETGET_UINT16_PAIR = 7,
+	TIFF_SETGET_C16_UINT16 = 8,
+	TIFF_SETGET_OTHER = 9,
+} TIFFSetGetFieldType;
+
 /*
  * TIFF Tag Definitions.
  */
