@@ -748,14 +748,14 @@ _TIFFSampleToTagType(TIFF* tif)
 const TIFFFieldInfo*
 _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 {
-	if (tif->tif_foundfield && tif->tif_foundfield->field_tag == tag &&
-	    (dt == TIFF_ANY || dt == tif->tif_foundfield->field_type))
-		return tif->tif_foundfield;
-	/* NB: use sorted search (e.g. binary search) */
         TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0};
 	TIFFFieldInfo* pkey = &key;
 	const TIFFFieldInfo **ret;
 
+	if (tif->tif_foundfield && tif->tif_foundfield->field_tag == tag &&
+	    (dt == TIFF_ANY || dt == tif->tif_foundfield->field_type))
+		return tif->tif_foundfield;
+	/* NB: use sorted search (e.g. binary search) */
 	key.field_tag = tag;
         key.field_type = dt;
 
@@ -770,15 +770,15 @@ _TIFFFindFieldInfo(TIFF* tif, ttag_t tag, TIFFDataType dt)
 const TIFFFieldInfo*
 _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 {
+        TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0};
+	TIFFFieldInfo* pkey = &key;
+	const TIFFFieldInfo **ret;
+
 	if (tif->tif_foundfield
 	    && streq(tif->tif_foundfield->field_name, field_name)
 	    && (dt == TIFF_ANY || dt == tif->tif_foundfield->field_type))
 		return (tif->tif_foundfield);
 	/* NB: use sorted search (e.g. binary search) */
-        TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0};
-	TIFFFieldInfo* pkey = &key;
-	const TIFFFieldInfo **ret;
-
         key.field_name = (char *)field_name;
         key.field_type = dt;
 
