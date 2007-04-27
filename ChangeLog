@@ -1,3 +1,9 @@
+2007-04-27  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiff2pdf.c: Check the tmpfile() return status as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=154
+
 2007-04-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.h, tif_dirread.c, tif_dirinfo.c, tif_jpeg.c,
