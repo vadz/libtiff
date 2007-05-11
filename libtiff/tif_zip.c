@@ -340,7 +340,7 @@ ZIPVSetField(TIFF* tif, uint32 tag, va_list ap)
 
 	switch (tag) {
 	case TIFFTAG_ZIPQUALITY:
-		sp->zipquality = va_arg(ap, int);
+		sp->zipquality = (int) va_arg(ap, int);
 		if ( sp->state&ZSTATE_INIT_ENCODE ) {
 			if (deflateParams(&sp->stream,
 			    sp->zipquality, Z_DEFAULT_STRATEGY) != Z_OK) {
@@ -372,8 +372,7 @@ ZIPVGetField(TIFF* tif, uint32 tag, va_list ap)
 }
 
 static const TIFFFieldInfo zipFieldInfo[] = {
-    { TIFFTAG_ZIPQUALITY,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
-      TRUE,	FALSE,	"" },
+    { TIFFTAG_ZIPQUALITY, 0, 0, TIFF_ANY, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "" },
 };
 
 int
@@ -413,7 +412,7 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = ZIPVGetField; /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = ZIPVSetField; /* hook for codec tags */  ddd
+	tif->tif_tagmethods.vsetfield = ZIPVSetField; /* hook for codec tags */
 
 	/* Default values for codec-specific fields */
 	sp->zipquality = Z_DEFAULT_COMPRESSION;	/* default comp. level */

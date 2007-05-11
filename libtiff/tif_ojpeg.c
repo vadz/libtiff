@@ -176,13 +176,13 @@
 #define FIELD_OJPEG_COUNT 7
 
 static const TIFFFieldInfo ojpeg_field_info[] = {
-	{TIFFTAG_JPEGIFOFFSET,1,1,TIFF_LONG8,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGINTERCHANGEFORMAT,TRUE,FALSE,"JpegInterchangeFormat"},
-	{TIFFTAG_JPEGIFBYTECOUNT,1,1,TIFF_LONG8,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGINTERCHANGEFORMATLENGTH,TRUE,FALSE,"JpegInterchangeFormatLength"},
-	{TIFFTAG_JPEGQTABLES,TIFF_VARIABLE,TIFF_VARIABLE,TIFF_LONG8,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGQTABLES,FALSE,TRUE,"JpegQTables"},
-	{TIFFTAG_JPEGDCTABLES,TIFF_VARIABLE,TIFF_VARIABLE,TIFF_LONG8,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGDCTABLES,FALSE,TRUE,"JpegDcTables"},
-	{TIFFTAG_JPEGACTABLES,TIFF_VARIABLE,TIFF_VARIABLE,TIFF_LONG8,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGACTABLES,FALSE,TRUE,"JpegAcTables"},
-	{TIFFTAG_JPEGPROC,1,1,TIFF_SHORT,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGPROC,FALSE,FALSE,"JpegProc"},
-	{TIFFTAG_JPEGRESTARTINTERVAL,1,1,TIFF_SHORT,TIFF_SETGET_UNDEFINED,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGRESTARTINTERVAL,FALSE,FALSE,"JpegRestartInterval"},
+	{TIFFTAG_JPEGIFOFFSET,1,1,TIFF_LONG8,TIFF_SETGET_UINT64,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGINTERCHANGEFORMAT,TRUE,FALSE,"JpegInterchangeFormat"},
+	{TIFFTAG_JPEGIFBYTECOUNT,1,1,TIFF_LONG8,TIFF_SETGET_UINT64,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGINTERCHANGEFORMATLENGTH,TRUE,FALSE,"JpegInterchangeFormatLength"},
+	{TIFFTAG_JPEGQTABLES,TIFF_VARIABLE2,TIFF_VARIABLE2,TIFF_LONG8,TIFF_SETGET_C32_UINT64,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGQTABLES,FALSE,TRUE,"JpegQTables"},
+	{TIFFTAG_JPEGDCTABLES,TIFF_VARIABLE2,TIFF_VARIABLE2,TIFF_LONG8,TIFF_SETGET_C32_UINT64,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGDCTABLES,FALSE,TRUE,"JpegDcTables"},
+	{TIFFTAG_JPEGACTABLES,TIFF_VARIABLE2,TIFF_VARIABLE2,TIFF_LONG8,TIFF_SETGET_C32_UINT64,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGACTABLES,FALSE,TRUE,"JpegAcTables"},
+	{TIFFTAG_JPEGPROC,1,1,TIFF_SHORT,TIFF_SETGET_UINT16,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGPROC,FALSE,FALSE,"JpegProc"},
+	{TIFFTAG_JPEGRESTARTINTERVAL,1,1,TIFF_SHORT,TIFF_SETGET_UINT16,TIFF_SETGET_UNDEFINED,FIELD_OJPEG_JPEGRESTARTINTERVAL,FALSE,FALSE,"JpegRestartInterval"},
 };
 
 #ifndef LIBJPEG_ENCAP_EXTERNAL
@@ -437,7 +437,7 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
 	sp->vgetparent=tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield=OJPEGVGetField;
 	sp->vsetparent=tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield=OJPEGVSetField;  ddd
+	tif->tif_tagmethods.vsetfield=OJPEGVSetField;
 	tif->tif_tagmethods.printdir=OJPEGPrintDir;
 	/* Some OJPEG files don't have strip or tile offsets or bytecounts tags.
 	   Some others do, but have totally meaningless or corrupt values
@@ -502,20 +502,20 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 	switch(tag)
 	{
 		case TIFFTAG_JPEGIFOFFSET:
-			sp->jpeg_interchange_format=va_arg(ap,uint64_new);
+			sp->jpeg_interchange_format=(uint64_new)va_arg(ap,uint64_new);
 			break;
 		case TIFFTAG_JPEGIFBYTECOUNT:
-			sp->jpeg_interchange_format_length=va_arg(ap,uint64_new);  
+			sp->jpeg_interchange_format_length=va_arg(ap,uint64_new);
 			break;
 		case TIFFTAG_YCBCRSUBSAMPLING:
 			sp->subsampling_tag=1;
-			sp->subsampling_hor=(uint8)va_arg(ap,int);
-			sp->subsampling_ver=(uint8)va_arg(ap,int);
+			sp->subsampling_hor=(uint8)va_arg(ap,uint16);
+			sp->subsampling_ver=(uint8)va_arg(ap,uint16);
 			tif->tif_dir.td_ycbcrsubsampling[0]=sp->subsampling_hor;
 			tif->tif_dir.td_ycbcrsubsampling[1]=sp->subsampling_ver;
 			break;
 		case TIFFTAG_JPEGQTABLES:
-			ma=va_arg(ap,uint32);
+			ma=(uint32)va_arg(ap,uint32);
 			if (ma!=0)
 			{
 				if (ma>3)
@@ -524,13 +524,13 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 					return(0);
 				}
 				sp->qtable_offset_count=(uint8)ma;
-				mb=va_arg(ap,uint64_new*);
+				mb=(uint64_new*)va_arg(ap,uint64_new*);
 				for (n=0; n<ma; n++)
 					sp->qtable_offset[n]=mb[n];
 			}
 			break;
 		case TIFFTAG_JPEGDCTABLES:
-			ma=va_arg(ap,uint32);
+			ma=(uint32)va_arg(ap,uint32);
 			if (ma!=0)
 			{
 				if (ma>3)
@@ -539,13 +539,13 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 					return(0);
 				}
 				sp->dctable_offset_count=(uint8)ma;
-				mb=va_arg(ap,uint64_new*);
+				mb=(uint64_new*)va_arg(ap,uint64_new*);
 				for (n=0; n<ma; n++)
 					sp->dctable_offset[n]=mb[n];
 			}
 			break;
 		case TIFFTAG_JPEGACTABLES:
-			ma=va_arg(ap,uint32);
+			ma=(uint32)va_arg(ap,uint32);
 			if (ma!=0)
 			{
 				if (ma>3)
@@ -554,16 +554,16 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 					return(0);
 				}
 				sp->actable_offset_count=(uint8)ma;
-				mb=va_arg(ap,uint64_new*);
+				mb=(uint64_new*)va_arg(ap,uint64_new*);
 				for (n=0; n<ma; n++)
 					sp->actable_offset[n]=mb[n];
 			}
 			break;
 		case TIFFTAG_JPEGPROC:
-			sp->jpeg_proc=(uint8)va_arg(ap,uint32);
+			sp->jpeg_proc=(uint8)va_arg(ap,uint16);
 			break;
 		case TIFFTAG_JPEGRESTARTINTERVAL:
-			sp->restart_interval=(uint16)va_arg(ap,uint32);
+			sp->restart_interval=(uint16)va_arg(ap,uint16);
 			break;
 		default:
 			return (*sp->vsetparent)(tif,tag,ap);

@@ -184,23 +184,15 @@ static int JPEGInitializeLibJPEG(TIFF * tif, int force_encode, int force_decode)
 #define	FIELD_FAXDCS		(FIELD_CODEC+4)
 
 static const TIFFFieldInfo jpegFieldInfo[] = {
-    { TIFFTAG_JPEGTABLES,	 -3,-3,	TIFF_UNDEFINED,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_JPEGTABLES,
-      FALSE,	TRUE,	"JPEGTables" },
-    { TIFFTAG_JPEGQUALITY,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
-      TRUE,	FALSE,	"" },
-    { TIFFTAG_JPEGCOLORMODE,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
-      FALSE,	FALSE,	"" },
-    { TIFFTAG_JPEGTABLESMODE,	 0, 0,	TIFF_ANY,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
-      FALSE,	FALSE,	"" },
+    { TIFFTAG_JPEGTABLES, -3, -3, TIFF_UNDEFINED, TIFF_SETGET_C32_UINT8, TIFF_SETGET_UNDEFINED, FIELD_JPEGTABLES, FALSE, TRUE, "JPEGTables" },
+    { TIFFTAG_JPEGQUALITY, 0, 0, TIFF_ANY, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "" },
+    { TIFFTAG_JPEGCOLORMODE, 0, 0, TIFF_ANY, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "" },
+    { TIFFTAG_JPEGTABLESMODE, 0, 0, TIFF_ANY, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "" },
     /* Specific for JPEG in faxes */
-    { TIFFTAG_FAXRECVPARAMS,	 1, 1, TIFF_LONG,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_RECVPARAMS,
-      TRUE,	FALSE,	"FaxRecvParams" },
-    { TIFFTAG_FAXSUBADDRESS,	-1,-1, TIFF_ASCII,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_SUBADDRESS,
-      TRUE,	FALSE,	"FaxSubAddress" },
-    { TIFFTAG_FAXRECVTIME,	 1, 1, TIFF_LONG,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_RECVTIME,
-      TRUE,	FALSE,	"FaxRecvTime" },
-    { TIFFTAG_FAXDCS,		-1, -1, TIFF_ASCII,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_FAXDCS,
-	  TRUE,	FALSE,	"FaxDcs" },
+    { TIFFTAG_FAXRECVPARAMS, 1, 1, TIFF_LONG, TIFF_SETGET_UINT32, TIFF_SETGET_UNDEFINED, FIELD_RECVPARAMS, TRUE, FALSE, "FaxRecvParams" },
+    { TIFFTAG_FAXSUBADDRESS, -1, -1, TIFF_ASCII, TIFF_SETGET_ASCII, TIFF_SETGET_UNDEFINED, FIELD_SUBADDRESS, TRUE, FALSE, "FaxSubAddress" },
+    { TIFFTAG_FAXRECVTIME, 1, 1, TIFF_LONG, TIFF_SETGET_UINT32, TIFF_SETGET_UNDEFINED, FIELD_RECVTIME, TRUE, FALSE, "FaxRecvTime" },
+    { TIFFTAG_FAXDCS, -1, -1, TIFF_ASCII, TIFF_SETGET_ASCII, TIFF_SETGET_UNDEFINED, FIELD_FAXDCS, TRUE, FALSE, "FaxDcs" },
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
@@ -1622,7 +1614,7 @@ JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 
 	switch (tag) {
 	case TIFFTAG_JPEGTABLES:
-		v32 = va_arg(ap, uint32);
+		v32 = (uint32) va_arg(ap, uint32);
 		if (v32 == 0) {
 			/* XXX */
 			return (0);
@@ -1633,34 +1625,34 @@ JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 		TIFFSetFieldBit(tif, FIELD_JPEGTABLES);
 		break;
 	case TIFFTAG_JPEGQUALITY:
-		sp->jpegquality = va_arg(ap, int);
+		sp->jpegquality = (int) va_arg(ap, int);
 		return (1);			/* pseudo tag */
 	case TIFFTAG_JPEGCOLORMODE:
-		sp->jpegcolormode = va_arg(ap, int);
-                JPEGResetUpsampled( tif );
+		sp->jpegcolormode = (int) va_arg(ap, int);
+		JPEGResetUpsampled( tif );
 		return (1);			/* pseudo tag */
 	case TIFFTAG_PHOTOMETRIC:
-        {
-                int ret_value = (*sp->vsetparent)(tif, tag, ap);
-                JPEGResetUpsampled( tif );
-                return ret_value;
-        }
+	{
+		int ret_value = (*sp->vsetparent)(tif, tag, ap);
+		JPEGResetUpsampled( tif );
+		return ret_value;
+	}
 	case TIFFTAG_JPEGTABLESMODE:
-		sp->jpegtablesmode = va_arg(ap, int);
+		sp->jpegtablesmode = (int) va_arg(ap, int);
 		return (1);			/* pseudo tag */
 	case TIFFTAG_YCBCRSUBSAMPLING:
-                /* mark the fact that we have a real ycbcrsubsampling! */
+		/* mark the fact that we have a real ycbcrsubsampling! */
 		sp->ycbcrsampling_fetched = 1;
-                /* should we be recomputing upsampling info here? */
+		/* should we be recomputing upsampling info here? */
 		return (*sp->vsetparent)(tif, tag, ap);
 	case TIFFTAG_FAXRECVPARAMS:
-		sp->recvparams = va_arg(ap, uint32);
+		sp->recvparams = (uint32) va_arg(ap, uint32);
 		break;
 	case TIFFTAG_FAXSUBADDRESS:
 		_TIFFsetString(&sp->subaddress, va_arg(ap, char*));
 		break;
 	case TIFFTAG_FAXRECVTIME:
-		sp->recvtime = va_arg(ap, uint32);
+		sp->recvtime = (uint32) va_arg(ap, uint32);
 		break;
 	case TIFFTAG_FAXDCS:
 		_TIFFsetString(&sp->faxdcs, va_arg(ap, char*));
@@ -1959,7 +1951,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = JPEGVGetField; /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = JPEGVSetField; /* hook for codec tags */  ddd
+	tif->tif_tagmethods.vsetfield = JPEGVSetField; /* hook for codec tags */
 	sp->printdir = tif->tif_tagmethods.printdir;
 	tif->tif_tagmethods.printdir = JPEGPrintDir;   /* hook for codec tags */
 

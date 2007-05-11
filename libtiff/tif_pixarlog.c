@@ -1253,7 +1253,7 @@ PixarLogVSetField(TIFF* tif, uint32 tag, va_list ap)
 
     switch (tag) {
      case TIFFTAG_PIXARLOGQUALITY:
-		sp->quality = va_arg(ap, int);
+		sp->quality = (int) va_arg(ap, int);
 		if (tif->tif_mode != O_RDONLY && (sp->state&PLSTATE_INIT)) {
 			if (deflateParams(&sp->stream,
 			    sp->quality, Z_DEFAULT_STRATEGY) != Z_OK) {
@@ -1264,7 +1264,7 @@ PixarLogVSetField(TIFF* tif, uint32 tag, va_list ap)
 		}
 		return (1);
      case TIFFTAG_PIXARLOGDATAFMT:
-	sp->user_datafmt = va_arg(ap, int);
+	sp->user_datafmt = (int) va_arg(ap, int);
 	/* Tweak the TIFF header so that the rest of libtiff knows what
 	 * size of data will be passed between app and library, and
 	 * assume that the app knows what it is doing and is not
@@ -1325,8 +1325,8 @@ PixarLogVGetField(TIFF* tif, uint32 tag, va_list ap)
 }
 
 static const TIFFFieldInfo pixarlogFieldInfo[] = {
-    {TIFFTAG_PIXARLOGDATAFMT,0,0,TIFF_ANY,  TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,FALSE,FALSE,""},
-    {TIFFTAG_PIXARLOGQUALITY,0,0,TIFF_ANY,  TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,FALSE,FALSE,""}
+    {TIFFTAG_PIXARLOGDATAFMT, 0, 0, TIFF_ANY, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, ""},
+    {TIFFTAG_PIXARLOGQUALITY, 0, 0, TIFF_ANY, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, ""}
 };
 
 int
@@ -1380,7 +1380,7 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = PixarLogVGetField;   /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = PixarLogVSetField;   /* hook for codec tags */  ddd
+	tif->tif_tagmethods.vsetfield = PixarLogVSetField;   /* hook for codec tags */
 
 	/* Default values for codec-specific fields */
 	sp->quality = Z_DEFAULT_COMPRESSION; /* default comp. level */

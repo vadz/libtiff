@@ -1505,7 +1505,7 @@ LogLuvVSetField(TIFF* tif, uint32 tag, va_list ap)
 
 	switch (tag) {
 	case TIFFTAG_SGILOGDATAFMT:
-		sp->user_datafmt = va_arg(ap, int);
+		sp->user_datafmt = (int) va_arg(ap, int);
 		/*
 		 * Tweak the TIFF header so that the rest of libtiff knows what
 		 * size of data will be passed between app and library, and
@@ -1541,7 +1541,7 @@ LogLuvVSetField(TIFF* tif, uint32 tag, va_list ap)
 		tif->tif_scanlinesize = TIFFScanlineSize(tif);
 		return (1);
 	case TIFFTAG_SGILOGENCODE:
-		sp->encode_meth = va_arg(ap, int);
+		sp->encode_meth = (int) va_arg(ap, int);
 		if (sp->encode_meth != SGILOGENCODE_NODITHER &&
 		    sp->encode_meth != SGILOGENCODE_RANDITHER) {
 			TIFFErrorExt(tif->tif_clientdata, module,
@@ -1570,10 +1570,8 @@ LogLuvVGetField(TIFF* tif, uint32 tag, va_list ap)
 }
 
 static const TIFFFieldInfo LogLuvFieldInfo[] = {
-    { TIFFTAG_SGILOGDATAFMT,	  0, 0,	TIFF_SHORT,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
-      TRUE,	FALSE,	"SGILogDataFmt"},
-    { TIFFTAG_SGILOGENCODE,	  0, 0, TIFF_SHORT,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO,
-      TRUE,	FALSE,	"SGILogEncode"}
+    { TIFFTAG_SGILOGDATAFMT, 0, 0, TIFF_SHORT, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "SGILogDataFmt"},
+    { TIFFTAG_SGILOGENCODE, 0, 0, TIFF_SHORT, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "SGILogEncode"}
 };
 
 int
@@ -1627,7 +1625,7 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 	sp->vgetparent = tif->tif_tagmethods.vgetfield;
 	tif->tif_tagmethods.vgetfield = LogLuvVGetField;   /* hook for codec tags */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vsetfield = LogLuvVSetField;   /* hook for codec tags */  ddd
+	tif->tif_tagmethods.vsetfield = LogLuvVSetField;   /* hook for codec tags */
 
 	return (1);
 bad:

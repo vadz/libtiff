@@ -57,10 +57,10 @@ typedef struct
 
 static const TIFFFieldInfo jbigFieldInfo[] = 
 {
-        {TIFFTAG_FAXRECVPARAMS,  1,  1, TIFF_LONG,  FIELD_RECVPARAMS, TRUE, FALSE, "FaxRecvParams"},
-        {TIFFTAG_FAXSUBADDRESS, -1, -1, TIFF_ASCII, FIELD_SUBADDRESS, TRUE, FALSE, "FaxSubAddress"},
-        {TIFFTAG_FAXRECVTIME,    1,  1, TIFF_LONG,  FIELD_RECVTIME,   TRUE, FALSE, "FaxRecvTime"},
-        {TIFFTAG_FAXDCS,        -1, -1, TIFF_ASCII, FIELD_FAXDCS,     TRUE, FALSE, "FaxDcs"},
+	{TIFFTAG_FAXRECVPARAMS, 1,  1, TIFF_LONG,  FIELD_RECVPARAMS, TIFF_SETGET_UINT32, TIFF_SETGET_UNDEFINED, TRUE, FALSE, "FaxRecvParams"},
+	{TIFFTAG_FAXSUBADDRESS, -1, -1, TIFF_ASCII, FIELD_SUBADDRESS, TIFF_SETGET_ASCII, TIFF_SETGET_UNDEFINED, TRUE, FALSE, "FaxSubAddress"},
+	{TIFFTAG_FAXRECVTIME, 1, 1, TIFF_LONG, FIELD_RECVTIME, TIFF_SETGET_UINT32, TIFF_SETGET_UNDEFINED, TRUE, FALSE, "FaxRecvTime"},
+	{TIFFTAG_FAXDCS, -1, -1, TIFF_ASCII, FIELD_FAXDCS, TIFF_SETGET_ASCII, TIFF_SETGET_UNDEFINED, TRUE, FALSE, "FaxDcs"},
 };
 
 static int JBIGSetupDecode(TIFF* tif)
@@ -247,19 +247,19 @@ static int JBIGVGetField(TIFF* tif, ttag_t tag, va_list ap)
 
         switch (tag)
         {
-                case TIFFTAG_FAXRECVPARAMS:
+		case TIFFTAG_FAXRECVPARAMS:
                         *va_arg(ap, uint32*) = codec->recvparams;
                         break;
                 
-                case TIFFTAG_FAXSUBADDRESS:
+		case TIFFTAG_FAXSUBADDRESS:
                         *va_arg(ap, char**) = codec->subaddress;
                         break;
 
-                case TIFFTAG_FAXRECVTIME:
+		case TIFFTAG_FAXRECVTIME:
                         *va_arg(ap, uint32*) = codec->recvtime;
                         break;
 
-                case TIFFTAG_FAXDCS:
+		case TIFFTAG_FAXDCS:
                         *va_arg(ap, char**) = codec->faxdcs;
                         break;
 
@@ -276,16 +276,16 @@ static int JBIGVSetField(TIFF* tif, ttag_t tag, va_list ap)
 
         switch (tag)
         {
-                case TIFFTAG_FAXRECVPARAMS:
-                        codec->recvparams = va_arg(ap, uint32);
+		case TIFFTAG_FAXRECVPARAMS:
+                        codec->recvparams = (uint32) va_arg(ap, uint32);
                         break;
 
-                case TIFFTAG_FAXSUBADDRESS:
+		case TIFFTAG_FAXSUBADDRESS:
                         _TIFFsetString(&codec->subaddress, va_arg(ap, char*));
                         break;
 
-                case TIFFTAG_FAXRECVTIME:
-                        codec->recvtime = va_arg(ap, uint32);
+		case TIFFTAG_FAXRECVTIME:
+			codec->recvtime = (uint32) va_arg(ap, uint32);
                         break;
 
                 case TIFFTAG_FAXDCS:

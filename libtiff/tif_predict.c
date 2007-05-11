@@ -536,8 +536,7 @@ PredictorEncodeTile(TIFF* tif, uint8* bp0, tmsize_t cc0, uint16 s)
 #define	FIELD_PREDICTOR	(FIELD_CODEC+0)		/* XXX */
 
 static const TIFFFieldInfo predictFieldInfo[] = {
-    { TIFFTAG_PREDICTOR,	 1, 1, TIFF_SHORT,	TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_PREDICTOR,
-      FALSE,	FALSE,	"Predictor" },
+    { TIFFTAG_PREDICTOR, 1, 1, TIFF_SHORT, TIFF_SETGET_UINT16, TIFF_SETGET_UNDEFINED, FIELD_PREDICTOR, FALSE, FALSE, "Predictor" },
 };
 
 static int
@@ -550,7 +549,7 @@ PredictorVSetField(TIFF* tif, uint32 tag, va_list ap)
 
 	switch (tag) {
 	case TIFFTAG_PREDICTOR:
-		sp->predictor = (uint16) va_arg(ap, int);
+		sp->predictor = (uint16) va_arg(ap, uint16);
 		TIFFSetFieldBit(tif, FIELD_PREDICTOR);
 		break;
 	default:
@@ -622,7 +621,7 @@ TIFFPredictorInit(TIFF* tif)
             PredictorVGetField;/* hook for predictor tag */
 	sp->vsetparent = tif->tif_tagmethods.vsetfield;
 	tif->tif_tagmethods.vsetfield =
-            PredictorVSetField;/* hook for predictor tag */   ddd
+	    PredictorVSetField;/* hook for predictor tag */
 	sp->printdir = tif->tif_tagmethods.printdir;
 	tif->tif_tagmethods.printdir =
             PredictorPrintDir;	/* hook for predictor tag */
