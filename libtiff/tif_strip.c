@@ -310,6 +310,8 @@ TIFFScanlineSize64(TIFF* tif)
 			assert(td->td_samplesperpixel==3);
 			TIFFGetField(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
 			    ycbcrsubsampling+1);
+			assert((ycbcrsubsampling[0]==1)||(ycbcrsubsampling[0]==2)||(ycbcrsubsampling[0]==4));
+			assert((ycbcrsubsampling[1]==1)||(ycbcrsubsampling[1]==2)||(ycbcrsubsampling[1]==4));
 			if (ycbcrsubsampling[0]*ycbcrsubsampling[1]==0)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,

@@ -2616,12 +2616,6 @@ TIFFReadDirectory(TIFF* tif)
 					}
 				}
 				break;
-			case TIFFTAG_PAGENUMBER:
-			case TIFFTAG_HALFTONEHINTS:
-			case TIFFTAG_YCBCRSUBSAMPLING:
-			case TIFFTAG_DOTRANGE:
-				(void) TIFFFetchShortPair(tif,dp,1);
-				break;
 			case TIFFTAG_REFERENCEBLACKWHITE:
 				(void) TIFFFetchRefBlackWhite(tif,dp);
 				break;
@@ -3741,6 +3735,8 @@ TIFFFetchShortArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
 static int
 TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir, int recover)
 {
+	assert(0);
+	#ifdef NDEF
 	static const char module[] = "TIFFFetchShortPair";
 	enum TIFFReadDirEntryErr err;
 	uint16* data;
@@ -3765,6 +3761,7 @@ TIFFFetchShortPair(TIFF* tif, TIFFDirEntry* dir, int recover)
 	}
 	_TIFFfree(data);
 	return 1;
+	#endif
 }
 
 /*
@@ -3950,6 +3947,7 @@ TIFFFetchAnyArray(TIFF* tif, TIFFDirEntry* dir, double* v)
 static int
 TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 {
+	static const char module[] = "TIFFFetchNormalTag";
 	enum TIFFReadDirEntryErr err;
 	uint32 fii;
 	const TIFFFieldInfo* fip;
@@ -3981,9 +3979,21 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 						mb++;
 					}
 					if (mb+1<(uint32)dp->tdir_count)
-						assert(0);
+						TIFFWarningExt(tif->tif_clientdata,module,"ASCII value for tag \"%s\" contains null byte in value; value incorrectly truncated during reading due to implementation limitations",fip->field_name);
 					else if (mb+1>(uint32)dp->tdir_count)
-						assert(0);
+					{
+						char* n;
+						TIFFWarningExt(tif->tif_clientdata,module,"ASCII value for tag \"%s\" does not end in null byte",fip->field_name);
+						if ((uint32)dp->tdir_count+1!=dp->tdir_count+1)
+							assert(0);
+						n=_TIFFmalloc((uint32)dp->tdir_count+1);
+						if (n==0)
+							assert(0);
+						_TIFFmemcpy(n,data,(uint32)dp->tdir_count);
+						n[(uint32)dp->tdir_count]=0;
+						_TIFFfree(data);
+						data=n;
+					}
 					if (!TIFFSetField(tif,dp->tdir_tag,data))
 						assert(0);
 					_TIFFfree(data);
@@ -4049,7 +4059,23 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 			assert(0);
 			break;
 		case TIFF_SETGET_UINT16_PAIR:
-			assert(0);
+			{
+				uint16* data;
+				assert(fip->field_readcount==2);
+				assert(fip->field_passcount==0);
+				if (dp->tdir_count!=2)
+					assert(0);
+				else
+				{
+					err=TIFFReadDirEntryShortArray(tif,dp,&data);
+					if (err==TIFFReadDirEntryErrOk)
+					{
+						if (!TIFFSetField(tif,dp->tdir_tag,data[0],data[1]))
+							assert(0);
+						_TIFFfree(data);
+					}
+				}
+			}
 			break;
 		case TIFF_SETGET_C0_FLOAT:
 			{
@@ -4115,6 +4141,34 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 				assert(fip->field_readcount==TIFF_VARIABLE2);
 				assert(fip->field_passcount==1);
 				err=TIFFReadDirEntryByteArray(tif,dp,&data);
+				if (err==TIFFReadDirEntryErrOk)
+				{
+					if (!TIFFSetField(tif,dp->tdir_tag,(uint32)(dp->tdir_count),data))
+						assert(0);
+					_TIFFfree(data);
+				}
+			}
+			break;
+		case TIFF_SETGET_C32_UINT16:
+			{
+				uint16* data;
+				assert(fip->field_readcount==TIFF_VARIABLE2);
+				assert(fip->field_passcount==1);
+				err=TIFFReadDirEntryShortArray(tif,dp,&data);
+				if (err==TIFFReadDirEntryErrOk)
+				{
+					if (!TIFFSetField(tif,dp->tdir_tag,(uint32)(dp->tdir_count),data))
+						assert(0);
+					_TIFFfree(data);
+				}
+			}
+			break;
+		case TIFF_SETGET_C32_UINT32:
+			{
+				uint32* data;
+				assert(fip->field_readcount==TIFF_VARIABLE2);
+				assert(fip->field_passcount==1);
+				err=TIFFReadDirEntryLongArray(tif,dp,&data);
 				if (err==TIFFReadDirEntryErrOk)
 				{
 					if (!TIFFSetField(tif,dp->tdir_tag,(uint32)(dp->tdir_count),data))
