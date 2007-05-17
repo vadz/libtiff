@@ -75,7 +75,6 @@ OBJ	= \
 	tif_warning.obj \
 	tif_write.obj \
 	tif_zip.obj \
-	tif_jbig.obj \
 	$(OBJ_SYSDEP_MODULE)
 
 all:	libtiff.lib $(DLLNAME)
