@@ -85,6 +85,12 @@ static int ZIPEncode(TIFF* tif, uint8* bp, tmsize_t cc, uint16 s);
 static int ZIPDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s);
 
 static int
+ZIPFixupTags(TIFF* tif)
+{
+	return (1);
+}
+
+static int
 ZIPSetupDecode(TIFF* tif)
 {
 	static const char module[] = "ZIPSetupDecode";
@@ -421,6 +427,7 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	/*
 	 * Install codec methods.
 	 */
+	tif->tif_fixuptags = ZIPFixupTags; 
 	tif->tif_setupdecode = ZIPSetupDecode;
 	tif->tif_predecode = ZIPPreDecode;
 	tif->tif_decoderow = ZIPDecode;

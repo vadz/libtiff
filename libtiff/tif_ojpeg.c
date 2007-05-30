@@ -314,6 +314,7 @@ static int OJPEGVGetField(TIFF* tif, uint32 tag, va_list ap);
 static int OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap);
 static void OJPEGPrintDir(TIFF* tif, FILE* fd, long flags);
 
+static int OJPEGFixupTags(TIFF* tif);
 static int OJPEGSetupDecode(TIFF* tif);
 static int OJPEGPreDecode(TIFF* tif, uint16 s);
 static int OJPEGPreDecodeSkipRaw(TIFF* tif);
@@ -419,6 +420,7 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
 	sp->subsampling_ver=2;
 	TIFFSetField(tif,TIFFTAG_YCBCRSUBSAMPLING,2,2);
 	/* tif codec methods */
+	tif->tif_fixuptags=OJPEGFixupTags;  
 	tif->tif_setupdecode=OJPEGSetupDecode;
 	tif->tif_predecode=OJPEGPreDecode;
 	tif->tif_postdecode=OJPEGPostDecode;  
@@ -609,6 +611,12 @@ OJPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd,"  JpegProc: %u\n",(unsigned int)sp->jpeg_proc);
 	if (TIFFFieldSet(tif,FIELD_OJPEG_JPEGRESTARTINTERVAL))
 		fprintf(fd,"  JpegRestartInterval: %u\n",(unsigned int)sp->restart_interval);
+}
+
+static int
+OJPEGFixupTags(TIFF* tif)
+{
+	return(1);
 }
 
 static int

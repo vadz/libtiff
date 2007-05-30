@@ -3692,6 +3692,7 @@ TIFFReadDirectory(TIFF* tif)
 			}
 		}
 	}
+	(*tif->tif_fixuptags)(tif);
 
 	/*
 	 * Some manufacturers make life difficult by writing

@@ -350,7 +350,8 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
         tif->tif_flags |= TIFF_NOBITREV;
         tif->tif_flags &= ~TIFF_MAPPED;
 
-        /* Setup the function pointers for encode, decode, and cleanup. */
+	/* Setup the function pointers for encode, decode, and cleanup. */
+	tif->tif_fixuptags = JBIGFixupTags; ddd
         tif->tif_setupdecode = JBIGSetupDecode;
         tif->tif_decodestrip = JBIGDecode;  ddd
 

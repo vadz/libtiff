@@ -189,6 +189,12 @@ static void cl_hash(LZWCodecState*);
 #endif
 
 static int
+LZWFixupTags(TIFF* tif)
+{
+	return (1);
+}
+
+static int
 LZWSetupDecode(TIFF* tif)
 {
 	static const char module[] = "LZWSetupDecode";
@@ -1052,6 +1058,7 @@ TIFFInitLZW(TIFF* tif, int scheme)
 	/*
 	 * Install codec methods.
 	 */
+	tif->tif_fixuptags = LZWFixupTags; 
 	tif->tif_setupdecode = LZWSetupDecode;
 	tif->tif_predecode = LZWPreDecode;
 	tif->tif_decoderow = LZWDecode;

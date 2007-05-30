@@ -457,6 +457,12 @@ _TIFFFax3fillruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
 #undef	ZERO
 #undef	FILL
 
+static int
+Fax3FixupTags(TIFF* tif)
+{
+	return (1);
+}
+
 /*
  * Setup G3/G4-related compression/decompression state
  * before data is processed.  This routine is called once
@@ -1352,6 +1358,7 @@ InitCCITTFax3(TIFF* tif)
 	/*
 	 * Install codec methods.
 	 */
+	tif->tif_fixuptags = Fax3FixupTags;
 	tif->tif_setupdecode = Fax3SetupState;
 	tif->tif_predecode = Fax3PreDecode;
 	tif->tif_decoderow = Fax3Decode1D;

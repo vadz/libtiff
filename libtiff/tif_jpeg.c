@@ -626,6 +626,278 @@ alloc_downsampled_buffers(TIFF* tif, jpeg_component_info* comp_info,
  * JPEG Decoding.
  */
 
+#ifdef CHECK_JPEG_YCBCR_SUBSAMPLING
+
+#define JPEG_MARKER_SOF0 0xC0
+#define JPEG_MARKER_SOF1 0xC1
+#define JPEG_MARKER_SOF3 0xC3
+#define JPEG_MARKER_DHT 0xC4
+#define JPEG_MARKER_SOI 0xD8
+#define JPEG_MARKER_DQT 0xDB
+#define JPEG_MARKER_DRI 0xDD
+#define JPEG_MARKER_APP0 0xE0
+#define JPEG_MARKER_COM 0xFE
+struct JPEGFixupTagsSubsamplingData
+{
+	TIFF* tif;
+	void* buffer;
+	uint32 buffersize;
+	uint8* buffercurrentbyte;
+	uint32 bufferbytesleft;
+	uint64_new fileoffset;
+	uint8 filepositioned;
+	uint64_new filebytesleft;
+};
+static void JPEGFixupTagsSubsampling(TIFF* tif);
+static int JPEGFixupTagsSubsamplingSec(struct JPEGFixupTagsSubsamplingData* Data);
+static int JPEGFixupTagsSubsamplingReadByte(struct JPEGFixupTagsSubsamplingData* Data, uint8* Result);
+static int JPEGFixupTagsSubsamplingReadWord(struct JPEGFixupTagsSubsamplingData* Data, uint16* Result);
+static void JPEGFixupTagsSubsamplingSkip(struct JPEGFixupTagsSubsamplingData* Data, uint16 Skiplength);
+
+#endif
+
+static int
+JPEGFixupTags(TIFF* tif)
+{
+	#ifdef CHECK_JPEG_YCBCR_SUBSAMPLING
+	if (tif->tif_dir.td_samplesperpixel>1)
+		JPEGFixupTagsSubsampling(tif);
+	#endif
+	return(1);
+}
+
+#ifdef CHECK_JPEG_YCBCR_SUBSAMPLING
+
+static void
+JPEGFixupTagsSubsampling(TIFF* tif)
+{
+	static const char module[] = "JPEGFixupTagsSubsampling";
+	/*
+	 * Some JPEG-in-TIFF produces do not emit the YCBCRSUBSAMPLING values in
+	 * the TIFF tags, but still use non-default (2,2) values within the jpeg
+	 * data stream itself.  In order for TIFF applications to work properly
+	 * - for instance to get the strip buffer size right - it is imperative
+	 * that the subsampling be available before we start reading the image
+	 * data normally.  This function will attempt to analyze the first strip in
+	 * order to get the sampling values from the jpeg data stream.
+	 *
+	 * Note that JPEGPreDeocode() will produce a fairly loud warning when the
+	 * discovered sampling does not match the default sampling (2,2) or whatever
+	 * was actually in the tiff tags.
+	 *
+	 * See the bug in bugzilla for details:
+	 *
+	 * http://bugzilla.remotesensing.org/show_bug.cgi?id=168
+	 *
+	 * Frank Warmerdam, July 2002
+	 * Joris Van Damme, May 2007
+	 */
+	struct JPEGFixupTagsSubsamplingData m;
+	m.tif=tif;
+	m.buffersize=2048;
+	m.buffer=_TIFFmalloc(m.buffersize);
+	if (m.buffer==NULL)
+	{
+		TIFFWarningExt(tif->tif_clientdata,module,"Unable to allocate memory for auto-correcting of subsampling values, auto-correcting skipped");
+		return;
+	}
+	m.buffercurrentbyte=NULL;
+	m.bufferbytesleft=0;
+	m.fileoffset=tif->tif_dir.td_stripoffset[0];
+	m.filepositioned=0;
+	m.filebytesleft=tif->tif_dir.td_stripbytecount[0];
+	if (!JPEGFixupTagsSubsamplingSec(&m))
+		TIFFWarningExt(tif->tif_clientdata,module,"Unable to auto-correct subsampling values, possibly corrupt JPEG compressed data");
+	_TIFFfree(m.buffer);
+}
+
+static int
+JPEGFixupTagsSubsamplingSec(struct JPEGFixupTagsSubsamplingData* Data)
+{
+	static const char module[] = "JPEGFixupTagsSubsamplingSec";
+	uint8 n;
+	while (1)
+	{
+		while (1)
+		{
+			if (!JPEGFixupTagsSubsamplingReadByte(Data,&n))
+				return(0);
+			if (n==255)
+				break;
+		}
+		while (1)
+		{
+			if (!JPEGFixupTagsSubsamplingReadByte(Data,&n))
+				return(0);
+			if (n!=255)
+				break;
+		}
+		switch (n)
+		{
+			case JPEG_MARKER_SOI:
+				/* this type of marker has no data and should be skipped */
+				break;
+			case JPEG_MARKER_COM:
+			case JPEG_MARKER_APP0:
+			case JPEG_MARKER_APP0+1:
+			case JPEG_MARKER_APP0+2:
+			case JPEG_MARKER_APP0+3:
+			case JPEG_MARKER_APP0+4:
+			case JPEG_MARKER_APP0+5:
+			case JPEG_MARKER_APP0+6:
+			case JPEG_MARKER_APP0+7:
+			case JPEG_MARKER_APP0+8:
+			case JPEG_MARKER_APP0+9:
+			case JPEG_MARKER_APP0+10:
+			case JPEG_MARKER_APP0+11:
+			case JPEG_MARKER_APP0+12:
+			case JPEG_MARKER_APP0+13:
+			case JPEG_MARKER_APP0+14:
+			case JPEG_MARKER_APP0+15:
+			case JPEG_MARKER_DQT:
+			case JPEG_MARKER_DHT:
+			case JPEG_MARKER_DRI:
+				/* this type of marker has data, but it has no use to us and should be skipped */
+				{
+					uint16 o;
+					if (!JPEGFixupTagsSubsamplingReadWord(Data,&o))
+						return(0);
+					if (o<2)
+						return(0);
+					o-=2;
+					if (o>0)
+						JPEGFixupTagsSubsamplingSkip(Data,o);
+				}
+				break;
+			case JPEG_MARKER_SOF0:
+				/* this marker contains the subsampling factors we're scanning for */
+				{
+					uint16 o;
+					uint8 p;
+					uint8 q;
+					uint8 qh,qv;
+					if (!JPEGFixupTagsSubsamplingReadWord(Data,&o))
+						return(0);
+					if (o!=8+Data->tif->tif_dir.td_samplesperpixel*3)
+						return(0);
+					JPEGFixupTagsSubsamplingSkip(Data,6);
+					for (p=0; p<Data->tif->tif_dir.td_samplesperpixel; p++)
+					{
+						JPEGFixupTagsSubsamplingSkip(Data,1);
+						if (!JPEGFixupTagsSubsamplingReadByte(Data,&q))
+							return(0);
+						if (p==0)
+						{
+							qh=(q>>4);
+							qv=(q&15);
+						}
+						else
+						{
+							if (q!=0x11)
+							{
+								TIFFWarningExt(Data->tif->tif_clientdata,module,
+								    "Subsampling values inside JPEG compressed data have no TIFF equivalent, auto-correction of TIFF subsampling values failed");
+								return(1);
+							}
+						}
+						JPEGFixupTagsSubsamplingSkip(Data,1);
+					}
+					if (((qh!=1)&&(qh!=2)&&(qh!=4))||((qv!=1)&&(qv!=2)&&(qv!=4)))
+					{
+						TIFFWarningExt(Data->tif->tif_clientdata,module,
+						    "Subsampling values inside JPEG compressed data have no TIFF equivalent, auto-correction of TIFF subsampling values failed");
+						return(1);
+					}
+					if ((qh!=Data->tif->tif_dir.td_ycbcrsubsampling[0])||(qv!=Data->tif->tif_dir.td_ycbcrsubsampling[1]))
+					{
+						TIFFWarningExt(Data->tif->tif_clientdata,module,
+						    "Auto-corrected former TIFF subsampling values [%d,%d] to match subsampling values inside JPEG compressed data [%d,%d]",
+						    (uint32)Data->tif->tif_dir.td_ycbcrsubsampling[0],
+						    (uint32)Data->tif->tif_dir.td_ycbcrsubsampling[1],
+						    (uint32)qh,(uint32)qv);
+						Data->tif->tif_dir.td_ycbcrsubsampling[0]=qh;
+						Data->tif->tif_dir.td_ycbcrsubsampling[1]=qv;
+					}
+				}
+				return(1);
+			default:
+				return(0);
+		}
+	}
+}
+
+static int
+JPEGFixupTagsSubsamplingReadByte(struct JPEGFixupTagsSubsamplingData* Data, uint8* Result)
+{
+	if (Data->bufferbytesleft==0)
+	{
+		uint32 m;
+		if (Data->filebytesleft==0)
+			return(0);
+		if (!Data->filepositioned)
+		{
+			TIFFSeekFile(Data->tif,Data->fileoffset,SEEK_SET);
+			Data->filepositioned=1;
+		}
+		m=Data->buffersize;
+		if ((uint64_new)m>Data->filebytesleft)
+			m=(uint32)Data->filebytesleft;
+		if (TIFFReadFile(Data->tif,Data->buffer,m)!=m)
+			return(0);
+		Data->buffercurrentbyte=Data->buffer;
+		Data->bufferbytesleft=m;
+		Data->fileoffset+=m;
+		Data->filebytesleft-=m;
+	}
+	*Result=*Data->buffercurrentbyte;
+	Data->buffercurrentbyte++;
+	Data->bufferbytesleft--;
+	return(1);
+}
+
+static int
+JPEGFixupTagsSubsamplingReadWord(struct JPEGFixupTagsSubsamplingData* Data, uint16* Result)
+{
+	uint8 ma;
+	uint8 mb;
+	if (!JPEGFixupTagsSubsamplingReadByte(Data,&ma))
+		return(0);
+	if (!JPEGFixupTagsSubsamplingReadByte(Data,&mb))
+		return(0);
+	*Result=(ma<<8)|mb;
+	return(1);
+}
+
+static void
+JPEGFixupTagsSubsamplingSkip(struct JPEGFixupTagsSubsamplingData* Data, uint16 Skiplength)
+{
+	if (Skiplength<=Data->bufferbytesleft)
+	{
+		Data->buffercurrentbyte+=Skiplength;
+		Data->bufferbytesleft-=Skiplength;
+	}
+	else
+	{
+		uint16 m;
+		m=Skiplength-Data->bufferbytesleft;
+		if (m<=Data->filebytesleft)
+		{
+			Data->bufferbytesleft=0;
+			Data->fileoffset+=m;
+			Data->filebytesleft-=m;
+			Data->filepositioned=0;
+		}
+		else
+		{
+			Data->bufferbytesleft=0;
+			Data->filebytesleft=0;
+		}
+	}
+}
+
+#endif
+
+
 static int
 JPEGSetupDecode(TIFF* tif)
 {
@@ -1671,73 +1943,6 @@ JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 	return (1);
 }
 
-/*
- * Some JPEG-in-TIFF produces do not emit the YCBCRSUBSAMPLING values in
- * the TIFF tags, but still use non-default (2,2) values within the jpeg
- * data stream itself.  In order for TIFF applications to work properly
- * - for instance to get the strip buffer size right - it is imperative
- * that the subsampling be available before we start reading the image
- * data normally.  This function will attempt to load the first strip in
- * order to get the sampling values from the jpeg data stream.  Various
- * hacks are various places are done to ensure this function gets called
- * before the td_ycbcrsubsampling values are used from the directory structure,
- * including calling TIFFGetField() for the YCBCRSUBSAMPLING field from 
- * TIFFStripSize(), and the printing code in tif_print.c. 
- *
- * Note that JPEGPreDeocode() will produce a fairly loud warning when the
- * discovered sampling does not match the default sampling (2,2) or whatever
- * was actually in the tiff tags. 
- *
- * Problems:
- *  o This code will cause one whole strip/tile of compressed data to be
- *    loaded just to get the tags right, even if the imagery is never read.
- *    It would be more efficient to just load a bit of the header, and
- *    initialize things from that. 
- *
- * See the bug in bugzilla for details:
- *
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=168
- *
- * Frank Warmerdam, July 2002
- */
-
-static void 
-JPEGFixupTestSubsampling( TIFF * tif )
-{
-#ifdef CHECK_JPEG_YCBCR_SUBSAMPLING
-    JPEGState *sp = JState(tif);
-    TIFFDirectory *td = &tif->tif_dir;
-
-    JPEGInitializeLibJPEG( tif, 0, 0 );
-
-    /*
-     * Some JPEG-in-TIFF files don't provide the ycbcrsampling tags, 
-     * and use a sampling schema other than the default 2,2.  To handle
-     * this we actually have to scan the header of a strip or tile of
-     * jpeg data to get the sampling.  
-     */
-    if( !sp->cinfo.comm.is_decompressor 
-        || sp->ycbcrsampling_fetched  
-        || td->td_photometric != PHOTOMETRIC_YCBCR )
-        return;
-
-    sp->ycbcrsampling_fetched = 1;
-    if( TIFFIsTiled( tif ) )
-    {
-        if( !TIFFFillTile( tif, 0 ) )
-			return;
-    }
-    else
-	{
-        if( !TIFFFillStrip( tif, 0 ) )
-            return;
-    }
-
-    TIFFSetField( tif, TIFFTAG_YCBCRSUBSAMPLING, 
-                  (uint16) sp->h_sampling, (uint16) sp->v_sampling );
-#endif /* CHECK_JPEG_YCBCR_SUBSAMPLING */
-}
-
 static int
 JPEGVGetField(TIFF* tif, uint32 tag, va_list ap)
 {
@@ -1759,9 +1964,6 @@ JPEGVGetField(TIFF* tif, uint32 tag, va_list ap)
 		case TIFFTAG_JPEGTABLESMODE:
 			*va_arg(ap, int*) = sp->jpegtablesmode;
 			break;
-		case TIFFTAG_YCBCRSUBSAMPLING:
-			JPEGFixupTestSubsampling( tif );
-			return (*sp->vgetparent)(tif, tag, ap);
 		case TIFFTAG_FAXRECVPARAMS:
 			*va_arg(ap, uint32*) = sp->recvparams;
 			break;
@@ -1971,6 +2173,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	/*
 	 * Install codec methods.
 	 */
+	tif->tif_fixuptags = JPEGFixupTags;
 	tif->tif_setupdecode = JPEGSetupDecode;
 	tif->tif_predecode = JPEGPreDecode;
 	tif->tif_decoderow = JPEGDecode;
@@ -2006,12 +2209,6 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	    _TIFFmemset(sp->jpegtables, 0, SIZE_OF_JPEGTABLES);
 #undef SIZE_OF_JPEGTABLES
         }
-
-        /*
-         * Mark the TIFFTAG_YCBCRSAMPLES as present even if it is not
-         * see: JPEGFixupTestSubsampling().
-         */
-        TIFFSetFieldBit( tif, FIELD_YCBCRSUBSAMPLING );
 
 	return 1;
 }

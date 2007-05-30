@@ -642,6 +642,12 @@ multiply_ms(tmsize_t m1, tmsize_t m2)
 }
 
 static int
+PixarLogFixupTags(TIFF* tif)
+{
+	return (1);
+}
+
+static int
 PixarLogSetupDecode(TIFF* tif)
 {
 	static const char module[] = "PixarLogSetupDecode";
@@ -1362,6 +1368,7 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	/*
 	 * Install codec methods.
 	 */
+	tif->tif_fixuptags = PixarLogFixupTags; 
 	tif->tif_setupdecode = PixarLogSetupDecode;
 	tif->tif_predecode = PixarLogPreDecode;
 	tif->tif_decoderow = PixarLogDecode;

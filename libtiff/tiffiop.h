@@ -124,8 +124,8 @@ struct tiff {
 					/* directories to prevent IFD looping */
 	uint16          tif_dirlistsize;/* number of entires in offset list */
 	uint16		tif_dirnumber;  /* number of already seen directories */
-	TIFFDirectory	tif_dir;	/* internal rep of current directory */
-	TIFFDirectory	tif_customdir;	/* custom IFDs are separated from
+	TIFFDirectory   tif_dir;	/* internal rep of current directory */
+	TIFFDirectory   tif_customdir;	/* custom IFDs are separated from
 					   the main ones */
 	union {
 		TIFFHeaderCommon common;
@@ -133,8 +133,8 @@ struct tiff {
 		TIFFHeaderBig big;
 	} tif_header;
 	uint16          tif_header_size; /* file's header block and its length */
-	const int*	tif_typeshift;	/* data type shift counts */
-	const long*	tif_typemask;	/* data type masks */
+	const int*      tif_typeshift;	/* data type shift counts */
+	const long*     tif_typemask;	/* data type masks */
 	uint32          tif_row;	/* current scanline */
 	uint16          tif_curdir;	/* current directory (index) */
 	uint32          tif_curstrip;	/* current strip for read/write */
@@ -148,11 +148,12 @@ struct tiff {
 	uint32          tif_curtile;	/* current tile for read/write */
 	tmsize_t        tif_tilesize;	/* # of bytes in a tile */
 /* compression scheme hooks */
-	int		tif_decodestatus;
-	TIFFBoolMethod	tif_setupdecode;/* called once before predecode */
-	TIFFPreMethod	tif_predecode;	/* pre- row/strip/tile decoding */
-	TIFFBoolMethod	tif_setupencode;/* called once before preencode */
-	int		tif_encodestatus;
+	int             tif_decodestatus;
+	TIFFBoolMethod  tif_fixuptags;  /* called in TIFFReadDirectory */
+	TIFFBoolMethod  tif_setupdecode;/* called once before predecode */
+	TIFFPreMethod   tif_predecode;	/* pre- row/strip/tile decoding */
+	TIFFBoolMethod  tif_setupencode;/* called once before preencode */
+	int             tif_encodestatus;
 	TIFFPreMethod   tif_preencode;	/* pre- row/strip/tile encoding */
 	TIFFBoolMethod  tif_postencode;	/* post- row/strip/tile encoding */
 	TIFFCodeMethod  tif_decoderow;	/* scanline decoding routine */  
