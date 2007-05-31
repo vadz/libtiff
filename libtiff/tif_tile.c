@@ -222,7 +222,8 @@ TIFFVTileSize64(TIFF* tif, uint32 nrows)
 	    td->td_tiledepth == 0)
 		return (0);
 	if ((td->td_planarconfig==PLANARCONFIG_CONTIG)&&
-	    (td->td_photometric == PHOTOMETRIC_YCBCR)&&
+	    (td->td_photometric==PHOTOMETRIC_YCBCR)&&
+	    (td->td_samplesperpixel==3)&&
 	    (!isUpSampled(tif)))
 	{
 		/*
@@ -239,9 +240,10 @@ TIFFVTileSize64(TIFF* tif, uint32 nrows)
 		uint32 samplingblocks_ver;
 		uint64_new samplingrow_samples;
 		uint64_new samplingrow_size;
-		assert(td->td_samplesperpixel==3);
-		TIFFGetField(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
+		TIFFGetFieldDefaulted(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
 		    ycbcrsubsampling+1);
+		assert((ycbcrsubsampling[0]==1)||(ycbcrsubsampling[0]==2)||(ycbcrsubsampling[0]==4));
+		assert((ycbcrsubsampling[1]==1)||(ycbcrsubsampling[1]==2)||(ycbcrsubsampling[1]==4));
 		if (ycbcrsubsampling[0]*ycbcrsubsampling[1]==0)
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,

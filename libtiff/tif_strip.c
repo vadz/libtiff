@@ -139,8 +139,10 @@ TIFFVStripSize64(TIFF* tif, uint32 nrows)
 		uint64_new samplingrow_samples;
 		uint64_new samplingrow_size;
 		assert(td->td_samplesperpixel==3);
-		TIFFGetField(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
+		TIFFGetFieldDefaulted(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
 		    ycbcrsubsampling+1);
+		assert((ycbcrsubsampling[0]==1)||(ycbcrsubsampling[0]==2)||(ycbcrsubsampling[0]==4));
+		assert((ycbcrsubsampling[1]==1)||(ycbcrsubsampling[1]==2)||(ycbcrsubsampling[1]==4));
 		if (ycbcrsubsampling[0]*ycbcrsubsampling[1]==0)
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,
@@ -300,7 +302,9 @@ TIFFScanlineSize64(TIFF* tif)
 	uint64_new scanline_size;
 	if (td->td_planarconfig==PLANARCONFIG_CONTIG)
 	{
-		if ((td->td_photometric==PHOTOMETRIC_YCBCR)&&(!isUpSampled(tif)))
+		if ((td->td_photometric==PHOTOMETRIC_YCBCR)&&
+		    (td->td_samplesperpixel==3)&&
+		    (!isUpSampled(tif)))
 		{
 			uint16 ycbcrsubsampling[2];
 			uint16 samplingblock_samples;
@@ -308,7 +312,7 @@ TIFFScanlineSize64(TIFF* tif)
 			uint64_new samplingrow_samples;
 			uint64_new samplingrow_size;
 			assert(td->td_samplesperpixel==3);
-			TIFFGetField(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
+			TIFFGetFieldDefaulted(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
 			    ycbcrsubsampling+1);
 			assert((ycbcrsubsampling[0]==1)||(ycbcrsubsampling[0]==2)||(ycbcrsubsampling[0]==4));
 			assert((ycbcrsubsampling[1]==1)||(ycbcrsubsampling[1]==2)||(ycbcrsubsampling[1]==4));
