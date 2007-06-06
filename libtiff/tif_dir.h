@@ -97,48 +97,48 @@ typedef struct {
  * Note that a bit *is* allocated for ignored tags;
  * this is understood by the directory reading logic
  * which uses this fact to avoid special-case handling
- */ 
-#define	FIELD_IGNORE			0
+ */
+#define	FIELD_IGNORE                   0
 
 /* multi-item fields */
-#define	FIELD_IMAGEDIMENSIONS		1
-#define FIELD_TILEDIMENSIONS		2
-#define	FIELD_RESOLUTION		3
-#define	FIELD_POSITION			4
+#define FIELD_IMAGEDIMENSIONS          1
+#define FIELD_TILEDIMENSIONS           2
+#define FIELD_RESOLUTION               3
+#define FIELD_POSITION                 4
 
 /* single-item fields */
-#define	FIELD_SUBFILETYPE		5
-#define	FIELD_BITSPERSAMPLE		6
-#define	FIELD_COMPRESSION		7
-#define	FIELD_PHOTOMETRIC		8
-#define	FIELD_THRESHHOLDING		9
-#define	FIELD_FILLORDER			10
-#define	FIELD_ORIENTATION		15
-#define	FIELD_SAMPLESPERPIXEL		16
-#define	FIELD_ROWSPERSTRIP		17
-#define	FIELD_MINSAMPLEVALUE		18
-#define	FIELD_MAXSAMPLEVALUE		19
-#define	FIELD_PLANARCONFIG		20
-#define	FIELD_RESOLUTIONUNIT		22
-#define	FIELD_PAGENUMBER		23
-#define	FIELD_STRIPBYTECOUNTS		24
-#define	FIELD_STRIPOFFSETS		25
-#define	FIELD_COLORMAP			26
-#define	FIELD_EXTRASAMPLES		31
-#define FIELD_SAMPLEFORMAT		32
-#define	FIELD_SMINSAMPLEVALUE		33
-#define	FIELD_SMAXSAMPLEVALUE		34
-#define FIELD_IMAGEDEPTH		35
-#define FIELD_TILEDEPTH			36
-#define	FIELD_HALFTONEHINTS		37
-#define FIELD_YCBCRSUBSAMPLING		39
-#define FIELD_YCBCRPOSITIONING		40
-#define	FIELD_TRANSFERFUNCTION		44
-#define	FIELD_INKNAMES			46
-#define	FIELD_SUBIFD			49
-/*      FIELD_CUSTOM (see tiffio.h)     65 */
+#define FIELD_SUBFILETYPE              5
+#define FIELD_BITSPERSAMPLE            6
+#define FIELD_COMPRESSION              7
+#define FIELD_PHOTOMETRIC              8
+#define FIELD_THRESHHOLDING            9
+#define FIELD_FILLORDER                10
+#define FIELD_ORIENTATION              15
+#define FIELD_SAMPLESPERPIXEL          16
+#define FIELD_ROWSPERSTRIP             17
+#define FIELD_MINSAMPLEVALUE           18
+#define FIELD_MAXSAMPLEVALUE           19
+#define FIELD_PLANARCONFIG             20
+#define FIELD_RESOLUTIONUNIT           22
+#define FIELD_PAGENUMBER               23
+#define FIELD_STRIPBYTECOUNTS          24
+#define FIELD_STRIPOFFSETS             25
+#define FIELD_COLORMAP                 26
+#define FIELD_EXTRASAMPLES             31
+#define FIELD_SAMPLEFORMAT             32
+#define FIELD_SMINSAMPLEVALUE          33
+#define FIELD_SMAXSAMPLEVALUE          34
+#define FIELD_IMAGEDEPTH               35
+#define FIELD_TILEDEPTH                36
+#define FIELD_HALFTONEHINTS            37
+#define FIELD_YCBCRSUBSAMPLING         39
+#define FIELD_YCBCRPOSITIONING         40
+#define FIELD_TRANSFERFUNCTION         44
+#define FIELD_INKNAMES                 46
+#define FIELD_SUBIFD                   49
+/*      FIELD_CUSTOM (see tiffio.h)    65 */
 /* end of support for well-known tags; codec-private tags follow */
-#define	FIELD_CODEC			66	/* base of codec-private tags */
+#define FIELD_CODEC                    66  /* base of codec-private tags */
 
 
 /*
