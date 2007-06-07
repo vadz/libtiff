@@ -180,7 +180,7 @@ extern "C" {
 extern const TIFFFieldInfo *_TIFFGetFieldInfo(size_t *);
 extern const TIFFFieldInfo *_TIFFGetExifFieldInfo(size_t *);
 extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfo unfo[], uint32 n);
-extern	int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
+extern int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
 extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
 extern TIFFDataType _TIFFSampleToTagType(TIFF*);
 extern const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag,
