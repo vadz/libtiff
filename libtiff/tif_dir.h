@@ -70,7 +70,7 @@ typedef struct {
 	uint64_new* td_stripbytecount;
 	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */  
 	uint16  td_nsubifd;
-	uint32* td_subifd;
+	uint64_new* td_subifd;
 	/* YCbCr parameters */
 	uint16  td_ycbcrsubsampling[2];
 	uint16  td_ycbcrpositioning;

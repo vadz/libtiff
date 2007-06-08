@@ -485,7 +485,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif, FIELD_SUBIFD)) {
 		fprintf(fd, "  SubIFD Offsets:");
 		for (i = 0; i < td->td_nsubifd; i++)
-			fprintf(fd, " %5lu", (long) td->td_subifd[i]);
+			fprintf(fd, " %5llu", (long) td->td_subifd[i]);
 		fputc('\n', fd);
 	}
 
