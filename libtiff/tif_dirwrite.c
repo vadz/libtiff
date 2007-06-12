@@ -31,43 +31,6 @@
  */
 #include "tiffiop.h"
 
-#ifdef NDEF
-
-static	int TIFFWriteNormalTag(TIFF*, TIFFDirEntry*, const TIFFFieldInfo*);
-static	void TIFFSetupShortLong(TIFF*, ttag_t, TIFFDirEntry*, uint32);
-static	void TIFFSetupShort(TIFF*, ttag_t, TIFFDirEntry*, uint16);
-static	int TIFFSetupShortPair(TIFF*, ttag_t, TIFFDirEntry*);
-static	int TIFFWritePerSampleShorts(TIFF*, ttag_t, TIFFDirEntry*);
-static	int TIFFWritePerSampleAnys(TIFF*, TIFFDataType, ttag_t, TIFFDirEntry*);
-static	int TIFFWriteShortTable(TIFF*, ttag_t, TIFFDirEntry*, uint32, uint16**);
-static	int TIFFWriteShortArray(TIFF*, TIFFDirEntry*, uint16*);
-static	int TIFFWriteLongArray(TIFF *, TIFFDirEntry*, uint32*);
-static	int TIFFWriteRationalArray(TIFF *, TIFFDirEntry*, float*);
-static	int TIFFWriteFloatArray(TIFF *, TIFFDirEntry*, float*);
-static	int TIFFWriteDoubleArray(TIFF *, TIFFDirEntry*, double*);
-static	int TIFFWriteByteArray(TIFF*, TIFFDirEntry*, char*);
-static	int TIFFWriteAnyArray(TIFF*,
-	    TIFFDataType, ttag_t, TIFFDirEntry*, uint32, double*);
-static	int TIFFWriteTransferFunction(TIFF*, TIFFDirEntry*);
-static	int TIFFWriteInkNames(TIFF*, TIFFDirEntry*);
-static	int TIFFWriteData(TIFF*, TIFFDirEntry*, char*);
-
-#define	WriteRationalPair(type, tag1, v1, tag2, v2) {		\
-	TIFFWriteRational((tif), (type), (tag1), (dir), (v1))	\
-	TIFFWriteRational((tif), (type), (tag2), (dir)+1, (v2))	\
-	(dir)++;						\
-}
-#define	TIFFWriteRational(tif, type, tag, dir, v)		\
-	(dir)->tdir_tag = (tag);				\
-	(dir)->tdir_type = (type);				\
-	(dir)->tdir_count = 1;					\
-	if (!TIFFWriteRationalArray((tif), (dir), &(v)))	\
-		goto bad;
-
-#endif
-
-/* ddddddddddddddddddddddddddddddddddddddddddddddddddd */
-
 #ifdef HAVE_IEEEFP
 #define TIFFCvtNativeToIEEEFloat(tif, n, fp)
 #define TIFFCvtNativeToIEEEDouble(tif, n, dp)
@@ -75,6 +38,8 @@ static	int TIFFWriteData(TIFF*, TIFFDirEntry*, char*);
 extern void TIFFCvtNativeToIEEEFloat(TIFF* tif, uint32 n, float* fp);
 extern void TIFFCvtNativeToIEEEDouble(TIFF* tif, uint32 n, double* dp);
 #endif
+
+static int _TIFFWriteDirectory(TIFF* tif, int done);
 
 static int TIFFWriteDirectoryTagSampleformatPerSample(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, double value);
 
@@ -151,8 +116,14 @@ static int TIFFWriteDirectoryTagData(TIFF* tif, uint32* ndir, TIFFDirEntry* dir,
 
 static int TIFFLinkDirectory(TIFF*);
 
+int
+TIFFWriteDirectory(TIFF* tif)
+{
+	return _TIFFWriteDirectory(tif, TRUE);
+}
+
 /*
- * Write the contents of the current directory                                                                              
+ * Write the contents of the current directory
  * to the specified file.  This routine doesn't
  * handle overwriting a directory with auxiliary
  * storage that's been changed.
@@ -485,6 +456,7 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		}
 		if (tif->tif_dataoff&1)
 			tif->tif_dataoff++;
+		tif->tif_curdir++;
 	}
 	if (TIFFFieldSet(tif,FIELD_SUBIFD)&&(tif->tif_subifdoff==0))
 	{
@@ -580,6 +552,17 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		goto bad;
 	}
 	_TIFFfree(dirmem);
+	if (done)
+	{
+		TIFFFreeDirectory(tif);
+		tif->tif_flags&=~TIFF_DIRTYDIRECT;
+		(*tif->tif_cleanup)(tif);
+		/*
+		* Reset directory-related state for subsequent
+		* directories.
+		*/
+		TIFFCreateDirectory(tif);
+	}
 	return(1);
 bad:
 	if (dir!=NULL)
@@ -1190,11 +1173,10 @@ TIFFWriteDirectoryTagShortLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* 
 	return(o);
 }
 
-/* PODD */
-
 static int
 TIFFWriteDirectoryTagColormap(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 {
+	static const char module[] = "TIFFWriteDirectoryTagColormap";
 	uint32 m;
 	uint16* n;
 	int o;
@@ -1206,7 +1188,10 @@ TIFFWriteDirectoryTagColormap(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 	m=(1<<tif->tif_dir.td_bitspersample);
 	n=_TIFFmalloc(3*m*sizeof(uint16));
 	if (n==NULL)
-		assert(0);
+	{
+		TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+		return(0);
+	}
 	_TIFFmemcpy(&n[0],tif->tif_dir.td_colormap[0],m*sizeof(uint16));
 	_TIFFmemcpy(&n[m],tif->tif_dir.td_colormap[1],m*sizeof(uint16));
 	_TIFFmemcpy(&n[2*m],tif->tif_dir.td_colormap[2],m*sizeof(uint16));
@@ -1218,6 +1203,7 @@ TIFFWriteDirectoryTagColormap(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 static int
 TIFFWriteDirectoryTagTransferfunction(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 {
+	static const char module[] = "TIFFWriteDirectoryTagTransferfunction";
 	uint32 m;
 	uint16 n;
 	uint16* o;
@@ -1229,6 +1215,12 @@ TIFFWriteDirectoryTagTransferfunction(TIFF* tif, uint32* ndir, TIFFDirEntry* dir
 	}
 	m=(1<<tif->tif_dir.td_bitspersample);
 	n=tif->tif_dir.td_samplesperpixel-tif->tif_dir.td_extrasamples;
+	/*
+	 * Check if the table can be written as a single column,
+	 * or if it must be written as 3 columns.  Note that we
+	 * write a 3-column tag if there are 2 samples/pixel and
+	 * a single column of data won't suffice--hmm.
+	 */
 	if (n>3)
 		n=3;
 	if (n==3)
@@ -1245,7 +1237,10 @@ TIFFWriteDirectoryTagTransferfunction(TIFF* tif, uint32* ndir, TIFFDirEntry* dir
 		n=1;
 	o=_TIFFmalloc(n*m*sizeof(uint16));
 	if (o==NULL)
-		assert(0);
+	{
+		TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+		return(0);
+	}
 	_TIFFmemcpy(&o[0],tif->tif_dir.td_transferfunction[0],m*sizeof(uint16));
 	if (n>1)
 		_TIFFmemcpy(&o[m],tif->tif_dir.td_transferfunction[1],m*sizeof(uint16));
@@ -1259,6 +1254,7 @@ TIFFWriteDirectoryTagTransferfunction(TIFF* tif, uint32* ndir, TIFFDirEntry* dir
 static int
 TIFFWriteDirectoryTagSubifd(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 {
+	static const char module[] = "TIFFWriteDirectoryTagSubifd";
 	uint64_new m;
 	int n;
 	if (tif->tif_dir.td_nsubifd==0)
@@ -1276,6 +1272,11 @@ TIFFWriteDirectoryTagSubifd(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 		uint32* pb;
 		uint16 p;
 		o=_TIFFmalloc(tif->tif_dir.td_nsubifd*sizeof(uint32));
+		if (o==NULL)
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+			return(0);
+		}
 		pa=tif->tif_dir.td_subifd;
 		pb=o;
 		for (p=0; p<tif->tif_dir.td_nsubifd; p++)
@@ -1487,7 +1488,7 @@ TIFFWriteDirectoryTagCheckedRational(TIFF* tif, uint32* ndir, TIFFDirEntry* dir,
 	assert(sizeof(uint32)==4);
 	if (value==(uint32)value)
 	{
-		m[0]=value;
+		m[0]=(uint32)value;
 		m[1]=1;
 	}
 	else if (value<1.0)
@@ -1511,13 +1512,104 @@ TIFFWriteDirectoryTagCheckedRational(TIFF* tif, uint32* ndir, TIFFDirEntry* dir,
 static int
 TIFFWriteDirectoryTagCheckedRationalArray(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, float* value)
 {
-	assert(0);
+	static const char module[] = "TIFFWriteDirectoryTagCheckedRationalArray";
+	uint32* m;
+	float* na;
+	uint32* nb;
+	uint32 nc;
+	int o;
+	assert(sizeof(uint32)==4);
+	m=_TIFFmalloc(count*2*sizeof(uint32));
+	if (m==NULL)
+	{
+		TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+		return(0);
+	}
+	for (na=value, nb=m, nc=0; nc<count; na++, nb+=2, nc++)
+	{
+		if (*na==(uint32)(*na))
+		{
+			nb[0]=(uint32)(*na);
+			nb[1]=1;
+		}
+		else if (*na<1.0)
+		{
+			nb[0]=(uint32)((*na)*0xFFFFFFFF);
+			nb[1]=0xFFFFFFFF;
+		}
+		else
+		{
+			nb[0]=0xFFFFFFFF;
+			nb[1]=(uint32)(0xFFFFFFFF/(*na));
+		}
+	}
+	if (tif->tif_flags&TIFF_SWAB)
+		TIFFSwabArrayOfLong(m,count*2);
+	o=TIFFWriteDirectoryTagData(tif,ndir,dir,tag,TIFF_RATIONAL,count,count*8,&m[0]);
+	_TIFFfree(m);
+	return(o);
 }
 
 static int
 TIFFWriteDirectoryTagCheckedSrationalArray(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, float* value)
 {
-	assert(0);
+	static const char module[] = "TIFFWriteDirectoryTagCheckedSrationalArray";
+	int32* m;
+	float* na;
+	int32* nb;
+	uint32 nc;
+	int o;
+	assert(sizeof(int32)==4);
+	m=_TIFFmalloc(count*2*sizeof(int32));
+	if (m==NULL)
+	{
+		TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+		return(0);
+	}
+	for (na=value, nb=m, nc=0; nc<count; na++, nb+=2, nc++)
+	{
+		if (*na<0.0)
+		{
+			if (*na==(int32)(*na))
+			{
+				nb[0]=(int32)(*na);
+				nb[1]=1;
+			}
+			else if (*na>-1.0)
+			{
+				nb[0]=-(int32)((-*na)*0x7FFFFFFF);
+				nb[1]=0x7FFFFFFF;
+			}
+			else
+			{
+				nb[0]=-0x7FFFFFFF;
+				nb[1]=(int32)(0x7FFFFFFF/(-*na));
+			}
+		}
+		else
+		{
+			if (*na==(int32)(*na))
+			{
+				nb[0]=(int32)(*na);
+				nb[1]=1;
+			}
+			else if (*na<1.0)
+			{
+				nb[0]=(int32)((*na)*0x7FFFFFFF);
+				nb[1]=0x7FFFFFFF;
+			}
+			else
+			{
+				nb[0]=0x7FFFFFFF;
+				nb[1]=(int32)(0x7FFFFFFF/(*na));
+			}
+		}
+	}
+	if (tif->tif_flags&TIFF_SWAB)
+		TIFFSwabArrayOfLong((uint32*)m,count*2);
+	o=TIFFWriteDirectoryTagData(tif,ndir,dir,tag,TIFF_SRATIONAL,count,count*8,&m[0]);
+	_TIFFfree(m);
+	return(o);
 }
 
 static int
@@ -1590,6 +1682,7 @@ TIFFWriteDirectoryTagCheckedIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir
 static int
 TIFFWriteDirectoryTagData(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint16 datatype, uint32 count, uint32 datalength, void* data)
 {
+	static const char module[] = "TIFFWriteDirectoryTagData";
 	uint32 m;
 	m=0;
 	while (m<(*ndir))
@@ -1618,12 +1711,21 @@ TIFFWriteDirectoryTagData(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag
 		nb=na+datalength;
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
 			nb=(uint32)nb;
-		if ((nb<na)||(nb<datalength)||(nb-datalength!=na))
-			assert(0);  /* maximum length reached */
+		if ((nb<na)||(nb<datalength))
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"Maximum TIFF file size exceeded");
+			return(0);
+		}
 		if (!SeekOK(tif,na))
-			assert(0);
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"IO error writing tag data");
+			return(0);
+		}
 		if (!WriteOK(tif,data,datalength))
-			assert(0);
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"IO error writing tag data");
+			return(0);
+		}
 		tif->tif_dataoff=nb;
 		if (tif->tif_dataoff&1)
 			tif->tif_dataoff++;
@@ -1806,7 +1908,11 @@ TIFFLinkDirectory(TIFF* tif)
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>0xFFFF)
-				assert(0);
+			{
+				TIFFErrorExt(tif->tif_clientdata, module,
+					     "Sanity check on tag count failed, likely corrupt TIFF");
+				return (0);
+			}
 			dircount=(uint16)dircount64;
 			(void) TIFFSeekFile(tif,
 			    nextdir+8+dircount*20, SEEK_SET);
@@ -1834,343 +1940,7 @@ TIFFLinkDirectory(TIFF* tif)
 	return (1);
 }
 
-	#ifdef NDEF
-	uint16 dircount;
-	toff_t diroff;
-	ttag_t tag;
-	uint32 nfields;
-	tsize_t dirsize;
-	char* data;
-	TIFFDirEntry* dir;
-	TIFFDirectory* td;
-	unsigned long b, fields[FIELD_SETLONGS];
-	int fi, nfi;
-
-	if (tif->tif_mode == O_RDONLY)
-		return (1);
-	/*
-	 * Clear write state so that subsequent images with
-	 * different characteristics get the right buffers
-	 * setup for them.
-	 */
-	if (done)
-	{
-		if (tif->tif_flags & TIFF_POSTENCODE) {
-			tif->tif_flags &= ~TIFF_POSTENCODE;
-			if (!(*tif->tif_postencode)(tif)) {
-				TIFFErrorExt(tif->tif_clientdata,
-					     tif->tif_name,
-				"Error post-encoding before directory write");
-				return (0);
-			}
-		}
-		(*tif->tif_close)(tif);		/* shutdown encoder */
-		/*
-		 * Flush any data that might have been written
-		 * by the compression close+cleanup routines.
-		 */
-		if (tif->tif_rawcc > 0
-		    && (tif->tif_flags & TIFF_BEENWRITING) != 0
-		    && !TIFFFlushData1(tif)) {
-			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			    "Error flushing data before directory write");
-			return (0);
-		}
-		if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
-			_TIFFfree(tif->tif_rawdata);
-			tif->tif_rawdata = NULL;
-			tif->tif_rawcc = 0;
-			tif->tif_rawdatasize = 0;
-		}
-		tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP);
-	}
-
-	td = &tif->tif_dir;
-	/*
-	 * Size the directory so that we can calculate
-	 * offsets for the data items that aren't kept
-	 * in-place in each field.
-	 */
-	nfields = 0;
-	for (b = 0; b <= FIELD_LAST; b++)
-		if (TIFFFieldSet(tif, b) && b != FIELD_CUSTOM)
-			nfields += (b < FIELD_SUBFILETYPE ? 2 : 1);
-	nfields += td->td_customValueCount;
-	dirsize = nfields * sizeof (TIFFDirEntry);
-	data = (char*) _TIFFmalloc(dirsize);
-	if (data == NULL) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "Cannot write directory, out of space");
-		return (0);
-	}
-	/*
-	 * Directory hasn't been placed yet, put
-	 * it at the end of the file and link it
-	 * into the existing directory structure.
-	 */
-	if (tif->tif_diroff == 0 && !TIFFLinkDirectory(tif))
-		goto bad;
-	tif->tif_dataoff = (toff_t)(
-	    tif->tif_diroff + sizeof (uint16) + dirsize + sizeof (toff_t));
-	if (tif->tif_dataoff & 1)
-		tif->tif_dataoff++;
-	(void) TIFFSeekFile(tif, tif->tif_dataoff, SEEK_SET);
-	tif->tif_curdir++;
-	dir = (TIFFDirEntry*) data;
-	/*
-	 * Setup external form of directory
-	 * entries and write data items.
-	 */
-	_TIFFmemcpy(fields, td->td_fieldsset, sizeof (fields));
-	/*
-	 * Write out ExtraSamples tag only if
-	 * extra samples are present in the data.
-	 */
-	if (FieldSet(fields, FIELD_EXTRASAMPLES) && !td->td_extrasamples) {
-		ResetFieldBit(fields, FIELD_EXTRASAMPLES);
-		nfields--;
-		dirsize -= sizeof (TIFFDirEntry);
-	}								/*XXX*/
-	for (fi = 0, nfi = tif->tif_nfields; nfi > 0; nfi--, fi++) {  ddd
-		const TIFFFieldInfo* fip = tif->tif_fieldinfo[fi];
-
-		/*
-		 * For custom fields, we test to see if the custom field
-		 * is set or not.  For normal fields, we just use the
-		 * FieldSet test.
-		*/
-		if( fip->field_bit == FIELD_CUSTOM )
-		{
-			int ci, is_set = FALSE;
-
-			for( ci = 0; ci < td->td_customValueCount; ci++ )
-				is_set |= (td->td_customValues[ci].info == fip);
-
-			if( !is_set )
-				continue;
-		}
-		else if (!FieldSet(fields, fip->field_bit))
-			continue;
-
-		/*
-		 * Handle other fields.
-		 */
-		switch (fip->field_bit)
-		{
-		case FIELD_STRIPOFFSETS:
-			/*
-			 * We use one field bit for both strip and tile
-
-			 * offsets, and so must be careful in selecting
-			 * the appropriate field descriptor (so that tags
-			 * are written in sorted order).
-			 */
-			tag = isTiled(tif) ?
-			    TIFFTAG_TILEOFFSETS : TIFFTAG_STRIPOFFSETS;
-			if (tag != fip->field_tag)
-				continue;
-			
-			dir->tdir_tag = (uint16) tag;
-			dir->tdir_type = (uint16) TIFF_LONG;
-			dir->tdir_count = (uint32) td->td_nstrips;  ddd
-			if (!TIFFWriteLongArray(tif, dir, td->td_stripoffset))  ddd
-				goto bad;
-			break;
-		case FIELD_STRIPBYTECOUNTS:
-			/*
-			 * We use one field bit for both strip and tile
-			 * byte counts, and so must be careful in selecting
-			 * the appropriate field descriptor (so that tags
-			 * are written in sorted order).
-			 */
-			tag = isTiled(tif) ?
-			    TIFFTAG_TILEBYTECOUNTS : TIFFTAG_STRIPBYTECOUNTS;
-			if (tag != fip->field_tag)
-				continue;
-
-			dir->tdir_tag = (uint16) tag;
-			dir->tdir_type = (uint16) TIFF_LONG;
-			dir->tdir_count = (uint32) td->td_nstrips;  ddd
-			if (!TIFFWriteLongArray(tif, dir, td->td_stripbytecount))
-				goto bad;
-			break;
-		case FIELD_ROWSPERSTRIP:
-			TIFFSetupShortLong(tif, TIFFTAG_ROWSPERSTRIP,
-			    dir, td->td_rowsperstrip);
-			break;
-		case FIELD_COLORMAP:
-			if (!TIFFWriteShortTable(tif, TIFFTAG_COLORMAP, dir,
-			    3, td->td_colormap))
-				goto bad;
-			break;
-		case FIELD_IMAGEDIMENSIONS:
-			TIFFSetupShortLong(tif, TIFFTAG_IMAGEWIDTH,
-			    dir++, td->td_imagewidth);
-			TIFFSetupShortLong(tif, TIFFTAG_IMAGELENGTH,
-			    dir, td->td_imagelength);
-			break;
-		case FIELD_TILEDIMENSIONS:
-			TIFFSetupShortLong(tif, TIFFTAG_TILEWIDTH,
-			    dir++, td->td_tilewidth);
-			TIFFSetupShortLong(tif, TIFFTAG_TILELENGTH,
-			    dir, td->td_tilelength);
-			break;
-		case FIELD_COMPRESSION:
-			TIFFSetupShort(tif, TIFFTAG_COMPRESSION,
-			    dir, td->td_compression);
-			break;
-		case FIELD_PHOTOMETRIC:
-			TIFFSetupShort(tif, TIFFTAG_PHOTOMETRIC,
-			    dir, td->td_photometric);
-			break;
-		case FIELD_POSITION:
-			WriteRationalPair(TIFF_RATIONAL,
-			    TIFFTAG_XPOSITION, td->td_xposition,
-			    TIFFTAG_YPOSITION, td->td_yposition);
-			break;
-		case FIELD_RESOLUTION:
-			WriteRationalPair(TIFF_RATIONAL,
-			    TIFFTAG_XRESOLUTION, td->td_xresolution,
-			    TIFFTAG_YRESOLUTION, td->td_yresolution);
-			break;
-		case FIELD_BITSPERSAMPLE:
-		case FIELD_MINSAMPLEVALUE:
-		case FIELD_MAXSAMPLEVALUE:
-		case FIELD_SAMPLEFORMAT:
-			if (!TIFFWritePerSampleShorts(tif, fip->field_tag, dir))
-				goto bad;
-			break;
-		case FIELD_SMINSAMPLEVALUE:
-		case FIELD_SMAXSAMPLEVALUE:
-			if (!TIFFWritePerSampleAnys(tif,
-			    _TIFFSampleToTagType(tif), fip->field_tag, dir))
-				goto bad;
-			break;
-		case FIELD_PAGENUMBER:
-		case FIELD_HALFTONEHINTS:
-		case FIELD_YCBCRSUBSAMPLING:
-			if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
-				goto bad;
-			break;
-		case FIELD_INKNAMES:
-			if (!TIFFWriteInkNames(tif, dir))
-				goto bad;
-			break;
-		case FIELD_TRANSFERFUNCTION:
-			if (!TIFFWriteTransferFunction(tif, dir))
-				goto bad;
-			break;
-		case FIELD_SUBIFD:
-			/*
-			 * XXX: Always write this field using LONG type
-			 * for backward compatibility.
-			 */
-			dir->tdir_tag = (uint16) fip->field_tag;
-			dir->tdir_type = (uint16) TIFF_LONG;
-			dir->tdir_count = (uint32) td->td_nsubifd;
-			if (!TIFFWriteLongArray(tif, dir, td->td_subifd))
-				goto bad;
-			/*
-			 * Total hack: if this directory includes a SubIFD
-			 * tag then force the next <n> directories to be
-			 * written as ``sub directories'' of this one.  This
-			 * is used to write things like thumbnails and
-			 * image masks that one wants to keep out of the
-			 * normal directory linkage access mechanism.
-			 */
-			if (dir->tdir_count > 0) {
-				tif->tif_flags |= TIFF_INSUBIFD;
-				tif->tif_nsubifd = (uint16) dir->tdir_count;
-				if (dir->tdir_count > 1)
-					tif->tif_subifdoff = dir->tdir_offset;
-				else
-					tif->tif_subifdoff = (uint32)(
-					      tif->tif_diroff
-					    + sizeof (uint16)
-					    + ((char*)&dir->tdir_offset-data));
-			}
-			break;
-		default:
-			/* XXX: Should be fixed and removed. */
-			if (fip->field_tag == TIFFTAG_DOTRANGE) {
-				if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
-					goto bad;
-			}
-			else if (!TIFFWriteNormalTag(tif, dir, fip))
-				goto bad;
-			break;
-		}
-		dir++;
-
-		if( fip->field_bit != FIELD_CUSTOM )
-			ResetFieldBit(fields, fip->field_bit);
-	}
-
-	/*
-	 * Write directory.
-	 */
-	dircount = (uint16) nfields;
-	diroff = (uint32) tif->tif_nextdiroff;
-	if (tif->tif_flags & TIFF_SWAB) {
-		/*
-		 * The file's byte order is opposite to the
-		 * native machine architecture.  We overwrite
-		 * the directory information with impunity
-		 * because it'll be released below after we
-		 * write it to the file.  Note that all the
-		 * other tag construction routines assume that
-		 * we do this byte-swapping; i.e. they only
-		 * byte-swap indirect data.
-		 */
-		for (dir = (TIFFDirEntry*) data; dircount; dir++, dircount--) {
-			TIFFSwabArrayOfShort(&dir->tdir_tag, 2);  ddd
-			TIFFSwabArrayOfLong(&dir->tdir_count, 2);  ddd
-		}
-		dircount = (uint16) nfields;
-		TIFFSwabShort(&dircount);
-		TIFFSwabLong(&diroff);
-	}
-	(void) TIFFSeekFile(tif, tif->tif_diroff, SEEK_SET);
-	if (!WriteOK(tif, &dircount, sizeof (dircount))) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "Error writing directory count");
-		goto bad;
-	}
-	if (!WriteOK(tif, data, dirsize)) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "Error writing directory contents");
-		goto bad;
-	}
-	if (!WriteOK(tif, &diroff, sizeof (uint32))) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "Error writing directory link");
-		goto bad;
-	}
-	if (done) {
-		TIFFFreeDirectory(tif);
-		tif->tif_flags &= ~TIFF_DIRTYDIRECT;
-		(*tif->tif_cleanup)(tif);
-
-		/*
-		* Reset directory-related state for subsequent
-		* directories.
-		*/
-		TIFFCreateDirectory(tif);
-	}
-	_TIFFfree(data);
-	return (1);
-bad:
-	_TIFFfree(data);
-	return (0);
-}
-#endif
-#undef WriteRationalPair
-
-int
-TIFFWriteDirectory(TIFF* tif)
-{
-	return _TIFFWriteDirectory(tif, TRUE);
-}
+/* PODD */
 
 #ifdef NDEF
 
@@ -2320,664 +2090,9 @@ TIFFWriteCustomDirectory(TIFF* tif, toff_t *pdiroff)
 }
 
 /*
- * Process tags that are not special cased.
- */
-static int
-TIFFWriteNormalTag(TIFF* tif, TIFFDirEntry* dir, const TIFFFieldInfo* fip)
-{
-	uint16 wc = (uint16) fip->field_writecount;
-	uint32 wc2;
-
-	dir->tdir_tag = (uint16) fip->field_tag;
-	dir->tdir_type = (uint16) fip->field_type;
-	dir->tdir_count = wc;
-	
-	switch (fip->field_type) {
-	case TIFF_SHORT:
-	case TIFF_SSHORT:
-		if (fip->field_passcount) {
-			uint16* wp;
-			if (wc == (uint16) TIFF_VARIABLE2) {
-				TIFFGetField(tif, fip->field_tag, &wc2, &wp);
-				dir->tdir_count = wc2;
-			} else {	/* Assume TIFF_VARIABLE */
-				TIFFGetField(tif, fip->field_tag, &wc, &wp);
-				dir->tdir_count = wc;
-			}
-			if (!TIFFWriteShortArray(tif, dir, wp))
-				return 0;
-		} else {
-			if (wc == 1) {
-				uint16 sv;
-				TIFFGetField(tif, fip->field_tag, &sv);
-				dir->tdir_offset =
-					TIFFInsertData(tif, dir->tdir_type, sv);
-			} else {
-				uint16* wp;
-				TIFFGetField(tif, fip->field_tag, &wp);
-				if (!TIFFWriteShortArray(tif, dir, wp))
-					return 0;
-			}
-		}
-		break;
-	case TIFF_LONG:
-	case TIFF_SLONG:
-	case TIFF_IFD:
-		if (fip->field_passcount) {
-			uint32* lp;
-			if (wc == (uint16) TIFF_VARIABLE2) {
-				TIFFGetField(tif, fip->field_tag, &wc2, &lp);
-				dir->tdir_count = wc2;
-			} else {	/* Assume TIFF_VARIABLE */
-				TIFFGetField(tif, fip->field_tag, &wc, &lp);
-				dir->tdir_count = wc;
-			}
-			if (!TIFFWriteLongArray(tif, dir, lp))
-				return 0;
-		} else {
-			if (wc == 1) {
-				/* XXX handle LONG->SHORT conversion */
-				TIFFGetField(tif, fip->field_tag,
-					     &dir->tdir_offset);
-			} else {
-				uint32* lp;
-				TIFFGetField(tif, fip->field_tag, &lp);
-				if (!TIFFWriteLongArray(tif, dir, lp))
-					return 0;
-			}
-		}
-		break;
-	case TIFF_RATIONAL:
-	case TIFF_SRATIONAL:
-		if (fip->field_passcount) {
-			float* fp;
-			if (wc == (uint16) TIFF_VARIABLE2) {
-				TIFFGetField(tif, fip->field_tag, &wc2, &fp);
-				dir->tdir_count = wc2;
-			} else {	/* Assume TIFF_VARIABLE */
-				TIFFGetField(tif, fip->field_tag, &wc, &fp);
-				dir->tdir_count = wc;
-			}
-			if (!TIFFWriteRationalArray(tif, dir, fp))
-				return 0;
-		} else {
-			if (wc == 1) {
-				float fv;
-				TIFFGetField(tif, fip->field_tag, &fv);
-				if (!TIFFWriteRationalArray(tif, dir, &fv))
-					return 0;
-			} else {
-				float* fp;
-				TIFFGetField(tif, fip->field_tag, &fp);
-				if (!TIFFWriteRationalArray(tif, dir, fp))
-					return 0;
-			}
-		}
-		break;
-	case TIFF_FLOAT:
-		if (fip->field_passcount) {
-			float* fp;
-			if (wc == (uint16) TIFF_VARIABLE2) {
-				TIFFGetField(tif, fip->field_tag, &wc2, &fp);
-				dir->tdir_count = wc2;
-			} else {	/* Assume TIFF_VARIABLE */
-				TIFFGetField(tif, fip->field_tag, &wc, &fp);
-				dir->tdir_count = wc;
-			}
-			if (!TIFFWriteFloatArray(tif, dir, fp))
-				return 0;
-		} else {
-			if (wc == 1) {
-				float fv;
-				TIFFGetField(tif, fip->field_tag, &fv);
-				if (!TIFFWriteFloatArray(tif, dir, &fv))
-					return 0;
-			} else {
-				float* fp;
-				TIFFGetField(tif, fip->field_tag, &fp);
-				if (!TIFFWriteFloatArray(tif, dir, fp))
-					return 0;
-			}
-		}
-		break;
-	case TIFF_DOUBLE:
-		if (fip->field_passcount) {
-			double* dp;
-			if (wc == (uint16) TIFF_VARIABLE2) {
-				TIFFGetField(tif, fip->field_tag, &wc2, &dp);
-				dir->tdir_count = wc2;
-			} else {	/* Assume TIFF_VARIABLE */
-				TIFFGetField(tif, fip->field_tag, &wc, &dp);
-				dir->tdir_count = wc;
-			}
-			if (!TIFFWriteDoubleArray(tif, dir, dp))
-				return 0;
-		} else {
-			if (wc == 1) {
-				double dv;
-				TIFFGetField(tif, fip->field_tag, &dv);
-				if (!TIFFWriteDoubleArray(tif, dir, &dv))
-					return 0;
-			} else {
-				double* dp;
-				TIFFGetField(tif, fip->field_tag, &dp);
-				if (!TIFFWriteDoubleArray(tif, dir, dp))
-					return 0;
-			}
-		}
-		break;
-	case TIFF_ASCII:
-		{ 
-                    char* cp;
-                    if (fip->field_passcount)
-                    {
-                        if( wc == (uint16) TIFF_VARIABLE2 )
-                            TIFFGetField(tif, fip->field_tag, &wc2, &cp);
-                        else
-                            TIFFGetField(tif, fip->field_tag, &wc, &cp);
-                    }
-                    else
-                        TIFFGetField(tif, fip->field_tag, &cp);
-
-                    dir->tdir_count = (uint32) (strlen(cp) + 1);
-                    if (!TIFFWriteByteArray(tif, dir, cp))
-                        return (0);
-		}
-		break;
-
-        case TIFF_BYTE:
-        case TIFF_SBYTE:          
-		if (fip->field_passcount) {
-			char* cp;
-			if (wc == (uint16) TIFF_VARIABLE2) {
-				TIFFGetField(tif, fip->field_tag, &wc2, &cp);
-				dir->tdir_count = wc2;
-			} else {	/* Assume TIFF_VARIABLE */
-				TIFFGetField(tif, fip->field_tag, &wc, &cp);
-				dir->tdir_count = wc;
-			}
-			if (!TIFFWriteByteArray(tif, dir, cp))
-				return 0;
-		} else {
-			if (wc == 1) {
-				char cv;
-				TIFFGetField(tif, fip->field_tag, &cv);
-				if (!TIFFWriteByteArray(tif, dir, &cv))
-					return 0;
-			} else {
-				char* cp;
-				TIFFGetField(tif, fip->field_tag, &cp);
-				if (!TIFFWriteByteArray(tif, dir, cp))
-					return 0;
-			}
-		}
-                break;
-
-	case TIFF_UNDEFINED:
-		{ char* cp;
-		  if (wc == (unsigned short) TIFF_VARIABLE) {
-			TIFFGetField(tif, fip->field_tag, &wc, &cp);
-			dir->tdir_count = wc;
-		  } else if (wc == (unsigned short) TIFF_VARIABLE2) {
-			TIFFGetField(tif, fip->field_tag, &wc2, &cp);
-			dir->tdir_count = wc2;
-		  } else 
-			TIFFGetField(tif, fip->field_tag, &cp);
-		  if (!TIFFWriteByteArray(tif, dir, cp))
-			return (0);
-		}
-		break;
-
-        case TIFF_NOTYPE:
-                break;
-	}
-	return (1);
-}
-
-/*
- * Setup a directory entry with either a SHORT
- * or LONG type according to the value.
- */
-static void
-TIFFSetupShortLong(TIFF* tif, ttag_t tag, TIFFDirEntry* dir, uint32 v)
-{
-	dir->tdir_tag = (uint16) tag;
-	dir->tdir_count = 1;
-	if (v > 0xffffL) {
-		dir->tdir_type = (short) TIFF_LONG;
-		dir->tdir_offset = v;
-	} else {
-		dir->tdir_type = (short) TIFF_SHORT;
-		dir->tdir_offset = TIFFInsertData(tif, (int) TIFF_SHORT, v);
-	}
-}
-
-/*
- * Setup a SHORT directory entry
- */
-static void
-TIFFSetupShort(TIFF* tif, ttag_t tag, TIFFDirEntry* dir, uint16 v)
-{
-	dir->tdir_tag = (uint16) tag;
-	dir->tdir_count = 1;
-	dir->tdir_type = (short) TIFF_SHORT;
-	dir->tdir_offset = TIFFInsertData(tif, (int) TIFF_SHORT, v);
-}
-#undef MakeShortDirent
-
-#define	NITEMS(x)	(sizeof (x) / sizeof (x[0]))
-/*
- * Setup a directory entry that references a
- * samples/pixel array of SHORT values and
- * (potentially) write the associated indirect
- * values.
- */
-static int
-TIFFWritePerSampleShorts(TIFF* tif, ttag_t tag, TIFFDirEntry* dir)
-{
-	uint16 buf[10], v;
-	uint16* w = buf;
-	uint16 i, samples = tif->tif_dir.td_samplesperpixel;
-	int status;
-
-	if (samples > NITEMS(buf)) {
-		w = (uint16*) _TIFFmalloc(samples * sizeof (uint16));
-		if (w == NULL) {
-			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			    "No space to write per-sample shorts");
-			return (0);
-		}
-	}
-	TIFFGetField(tif, tag, &v);
-	for (i = 0; i < samples; i++)
-		w[i] = v;
-	
-	dir->tdir_tag = (uint16) tag;
-	dir->tdir_type = (uint16) TIFF_SHORT;
-	dir->tdir_count = samples;
-	status = TIFFWriteShortArray(tif, dir, w);
-	if (w != buf)
-		_TIFFfree((char*) w);
-	return (status);
-}
-
-/*
- * Setup a directory entry that references a samples/pixel array of ``type''
- * values and (potentially) write the associated indirect values.  The source
- * data from TIFFGetField() for the specified tag must be returned as double.
- */
-static int
-TIFFWritePerSampleAnys(TIFF* tif,
-    TIFFDataType type, ttag_t tag, TIFFDirEntry* dir)
-{
-	double buf[10], v;
-	double* w = buf;
-	uint16 i, samples = tif->tif_dir.td_samplesperpixel;
-	int status;
-
-	if (samples > NITEMS(buf)) {
-		w = (double*) _TIFFmalloc(samples * sizeof (double));
-		if (w == NULL) {
-			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			    "No space to write per-sample values");
-			return (0);
-		}
-	}
-	TIFFGetField(tif, tag, &v);
-	for (i = 0; i < samples; i++)
-		w[i] = v;
-	status = TIFFWriteAnyArray(tif, type, tag, dir, samples, w);
-	if (w != buf)
-		_TIFFfree(w);
-	return (status);
-}
-#undef NITEMS
-
-/*
- * Setup a pair of shorts that are returned by
- * value, rather than as a reference to an array.
- */
-static int
-TIFFSetupShortPair(TIFF* tif, ttag_t tag, TIFFDirEntry* dir)
-{
-	uint16 v[2];
-
-	TIFFGetField(tif, tag, &v[0], &v[1]);
-
-	dir->tdir_tag = (uint16) tag;
-	dir->tdir_type = (uint16) TIFF_SHORT;
-	dir->tdir_count = 2;
-	return (TIFFWriteShortArray(tif, dir, v));
-}
-
-/*
- * Setup a directory entry for an NxM table of shorts,
- * where M is known to be 2**bitspersample, and write
- * the associated indirect data.
- */
-static int
-TIFFWriteShortTable(TIFF* tif,
-    ttag_t tag, TIFFDirEntry* dir, uint32 n, uint16** table)
-{
-	uint32 i, off;
-
-	dir->tdir_tag = (uint16) tag;
-	dir->tdir_type = (short) TIFF_SHORT;
-	/* XXX -- yech, fool TIFFWriteData */
-	dir->tdir_count = (uint32) (1L<<tif->tif_dir.td_bitspersample);
-	off = tif->tif_dataoff;
-	for (i = 0; i < n; i++)
-		if (!TIFFWriteData(tif, dir, (char *)table[i]))
-			return (0);
-	dir->tdir_count *= n;
-	dir->tdir_offset = off;
-	return (1);
-}
-
-/*
- * Write/copy data associated with an ASCII or opaque tag value.
- */
-static int
-TIFFWriteByteArray(TIFF* tif, TIFFDirEntry* dir, char* cp)
-{
-	if (dir->tdir_count > 4) {
-		if (!TIFFWriteData(tif, dir, cp))
-			return (0);
-	} else
-		_TIFFmemcpy(&dir->tdir_offset, cp, dir->tdir_count);
-	return (1);
-}
-
-/*
- * Setup a directory entry of an array of SHORT
- * or SSHORT and write the associated indirect values.
- */
-static int
-TIFFWriteShortArray(TIFF* tif, TIFFDirEntry* dir, uint16* v)
-{
-	if (dir->tdir_count <= 2) {
-		if (tif->tif_header.common.tiff_magic == TIFF_BIGENDIAN) {
-			dir->tdir_offset = (uint32) ((long) v[0] << 16);
-			if (dir->tdir_count == 2)
-				dir->tdir_offset |= v[1] & 0xffff;
-		} else {
-			dir->tdir_offset = v[0] & 0xffff;
-			if (dir->tdir_count == 2)
-				dir->tdir_offset |= (long) v[1] << 16;
-		}
-		return (1);
-	} else
-		return (TIFFWriteData(tif, dir, (char*) v));
-}
-
-/*
- * Setup a directory entry of an array of LONG
- * or SLONG and write the associated indirect values.
- */
-static int
-TIFFWriteLongArray(TIFF* tif, TIFFDirEntry* dir, uint32* v)
-{
-	if (dir->tdir_count == 1) {
-		dir->tdir_offset = v[0];
-		return (1);
-	} else
-		return (TIFFWriteData(tif, dir, (char*) v));
-}
-
-/*
- * Setup a directory entry of an array of RATIONAL
- * or SRATIONAL and write the associated indirect values.
- */
-static int
-TIFFWriteRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
-{
-	uint32 i;
-	uint32* t;
-	int status;
-
-	t = (uint32*) _TIFFmalloc(2 * dir->tdir_count * sizeof (uint32));
-	if (t == NULL) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-		    "No space to write RATIONAL array");
-		return (0);
-	}
-	for (i = 0; i < dir->tdir_count; i++) {
-		float fv = v[i];
-		int sign = 1;
-		uint32 den;
-
-		if (fv < 0) {
-			if (dir->tdir_type == TIFF_RATIONAL) {
-				TIFFWarningExt(tif->tif_clientdata,
-					       tif->tif_name,
-	"\"%s\": Information lost writing value (%g) as (unsigned) RATIONAL",
-				_TIFFFieldWithTag(tif,dir->tdir_tag)->field_name,
-						fv);
-				fv = 0;
-			} else
-				fv = -fv, sign = -1;
-		}
-		den = 1L;
-		if (fv > 0) {
-			while (fv < 1L<<(31-3) && den < 1L<<(31-3))
-				fv *= 1<<3, den *= 1L<<3;
-		}
-		t[2*i+0] = (uint32) (sign * (fv + 0.5));
-		t[2*i+1] = den;
-	}
-	status = TIFFWriteData(tif, dir, (char *)t);
-	_TIFFfree((char*) t);
-	return (status);
-}
-
-static int
-TIFFWriteFloatArray(TIFF* tif, TIFFDirEntry* dir, float* v)
-{
-	TIFFCvtNativeToIEEEFloat(tif, dir->tdir_count, v);
-	if (dir->tdir_count == 1) {
-		dir->tdir_offset = *(uint32*) &v[0];
-		return (1);
-	} else
-		return (TIFFWriteData(tif, dir, (char*) v));
-}
-
-static int
-TIFFWriteDoubleArray(TIFF* tif, TIFFDirEntry* dir, double* v)
-{
-	TIFFCvtNativeToIEEEDouble(tif, dir->tdir_count, v);
-	return (TIFFWriteData(tif, dir, (char*) v));
-}
-
-/*
- * Write an array of ``type'' values for a specified tag (i.e. this is a tag
- * which is allowed to have different types, e.g. SMaxSampleType).
- * Internally the data values are represented as double since a double can
- * hold any of the TIFF tag types (yes, this should really be an abstract
- * type tany_t for portability).  The data is converted into the specified
- * type in a temporary buffer and then handed off to the appropriate array
- * writer.
- */
-static int
-TIFFWriteAnyArray(TIFF* tif,
-    TIFFDataType type, ttag_t tag, TIFFDirEntry* dir, uint32 n, double* v)
-{
-	char buf[10 * sizeof(double)];
-	char* w = buf;
-	int i, status = 0;
-
-	if (n * TIFFDataWidth(type) > sizeof buf) {
-		w = (char*) _TIFFmalloc(n * TIFFDataWidth(type));
-		if (w == NULL) {
-			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-				     "No space to write array");
-			return (0);
-		}
-	}
-
-	dir->tdir_tag = (uint16) tag;
-	dir->tdir_type = (uint16) type;
-	dir->tdir_count = n;
-
-	switch (type) {
-	case TIFF_BYTE:
-		{ 
-			uint8* bp = (uint8*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (uint8) v[i];
-			if (!TIFFWriteByteArray(tif, dir, (char*) bp))
-				goto out;
-		}
-		break;
-	case TIFF_SBYTE:
-		{ 
-			int8* bp = (int8*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (int8) v[i];
-			if (!TIFFWriteByteArray(tif, dir, (char*) bp))
-				goto out;
-		}
-		break;
-	case TIFF_SHORT:
-		{
-			uint16* bp = (uint16*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (uint16) v[i];
-			if (!TIFFWriteShortArray(tif, dir, (uint16*)bp))
-				goto out;
-		}
-		break;
-	case TIFF_SSHORT:
-		{ 
-			int16* bp = (int16*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (int16) v[i];
-			if (!TIFFWriteShortArray(tif, dir, (uint16*)bp))
-				goto out;
-		}
-		break;
-	case TIFF_LONG:
-		{
-			uint32* bp = (uint32*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (uint32) v[i];
-			if (!TIFFWriteLongArray(tif, dir, bp))
-				goto out;
-		}
-		break;
-	case TIFF_SLONG:
-		{
-			int32* bp = (int32*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (int32) v[i];
-			if (!TIFFWriteLongArray(tif, dir, (uint32*) bp))
-				goto out;
-		}
-		break;
-	case TIFF_FLOAT:
-		{ 
-			float* bp = (float*) w;
-			for (i = 0; i < (int) n; i++)
-				bp[i] = (float) v[i];
-			if (!TIFFWriteFloatArray(tif, dir, bp))
-				goto out;
-		}
-		break;
-	case TIFF_DOUBLE:
-		return (TIFFWriteDoubleArray(tif, dir, v));
-	default:
-		/* TIFF_NOTYPE */
-		/* TIFF_ASCII */
-		/* TIFF_UNDEFINED */
-		/* TIFF_RATIONAL */
-		/* TIFF_SRATIONAL */
-		goto out;
-	}
-	status = 1;
- out:
-	if (w != buf)
-		_TIFFfree(w);
-	return (status);
-}
-
-static int
-TIFFWriteTransferFunction(TIFF* tif, TIFFDirEntry* dir)
-{
-	TIFFDirectory* td = &tif->tif_dir;
-	tsize_t n = (1L<<td->td_bitspersample) * sizeof (uint16);
-	uint16** tf = td->td_transferfunction;
-	int ncols;
-
-	/*
-	 * Check if the table can be written as a single column,
-	 * or if it must be written as 3 columns.  Note that we
-	 * write a 3-column tag if there are 2 samples/pixel and
-	 * a single column of data won't suffice--hmm.
-	 */
-	switch (td->td_samplesperpixel - td->td_extrasamples) {
-	default:	if (_TIFFmemcmp(tf[0], tf[2], n)) { ncols = 3; break; }
-	case 2:		if (_TIFFmemcmp(tf[0], tf[1], n)) { ncols = 3; break; }
-	case 1: case 0:	ncols = 1;
-	}
-	return (TIFFWriteShortTable(tif,
-	    TIFFTAG_TRANSFERFUNCTION, dir, ncols, tf));
-}
-
-static int
-TIFFWriteInkNames(TIFF* tif, TIFFDirEntry* dir)
-{
-	TIFFDirectory* td = &tif->tif_dir;
-
-	dir->tdir_tag = TIFFTAG_INKNAMES;
-	dir->tdir_type = (short) TIFF_ASCII;
-	dir->tdir_count = td->td_inknameslen;
-	return (TIFFWriteByteArray(tif, dir, td->td_inknames));
-}
-
-/*
- * Write a contiguous directory item.
- */
-static int
-TIFFWriteData(TIFF* tif, TIFFDirEntry* dir, char* cp)
-{
-	tsize_t cc;
-
-	if (tif->tif_flags & TIFF_SWAB) {
-		switch (dir->tdir_type) {
-		case TIFF_SHORT:
-		case TIFF_SSHORT:
-			TIFFSwabArrayOfShort((uint16*) cp, dir->tdir_count);  ddd
-			break;
-		case TIFF_LONG:
-		case TIFF_SLONG:
-		case TIFF_FLOAT:
-			TIFFSwabArrayOfLong((uint32*) cp, dir->tdir_count);  ddd
-			break;
-		case TIFF_RATIONAL:
-		case TIFF_SRATIONAL:
-			TIFFSwabArrayOfLong((uint32*) cp, 2*dir->tdir_count);  ddd
-			break;
-		case TIFF_DOUBLE:
-			TIFFSwabArrayOfDouble((double*) cp, dir->tdir_count);  ddd
-			break;
-		}
-	}
-	dir->tdir_offset = tif->tif_dataoff;
-	cc = dir->tdir_count * TIFFDataWidth((TIFFDataType) dir->tdir_type);
-	if (SeekOK(tif, dir->tdir_offset) &&
-	    WriteOK(tif, cp, cc)) {
-		tif->tif_dataoff += (cc + 1) & ~1;
-		return (1);
-	}
-	TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-		     "Error writing data for field \"%s\"",
-	_TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-	return (0);
-}
-
-/*
  * Similar to TIFFWriteDirectory(), but if the directory has already
  * been written once, it is relocated to the end of the file, in case it
- * has changed in size.  Note that this will result in the loss of the 
+ * has changed in size.  Note that this will result in the loss of the
  * previously used directory space. 
  */ 
 
