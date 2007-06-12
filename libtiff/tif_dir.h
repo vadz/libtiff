@@ -66,11 +66,11 @@ typedef struct {
 	 * number of striles */
 	uint32  td_stripsperimage;  
 	uint32  td_nstrips;            /* size of offset & bytecount arrays */
-	uint64_new* td_stripoffset;
-	uint64_new* td_stripbytecount;
-	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */  
+	uint64* td_stripoffset;
+	uint64* td_stripbytecount;
+	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */
 	uint16  td_nsubifd;
-	uint64_new* td_subifd;
+	uint64* td_subifd;
 	/* YCbCr parameters */
 	uint16  td_ycbcrsubsampling[2];
 	uint16  td_ycbcrpositioning;

@@ -458,18 +458,18 @@ TIFFSetupStrips(TIFF* tif)
 	td->td_nstrips = td->td_stripsperimage;
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 		td->td_stripsperimage /= td->td_samplesperpixel;
-	td->td_stripoffset = (uint64_new *)
-	    _TIFFmalloc(td->td_nstrips * sizeof (uint64_new));
-	td->td_stripbytecount = (uint64_new *)
-	    _TIFFmalloc(td->td_nstrips * sizeof (uint64_new));
+	td->td_stripoffset = (uint64 *)
+	    _TIFFmalloc(td->td_nstrips * sizeof (uint64));
+	td->td_stripbytecount = (uint64 *)
+	    _TIFFmalloc(td->td_nstrips * sizeof (uint64));
 	if (td->td_stripoffset == NULL || td->td_stripbytecount == NULL)
 		return (0);
 	/*
 	 * Place data at the end-of-file
 	 * (by setting offsets to zero).
 	 */
-	_TIFFmemset(td->td_stripoffset, 0, td->td_nstrips*sizeof (uint64_new));
-	_TIFFmemset(td->td_stripbytecount, 0, td->td_nstrips*sizeof (uint64_new));
+	_TIFFmemset(td->td_stripoffset, 0, td->td_nstrips*sizeof (uint64));
+	_TIFFmemset(td->td_stripbytecount, 0, td->td_nstrips*sizeof (uint64));
 	TIFFSetFieldBit(tif, FIELD_STRIPOFFSETS);
 	TIFFSetFieldBit(tif, FIELD_STRIPBYTECOUNTS);
 	return (1);
@@ -596,14 +596,14 @@ static int
 TIFFGrowStrips(TIFF* tif, uint32 delta, const char* module)
 {
 	TIFFDirectory *td = &tif->tif_dir;
-	uint32* new_stripoffset;
-	uint32* new_stripbytecount;
+	uint64* new_stripoffset;
+	uint64* new_stripbytecount;
 
 	assert(td->td_planarconfig == PLANARCONFIG_CONTIG);
-	new_stripoffset = (uint64_new*)_TIFFrealloc(td->td_stripoffset,
-		(td->td_nstrips + delta) * sizeof (uint64_new));
-	new_stripbytecount = (uint64_new*)_TIFFrealloc(td->td_stripbytecount,
-		(td->td_nstrips + delta) * sizeof (uint64_new));
+	new_stripoffset = (uint64*)_TIFFrealloc(td->td_stripoffset,
+		(td->td_nstrips + delta) * sizeof (uint64));
+	new_stripbytecount = (uint64*)_TIFFrealloc(td->td_stripbytecount,
+		(td->td_nstrips + delta) * sizeof (uint64));
 	if (new_stripoffset == NULL || new_stripbytecount == NULL) {
 		if (new_stripoffset)
 			_TIFFfree(new_stripoffset);
@@ -616,9 +616,9 @@ TIFFGrowStrips(TIFF* tif, uint32 delta, const char* module)
 	td->td_stripoffset = new_stripoffset;
 	td->td_stripbytecount = new_stripbytecount;
 	_TIFFmemset(td->td_stripoffset + td->td_nstrips,
-		    0, delta*sizeof (uint64_new));
+		    0, delta*sizeof (uint64));
 	_TIFFmemset(td->td_stripbytecount + td->td_nstrips,
-		    0, delta*sizeof (uint64_new));
+		    0, delta*sizeof (uint64));
 	td->td_nstrips += delta;
 	return (1);
 }
@@ -719,7 +719,7 @@ TIFFFlushData1(TIFF* tif)
  * appended to the end of the file.
  */
 void
-TIFFSetWriteOffset(TIFF* tif, uint64_new off)
+TIFFSetWriteOffset(TIFF* tif, uint64 off)
 {
 	tif->tif_curoff = off;
 }

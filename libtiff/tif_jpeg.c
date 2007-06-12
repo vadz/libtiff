@@ -644,8 +644,8 @@ struct JPEGFixupTagsSubsamplingData
 	uint32 buffersize;
 	uint8* buffercurrentbyte;
 	uint32 bufferbytesleft;
-	uint64_new fileoffset;
-	uint64_new filebytesleft;
+	uint64 fileoffset;
+	uint64 filebytesleft;
 	uint8 filepositioned;
 };
 static void JPEGFixupTagsSubsampling(TIFF* tif);
@@ -844,7 +844,7 @@ JPEGFixupTagsSubsamplingReadByte(struct JPEGFixupTagsSubsamplingData* data, uint
 			data->filepositioned=1;
 		}
 		m=data->buffersize;
-		if ((uint64_new)m>data->filebytesleft)
+		if ((uint64)m>data->filebytesleft)
 			m=(uint32)data->filebytesleft;
 		if (TIFFReadFile(data->tif,data->buffer,m)!=m)
 			return(0);
@@ -2057,7 +2057,7 @@ JPEGDefaultTileSize(TIFF* tif, uint32* tw, uint32* th)
 static int JPEGInitializeLibJPEG( TIFF * tif, int force_encode, int force_decode )
 {
     JPEGState* sp = JState(tif);
-    uint64_new* byte_counts = NULL;
+    uint64* byte_counts = NULL;
     int     data_is_empty = TRUE;
     int     decompress;
 

@@ -217,7 +217,7 @@ TIFFReadRawStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 {
 	static const char module[] = "TIFFReadRawStrip";
 	TIFFDirectory *td = &tif->tif_dir;
-	uint64_new bytecount;
+	uint64 bytecount;
 	tmsize_t bytecountm;
 
 	if (!TIFFCheckRead(tif, 0))
@@ -243,7 +243,7 @@ TIFFReadRawStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 		return ((tmsize_t)(-1));
 	}
 	bytecountm = (tmsize_t)bytecount;
-	if ((uint64_new)bytecountm!=bytecount) {
+	if ((uint64)bytecountm!=bytecount) {
 		TIFFErrorExt(tif->tif_clientdata, module, "Integer overflow");
 		return ((tmsize_t)(-1));
 	}
@@ -264,7 +264,7 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 
 	if ((tif->tif_flags&TIFF_NOREADRAW)==0)
 	{
-		uint64_new bytecount = td->td_stripbytecount[strip];  
+		uint64 bytecount = td->td_stripbytecount[strip];
 		if (bytecount <= 0) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "Invalid strip byte count %llu, strip %lu",
@@ -298,8 +298,8 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 			 * comparison (which can overflow) we do the following
 			 * two comparisons:
 			 */
-			if (bytecount > (uint64_new)tif->tif_size ||
-			    td->td_stripoffset[strip] > (uint64_new)tif->tif_size - bytecount) {
+			if (bytecount > (uint64)tif->tif_size ||
+			    td->td_stripoffset[strip] > (uint64)tif->tif_size - bytecount) {
 				/*
 				 * This error message might seem strange, but
 				 * it's what would happen if a read were done
@@ -325,7 +325,7 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 			 */
 			tmsize_t bytecountm;
 			bytecountm=(tmsize_t)bytecount;
-			if ((uint64_new)bytecountm!=bytecount)
+			if ((uint64)bytecountm!=bytecount)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Integer overflow");
 				return(0);
@@ -452,7 +452,7 @@ TIFFReadRawTile(TIFF* tif, uint32 tile, void* buf, tmsize_t size)
 {
 	static const char module[] = "TIFFReadRawTile";
 	TIFFDirectory *td = &tif->tif_dir;
-	uint64_new bytecount64;
+	uint64 bytecount64;
 	tmsize_t bytecountm;
 
 	if (!TIFFCheckRead(tif, 1))
@@ -470,10 +470,10 @@ TIFFReadRawTile(TIFF* tif, uint32 tile, void* buf, tmsize_t size)
 		return ((tmsize_t)(-1));
 	}
 	bytecount64 = td->td_stripbytecount[tile];
-	if (size != (tmsize_t)(-1) && (uint64_new)size < bytecount64)
-		bytecount64 = (uint64_new)size;
+	if (size != (tmsize_t)(-1) && (uint64)size < bytecount64)
+		bytecount64 = (uint64)size;
 	bytecountm = (tmsize_t)bytecount64;
-	if ((uint64_new)bytecountm!=bytecount64)
+	if ((uint64)bytecountm!=bytecount64)
 	{
 		TIFFErrorExt(tif->tif_clientdata,module,"Integer overflow");
 		return ((tmsize_t)(-1));
@@ -493,7 +493,7 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 
 	if ((tif->tif_flags&TIFF_NOREADRAW)==0)
 	{
-		uint64_new bytecount = td->td_stripbytecount[tile];
+		uint64 bytecount = td->td_stripbytecount[tile];
 		if (bytecount <= 0) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "%llu: Invalid tile byte count, tile %lu",
@@ -526,8 +526,8 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 			 * comparison (which can overflow) we do the following
 			 * two comparisons:
 			 */
-			if (bytecount > (uint64_new)tif->tif_size ||
-			    td->td_stripoffset[tile] > (uint64_new)tif->tif_size - bytecount) {
+			if (bytecount > (uint64)tif->tif_size ||
+			    td->td_stripoffset[tile] > (uint64)tif->tif_size - bytecount) {
 				tif->tif_curtile = NOTILE;
 				return (0);
 			}
@@ -542,7 +542,7 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 			 */
 			tmsize_t bytecountm;
 			bytecountm=(tmsize_t)bytecount;
-			if ((uint64_new)bytecountm!=bytecount)
+			if ((uint64)bytecountm!=bytecount)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Integer overflow");
 				return(0);
@@ -594,7 +594,7 @@ TIFFReadBufferSetup(TIFF* tif, void* bp, tmsize_t size)
 		tif->tif_rawdata = (uint8*) bp;
 		tif->tif_flags &= ~TIFF_MYBUFFER;
 	} else {
-		tif->tif_rawdatasize = (tmsize_t)TIFFroundup_64((uint64_new)size, 1024);
+		tif->tif_rawdatasize = (tmsize_t)TIFFroundup_64((uint64)size, 1024);
 		if (tif->tif_rawdatasize==0)
 			tif->tif_rawdatasize=(tmsize_t)(-1);
 		tif->tif_rawdata = (uint8*) _TIFFmalloc(tif->tif_rawdatasize);

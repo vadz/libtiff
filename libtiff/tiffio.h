@@ -58,17 +58,20 @@ typedef struct tiff TIFF;
  *     32-bit file offsets being the most important, and to ensure
  *     that it is unsigned, rather than signed.
  */
-typedef uint32 ttag_t_old;          /* directory tag */
-typedef uint16 tdir_t_old;          /* directory index */
-typedef uint16 tsample_t_old;       /* sample number */
-typedef uint32 tstrile_t_old;       /* strip or tile number */
-typedef tstrile_t_old tstrip_t_old;     /* strip number */
-typedef tstrile_t_old ttile_t_old;      /* tile number */
-typedef int32 tsize_t_old;          /* i/o size in bytes */
-typedef void* tdata_t_old;          /* image data ref */
-typedef uint32 toff_t_old;          /* file offset */
-/* temp new ones */
-typedef uint32 tmsize_t;
+/* this is the machine addressing size type, only it's signed, so make it int32
+   on 32bit machines, int64 on 64bit machines */
+typedef int32 tmsize_t;
+/* the following are depreciated and should be replaces by their defining
+   counterparts */
+typedef uint32 ttag_t;          /* directory tag */
+typedef uint16 tdir_t;          /* directory index */
+typedef uint16 tsample_t;       /* sample number */
+typedef uint32 tstrile_t;       /* strip or tile number */
+typedef tstrile_t tstrip_t;     /* strip number */
+typedef tstrile_t ttile_t;      /* tile number */
+typedef tmsize_t tsize_t;          /* i/o size in bytes */
+typedef void* tdata_t;          /* image data ref */
+typedef uint64 toff_t;          /* file offset */
 
 #if !defined(__WIN32__) && (defined(_WIN32) || defined(WIN32))
 #define __WIN32__
@@ -264,9 +267,9 @@ extern "C" {
 typedef void (*TIFFErrorHandler)(const char*, const char*, va_list);
 typedef void (*TIFFErrorHandlerExt)(thandle_t, const char*, const char*, va_list);
 typedef tmsize_t (*TIFFReadWriteProc)(thandle_t, void*, tmsize_t);
-typedef uint64_new (*TIFFSeekProc)(thandle_t, uint64_new, int);  
+typedef uint64 (*TIFFSeekProc)(thandle_t, uint64, int);
 typedef int (*TIFFCloseProc)(thandle_t);
-typedef uint64_new (*TIFFSizeProc)(thandle_t);  
+typedef uint64 (*TIFFSizeProc)(thandle_t);
 typedef int (*TIFFMapFileProc)(thandle_t, void** base, tmsize_t* size);
 typedef void (*TIFFUnmapFileProc)(thandle_t, void* base, tmsize_t size);
 typedef void (*TIFFExtendProc)(TIFF*);
@@ -352,25 +355,25 @@ extern int TIFFVGetField(TIFF*, uint32, va_list);
 extern int TIFFGetFieldDefaulted(TIFF*, uint32, ...);
 extern int TIFFVGetFieldDefaulted(TIFF*, uint32, va_list);
 extern int TIFFReadDirectory(TIFF*);
-extern int TIFFReadCustomDirectory(TIFF* tif, uint64_new diroff,
+extern int TIFFReadCustomDirectory(TIFF* tif, uint64 diroff,
     const TIFFFieldInfo info[], uint32 n);
-extern int TIFFReadEXIFDirectory(TIFF*, uint64_new);
-extern uint64_new TIFFScanlineSize64(TIFF* tif);
+extern int TIFFReadEXIFDirectory(TIFF*, uint64);
+extern uint64 TIFFScanlineSize64(TIFF* tif);
 extern tmsize_t TIFFScanlineSize(TIFF* tif);
-extern uint64_new TIFFRasterScanlineSize64(TIFF* tif);
+extern uint64 TIFFRasterScanlineSize64(TIFF* tif);
 extern tmsize_t TIFFRasterScanlineSize(TIFF* tif);
-extern uint64_new TIFFStripSize64(TIFF* tif);
+extern uint64 TIFFStripSize64(TIFF* tif);
 extern tmsize_t TIFFStripSize(TIFF* tif);
-extern uint64_new TIFFRawStripSize64(TIFF* tif, uint32 strip);  
-extern tmsize_t TIFFRawStripSize(TIFF* tif, uint32 strip);  
-extern uint64_new TIFFVStripSize64(TIFF* tif, uint32 nrows);
+extern uint64 TIFFRawStripSize64(TIFF* tif, uint32 strip);
+extern tmsize_t TIFFRawStripSize(TIFF* tif, uint32 strip);
+extern uint64 TIFFVStripSize64(TIFF* tif, uint32 nrows);
 extern tmsize_t TIFFVStripSize(TIFF* tif, uint32 nrows);
-extern uint64_new TIFFTileRowSize64(TIFF* tif);
+extern uint64 TIFFTileRowSize64(TIFF* tif);
 extern tmsize_t TIFFTileRowSize(TIFF* tif);
-extern uint64_new TIFFTileSize64(TIFF* tif);
+extern uint64 TIFFTileSize64(TIFF* tif);
 extern tmsize_t TIFFTileSize(TIFF* tif);
-extern uint64_new TIFFVTileSize64(TIFF* tif, uint32 nrows);
-extern tmsize_t TIFFVTileSize(TIFF* tif, uint32 nrows);  
+extern uint64 TIFFVTileSize64(TIFF* tif, uint32 nrows);
+extern tmsize_t TIFFVTileSize(TIFF* tif, uint32 nrows);
 extern uint32 TIFFDefaultStripSize(TIFF*, uint32);
 extern void TIFFDefaultTileSize(TIFF*, uint32*, uint32*);
 extern int TIFFFileno(TIFF*);
@@ -405,7 +408,7 @@ extern void TIFFFreeDirectory(TIFF*);
 extern int TIFFCreateDirectory(TIFF*);
 extern int TIFFLastDirectory(TIFF*);
 extern int TIFFSetDirectory(TIFF*, uint16);
-extern int TIFFSetSubDirectory(TIFF*, uint32);
+extern int TIFFSetSubDirectory(TIFF*, uint64);
 extern int TIFFUnlinkDirectory(TIFF*, uint16);
 extern int TIFFSetField(TIFF*, uint32, ...);
 extern int TIFFVSetField(TIFF*, uint32, va_list);
@@ -473,15 +476,15 @@ extern tmsize_t TIFFWriteRawStrip(TIFF* tif, uint32 strip, void* data, tmsize_t 
 extern tmsize_t TIFFWriteEncodedTile(TIFF* tif, uint32 tile, void* data, tmsize_t cc);  
 extern tmsize_t TIFFWriteRawTile(TIFF* tif, uint32 tile, void* data, tmsize_t cc);  
 extern int TIFFDataWidth(TIFFDataType);    /* table of tag datatype widths */
-extern void TIFFSetWriteOffset(TIFF* tif, uint64_new off);  
+extern void TIFFSetWriteOffset(TIFF* tif, uint64 off);
 extern void TIFFSwabShort(uint16*);
 extern void TIFFSwabLong(uint32*);
-extern void TIFFSwabLong8(uint64_new*);
+extern void TIFFSwabLong8(uint64*);
 extern void TIFFSwabDouble(double*);
 extern void TIFFSwabArrayOfShort(uint16* wp, tmsize_t n);
 extern void TIFFSwabArrayOfTriples(uint8* tp, tmsize_t n);
 extern void TIFFSwabArrayOfLong(uint32* lp, tmsize_t n);
-extern void TIFFSwabArrayOfLong8(uint64_new* lp, tmsize_t n);
+extern void TIFFSwabArrayOfLong8(uint64* lp, tmsize_t n);
 extern void TIFFSwabArrayOfDouble(double* dp, tmsize_t n);
 extern void TIFFReverseBits(uint8* cp, tmsize_t n);
 extern const unsigned char* TIFFGetBitRevTable(int);

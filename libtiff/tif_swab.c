@@ -56,7 +56,7 @@ TIFFSwabLong(uint32* lp)
 
 #ifndef TIFFSwabLong8
 void
-TIFFSwabLong8(uint64_new* lp)
+TIFFSwabLong8(uint64* lp)
 {
 	register unsigned char* cp = (unsigned char*) lp;
 	unsigned char t;
@@ -119,7 +119,7 @@ TIFFSwabArrayOfLong(register uint32* lp, tmsize_t n)
 
 #ifndef TIFFSwabArrayOfLong8
 void
-TIFFSwabArrayOfLong8(register uint64_new* lp, tmsize_t n)  
+TIFFSwabArrayOfLong8(register uint64* lp, tmsize_t n)  
 {
 	register unsigned char *cp;
 	register unsigned char t;

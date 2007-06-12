@@ -37,7 +37,7 @@ _tiffReadProc(thandle_t fd, void* buf, tmsize_t size)
 {
 	DWORD dwSizeRead;
 	/* TODO: support size datatype that is 64bit on 64bit systems */
-	assert((uint32)size==size);
+	assert((int32)size==size);
 	if (!ReadFile(fd, buf, (uint32)size, &dwSizeRead, NULL))
 		return(0);
 	return ((tmsize_t)dwSizeRead);
@@ -48,14 +48,14 @@ _tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 {
 	DWORD dwSizeWritten;
 	/* TODO: support size datatype that is 64bit on 64bit systems */
-	assert((uint32)size==size);
+	assert((int32)size==size);
 	if (!WriteFile(fd, buf, (uint32)size, &dwSizeWritten, NULL))
 		return(0);
 	return ((tmsize_t)dwSizeWritten);
 }
 
-static uint64_new
-_tiffSeekProc(thandle_t fd, uint64_new off, int whence)
+static uint64
+_tiffSeekProc(thandle_t fd, uint64 off, int whence)
 {
 	LARGE_INTEGER off_in, off_out;
 	DWORD dwMoveMethod;
@@ -88,7 +88,7 @@ _tiffCloseProc(thandle_t fd)
 	return (CloseHandle(fd) ? 0 : -1);
 }
 
-static uint64_new
+static uint64
 _tiffSizeProc(thandle_t fd)
 {
 	ULARGE_INTEGER m;
@@ -119,13 +119,13 @@ _tiffDummyMapProc(thandle_t fd, void** pbase, tmsize_t* psize)
 static int
 _tiffMapProc(thandle_t fd, void** pbase, tmsize_t* psize)
 {
-	uint64_new size;
+	uint64 size;
 	tmsize_t sizem;
 	HANDLE hMapFile;
 
 	size = _tiffSizeProc(fd);
 	sizem = (tmsize_t)size;
-	if ((uint64_new)sizem!=size)
+	if ((uint64)sizem!=size)
 		return (0);
 	hMapFile = CreateFileMapping(fd, NULL, PAGE_READONLY, 0, sizem, NULL);
 	if (hMapFile == NULL)

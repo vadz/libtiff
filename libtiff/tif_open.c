@@ -161,8 +161,8 @@ TIFFClientOpen(
 	assert(sizeof(int16)==2);
 	assert(sizeof(uint32)==4);
 	assert(sizeof(int32)==4);
-	assert(sizeof(uint64_new)==8);
-	assert(sizeof(int64_new)==8);
+	assert(sizeof(uint64)==8);
+	assert(sizeof(int64)==8);
 	assert(sizeof(tmsize_t)==sizeof(void*));
 
 	m = _TIFFgetMode(mode, module);

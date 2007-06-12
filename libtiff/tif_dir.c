@@ -63,8 +63,8 @@ void _TIFFsetShortArray(uint16** wpp, uint16* wp, uint32 n)
     { setByteArray((void**) wpp, (void*) wp, n, sizeof (uint16)); }
 void _TIFFsetLongArray(uint32** lpp, uint32* lp, uint32 n)
     { setByteArray((void**) lpp, (void*) lp, n, sizeof (uint32)); }
-void _TIFFsetLong8Array(uint32** lpp, uint64_new* lp, uint32 n)
-    { setByteArray((void**) lpp, (void*) lp, n, sizeof (uint64_new)); }
+void _TIFFsetLong8Array(uint64** lpp, uint64* lp, uint32 n)
+    { setByteArray((void**) lpp, (void*) lp, n, sizeof (uint64)); }
 void _TIFFsetFloatArray(float** fpp, float* fp, uint32 n)
     { setByteArray((void**) fpp, (void*) fp, n, sizeof (float)); }
 void _TIFFsetDoubleArray(double** dpp, double* dp, uint32 n)
@@ -356,7 +356,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	case TIFFTAG_SUBIFD:
 		if ((tif->tif_flags & TIFF_INSUBIFD) == 0) {
 			td->td_nsubifd = (uint16) va_arg(ap, uint16);
-			_TIFFsetLong8Array(&td->td_subifd, (uint64_new*) va_arg(ap, uint64_new*),
+			_TIFFsetLong8Array(&td->td_subifd, (uint64*) va_arg(ap, uint64*),
 			    (long) td->td_nsubifd);
 		} else {
 			TIFFErrorExt(tif->tif_clientdata, module,
@@ -769,11 +769,11 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
             break;
 	case TIFFTAG_STRIPOFFSETS:
 	case TIFFTAG_TILEOFFSETS:
-	    *va_arg(ap, uint64_new**) = td->td_stripoffset;
+	    *va_arg(ap, uint64**) = td->td_stripoffset;
 	    break;
 	case TIFFTAG_STRIPBYTECOUNTS:
 	case TIFFTAG_TILEBYTECOUNTS:
-	    *va_arg(ap, uint64_new**) = td->td_stripbytecount;  
+	    *va_arg(ap, uint64**) = td->td_stripbytecount;
             break;
 	case TIFFTAG_MATTEING:
             *va_arg(ap, uint16*) =
@@ -817,7 +817,7 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
             break;
 	case TIFFTAG_SUBIFD:
             *va_arg(ap, uint16*) = td->td_nsubifd;
-	    *va_arg(ap, uint64_new**) = td->td_subifd;
+	    *va_arg(ap, uint64**) = td->td_subifd;
             break;
 	case TIFFTAG_YCBCRPOSITIONING:
             *va_arg(ap, uint16*) = td->td_ycbcrpositioning;
@@ -1122,12 +1122,12 @@ TIFFDefaultDirectory(TIFF* tif)
 }
 
 static int
-TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
+TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 {
 	static const char module[] = "TIFFAdvanceDirectory";
 	if (isMapped(tif))
 	{
-		uint64_new poff=*nextdir;
+		uint64 poff=*nextdir;
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
 		{
 			uint16 dircount;
@@ -1144,7 +1144,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 			poff+=sizeof (uint16)+dircount*12;
 			if (off != NULL)
 				*off = poff;
-			if (((uint64_new) (poff+sizeof (uint32))) > tif->tif_size)
+			if (((uint64) (poff+sizeof (uint32))) > tif->tif_size)
 			{
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
@@ -1157,15 +1157,15 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 		}
 		else
 		{
-			uint64_new dircount64;
+			uint64 dircount64;
 			uint16 dircount16;
-			if (poff+sizeof(uint64_new) > tif->tif_size)
+			if (poff+sizeof(uint64) > tif->tif_size)
 			{
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
 				    tif->tif_name);
 				return (0);
 			}
-			_TIFFmemcpy(&dircount64, tif->tif_base+(tmsize_t)poff, sizeof (uint64_new));
+			_TIFFmemcpy(&dircount64, tif->tif_base+(tmsize_t)poff, sizeof (uint64));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>0xFFFF)
@@ -1174,16 +1174,16 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 				return(0);
 			}
 			dircount16 = (uint16)dircount64;
-			poff+=sizeof (uint64_new)+dircount16*20;
+			poff+=sizeof (uint64)+dircount16*20;
 			if (off != NULL)
 				*off = poff;
-			if (((uint64_new) (poff+sizeof (uint64_new))) > tif->tif_size)
+			if (((uint64) (poff+sizeof (uint64))) > tif->tif_size)
 			{
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
 				return (0);
 			}
-			_TIFFmemcpy(nextdir, tif->tif_base+(tmsize_t)poff, sizeof (uint64_new));
+			_TIFFmemcpy(nextdir, tif->tif_base+(tmsize_t)poff, sizeof (uint64));
 			if (tif->tif_flags & TIFF_SWAB)
 				TIFFSwabLong8(nextdir);
 		}
@@ -1220,10 +1220,10 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 		}
 		else
 		{
-			uint64_new dircount64;
+			uint64 dircount64;
 			uint16 dircount16;
 			if (!SeekOK(tif, *nextdir) ||
-			    !ReadOK(tif, &dircount64, sizeof (uint64_new))) {
+			    !ReadOK(tif, &dircount64, sizeof (uint64))) {
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
 				    tif->tif_name);
 				return (0);
@@ -1242,7 +1242,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 			else
 				(void) TIFFSeekFile(tif,
 				    dircount16*20, SEEK_CUR);
-			if (!ReadOK(tif, nextdir, sizeof (uint64_new))) {
+			if (!ReadOK(tif, nextdir, sizeof (uint64))) {
 				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
 				    tif->tif_name);
 				return (0);
@@ -1260,7 +1260,7 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_new* nextdir, uint64_new* off)
 uint16
 TIFFNumberOfDirectories(TIFF* tif)
 {
-	uint64_new nextdir;
+	uint64 nextdir;
 	uint16 n;
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
@@ -1279,7 +1279,7 @@ TIFFNumberOfDirectories(TIFF* tif)
 int
 TIFFSetDirectory(TIFF* tif, uint16 dirn)
 {
-	uint64_new nextdir;
+	uint64 nextdir;
 	uint16 n;
 
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
@@ -1311,7 +1311,7 @@ TIFFSetDirectory(TIFF* tif, uint16 dirn)
  * the SubIFD tag (e.g. thumbnail images).
  */
 int
-TIFFSetSubDirectory(TIFF* tif, uint32 diroff)
+TIFFSetSubDirectory(TIFF* tif, uint64 diroff)
 {
 	tif->tif_nextdiroff = diroff;
 	/*
@@ -1348,8 +1348,8 @@ int
 TIFFUnlinkDirectory(TIFF* tif, uint16 dirn)
 {
 	static const char module[] = "TIFFUnlinkDirectory";
-	uint64_new nextdir;
-	uint64_new off;
+	uint64 nextdir;
+	uint64 off;
 	uint16 n;
 
 	if (tif->tif_mode == O_RDONLY) {

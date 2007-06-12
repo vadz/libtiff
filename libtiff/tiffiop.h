@@ -116,9 +116,9 @@ struct tiff {
 #define TIFF_NOREADRAW   0x20000 /* skip reading of raw uncompressed image data */
 #define TIFF_INCUSTOMIFD 0x40000 /* currently writing a custom IFD */
 #define TIFF_BIGTIFF     0x80000 /* read/write bigtiff */
-	uint64_new           tif_diroff;       /* file offset of current directory */
-	uint64_new           tif_nextdiroff;   /* file offset of following directory */
-	uint64_new*          tif_dirlist;      /* list of offsets to already seen directories to prevent IFD looping */
+	uint64               tif_diroff;       /* file offset of current directory */
+	uint64               tif_nextdiroff;   /* file offset of following directory */
+	uint64*              tif_dirlist;      /* list of offsets to already seen directories to prevent IFD looping */
 	uint16               tif_dirlistsize;  /* number of entires in offset list */
 	uint16               tif_dirnumber;    /* number of already seen directories */
 	TIFFDirectory        tif_dir;          /* internal rep of current directory */
@@ -134,11 +134,11 @@ struct tiff {
 	uint32               tif_row;          /* current scanline */
 	uint16               tif_curdir;       /* current directory (index) */
 	uint32               tif_curstrip;     /* current strip for read/write */
-	uint64_new           tif_curoff;       /* current offset for read/write */
-	uint64_new           tif_dataoff;      /* current offset for writing dir */
+	uint64               tif_curoff;       /* current offset for read/write */
+	uint64               tif_dataoff;      /* current offset for writing dir */
 /* SubIFD support */
 	uint16               tif_nsubifd;      /* remaining subifds to write */
-	uint64_new           tif_subifdoff;    /* offset for patching SubIFD link */
+	uint64               tif_subifdoff;    /* offset for patching SubIFD link */
 /* tiling support */
 	uint32               tif_col;          /* current column (offset by row too) */
 	uint32               tif_curtile;      /* current tile for read/write */
@@ -234,8 +234,8 @@ struct tiff {
 #define TIFFhowmany_32(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
 #define TIFFhowmany8_32(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
 #define TIFFroundup_32(x, y) (TIFFhowmany_32(x,y)*(y))
-#define TIFFhowmany_64(x, y) ((((uint64_new)(x))+(((uint64_new)(y))-1))/((uint64_new)(y)))
-#define TIFFhowmany8_64(x) (((x)&0x07)?((uint64_new)(x)>>3)+1:(uint64_new)(x)>>3)
+#define TIFFhowmany_64(x, y) ((((uint64)(x))+(((uint64)(y))-1))/((uint64)(y)))
+#define TIFFhowmany8_64(x) (((x)&0x07)?((uint64)(x)>>3)+1:(uint64)(x)>>3)
 #define TIFFroundup_64(x, y) (TIFFhowmany_64(x,y)*(y))
 
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))

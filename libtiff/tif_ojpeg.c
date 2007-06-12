@@ -224,7 +224,7 @@ typedef struct {
 	#endif
 	TIFFVGetMethod vgetparent;
 	TIFFVSetMethod vsetparent;
-	uint64_new file_size;  
+	uint64 file_size;
 	uint32 image_width;
 	uint32 image_length;
 	uint32 strile_width;
@@ -233,8 +233,8 @@ typedef struct {
 	uint8 samples_per_pixel;
 	uint8 plane_sample_offset;
 	uint8 samples_per_pixel_per_plane;
-	uint64_new jpeg_interchange_format;
-	uint64_new jpeg_interchange_format_length;
+	uint64 jpeg_interchange_format;
+	uint64 jpeg_interchange_format_length;
 	uint8 jpeg_proc;
 	uint8 subsamplingcorrect;
 	uint8 subsamplingcorrect_done;
@@ -245,9 +245,9 @@ typedef struct {
 	uint8 qtable_offset_count;
 	uint8 dctable_offset_count;
 	uint8 actable_offset_count;
-	uint64_new qtable_offset[3];
-	uint64_new dctable_offset[3];
-	uint64_new actable_offset[3];
+	uint64 qtable_offset[3];
+	uint64 dctable_offset[3];
+	uint64 actable_offset[3];
 	uint8* qtable[4];
 	uint8* dctable[4];
 	uint8* actable[4];
@@ -266,8 +266,8 @@ typedef struct {
 		uint8 log;
 		OJPEGStateInBufferSource in_buffer_source;
 		uint32 in_buffer_next_strile;
-		uint64_new in_buffer_file_pos;
-		uint64_new in_buffer_file_togo;
+		uint64 in_buffer_file_pos;
+		uint64 in_buffer_file_togo;
 	} sos_end[3];
 	uint8 readheader_done;
 	uint8 writeheader_done;
@@ -299,9 +299,9 @@ typedef struct {
 	OJPEGStateInBufferSource in_buffer_source;
 	uint32 in_buffer_next_strile;
 	uint32 in_buffer_strile_count;
-	uint64_new in_buffer_file_pos;
+	uint64 in_buffer_file_pos;
 	uint8 in_buffer_file_pos_log;
-	uint64_new in_buffer_file_togo;
+	uint64 in_buffer_file_togo;
 	uint16 in_buffer_togo;
 	uint8* in_buffer_cur;
 	uint8 in_buffer[OJPEG_BUFFER];
@@ -458,10 +458,10 @@ OJPEGVGetField(TIFF* tif, uint32 tag, va_list ap)
 	switch(tag)
 	{
 		case TIFFTAG_JPEGIFOFFSET:
-			*va_arg(ap,uint64_new*)=(uint64_new)sp->jpeg_interchange_format;
+			*va_arg(ap,uint64*)=(uint64)sp->jpeg_interchange_format;
 			break;
 		case TIFFTAG_JPEGIFBYTECOUNT:
-			*va_arg(ap,uint64_new*)=(uint64_new)sp->jpeg_interchange_format_length;  
+			*va_arg(ap,uint64*)=(uint64)sp->jpeg_interchange_format_length;
 			break;
 		case TIFFTAG_YCBCRSUBSAMPLING:
 			if (sp->subsamplingcorrect_done==0)
@@ -499,15 +499,15 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 	static const char module[]="OJPEGVSetField";
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	uint32 ma;
-	uint64_new* mb;
+	uint64* mb;
 	uint32 n;
 	switch(tag)
 	{
 		case TIFFTAG_JPEGIFOFFSET:
-			sp->jpeg_interchange_format=(uint64_new)va_arg(ap,uint64_new);
+			sp->jpeg_interchange_format=(uint64)va_arg(ap,uint64);
 			break;
 		case TIFFTAG_JPEGIFBYTECOUNT:
-			sp->jpeg_interchange_format_length=va_arg(ap,uint64_new);
+			sp->jpeg_interchange_format_length=(uint64)va_arg(ap,uint64);
 			break;
 		case TIFFTAG_YCBCRSUBSAMPLING:
 			sp->subsampling_tag=1;
@@ -526,7 +526,7 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 					return(0);
 				}
 				sp->qtable_offset_count=(uint8)ma;
-				mb=(uint64_new*)va_arg(ap,uint64_new*);
+				mb=(uint64*)va_arg(ap,uint64*);
 				for (n=0; n<ma; n++)
 					sp->qtable_offset[n]=mb[n];
 			}
@@ -541,7 +541,7 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 					return(0);
 				}
 				sp->dctable_offset_count=(uint8)ma;
-				mb=(uint64_new*)va_arg(ap,uint64_new*);
+				mb=(uint64*)va_arg(ap,uint64*);
 				for (n=0; n<ma; n++)
 					sp->dctable_offset[n]=mb[n];
 			}
@@ -556,7 +556,7 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 					return(0);
 				}
 				sp->actable_offset_count=(uint8)ma;
-				mb=(uint64_new*)va_arg(ap,uint64_new*);
+				mb=(uint64*)va_arg(ap,uint64*);
 				for (n=0; n<ma; n++)
 					sp->actable_offset[n]=mb[n];
 			}

@@ -199,8 +199,8 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	uint16 i;
 	long l, n;
 
-	fprintf(fd, "TIFF Directory at offset 0x%lx (%lu)\n",
-		(unsigned long)tif->tif_diroff, (unsigned long)tif->tif_diroff);
+	fprintf(fd, "TIFF Directory at offset 0x%llx (%llu)\n",
+		tif->tif_diroff, tif->tif_diroff);
 	if (TIFFFieldSet(tif,FIELD_SUBFILETYPE)) {
 		fprintf(fd, "  Subfile Type:");
 		sep = " ";
