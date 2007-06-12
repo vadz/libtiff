@@ -60,7 +60,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	extern char* optarg;
 	long flags = 0;
-	uint32 diroff = 0;
+	uint64 diroff = 0;
 	int chopstrips = 0;		/* disable strip chopping */
 
 	while ((c = getopt(argc, argv, "f:o:cdDSjilmrsvwz0123456789")) != -1)
