@@ -63,7 +63,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	extern char *optarg;
 
-	while ((c = getopt(argc, argv, "c:r:t:b:n:8")) != -1)
+	while ((c = getopt(argc, argv, "c:r:t:bn8")) != -1)
 		switch (c) {
 			case 'b':
 				process_by_block = 1;
