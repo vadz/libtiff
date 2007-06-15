@@ -517,14 +517,12 @@ PredictorEncodeTile(TIFF* tif, uint8* bp0, tmsize_t cc0, uint16 s)
 	TIFFPredictorState *sp = PredictorState(tif);
 	tmsize_t cc = cc0, rowsize;
 	unsigned char* bp = bp0;
-
 	assert(sp != NULL);
 	assert(sp->pfunc != NULL);
 	assert(sp->codetile != NULL);
-	assert((cc0%rowsize)==0);
-
 	rowsize = sp->rowsize;
 	assert(rowsize > 0);
+	assert((cc0%rowsize)==0);
 	while (cc > 0) {
 		(*sp->pfunc)(tif, bp, rowsize);
 		cc -= rowsize;
@@ -536,7 +534,7 @@ PredictorEncodeTile(TIFF* tif, uint8* bp0, tmsize_t cc0, uint16 s)
 #define	FIELD_PREDICTOR	(FIELD_CODEC+0)		/* XXX */
 
 static const TIFFFieldInfo predictFieldInfo[] = {
-    { TIFFTAG_PREDICTOR, 1, 1, TIFF_SHORT, TIFF_SETGET_UINT16, TIFF_SETGET_UNDEFINED, FIELD_PREDICTOR, FALSE, FALSE, "Predictor" },
+    { TIFFTAG_PREDICTOR, 1, 1, TIFF_SHORT, TIFF_SETGET_UINT16, TIFF_SETGET_UINT16, FIELD_PREDICTOR, FALSE, FALSE, "Predictor" },
 };
 
 static int

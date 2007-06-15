@@ -540,6 +540,67 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 				if (!TIFFWriteDirectoryTagSubifd(tif,&ndir,dir))
 					goto bad;
 			}
+			{
+				int n;
+				for (n=0; n<tif->tif_nfields; n++)
+				{
+					const TIFFFieldInfo* o;
+					o=tif->tif_fieldinfo[n];
+					if ((o->field_bit>=FIELD_CODEC)&&(TIFFFieldSet(tif,o->field_bit)))
+					{
+						switch (o->get_field_type)
+						{
+							case TIFF_SETGET_ASCII:
+								{
+									uint32 pa;
+									char* pb;
+									assert(o->field_type==TIFF_ASCII);
+									assert(o->field_readcount==TIFF_VARIABLE);
+									assert(o->field_passcount==0);
+									TIFFGetField(tif,o->field_tag,&pb);
+									pa=strlen(pb);
+									if (!TIFFWriteDirectoryTagAscii(tif,&ndir,dir,o->field_tag,pa,pb))
+										goto bad;
+								}
+								break;
+							case TIFF_SETGET_UINT16:
+								{
+									uint16 p;
+									assert(o->field_type==TIFF_SHORT);
+									assert(o->field_readcount==1);
+									assert(o->field_passcount==0);
+									TIFFGetField(tif,o->field_tag,&p);
+									if (!TIFFWriteDirectoryTagShort(tif,&ndir,dir,o->field_tag,p))
+										goto bad;
+								}
+								break;
+							case TIFF_SETGET_UINT32:
+								{
+									uint32 p;
+									assert(o->field_type==TIFF_LONG);
+									assert(o->field_readcount==1);
+									assert(o->field_passcount==0);
+									TIFFGetField(tif,o->field_tag,&p);
+									if (!TIFFWriteDirectoryTagLong(tif,&ndir,dir,o->field_tag,p))
+										goto bad;
+								}
+								break;
+							case TIFF_SETGET_C32_UINT8:
+								{
+									uint32 pa;
+									void* pb;
+									assert(o->field_type==TIFF_UNDEFINED);
+									assert(o->field_readcount==TIFF_VARIABLE2);
+									assert(o->field_passcount==1);
+									TIFFGetField(tif,o->field_tag,&pa,&pb);
+									if (!TIFFWriteDirectoryTagUndefinedArray(tif,&ndir,dir,o->field_tag,pa,pb))
+										goto bad;
+								}
+								break;
+						}
+					}
+				}
+			}
 		}
 		for (m=0; m<(uint32)(tif->tif_dir.td_customValueCount); m++)
 		{
