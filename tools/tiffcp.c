@@ -152,7 +152,7 @@ static TIFF* openSrcImage (char **imageSpec)
 }
 
 int
-tiffcp_main(int argc, char* argv[])
+main(int argc, char* argv[])
 {
 	uint16 defconfig = (uint16) -1;
 	uint16 deffillorder = 0;
