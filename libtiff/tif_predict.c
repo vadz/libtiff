@@ -62,23 +62,23 @@ PredictorSetup(TIFF* tif)
 			if (td->td_bitspersample != 8
 			    && td->td_bitspersample != 16) {
 				TIFFErrorExt(tif->tif_clientdata, module,
-    "Horizontal differencing \"Predictor\" not supported with %d-bit samples",
-					  td->td_bitspersample);
+				    "Horizontal differencing \"Predictor\" not supported with %d-bit samples",
+				    td->td_bitspersample);
 				return 0;
 			}
 			break;
 		case PREDICTOR_FLOATINGPOINT:
 			if (td->td_sampleformat != SAMPLEFORMAT_IEEEFP) {
 				TIFFErrorExt(tif->tif_clientdata, module,
-	"Floating point \"Predictor\" not supported with %d data format",
-					  td->td_sampleformat);
+				    "Floating point \"Predictor\" not supported with %d data format",
+				    td->td_sampleformat);
 				return 0;
 			}
 			break;
 		default:
 			TIFFErrorExt(tif->tif_clientdata, module,
-				  "\"Predictor\" value %d not supported",
-				  sp->predictor);
+			    "\"Predictor\" value %d not supported",
+			    sp->predictor);
 			return 0;
 	}
 	sp->stride = (td->td_planarconfig == PLANARCONFIG_CONTIG ?
@@ -332,12 +332,12 @@ fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc)
 	for (count = 0; count < wc; count++) {
 		uint32 byte;
 		for (byte = 0; byte < bps; byte++) {
-#if WORDS_BIGENDIAN
+			#if WORDS_BIGENDIAN
 			cp[bps * count + byte] = tmp[byte * wc + count];
-#else
+			#else
 			cp[bps * count + byte] =
 				tmp[(bps - byte - 1) * wc + count];
-#endif
+			#endif
 		}
 	}
 	_TIFFfree(tmp);
@@ -481,12 +481,12 @@ fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc)
 	for (count = 0; count < wc; count++) {
 		uint32 byte;
 		for (byte = 0; byte < bps; byte++) {
-#if WORDS_BIGENDIAN
-			cp[byte * wc + count] =	tmp[bps * count + byte];
-#else
+			#if WORDS_BIGENDIAN
+			cp[byte * wc + count] = tmp[bps * count + byte];
+			#else
 			cp[(bps - byte - 1) * wc + count] =
 				tmp[bps * count + byte];
-#endif
+			#endif
 		}
 	}
 	_TIFFfree(tmp);
@@ -584,9 +584,9 @@ PredictorPrintDir(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_PREDICTOR)) {
 		fprintf(fd, "  Predictor: ");
 		switch (sp->predictor) {
-		case 1: fprintf(fd, "none "); break;
-		case 2: fprintf(fd, "horizontal differencing "); break;
-		case 3: fprintf(fd, "floating point predictor "); break;
+			case 1: fprintf(fd, "none "); break;
+			case 2: fprintf(fd, "horizontal differencing "); break;
+			case 3: fprintf(fd, "floating point predictor "); break;
 		}
 		fprintf(fd, "%u (0x%x)\n", sp->predictor, sp->predictor);
 	}
@@ -605,9 +605,9 @@ TIFFPredictorInit(TIFF* tif)
 	 * Merge codec-specific tag information.
 	 */
 	if (!_TIFFMergeFieldInfo(tif, predictFieldInfo,
-				 TIFFArrayCount(predictFieldInfo))) {
+	    TIFFArrayCount(predictFieldInfo))) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFPredictorInit",
-			     "Merging Predictor codec-specific tags failed");
+		    "Merging Predictor codec-specific tags failed");
 		return 0;
 	}
 

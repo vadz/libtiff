@@ -146,7 +146,7 @@
  * 	absolutely no effect. That is why most people insist the EGYPTIANWALK is a bit silly.
  */
 
-/* #define LIBJPEG_ENCAP_EXTERNAL */
+/* define LIBJPEG_ENCAP_EXTERNAL */
 #define SETJMP(jbuf) setjmp(jbuf)
 #define LONGJMP(jbuf,code) longjmp(jbuf,code)
 #define JMP_BUF jmp_buf
@@ -402,7 +402,7 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
 	 */
 	if (!_TIFFMergeFieldInfo(tif,ojpeg_field_info,FIELD_OJPEG_COUNT)) {
 		TIFFErrorExt(tif->tif_clientdata, module,
-			     "Merging Old JPEG codec-specific tags failed");
+		    "Merging Old JPEG codec-specific tags failed");
 		return 0;
 	}
 

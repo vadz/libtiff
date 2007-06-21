@@ -106,7 +106,7 @@ TIFFNumberOfStrips(TIFF* tif)
 	     TIFFhowmany_32(td->td_imagelength, td->td_rowsperstrip));
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 		nstrips = multiply_32(tif, nstrips, (uint32)td->td_samplesperpixel,
-				   "TIFFNumberOfStrips");
+		    "TIFFNumberOfStrips");
 	return (nstrips);
 }
 
@@ -155,7 +155,8 @@ TIFFVStripSize64(TIFF* tif, uint32 nrows)
 		samplingrow_samples=multiply_64(tif,samplingblocks_hor,samplingblock_samples,module);
 		samplingrow_size=TIFFhowmany8_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module));
 		return(multiply_64(tif,samplingrow_size,samplingblocks_ver,module));
-	} else
+	}
+	else
 		return(multiply_64(tif,nrows,TIFFScanlineSize64(tif),module));
 }
 tmsize_t
@@ -325,7 +326,7 @@ TIFFScanlineSize64(TIFF* tif)
 			samplingblock_samples=ycbcrsubsampling[0]*ycbcrsubsampling[1]+2;
 			samplingblocks_hor=TIFFhowmany_32(td->td_imagewidth,ycbcrsubsampling[0]);
 			samplingrow_samples=multiply_64(tif,samplingblocks_hor,samplingblock_samples,module);
-			samplingrow_size=TIFFhowmany_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module),8);  
+			samplingrow_size=TIFFhowmany_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module),8);
 			assert((samplingrow_size%ycbcrsubsampling[1])==0);
 			scanline_size=(samplingrow_size/ycbcrsubsampling[1]);
 		}
@@ -375,8 +376,7 @@ TIFFRasterScanlineSize64(TIFF* tif)
 		return (TIFFhowmany8_64(scanline));
 	} else
 		return (multiply_64 (tif, TIFFhowmany8_64(scanline),
-					    td->td_samplesperpixel,
-					    module));
+		    td->td_samplesperpixel, module));
 }
 tmsize_t
 TIFFRasterScanlineSize(TIFF* tif)

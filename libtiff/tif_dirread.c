@@ -51,20 +51,6 @@ extern void TIFFCvtIEEEFloatToNative(TIFF*, uint32, float*);
 extern void TIFFCvtIEEEDoubleToNative(TIFF*, uint32, double*);
 #endif
 
-static int EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
-static int EstimateStripByteCountsClassic(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
-static int EstimateStripByteCountsBig(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
-static void MissingRequired(TIFF*, const char*);
-static int TIFFCheckDirOffset(TIFF* tif, uint64 diroff);
-static int CheckDirCount(TIFF*, TIFFDirEntry*, uint32);
-static uint16 TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir, uint64* nextdiroff);
-static int TIFFFetchNormalTag(TIFF*, TIFFDirEntry*, int recover);
-static int TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp);
-static int TIFFFetchSubjectDistance(TIFF*, TIFFDirEntry*);
-static void ChopUpSingleUncompressedStrip(TIFF*);
-
-/* dddddddddddddddddddddddddd */
-
 enum TIFFReadDirEntryErr {
 	TIFFReadDirEntryErrOk = 0,
 	TIFFReadDirEntryErrCount = 1,
@@ -164,6 +150,16 @@ static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, c
 static void TIFFReadDirectoryCheckOrder(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
 static TIFFDirEntry* TIFFReadDirectoryFindEntry(TIFF* tif, TIFFDirEntry* dir, uint16 dircount, uint16 tagid);
 static void TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint32* fii);
+
+static int EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount);
+static void MissingRequired(TIFF*, const char*);
+static int TIFFCheckDirOffset(TIFF* tif, uint64 diroff);
+static int CheckDirCount(TIFF*, TIFFDirEntry*, uint32);
+static uint16 TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir, uint64* nextdiroff);
+static int TIFFFetchNormalTag(TIFF*, TIFFDirEntry*, int recover);
+static int TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp);
+static int TIFFFetchSubjectDistance(TIFF*, TIFFDirEntry*);
+static void ChopUpSingleUncompressedStrip(TIFF*);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryShort(TIFF* tif, TIFFDirEntry* direntry, uint16* value)
 {
@@ -3692,6 +3688,9 @@ TIFFReadDirectory(TIFF* tif)
 			}
 		}
 	}
+	/*
+	 * An opportunity for compression mode dependent tag fixup
+	 */
 	(*tif->tif_fixuptags)(tif);
 
 	/*

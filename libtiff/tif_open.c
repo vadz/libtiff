@@ -29,52 +29,6 @@
  */
 #include "tiffiop.h"
 
-static const long typemask[13] = {
-	(long)0L,		/* TIFF_NOTYPE */
-	(long)0x000000ffL,	/* TIFF_BYTE */
-	(long)0xffffffffL,	/* TIFF_ASCII */
-	(long)0x0000ffffL,	/* TIFF_SHORT */
-	(long)0xffffffffL,	/* TIFF_LONG */
-	(long)0xffffffffL,	/* TIFF_RATIONAL */
-	(long)0x000000ffL,	/* TIFF_SBYTE */
-	(long)0x000000ffL,	/* TIFF_UNDEFINED */
-	(long)0x0000ffffL,	/* TIFF_SSHORT */
-	(long)0xffffffffL,	/* TIFF_SLONG */
-	(long)0xffffffffL,	/* TIFF_SRATIONAL */
-	(long)0xffffffffL,	/* TIFF_FLOAT */
-	(long)0xffffffffL,	/* TIFF_DOUBLE */
-};
-static const int bigTypeshift[13] = {
-	0,		/* TIFF_NOTYPE */
-	24,		/* TIFF_BYTE */
-	0,		/* TIFF_ASCII */
-	16,		/* TIFF_SHORT */
-	0,		/* TIFF_LONG */
-	0,		/* TIFF_RATIONAL */
-	24,		/* TIFF_SBYTE */
-	24,		/* TIFF_UNDEFINED */
-	16,		/* TIFF_SSHORT */
-	0,		/* TIFF_SLONG */
-	0,		/* TIFF_SRATIONAL */
-	0,		/* TIFF_FLOAT */
-	0,		/* TIFF_DOUBLE */
-};
-static const int litTypeshift[13] = {
-	0,		/* TIFF_NOTYPE */
-	0,		/* TIFF_BYTE */
-	0,		/* TIFF_ASCII */
-	0,		/* TIFF_SHORT */
-	0,		/* TIFF_LONG */
-	0,		/* TIFF_RATIONAL */
-	0,		/* TIFF_SBYTE */
-	0,		/* TIFF_UNDEFINED */
-	0,		/* TIFF_SSHORT */
-	0,		/* TIFF_SLONG */
-	0,		/* TIFF_SRATIONAL */
-	0,		/* TIFF_FLOAT */
-	0,		/* TIFF_DOUBLE */
-};
-
 /*
  * Dummy functions to fill the omitted client procedures.
  */
@@ -89,28 +43,6 @@ static void
 _tiffDummyUnmapProc(thandle_t fd, void* base, tmsize_t size)
 {
 	(void) fd; (void) base; (void) size;
-}
-
-/*
- * Initialize the shift & mask tables, and the
- * byte swapping state according to the file
- * contents and the machine architecture.
- */
-static void
-TIFFInitOrder(TIFF* tif, int magic)
-{
-	tif->tif_typemask = typemask;
-	if (magic == TIFF_BIGENDIAN) {
-		tif->tif_typeshift = bigTypeshift;
-#ifndef WORDS_BIGENDIAN
-		tif->tif_flags |= TIFF_SWAB;
-#endif
-	} else {
-		tif->tif_typeshift = litTypeshift;
-#ifdef WORDS_BIGENDIAN
-		tif->tif_flags |= TIFF_SWAB;
-#endif
-	}
 }
 
 int
@@ -184,7 +116,7 @@ TIFFClientOpen(
 	tif->tif_clientdata = clientdata;
 	if (!readproc || !writeproc || !seekproc || !closeproc || !sizeproc) {
 		TIFFErrorExt(clientdata, module,
-			  "One of the client procedures is NULL pointer.");
+		    "One of the client procedures is NULL pointer.");
 		goto bad2;
 	}
 	tif->tif_readproc = readproc;
@@ -192,7 +124,7 @@ TIFFClientOpen(
 	tif->tif_seekproc = seekproc;
 	tif->tif_closeproc = closeproc;
 	tif->tif_sizeproc = sizeproc;
-        if (mapproc)
+	if (mapproc)
 		tif->tif_mapproc = mapproc;
 	else
 		tif->tif_mapproc = _tiffDummyMapProc;
@@ -200,7 +132,7 @@ TIFFClientOpen(
 		tif->tif_unmapproc = unmapproc;
 	else
 		tif->tif_unmapproc = _tiffDummyUnmapProc;
-	_TIFFSetDefaultCompressionState(tif);	/* setup default state */
+	_TIFFSetDefaultCompressionState(tif);    /* setup default state */
 	/*
 	 * Default is to return data MSB2LSB and enable the
 	 * use of memory-mapped files and strip chopping when
@@ -210,10 +142,10 @@ TIFFClientOpen(
 	if (m == O_RDONLY )
 		tif->tif_flags |= TIFF_MAPPED;
 
-#ifdef STRIPCHOP_DEFAULT
+	#ifdef STRIPCHOP_DEFAULT
 	if (m == O_RDONLY || m == O_RDWR)
 		tif->tif_flags |= STRIPCHOP_DEFAULT;
-#endif
+	#endif
 
 	/*
 	 * Process library-specific flags in the open mode string.
@@ -269,53 +201,53 @@ TIFFClientOpen(
 	 */
 	for (cp = mode; *cp; cp++)
 		switch (*cp) {
-		case 'b':
-#ifndef WORDS_BIGENDIAN
-		    if (m&O_CREAT)
-				tif->tif_flags |= TIFF_SWAB;
-#endif
-			break;
-		case 'l':
-#ifdef WORDS_BIGENDIAN
-			if ((m&O_CREAT))
-				tif->tif_flags |= TIFF_SWAB;
-#endif
-			break;
-		case 'B':
-			tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
-			    FILLORDER_MSB2LSB;
-			break;
-		case 'L':
-			tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
-			    FILLORDER_LSB2MSB;
-			break;
-		case 'H':
-			tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
-			    HOST_FILLORDER;
-			break;
-		case 'M':
-			if (m == O_RDONLY)
-				tif->tif_flags |= TIFF_MAPPED;
-			break;
-		case 'm':
-			if (m == O_RDONLY)
-				tif->tif_flags &= ~TIFF_MAPPED;
-			break;
-		case 'C':
-			if (m == O_RDONLY)
-				tif->tif_flags |= TIFF_STRIPCHOP;
-			break;
-		case 'c':
-			if (m == O_RDONLY)
-				tif->tif_flags &= ~TIFF_STRIPCHOP;
-			break;
-		case 'h':
-			tif->tif_flags |= TIFF_HEADERONLY;
-			break;
-		case '8':
-			if (m&O_CREAT)
-				tif->tif_flags |= TIFF_BIGTIFF;
-			break;
+			case 'b':
+				#ifndef WORDS_BIGENDIAN
+				if (m&O_CREAT)
+					tif->tif_flags |= TIFF_SWAB;
+				#endif
+				break;
+			case 'l':
+				#ifdef WORDS_BIGENDIAN
+				if ((m&O_CREAT))
+					tif->tif_flags |= TIFF_SWAB;
+				#endif
+				break;
+			case 'B':
+				tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
+				    FILLORDER_MSB2LSB;
+				break;
+			case 'L':
+				tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
+				    FILLORDER_LSB2MSB;
+				break;
+			case 'H':
+				tif->tif_flags = (tif->tif_flags &~ TIFF_FILLORDER) |
+				    HOST_FILLORDER;
+				break;
+			case 'M':
+				if (m == O_RDONLY)
+					tif->tif_flags |= TIFF_MAPPED;
+				break;
+			case 'm':
+				if (m == O_RDONLY)
+					tif->tif_flags &= ~TIFF_MAPPED;
+				break;
+			case 'C':
+				if (m == O_RDONLY)
+					tif->tif_flags |= TIFF_STRIPCHOP;
+				break;
+			case 'c':
+				if (m == O_RDONLY)
+					tif->tif_flags &= ~TIFF_STRIPCHOP;
+				break;
+			case 'h':
+				tif->tif_flags |= TIFF_HEADERONLY;
+				break;
+			case '8':
+				if (m&O_CREAT)
+					tif->tif_flags |= TIFF_BIGTIFF;
+				break;
 		}
 	/*
 	 * Read in TIFF header.
@@ -324,19 +256,19 @@ TIFFClientOpen(
 	    !ReadOK(tif, &tif->tif_header, sizeof (TIFFHeaderClassic))) {
 		if (tif->tif_mode == O_RDONLY) {
 			TIFFErrorExt(tif->tif_clientdata, name,
-				     "Cannot read TIFF header");
+			    "Cannot read TIFF header");
 			goto bad;
 		}
 		/*
 		 * Setup header and write.
 		 */
-#ifdef WORDS_BIGENDIAN
+		#ifdef WORDS_BIGENDIAN
 		tif->tif_header.common.tiff_magic = tif->tif_flags & TIFF_SWAB
 		    ? TIFF_LITTLEENDIAN : TIFF_BIGENDIAN;
-#else
+		#else
 		tif->tif_header.common.tiff_magic = tif->tif_flags & TIFF_SWAB
 		    ? TIFF_BIGENDIAN : TIFF_LITTLEENDIAN;
-#endif
+		#endif
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
 		{
 			tif->tif_header.common.tiff_version = TIFF_VERSION_CLASSIC;
@@ -368,13 +300,21 @@ TIFFClientOpen(
 		TIFFSeekFile( tif, 0, SEEK_SET );
 		if (!WriteOK(tif, &tif->tif_header, (tmsize_t)(tif->tif_header_size))) {
 			TIFFErrorExt(tif->tif_clientdata, name,
-				     "Error writing TIFF header");
+			    "Error writing TIFF header");
 			goto bad;
 		}
 		/*
 		 * Setup the byte order handling.
 		 */
-		TIFFInitOrder(tif, tif->tif_header.common.tiff_magic);
+		if (tif->tif_header.common.tiff_magic == TIFF_BIGENDIAN) {
+			#ifndef WORDS_BIGENDIAN
+			tif->tif_flags |= TIFF_SWAB;
+			#endif
+		} else {
+			#ifdef WORDS_BIGENDIAN
+			tif->tif_flags |= TIFF_SWAB;
+			#endif
+		}
 		/*
 		 * Setup default directory.
 		 */
@@ -391,26 +331,34 @@ TIFFClientOpen(
 	 */
 	if (tif->tif_header.common.tiff_magic != TIFF_BIGENDIAN &&
 	    tif->tif_header.common.tiff_magic != TIFF_LITTLEENDIAN
-#if MDI_SUPPORT
+	    #if MDI_SUPPORT
 	    &&
-#if HOST_BIGENDIAN
+	    #if HOST_BIGENDIAN
 	    tif->tif_header.common.tiff_magic != MDI_BIGENDIAN
-#else
+	    #else
 	    tif->tif_header.common.tiff_magic != MDI_LITTLEENDIAN
-#endif
+	    #endif
 	    ) {
 		TIFFErrorExt(tif->tif_clientdata, name,
-			"Not a TIFF or MDI file, bad magic number %d (0x%x)",
-#else
+		    "Not a TIFF or MDI file, bad magic number %d (0x%x)",
+	    #else
 	    ) {
 		TIFFErrorExt(tif->tif_clientdata, name,
-			     "Not a TIFF file, bad magic number %d (0x%x)",
-#endif
+		    "Not a TIFF file, bad magic number %d (0x%x)",
+	    #endif
 		    tif->tif_header.common.tiff_magic,
 		    tif->tif_header.common.tiff_magic);
 		goto bad;
 	}
-	TIFFInitOrder(tif, tif->tif_header.common.tiff_magic);
+	if (tif->tif_header.common.tiff_magic == TIFF_BIGENDIAN) {
+		#ifndef WORDS_BIGENDIAN
+		tif->tif_flags |= TIFF_SWAB;
+		#endif
+	} else {
+		#ifdef WORDS_BIGENDIAN
+		tif->tif_flags |= TIFF_SWAB;
+		#endif
+	}
 	if (tif->tif_flags & TIFF_SWAB) 
 		TIFFSwabShort(&tif->tif_header.common.tiff_version);
 	if ((tif->tif_header.common.tiff_version != TIFF_VERSION_CLASSIC)&&
@@ -432,7 +380,7 @@ TIFFClientOpen(
 		if (!ReadOK(tif, ((uint8*)(&tif->tif_header) + sizeof(TIFFHeaderClassic)), (sizeof(TIFFHeaderBig)-sizeof(TIFFHeaderClassic))))
 		{
 			TIFFErrorExt(tif->tif_clientdata, name,
-				     "Cannot read TIFF header");
+			    "Cannot read TIFF header");
 			goto bad;
 		}
 		if (tif->tif_flags & TIFF_SWAB)
@@ -476,34 +424,34 @@ TIFFClientOpen(
 	 * Setup initial directory.
 	 */
 	switch (mode[0]) {
-	case 'r':
-		if (!(tif->tif_flags&TIFF_BIGTIFF))
-			tif->tif_nextdiroff = tif->tif_header.classic.tiff_diroff;
-		else
-			tif->tif_nextdiroff = tif->tif_header.big.tiff_diroff;
-		/*
-		 * Try to use a memory-mapped file if the client
-		 * has not explicitly suppressed usage with the
-		 * 'm' flag in the open mode (see above).
-		 */
-		if ((tif->tif_flags & TIFF_MAPPED) &&
-		    !TIFFMapFileContents(tif,(void**)(&tif->tif_base),&tif->tif_size))
-			tif->tif_flags &= ~TIFF_MAPPED;
-		if (TIFFReadDirectory(tif)) {
-			tif->tif_rawcc = (tmsize_t)-1;  
-			tif->tif_flags |= TIFF_BUFFERSETUP;
+		case 'r':
+			if (!(tif->tif_flags&TIFF_BIGTIFF))
+				tif->tif_nextdiroff = tif->tif_header.classic.tiff_diroff;
+			else
+				tif->tif_nextdiroff = tif->tif_header.big.tiff_diroff;
+			/*
+			 * Try to use a memory-mapped file if the client
+			 * has not explicitly suppressed usage with the
+			 * 'm' flag in the open mode (see above).
+			 */
+			if ((tif->tif_flags & TIFF_MAPPED) &&
+			    !TIFFMapFileContents(tif,(void**)(&tif->tif_base),&tif->tif_size))
+				tif->tif_flags &= ~TIFF_MAPPED;
+			if (TIFFReadDirectory(tif)) {
+				tif->tif_rawcc = (tmsize_t)-1;
+				tif->tif_flags |= TIFF_BUFFERSETUP;
+				return (tif);
+			}
+			break;
+		case 'a':
+			/*
+			 * New directories are automatically append
+			 * to the end of the directory chain when they
+			 * are written out (see TIFFWriteDirectory).
+			 */
+			if (!TIFFDefaultDirectory(tif))
+				goto bad;
 			return (tif);
-		}
-		break;
-	case 'a':
-		/*
-		 * New directories are automatically append
-		 * to the end of the directory chain when they
-		 * are written out (see TIFFWriteDirectory).
-		 */
-		if (!TIFFDefaultDirectory(tif))
-			goto bad;
-		return (tif);
 	}
 bad:
 	tif->tif_mode = O_RDONLY;	/* XXX avoid flush */

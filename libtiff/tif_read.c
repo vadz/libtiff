@@ -51,9 +51,9 @@ TIFFSeek(TIFF* tif, uint32 row, uint16 sample)
 
 	if (row >= td->td_imagelength) {	/* out of range */
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "%lu: Row out of range, max %lu",
-			     (unsigned long) row,
-			     (unsigned long) td->td_imagelength);
+		    "%lu: Row out of range, max %lu",
+		    (unsigned long) row,
+		    (unsigned long) td->td_imagelength);
 		return (0);
 	}
 	if (td->td_planarconfig == PLANARCONFIG_SEPARATE) {

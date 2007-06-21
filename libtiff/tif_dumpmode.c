@@ -31,6 +31,12 @@
  */
 #include "tiffiop.h"
 
+static int
+DumpFixupTags(TIFF* tif)
+{
+	return (1);
+}
+
 /*
  * Encode a hunk of pixels.
  */
@@ -106,6 +112,7 @@ int
 TIFFInitDumpMode(TIFF* tif, int scheme)
 {
 	(void) scheme;
+	tif->tif_fixuptags = DumpFixupTags;  
 	tif->tif_decoderow = DumpModeDecode;
 	tif->tif_decodestrip = DumpModeDecode;
 	tif->tif_decodetile = DumpModeDecode;

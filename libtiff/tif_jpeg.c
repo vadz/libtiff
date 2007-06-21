@@ -108,7 +108,7 @@ int TIFFFillTile(TIFF* tif, uint32 tile);
 
 typedef struct jpeg_destination_mgr jpeg_destination_mgr;
 typedef struct jpeg_source_mgr jpeg_source_mgr;
-typedef	struct jpeg_error_mgr jpeg_error_mgr;
+typedef struct jpeg_error_mgr jpeg_error_mgr;
 
 /*
  * State block for each open TIFF file using
@@ -123,7 +123,7 @@ typedef	struct jpeg_error_mgr jpeg_error_mgr;
  *     so we can safely cast JPEGState* -> jpeg_xxx_struct*
  *     and vice versa!
  */
-typedef	struct {
+typedef struct {
 	union {
 		struct jpeg_compress_struct c;
 		struct jpeg_decompress_struct d;

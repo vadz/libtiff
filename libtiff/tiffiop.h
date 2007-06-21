@@ -129,8 +129,6 @@ struct tiff {
 		TIFFHeaderBig big;
 	} tif_header;
 	uint16               tif_header_size;  /* file's header block and its length */
-	const int*           tif_typeshift;    /* data type shift counts */
-	const long*          tif_typemask;     /* data type masks */
 	uint32               tif_row;          /* current scanline */
 	uint16               tif_curdir;       /* current directory (index) */
 	uint32               tif_curstrip;     /* current strip for read/write */

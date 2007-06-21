@@ -73,7 +73,7 @@ _TIFFPrintField(FILE* fd, const TIFFFieldInfo *fip,
 			fprintf(fd, "%u", ((uint8 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_UNDEFINED)
 			fprintf(fd, "0x%x",
-				(unsigned int) ((unsigned char *) raw_data)[j]);
+			    (unsigned int) ((unsigned char *) raw_data)[j]);
 		else if(fip->field_type == TIFF_SBYTE)
 			fprintf(fd, "%d", ((int8 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_SHORT)
@@ -82,7 +82,7 @@ _TIFFPrintField(FILE* fd, const TIFFFieldInfo *fip,
 			fprintf(fd, "%d", ((int16 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_LONG)
 			fprintf(fd, "%lu",
-				(unsigned long)((uint32 *) raw_data)[j]);
+			    (unsigned long)((uint32 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_SLONG)
 			fprintf(fd, "%ld", (long)((int32 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_RATIONAL
@@ -127,18 +127,19 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 					break;
 				default:
 					fprintf(fd, "%u (0x%x)\n",
-						*((uint16*)raw_data),
-						*((uint16*)raw_data));
+					    *((uint16*)raw_data),
+					    *((uint16*)raw_data));
 					break;
 			}
 			return 1;
 		case TIFFTAG_DOTRANGE:
 			fprintf(fd, "  Dot Range: %u-%u\n",
-				((uint16*)raw_data)[0], ((uint16*)raw_data)[1]);
+			    ((uint16*)raw_data)[0], ((uint16*)raw_data)[1]);
 			return 1;
 		case TIFFTAG_WHITEPOINT:
 			fprintf(fd, "  White Point: %g-%g\n",
-				((float *)raw_data)[0], ((float *)raw_data)[1]);			return 1;
+			    ((float *)raw_data)[0], ((float *)raw_data)[1]);
+			return 1;
 		case TIFFTAG_REFERENCEBLACKWHITE:
 		{
 			uint16 i;
@@ -146,14 +147,14 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 			fprintf(fd, "  Reference Black/White:\n");
 			for (i = 0; i < td->td_samplesperpixel; i++)
 			fprintf(fd, "    %2d: %5g %5g\n", i,
-				((float *)raw_data)[2*i+0],
-				((float *)raw_data)[2*i+1]);
+			    ((float *)raw_data)[2*i+0],
+			    ((float *)raw_data)[2*i+1]);
 			return 1;
 		}
 		case TIFFTAG_XMLPACKET:
 		{
 			uint32 i;
-			
+
 			fprintf(fd, "  XMLPacket (XMP Metadata):\n" );
 			for(i = 0; i < value_count; i++)
 				fputc(((char *)raw_data)[i], fd);
@@ -166,23 +167,23 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 			 * defined as array of LONG values.
 			 */
 			fprintf(fd,
-				"  RichTIFFIPTC Data: <present>, %lu bytes\n",
-				(unsigned long) value_count * 4);
+			    "  RichTIFFIPTC Data: <present>, %lu bytes\n",
+			    (unsigned long) value_count * 4);
 			return 1;
 		case TIFFTAG_PHOTOSHOP:
 			fprintf(fd, "  Photoshop Data: <present>, %lu bytes\n",
-				(unsigned long) value_count);
+			    (unsigned long) value_count);
 			return 1;
 		case TIFFTAG_ICCPROFILE:
 			fprintf(fd, "  ICC Profile: <present>, %lu bytes\n",
-				(unsigned long) value_count);
+			    (unsigned long) value_count);
 			return 1;
 		case TIFFTAG_STONITS:
 			fprintf(fd,
-				"  Sample to Nits conversion factor: %.4e\n",
-				*((double*)raw_data));
+			    "  Sample to Nits conversion factor: %.4e\n",
+			    *((double*)raw_data));
 			return 1;
-        }
+	}
 
 	return 0;
 }
@@ -200,7 +201,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	long l, n;
 
 	fprintf(fd, "TIFF Directory at offset 0x%llx (%llu)\n",
-		tif->tif_diroff, tif->tif_diroff);
+		(unsigned long long) tif->tif_diroff, (unsigned long long) tif->tif_diroff);
 	if (TIFFFieldSet(tif,FIELD_SUBFILETYPE)) {
 		fprintf(fd, "  Subfile Type:");
 		sep = " ";
@@ -489,98 +490,98 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		fputc('\n', fd);
 	}
 
-        /*
-        ** Custom tag support.
-        */
-        {
-            int  i;
-            short count;
+	/*
+	** Custom tag support.
+	*/
+	{
+		int  i;
+		short count;
 
-            count = (short) TIFFGetTagListCount(tif);
-            for(i = 0; i < count; i++) {
-                uint32 tag = TIFFGetTagListEntry(tif, i);
-                const TIFFFieldInfo *fip;
-                uint32 value_count;
-                int mem_alloc = 0;
-                void *raw_data;
+		count = (short) TIFFGetTagListCount(tif);
+		for(i = 0; i < count; i++) {
+			uint32 tag = TIFFGetTagListEntry(tif, i);
+			const TIFFFieldInfo *fip;
+			uint32 value_count;
+			int mem_alloc = 0;
+			void *raw_data;
 
-                fip = TIFFFieldWithTag(tif, tag);
-                if(fip == NULL)
-			continue;
-
-		if(fip->field_passcount) {
-			if(TIFFGetField(tif, tag, &value_count, &raw_data) != 1)
+			fip = TIFFFieldWithTag(tif, tag);
+			if(fip == NULL)
 				continue;
-		} else {
-			if (fip->field_readcount == TIFF_VARIABLE
-			    || fip->field_readcount == TIFF_VARIABLE2)
-				value_count = 1;
-			else if (fip->field_readcount == TIFF_SPP)
-				value_count = td->td_samplesperpixel;
-			else
-				value_count = fip->field_readcount;
-			if ((fip->field_type == TIFF_ASCII
-			     || fip->field_readcount == TIFF_VARIABLE
-			     || fip->field_readcount == TIFF_VARIABLE2
-			     || fip->field_readcount == TIFF_SPP
-			     || value_count > 1)
-			    && fip->field_tag != TIFFTAG_PAGENUMBER
-			    && fip->field_tag != TIFFTAG_HALFTONEHINTS
-			    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
-			    && fip->field_tag != TIFFTAG_DOTRANGE) {
-				if(TIFFGetField(tif, tag, &raw_data) != 1)
+
+			if(fip->field_passcount) {
+				if(TIFFGetField(tif, tag, &value_count, &raw_data) != 1)
 					continue;
-			} else if (fip->field_tag != TIFFTAG_PAGENUMBER
-				   && fip->field_tag != TIFFTAG_HALFTONEHINTS
-				   && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
-				   && fip->field_tag != TIFFTAG_DOTRANGE) {
-				raw_data = _TIFFmalloc(
-					_TIFFDataSize(fip->field_type)
-					* value_count);
-				mem_alloc = 1;
-				if(TIFFGetField(tif, tag, raw_data) != 1) {
-					_TIFFfree(raw_data);
-					continue;
-				}
 			} else {
-				/* 
-				 * XXX: Should be fixed and removed, see the
-				 * notes related to TIFFTAG_PAGENUMBER,
-				 * TIFFTAG_HALFTONEHINTS,
-				 * TIFFTAG_YCBCRSUBSAMPLING and
-				 * TIFFTAG_DOTRANGE tags in tif_dir.c. */
-				char *tmp;
-				raw_data = _TIFFmalloc(
-					_TIFFDataSize(fip->field_type)
-					* value_count);
-				tmp = raw_data;
-				mem_alloc = 1;
-				if(TIFFGetField(tif, tag, tmp,
-				tmp + _TIFFDataSize(fip->field_type)) != 1) {
-					_TIFFfree(raw_data);
-					continue;
+				if (fip->field_readcount == TIFF_VARIABLE
+				    || fip->field_readcount == TIFF_VARIABLE2)
+					value_count = 1;
+				else if (fip->field_readcount == TIFF_SPP)
+					value_count = td->td_samplesperpixel;
+				else
+					value_count = fip->field_readcount;
+				if ((fip->field_type == TIFF_ASCII
+				    || fip->field_readcount == TIFF_VARIABLE
+				    || fip->field_readcount == TIFF_VARIABLE2
+				    || fip->field_readcount == TIFF_SPP
+				    || value_count > 1)
+				    && fip->field_tag != TIFFTAG_PAGENUMBER
+				    && fip->field_tag != TIFFTAG_HALFTONEHINTS
+				    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
+				    && fip->field_tag != TIFFTAG_DOTRANGE) {
+					if(TIFFGetField(tif, tag, &raw_data) != 1)
+						continue;
+				} else if (fip->field_tag != TIFFTAG_PAGENUMBER
+				    && fip->field_tag != TIFFTAG_HALFTONEHINTS
+				    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
+				    && fip->field_tag != TIFFTAG_DOTRANGE) {
+					raw_data = _TIFFmalloc(
+					    _TIFFDataSize(fip->field_type)
+					    * value_count);
+					mem_alloc = 1;
+					if(TIFFGetField(tif, tag, raw_data) != 1) {
+						_TIFFfree(raw_data);
+						continue;
+					}
+				} else {
+					/*
+					 * XXX: Should be fixed and removed, see the
+					 * notes related to TIFFTAG_PAGENUMBER,
+					 * TIFFTAG_HALFTONEHINTS,
+					 * TIFFTAG_YCBCRSUBSAMPLING and
+					 * TIFFTAG_DOTRANGE tags in tif_dir.c. */
+					char *tmp;
+					raw_data = _TIFFmalloc(
+					    _TIFFDataSize(fip->field_type)
+					    * value_count);
+					tmp = raw_data;
+					mem_alloc = 1;
+					if(TIFFGetField(tif, tag, tmp,
+					    tmp + _TIFFDataSize(fip->field_type)) != 1) {
+						_TIFFfree(raw_data);
+						continue;
+					}
 				}
 			}
-		}
 
-		/*
-		 * Catch the tags which needs to be specially handled and
-		 * pretty print them. If tag not handled in
-		 * _TIFFPrettyPrintField() fall down and print it as any other
-		 * tag.
-		 */
-		if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data)) {
+			/*
+			 * Catch the tags which needs to be specially handled and
+			 * pretty print them. If tag not handled in
+			 * _TIFFPrettyPrintField() fall down and print it as any other
+			 * tag.
+			 */
+			if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data)) {
+				if(mem_alloc)
+					_TIFFfree(raw_data);
+				continue;
+			}
+			else
+				_TIFFPrintField(fd, fip, value_count, raw_data);
+
 			if(mem_alloc)
 				_TIFFfree(raw_data);
-			continue;
 		}
-		else
-			_TIFFPrintField(fd, fip, value_count, raw_data);
-
-		if(mem_alloc)
-			_TIFFfree(raw_data);
-            }
-        }
+	}
         
 	if (tif->tif_tagmethods.printdir)
 		(*tif->tif_tagmethods.printdir)(tif, fd, flags);
