@@ -69,7 +69,7 @@ typedef uint16 tsample_t;       /* sample number */
 typedef uint32 tstrile_t;       /* strip or tile number */
 typedef tstrile_t tstrip_t;     /* strip number */
 typedef tstrile_t ttile_t;      /* tile number */
-typedef tmsize_t tsize_t;          /* i/o size in bytes */
+typedef tmsize_t tsize_t;       /* i/o size in bytes */
 typedef void* tdata_t;          /* image data ref */
 typedef uint64 toff_t;          /* file offset */
 
@@ -131,7 +131,7 @@ typedef	void* thandle_t;	/* client data handle */
 
 /* Structure for holding information about a display device. */
 
-typedef	unsigned char TIFFRGBValue;		/* 8-bit samples */
+typedef unsigned char TIFFRGBValue;		/* 8-bit samples */
 
 typedef struct {
 	float d_mat[3][3]; 		/* XYZ -> luminance matrix */
