@@ -1066,11 +1066,10 @@ int
 TIFFDefaultDirectory(TIFF* tif)
 {
 	register TIFFDirectory* td = &tif->tif_dir;
+	const TIFFFieldInfoArray* tiffFieldInfoArray;
 
-	size_t tiffFieldInfoCount;
-	const TIFFFieldInfo *tiffFieldInfo =
-	    _TIFFGetFieldInfo(&tiffFieldInfoCount);
-	_TIFFSetupFieldInfo(tif, tiffFieldInfo, tiffFieldInfoCount);
+	tiffFieldInfoArray = _TIFFGetFieldInfo();
+	_TIFFSetupFieldInfo(tif, tiffFieldInfoArray);   
 
 	_TIFFmemset(td, 0, sizeof (*td));
 	td->td_fillorder = FILLORDER_MSB2LSB;

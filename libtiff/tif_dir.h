@@ -167,12 +167,11 @@ typedef struct {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-extern const TIFFFieldInfo *_TIFFGetFieldInfo(size_t *);
-extern const TIFFFieldInfo *_TIFFGetExifFieldInfo(size_t *);
-extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfo unfo[], uint32 n);
+extern const TIFFFieldInfoArray* _TIFFGetFieldInfo();
+extern const TIFFFieldInfoArray* _TIFFGetExifFieldInfo();
+extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray);
 extern int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
 extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
-extern TIFFDataType _TIFFSampleToTagType(TIFF*);
 extern const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag,
     TIFFDataType dt);
 extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo(TIFF *tif, uint32 tag,

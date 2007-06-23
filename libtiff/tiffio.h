@@ -246,11 +246,11 @@ struct _TIFFRGBAImage {
  * More codecs may be registered through calls to the library
  * and/or the builtin implementations may be overridden.
  */
-typedef	int (*TIFFInitMethod)(TIFF*, int);
+typedef int (*TIFFInitMethod)(TIFF*, int);
 typedef struct {
-	char*		name;
-	uint16		scheme;
-	TIFFInitMethod	init;
+	char* name;
+	uint16 scheme;
+	TIFFInitMethod init;
 } TIFFCodec;
 
 #include <stdio.h>
@@ -274,13 +274,13 @@ typedef int (*TIFFMapFileProc)(thandle_t, void** base, tmsize_t* size);
 typedef void (*TIFFUnmapFileProc)(thandle_t, void* base, tmsize_t size);
 typedef void (*TIFFExtendProc)(TIFF*);
 
-extern	const char* TIFFGetVersion(void);
+extern const char* TIFFGetVersion(void);
 
-extern	const TIFFCodec* TIFFFindCODEC(uint16);
-extern	TIFFCodec* TIFFRegisterCODEC(uint16, const char*, TIFFInitMethod);
-extern	void TIFFUnRegisterCODEC(TIFFCodec*);
-extern  int TIFFIsCODECConfigured(uint16);
-extern	TIFFCodec* TIFFGetConfiguredCODECs(void);
+extern const TIFFCodec* TIFFFindCODEC(uint16);
+extern TIFFCodec* TIFFRegisterCODEC(uint16, const char*, TIFFInitMethod);
+extern void TIFFUnRegisterCODEC(TIFFCodec*);
+extern int TIFFIsCODECConfigured(uint16);
+extern TIFFCodec* TIFFGetConfiguredCODECs(void);
 
 /*
  * Auxiliary functions.
@@ -306,6 +306,8 @@ extern uint32 TIFFGetTagListEntry( TIFF *, int tag_index );
 
 #define FIELD_CUSTOM    65    
 
+struct TIFFFieldInfoArray;
+
 typedef struct {
 	uint32 field_tag;                       /* field's tag */
 	short field_readcount;                  /* read count/TIFF_VARIABLE/TIFF_SPP */
@@ -317,7 +319,21 @@ typedef struct {
 	unsigned char field_oktochange;         /* if true, can change while writing */
 	unsigned char field_passcount;          /* if true, pass dir count on set */
 	char* field_name;                       /* ASCII name */
+	struct TIFFFieldInfoArray* field_subfields;
 } TIFFFieldInfo;
+
+typedef enum {
+	tfiatImage,
+	tfiatExif,
+	tfiatOther,
+} TIFFFieldInfoArrayType;
+
+typedef struct {
+	TIFFFieldInfoArrayType type;
+	uint32 allocated;
+	uint32 used;
+	TIFFFieldInfo* fieldinfo;
+} TIFFFieldInfoArray;
 
 typedef struct _TIFFTagValue {
     const TIFFFieldInfo  *info;
@@ -355,8 +371,7 @@ extern int TIFFVGetField(TIFF*, uint32, va_list);
 extern int TIFFGetFieldDefaulted(TIFF*, uint32, ...);
 extern int TIFFVGetFieldDefaulted(TIFF*, uint32, va_list);
 extern int TIFFReadDirectory(TIFF*);
-extern int TIFFReadCustomDirectory(TIFF* tif, uint64 diroff,
-    const TIFFFieldInfo info[], uint32 n);
+extern int TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* infoarray);
 extern int TIFFReadEXIFDirectory(TIFF*, uint64);
 extern uint64 TIFFScanlineSize64(TIFF* tif);
 extern tmsize_t TIFFScanlineSize(TIFF* tif);
@@ -432,15 +447,15 @@ extern int TIFFReadRGBAImage(TIFF*, uint32, uint32, uint32*, int);
 extern int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*, int, int);
 #endif
 
-extern	int TIFFReadRGBAStrip(TIFF*, uint32, uint32 * );
-extern	int TIFFReadRGBATile(TIFF*, uint32, uint32, uint32 * );
-extern	int TIFFRGBAImageOK(TIFF*, char [1024]);
-extern	int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
-extern	int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
-extern	void TIFFRGBAImageEnd(TIFFRGBAImage*);
-extern	TIFF* TIFFOpen(const char*, const char*);
+extern int TIFFReadRGBAStrip(TIFF*, uint32, uint32 * );
+extern int TIFFReadRGBATile(TIFF*, uint32, uint32, uint32 * );
+extern int TIFFRGBAImageOK(TIFF*, char [1024]);
+extern int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
+extern int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
+extern void TIFFRGBAImageEnd(TIFFRGBAImage*);
+extern TIFF* TIFFOpen(const char*, const char*);
 # ifdef __WIN32__
-extern	TIFF* TIFFOpenW(const wchar_t*, const char*);
+extern TIFF* TIFFOpenW(const wchar_t*, const char*);
 # endif /* __WIN32__ */
 extern TIFF* TIFFFdOpen(int, const char*, const char*);
 extern TIFF* TIFFClientOpen(const char*, const char*,
