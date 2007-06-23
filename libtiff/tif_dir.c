@@ -570,6 +570,19 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 								_TIFFmemcpy(val, &v, tv_size);
 							}
 							break;
+						case TIFF_LONG8:
+						case TIFF_IFD8:
+							{
+								uint64 v = va_arg(ap, uint64);
+								_TIFFmemcpy(val, &v, tv_size);
+							}
+							break;
+						case TIFF_SLONG8:
+							{
+								int64 v = va_arg(ap, int64);
+								_TIFFmemcpy(val, &v, tv_size);
+							}
+							break;
 						case TIFF_RATIONAL:
 						case TIFF_SRATIONAL:
 						case TIFF_FLOAT:
@@ -926,6 +939,17 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 					case TIFF_SLONG:
 						*va_arg(ap, int32*) =
 							*(int32 *)val;
+						ret_val = 1;
+						break;
+					case TIFF_LONG8:
+					case TIFF_IFD8:
+						*va_arg(ap, uint64*) =
+							*(uint64 *)val;
+						ret_val = 1;
+						break;
+					case TIFF_SLONG8:
+						*va_arg(ap, int64*) =
+							*(int64 *)val;
 						ret_val = 1;
 						break;
 					case TIFF_RATIONAL:
@@ -1362,10 +1386,15 @@ TIFFUnlinkDirectory(TIFF* tif, uint16 dirn)
 	 * field we'll need to patch.
 	 */
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
+	{
 		nextdir = tif->tif_header.classic.tiff_diroff;
+		off = 4;
+	}
 	else
+	{
 		nextdir = tif->tif_header.big.tiff_diroff;
-	off = sizeof (uint16) + sizeof (uint16);
+		off = 8;
+	}
 	for (n = dirn-1; n > 0; n--) {
 		if (nextdir == 0) {
 			TIFFErrorExt(tif->tif_clientdata, module, "Directory %d does not exist", dirn);
@@ -1386,11 +1415,26 @@ TIFFUnlinkDirectory(TIFF* tif, uint16 dirn)
 	 * that follows.
 	 */
 	(void) TIFFSeekFile(tif, off, SEEK_SET);
-	if (tif->tif_flags & TIFF_SWAB)
-		TIFFSwabLong8(&nextdir);
-	if (!WriteOK(tif, &nextdir, sizeof (uint32))) {
-		TIFFErrorExt(tif->tif_clientdata, module, "Error writing directory link");
-		return (0);
+	if (!(tif->tif_flags&TIFF_BIGTIFF))
+	{
+		uint32 nextdir32;
+		nextdir32=(uint32)nextdir;
+		assert((uint64)nextdir32==nextdir);
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabLong(&nextdir32);
+		if (!WriteOK(tif, &nextdir32, sizeof (uint32))) {
+			TIFFErrorExt(tif->tif_clientdata, module, "Error writing directory link");
+			return (0);
+		}
+	}
+	else
+	{
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabLong8(&nextdir);
+		if (!WriteOK(tif, &nextdir, sizeof (uint64))) {
+			TIFFErrorExt(tif->tif_clientdata, module, "Error writing directory link");
+			return (0);
+		}
 	}
 	/*
 	 * Leave directory state setup safely.  We don't have

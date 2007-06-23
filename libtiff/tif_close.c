@@ -46,10 +46,10 @@ void
 TIFFCleanup(TIFF* tif)
 {
 	if (tif->tif_mode != O_RDONLY)
-	    /*
-	     * Flush buffered data and directory (if dirty).
-	     */
-	    TIFFFlush(tif);
+		/*
+		* Flush buffered data and directory (if dirty).
+		*/
+		TIFFFlush(tif);
 	(*tif->tif_cleanup)(tif);
 	TIFFFreeDirectory(tif);
 
@@ -76,18 +76,18 @@ TIFFCleanup(TIFF* tif)
 	{
 		uint32 i;
 
-	    for (i = 0; i < tif->tif_nfields; i++) 
-	    {
-		TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
-		if (fld->field_bit == FIELD_CUSTOM && 
-		    strncmp("Tag ", fld->field_name, 4) == 0) 
+		for (i = 0; i < tif->tif_nfields; i++)
 		{
-		    _TIFFfree(fld->field_name);
-		    _TIFFfree(fld);
+			TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
+			if (fld->field_bit == FIELD_CUSTOM &&
+			    strncmp("Tag ", fld->field_name, 4) == 0)
+			{
+				_TIFFfree(fld->field_name);
+				_TIFFfree(fld);
+			}
 		}
-	    }   
-	  
-	    _TIFFfree(tif->tif_fieldinfo);
+
+		_TIFFfree(tif->tif_fieldinfo);
 	}
 
 	_TIFFfree(tif);
