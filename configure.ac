@@ -100,12 +100,112 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
 AC_C_BIGENDIAN
+AC_CHECK_SIZEOF(int)dnl # This one does not seem to be needed any more.
+AC_CHECK_SIZEOF(long)dnl # This one is needed by libtiff/tif_fax3.c
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
-AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(long)
 AC_HEADER_TIME
 AC_STRUCT_TM
+
+dnl ---------------------------------------------------------------------------
+dnl Compute sized types for current CPU and compiler options
+dnl ---------------------------------------------------------------------------
+
+# Obtain size of an 'signed short' and define as SIZEOF_SIGNED_SHORT
+AC_CHECK_SIZEOF(signed short)
+
+# Obtain size of an 'unsigned short' and define as SIZEOF_UNSIGNED_SHORT
+AC_CHECK_SIZEOF(unsigned short)
+
+# Obtain size of an 'signed int' and define as SIZEOF_SIGNED_INT
+AC_CHECK_SIZEOF(signed int)
+
+# Obtain size of an 'unsigned int' and define as SIZEOF_UNSIGNED_INT
+AC_CHECK_SIZEOF(unsigned int)
+
+# Obtain size of a 'signed long' and define as SIZEOF_SIGNED_LONG
+AC_CHECK_SIZEOF(signed long)
+
+# Obtain size of a 'unsigned long' and define as SIZEOF_UNSIGNED_LONG
+AC_CHECK_SIZEOF(unsigned long)
+
+# Obtain size of a 'long long' and define as SIZEOF_SIGNED_LONG_LONG.  If
+# 'long long' is not supported then the value defined is zero.
+AC_CHECK_SIZEOF(signed long long)
+
+# Obtain size of a 'unsigned long long' and define as
+# SIZEOF_UNSIGNED_LONG_LONG.  If 'unsigned long long' is not
+# supported then the value defined is zero.
+AC_CHECK_SIZEOF(unsigned long long)
+
+AC_MSG_CHECKING(for signed 8-bit type)
+INT8_T='signed char'
+AC_MSG_RESULT($INT8_T)
+AC_DEFINE_UNQUOTED(TIFF_INT8_T,$INT8_T,[Signed 8-bit type])
+
+AC_MSG_CHECKING(for unsigned 8-bit type)
+UINT8_T='unsigned char'
+AC_MSG_RESULT($UINT8_T)
+AC_DEFINE_UNQUOTED(TIFF_UINT8_T,$INT8_T,[Unsigned 8-bit type])
+
+AC_MSG_CHECKING(for signed 16-bit type)
+INT16_T='signed short'
+AC_MSG_RESULT($INT16_T)
+AC_DEFINE_UNQUOTED(TIFF_INT16_T,$INT16_T,[Signed 16-bit type])
+
+AC_MSG_CHECKING(for unsigned 16-bit type)
+UINT16_T='unsigned short'
+AC_MSG_RESULT($UINT16_T)
+AC_DEFINE_UNQUOTED(TIFF_UINT16_T,$UINT16_T,[Unsigned 16-bit type])
+
+AC_MSG_CHECKING(for signed 32-bit type)
+INT32_T='none'
+if test $ac_cv_sizeof_signed_int -eq 4
+then
+  INT32_T='signed int'
+elif test $ac_cv_sizeof_signed_long -eq 4
+then
+  INT32_T='signed long'
+fi
+AC_MSG_RESULT($INT32_T)
+AC_DEFINE_UNQUOTED(TIFF_INT32_T,$INT32_T,[Signed 32-bit type])
+
+AC_MSG_CHECKING(for unsigned 32-bit type)
+UINT32_T='none'
+if test $ac_cv_sizeof_unsigned_int -eq 4
+then
+  UINT32_T='unsigned int'
+elif test $ac_cv_sizeof_unsigned_long -eq 4
+then
+  UINT32_T='unsigned long'
+fi
+AC_MSG_RESULT($UINT32_T)
+AC_DEFINE_UNQUOTED(TIFF_UINT32_T,$UINT32_T,[Unsigned 32-bit type])
+
+AC_MSG_CHECKING(for signed 64-bit type)
+INT64_T='none'
+if test $ac_cv_sizeof_signed_long -eq 8
+then
+  INT64_T='signed long'
+elif test $ac_cv_sizeof_signed_long_long -eq 8
+then
+  INT64_T='signed long long'
+fi
+AC_MSG_RESULT($INT64_T)
+AC_DEFINE_UNQUOTED(TIFF_INT64_T,$INT64_T,[Signed 64-bit type])
+
+AC_MSG_CHECKING(for unsigned 64-bit type)
+UINT64_T='none'
+if test $ac_cv_sizeof_unsigned_long -eq 8
+then
+  UINT64_T='unsigned long'
+elif test $ac_cv_sizeof_unsigned_long_long -eq 8
+then
+  UINT64_T='unsigned long long'
+fi
+AC_MSG_RESULT($UINT64_T)
+AC_DEFINE_UNQUOTED(TIFF_UINT64_T,$UINT64_T,[Unsigned 64-bit type])
+
 dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
 AC_CHECK_TYPES([int8, int16, int32],,,
 [
@@ -115,12 +215,13 @@ AC_CHECK_TYPES([int8, int16, int32],,,
 ])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor isascii memmove memset mmap pow setmode sqrt strchr strrchr strstr strtol])
+AC_CHECK_FUNCS([floor isascii memmove memset mmap pow setmode sqrt strchr strrchr strstr strtol strtoull])
 
 dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)
 AC_REPLACE_FUNCS(strcasecmp)
 AC_REPLACE_FUNCS(strtoul)
+AC_REPLACE_FUNCS(strtoull)
 AC_REPLACE_FUNCS(lfind)
 
 dnl ---------------------------------------------------------------------------

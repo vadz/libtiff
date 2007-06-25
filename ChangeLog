@@ -1,3 +1,12 @@
+2007-06-25  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* port/strtoull.c: New porting function in case strtoull() is not
+	available on the target system.	
+	* configure.ac: Add configure support for determining sized types
+	in a portable way and performing necessary substitutions in
+	tif_config.h and tiffconf.h.  Updated tiff.h to use the new
+	definitions.
+
 2007-04-27  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Check the tmpfile() return status as per bug
