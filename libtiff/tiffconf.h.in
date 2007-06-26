@@ -31,6 +31,9 @@
 /* Unsigned 8-bit type */
 #undef TIFF_UINT8_T
 
+/* Signed size type */
+#undef TIFF_SSIZE_T
+
 /* Pointer difference type */
 #undef TIFF_PTRDIFF_T
 

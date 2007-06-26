@@ -60,7 +60,7 @@ typedef struct tiff TIFF;
  */
 /* this is the machine addressing size type, only it's signed, so make it int32
    on 32bit machines, int64 on 64bit machines */
-typedef TIFF_PTRDIFF_T tmsize_t;
+typedef TIFF_SSIZE_T tmsize_t;
 /* the following are depriciated and should be replaced by their defining
    counterparts */
 typedef uint32 ttag_t;          /* directory tag */

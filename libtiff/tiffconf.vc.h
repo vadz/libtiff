@@ -46,6 +46,9 @@
 /* Unsigned 64-bit type */
 #define TIFF_UINT64_T unsigned __int64
 
+/* Signed size type */
+#define TIFF_SSIZE_T signed long
+
 /* Pointer difference type */
 #define TIFF_PTRDIFF_T long
 

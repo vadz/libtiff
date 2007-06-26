@@ -208,6 +208,19 @@ fi
 AC_MSG_RESULT($UINT64_T)
 AC_DEFINE_UNQUOTED(TIFF_UINT64_T,$UINT64_T,[Unsigned 64-bit type])
 
+# Determine TIFF equivalent of ssize_t
+AC_MSG_CHECKING(for signed size type)
+SSIZE_T='unknown'
+if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
+then
+  SSIZE_T='signed long'
+elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
+then
+  SSIZE_T='signed long long'
+fi
+AC_MSG_RESULT($SSIZE_T)
+AC_DEFINE_UNQUOTED(TIFF_SSIZE_T,$SSIZE_T,[Signed size type])
+
 # Determine the type to use for the difference between two pointers.
 # We will default to the POSIX ptrdiff_t if it is available, but will
 # be prepared for the case when it is not.
@@ -215,13 +228,7 @@ PTRDIFF_T='unknown'
 AC_CHECK_TYPE(ptrdiff_t,[PTRDIFF_T=ptrdiff_t])
 if test $PTRDIFF_T = unknown
 then
-  if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
-  then
-    PTRDIFF_T='signed long'
-  elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
-  then
-    PTRDIFF_T='signed long long'
-  fi
+  PTRDIFF_T=$SSIZE_T
 fi
 AC_MSG_CHECKING(for pointer difference type)
 AC_MSG_RESULT($PTRDIFF_T)

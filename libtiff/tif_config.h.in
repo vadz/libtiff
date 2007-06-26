@@ -265,6 +265,9 @@
 /* Pointer difference type */
 #undef TIFF_PTRDIFF_T
 
+/* Signed size type */
+#undef TIFF_SSIZE_T
+
 /* Unsigned 16-bit type */
 #undef TIFF_UINT16_T
 

@@ -24877,6 +24877,25 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+# Determine TIFF equivalent of ssize_t
+{ echo "$as_me:$LINENO: checking for signed size type" >&5
+echo $ECHO_N "checking for signed size type... $ECHO_C" >&6; }
+SSIZE_T='unknown'
+if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
+then
+  SSIZE_T='signed long'
+elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
+then
+  SSIZE_T='signed long long'
+fi
+{ echo "$as_me:$LINENO: result: $SSIZE_T" >&5
+echo "${ECHO_T}$SSIZE_T" >&6; }
+
+cat >>confdefs.h <<_ACEOF
+#define TIFF_SSIZE_T $SSIZE_T
+_ACEOF
+
+
 # Determine the type to use for the difference between two pointers.
 # We will default to the POSIX ptrdiff_t if it is available, but will
 # be prepared for the case when it is not.
@@ -24940,13 +24959,7 @@ fi
 
 if test $PTRDIFF_T = unknown
 then
-  if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
-  then
-    PTRDIFF_T='signed long'
-  elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
-  then
-    PTRDIFF_T='signed long long'
-  fi
+  PTRDIFF_T=$SSIZE_T
 fi
 { echo "$as_me:$LINENO: checking for pointer difference type" >&5
 echo $ECHO_N "checking for pointer difference type... $ECHO_C" >&6; }
