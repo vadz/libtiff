@@ -329,7 +329,7 @@ Fax3Decode2D(TIFF* tif, uint8* buf, tmsize_t occ, uint16 s)
  * this is <8 bytes.  We optimize the code here to reflect the
  * machine characteristics.
  */
-#if SIZEOF_LONG == 8
+#if SIZEOF_UNSIGNED_LONG == 8
 # define FILL(n, cp)							    \
     switch (n) {							    \
     case 15:(cp)[14] = 0xff; case 14:(cp)[13] = 0xff; case 13: (cp)[12] = 0xff;\

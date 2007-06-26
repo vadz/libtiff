@@ -46,6 +46,9 @@
 /* Unsigned 64-bit type */
 #define TIFF_UINT64_T unsigned __int64
 
+/* Pointer difference type */
+#define TIFF_PTRDIFF_T long
+
 /* Compatibility stuff. */
 
 /* Define as 0 or 1 according to the floating point format suported by the

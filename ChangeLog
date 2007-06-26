@@ -1,6 +1,7 @@
 2007-06-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Fix typo when substituting value for unsigned 8 bit type.
+	Added support for a TIFF_PTRDIFF_T type to use when doing pointer arithmetic.
 	* libtiff/tiffconf.vc.h: Add porting type defintions for WIN32.
 
 2007-06-25  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>

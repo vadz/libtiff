@@ -99,8 +99,6 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
 AC_C_BIGENDIAN
-AC_CHECK_SIZEOF(int)dnl # This one does not seem to be needed any more.
-AC_CHECK_SIZEOF(long)dnl # This one is needed by libtiff/tif_fax3.c
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
@@ -128,14 +126,19 @@ AC_CHECK_SIZEOF(signed long)
 # Obtain size of a 'unsigned long' and define as SIZEOF_UNSIGNED_LONG
 AC_CHECK_SIZEOF(unsigned long)
 
-# Obtain size of a 'long long' and define as SIZEOF_SIGNED_LONG_LONG.  If
-# 'long long' is not supported then the value defined is zero.
+# Obtain size of a 'long long' and define as SIZEOF_SIGNED_LONG_LONG.
+# If 'long long' is not supported then the value defined is zero.
 AC_CHECK_SIZEOF(signed long long)
 
 # Obtain size of a 'unsigned long long' and define as
 # SIZEOF_UNSIGNED_LONG_LONG.  If 'unsigned long long' is not
 # supported then the value defined is zero.
 AC_CHECK_SIZEOF(unsigned long long)
+
+# Obtain the size of an 'unsigned char *' and define as
+# SIZEOF_UNSIGNED_CHAR_P.  Result is available in
+# ac_cv_sizeof_unsigned_char_p.
+AC_CHECK_SIZEOF(unsigned char *)
 
 AC_MSG_CHECKING(for signed 8-bit type)
 INT8_T='signed char'
@@ -204,6 +207,25 @@ then
 fi
 AC_MSG_RESULT($UINT64_T)
 AC_DEFINE_UNQUOTED(TIFF_UINT64_T,$UINT64_T,[Unsigned 64-bit type])
+
+# Determine the type to use for the difference between two pointers.
+# We will default to the POSIX ptrdiff_t if it is available, but will
+# be prepared for the case when it is not.
+PTRDIFF_T='unknown'
+AC_CHECK_TYPE(ptrdiff_t,[PTRDIFF_T=ptrdiff_t])
+if test $PTRDIFF_T = unknown
+then
+  if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
+  then
+    PTRDIFF_T='signed long'
+  elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
+  then
+    PTRDIFF_T='signed long long'
+  fi
+fi
+AC_MSG_CHECKING(for pointer difference type)
+AC_MSG_RESULT($PTRDIFF_T)
+AC_DEFINE_UNQUOTED(TIFF_PTRDIFF_T,$PTRDIFF_T,[Pointer difference type])
 
 dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
 AC_CHECK_TYPES([int8, int16, int32],,,

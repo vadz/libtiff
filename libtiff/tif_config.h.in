@@ -207,12 +207,6 @@
    your system. */
 #undef PTHREAD_CREATE_JOINABLE
 
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* The size of `long', as computed by sizeof. */
-#undef SIZEOF_LONG
-
 /* The size of `signed int', as computed by sizeof. */
 #undef SIZEOF_SIGNED_INT
 
@@ -224,6 +218,9 @@
 
 /* The size of `signed short', as computed by sizeof. */
 #undef SIZEOF_SIGNED_SHORT
+
+/* The size of `unsigned char *', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_CHAR_P
 
 /* The size of `unsigned int', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_INT
@@ -264,6 +261,9 @@
 
 /* Signed 8-bit type */
 #undef TIFF_INT8_T
+
+/* Pointer difference type */
+#undef TIFF_PTRDIFF_T
 
 /* Unsigned 16-bit type */
 #undef TIFF_UINT16_T
