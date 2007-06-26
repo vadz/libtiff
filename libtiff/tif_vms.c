@@ -41,6 +41,11 @@
 #define	NOSHARE
 #endif
 
+COMPILATION SHOULD FAIL
+This file is not yet updated to reflect changes in LibTiff 4.0. If you have
+the opportunity to update and test this file, please contact LibTiff folks
+for all assistance you may require and contribute the results
+
 #ifdef __alpha
 /* Dummy entry point for backwards compatibility */
 void TIFFModeCCITTFax3(void){}

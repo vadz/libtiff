@@ -50,6 +50,11 @@ borrowing types from kernel.h, which is less efficient but doesn't need any
 third-party libraries.
  */
 
+COMPILATION SHOULD FAIL
+This file is not yet updated to reflect changes in LibTiff 4.0. If you have
+the opportunity to update and test this file, please contact LibTiff folks
+for all assistance you may require and contribute the results
+
 #ifdef INCLUDE_OSLIB
 
 #include "osfile.h"

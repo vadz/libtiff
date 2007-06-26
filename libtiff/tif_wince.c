@@ -39,6 +39,11 @@
 /* Turn off console support on Windows CE. */
 #undef TIF_PLATFORM_CONSOLE
 
+COMPILATION SHOULD FAIL
+This file is not yet updated to reflect changes in LibTiff 4.0. If you have
+the opportunity to update and test this file, please contact LibTiff folks
+for all assistance you may require and contribute the results
+
 
 /*
  * Open a TIFF file for read/writing.
