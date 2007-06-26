@@ -4418,7 +4418,7 @@ test -z "$OBJDUMP" && OBJDUMP=objdump
 
 
 macro_version='2.1a'
-macro_revision='1.2455'
+macro_revision='1.2410'
 
 
 
@@ -16314,7 +16314,7 @@ UINT8_T='unsigned char'
 echo "${ECHO_T}$UINT8_T" >&6; }
 
 cat >>confdefs.h <<_ACEOF
-#define TIFF_UINT8_T $INT8_T
+#define TIFF_UINT8_T $UINT8_T
 _ACEOF
 
 

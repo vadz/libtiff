@@ -1,3 +1,8 @@
+2007-06-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Fix typo when substituting value for unsigned 8 bit type.
+	* libtiff/tiffconf.vc.h: Add porting type defintions for WIN32.
+
 2007-06-25  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* port/strtoull.c: New porting function in case strtoull() is not

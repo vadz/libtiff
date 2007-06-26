@@ -22,6 +22,30 @@
 /* The size of a `long', as computed by sizeof. */
 #define SIZEOF_LONG 4
 
+/* Signed 8-bit type */
+#define TIFF_INT8_T signed char
+
+/* Unsigned 8-bit type */
+#define TIFF_UINT8_T unsigned char
+
+/* Signed 16-bit type */
+#define TIFF_INT16_T signed short
+
+/* Unsigned 16-bit type */
+#define TIFF_UINT16_T unsigned short
+
+/* Signed 32-bit type */
+#define TIFF_INT32_T signed int
+
+/* Unsigned 32-bit type */
+#define TIFF_UINT32_T unsigned int
+
+/* Signed 64-bit type */
+#define TIFF_INT64_T signed __int64
+
+/* Unsigned 64-bit type */
+#define TIFF_UINT64_T unsigned __int64
+
 /* Compatibility stuff. */
 
 /* Define as 0 or 1 according to the floating point format suported by the

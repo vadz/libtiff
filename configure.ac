@@ -146,7 +146,7 @@ AC_DEFINE_UNQUOTED(TIFF_INT8_T,$INT8_T,[Signed 8-bit type])
 AC_MSG_CHECKING(for unsigned 8-bit type)
 UINT8_T='unsigned char'
 AC_MSG_RESULT($UINT8_T)
-AC_DEFINE_UNQUOTED(TIFF_UINT8_T,$INT8_T,[Unsigned 8-bit type])
+AC_DEFINE_UNQUOTED(TIFF_UINT8_T,$UINT8_T,[Unsigned 8-bit type])
 
 AC_MSG_CHECKING(for signed 16-bit type)
 INT16_T='signed short'
