@@ -201,7 +201,7 @@ TIFFCodec*
 TIFFRegisterCODEC(uint16 scheme, const char* name, TIFFInitMethod init)
 {
 	codec_t* cd = (codec_t*)
-	    _TIFFmalloc(sizeof (codec_t) + sizeof (TIFFCodec) + strlen(name)+1);
+	    _TIFFmalloc((tmsize_t)(sizeof (codec_t) + sizeof (TIFFCodec) + strlen(name)+1));
 
 	if (cd != NULL) {
 		cd->info = (TIFFCodec*) ((uint8*) cd + sizeof (codec_t));

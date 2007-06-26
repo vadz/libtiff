@@ -741,7 +741,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		{
 			enum TIFFReadDirEntryErr err;
 			uint32 offset;
-			offset=direntry->tdir_offset;
+			offset=(uint32)(direntry->tdir_offset);
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong(&offset);
 			err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
@@ -4016,7 +4016,6 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 int
 TIFFReadEXIFDirectory(TIFF* tif, uint64 diroff)
 {
-	uint32 exifFieldInfoCount;
 	const TIFFFieldInfoArray* exifFieldInfoArray;
 	exifFieldInfoArray = _TIFFGetExifFieldInfo();
 	return TIFFReadCustomDirectory(tif, diroff, exifFieldInfoArray);  
@@ -4277,7 +4276,12 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 		}
 	} else {
 		tmsize_t m;
-		tmsize_t off = tif->tif_diroff;
+		tmsize_t off = (tmsize_t) tif->tif_diroff;
+		if ((uint64)off!=tif->tif_diroff)
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"Can not read TIFF directory count");
+			return(0);
+		}
 
 		/*
 		 * Check for integer overflow when validating the dir_off,
@@ -4293,8 +4297,7 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 			m=off+sizeof(uint16);
 			if ((m<off)||(m<sizeof(uint16))||(m>tif->tif_size)) {
 				TIFFErrorExt(tif->tif_clientdata, module,
-					"%s: Can not read TIFF directory count",
-					tif->tif_name);
+					"Can not read TIFF directory count");
 				return 0;
 			} else {
 				_TIFFmemcpy(&dircount16, tif->tif_base + off,
@@ -4405,7 +4408,7 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 				TIFFSwabLong((uint32*)ma);
 			mb->tdir_count=(uint64)(*(uint32*)ma);
 			((uint32*)ma)++;
-			*(uint32*)(&mb->tdir_offset)=(uint64)(*(uint32*)ma);
+			*(uint32*)(&mb->tdir_offset)=*(uint32*)ma;
 			((uint32*)ma)++;
 		}
 		else
@@ -5159,7 +5162,7 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 		stripbytes = rowbytes;
 		rowsperstrip = 1;
 	} else if (rowbytes > 0 ) {
-		rowsperstrip = STRIP_SIZE_DEFAULT / rowbytes;
+		rowsperstrip = (uint32) (STRIP_SIZE_DEFAULT / rowbytes);
 		stripbytes = rowbytes * rowsperstrip;
 	}
 	else

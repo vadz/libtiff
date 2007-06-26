@@ -306,7 +306,7 @@ extern uint32 TIFFGetTagListEntry( TIFF *, int tag_index );
 
 #define FIELD_CUSTOM    65    
 
-struct TIFFFieldInfoArray;
+struct _TIFFFieldInfoArray;
 
 typedef struct {
 	uint32 field_tag;                       /* field's tag */
@@ -319,7 +319,7 @@ typedef struct {
 	unsigned char field_oktochange;         /* if true, can change while writing */
 	unsigned char field_passcount;          /* if true, pass dir count on set */
 	char* field_name;                       /* ASCII name */
-	struct TIFFFieldInfoArray* field_subfields;
+	const struct _TIFFFieldInfoArray* field_subfields;
 } TIFFFieldInfo;
 
 typedef enum {
@@ -328,11 +328,11 @@ typedef enum {
 	tfiatOther,
 } TIFFFieldInfoArrayType;
 
-typedef struct {
+typedef struct _TIFFFieldInfoArray{
 	TIFFFieldInfoArrayType type;
 	uint32 allocated;
 	uint32 used;
-	TIFFFieldInfo* fieldinfo;
+	const TIFFFieldInfo* fieldinfo;
 } TIFFFieldInfoArray;
 
 typedef struct _TIFFTagValue {
@@ -412,7 +412,7 @@ extern TIFFUnmapFileProc TIFFGetUnmapFileProc(TIFF*);
 extern uint32 TIFFCurrentRow(TIFF*);
 extern uint16 TIFFCurrentDirectory(TIFF*);
 extern uint16 TIFFNumberOfDirectories(TIFF*);
-extern uint32 TIFFCurrentDirOffset(TIFF*);
+extern uint64 TIFFCurrentDirOffset(TIFF*);
 extern uint32 TIFFCurrentStrip(TIFF*);
 extern uint32 TIFFCurrentTile(TIFF* tif);
 extern int TIFFReadBufferSetup(TIFF* tif, void* bp, tmsize_t size);

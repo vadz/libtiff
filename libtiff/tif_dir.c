@@ -46,7 +46,7 @@ setByteArray(void** vpp, void* vp, size_t nmemb, size_t elem_size)
 	if (*vpp)
 		_TIFFfree(*vpp), *vpp = 0;
 	if (vp) {
-		tmsize_t bytes = nmemb * elem_size;
+		tmsize_t bytes = (tmsize_t)(nmemb * elem_size);
 		if (elem_size && bytes / elem_size == nmemb)
 			*vpp = (void*) _TIFFmalloc(bytes);
 		if (*vpp)
@@ -124,7 +124,7 @@ checkInkNamesString(TIFF* tif, uint32 slen, const char* s)
 					goto bad;
 			cp++;				/* skip \0 */
 		}
-		return (cp-s);
+		return ((uint32)(cp-s));
 	}
 bad:
 	TIFFErrorExt(tif->tif_clientdata, "TIFFSetField",
@@ -478,7 +478,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 			else
 			{
 				mb=(char*)va_arg(ap,char*);
-				ma=strlen(mb)+1;
+				ma=(uint32)(strlen(mb)+1);
 			}
 			tv->count=ma;
 			setByteArray(&tv->value,mb,ma,1);
@@ -1348,7 +1348,7 @@ TIFFSetSubDirectory(TIFF* tif, uint64 diroff)
 /*
  * Return file offset of the current directory.
  */
-uint32
+uint64
 TIFFCurrentDirOffset(TIFF* tif)
 {
 	return (tif->tif_diroff);

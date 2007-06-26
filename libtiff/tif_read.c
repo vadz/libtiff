@@ -249,7 +249,7 @@ TIFFReadRawStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 	}
 	if (size != (tmsize_t)(-1) && size < bytecountm)
 		bytecountm = size;
-	return (TIFFReadRawStrip1(tif, strip, buf, bytecount, module));
+	return (TIFFReadRawStrip1(tif, strip, buf, bytecountm, module));
 }
 
 /*

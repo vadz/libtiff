@@ -656,7 +656,7 @@ OJPEGPreDecode(TIFF* tif, uint16 s)
 	}
 	if (sp->writeheader_done==0)
 	{
-		sp->plane_sample_offset=s;
+		sp->plane_sample_offset=(uint8)s;
 		sp->write_cursample=s;
 		sp->write_curstrile=s*tif->tif_dir.td_stripsperimage;
 		if ((sp->in_buffer_file_pos_log==0) ||
@@ -1014,9 +1014,9 @@ OJPEGReadHeaderInfo(TIFF* tif)
 		sp->strile_length=tif->tif_dir.td_rowsperstrip;
 		sp->strile_length_total=sp->image_length;
 	}
-	sp->samples_per_pixel=tif->tif_dir.td_samplesperpixel;
-	if (sp->samples_per_pixel==1)
+	if (tif->tif_dir.td_samplesperpixel==1)
 	{
+		sp->samples_per_pixel=1;
 		sp->plane_sample_offset=0;
 		sp->samples_per_pixel_per_plane=sp->samples_per_pixel;
 		sp->subsampling_hor=1;
@@ -1024,11 +1024,12 @@ OJPEGReadHeaderInfo(TIFF* tif)
 	}
 	else
 	{
-		if (sp->samples_per_pixel!=3)
+		if (tif->tif_dir.td_samplesperpixel!=3)
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,"SamplesPerPixel %d not supported for this compression scheme",sp->samples_per_pixel);
 			return(0);
 		}
+		sp->samples_per_pixel=3;
 		sp->plane_sample_offset=0;
 		if (tif->tif_dir.td_planarconfig==PLANARCONFIG_CONTIG)
 			sp->samples_per_pixel_per_plane=3;
@@ -2032,8 +2033,8 @@ OJPEGReadSkip(OJPEGState* sp, uint16 len)
 	{
 		assert(sp->in_buffer_togo==0);
 		n=m;
-		if (n>sp->in_buffer_file_togo)
-			n=sp->in_buffer_file_togo;
+		if ((uint64)n>sp->in_buffer_file_togo)
+			n=(uint16)sp->in_buffer_file_togo;
 		sp->in_buffer_file_pos+=n;
 		sp->in_buffer_file_togo-=n;
 		sp->in_buffer_file_pos_log=0;

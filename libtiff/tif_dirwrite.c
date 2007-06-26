@@ -558,7 +558,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 									assert(o->field_readcount==TIFF_VARIABLE);
 									assert(o->field_passcount==0);
 									TIFFGetField(tif,o->field_tag,&pb);
-									pa=strlen(pb);
+									pa=(uint32)(strlen(pb));
 									if (!TIFFWriteDirectoryTagAscii(tif,&ndir,dir,o->field_tag,pa,pb))
 										goto bad;
 								}
@@ -1533,7 +1533,7 @@ TIFFWriteDirectoryTagSubifd(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 		for (p=0; p<tif->tif_dir.td_nsubifd; p++)
 		{
 			assert(*pa<=0xFFFFFFFFUL);
-			*pb++=*pa++;
+			*pb++=(uint32)(*pa++);
 		}
 		n=TIFFWriteDirectoryTagCheckedIfdArray(tif,ndir,dir,TIFFTAG_SUBIFD,tif->tif_dir.td_nsubifd,o);
 		_TIFFfree(o);
@@ -2077,7 +2077,7 @@ TIFFLinkDirectory(TIFF* tif)
 	{
 		uint32 m;
 		uint32 nextdir;
-		m = tif->tif_diroff;
+		m = (uint32)(tif->tif_diroff);
 		if (tif->tif_flags & TIFF_SWAB)
 			TIFFSwabLong(&m);
 		if (tif->tif_header.classic.tiff_diroff == 0) {

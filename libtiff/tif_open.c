@@ -100,7 +100,7 @@ TIFFClientOpen(
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
 		goto bad2;
-	tif = (TIFF *)_TIFFmalloc(sizeof (TIFF) + strlen(name) + 1);
+	tif = (TIFF *)_TIFFmalloc((tmsize_t)(sizeof (TIFF) + strlen(name) + 1));
 	if (tif == NULL) {
 		TIFFErrorExt(clientdata, module, "%s: Out of memory (TIFF structure)", name);
 		goto bad2;
