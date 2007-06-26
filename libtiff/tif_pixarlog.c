@@ -756,7 +756,7 @@ PixarLogDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 	    to deal with 8byte memory sizes, though this code will respond
 	    apropriately even before we simplify it */
 	sp->stream.avail_out = (uInt) (nsamples * sizeof(uint16));
-	if ((tmsize_t)sp->stream.avail_out != nsamples * sizeof(uint16))
+	if (sp->stream.avail_out != nsamples * sizeof(uint16))
 	{
 		TIFFErrorExt(tif->tif_clientdata, module, "ZLib cannot deal with buffers this size");
 		return (0);
@@ -1143,7 +1143,7 @@ PixarLogEncode(TIFF* tif, uint8* bp, tmsize_t cc, uint16 s)
 	    to deal with 8byte memory sizes, though this code will respond
 	    apropriately even before we simplify it */
 	sp->stream.avail_in = n * sizeof(uint16);
-	if ((tmsize_t)sp->stream.avail_in != n * sizeof(uint16))
+	if (sp->stream.avail_in != n * sizeof(uint16))
 	{
 		TIFFErrorExt(tif->tif_clientdata, module, "ZLib cannot deal with buffers this size");
 		return (0);

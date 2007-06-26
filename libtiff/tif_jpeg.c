@@ -846,7 +846,8 @@ JPEGFixupTagsSubsamplingReadByte(struct JPEGFixupTagsSubsamplingData* data, uint
 		m=data->buffersize;
 		if ((uint64)m>data->filebytesleft)
 			m=(uint32)data->filebytesleft;
-		if (TIFFReadFile(data->tif,data->buffer,m)!=m)
+		assert(m<0x80000000UL);
+		if (TIFFReadFile(data->tif,data->buffer,(tmsize_t)m)!=(tmsize_t)m)
 			return(0);
 		data->buffercurrentbyte=data->buffer;
 		data->bufferbytesleft=m;

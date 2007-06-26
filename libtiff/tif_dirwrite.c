@@ -541,7 +541,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 					goto bad;
 			}
 			{
-				int n;
+				uint32 n;
 				for (n=0; n<tif->tif_nfields; n++)
 				{
 					const TIFFFieldInfo* o;
@@ -797,7 +797,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 		TIFFErrorExt(tif->tif_clientdata,module,"IO error writing directory");
 		goto bad;
 	}
-	if (!WriteOK(tif,dirmem,dirsize))
+	if (!WriteOK(tif,dirmem,(tmsize_t)dirsize))
 	{
 		TIFFErrorExt(tif->tif_clientdata,module,"IO error writing directory");
 		goto bad;
@@ -1737,7 +1737,12 @@ TIFFWriteDirectoryTagCheckedRational(TIFF* tif, uint32* ndir, TIFFDirEntry* dir,
 	uint32 m[2];
 	assert(value>=0.0);
 	assert(sizeof(uint32)==4);
-	if (value==(uint32)value)
+	if (value<=0.0)
+	{
+		m[0]=0;
+		m[1]=1;
+	}
+	else if (value==(double)(uint32)value)
 	{
 		m[0]=(uint32)value;
 		m[1]=1;
@@ -1778,7 +1783,12 @@ TIFFWriteDirectoryTagCheckedRationalArray(TIFF* tif, uint32* ndir, TIFFDirEntry*
 	}
 	for (na=value, nb=m, nc=0; nc<count; na++, nb+=2, nc++)
 	{
-		if (*na==(uint32)(*na))
+		if (*na<=0.0)
+		{
+			nb[0]=0;
+			nb[1]=1;
+		}
+		else if (*na==(float)(uint32)(*na))
 		{
 			nb[0]=(uint32)(*na);
 			nb[1]=1;
@@ -1953,7 +1963,7 @@ TIFFWriteDirectoryTagData(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag
 	dir[m].tdir_type=datatype;
 	dir[m].tdir_count=count;
 	dir[m].tdir_offset=0;
-	if (datalength<=((tif->tif_flags&TIFF_BIGTIFF)?8:4))
+	if (datalength<=((tif->tif_flags&TIFF_BIGTIFF)?0x8U:0x4U))
 		_TIFFmemcpy(&dir[m].tdir_offset,data,datalength);
 	else
 	{
@@ -1972,7 +1982,8 @@ TIFFWriteDirectoryTagData(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag
 			TIFFErrorExt(tif->tif_clientdata,module,"IO error writing tag data");
 			return(0);
 		}
-		if (!WriteOK(tif,data,datalength))
+		assert(datalength<0x80000000UL);
+		if (!WriteOK(tif,data,(tmsize_t)datalength))
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,"IO error writing tag data");
 			return(0);

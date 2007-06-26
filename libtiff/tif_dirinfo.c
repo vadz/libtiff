@@ -253,13 +253,13 @@ static const TIFFFieldInfoArray tiffFieldInfoArray = { tfiatImage, 0, TIFFArrayC
 static const TIFFFieldInfoArray exifFieldInfoArray = { tfiatExif, 0, TIFFArrayCount(exifFieldInfo), exifFieldInfo };
 
 const TIFFFieldInfoArray*
-_TIFFGetFieldInfo()
+_TIFFGetFieldInfo(void)
 {
 	return(&tiffFieldInfoArray);
 }
 
 const TIFFFieldInfoArray*
-_TIFFGetExifFieldInfo()
+_TIFFGetExifFieldInfo(void)
 {
 	return(&exifFieldInfoArray);
 }

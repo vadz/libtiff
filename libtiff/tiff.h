@@ -107,24 +107,6 @@ typedef struct {
 
 
 /*
- * TIFF Image File Directories are comprised of a table of field
- * descriptors of the form shown below.  The table is sorted in
- * ascending order by tag.  The values associated with each entry are
- * disjoint and may appear anywhere in the file (so long as they are
- * placed on a word boundary).
- *
- * If the value is 4 bytes or less, in ClassicTIFF, or 8 bytes or less in
- * BigTIFF, then it is placed in the offset field to save space. If so,
- * it is left-justified in the offset field.
- */
-typedef struct {
-	uint16 tdir_tag;        /* see below */
-	uint16 tdir_type;       /* data type; see below */
-	uint64 tdir_count;      /* number of items; length in spec */
-	uint64 tdir_offset;
-} TIFFDirEntry;
-
-/*
  * NB: In the comments below,
  *  - items marked with a + are obsoleted by revision 5.0,
  *  - items marked with a ! are introduced in revision 6.0.

@@ -34,9 +34,9 @@
  * Internal format of a TIFF directory entry.
  */
 typedef struct {
-#define	FIELD_SETLONGS	4
+#define FIELD_SETLONGS 4
 	/* bit vector of fields that are set */
-	unsigned long	td_fieldsset[FIELD_SETLONGS];
+	unsigned long td_fieldsset[FIELD_SETLONGS];
 
 	uint32  td_imagewidth, td_imagelength, td_imagedepth;
 	uint32  td_tilewidth, td_tilelength, td_tiledepth;
@@ -65,7 +65,7 @@ typedef struct {
 	 * of striles (=strips or tiles) per plane, and td_nstrips the total
 	 * number of striles */
 	uint32  td_stripsperimage;  
-	uint32  td_nstrips;            /* size of offset & bytecount arrays */
+	uint32  td_nstrips;              /* size of offset & bytecount arrays */
 	uint64* td_stripoffset;
 	uint64* td_stripbytecount;
 	int     td_stripbytecountsorted; /* is the bytecount array sorted ascending? */
@@ -98,7 +98,7 @@ typedef struct {
  * this is understood by the directory reading logic
  * which uses this fact to avoid special-case handling
  */
-#define	FIELD_IGNORE                   0
+#define FIELD_IGNORE                   0
 
 /* multi-item fields */
 #define FIELD_IMAGEDIMENSIONS          1
@@ -151,24 +151,24 @@ typedef struct {
  * do using internal state flags without polluting the
  * field bit space defined for real tags.
  */
-#define	FIELD_PSEUDO			0
+#define FIELD_PSEUDO			0
 
-#define	FIELD_LAST			(32*FIELD_SETLONGS-1)
+#define FIELD_LAST			(32*FIELD_SETLONGS-1)
 
-#define BITn(n)				(((unsigned long)1L)<<((n)&0x1f)) 
-#define BITFIELDn(tif, n)		((tif)->tif_dir.td_fieldsset[(n)/32]) 
-#define TIFFFieldSet(tif, field)	(BITFIELDn(tif, field) & BITn(field)) 
+#define BITn(n)				(((unsigned long)1L)<<((n)&0x1f))
+#define BITFIELDn(tif, n)		((tif)->tif_dir.td_fieldsset[(n)/32])
+#define TIFFFieldSet(tif, field)	(BITFIELDn(tif, field) & BITn(field))
 #define TIFFSetFieldBit(tif, field)	(BITFIELDn(tif, field) |= BITn(field))
 #define TIFFClrFieldBit(tif, field)	(BITFIELDn(tif, field) &= ~BITn(field))
 
-#define	FieldSet(fields, f)		(fields[(f)/32] & BITn(f))
-#define	ResetFieldBit(fields, f)	(fields[(f)/32] &= ~BITn(f))
+#define FieldSet(fields, f)		(fields[(f)/32] & BITn(f))
+#define ResetFieldBit(fields, f)	(fields[(f)/32] &= ~BITn(f))
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-extern const TIFFFieldInfoArray* _TIFFGetFieldInfo();
-extern const TIFFFieldInfoArray* _TIFFGetExifFieldInfo();
+extern const TIFFFieldInfoArray* _TIFFGetFieldInfo(void);
+extern const TIFFFieldInfoArray* _TIFFGetExifFieldInfo(void);
 extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray);
 extern int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
 extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
@@ -177,10 +177,10 @@ extern const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag,
 extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo(TIFF *tif, uint32 tag,
     TIFFDataType dt);
 
-#define _TIFFFindFieldInfo	    TIFFFindFieldInfo
-#define _TIFFFindFieldInfoByName    TIFFFindFieldInfoByName
-#define _TIFFFieldWithTag	    TIFFFieldWithTag
-#define _TIFFFieldWithName	    TIFFFieldWithName
+#define _TIFFFindFieldInfo         TIFFFindFieldInfo
+#define _TIFFFindFieldInfoByName   TIFFFindFieldInfoByName
+#define _TIFFFieldWithTag          TIFFFieldWithTag
+#define _TIFFFieldWithName         TIFFFieldWithName
 
 #if defined(__cplusplus)
 }
