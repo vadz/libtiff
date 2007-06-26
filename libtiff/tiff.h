@@ -42,8 +42,9 @@
  *
  *    (http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf)
  *
- * For Big TIFF design notes see the following link
+ * For BigTIFF design notes see the following links
  *    http://www.remotesensing.org/libtiff/bigtiffdesign.html
+ *    http://www.awaresystems.be/imaging/tiff/bigtiff.html
  */
 
 #define TIFF_VERSION_CLASSIC 42

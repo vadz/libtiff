@@ -251,13 +251,14 @@ TIFFUnRegisterCODEC(TIFFCodec* c)
 TIFFCodec*
 TIFFGetConfiguredCODECs()
 {
-	int		i = 1;
-        codec_t		*cd;
-        const TIFFCodec	*c;
-	TIFFCodec	*codecs = NULL, *new_codecs;
+	int i = 1;
+	codec_t *cd;
+	const TIFFCodec* c;
+	TIFFCodec* codecs = NULL;
+	TIFFCodec* new_codecs;
 
-        for (cd = registeredCODECS; cd; cd = cd->next) {
-                new_codecs = (TIFFCodec *)
+	for (cd = registeredCODECS; cd; cd = cd->next) {
+		new_codecs = (TIFFCodec *)
 			_TIFFrealloc(codecs, i * sizeof(TIFFCodec));
 		if (!new_codecs) {
 			_TIFFfree (codecs);
@@ -267,9 +268,9 @@ TIFFGetConfiguredCODECs()
 		_TIFFmemcpy(codecs + i - 1, cd, sizeof(TIFFCodec));
 		i++;
 	}
-        for (c = _TIFFBuiltinCODECS; c->name; c++) {
-                if (TIFFIsCODECConfigured(c->scheme)) {
-                        new_codecs = (TIFFCodec *)
+	for (c = _TIFFBuiltinCODECS; c->name; c++) {
+		if (TIFFIsCODECConfigured(c->scheme)) {
+			new_codecs = (TIFFCodec *)
 				_TIFFrealloc(codecs, i * sizeof(TIFFCodec));
 			if (!new_codecs) {
 				_TIFFfree (codecs);
@@ -289,7 +290,7 @@ TIFFGetConfiguredCODECs()
 	codecs = new_codecs;
 	_TIFFmemset(codecs + i - 1, 0, sizeof(TIFFCodec));
 
-        return codecs;
+	return codecs;
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */

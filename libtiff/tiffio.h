@@ -61,7 +61,7 @@ typedef struct tiff TIFF;
 /* this is the machine addressing size type, only it's signed, so make it int32
    on 32bit machines, int64 on 64bit machines */
 typedef int32 tmsize_t;
-/* the following are depreciated and should be replaces by their defining
+/* the following are depriciated and should be replaced by their defining
    counterparts */
 typedef uint32 ttag_t;          /* directory tag */
 typedef uint16 tdir_t;          /* directory index */
@@ -94,12 +94,12 @@ typedef uint64 toff_t;          /* file offset */
 # define VC_EXTRALEAN
 # include <windows.h>
 # ifdef __WIN32__
-DECLARE_HANDLE(thandle_t);	/* Win32 file handle */
+DECLARE_HANDLE(thandle_t);     /* Win32 file handle */
 # else
-typedef	HFILE thandle_t;	/* client data handle */
+typedef HFILE thandle_t;       /* client data handle */
 # endif /* __WIN32__ */
 #else
-typedef	void* thandle_t;	/* client data handle */
+typedef void* thandle_t;       /* client data handle */
 #endif /* USE_WIN32_FILEIO */
 
 /*
@@ -108,13 +108,13 @@ typedef	void* thandle_t;	/* client data handle */
  * very large.   Bit-or these flags to enable printing
  * multiple items.
  */
-#define	TIFFPRINT_NONE		0x0		/* no extra info */
-#define	TIFFPRINT_STRIPS	0x1		/* strips/tiles info */
-#define	TIFFPRINT_CURVES	0x2		/* color/gray response curves */
-#define	TIFFPRINT_COLORMAP	0x4		/* colormap */
-#define	TIFFPRINT_JPEGQTABLES	0x100		/* JPEG Q matrices */
-#define	TIFFPRINT_JPEGACTABLES	0x200		/* JPEG AC tables */
-#define	TIFFPRINT_JPEGDCTABLES	0x200		/* JPEG DC tables */
+#define TIFFPRINT_NONE	       0x0    /* no extra info */
+#define TIFFPRINT_STRIPS       0x1    /* strips/tiles info */
+#define TIFFPRINT_CURVES       0x2    /* color/gray response curves */
+#define TIFFPRINT_COLORMAP     0x4    /* colormap */
+#define TIFFPRINT_JPEGQTABLES  0x100  /* JPEG Q matrices */
+#define TIFFPRINT_JPEGACTABLES 0x200  /* JPEG AC tables */
+#define TIFFPRINT_JPEGDCTABLES 0x200  /* JPEG DC tables */
 
 /* 
  * Colour conversion stuff
@@ -131,42 +131,42 @@ typedef	void* thandle_t;	/* client data handle */
 
 /* Structure for holding information about a display device. */
 
-typedef unsigned char TIFFRGBValue;		/* 8-bit samples */
+typedef unsigned char TIFFRGBValue;               /* 8-bit samples */
 
 typedef struct {
-	float d_mat[3][3]; 		/* XYZ -> luminance matrix */
-	float d_YCR;			/* Light o/p for reference white */
+	float d_mat[3][3];                        /* XYZ -> luminance matrix */
+	float d_YCR;                              /* Light o/p for reference white */
 	float d_YCG;
 	float d_YCB;
-	uint32 d_Vrwr;			/* Pixel values for ref. white */
+	uint32 d_Vrwr;                            /* Pixel values for ref. white */
 	uint32 d_Vrwg;
 	uint32 d_Vrwb;
-	float d_Y0R;			/* Residual light for black pixel */
+	float d_Y0R;                              /* Residual light for black pixel */
 	float d_Y0G;
 	float d_Y0B;
-	float d_gammaR;			/* Gamma values for the three guns */
+	float d_gammaR;                           /* Gamma values for the three guns */
 	float d_gammaG;
 	float d_gammaB;
 } TIFFDisplay;
 
-typedef struct {				/* YCbCr->RGB support */
-	TIFFRGBValue* clamptab;			/* range clamping table */
-	int*	Cr_r_tab;
-	int*	Cb_b_tab;
-	int32*	Cr_g_tab;
-	int32*	Cb_g_tab;
-        int32*  Y_tab;
+typedef struct {                                  /* YCbCr->RGB support */
+	TIFFRGBValue* clamptab;                   /* range clamping table */
+	int* Cr_r_tab;
+	int* Cb_b_tab;
+	int32* Cr_g_tab;
+	int32* Cb_g_tab;
+	int32* Y_tab;
 } TIFFYCbCrToRGB;
 
-typedef struct {				/* CIE Lab 1976->RGB support */
-	int	range;				/* Size of conversion table */
+typedef struct {                                  /* CIE Lab 1976->RGB support */
+	int range;                                /* Size of conversion table */
 #define CIELABTORGB_TABLE_RANGE 1500
-	float	rstep, gstep, bstep;
-	float	X0, Y0, Z0;			/* Reference white point */
+	float rstep, gstep, bstep;
+	float X0, Y0, Z0;                         /* Reference white point */
 	TIFFDisplay display;
-	float	Yr2r[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yr to r */
-	float	Yg2g[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yg to g */
-	float	Yb2b[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yb to b */
+	float Yr2r[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yr to r */
+	float Yg2g[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yg to g */
+	float Yb2b[CIELABTORGB_TABLE_RANGE + 1];  /* Conversion of Yb to b */
 } TIFFCIELabToRGB;
 
 /*
@@ -234,10 +234,10 @@ struct _TIFFRGBAImage {
  * Macros for extracting components from the
  * packed ABGR form returned by TIFFReadRGBAImage.
  */
-#define	TIFFGetR(abgr)	((abgr) & 0xff)
-#define	TIFFGetG(abgr)	(((abgr) >> 8) & 0xff)
-#define	TIFFGetB(abgr)	(((abgr) >> 16) & 0xff)
-#define	TIFFGetA(abgr)	(((abgr) >> 24) & 0xff)
+#define TIFFGetR(abgr) ((abgr) & 0xff)
+#define TIFFGetG(abgr) (((abgr) >> 8) & 0xff)
+#define TIFFGetB(abgr) (((abgr) >> 16) & 0xff)
+#define TIFFGetA(abgr) (((abgr) >> 24) & 0xff)
 
 /*
  * A CODEC is a software package that implements decoding,
@@ -258,7 +258,7 @@ typedef struct {
 
 /* share internal LogLuv conversion routines? */
 #ifndef LOGLUV_PUBLIC
-#define LOGLUV_PUBLIC		1
+#define LOGLUV_PUBLIC 1
 #endif
 
 #if defined(c_plusplus) || defined(__cplusplus)
@@ -343,36 +343,36 @@ typedef struct _TIFFTagValue {
 
 extern void TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n);
 extern const TIFFFieldInfo* TIFFFindFieldInfo(TIFF*, uint32, TIFFDataType);
-extern  const TIFFFieldInfo* TIFFFindFieldInfoByName(TIFF* , const char *,
-						     TIFFDataType);
+extern const TIFFFieldInfo* TIFFFindFieldInfoByName(TIFF* , const char *,
+    TIFFDataType);
 extern const TIFFFieldInfo* TIFFFieldWithTag(TIFF*, uint32);
 extern const TIFFFieldInfo* TIFFFieldWithName(TIFF*, const char *);
 
 typedef int (*TIFFVSetMethod)(TIFF*, uint32, va_list);
 typedef int (*TIFFVGetMethod)(TIFF*, uint32, va_list);
 typedef void (*TIFFPrintMethod)(TIFF*, FILE*, long);
-    
+
 typedef struct {
-    TIFFVSetMethod	vsetfield;	/* tag set routine */
-    TIFFVGetMethod	vgetfield;	/* tag get routine */
-    TIFFPrintMethod	printdir;	/* directory print routine */
+    TIFFVSetMethod vsetfield; /* tag set routine */
+    TIFFVGetMethod vgetfield; /* tag get routine */
+    TIFFPrintMethod printdir; /* directory print routine */
 } TIFFTagMethods;
-        
+
 extern  TIFFTagMethods *TIFFAccessTagMethods( TIFF * );
 extern  void *TIFFGetClientInfo( TIFF *, const char * );
 extern  void TIFFSetClientInfo( TIFF *, void *, const char * );
 
-extern void TIFFCleanup(TIFF*);
-extern void TIFFClose(TIFF*);
-extern int TIFFFlush(TIFF*);
-extern int TIFFFlushData(TIFF*);
-extern int TIFFGetField(TIFF*, uint32, ...);
-extern int TIFFVGetField(TIFF*, uint32, va_list);
-extern int TIFFGetFieldDefaulted(TIFF*, uint32, ...);
-extern int TIFFVGetFieldDefaulted(TIFF*, uint32, va_list);
-extern int TIFFReadDirectory(TIFF*);
+extern void TIFFCleanup(TIFF* tif);
+extern void TIFFClose(TIFF* tif);
+extern int TIFFFlush(TIFF* tif);
+extern int TIFFFlushData(TIFF* tif);
+extern int TIFFGetField(TIFF* tif, uint32 tag, ...);
+extern int TIFFVGetField(TIFF* tif, uint32 tag, va_list ap);
+extern int TIFFGetFieldDefaulted(TIFF* tif, uint32 tag, ...);
+extern int TIFFVGetFieldDefaulted(TIFF* tif, uint32 tag, va_list ap);
+extern int TIFFReadDirectory(TIFF* tif);
 extern int TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* infoarray);
-extern int TIFFReadEXIFDirectory(TIFF*, uint64);
+extern int TIFFReadEXIFDirectory(TIFF* tif, uint64 diroff);
 extern uint64 TIFFScanlineSize64(TIFF* tif);
 extern tmsize_t TIFFScanlineSize(TIFF* tif);
 extern uint64 TIFFRasterScanlineSize64(TIFF* tif);
@@ -389,7 +389,7 @@ extern uint64 TIFFTileSize64(TIFF* tif);
 extern tmsize_t TIFFTileSize(TIFF* tif);
 extern uint64 TIFFVTileSize64(TIFF* tif, uint32 nrows);
 extern tmsize_t TIFFVTileSize(TIFF* tif, uint32 nrows);
-extern uint32 TIFFDefaultStripSize(TIFF*, uint32);
+extern uint32 TIFFDefaultStripSize(TIFF* tif, uint32 request);
 extern void TIFFDefaultTileSize(TIFF*, uint32*, uint32*);
 extern int TIFFFileno(TIFF*);
 extern int TIFFSetFileno(TIFF*, int);
@@ -508,36 +508,36 @@ extern const unsigned char* TIFFGetBitRevTable(int);
 #define U_NEU		0.210526316
 #define V_NEU		0.473684211
 #define UVSCALE		410.
-extern	double LogL16toY(int);
-extern	double LogL10toY(int);
-extern	void XYZtoRGB24(float*, uint8*);
-extern	int uv_decode(double*, double*, int);
-extern	void LogLuv24toXYZ(uint32, float*);
-extern	void LogLuv32toXYZ(uint32, float*);
+extern double LogL16toY(int);
+extern double LogL10toY(int);
+extern void XYZtoRGB24(float*, uint8*);
+extern int uv_decode(double*, double*, int);
+extern void LogLuv24toXYZ(uint32, float*);
+extern void LogLuv32toXYZ(uint32, float*);
 #if defined(c_plusplus) || defined(__cplusplus)
-extern	int LogL16fromY(double, int = SGILOGENCODE_NODITHER);
-extern	int LogL10fromY(double, int = SGILOGENCODE_NODITHER);
-extern	int uv_encode(double, double, int = SGILOGENCODE_NODITHER);
-extern	uint32 LogLuv24fromXYZ(float*, int = SGILOGENCODE_NODITHER);
-extern	uint32 LogLuv32fromXYZ(float*, int = SGILOGENCODE_NODITHER);
+extern int LogL16fromY(double, int = SGILOGENCODE_NODITHER);
+extern int LogL10fromY(double, int = SGILOGENCODE_NODITHER);
+extern int uv_encode(double, double, int = SGILOGENCODE_NODITHER);
+extern uint32 LogLuv24fromXYZ(float*, int = SGILOGENCODE_NODITHER);
+extern uint32 LogLuv32fromXYZ(float*, int = SGILOGENCODE_NODITHER);
 #else
-extern	int LogL16fromY(double, int);
-extern	int LogL10fromY(double, int);
-extern	int uv_encode(double, double, int);
-extern	uint32 LogLuv24fromXYZ(float*, int);
-extern	uint32 LogLuv32fromXYZ(float*, int);
+extern int LogL16fromY(double, int);
+extern int LogL10fromY(double, int);
+extern int uv_encode(double, double, int);
+extern uint32 LogLuv24fromXYZ(float*, int);
+extern uint32 LogLuv32fromXYZ(float*, int);
 #endif
 #endif /* LOGLUV_PUBLIC */
-    
+
 extern int TIFFCIELabToRGBInit(TIFFCIELabToRGB*, TIFFDisplay *, float*);
 extern void TIFFCIELabToXYZ(TIFFCIELabToRGB *, uint32, int32, int32,
-			    float *, float *, float *);
+    float *, float *, float *);
 extern void TIFFXYZToRGB(TIFFCIELabToRGB *, float, float, float,
-			 uint32 *, uint32 *, uint32 *);
+    uint32 *, uint32 *, uint32 *);
 
 extern int TIFFYCbCrToRGBInit(TIFFYCbCrToRGB*, float*, float*);
 extern void TIFFYCbCrtoRGB(TIFFYCbCrToRGB *, uint32, int32, int32,
-			   uint32 *, uint32 *, uint32 *);
+    uint32 *, uint32 *, uint32 *);
 
 #if defined(c_plusplus) || defined(__cplusplus)
 }
