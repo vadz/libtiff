@@ -616,6 +616,7 @@ OJPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 static int
 OJPEGFixupTags(TIFF* tif)
 {
+	(void) tif;
 	return(1);
 }
 
@@ -1889,7 +1890,7 @@ OJPEGReadBufferFill(OJPEGState* sp)
 			assert(n>0);
 			assert(n<=OJPEG_BUFFER);
 			assert(n<65536);
-			assert(n<=sp->in_buffer_file_togo);
+			assert((uint64)n<=sp->in_buffer_file_togo);
 			m=(uint16)n;
 			sp->in_buffer_togo=m;
 			sp->in_buffer_cur=sp->in_buffer;

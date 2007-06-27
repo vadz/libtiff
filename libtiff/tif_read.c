@@ -194,16 +194,26 @@ TIFFReadRawStrip1(TIFF* tif, uint32 strip, void* buf, tmsize_t size,
 			return ((tmsize_t)(-1));
 		}
 	} else {
-		if (td->td_stripoffset[strip] + size > tif->tif_size) {
+		tmsize_t ma,mb;
+		tmsize_t n;
+		ma=(tmsize_t)td->td_stripoffset[strip];
+		mb=ma+size;
+		if (((uint64)ma!=td->td_stripoffset[strip])||(ma>tif->tif_size))
+			n=0;
+		else if ((mb<ma)||(mb<size)||(mb>tif->tif_size))
+			n=tif->tif_size-ma;
+		else
+			n=size;
+		if (n!=size) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "Read error at scanline %lu, strip %lu; got %llu bytes, expected %llu",
 			    (unsigned long) tif->tif_row,
 			    (unsigned long) strip,
-			    (unsigned long long) tif->tif_size - td->td_stripoffset[strip],
+			    (unsigned long long) n,
 			    (unsigned long long) size);
 			return ((tmsize_t)(-1));
 		}
-		_TIFFmemcpy(buf, tif->tif_base + (tmsize_t)(td->td_stripoffset[strip]),
+		_TIFFmemcpy(buf, tif->tif_base + ma,
 			    size);
 	}
 	return (size);
@@ -429,17 +439,27 @@ TIFFReadRawTile1(TIFF* tif, uint32 tile, void* buf, tmsize_t size, const char* m
 			return ((tmsize_t)(-1));
 		}
 	} else {
-		if (td->td_stripoffset[tile] + size > tif->tif_size) {
+		tmsize_t ma,mb;
+		tmsize_t n;
+		ma=(tmsize_t)td->td_stripoffset[tile];
+		mb=ma+size;
+		if (((uint64)ma!=td->td_stripoffset[tile])||(ma>tif->tif_size))
+			n=0;
+		else if ((mb<ma)||(mb<size)||(mb>tif->tif_size))
+			n=tif->tif_size-ma;
+		else
+			n=size;
+		if (n!=size) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			    "Read error at row %lud, col %lud, tile %lud; got %llu bytes, expected %llu",
 			    (unsigned long) tif->tif_row,
 			    (unsigned long) tif->tif_col,
 			    (unsigned long) tile,
-			    (unsigned long long) tif->tif_size - td->td_stripoffset[tile],
+			    (unsigned long long) n,
 			    (unsigned long long) size);
 			return ((tmsize_t)(-1));
 		}
-		_TIFFmemcpy(buf, tif->tif_base + (tmsize_t)td->td_stripoffset[tile], size);
+		_TIFFmemcpy(buf, tif->tif_base + ma, size);
 	}
 	return (size);
 }

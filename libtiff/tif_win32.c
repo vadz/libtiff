@@ -187,6 +187,8 @@ _tiffDummyUnmapProc(thandle_t fd, void* base, tmsize_t size)
 static void
 _tiffUnmapProc(thandle_t fd, void* base, tmsize_t size)
 {
+	(void) fd;
+	(void) size;
 	UnmapViewOfFile(base);
 }
 

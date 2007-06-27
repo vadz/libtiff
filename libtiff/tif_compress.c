@@ -88,6 +88,7 @@ TIFFNoDecode(TIFF* tif, const char* method)
 int
 _TIFFNoFixupTags(TIFF* tif)
 {
+	(void) tif;
 	return (1);
 }
 

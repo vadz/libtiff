@@ -32,19 +32,6 @@
 #include "tiffiop.h"
 
 static uint32
-summarize_32(TIFF* tif, uint32 summand1, uint32 summand2, const char* where)
-{
-	uint32 bytes = summand1 + summand2;
-
-	if (bytes - summand1 != summand2) {
-		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Integer overflow in %s", where);
-		bytes = 0;
-	}
-
-	return (bytes);
-}
-
-static uint32
 multiply_32(TIFF* tif, uint32 nmemb, uint32 elem_size, const char* where)
 {
 	uint32 bytes = nmemb * elem_size;

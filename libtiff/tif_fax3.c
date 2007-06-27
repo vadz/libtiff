@@ -460,6 +460,7 @@ _TIFFFax3fillruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
 static int
 Fax3FixupTags(TIFF* tif)
 {
+	(void) tif;
 	return (1);
 }
 

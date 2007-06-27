@@ -784,25 +784,22 @@ JPEGFixupTagsSubsamplingSec(struct JPEGFixupTagsSubsamplingData* data)
 						return(0);
 					if (n!=8+data->tif->tif_dir.td_samplesperpixel*3)
 						return(0);
-					JPEGFixupTagsSubsamplingSkip(data,6);
-					for (o=0; o<data->tif->tif_dir.td_samplesperpixel; o++)
+					JPEGFixupTagsSubsamplingSkip(data,7);
+					if (!JPEGFixupTagsSubsamplingReadByte(data,&p))
+						return(0);
+					ph=(p>>4);
+					pv=(p&15);
+					JPEGFixupTagsSubsamplingSkip(data,1);
+					for (o=1; o<data->tif->tif_dir.td_samplesperpixel; o++)
 					{
 						JPEGFixupTagsSubsamplingSkip(data,1);
 						if (!JPEGFixupTagsSubsamplingReadByte(data,&p))
 							return(0);
-						if (o==0)
+						if (p!=0x11)
 						{
-							ph=(p>>4);
-							pv=(p&15);
-						}
-						else
-						{
-							if (p!=0x11)
-							{
-								TIFFWarningExt(data->tif->tif_clientdata,module,
-								    "Subsampling values inside JPEG compressed data have no TIFF equivalent, auto-correction of TIFF subsampling values failed");
-								return(1);
-							}
+							TIFFWarningExt(data->tif->tif_clientdata,module,
+							    "Subsampling values inside JPEG compressed data have no TIFF equivalent, auto-correction of TIFF subsampling values failed");
+							return(1);
 						}
 						JPEGFixupTagsSubsamplingSkip(data,1);
 					}

@@ -644,6 +644,7 @@ multiply_ms(tmsize_t m1, tmsize_t m2)
 static int
 PixarLogFixupTags(TIFF* tif)
 {
+	(void) tif;
 	return (1);
 }
 

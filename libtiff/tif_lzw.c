@@ -191,6 +191,7 @@ static void cl_hash(LZWCodecState*);
 static int
 LZWFixupTags(TIFF* tif)
 {
+	(void) tif;
 	return (1);
 }
 

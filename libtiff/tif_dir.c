@@ -1153,64 +1153,68 @@ TIFFAdvanceDirectory(TIFF* tif, uint64* nextdir, uint64* off)
 		uint64 poff=*nextdir;
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
 		{
+			tmsize_t poffa,poffb,poffc,poffd;
 			uint16 dircount;
 			uint32 nextdir32;
-			if (poff+sizeof(uint16) > tif->tif_size)
+			poffa=(tmsize_t)poff;
+			poffb=poffa+sizeof(uint16);
+			if (((uint64)poffa!=poff)||(poffb<poffa)||(poffb<(tmsize_t)sizeof(uint16))||(poffb>tif->tif_size))
 			{
-				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
-				    tif->tif_name);
-				return (0);
+				TIFFErrorExt(tif->tif_clientdata,module,"Error fetching directory count");
+				return(0);
 			}
-			_TIFFmemcpy(&dircount, tif->tif_base+(tmsize_t)poff, sizeof (uint16));
-			if (tif->tif_flags & TIFF_SWAB)
+			_TIFFmemcpy(&dircount,tif->tif_base+poffa,sizeof(uint16));
+			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabShort(&dircount);
-			poff+=sizeof (uint16)+dircount*12;
-			if (off != NULL)
-				*off = poff;
-			if (((uint64) (poff+sizeof (uint32))) > tif->tif_size)
+			poffc=poffb+dircount*12;
+			poffd=poffc+sizeof(uint32);
+			if ((poffc<poffb)||(poffc<dircount*12)||(poffd<poffc)||(poffd<(tmsize_t)sizeof(uint32))||(poffd>tif->tif_size))
 			{
-				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
-				    tif->tif_name);
-				return (0);
+				TIFFErrorExt(tif->tif_clientdata,module,"Error fetching directory link");
+				return(0);
 			}
-			_TIFFmemcpy(&nextdir32, tif->tif_base+(tmsize_t)poff, sizeof (uint32));
-			if (tif->tif_flags & TIFF_SWAB)
+			if (off!=NULL)
+				*off=(uint64)poffc;
+			_TIFFmemcpy(&nextdir32,tif->tif_base+poffc,sizeof(uint32));
+			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong(&nextdir32);
 			*nextdir=nextdir32;
 		}
 		else
 		{
+			tmsize_t poffa,poffb,poffc,poffd;
 			uint64 dircount64;
 			uint16 dircount16;
-			if (poff+sizeof(uint64) > tif->tif_size)
+			poffa=(tmsize_t)poff;
+			poffb=poffa+sizeof(uint64);
+			if (((uint64)poffa!=poff)||(poffb<poffa)||(poffb<(tmsize_t)sizeof(uint64))||(poffb>tif->tif_size))
 			{
-				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory count",
-				    tif->tif_name);
-				return (0);
+				TIFFErrorExt(tif->tif_clientdata,module,"Error fetching directory count");
+				return(0);
 			}
-			_TIFFmemcpy(&dircount64, tif->tif_base+(tmsize_t)poff, sizeof (uint64));
-			if (tif->tif_flags & TIFF_SWAB)
+			_TIFFmemcpy(&dircount64,tif->tif_base+poffa,sizeof(uint64));
+			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>0xFFFF)
 			{
-				TIFFErrorExt(tif->tif_clientdata, module, "Error fetching directory count");
+				TIFFErrorExt(tif->tif_clientdata,module,"Sanity check on directory count failed");
 				return(0);
 			}
-			dircount16 = (uint16)dircount64;
-			poff+=sizeof (uint64)+dircount16*20;
-			if (off != NULL)
-				*off = poff;
-			if (((uint64) (poff+sizeof (uint64))) > tif->tif_size)
+			dircount16=(uint16)dircount64;
+			poffc=poffb+dircount16*20;
+			poffd=poffc+sizeof(uint64);
+			if ((poffc<poffb)||(poffc<dircount16*20)||(poffd<poffc)||(poffd<(tmsize_t)sizeof(uint64))||(poffd>tif->tif_size))
 			{
-				TIFFErrorExt(tif->tif_clientdata, module, "%s: Error fetching directory link",
-				    tif->tif_name);
-				return (0);
+				TIFFErrorExt(tif->tif_clientdata,module,"Error fetching directory link");
+				return(0);
 			}
-			_TIFFmemcpy(nextdir, tif->tif_base+(tmsize_t)poff, sizeof (uint64));
-			if (tif->tif_flags & TIFF_SWAB)
+			if (off!=NULL)
+				*off=(uint64)poffc;
+			_TIFFmemcpy(nextdir,tif->tif_base+poffc,sizeof(uint64));
+			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong8(nextdir);
 		}
-		return (1);
+		return(1);
 	}
 	else
 	{
