@@ -122,6 +122,343 @@ static int TIFFLinkDirectory(TIFF*);
  * handle overwriting a directory with auxiliary
  * storage that's been changed.
  */
+<<<<<<< tif_dirwrite.c
+static int
+_TIFFWriteDirectory(TIFF* tif, int done)
+{
+	assert(0);
+	#ifdef NDEF
+	uint16 dircount;
+	toff_t diroff;
+	ttag_t tag;
+	uint32 nfields;
+	tsize_t dirsize;
+	char* data;
+	TIFFDirEntry* dir;
+	TIFFDirectory* td;
+	unsigned long b, fields[FIELD_SETLONGS];
+	int fi, nfi;
+
+	if (tif->tif_mode == O_RDONLY)
+		return (1);
+	/*
+	 * Clear write state so that subsequent images with
+	 * different characteristics get the right buffers
+	 * setup for them.
+	 */
+	if (done)
+	{
+		if (tif->tif_flags & TIFF_POSTENCODE) {
+			tif->tif_flags &= ~TIFF_POSTENCODE;
+			if (!(*tif->tif_postencode)(tif)) {
+				TIFFErrorExt(tif->tif_clientdata,
+					     tif->tif_name,
+				"Error post-encoding before directory write");
+				return (0);
+			}
+		}
+		(*tif->tif_close)(tif);		/* shutdown encoder */
+		/*
+		 * Flush any data that might have been written
+		 * by the compression close+cleanup routines.
+		 */
+		if (tif->tif_rawcc > 0 
+                    && (tif->tif_flags & TIFF_BEENWRITING) != 0
+                    && !TIFFFlushData1(tif)) {
+			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			    "Error flushing data before directory write");
+			return (0);
+		}
+		if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
+			_TIFFfree(tif->tif_rawdata);
+			tif->tif_rawdata = NULL;
+			tif->tif_rawcc = 0;
+			tif->tif_rawdatasize = 0;
+		}
+		tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP);
+	}
+
+	td = &tif->tif_dir;
+	/*
+	 * Size the directory so that we can calculate
+	 * offsets for the data items that aren't kept
+	 * in-place in each field.
+	 */
+	nfields = 0;
+	for (b = 0; b <= FIELD_LAST; b++)
+		if (TIFFFieldSet(tif, b) && b != FIELD_CUSTOM)
+			nfields += (b < FIELD_SUBFILETYPE ? 2 : 1);
+	nfields += td->td_customValueCount;
+	dirsize = nfields * sizeof (TIFFDirEntry);
+	data = (char*) _TIFFmalloc(dirsize);
+	if (data == NULL) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Cannot write directory, out of space");
+		return (0);
+	}
+	/*
+	 * Directory hasn't been placed yet, put
+	 * it at the end of the file and link it
+	 * into the existing directory structure.
+	 */
+	if (tif->tif_diroff == 0 && !TIFFLinkDirectory(tif))
+		goto bad;
+	tif->tif_dataoff = (toff_t)(
+	    tif->tif_diroff + sizeof (uint16) + dirsize + sizeof (toff_t));
+	if (tif->tif_dataoff & 1)
+		tif->tif_dataoff++;
+	(void) TIFFSeekFile(tif, tif->tif_dataoff, SEEK_SET);
+	tif->tif_curdir++;
+	dir = (TIFFDirEntry*) data;
+	/*
+	 * Setup external form of directory
+	 * entries and write data items.
+	 */
+	_TIFFmemcpy(fields, td->td_fieldsset, sizeof (fields));
+	/*
+	 * Write out ExtraSamples tag only if
+	 * extra samples are present in the data.
+	 */
+	if (FieldSet(fields, FIELD_EXTRASAMPLES) && !td->td_extrasamples) {
+		ResetFieldBit(fields, FIELD_EXTRASAMPLES);
+		nfields--;
+		dirsize -= sizeof (TIFFDirEntry);
+	}								/*XXX*/
+	for (fi = 0, nfi = tif->tif_nfields; nfi > 0; nfi--, fi++) {  ddd
+		const TIFFFieldInfo* fip = tif->tif_fieldinfo[fi];
+
+		/*
+		 * For custom fields, we test to see if the custom field
+		 * is set or not.  For normal fields, we just use the
+		 * FieldSet test.
+		*/
+		if( fip->field_bit == FIELD_CUSTOM )
+		{
+			int ci, is_set = FALSE;
+
+			for( ci = 0; ci < td->td_customValueCount; ci++ )
+				is_set |= (td->td_customValues[ci].info == fip);
+
+			if( !is_set )
+				continue;
+		}
+		else if (!FieldSet(fields, fip->field_bit))
+			continue;
+
+		/*
+		 * Handle other fields.
+		 */
+		switch (fip->field_bit)
+		{
+		case FIELD_STRIPOFFSETS:
+			/*
+			 * We use one field bit for both strip and tile
+
+			 * offsets, and so must be careful in selecting
+			 * the appropriate field descriptor (so that tags
+			 * are written in sorted order).
+			 */
+			tag = isTiled(tif) ?
+			    TIFFTAG_TILEOFFSETS : TIFFTAG_STRIPOFFSETS;
+			if (tag != fip->field_tag)
+				continue;
+			
+			dir->tdir_tag = (uint16) tag;
+			dir->tdir_type = (uint16) TIFF_LONG;
+			dir->tdir_count = (uint32) td->td_nstrips;  ddd
+			if (!TIFFWriteLongArray(tif, dir, td->td_stripoffset))  ddd
+				goto bad;
+			break;
+		case FIELD_STRIPBYTECOUNTS:
+			/*
+			 * We use one field bit for both strip and tile
+			 * byte counts, and so must be careful in selecting
+			 * the appropriate field descriptor (so that tags
+			 * are written in sorted order).
+			 */
+			tag = isTiled(tif) ?
+			    TIFFTAG_TILEBYTECOUNTS : TIFFTAG_STRIPBYTECOUNTS;
+			if (tag != fip->field_tag)
+				continue;
+			
+			dir->tdir_tag = (uint16) tag;
+			dir->tdir_type = (uint16) TIFF_LONG;
+			dir->tdir_count = (uint32) td->td_nstrips;  ddd
+			if (!TIFFWriteLongArray(tif, dir, td->td_stripbytecount))
+				goto bad;
+			break;
+		case FIELD_ROWSPERSTRIP:
+			TIFFSetupShortLong(tif, TIFFTAG_ROWSPERSTRIP,
+			    dir, td->td_rowsperstrip);
+			break;
+		case FIELD_COLORMAP:
+			if (!TIFFWriteShortTable(tif, TIFFTAG_COLORMAP, dir,
+			    3, td->td_colormap))
+				goto bad;
+			break;
+		case FIELD_IMAGEDIMENSIONS:
+			TIFFSetupShortLong(tif, TIFFTAG_IMAGEWIDTH,
+			    dir++, td->td_imagewidth);
+			TIFFSetupShortLong(tif, TIFFTAG_IMAGELENGTH,
+			    dir, td->td_imagelength);
+			break;
+		case FIELD_TILEDIMENSIONS:
+			TIFFSetupShortLong(tif, TIFFTAG_TILEWIDTH,
+			    dir++, td->td_tilewidth);
+			TIFFSetupShortLong(tif, TIFFTAG_TILELENGTH,
+			    dir, td->td_tilelength);
+			break;
+		case FIELD_COMPRESSION:
+			TIFFSetupShort(tif, TIFFTAG_COMPRESSION,
+			    dir, td->td_compression);
+			break;
+		case FIELD_PHOTOMETRIC:
+			TIFFSetupShort(tif, TIFFTAG_PHOTOMETRIC,
+			    dir, td->td_photometric);
+			break;
+		case FIELD_POSITION:
+			WriteRationalPair(TIFF_RATIONAL,
+			    TIFFTAG_XPOSITION, td->td_xposition,
+			    TIFFTAG_YPOSITION, td->td_yposition);
+			break;
+		case FIELD_RESOLUTION:
+			WriteRationalPair(TIFF_RATIONAL,
+			    TIFFTAG_XRESOLUTION, td->td_xresolution,
+			    TIFFTAG_YRESOLUTION, td->td_yresolution);
+			break;
+		case FIELD_BITSPERSAMPLE:
+		case FIELD_MINSAMPLEVALUE:
+		case FIELD_MAXSAMPLEVALUE:
+		case FIELD_SAMPLEFORMAT:
+			if (!TIFFWritePerSampleShorts(tif, fip->field_tag, dir))
+				goto bad;
+			break;
+		case FIELD_SMINSAMPLEVALUE:
+		case FIELD_SMAXSAMPLEVALUE:
+			if (!TIFFWritePerSampleAnys(tif,
+			    _TIFFSampleToTagType(tif), fip->field_tag, dir))
+				goto bad;
+			break;
+		case FIELD_PAGENUMBER:
+		case FIELD_HALFTONEHINTS:
+		case FIELD_YCBCRSUBSAMPLING:
+			if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
+				goto bad;
+			break;
+		case FIELD_INKNAMES:
+			if (!TIFFWriteInkNames(tif, dir))
+				goto bad;
+			break;
+		case FIELD_TRANSFERFUNCTION:
+			if (!TIFFWriteTransferFunction(tif, dir))
+				goto bad;
+			break;
+		case FIELD_SUBIFD:
+			/*
+			 * XXX: Always write this field using LONG type
+			 * for backward compatibility.
+			 */
+			dir->tdir_tag = (uint16) fip->field_tag;
+			dir->tdir_type = (uint16) TIFF_LONG;
+			dir->tdir_count = (uint32) td->td_nsubifd;
+			if (!TIFFWriteLongArray(tif, dir, td->td_subifd))
+				goto bad;
+			/*
+			 * Total hack: if this directory includes a SubIFD
+			 * tag then force the next <n> directories to be
+			 * written as ``sub directories'' of this one.  This
+			 * is used to write things like thumbnails and
+			 * image masks that one wants to keep out of the
+			 * normal directory linkage access mechanism.
+			 */
+			if (dir->tdir_count > 0) {
+				tif->tif_flags |= TIFF_INSUBIFD;
+				tif->tif_nsubifd = (uint16) dir->tdir_count;
+				if (dir->tdir_count > 1)
+					tif->tif_subifdoff = dir->tdir_offset;
+				else
+					tif->tif_subifdoff = (uint32)(
+					      tif->tif_diroff
+					    + sizeof (uint16)
+					    + ((char*)&dir->tdir_offset-data));
+			}
+			break;
+		default:
+			/* XXX: Should be fixed and removed. */
+			if (fip->field_tag == TIFFTAG_DOTRANGE) {
+				if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
+					goto bad;
+			}
+			else if (!TIFFWriteNormalTag(tif, dir, fip))
+				goto bad;
+			break;
+		}
+		dir++;
+                
+		if( fip->field_bit != FIELD_CUSTOM )
+			ResetFieldBit(fields, fip->field_bit);
+	}
+
+	/*
+	 * Write directory.
+	 */
+	dircount = (uint16) nfields;
+	diroff = (uint32) tif->tif_nextdiroff;
+	if (tif->tif_flags & TIFF_SWAB) {
+		/*
+		 * The file's byte order is opposite to the native machine
+		 * architecture.  We overwrite the directory information with
+		 * impunity because it'll be released below after we write it
+		 * to the file.  Note that all the other tag construction
+		 * routines assume that we do this byte-swapping; i.e. they
+		 * only byte-swap indirect data.
+		 */
+		for (dir = (TIFFDirEntry*) data; dircount; dir++, dircount--) {
+			TIFFSwabArrayOfShort(&dir->tdir_tag, 2);  ddd
+			TIFFSwabArrayOfLong(&dir->tdir_count, 2);  ddd
+		}
+		dircount = (uint16) nfields;
+		TIFFSwabShort(&dircount);
+		TIFFSwabLong(&diroff);
+	}
+	(void) TIFFSeekFile(tif, tif->tif_diroff, SEEK_SET);
+	if (!WriteOK(tif, &dircount, sizeof (dircount))) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Error writing directory count");
+		goto bad;
+	}
+	if (!WriteOK(tif, data, dirsize)) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Error writing directory contents");
+		goto bad;
+	}
+	if (!WriteOK(tif, &diroff, sizeof (uint32))) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Error writing directory link");
+		goto bad;
+	}
+	if (done) {
+		TIFFFreeDirectory(tif);
+		tif->tif_flags &= ~TIFF_DIRTYDIRECT;
+		(*tif->tif_cleanup)(tif);
+
+		/*
+		* Reset directory-related state for subsequent
+		* directories.
+		*/
+		TIFFCreateDirectory(tif);
+	}
+	_TIFFfree(data);
+	return (1);
+bad:
+	_TIFFfree(data);
+	return (0);
+	#endif
+}
+#undef WriteRationalPair
+
+=======
+>>>>>>> 1.48
 int
 TIFFWriteDirectory(TIFF* tif)
 {
@@ -171,6 +508,35 @@ TIFFRewriteDirectory( TIFF *tif )
 	 * Find and zero the pointer to this directory, so that TIFFLinkDirectory
 	 * will cause it to be added after this directories current pre-link.
 	 */
+<<<<<<< tif_dirwrite.c
+	nfields = 0;
+	for (b = 0; b <= FIELD_LAST; b++)
+		if (TIFFFieldSet(tif, b) && b != FIELD_CUSTOM)
+			nfields += (b < FIELD_SUBFILETYPE ? 2 : 1);
+	nfields += td->td_customValueCount;
+	dirsize = nfields * sizeof (TIFFDirEntry);
+	data = (char*) _TIFFmalloc(dirsize);
+	if (data == NULL) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Cannot write directory, out of space");
+		return (0);
+	}
+	/*
+	 * Put the directory  at the end of the file.
+	 */
+	tif->tif_diroff = (TIFFSeekFile(tif, (toff_t) 0, SEEK_END)+1) &~ 1;
+	tif->tif_dataoff = (toff_t)(
+	    tif->tif_diroff + sizeof (uint16) + dirsize + sizeof (toff_t));
+	if (tif->tif_dataoff & 1)
+		tif->tif_dataoff++;
+	(void) TIFFSeekFile(tif, tif->tif_dataoff, SEEK_SET);
+	dir = (TIFFDirEntry*) data;
+	/*
+	 * Setup external form of directory entries and write data items.
+	 */
+	_TIFFmemcpy(fields, td->td_fieldsset, sizeof (fields));
+=======
+>>>>>>> 1.48
 
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
@@ -300,6 +666,50 @@ TIFFRewriteDirectory( TIFF *tif )
 	/*
 	 * Now use TIFFWriteDirectory() normally.
 	 */
+<<<<<<< tif_dirwrite.c
+	dircount = (uint16) nfields;
+	*pdiroff = (uint32) tif->tif_nextdiroff;
+	if (tif->tif_flags & TIFF_SWAB) {
+		/*
+		 * The file's byte order is opposite to the native machine
+		 * architecture.  We overwrite the directory information with
+		 * impunity because it'll be released below after we write it
+		 * to the file.  Note that all the other tag construction
+		 * routines assume that we do this byte-swapping; i.e. they
+		 * only byte-swap indirect data.
+		 */
+		for (dir = (TIFFDirEntry*) data; dircount; dir++, dircount--) {
+			TIFFSwabArrayOfShort(&dir->tdir_tag, 2);  ddd
+			TIFFSwabArrayOfLong(&dir->tdir_count, 2);  ddd
+		}
+		dircount = (uint16) nfields;
+		TIFFSwabShort(&dircount);
+		TIFFSwabLong(pdiroff);
+	}
+	(void) TIFFSeekFile(tif, tif->tif_diroff, SEEK_SET);
+	if (!WriteOK(tif, &dircount, sizeof (dircount))) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Error writing directory count");
+		goto bad;
+	}
+	if (!WriteOK(tif, data, dirsize)) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Error writing directory contents");
+		goto bad;
+	}
+	if (!WriteOK(tif, pdiroff, sizeof (uint32))) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+			     "Error writing directory link");
+		goto bad;
+	}
+	_TIFFfree(data);
+	return (1);
+bad:
+	_TIFFfree(data);
+	return (0);
+}
+=======
+>>>>>>> 1.48
 
 	return TIFFWriteDirectory( tif );
 }
