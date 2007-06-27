@@ -2321,7 +2321,8 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 				{
 					if (tif->tif_flags&TIFF_SWAB)
 						TIFFSwabLong(ma);
-					maa=*((int32*)ma)++;
+					maa=*(int32*)ma;
+					ma++;
 					if (tif->tif_flags&TIFF_SWAB)
 						TIFFSwabLong(ma);
 					mab=*ma++;

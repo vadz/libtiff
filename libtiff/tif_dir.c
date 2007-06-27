@@ -82,7 +82,7 @@ setExtraSamples(TIFFDirectory* td, va_list ap, uint32* v)
 	uint16* va;
 	uint32 i;
 
-	*v = (uint16) va_arg(ap, uint16);
+	*v = (uint16) va_arg(ap, uint16_vap);
 	if ((uint16) *v > td->td_samplesperpixel)
 		return 0;
 	va = va_arg(ap, uint16*);
@@ -156,7 +156,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		td->td_imagelength = (uint32) va_arg(ap, uint32);
 		break;
 	case TIFFTAG_BITSPERSAMPLE:
-		td->td_bitspersample = (uint16) va_arg(ap, uint16);
+		td->td_bitspersample = (uint16) va_arg(ap, uint16_vap);
 		/*
 		 * If the data require post-decoding processing to byte-swap
 		 * samples, set it up here.  Note that since tags are required
@@ -178,7 +178,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		}
 		break;
 	case TIFFTAG_COMPRESSION:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		/*
 		 * If we're changing the compression scheme, the notify the
 		 * previous module so that it can cleanup any state it's
@@ -199,26 +199,26 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		    status = 0;
 		break;
 	case TIFFTAG_PHOTOMETRIC:
-		td->td_photometric = (uint16) va_arg(ap, uint16);
+		td->td_photometric = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_THRESHHOLDING:
-		td->td_threshholding = (uint16) va_arg(ap, uint16);
+		td->td_threshholding = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_FILLORDER:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		if (v != FILLORDER_LSB2MSB && v != FILLORDER_MSB2LSB)
 			goto badvalue;
 		td->td_fillorder = (uint16) v;
 		break;
 	case TIFFTAG_ORIENTATION:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		if (v < ORIENTATION_TOPLEFT || ORIENTATION_LEFTBOT < v)
 			goto badvalue;
 		else
 			td->td_orientation = (uint16) v;
 		break;
 	case TIFFTAG_SAMPLESPERPIXEL:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		if (v == 0)
 			goto badvalue;
 		td->td_samplesperpixel = (uint16) v;
@@ -234,10 +234,10 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		}
 		break;
 	case TIFFTAG_MINSAMPLEVALUE:
-		td->td_minsamplevalue = (uint16) va_arg(ap, uint16);
+		td->td_minsamplevalue = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_MAXSAMPLEVALUE:
-		td->td_maxsamplevalue = (uint16) va_arg(ap, uint16);
+		td->td_maxsamplevalue = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_SMINSAMPLEVALUE:
 		td->td_sminsamplevalue = (double) va_arg(ap, double);
@@ -252,7 +252,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		td->td_yresolution = (float) va_arg(ap, double);
 		break;
 	case TIFFTAG_PLANARCONFIG:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		if (v != PLANARCONFIG_CONTIG && v != PLANARCONFIG_SEPARATE)
 			goto badvalue;
 		td->td_planarconfig = (uint16) v;
@@ -264,18 +264,18 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		td->td_yposition = (float) va_arg(ap, double);
 		break;
 	case TIFFTAG_RESOLUTIONUNIT:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		if (v < RESUNIT_NONE || RESUNIT_CENTIMETER < v)
 			goto badvalue;
 		td->td_resolutionunit = (uint16) v;
 		break;
 	case TIFFTAG_PAGENUMBER:
-		td->td_pagenumber[0] = (uint16) va_arg(ap, uint16);
-		td->td_pagenumber[1] = (uint16) va_arg(ap, uint16);
+		td->td_pagenumber[0] = (uint16) va_arg(ap, uint16_vap);
+		td->td_pagenumber[1] = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_HALFTONEHINTS:
-		td->td_halftonehints[0] = (uint16) va_arg(ap, uint16);
-		td->td_halftonehints[1] = (uint16) va_arg(ap, uint16);
+		td->td_halftonehints[0] = (uint16) va_arg(ap, uint16_vap);
+		td->td_halftonehints[1] = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_COLORMAP:
 		v32 = (uint32)(1L<<td->td_bitspersample);
@@ -288,7 +288,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 			goto badvalue;
 		break;
 	case TIFFTAG_MATTEING:
-		td->td_extrasamples = (uint16) (va_arg(ap, uint16) != 0);
+		td->td_extrasamples =  (((uint16) va_arg(ap, uint16_vap)) != 0);
 		if (td->td_extrasamples) {
 			uint16 sv = EXTRASAMPLE_ASSOCALPHA;
 			_TIFFsetShortArray(&td->td_sampleinfo, &sv, 1);
@@ -323,7 +323,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		td->td_tiledepth = v32;
 		break;
 	case TIFFTAG_DATATYPE:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		switch (v) {
 		case DATATYPE_VOID:	v = SAMPLEFORMAT_VOID;	break;
 		case DATATYPE_INT:	v = SAMPLEFORMAT_INT;	break;
@@ -334,7 +334,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		td->td_sampleformat = (uint16) v;
 		break;
 	case TIFFTAG_SAMPLEFORMAT:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		if (v < SAMPLEFORMAT_UINT || SAMPLEFORMAT_COMPLEXIEEEFP < v)
 			goto badvalue;
 		td->td_sampleformat = (uint16) v;
@@ -355,7 +355,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		break;
 	case TIFFTAG_SUBIFD:
 		if ((tif->tif_flags & TIFF_INSUBIFD) == 0) {
-			td->td_nsubifd = (uint16) va_arg(ap, uint16);
+			td->td_nsubifd = (uint16) va_arg(ap, uint16_vap);
 			_TIFFsetLong8Array(&td->td_subifd, (uint64*) va_arg(ap, uint64*),
 			    (long) td->td_nsubifd);
 		} else {
@@ -366,11 +366,11 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		}
 		break;
 	case TIFFTAG_YCBCRPOSITIONING:
-		td->td_ycbcrpositioning = (uint16) va_arg(ap, uint16);
+		td->td_ycbcrpositioning = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_YCBCRSUBSAMPLING:
-		td->td_ycbcrsubsampling[0] = (uint16) va_arg(ap, uint16);
-		td->td_ycbcrsubsampling[1] = (uint16) va_arg(ap, uint16);
+		td->td_ycbcrsubsampling[0] = (uint16) va_arg(ap, uint16_vap);
+		td->td_ycbcrsubsampling[1] = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_TRANSFERFUNCTION:
 		v = (td->td_samplesperpixel - td->td_extrasamples) > 1 ? 3 : 1;
@@ -379,7 +379,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 			    va_arg(ap, uint16*), 1L<<td->td_bitspersample);
 		break;
 	case TIFFTAG_INKNAMES:
-		v = (uint16) va_arg(ap, uint16);
+		v = (uint16) va_arg(ap, uint16_vap);
 		s = va_arg(ap, char*);
 		v = checkInkNamesString(tif, v, s);
 		status = v > 0;

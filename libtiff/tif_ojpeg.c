@@ -511,8 +511,8 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 			break;
 		case TIFFTAG_YCBCRSUBSAMPLING:
 			sp->subsampling_tag=1;
-			sp->subsampling_hor=(uint8)va_arg(ap,uint16);
-			sp->subsampling_ver=(uint8)va_arg(ap,uint16);
+			sp->subsampling_hor=(uint8)va_arg(ap,uint16_vap);
+			sp->subsampling_ver=(uint8)va_arg(ap,uint16_vap);
 			tif->tif_dir.td_ycbcrsubsampling[0]=sp->subsampling_hor;
 			tif->tif_dir.td_ycbcrsubsampling[1]=sp->subsampling_ver;
 			break;
@@ -562,10 +562,10 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 			}
 			break;
 		case TIFFTAG_JPEGPROC:
-			sp->jpeg_proc=(uint8)va_arg(ap,uint16);
+			sp->jpeg_proc=(uint8)va_arg(ap,uint16_vap);
 			break;
 		case TIFFTAG_JPEGRESTARTINTERVAL:
-			sp->restart_interval=(uint16)va_arg(ap,uint16);
+			sp->restart_interval=(uint16)va_arg(ap,uint16_vap);
 			break;
 		default:
 			return (*sp->vsetparent)(tif,tag,ap);

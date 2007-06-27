@@ -77,6 +77,16 @@ typedef TIFF_UINT32_T uint32;
 typedef TIFF_INT64_T  int64;
 typedef TIFF_UINT64_T uint64;
 
+/*
+ * Some types as promoted in a variable argument list
+ * We use uint16_vap rather then directly using int, because this way
+ * we document the type we actually want to pass through, conceptually,
+ * rather then confusing the issue by merely stating the type it gets
+ * promoted to
+ */
+
+typedef int uint16_vap;
+
 /* For TIFFReassignTagToIgnore */
 enum TIFFIgnoreSense /* IGNORE tag table */
 {

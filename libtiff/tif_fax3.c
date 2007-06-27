@@ -1168,7 +1168,7 @@ Fax3VSetField(TIFF* tif, uint32 tag, va_list ap)
 		sp->badfaxlines = (uint32) va_arg(ap, uint32);
 		break;
 	case TIFFTAG_CLEANFAXDATA:
-		sp->cleanfaxdata = (uint16) va_arg(ap, uint16);
+		sp->cleanfaxdata = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_CONSECUTIVEBADFAXLINES:
 		sp->badfaxrun = (uint32) va_arg(ap, uint32);
