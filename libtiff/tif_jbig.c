@@ -4,23 +4,23 @@
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
  *
- * Permission to use, copy, modify, distribute, and sell this software and 
+ * Permission to use, copy, modify, distribute, and sell this software and
  * its documentation for any purpose is hereby granted without fee, provided
  * that (i) the above copyright notices and this permission notice appear in
  * all copies of the software and related documentation, and (ii) the names of
  * Sam Leffler and Silicon Graphics may not be used in any advertising or
  * publicity relating to the software without the specific, prior written
  * permission of Sam Leffler and Silicon Graphics.
- * 
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
- * 
+ *
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ *
  * IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
  * ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
  * OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
- * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+ * WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF
+ * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
  */
 
@@ -29,7 +29,7 @@
  *
  * JBIG Compression Algorithm Support.
  * Contributed by Lee Howard <faxguy@deanox.com>
- * 
+ *
  */
 
 #include "tiffiop.h"
@@ -63,18 +63,24 @@ static const TIFFFieldInfo jbigFieldInfo[] =
 	{TIFFTAG_FAXDCS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_FAXDCS, TRUE, FALSE, "FaxDcs", NULL},
 };
 
+static int JBIGFixupTags(TIFF* tif)
+{
+	(void) tif;
+	return 1;
+}
+
 static int JBIGSetupDecode(TIFF* tif)
 {
 	if (TIFFNumberOfStrips(tif) != 1)
 	{
-		TIFFError("JBIG", "Multistrip images not supported in decoder");
+		TIFFErrorExt(tif->tif_clientdata, "JBIG", "Multistrip images not supported in decoder");
 		return 0;
 	}
 
 	return 1;
 }
 
-static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, uint16 s)
+static int JBIGDecode(TIFF* tif, uint8* buffer, tmsize_t size, uint16 s)
 {
 	struct jbg_dec_state decoder;
 	int decodeStatus = 0;
@@ -83,13 +89,13 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, uint16 s)
 
 	if (isFillOrder(tif, tif->tif_dir.td_fillorder))
 	{
-		TIFFReverseBits(tif->tif_rawdata, tif->tif_rawdatasize);  ddd
+		TIFFReverseBits(tif->tif_rawdata, tif->tif_rawdatasize);
 	}
 
 	jbg_dec_init(&decoder);
 
 #if defined(HAVE_JBG_NEWLEN)
-	jbg_newlen(tif->tif_rawdata, tif->tif_rawdatasize);  ddd
+	jbg_newlen(tif->tif_rawdata, (size_t)tif->tif_rawdatasize);
 	/*
 	 * I do not check the return status of jbg_newlen because even if this
 	 * function fails it does not necessarily mean that decoding the image
@@ -102,11 +108,11 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, uint16 s)
 	 */
 #endif /* HAVE_JBG_NEWLEN */
 
-	decodeStatus = jbg_dec_in(&decoder, tif->tif_rawdata,
-				  tif->tif_rawdatasize, NULL);  ddd
+	decodeStatus = jbg_dec_in(&decoder, (unsigned char*)tif->tif_rawdata,
+				  (size_t)tif->tif_rawdatasize, NULL);
 	if (JBG_EOK != decodeStatus)
 	{
-		TIFFError("JBIG", "Error (%d) decoding: %s",
+		TIFFErrorExt(tif->tif_clientdata, "JBIG", "Error (%d) decoding: %s",
 			  decodeStatus, jbg_strerror(decodeStatus, JBG_EN));
 		return 0;
 	}
@@ -121,32 +127,32 @@ static int JBIGSetupEncode(TIFF* tif)
 {
 	if (TIFFNumberOfStrips(tif) != 1)
 	{
-		TIFFError("JBIG", "Multistrip images not supported in encoder");
+		TIFFErrorExt(tif->tif_clientdata, "JBIG", "Multistrip images not supported in encoder");
 		return 0;
 	}
 
 	return 1;
 }
 
-static int JBIGCopyEncodedData(TIFF* tif, tidata_t pp, tsize_t cc, uint16 s)
+static int JBIGCopyEncodedData(TIFF* tif, unsigned char* pp, size_t cc, uint16 s)
 {
 	(void) s;
 	while (cc > 0)
 	{
-		tsize_t n = cc;
+		tmsize_t n = (tmsize_t)cc;
 
-		if (tif->tif_rawcc + n > tif->tif_rawdatasize)  ddd
+		if (tif->tif_rawcc + n > tif->tif_rawdatasize)
 		{
-			n = tif->tif_rawdatasize - tif->tif_rawcc;  ddd
+			n = tif->tif_rawdatasize - tif->tif_rawcc;
 		}
 
 		assert(n > 0);
 		_TIFFmemcpy(tif->tif_rawcp, pp, n);
 		tif->tif_rawcp += n;
-		tif->tif_rawcc += n;  ddd
+		tif->tif_rawcc += n;
 		pp += n;
-		cc -= n;
-		if (tif->tif_rawcc >= tif->tif_rawdatasize &&  ddd
+		cc -= (size_t)n;
+		if (tif->tif_rawcc >= tif->tif_rawdatasize &&
 		    !TIFFFlushData1(tif))
 		{
 			return (-1);
@@ -156,19 +162,19 @@ static int JBIGCopyEncodedData(TIFF* tif, tidata_t pp, tsize_t cc, uint16 s)
 	return (1);
 }
 
-static void JBIGOutputBie(unsigned char* buffer, size_t len, void *userData)
+static void JBIGOutputBie(unsigned char* buffer, size_t len, void* userData)
 {
 	TIFF* tif = (TIFF*)userData;
 
 	if (isFillOrder(tif, tif->tif_dir.td_fillorder))
 	{
-		TIFFReverseBits(buffer, len);  ddd
+		TIFFReverseBits(buffer, (tmsize_t)len);
 	}
 
 	JBIGCopyEncodedData(tif, buffer, len, 0);
 }
 
-static int JBIGEncode(TIFF* tif, tidata_t buffer, tsize_t size, uint16 s)
+static int JBIGEncode(TIFF* tif, uint8* buffer, tmsize_t size, uint16 s)
 {
 	TIFFDirectory* dir = &tif->tif_dir;
 	struct jbg_enc_state encoder;
@@ -321,7 +327,7 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
 	tif->tif_data = (tdata_t)_TIFFmalloc(sizeof(JBIGState));
 	if (tif->tif_data == NULL)
 	{
-		TIFFError("TIFFInitJBIG", "Not enough memory for JBIGState");
+		TIFFErrorExt(tif->tif_clientdata, "TIFFInitJBIG", "Not enough memory for JBIGState");
 		return 0;
 	}
 	_TIFFmemset(tif->tif_data, 0, sizeof(JBIGState));
@@ -339,7 +345,7 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
 	codec->vgetparent = tif->tif_tagmethods.vgetfield;
 	codec->vsetparent = tif->tif_tagmethods.vsetfield;
 	tif->tif_tagmethods.vgetfield = JBIGVGetField;
-	tif->tif_tagmethods.vsetfield = JBIGVSetField;  ddd
+	tif->tif_tagmethods.vsetfield = JBIGVSetField;
 	tif->tif_tagmethods.printdir = JBIGPrintDir;
 
 	/*
@@ -351,12 +357,12 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
 	tif->tif_flags &= ~TIFF_MAPPED;
 
 	/* Setup the function pointers for encode, decode, and cleanup. */
-	tif->tif_fixuptags = JBIGFixupTags; ddd
+	tif->tif_fixuptags = JBIGFixupTags;
 	tif->tif_setupdecode = JBIGSetupDecode;
-	tif->tif_decodestrip = JBIGDecode;  ddd
+	tif->tif_decodestrip = JBIGDecode;
 
 	tif->tif_setupencode = JBIGSetupEncode;
-	tif->tif_encodestrip = JBIGEncode;  ddd
+	tif->tif_encodestrip = JBIGEncode;
 
 	tif->tif_cleanup = JBIGCleanup;
 
