@@ -3871,9 +3871,9 @@ TIFFReadDirectoryCheckOrder(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 static TIFFDirEntry*
 TIFFReadDirectoryFindEntry(TIFF* tif, TIFFDirEntry* dir, uint16 dircount, uint16 tagid)
 {
-	(void) tif;
 	TIFFDirEntry* m;
 	uint16 n;
+	(void) tif;
 	for (m=dir, n=0; n<dircount; m++, n++)
 	{
 		if (m->tdir_tag==tagid)

@@ -59,7 +59,7 @@ _tiffReadProc(thandle_t fd, void* buf, tmsize_t size)
 		if (o!=n)
 			break;
 	}
-	return ((tmsize_t)p);
+	return(p);
 }
 
 static tmsize_t
@@ -89,7 +89,7 @@ _tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 		if (o!=n)
 			break;
 	}
-	return ((tmsize_t)p);
+	return(p);
 }
 
 static uint64
@@ -97,25 +97,23 @@ _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 {
 	LARGE_INTEGER off_in, off_out;
 	DWORD dwMoveMethod;
-
 	off_in.QuadPart = off;
-
 	switch(whence)
 	{
-	case SEEK_SET:
-		dwMoveMethod = FILE_BEGIN;
-		break;
-	case SEEK_CUR:
-		dwMoveMethod = FILE_CURRENT;
-		break;
-	case SEEK_END:
-		dwMoveMethod = FILE_END;
-		break;
-	default:
-		dwMoveMethod = FILE_BEGIN;
-		break;
+		case SEEK_SET:
+			dwMoveMethod = FILE_BEGIN;
+			break;
+		case SEEK_CUR:
+			dwMoveMethod = FILE_CURRENT;
+			break;
+		case SEEK_END:
+			dwMoveMethod = FILE_END;
+			break;
+		default:
+			dwMoveMethod = FILE_BEGIN;
+			break;
 	}
-	if (SetFilePointerEx(fd, off_in, &off_out, dwMoveMethod)==0)
+	if (SetFilePointerEx(fd,off_in,&off_out,dwMoveMethod)==0)
 		off_out.QuadPart=0;
 	return(off_out.QuadPart);
 }
