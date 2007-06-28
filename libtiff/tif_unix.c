@@ -37,6 +37,8 @@
 # include <sys/types.h>
 #endif
 
+#include <errno.h>
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -59,69 +61,37 @@
 static tmsize_t
 _tiffReadProc(thandle_t fd, void* buf, tmsize_t size)
 {
-        /* tmsize_t is 64bit on 64bit systems, but the standard library read
-         * takes signed 32bit sizes, so we loop through the data in suitable
-         * 32bit sized chunks */
-	uint8* ma;
-	uint64 mb;
-	size_t n;
-	ssize_t o;
-	tmsize_t p;
-	ma=(uint8*)buf;
-	mb=size;
-	p=0;
-	while (mb>0)
+	size_t size_io = (size_t) size;
+	if ((tmsize_t) size_io != size)
 	{
-		n=SSIZE_MAX;
-		if ((uint64)n>mb)
-			n=(size_t)mb;
-		o=read((int)fd,(void*)ma,n);
-		if (o<0)
-			return(0);
-		ma+=o;
-		mb-=o;
-		p+=o;
-		if ((size_t)o!=n)
-			break;
+		errno=EINVAL;
+		return (tmsize_t) -1;
 	}
-	return(p);
+	return ((tmsize_t) read((int) fd, buf, size_io));
 }
 
 static tmsize_t
 _tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 {
-        /* tmsize_t is 64bit on 64bit systems, but the standard library write
-         * takes signed 32bit sizes, so we loop through the data in suitable
-         * 32bit sized chunks */
-	uint8* ma;
-	uint64 mb;
-	size_t n;
-	ssize_t o;
-	tmsize_t p;
-	ma=(uint8*)buf;
-	mb=size;
-	p=0;
-	while (mb>0)
+	size_t size_io = (size_t) size;
+	if ((tmsize_t) size_io != size)
 	{
-		n=SSIZE_MAX;
-		if ((uint64)n>mb)
-			n=(size_t)mb;
-		o=write((int)fd,(void*)ma,n);
-		if (o<0)
-			return(0);
-		ma+=o;
-		mb-=o;
-		p+=o;
-		if ((size_t)o!=n)
-			break;
+		errno=EINVAL;
+		return (tmsize_t) -1;
 	}
-	return(p);
+	return ((tmsize_t) write((int) fd, buf, size_io));
 }
 
 static uint64
 _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 {
-	return((uint64)lseek((int)fd,(off_t)off,whence));
+	off_t off_io = (off_t) off;
+	if ((uint64) off_io != off)
+	{
+		errno=EINVAL;
+		return (uint64) -1; /* this is really gross */
+	}
+	return((uint64)lseek((int)fd,off_io,whence));
 }
 
 static int
