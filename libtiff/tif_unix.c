@@ -29,8 +29,6 @@
  * Windows Common RunTime Library.
  */
 
-#define _LARGE_FILE_API
-
 #include "tif_config.h"
 
 #ifdef HAVE_SYS_TYPES_H
@@ -42,7 +40,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <limits.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
