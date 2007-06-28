@@ -59,9 +59,9 @@
 static tmsize_t
 _tiffReadProc(thandle_t fd, void* buf, tmsize_t size)
 {
-	/* tmsize_t is 64bit on 64bit systems, but the standard library read takes
-	 * signed 32bit sizes, so we loop through the data in suitable 32bit sized
-	 * chunks */
+        /* tmsize_t is 64bit on 64bit systems, but the standard library read
+         * takes signed 32bit sizes, so we loop through the data in suitable
+         * 32bit sized chunks */
 	uint8* ma;
 	uint64 mb;
 	size_t n;
@@ -90,9 +90,9 @@ _tiffReadProc(thandle_t fd, void* buf, tmsize_t size)
 static tmsize_t
 _tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 {
-	/* tmsize_t is 64bit on 64bit systems, but the standard library write takes
-	 * signed 32bit sizes, so we loop through the data in suitable 32bit sized
-	 * chunks */
+        /* tmsize_t is 64bit on 64bit systems, but the standard library write
+         * takes signed 32bit sizes, so we loop through the data in suitable
+         * 32bit sized chunks */
 	uint8* ma;
 	uint64 mb;
 	size_t n;
@@ -121,7 +121,7 @@ _tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 static uint64
 _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 {
-	return((uint64)lseek64((int)fd,(off64_t)off,whence));
+	return((uint64)lseek((int)fd,(off_t)off,whence));
 }
 
 static int
@@ -133,20 +133,11 @@ _tiffCloseProc(thandle_t fd)
 static uint64
 _tiffSizeProc(thandle_t fd)
 {
-#ifdef _AM29K
-	off64_t fsize;
-	fsize=lseek64((int)fd,0,SEEK_END);
-	if (fsize==(off64_t)(-1))
-		return(0);
-	else
-		return((uint64)fsize);
-#else
-	struct stat64 sb;
-	if (fstat64((int)fd,&sb)<0)
+	struct stat sb;
+	if (fstat((int)fd,&sb)<0)
 		return(0);
 	else
 		return((uint64)sb.st_size);
-#endif
 }
 
 #ifdef HAVE_MMAP
@@ -226,13 +217,7 @@ TIFFOpen(const char* name, const char* mode)
 	m |= O_BINARY;
 #endif
 
-	m |= O_LARGEFILE;
-
-#ifdef _AM29K
-	fd = open(name, m);
-#else
 	fd = open(name, m, 0666);
-#endif
 	if (fd < 0) {
 		TIFFErrorExt(0, module, "%s: Cannot open", name);
 		return ((TIFF *)0);
@@ -357,3 +342,6 @@ unixErrorHandler(const char* module, const char* fmt, va_list ap)
 	fprintf(stderr, ".\n");
 }
 TIFFErrorHandler _TIFFerrorHandler = unixErrorHandler;
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
+
