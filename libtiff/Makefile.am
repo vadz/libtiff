@@ -114,7 +114,7 @@ endif
 libtiff_la_SOURCES = $(SRCS)
 libtiff_la_LDFLAGS = \
 	-no-undefined \
-	-version-number $(LIBTIFF_VERSION_INFO)
+	-version-info $(LIBTIFF_VERSION_INFO)
 if HAVE_RPATH
 libtiff_la_LDFLAGS += $(LIBDIR)
 endif
@@ -123,7 +123,7 @@ libtiff_la_LIBADD = $(LIBPORT)
 libtiffxx_la_SOURCES = $(SRCSXX)
 libtiffxx_la_LDFLAGS = \
 	-no-undefined \
-	-version-number $(LIBTIFF_VERSION_INFO)
+	-version-info $(LIBTIFF_VERSION_INFO)
 if HAVE_RPATH
 libtiffxx_la_LDFLAGS += $(LIBDIR)
 endif
