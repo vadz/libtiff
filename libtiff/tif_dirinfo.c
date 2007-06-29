@@ -476,6 +476,12 @@ _TIFFFindFieldInfo(TIFF* tif, uint32 tag, TIFFDataType dt)
 	if (tif->tif_foundfield && tif->tif_foundfield->field_tag == tag &&
 	    (dt == TIFF_ANY || dt == tif->tif_foundfield->field_type))
 		return tif->tif_foundfield;
+
+	/* If we are invoked with no field information, then just return. */
+	if ( !tif->tif_fieldinfo ) {
+		return NULL;
+	}
+
 	/* NB: use sorted search (e.g. binary search) */
 
 	key.field_tag = tag;
