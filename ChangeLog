@@ -1,3 +1,10 @@
+2007-06-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dirinfo.c (_TIFFFindFieldInfo): Don't attempt to
+	bsearch() on a NULL fieldinfo list.
+	(_TIFFFindFieldInfoByName): Don't attempt to
+	lfind() on a NULL fieldinfo list.
+
 2007-05-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirwrite.c: Fixed problem introduced with a fix for a
