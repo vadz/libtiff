@@ -87,6 +87,9 @@ TIFFClientOpen(
 	int m;
 	const char* cp;
 
+	/* The following are configuration checks. They should be redundant, but should not
+	 * compile to any actual code in an optimised release build anyway. If any of them
+	 * fail, (makefile-based or other) configuration is not correct */
 	assert(sizeof(uint8)==1);
 	assert(sizeof(int8)==1);
 	assert(sizeof(uint16)==2);
@@ -96,6 +99,19 @@ TIFFClientOpen(
 	assert(sizeof(uint64)==8);
 	assert(sizeof(int64)==8);
 	assert(sizeof(tmsize_t)==sizeof(void*));
+	{
+		union{
+			uint8 a8[2];
+			uint16 a16;
+		} n;
+		n.a8[0]=1;
+		n.a8[1]=0;
+		#ifdef WORDS_BIGENDIAN
+		assert(n.a16==256);
+		#else
+		assert(n.a16==1);
+		#endif
+	}
 
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
