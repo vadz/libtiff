@@ -350,6 +350,7 @@ checkImage(TIFF* tif)
 	switch (bitspersample) {
 	case 1: case 2:
 	case 4: case 8:
+	case 16:
 		break;
 	default:
 		TIFFError(filename, "Can not handle %d-bit/sample image",
@@ -434,7 +435,11 @@ setupPageState(TIFF* tif, uint32* pw, uint32* ph, double* pprw, double* pprh)
 		break;
 	case RESUNIT_NONE:
 	default:
-		xres *= PS_UNIT_SIZE, yres *= PS_UNIT_SIZE;
+		/*
+		 * check that the resolution is not inches before scaling it
+		 */
+		if (xres != PS_UNIT_SIZE || yres != PS_UNIT_SIZE)
+			xres *= PS_UNIT_SIZE, yres *= PS_UNIT_SIZE;
 		break;
 	}
 	*pprh = PSUNITS(*ph, yres);
@@ -1173,6 +1178,26 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	return(use_rawdata);
 }
 
+/* Flip the byte order of buffers with 16 bit samples */
+static void
+PS_FlipBytes(unsigned char* buf, int count)
+{
+	int i;
+	unsigned char temp;
+
+	if (count <= 0 || bitspersample <= 8) {
+		return;
+	}
+
+	count--;
+
+	for (i = 0; i < count; i += 2) {
+		temp = buf[i];
+		buf[i] = buf[i + 1];
+		buf[i + 1] = temp;
+	}
+}
+
 #define MAXLINE		36
 
 int
@@ -1277,6 +1302,13 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 				tiled_image ? "tile" : "strip", chunk_no);
 			if (ascii85)
 				Ascii85Put('\0', fd);
+		}
+		/*
+		 * for 16 bits, the two bytes must be most significant
+		 * byte first
+		 */
+		if (bitspersample == 16 && !TIFFIsBigEndian(tif)) {
+			PS_FlipBytes(buf_data, byte_count);
 		}
 		/*
 		 * For images with alpha, matte against a white background;
@@ -1476,6 +1508,13 @@ PSDataColorContig(FILE* fd, TIFF* tif, uint32 w, uint32 h, int nc)
 		if (TIFFReadScanline(tif, tf_buf, row, 0) < 0)
 			break;
 		cp = tf_buf;
+		/*
+		 * for 16 bits, the two bytes must be most significant
+		 * byte first
+		 */
+		if (bitspersample == 16 && !HOST_BIGENDIAN) {
+			PS_FlipBytes(cp, tf_bytesperrow);
+		}
 		if (alpha) {
 			int adjust;
 			cc = 0;
@@ -1676,6 +1715,13 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 			for (cp += cc; --cp >= tf_buf;)
 				*cp = ~*cp;
 			cp++;
+		}
+		/*
+		 * for 16 bits, the two bytes must be most significant
+		 * byte first
+		 */
+		if (bitspersample == 16 && !HOST_BIGENDIAN) {
+			PS_FlipBytes(cp, cc);
 		}
 		if (ascii85) {
 #if defined( EXP_ASCII85ENCODER )
