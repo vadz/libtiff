@@ -1,5 +1,11 @@
 2007-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/tiff2ps.c:  Added support 16-bit images as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1566
+
+	Patch from William Bader.
+
 	* tools/tiff2pdf.c: Fix for TIFFTAG_JPEGTABLES tag fetching and
 	significant upgrade of the whole utility as per bug
 	
