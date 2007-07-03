@@ -1,3 +1,14 @@
+2007-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiff2pdf.c: Fix for TIFFTAG_JPEGTABLES tag fetching and
+	significant upgrade of the whole utility as per bug
+	
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1560
+
+	Now we don't need tiffiop.h in tiff2pdf anymore and will open output
+	PDF file using TIFFClientOpen() machinery as it is implemented
+	by Leon Bottou.
+
 2007-06-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Fix typo when substituting value for unsigned 8 bit type.
