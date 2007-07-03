@@ -1,5 +1,8 @@
 2007-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* libtiff{tif_acorn.c, tif_apple.c, tif_atari.c, tif_msdos.c,
+	tif_win3.c}: Obsoleted portability stuff removed.
+
 	* tools/tiff2ps.c:  Added support 16-bit images as per bug
 	
 	http://bugzilla.remotesensing.org/show_bug.cgi?id=1566
