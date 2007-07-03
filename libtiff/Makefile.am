@@ -94,7 +94,6 @@ SRCSXX = \
 	tif_stream.cxx
 
 EXTRA_SRCS = \
-	tif_next.c \
 	tif_win32.c
 
 libtiffincludedir = $(includedir)
