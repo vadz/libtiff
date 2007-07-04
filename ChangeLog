@@ -1,3 +1,21 @@
+2007-07-04  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_dir.c, tiff.h, tiffio.h, libtiff.def}: Unused
+	TIFFReassignTagToIgnore() function and TIFFIgnoreSense enumeration
+	removed.
+
+	* libtiff/{tif_dirinfo.c, tif_fax3.c, tif_jbig.c, tif_jpeg.c}: Move
+	tags TIFFTAG_FAXRECVPARAMS, TIFFTAG_FAXSUBADDRESS,
+	TIFFTAG_FAXRECVTIME and TIFFTAG_FAXDCS to the common tag directory.
+	These tags are not codec-specific and relate to image content, so
+	process them as other normal tags.
+
+	* libtiff/{tiffio.h, tif_dir.h}: TIFFTagValue structure moved from the
+	public tiffio.h to private tif_dir.h.
+
+	* contrib/{acorn, mac-cw, mac-mpw}: Removed as unmaintained and
+	outdated.
+
 2007-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff{tif_acorn.c, tif_apple.c, tif_atari.c, tif_msdos.c,
