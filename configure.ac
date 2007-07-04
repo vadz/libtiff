@@ -732,13 +732,10 @@ AC_CONFIG_HEADERS([libtiff/tif_config.h libtiff/tiffconf.h])
 AC_CONFIG_FILES([Makefile \
 		 build/Makefile \
 		 contrib/Makefile \
-		 contrib/acorn/Makefile \
 		 contrib/addtiffo/Makefile \
 		 contrib/dbs/Makefile \
 		 contrib/dbs/xtiff/Makefile \
 		 contrib/iptcutil/Makefile \
-		 contrib/mac-cw/Makefile \
-		 contrib/mac-mpw/Makefile \
 		 contrib/mfs/Makefile \
 		 contrib/pds/Makefile \
 		 contrib/ras/Makefile \
