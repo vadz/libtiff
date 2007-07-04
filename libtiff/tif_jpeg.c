@@ -163,10 +163,6 @@ typedef struct {
 	int		jpegtablesmode;	/* What to put in JPEGTables */
 
         int             ycbcrsampling_fetched;
-	uint32		recvparams;	/* encoded Class 2 session params */
-	char*		subaddress;	/* subaddress string */
-	uint32		recvtime;	/* time spent receiving (secs) */
-	char*		faxdcs;		/* encoded fax parameters (DCS, Table 2/T.30) */
 } JPEGState;
 
 #define	JState(tif)	((JPEGState*)(tif)->tif_data)
@@ -178,21 +174,12 @@ static int JPEGEncodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s);
 static int JPEGInitializeLibJPEG(TIFF * tif, int force_encode, int force_decode);
 
 #define	FIELD_JPEGTABLES	(FIELD_CODEC+0)
-#define	FIELD_RECVPARAMS	(FIELD_CODEC+1)
-#define	FIELD_SUBADDRESS	(FIELD_CODEC+2)
-#define	FIELD_RECVTIME		(FIELD_CODEC+3)
-#define	FIELD_FAXDCS		(FIELD_CODEC+4)
 
 static const TIFFFieldInfo jpegFieldInfo[] = {
     { TIFFTAG_JPEGTABLES, -3, -3, TIFF_UNDEFINED, 0, TIFF_SETGET_C32_UINT8, TIFF_SETGET_C32_UINT8, FIELD_JPEGTABLES, FALSE, TRUE, "JPEGTables", NULL },
     { TIFFTAG_JPEGQUALITY, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "", NULL },
     { TIFFTAG_JPEGCOLORMODE, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL },
-    { TIFFTAG_JPEGTABLESMODE, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL },
-    /* Specific for JPEG in faxes */
-    { TIFFTAG_FAXRECVPARAMS, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_RECVPARAMS, TRUE, FALSE, "FaxRecvParams", NULL },
-    { TIFFTAG_FAXSUBADDRESS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_SUBADDRESS, TRUE, FALSE, "FaxSubAddress", NULL },
-    { TIFFTAG_FAXRECVTIME, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_RECVTIME, TRUE, FALSE, "FaxRecvTime", NULL },
-    { TIFFTAG_FAXDCS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_FAXDCS, TRUE, FALSE, "FaxDcs", NULL },
+    { TIFFTAG_JPEGTABLESMODE, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL }
 };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
@@ -1919,18 +1906,6 @@ JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 		sp->ycbcrsampling_fetched = 1;
 		/* should we be recomputing upsampling info here? */
 		return (*sp->vsetparent)(tif, tag, ap);
-	case TIFFTAG_FAXRECVPARAMS:
-		sp->recvparams = (uint32) va_arg(ap, uint32);
-		break;
-	case TIFFTAG_FAXSUBADDRESS:
-		_TIFFsetString(&sp->subaddress, va_arg(ap, char*));
-		break;
-	case TIFFTAG_FAXRECVTIME:
-		sp->recvtime = (uint32) va_arg(ap, uint32);
-		break;
-	case TIFFTAG_FAXDCS:
-		_TIFFsetString(&sp->faxdcs, va_arg(ap, char*));
-		break;
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
@@ -1966,18 +1941,6 @@ JPEGVGetField(TIFF* tif, uint32 tag, va_list ap)
 		case TIFFTAG_JPEGTABLESMODE:
 			*va_arg(ap, int*) = sp->jpegtablesmode;
 			break;
-		case TIFFTAG_FAXRECVPARAMS:
-			*va_arg(ap, uint32*) = sp->recvparams;
-			break;
-		case TIFFTAG_FAXSUBADDRESS:
-			*va_arg(ap, char**) = sp->subaddress;
-			break;
-		case TIFFTAG_FAXRECVTIME:
-			*va_arg(ap, uint32*) = sp->recvtime;
-			break;
-		case TIFFTAG_FAXDCS:
-			*va_arg(ap, char**) = sp->faxdcs;
-			break;
 		default:
 			return (*sp->vgetparent)(tif, tag, ap);
 	}
@@ -1995,16 +1958,6 @@ JPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_JPEGTABLES))
 		fprintf(fd, "  JPEG Tables: (%lu bytes)\n",
 			(unsigned long) sp->jpegtables_length);
-        if (TIFFFieldSet(tif,FIELD_RECVPARAMS))
-                fprintf(fd, "  Fax Receive Parameters: %08lx\n",
-                   (unsigned long) sp->recvparams);
-        if (TIFFFieldSet(tif,FIELD_SUBADDRESS))
-                fprintf(fd, "  Fax SubAddress: %s\n", sp->subaddress);
-        if (TIFFFieldSet(tif,FIELD_RECVTIME))
-                fprintf(fd, "  Fax Receive Time: %lu secs\n",
-                    (unsigned long) sp->recvtime);
-        if (TIFFFieldSet(tif,FIELD_FAXDCS))
-                fprintf(fd, "  Fax DCS: %s\n", sp->faxdcs);
 }
 
 static uint32
@@ -2165,11 +2118,6 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	sp->jpegquality = 75;			/* Default IJG quality */
 	sp->jpegcolormode = JPEGCOLORMODE_RAW;
 	sp->jpegtablesmode = JPEGTABLESMODE_QUANT | JPEGTABLESMODE_HUFF;
-
-        sp->recvparams = 0;
-        sp->subaddress = NULL;
-        sp->faxdcs = NULL;
-
         sp->ycbcrsampling_fetched = 0;
 
 	/*

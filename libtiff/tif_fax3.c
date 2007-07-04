@@ -57,10 +57,7 @@ typedef struct {
 	uint32   badfaxrun;              /* BadFaxRun tag */
 	uint32   badfaxlines;            /* BadFaxLines tag */
 	uint32   groupoptions;           /* Group 3/4 options tag */
-	uint32   recvparams;             /* encoded Class 2 session params */
-	char*    subaddress;             /* subaddress string */
-	uint32   recvtime;               /* time spent receiving (secs) */
-	char*    faxdcs;                 /* Table 2/T.30 encoded session params */
+
 	TIFFVGetMethod  vgetparent;      /* super-class method */
 	TIFFVSetMethod  vsetparent;      /* super-class method */
 	TIFFPrintMethod printdir;        /* super-class method */
@@ -1102,8 +1099,6 @@ Fax3Cleanup(TIFF* tif)
 	if (sp->refline)
 		_TIFFfree(sp->refline);
 
-	if (Fax3State(tif)->subaddress)
-		_TIFFfree(Fax3State(tif)->subaddress);
 	_TIFFfree(tif->tif_data);
 	tif->tif_data = NULL;
 
@@ -1113,10 +1108,6 @@ Fax3Cleanup(TIFF* tif)
 #define	FIELD_BADFAXLINES	(FIELD_CODEC+0)
 #define	FIELD_CLEANFAXDATA	(FIELD_CODEC+1)
 #define	FIELD_BADFAXRUN		(FIELD_CODEC+2)
-#define	FIELD_RECVPARAMS	(FIELD_CODEC+3)
-#define	FIELD_SUBADDRESS	(FIELD_CODEC+4)
-#define	FIELD_RECVTIME		(FIELD_CODEC+5)
-#define	FIELD_FAXDCS		(FIELD_CODEC+6)
 
 #define	FIELD_OPTIONS		(FIELD_CODEC+7)
 
@@ -1125,12 +1116,7 @@ static const TIFFFieldInfo faxFieldInfo[] = {
     { TIFFTAG_FAXFILLFUNC, 0, 0, TIFF_ANY, 0, TIFF_SETGET_OTHER, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "FaxFillFunc", NULL },
     { TIFFTAG_BADFAXLINES, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_BADFAXLINES, TRUE, FALSE, "BadFaxLines", NULL },
     { TIFFTAG_CLEANFAXDATA, 1, 1, TIFF_SHORT, 0, TIFF_SETGET_UINT16, TIFF_SETGET_UINT16, FIELD_CLEANFAXDATA, TRUE, FALSE, "CleanFaxData", NULL },
-    { TIFFTAG_CONSECUTIVEBADFAXLINES, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_BADFAXRUN, TRUE, FALSE, "ConsecutiveBadFaxLines", NULL },
-    { TIFFTAG_FAXRECVPARAMS, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_RECVPARAMS, TRUE, FALSE, "FaxRecvParams", NULL },
-    { TIFFTAG_FAXSUBADDRESS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_SUBADDRESS, TRUE, FALSE, "FaxSubAddress", NULL },
-    { TIFFTAG_FAXRECVTIME, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_RECVTIME, TRUE, FALSE, "FaxRecvTime", NULL },
-    { TIFFTAG_FAXDCS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_FAXDCS, TRUE, FALSE, "FaxDcs", NULL },
-};
+    { TIFFTAG_CONSECUTIVEBADFAXLINES, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_BADFAXRUN, TRUE, FALSE, "ConsecutiveBadFaxLines", NULL }};
 static const TIFFFieldInfo fax3FieldInfo[] = {
     { TIFFTAG_GROUP3OPTIONS, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_OPTIONS, FALSE, FALSE, "Group3Options", NULL },
 };
@@ -1174,18 +1160,6 @@ Fax3VSetField(TIFF* tif, uint32 tag, va_list ap)
 	case TIFFTAG_CONSECUTIVEBADFAXLINES:
 		sp->badfaxrun = (uint32) va_arg(ap, uint32);
 		break;
-	case TIFFTAG_FAXRECVPARAMS:
-		sp->recvparams = (uint32) va_arg(ap, uint32);
-		break;
-	case TIFFTAG_FAXSUBADDRESS:
-		_TIFFsetString(&sp->subaddress, va_arg(ap, char*));
-		break;
-	case TIFFTAG_FAXRECVTIME:
-		sp->recvtime = (uint32) va_arg(ap, uint32);
-		break;
-	case TIFFTAG_FAXDCS:
-		_TIFFsetString(&sp->faxdcs, va_arg(ap, char*));
-		break;
 	default:
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
@@ -1225,18 +1199,6 @@ Fax3VGetField(TIFF* tif, uint32 tag, va_list ap)
 		break;
 	case TIFFTAG_CONSECUTIVEBADFAXLINES:
 		*va_arg(ap, uint32*) = sp->badfaxrun;
-		break;
-	case TIFFTAG_FAXRECVPARAMS:
-		*va_arg(ap, uint32*) = sp->recvparams;
-		break;
-	case TIFFTAG_FAXSUBADDRESS:
-		*va_arg(ap, char**) = sp->subaddress;
-		break;
-	case TIFFTAG_FAXRECVTIME:
-		*va_arg(ap, uint32*) = sp->recvtime;
-		break;
-	case TIFFTAG_FAXDCS:
-		*va_arg(ap, char**) = sp->faxdcs;
 		break;
 	default:
 		return (*sp->vgetparent)(tif, tag, ap);
@@ -1294,16 +1256,6 @@ Fax3PrintDir(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_BADFAXRUN))
 		fprintf(fd, "  Consecutive Bad Fax Lines: %lu\n",
 		    (unsigned long) sp->badfaxrun);
-	if (TIFFFieldSet(tif,FIELD_RECVPARAMS))
-		fprintf(fd, "  Fax Receive Parameters: %08lx\n",
-		   (unsigned long) sp->recvparams);
-	if (TIFFFieldSet(tif,FIELD_SUBADDRESS))
-		fprintf(fd, "  Fax SubAddress: %s\n", sp->subaddress);
-	if (TIFFFieldSet(tif,FIELD_RECVTIME))
-		fprintf(fd, "  Fax Receive Time: %lu secs\n",
-		    (unsigned long) sp->recvtime);
-	if (TIFFFieldSet(tif,FIELD_FAXDCS))
-		fprintf(fd, "  Fax DCS: %s\n", sp->faxdcs);
 }
 
 static int
@@ -1346,9 +1298,6 @@ InitCCITTFax3(TIFF* tif)
 	sp->printdir = tif->tif_tagmethods.printdir;
 	tif->tif_tagmethods.printdir = Fax3PrintDir;   /* hook for codec tags */
 	sp->groupoptions = 0;	
-	sp->recvparams = 0;
-	sp->subaddress = NULL;
-	sp->faxdcs = NULL;
 
 	if (sp->rw_mode == O_RDONLY) /* FIXME: improve for in place update */
 		tif->tif_flags |= TIFF_NOBITREV; /* decoder does bit reversal */

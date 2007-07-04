@@ -37,38 +37,6 @@
 #ifdef JBIG_SUPPORT
 #include "jbig.h"
 
-typedef struct
-{
-	uint32  recvparams;     /* encoded Class 2 session params             */
-	char*   subaddress;     /* subaddress string                          */
-	uint32  recvtime;       /* time spend receiving in seconds            */
-	char*   faxdcs;         /* encoded fax parameters (DCS, Table 2/T.30) */
-
-	TIFFVGetMethod vgetparent;
-	TIFFVSetMethod vsetparent;
-} JBIGState;
-
-#define GetJBIGState(tif) ((JBIGState*)(tif)->tif_data)
-
-#define FIELD_RECVPARAMS        (FIELD_CODEC+0)
-#define FIELD_SUBADDRESS        (FIELD_CODEC+1)
-#define FIELD_RECVTIME          (FIELD_CODEC+2)
-#define FIELD_FAXDCS            (FIELD_CODEC+3)
-
-static const TIFFFieldInfo jbigFieldInfo[] =
-{
-	{TIFFTAG_FAXRECVPARAMS, 1,  1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_RECVPARAMS, TRUE, FALSE, "FaxRecvParams", NULL},
-	{TIFFTAG_FAXSUBADDRESS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_SUBADDRESS, TRUE, FALSE, "FaxSubAddress", NULL},
-	{TIFFTAG_FAXRECVTIME, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_RECVTIME, TRUE, FALSE, "FaxRecvTime", NULL},
-	{TIFFTAG_FAXDCS, -1, -1, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_ASCII, FIELD_FAXDCS, TRUE, FALSE, "FaxDcs", NULL},
-};
-
-static int JBIGFixupTags(TIFF* tif)
-{
-	(void) tif;
-	return 1;
-}
-
 static int JBIGSetupDecode(TIFF* tif)
 {
 	if (TIFFNumberOfStrips(tif) != 1)
@@ -198,155 +166,9 @@ static int JBIGEncode(TIFF* tif, uint8* buffer, tmsize_t size, uint16 s)
 	return 1;
 }
 
-static void JBIGCleanup(TIFF* tif)
-{
-	JBIGState *sp = GetJBIGState(tif);
-
-	assert(sp != 0);
-
-	tif->tif_tagmethods.vgetfield = sp->vgetparent;
-	tif->tif_tagmethods.vsetfield = sp->vsetparent;
-
-	_TIFFfree(tif->tif_data);
-	tif->tif_data = NULL;
-
-	_TIFFSetDefaultCompressionState(tif);
-}
-
-static void JBIGPrintDir(TIFF* tif, FILE* fd, long flags)
-{
-	JBIGState* codec = GetJBIGState(tif);
-	(void)flags;
-
-	if (TIFFFieldSet(tif, FIELD_RECVPARAMS))
-	{
-		fprintf(fd,
-			"  Fax Receive Parameters: %08lx\n",
-			(unsigned long)codec->recvparams);
-	}
-
-	if (TIFFFieldSet(tif, FIELD_SUBADDRESS))
-	{
-		fprintf(fd,
-			"  Fax SubAddress: %s\n",
-			codec->subaddress);
-	}
-
-	if (TIFFFieldSet(tif, FIELD_RECVTIME))
-	{
-		fprintf(fd,
-			"  Fax Receive Time: %lu secs\n",
-			(unsigned long)codec->recvtime);
-	}
-
-	if (TIFFFieldSet(tif, FIELD_FAXDCS))
-	{
-		fprintf(fd,
-			"  Fax DCS: %s\n",
-			codec->faxdcs);
-	}
-}
-
-static int JBIGVGetField(TIFF* tif, ttag_t tag, va_list ap)
-{
-	JBIGState* codec = GetJBIGState(tif);
-
-	switch (tag)
-	{
-		case TIFFTAG_FAXRECVPARAMS:
-			*va_arg(ap, uint32*) = codec->recvparams;
-			break;
-
-		case TIFFTAG_FAXSUBADDRESS:
-			*va_arg(ap, char**) = codec->subaddress;
-			break;
-
-		case TIFFTAG_FAXRECVTIME:
-			*va_arg(ap, uint32*) = codec->recvtime;
-			break;
-
-		case TIFFTAG_FAXDCS:
-			*va_arg(ap, char**) = codec->faxdcs;
-			break;
-
-		default:
-			return (*codec->vgetparent)(tif, tag, ap);
-	}
-
-	return 1;
-}
-
-static int JBIGVSetField(TIFF* tif, ttag_t tag, va_list ap)
-{
-	JBIGState* codec = GetJBIGState(tif);
-
-	switch (tag)
-	{
-		case TIFFTAG_FAXRECVPARAMS:
-			codec->recvparams = (uint32) va_arg(ap, uint32);
-			break;
-
-		case TIFFTAG_FAXSUBADDRESS:
-			_TIFFsetString(&codec->subaddress, va_arg(ap, char*));
-			break;
-
-		case TIFFTAG_FAXRECVTIME:
-			codec->recvtime = (uint32) va_arg(ap, uint32);
-			break;
-
-		case TIFFTAG_FAXDCS:
-			_TIFFsetString(&codec->faxdcs, va_arg(ap, char*));
-			break;
-
-		default:
-			return (*codec->vsetparent)(tif, tag, ap);
-	}
-
-	TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
-	tif->tif_flags |= TIFF_DIRTYDIRECT;
-	return 1;
-}
-
 int TIFFInitJBIG(TIFF* tif, int scheme)
 {
-	JBIGState* codec = NULL;
-
 	assert(scheme == COMPRESSION_JBIG);
-
-	/*
-	 * Merge codec-specific tag information.
-	 */
-	if (!_TIFFMergeFieldInfo(tif, jbigFieldInfo,
-				 TIFFArrayCount(jbigFieldInfo))) {
-		TIFFErrorExt(tif->tif_clientdata, "TIFFInitJBIG",
-			     "Merging JBIG codec-specific tags failed");
-		return 0;
-	}
-
-	/* Allocate memory for the JBIGState structure.*/
-	tif->tif_data = (tdata_t)_TIFFmalloc(sizeof(JBIGState));
-	if (tif->tif_data == NULL)
-	{
-		TIFFErrorExt(tif->tif_clientdata, "TIFFInitJBIG", "Not enough memory for JBIGState");
-		return 0;
-	}
-	_TIFFmemset(tif->tif_data, 0, sizeof(JBIGState));
-	codec = GetJBIGState(tif);
-
-	/* Initialize codec private fields */
-	codec->recvparams = 0;
-	codec->subaddress = NULL;
-	codec->faxdcs = NULL;
-	codec->recvtime = 0;
-
-	/*
-	 * Override parent get/set field methods.
-	 */
-	codec->vgetparent = tif->tif_tagmethods.vgetfield;
-	codec->vsetparent = tif->tif_tagmethods.vsetfield;
-	tif->tif_tagmethods.vgetfield = JBIGVGetField;
-	tif->tif_tagmethods.vsetfield = JBIGVSetField;
-	tif->tif_tagmethods.printdir = JBIGPrintDir;
 
 	/*
 	 * These flags are set so the JBIG Codec can control when to reverse
@@ -357,14 +179,11 @@ int TIFFInitJBIG(TIFF* tif, int scheme)
 	tif->tif_flags &= ~TIFF_MAPPED;
 
 	/* Setup the function pointers for encode, decode, and cleanup. */
-	tif->tif_fixuptags = JBIGFixupTags;
 	tif->tif_setupdecode = JBIGSetupDecode;
 	tif->tif_decodestrip = JBIGDecode;
 
 	tif->tif_setupencode = JBIGSetupEncode;
 	tif->tif_encodestrip = JBIGEncode;
-
-	tif->tif_cleanup = JBIGCleanup;
 
 	return 1;
 }
