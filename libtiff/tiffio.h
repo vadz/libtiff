@@ -425,7 +425,6 @@ extern int TIFFVSetField(TIFF*, uint32, va_list);
 extern int TIFFWriteDirectory(TIFF *);
 extern int TIFFCheckpointDirectory(TIFF *);
 extern int TIFFRewriteDirectory(TIFF *);
-extern int TIFFReassignTagToIgnore(enum TIFFIgnoreSense, int);
 
 #if defined(c_plusplus) || defined(__cplusplus)
 extern void TIFFPrintDirectory(TIFF*, FILE*, long = 0);

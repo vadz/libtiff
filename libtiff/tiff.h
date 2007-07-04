@@ -87,14 +87,6 @@ typedef TIFF_UINT64_T uint64;
 
 typedef int uint16_vap;
 
-/* For TIFFReassignTagToIgnore */
-enum TIFFIgnoreSense /* IGNORE tag table */
-{
-	TIS_STORE,
-	TIS_EXTRACT,
-	TIS_EMPTY
-};
-
 /*
  * TIFF header.
  */
