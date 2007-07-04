@@ -247,19 +247,18 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 {
 	uint16 dircount;
 	uint32 direntrysize;
-	void* dirmem;
+	void* dirmem = NULL;
 	uint64 nextdiroff;
 	uint32 n;
 	uint8* dp;
 
 	if (off == 0)			/* no more directories */
 		goto done;
-	if (lseek(fd, off, 0) != off) {
+	if (lseek(fd, off, 0) != (off_t)off) {
 		Fatal("Seek error accessing TIFF directory");
 		goto done;
 	}
-	if (!bigtiff)
-	{
+	if (!bigtiff) {
 		if (read(fd, (char*) &dircount, sizeof (uint16)) != sizeof (uint16)) {
 			ReadError("directory count");
 			goto done;
@@ -267,9 +266,7 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 		if (swabflag)
 			TIFFSwabShort(&dircount);
 		direntrysize = 12;
-	}
-	else
-	{
+	} else {
 		uint64 dircount64;
 		if (read(fd, (char*) &dircount64, sizeof (uint64)) != sizeof (uint64)) {
 			ReadError("directory count");
@@ -284,7 +281,7 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 		dircount = (uint16)dircount64;
 		direntrysize = 20;
 	}
-	dirmem = _TIFFmalloc(dircount*direntrysize);
+	dirmem = _TIFFmalloc(dircount * direntrysize);
 	if (dirmem == NULL) {
 		Fatal("No space for TIFF directory");
 		goto done;
@@ -333,9 +330,9 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 		tag = *(uint16*)dp;
 		if (swabflag)
 			TIFFSwabShort(&tag);
-		((uint16*)dp)++;
+		dp += sizeof(uint16);
 		type = *(uint16*)dp;
-		((uint16*)dp)++;
+		dp += sizeof(uint16);
 		if (swabflag)
 			TIFFSwabShort(&type);
 		PrintTag(stdout, tag);
@@ -348,7 +345,7 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 			count32 = *(uint32*)dp;
 			if (swabflag)
 				TIFFSwabLong(&count32);
-			((uint32*)dp)++;
+			dp += sizeof(uint32);
 			count = count32;
 		}
 		else
@@ -356,7 +353,7 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 			count = *(uint64*)dp;
 			if (swabflag)
 				TIFFSwabLong8(&count);
-			((uint64*)dp)++;
+			dp += sizeof(uint64);
 		}
 		printf("%llu<", (unsigned long long) count);
 		if (type >= NWIDTHS)
@@ -380,7 +377,7 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 					TIFFSwabLong(&dataoffset32);
 				dataoffset = dataoffset32;
 			}
-			((uint32*)dp)++;
+			dp += sizeof(uint32);
 		}
 		else
 		{
@@ -392,7 +389,7 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 				if (swabflag)
 					TIFFSwabLong8(&dataoffset);
 			}
-			((uint64*)dp)++;
+			dp += sizeof(uint64);
 		}
 		if (datasize>0x10000)
 		{
@@ -411,13 +408,13 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 			datamem = _TIFFmalloc((uint32)datasize);
 			if (datamem)
 			{
-				if (lseek(fd,dataoffset,0) != dataoffset)
+				if (lseek(fd,dataoffset,0) != (off_t)dataoffset)
 				{
 					Error("Seek error accessing tag %u value",tag);
 					_TIFFfree(datamem);
 					datamem = NULL;
 				}
-				if (read(fd,datamem,datasize) != datasize)
+				if (read(fd, datamem, datasize) != (ssize_t)datasize)
 				{
 					Error("Read error accessing tag %u value",tag);
 					_TIFFfree(datamem);
@@ -433,29 +430,29 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 			{
 				switch (type)
 				{
-					TIFF_BYTE:
-					TIFF_ASCII:
-					TIFF_SBYTE:
-					TIFF_UNDEFINED:
+					case TIFF_BYTE:
+					case TIFF_ASCII:
+					case TIFF_SBYTE:
+					case TIFF_UNDEFINED:
 						break;
-					TIFF_SHORT:
-					TIFF_SSHORT:
+					case TIFF_SHORT:
+					case TIFF_SSHORT:
 						TIFFSwabArrayOfShort((uint16*)datamem,count);
 						break;
-					TIFF_LONG:
-					TIFF_SLONG:
-					TIFF_FLOAT:
-					TIFF_IFD:
+					case TIFF_LONG:
+					case TIFF_SLONG:
+					case TIFF_FLOAT:
+					case TIFF_IFD:
 						TIFFSwabArrayOfLong((uint32*)datamem,count);
 						break;
-					TIFF_RATIONAL:
-					TIFF_SRATIONAL:
+					case TIFF_RATIONAL:
+					case TIFF_SRATIONAL:
 						TIFFSwabArrayOfLong((uint32*)datamem,count*2);
 						break;
-					TIFF_DOUBLE:
-					TIFF_LONG8:
-					TIFF_SLONG8:
-					TIFF_IFD8:
+					case TIFF_DOUBLE:
+					case TIFF_LONG8:
+					case TIFF_SLONG8:
+					case TIFF_IFD8:
 						TIFFSwabArrayOfLong8((uint64*)datamem,count);
 						break;
 				}
