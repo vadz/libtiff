@@ -30,6 +30,12 @@
  * ``Library-private'' Directory-related Definitions.
  */
 
+typedef struct {
+	const TIFFFieldInfo  *info;
+	int             count;
+	void           *value;
+} TIFFTagValue;
+
 /*
  * Internal format of a TIFF directory entry.
  */
@@ -188,3 +194,4 @@ extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo(TIFF *tif, uint32 tag,
 #endif /* _TIFFDIR_ */
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+

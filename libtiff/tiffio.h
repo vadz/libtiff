@@ -336,12 +336,6 @@ typedef struct _TIFFFieldInfoArray{
 	const TIFFFieldInfo* fieldinfo;                       /* actual field info */
 } TIFFFieldInfoArray;
 
-typedef struct _TIFFTagValue {
-    const TIFFFieldInfo  *info;
-    int             count;
-    void           *value;
-} TIFFTagValue;
-
 extern void TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n);
 extern const TIFFFieldInfo* TIFFFindFieldInfo(TIFF*, uint32, TIFFDataType);
 extern const TIFFFieldInfo* TIFFFindFieldInfoByName(TIFF* , const char *,
