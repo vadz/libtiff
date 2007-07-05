@@ -741,7 +741,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		{
 			enum TIFFReadDirEntryErr err;
 			uint32 offset;
-			offset=(uint32)(direntry->tdir_offset);
+			offset=*(uint32*)(&direntry->tdir_offset);
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong(&offset);
 			err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
