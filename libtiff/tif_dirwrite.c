@@ -79,6 +79,7 @@ static int TIFFWriteDirectoryTagDoublePerSample(TIFF* tif, uint32* ndir, TIFFDir
 static int TIFFWriteDirectoryTagIfdArray(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint32* value);
 static int TIFFWriteDirectoryTagIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
 static int TIFFWriteDirectoryTagShortLong(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 value);
+static int TIFFWriteDirectoryTagLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
 static int TIFFWriteDirectoryTagShortLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
 static int TIFFWriteDirectoryTagColormap(TIFF* tif, uint32* ndir, TIFFDirEntry* dir);
 static int TIFFWriteDirectoryTagTransferfunction(TIFF* tif, uint32* ndir, TIFFDirEntry* dir);
@@ -462,13 +463,29 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			}
 			if (TIFFFieldSet(tif,FIELD_STRIPBYTECOUNTS))
 			{
-				if (!TIFFWriteDirectoryTagShortLongLong8Array(tif,&ndir,dir,isTiled(tif)?TIFFTAG_TILEBYTECOUNTS:TIFFTAG_STRIPBYTECOUNTS,tif->tif_dir.td_nstrips,tif->tif_dir.td_stripbytecount))
-					goto bad;
+				if (!isTiled(tif))
+				{
+					if (!TIFFWriteDirectoryTagShortLongLong8Array(tif,&ndir,dir,TIFFTAG_STRIPBYTECOUNTS,tif->tif_dir.td_nstrips,tif->tif_dir.td_stripbytecount))
+						goto bad;
+				}
+				else
+				{
+					if (!TIFFWriteDirectoryTagLongLong8Array(tif,&ndir,dir,TIFFTAG_TILEBYTECOUNTS,tif->tif_dir.td_nstrips,tif->tif_dir.td_stripbytecount))
+						goto bad;
+				}
 			}
 			if (TIFFFieldSet(tif,FIELD_STRIPOFFSETS))
 			{
-				if (!TIFFWriteDirectoryTagShortLongLong8Array(tif,&ndir,dir,isTiled(tif)?TIFFTAG_TILEOFFSETS:TIFFTAG_STRIPOFFSETS,tif->tif_dir.td_nstrips,tif->tif_dir.td_stripoffset))
-					goto bad;
+				if (!isTiled(tif))
+				{
+					if (!TIFFWriteDirectoryTagShortLongLong8Array(tif,&ndir,dir,TIFFTAG_STRIPOFFSETS,tif->tif_dir.td_nstrips,tif->tif_dir.td_stripoffset))
+						goto bad;
+				}
+				else
+				{
+					if (!TIFFWriteDirectoryTagLongLong8Array(tif,&ndir,dir,TIFFTAG_TILEOFFSETS,tif->tif_dir.td_nstrips,tif->tif_dir.td_stripoffset))
+						goto bad;
+				}
 			}
 			if (TIFFFieldSet(tif,FIELD_COLORMAP))
 			{
@@ -1373,6 +1390,51 @@ TIFFWriteDirectoryTagShortLong(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint1
 }
 
 static int
+TIFFWriteDirectoryTagLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value)
+{
+	static const char module[] = "TIFFWriteDirectoryTagLongLong8Array";
+	uint64* ma;
+	uint32 mb;
+	uint8 n;
+	int o;
+	if (dir==NULL)
+	{
+		(*ndir)++;
+		return(1);
+	}
+	n=0;
+	for (ma=value, mb=0; mb<count; ma++, mb++)
+	{
+		if (*ma>0xFFFFFFFF)
+		{
+			n=1;
+			break;
+		}
+	}
+	if (n==0)
+	{
+		uint32* p;
+		uint32* q;
+		p=_TIFFmalloc(count*sizeof(uint32));
+		if (p==NULL)
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+			return(0);
+		}
+		for (ma=value, mb=0, q=p; mb<count; ma++, mb++, q++)
+			*q=(uint32)(*ma);
+		o=TIFFWriteDirectoryTagCheckedLongArray(tif,ndir,dir,tag,count,p);
+		_TIFFfree(p);
+	}
+	else
+	{
+		assert(n==1);
+		o=TIFFWriteDirectoryTagCheckedLong8Array(tif,ndir,dir,tag,count,value);
+	}
+	return(o);
+}
+
+static int
 TIFFWriteDirectoryTagShortLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value)
 {
 	static const char module[] = "TIFFWriteDirectoryTagShortLongLong8Array";
@@ -1400,7 +1462,7 @@ TIFFWriteDirectoryTagShortLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* 
 	{
 		uint16* p;
 		uint16* q;
-		p=_TIFFmalloc(count*2);
+		p=_TIFFmalloc(count*sizeof(uint16));
 		if (p==NULL)
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
@@ -1415,7 +1477,7 @@ TIFFWriteDirectoryTagShortLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* 
 	{
 		uint32* p;
 		uint32* q;
-		p=_TIFFmalloc(count*4);
+		p=_TIFFmalloc(count*sizeof(uint32));
 		if (p==NULL)
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
