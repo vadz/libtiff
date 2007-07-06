@@ -1,3 +1,8 @@
+2007-07-05  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2pdf.c: Fix a compile problem when JPEG_SUPPORT is not
+	defined.
+
 2007-07-04  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dir.c, tiff.h, tiffio.h, libtiff.def}: Unused

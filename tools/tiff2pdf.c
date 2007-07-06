@@ -2593,8 +2593,9 @@ dataready:
 		bufferoffset = TIFFWriteEncodedStrip(output, (tstrip_t)0,
 						     buffer,
 						     stripsize * stripcount); 
-	} else {
+	} else
 #endif
+        {
 		bufferoffset = TIFFWriteEncodedStrip(output, (tstrip_t)0,
 						     buffer,
 						     t2p->tiff_datasize); 
