@@ -1576,7 +1576,7 @@ LogLuvVGetField(TIFF* tif, uint32 tag, va_list ap)
 	}
 }
 
-static const TIFFFieldInfo LogLuvFieldInfo[] = {
+static const TIFFField LogLuvFields[] = {
     { TIFFTAG_SGILOGDATAFMT, 0, 0, TIFF_SHORT, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "SGILogDataFmt", NULL},
     { TIFFTAG_SGILOGENCODE, 0, 0, TIFF_SHORT, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "SGILogEncode", NULL}
 };
@@ -1592,8 +1592,7 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeFieldInfo(tif, LogLuvFieldInfo,
-	    TIFFArrayCount(LogLuvFieldInfo))) {
+	if (!_TIFFMergeField(tif, LogLuvFields, TIFFArrayCount(LogLuvFields))) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 		    "Merging SGILog codec-specific tags failed");
 		return 0;

@@ -178,15 +178,48 @@ extern const TIFFFieldInfoArray* _TIFFGetExifFieldInfo(void);
 extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray);
 extern int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
 extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
-extern const TIFFFieldInfo* _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag,
-    TIFFDataType dt);
-extern  TIFFFieldInfo* _TIFFCreateAnonFieldInfo(TIFF *tif, uint32 tag,
-    TIFFDataType dt);
 
 #define _TIFFFindFieldInfo         TIFFFindFieldInfo
 #define _TIFFFindFieldInfoByName   TIFFFindFieldInfoByName
 #define _TIFFFieldWithTag          TIFFFieldWithTag
 #define _TIFFFieldWithName         TIFFFieldWithName
+
+struct _TIFFFieldInfoArray;
+
+struct _TIFFField {
+	uint32 field_tag;                                     /* field's tag */
+	short field_readcount;                                /* read count/TIFF_VARIABLE/TIFF_SPP */
+	short field_writecount;                               /* write count/TIFF_VARIABLE */
+	TIFFDataType field_type;                              /* type of associated data */
+	uint32 reserved;                                      /* reserved for future extension */
+	TIFFSetGetFieldType set_field_type;                   /* type to be passed to TIFFSetField */
+	TIFFSetGetFieldType get_field_type;                   /* type to be passed to TIFFGetField */
+	unsigned short field_bit;                             /* bit in fieldsset bit vector */
+	unsigned char field_oktochange;                       /* if true, can change while writing */
+	unsigned char field_passcount;                        /* if true, pass dir count on set */
+	char* field_name;                                     /* ASCII name */
+	const struct _TIFFFieldInfoArray* field_subfields;    /* if field points to child ifds, child ifd field definition array */
+};
+
+typedef struct _TIFFField TIFFField;
+
+typedef enum {
+	tfiatImage,
+	tfiatExif,
+	tfiatOther,
+} TIFFFieldInfoArrayType;
+
+struct _TIFFFieldInfoArray {
+	TIFFFieldInfoArrayType type;    /* array type, will be used to determine if IFD is image and such */
+	uint32 allocated;               /* allocated size, 0 if constant, other if modified by future definition extension support */
+	uint32 used;                    /* size of array */
+	const TIFFField* fieldinfo;     /* actual field info */
+};
+
+extern int _TIFFMergeField(TIFF*, const TIFFField[], uint32);
+extern const TIFFField* _TIFFFindOrRegisterFieldInfo(TIFF *, uint32,
+						     TIFFDataType);
+extern  TIFFField* _TIFFCreateAnonField(TIFF *, uint32, TIFFDataType);
 
 #if defined(__cplusplus)
 }

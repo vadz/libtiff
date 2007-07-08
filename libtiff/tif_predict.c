@@ -533,7 +533,7 @@ PredictorEncodeTile(TIFF* tif, uint8* bp0, tmsize_t cc0, uint16 s)
 
 #define	FIELD_PREDICTOR	(FIELD_CODEC+0)		/* XXX */
 
-static const TIFFFieldInfo predictFieldInfo[] = {
+static const TIFFField predictFields[] = {
     { TIFFTAG_PREDICTOR, 1, 1, TIFF_SHORT, 0, TIFF_SETGET_UINT16, TIFF_SETGET_UINT16, FIELD_PREDICTOR, FALSE, FALSE, "Predictor", NULL },
 };
 
@@ -604,8 +604,8 @@ TIFFPredictorInit(TIFF* tif)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeFieldInfo(tif, predictFieldInfo,
-	    TIFFArrayCount(predictFieldInfo))) {
+	if (!_TIFFMergeField(tif, predictFields,
+			     TIFFArrayCount(predictFields))) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFPredictorInit",
 		    "Merging Predictor codec-specific tags failed");
 		return 0;

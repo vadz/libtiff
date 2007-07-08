@@ -203,9 +203,9 @@ struct tiff {
 	/* post-decoding support */
 	TIFFPostMethod       tif_postdecode;   /* post decoding routine */
 	/* tag support */
-	TIFFFieldInfo**      tif_fieldinfo;    /* sorted table of registered tags */
+	TIFFField**          tif_fieldinfo;    /* sorted table of registered tags */
 	uint32               tif_nfields;      /* # entries in registered tag table */
-	const TIFFFieldInfo* tif_foundfield;   /* cached pointer to already found tag */
+	const TIFFField*     tif_foundfield;   /* cached pointer to already found tag */
 	TIFFTagMethods       tif_tagmethods;   /* tag get/set/print routines */
 	TIFFClientInfoLink*  tif_clientinfo;   /* extra client information. */
 };

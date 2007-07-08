@@ -3280,7 +3280,7 @@ TIFFReadDirectory(TIFF* tif)
 	uint16 dircount;
 	TIFFDirEntry* dp;
 	uint16 di;
-	const TIFFFieldInfo* fip;
+	const TIFFField* fip;
 	uint32 fii;
 	tif->tif_diroff=tif->tif_nextdiroff;
 	if (!TIFFCheckDirOffset(tif,tif->tif_nextdiroff))
@@ -3371,21 +3371,18 @@ TIFFReadDirectory(TIFF* tif)
 				TIFFWarningExt(tif->tif_clientdata, module,
 				    "Unknown field with tag %d (0x%x) encountered",
 				    dp->tdir_tag,dp->tdir_tag);
-				if (!_TIFFMergeFieldInfo(tif,
-				    _TIFFCreateAnonFieldInfo(tif,
-				    dp->tdir_tag,
-				    (TIFFDataType) dp->tdir_type),
-				    1))
-				{
+				if (!_TIFFMergeField(tif,
+					_TIFFCreateAnonField(tif,
+						dp->tdir_tag,
+						(TIFFDataType) dp->tdir_type),
+					1)) {
 					TIFFWarningExt(tif->tif_clientdata,
 					    module,
 					    "Registering anonymous field with tag %d (0x%x) failed",
 					    dp->tdir_tag,
 					    dp->tdir_tag);
 					dp->tdir_tag=IGNORE;
-				}
-				else
-				{
+				} else {
 					TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 					assert(fii!=(uint32)(-1));
 				}
@@ -3926,7 +3923,7 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 	uint16 dircount;
 	TIFFDirEntry* dp;
 	uint16 di;
-	const TIFFFieldInfo* fip;
+	const TIFFField* fip;
 	uint32 fii;
 	_TIFFSetupFieldInfo(tif,infoarray);
 	dircount=TIFFFetchDirectory(tif,diroff,&dir,NULL);
@@ -3946,19 +3943,15 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 			TIFFWarningExt(tif->tif_clientdata, module,
 			    "Unknown field with tag %d (0x%x) encountered",
 			    dp->tdir_tag, dp->tdir_tag);
-			if (!_TIFFMergeFieldInfo(tif,
-			    _TIFFCreateAnonFieldInfo(tif,
-			    dp->tdir_tag,
-			    (TIFFDataType) dp->tdir_type),
-			    1))
-			{
+			if (!_TIFFMergeField(tif, _TIFFCreateAnonField(tif,
+						dp->tdir_tag,
+						(TIFFDataType) dp->tdir_type),
+					     1)) {
 				TIFFWarningExt(tif->tif_clientdata, module,
 				    "Registering anonymous field with tag %d (0x%x) failed",
 				    dp->tdir_tag, dp->tdir_tag);
 				dp->tdir_tag=IGNORE;
-			}
-			else
-			{
+			} else {
 				TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 				assert(fii!=0xFFFF);
 			}
@@ -4448,7 +4441,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 	static const char module[] = "TIFFFetchNormalTag";
 	enum TIFFReadDirEntryErr err;
 	uint32 fii;
-	const TIFFFieldInfo* fip;
+	const TIFFField* fip;
 	TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 	assert(fii!=0xFFFFFFFF);
 	fip=tif->tif_fieldinfo[fii];

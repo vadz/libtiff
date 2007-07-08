@@ -304,37 +304,20 @@ extern uint32 TIFFGetTagListEntry( TIFF *, int tag_index );
 #define TIFF_SPP       -2              /* marker for SamplesPerPixel tags */
 #define TIFF_VARIABLE2 -3              /* marker for uint32 var-length tags */
 
-#define FIELD_CUSTOM    65    
+#define FIELD_CUSTOM    65
 
-struct _TIFFFieldInfoArray;
+typedef struct _TIFFFieldInfoArray TIFFFieldInfoArray;
 
-typedef struct {
-	uint32 field_tag;                                     /* field's tag */
-	short field_readcount;                                /* read count/TIFF_VARIABLE/TIFF_SPP */
-	short field_writecount;                               /* write count/TIFF_VARIABLE */
-	TIFFDataType field_type;                              /* type of associated data */
-	uint32 reserved;                                      /* reserved for future extension */
-	TIFFSetGetFieldType set_field_type;                   /* type to be passed to TIFFSetField */
-	TIFFSetGetFieldType get_field_type;                   /* type to be passed to TIFFGetField */
-	unsigned short field_bit;                             /* bit in fieldsset bit vector */
-	unsigned char field_oktochange;                       /* if true, can change while writing */
-	unsigned char field_passcount;                        /* if true, pass dir count on set */
-	char* field_name;                                     /* ASCII name */
-	const struct _TIFFFieldInfoArray* field_subfields;    /* if field points to child ifds, child ifd field definition array */
+typedef	struct {
+	ttag_t	field_tag;		/* field's tag */
+	short	field_readcount;	/* read count/TIFF_VARIABLE/TIFF_SPP */
+	short	field_writecount;	/* write count/TIFF_VARIABLE */
+	TIFFDataType field_type;	/* type of associated data */
+        unsigned short field_bit;	/* bit in fieldsset bit vector */
+	unsigned char field_oktochange;	/* if true, can change while writing */
+	unsigned char field_passcount;	/* if true, pass dir count on set */
+	char	*field_name;		/* ASCII name */
 } TIFFFieldInfo;
-
-typedef enum {
-	tfiatImage,
-	tfiatExif,
-	tfiatOther,
-} TIFFFieldInfoArrayType;
-
-typedef struct _TIFFFieldInfoArray{
-	TIFFFieldInfoArrayType type;                          /* array type, will be used to determine if IFD is image and such */
-	uint32 allocated;                                     /* allocated size, 0 if constant, other if modified by future definition extension support */
-	uint32 used;                                          /* size of array */
-	const TIFFFieldInfo* fieldinfo;                       /* actual field info */
-} TIFFFieldInfoArray;
 
 extern void TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n);
 extern const TIFFFieldInfo* TIFFFindFieldInfo(TIFF*, uint32, TIFFDataType);

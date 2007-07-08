@@ -175,13 +175,12 @@ static int JPEGInitializeLibJPEG(TIFF * tif, int force_encode, int force_decode)
 
 #define	FIELD_JPEGTABLES	(FIELD_CODEC+0)
 
-static const TIFFFieldInfo jpegFieldInfo[] = {
+static const TIFFField jpegFields[] = {
     { TIFFTAG_JPEGTABLES, -3, -3, TIFF_UNDEFINED, 0, TIFF_SETGET_C32_UINT8, TIFF_SETGET_C32_UINT8, FIELD_JPEGTABLES, FALSE, TRUE, "JPEGTables", NULL },
     { TIFFTAG_JPEGQUALITY, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, TRUE, FALSE, "", NULL },
     { TIFFTAG_JPEGCOLORMODE, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL },
     { TIFFTAG_JPEGTABLESMODE, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL }
 };
-#define	N(a)	(sizeof (a) / sizeof (a[0]))
 
 /*
  * libjpeg interface layer.
@@ -2080,7 +2079,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeFieldInfo(tif, jpegFieldInfo, N(jpegFieldInfo))) {
+	if (!_TIFFMergeField(tif, jpegFields, TIFFArrayCount(jpegFields))) {
 		TIFFErrorExt(tif->tif_clientdata,
 			     "TIFFInitJPEG",
 			     "Merging JPEG codec-specific tags failed");

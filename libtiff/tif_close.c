@@ -78,7 +78,7 @@ TIFFCleanup(TIFF* tif)
 
 		for (i = 0; i < tif->tif_nfields; i++)
 		{
-			TIFFFieldInfo *fld = tif->tif_fieldinfo[i];
+			TIFFField *fld = tif->tif_fieldinfo[i];
 			if (fld->field_bit == FIELD_CUSTOM &&
 			    strncmp("Tag ", fld->field_name, 4) == 0)
 			{

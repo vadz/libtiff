@@ -1111,19 +1111,18 @@ Fax3Cleanup(TIFF* tif)
 
 #define	FIELD_OPTIONS		(FIELD_CODEC+7)
 
-static const TIFFFieldInfo faxFieldInfo[] = {
+static const TIFFField faxFields[] = {
     { TIFFTAG_FAXMODE, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "FaxMode", NULL },
     { TIFFTAG_FAXFILLFUNC, 0, 0, TIFF_ANY, 0, TIFF_SETGET_OTHER, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "FaxFillFunc", NULL },
     { TIFFTAG_BADFAXLINES, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_BADFAXLINES, TRUE, FALSE, "BadFaxLines", NULL },
     { TIFFTAG_CLEANFAXDATA, 1, 1, TIFF_SHORT, 0, TIFF_SETGET_UINT16, TIFF_SETGET_UINT16, FIELD_CLEANFAXDATA, TRUE, FALSE, "CleanFaxData", NULL },
     { TIFFTAG_CONSECUTIVEBADFAXLINES, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_BADFAXRUN, TRUE, FALSE, "ConsecutiveBadFaxLines", NULL }};
-static const TIFFFieldInfo fax3FieldInfo[] = {
+static const TIFFField fax3Fields[] = {
     { TIFFTAG_GROUP3OPTIONS, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_OPTIONS, FALSE, FALSE, "Group3Options", NULL },
 };
-static const TIFFFieldInfo fax4FieldInfo[] = {
+static const TIFFField fax4Fields[] = {
     { TIFFTAG_GROUP4OPTIONS, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UINT32, FIELD_OPTIONS, FALSE, FALSE, "Group4Options", NULL },
 };
-#define	N(a)	(sizeof (a) / sizeof (a[0]))
 
 static int
 Fax3VSetField(TIFF* tif, uint32 tag, va_list ap)
@@ -1267,7 +1266,7 @@ InitCCITTFax3(TIFF* tif)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeFieldInfo(tif, faxFieldInfo, N(faxFieldInfo))) {
+	if (!_TIFFMergeField(tif, faxFields, TIFFArrayCount(faxFields))) {
 		TIFFErrorExt(tif->tif_clientdata, "InitCCITTFax3",
 			"Merging common CCITT Fax codec-specific tags failed");
 		return 0;
@@ -1334,7 +1333,8 @@ TIFFInitCCITTFax3(TIFF* tif, int scheme)
 		/*
 		 * Merge codec-specific tag information.
 		 */
-		if (!_TIFFMergeFieldInfo(tif, fax3FieldInfo, N(fax3FieldInfo))) {
+		if (!_TIFFMergeField(tif, fax3Fields,
+				     TIFFArrayCount(fax3Fields))) {
 			TIFFErrorExt(tif->tif_clientdata, "TIFFInitCCITTFax3",
 			"Merging CCITT Fax 3 codec-specific tags failed");
 			return 0;
@@ -1451,7 +1451,8 @@ TIFFInitCCITTFax4(TIFF* tif, int scheme)
 		/*
 		 * Merge codec-specific tag information.
 		 */
-		if (!_TIFFMergeFieldInfo(tif, fax4FieldInfo, N(fax4FieldInfo))) {
+		if (!_TIFFMergeField(tif, fax4Fields,
+				     TIFFArrayCount(fax4Fields))) {
 			TIFFErrorExt(tif->tif_clientdata, "TIFFInitCCITTFax4",
 			"Merging CCITT Fax 4 codec-specific tags failed");
 			return 0;

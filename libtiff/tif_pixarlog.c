@@ -1331,7 +1331,7 @@ PixarLogVGetField(TIFF* tif, uint32 tag, va_list ap)
     return (1);
 }
 
-static const TIFFFieldInfo pixarlogFieldInfo[] = {
+static const TIFFField pixarlogFields[] = {
     {TIFFTAG_PIXARLOGDATAFMT, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL},
     {TIFFTAG_PIXARLOGQUALITY, 0, 0, TIFF_ANY, 0, TIFF_SETGET_INT, TIFF_SETGET_UNDEFINED, FIELD_PSEUDO, FALSE, FALSE, "", NULL}
 };
@@ -1348,8 +1348,8 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeFieldInfo(tif, pixarlogFieldInfo,
-				 TIFFArrayCount(pixarlogFieldInfo))) {
+	if (!_TIFFMergeField(tif, pixarlogFields,
+			     TIFFArrayCount(pixarlogFields))) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 			     "Merging PixarLog codec-specific tags failed");
 		return 0;
