@@ -1,3 +1,11 @@
+2007-07-08  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_zip.c, tif_predict.c, tif_pixarlog.c, tif_luv.c,
+	tif_fax3.c, tif_dirread.c, tif_dirwrite.c, tif_close.c, tif_ojpeg.c,
+	tif_jpeg.c, tif_dirinfo.c, tif_dir.h, tiffio.h, tiffiop.h}:
+	TIFFFIeldInfo structure replaced with TIFFField structure.
+	TIFFFieldInfo retained for the backward compatibility.
+
 2007-07-05  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2pdf.c: Fix a compile problem when JPEG_SUPPORT is not
