@@ -287,7 +287,7 @@ _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray)
 		_TIFFfree(tif->tif_fieldinfo);
 		tif->tif_nfields = 0;
 	}
-	if (!_TIFFMergeField(tif, infoarray->fieldinfo, infoarray->used))
+	if (!_TIFFMergeFields(tif, infoarray->fieldinfo, infoarray->used))
 	{
 		TIFFErrorExt(tif->tif_clientdata, "_TIFFSetupFieldInfo",
 			     "Setting up field info failed");
@@ -370,9 +370,9 @@ _TIFFSetGetType(TIFFDataType type)
 }
 
 int
-_TIFFMergeField(TIFF* tif, const TIFFField info[], uint32 n)
+_TIFFMergeFields(TIFF* tif, const TIFFField info[], uint32 n)
 {
-	const char module[] = "_TIFFMergeFieldInfo";
+	const char module[] = "_TIFFMergeField";
 	const char reason[] = "for field info array";
 	TIFFField** tp;
 	uint32 i;
@@ -725,7 +725,7 @@ _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag, TIFFDataType dt)
 	fld = _TIFFFindField(tif, tag, dt);
 	if (fld == NULL) {
 		fld = _TIFFCreateAnonField(tif, tag, dt);
-		if (!_TIFFMergeField(tif, fld, 1))
+		if (!_TIFFMergeFields(tif, fld, 1))
 			return NULL;
 	}
 

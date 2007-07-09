@@ -394,7 +394,7 @@ TIFFInitZIP(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, zipFields, TIFFArrayCount(zipFields))) {
+	if (!_TIFFMergeFields(tif, zipFields, TIFFArrayCount(zipFields))) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 			     "Merging Deflate codec-specific tags failed");
 		return 0;

@@ -216,7 +216,7 @@ struct _TIFFFieldInfoArray {
 	const TIFFField* fieldinfo;     /* actual field info */
 };
 
-extern int _TIFFMergeField(TIFF*, const TIFFField[], uint32);
+extern int _TIFFMergeFields(TIFF*, const TIFFField[], uint32);
 extern const TIFFField* _TIFFFindOrRegisterFieldInfo(TIFF *, uint32,
 						     TIFFDataType);
 extern  TIFFField* _TIFFCreateAnonField(TIFF *, uint32, TIFFDataType);

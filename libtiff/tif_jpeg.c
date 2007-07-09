@@ -2079,7 +2079,7 @@ TIFFInitJPEG(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, jpegFields, TIFFArrayCount(jpegFields))) {
+	if (!_TIFFMergeFields(tif, jpegFields, TIFFArrayCount(jpegFields))) {
 		TIFFErrorExt(tif->tif_clientdata,
 			     "TIFFInitJPEG",
 			     "Merging JPEG codec-specific tags failed");

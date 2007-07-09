@@ -1348,8 +1348,8 @@ TIFFInitPixarLog(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, pixarlogFields,
-			     TIFFArrayCount(pixarlogFields))) {
+	if (!_TIFFMergeFields(tif, pixarlogFields,
+			      TIFFArrayCount(pixarlogFields))) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 			     "Merging PixarLog codec-specific tags failed");
 		return 0;

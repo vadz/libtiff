@@ -1592,7 +1592,8 @@ TIFFInitSGILog(TIFF* tif, int scheme)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, LogLuvFields, TIFFArrayCount(LogLuvFields))) {
+	if (!_TIFFMergeFields(tif, LogLuvFields,
+			      TIFFArrayCount(LogLuvFields))) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 		    "Merging SGILog codec-specific tags failed");
 		return 0;

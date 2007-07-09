@@ -1266,7 +1266,7 @@ InitCCITTFax3(TIFF* tif)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, faxFields, TIFFArrayCount(faxFields))) {
+	if (!_TIFFMergeFields(tif, faxFields, TIFFArrayCount(faxFields))) {
 		TIFFErrorExt(tif->tif_clientdata, "InitCCITTFax3",
 			"Merging common CCITT Fax codec-specific tags failed");
 		return 0;
@@ -1333,8 +1333,8 @@ TIFFInitCCITTFax3(TIFF* tif, int scheme)
 		/*
 		 * Merge codec-specific tag information.
 		 */
-		if (!_TIFFMergeField(tif, fax3Fields,
-				     TIFFArrayCount(fax3Fields))) {
+		if (!_TIFFMergeFields(tif, fax3Fields,
+				      TIFFArrayCount(fax3Fields))) {
 			TIFFErrorExt(tif->tif_clientdata, "TIFFInitCCITTFax3",
 			"Merging CCITT Fax 3 codec-specific tags failed");
 			return 0;
@@ -1451,8 +1451,8 @@ TIFFInitCCITTFax4(TIFF* tif, int scheme)
 		/*
 		 * Merge codec-specific tag information.
 		 */
-		if (!_TIFFMergeField(tif, fax4Fields,
-				     TIFFArrayCount(fax4Fields))) {
+		if (!_TIFFMergeFields(tif, fax4Fields,
+				      TIFFArrayCount(fax4Fields))) {
 			TIFFErrorExt(tif->tif_clientdata, "TIFFInitCCITTFax4",
 			"Merging CCITT Fax 4 codec-specific tags failed");
 			return 0;

@@ -604,8 +604,8 @@ TIFFPredictorInit(TIFF* tif)
 	/*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, predictFields,
-			     TIFFArrayCount(predictFields))) {
+	if (!_TIFFMergeFields(tif, predictFields,
+			      TIFFArrayCount(predictFields))) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFPredictorInit",
 		    "Merging Predictor codec-specific tags failed");
 		return 0;

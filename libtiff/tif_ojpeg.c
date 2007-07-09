@@ -399,7 +399,7 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
         /*
 	 * Merge codec-specific tag information.
 	 */
-	if (!_TIFFMergeField(tif, ojpegFields, TIFFArrayCount(ojpegFields))) {
+	if (!_TIFFMergeFields(tif, ojpegFields, TIFFArrayCount(ojpegFields))) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 		    "Merging Old JPEG codec-specific tags failed");
 		return 0;
