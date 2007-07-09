@@ -48,67 +48,75 @@ BigTIFF support changes:
 
 <UL>
 
-	<LI>The options parameter in the TIFFOpen and TIFFClientOpen funcs has been
-	extended. When creating new files, you can add option '4' to specify you
-	want to create a ClassicTIFF file, though that is the default and the option
-	is not strictly necessary. (As such, old calling code will continue to
-	function and create ClassicTIFF files.) Or you can add option '8' to specify
-	you want to create a BigTIFF file instead. This new option is also reflected
-	in some of the tools we already upgraded. For instance, you can use the -8
-	option on tiffcp to have tiffcp produce BigTIFF files instead of the default
-	ClassicTIFF. (Whilst on additional option is provided for version selection when
-	creating new files, no such option is necessary when reading TIFF files.
-	LibTiff reads ClassicTIFF and BigTIFF both, and the application does not
-	need to be aware which TIFF version an opened file is.)
+	<LI>The options parameter in the TIFFOpen and TIFFClientOpen funcs has
+	been extended. When creating new files, you can add option '4' to
+	specify you want to create a ClassicTIFF file, though that is the
+	default and the option is not strictly necessary. (As such, old
+	calling code will continue to function and create ClassicTIFF files.)
+	Or you can add option '8' to specify you want to create a BigTIFF file
+	instead. This new option is also reflected in some of the tools we
+	already upgraded. For instance, you can use the -8 option on tiffcp to
+	have tiffcp produce BigTIFF files instead of the default ClassicTIFF.
+	(Whilst on additional option is provided for version selection when
+	creating new files, no such option is necessary when reading TIFF
+	files. LibTiff reads ClassicTIFF and BigTIFF both, and the application
+	does not need to be aware which TIFF version an opened file is.)
 
-	<LI>Allthough the tag count in BigTIFF is 64bit, we restricted the count in
-	the implementation to a much more reasonable size. This is necessary in
-	current implementation, because all tag data gets read automatically in the
-	IFD reading stage, so if there's half a dozen private tags with multiple
-	gigabytes of data that causes considerable overhead even if the application
-	level is never interested in these tags. Our choice to ignore tags with data
-	longer then a certain sanity value is much needed as things stand. We also
-	recommend to step away from writing tiles that are 8 kilobyte in their
-	uncompressed form, or writing single-line strips, in really big files,
-	resulting in mega's of tiles or strips. It's much more efficient to choose
-	bigger tile or strip sizes, up to several megabyte if needed, and have a few
-	kilo of tiles or strips instead.
+	<LI>Although the tag count in BigTIFF is 64bit, we restricted the
+	count in the implementation to a much more reasonable size. This is
+	necessary in current implementation, because all tag data gets read
+	automatically in the IFD reading stage, so if there's half a dozen
+	private tags with multiple gigabytes of data that causes considerable
+	overhead even if the application level is never interested in these
+	tags. Our choice to ignore tags with data longer then a certain sanity
+	value is much needed as things stand. We also recommend to step away
+	from writing tiles that are 8 kilobyte in their uncompressed form, or
+	writing single-line strips, in really big files, resulting in mega's
+	of tiles or strips. It's much more efficient to choose bigger tile or
+	strip sizes, up to several megabyte if needed, and have a few kilo of
+	tiles or strips instead.
 
-	<LI>Allthough it's rare, some application code does directly access file
-	offsets. Some of these are automatically upgraded because they used the
-	toff_t type, others need to be aware that the datatype changed and need to
-	start using toff_t or uint64. This impacts access to tags like the EXIF IFD
-	tag, for example, or the SubIfds tag, or to StripOffsets or TileOffsets, 
-	the return type of functions like TIFFCurrentDirOffset, and a parameter type to 
-	functions like TIFFSetSubDirectory.
+	<LI>Although it's rare, some application code does directly access
+	file offsets. Some of these are automatically upgraded because they
+	used the toff_t type, others need to be aware that the datatype
+	changed and need to start using toff_t or uint64. This impacts access
+	to tags like the EXIF IFD tag, for example, or the SubIfds tag, or to
+	StripOffsets or TileOffsets, the return type of functions like
+	TIFFCurrentDirOffset, and a parameter type to functions like
+	TIFFSetSubDirectory.
 
-	<LI>Allthough it's rare, some application code does use structures like
-	TIFFHeader or TIFFDirEntry that used to be an exact binary representation of
-	TIFF structures. These need to change. The old TIFFHeader structure is
-	replaced by the new TIFFHeaderClassic, TIFFHeaderBig, and TIFFHeaderCommon
-	structures that are an exact binary representation of the ClassicTIFF and
-	BigTIFF header, and of the part that is common to both. There is no new
-	equivalent for the old TIFFDirEntry structure (or more precisely, there is
-	still a TIFFDirEntry structure, but it is changed, moved to library-private
+	<LI>Although it's rare, some application code does use structures
+	like TIFFHeader or TIFFDirEntry that used to be an exact binary
+	representation of TIFF structures. These need to change. The old
+	TIFFHeader structure is replaced by the new TIFFHeaderClassic,
+	TIFFHeaderBig, and TIFFHeaderCommon structures that are an exact
+	binary representation of the ClassicTIFF and BigTIFF header, and of
+	the part that is common to both. There is no new equivalent for the
+	old TIFFDirEntry structure (or more precisely, there is still a
+	TIFFDirEntry structure, but it is changed, moved to library-private
 	definition, and no longer an exact binary representation of the tag
 	structure of either TIFF version).
 
-	<LI>Sizer functions, like TIFFTileSize or TIFFScanlineSize and the like,
-	return a tmsize_t value (tmsize_t is defined as int32 on 32bit machines, 
-	and int64 on 64bit machines, and as such it is meant to represent signed 
-	memory sizes). This is because we figure 98% of the calling code
-	uses the return value as sizes in allocations and the like. So, any overflow
-	that is theoretically possible with BigTIFF when LibTiff is running on a
-	32bit system, is best detected inside the sizer functions and it is best to
-	return a type that makes sense as a memory size. If your calling code is the
-	exception and is interested in actual file size, you best use the newer
-	TIFFTileSize64 or TIFFScanlineSize64 function that returns an uint64 type.
+	<LI>Sizer functions, like TIFFTileSize or TIFFScanlineSize and the
+	like, return a tmsize_t value (tmsize_t is defined as int32 on 32bit
+	machines, and int64 on 64bit machines, and as such it is meant to
+	represent signed memory sizes). This is because we figure 98% of the
+	calling code uses the return value as sizes in allocations and the
+	like. So, any overflow that is theoretically possible with BigTIFF
+	when LibTiff is running on a 32bit system, is best detected inside the
+	sizer functions and it is best to return a type that makes sense as a
+	memory size. If your calling code is the exception and is interested
+	in actual file size, you best use the newer TIFFTileSize64 or
+	TIFFScanlineSize64 function that returns an uint64 type.
 
 </UL>
 
 Other important backward incompatible changes in the public API:
 
 <UL>
+	<LI> TIFFFieldWithTag() and TIFFFieldWithName() functions now return
+	pointer to TIFFField constant object instead of TIFFFieldInfo.
+
 	<LI> TIFFReassignTagToIgnore() function and TIFFIgnoreSense enumeration
 	have been removed. They was unused and never been used properly.
 	Should be unneeded for high-level applications.
@@ -143,7 +151,7 @@ Other important backward incompatible changes in the public API:
 	extension but does not impact current API or functionality in a negative way 
 	that you need to know about.
 
-	<LI>Allthough there is still a functional definition for types like toff_t
+	<LI>Although there is still a functional definition for types like toff_t
 	(file offset), tstrip_t (strip index number), etc, we recommend against
 	using these in newer code. We have learned that it is next to impossible to
 	use these consistently and make real abstraction of the binary format of
