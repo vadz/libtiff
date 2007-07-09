@@ -378,8 +378,8 @@ _TIFFMergeFields(TIFF* tif, const TIFFField info[], uint32 n)
 	uint32 i;
 
 	for (i = 0; i < n; i++) {
-		const TIFFFieldInfo *fip =
-			_TIFFFindFieldInfo(tif, info[i].field_tag, TIFF_ANY);
+		const TIFFField *fip =
+			TIFFFindField(tif, info[i].field_tag, TIFF_ANY);
 		if (fip) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			"Field with tag %lu is already registered as \"%s\"",
@@ -427,8 +427,8 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n)
 	uint32 i;
 
 	for (i = 0; i < n; i++) {
-		const TIFFFieldInfo *fip =
-			_TIFFFindFieldInfo(tif, info[i].field_tag, TIFF_ANY);
+		const TIFFField *fip =
+			TIFFFindField(tif, info[i].field_tag, TIFF_ANY);
 		if (fip) {
 			TIFFErrorExt(tif->tif_clientdata, module,
 			"Field with tag %lu is already registered as \"%s\"",
@@ -573,7 +573,7 @@ _TIFFDataSize(TIFFDataType type)
 }
 
 const TIFFField*
-_TIFFFindField(TIFF* tif, uint32 tag, TIFFDataType dt)
+TIFFFindField(TIFF* tif, uint32 tag, TIFFDataType dt)
 {
 	TIFFField key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0, 0, 0, NULL, NULL};
 	TIFFField* pkey = &key;
@@ -599,7 +599,7 @@ _TIFFFindField(TIFF* tif, uint32 tag, TIFFDataType dt)
 }
 
 const TIFFFieldInfo*
-_TIFFFindFieldInfo(TIFF* tif, uint32 tag, TIFFDataType dt)
+TIFFFindFieldInfo(TIFF* tif, uint32 tag, TIFFDataType dt)
 {
 #if 0
 	TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0, 0, 0, NULL, NULL};
@@ -657,7 +657,7 @@ _TIFFFindFieldByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 }
 
 const TIFFFieldInfo*
-_TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
+TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 {
 #if 0
 	TIFFFieldInfo key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0, 0, 0, NULL, NULL};
@@ -688,10 +688,10 @@ _TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	return NULL;
 }
 
-const TIFFFieldInfo*
-_TIFFFieldWithTag(TIFF* tif, uint32 tag)
+const TIFFField*
+TIFFFieldWithTag(TIFF* tif, uint32 tag)
 {
-	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
+	const TIFFField* fip = TIFFFindField(tif, tag, TIFF_ANY);
 	if (!fip) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFFieldWithTag",
 			     "Internal error, unknown tag 0x%x",
@@ -702,11 +702,11 @@ _TIFFFieldWithTag(TIFF* tif, uint32 tag)
 	return (fip);
 }
 
-const TIFFFieldInfo*
-_TIFFFieldWithName(TIFF* tif, const char *field_name)
+const TIFFField*
+TIFFFieldWithName(TIFF* tif, const char *field_name)
 {
-	const TIFFFieldInfo* fip =
-		_TIFFFindFieldInfoByName(tif, field_name, TIFF_ANY);
+	const TIFFField* fip =
+		_TIFFFindFieldByName(tif, field_name, TIFF_ANY);
 	if (!fip) {
 		TIFFErrorExt(tif->tif_clientdata, "TIFFFieldWithName",
 			     "Internal error, unknown tag %s", field_name);
@@ -722,7 +722,7 @@ _TIFFFindOrRegisterFieldInfo(TIFF *tif, uint32 tag, TIFFDataType dt)
 {
 	const TIFFField *fld;
 
-	fld = _TIFFFindField(tif, tag, dt);
+	fld = TIFFFindField(tif, tag, dt);
 	if (fld == NULL) {
 		fld = _TIFFCreateAnonField(tif, tag, dt);
 		if (!_TIFFMergeFields(tif, fld, 1))

@@ -1128,7 +1128,7 @@ static int
 Fax3VSetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	Fax3BaseState* sp = Fax3State(tif);
-	const TIFFFieldInfo* fip;
+	const TIFFField* fip;
 
 	assert(sp != 0);
 	assert(sp->vsetparent != 0);
@@ -1163,7 +1163,7 @@ Fax3VSetField(TIFF* tif, uint32 tag, va_list ap)
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
 	
-	if ((fip = _TIFFFieldWithTag(tif, tag)))
+	if ((fip = TIFFFieldWithTag(tif, tag)))
 		TIFFSetFieldBit(tif, fip->field_bit);
 	else
 		return 0;

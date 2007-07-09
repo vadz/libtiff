@@ -61,7 +61,7 @@ static const char *orientNames[] = {
 #define	NORIENTNAMES	(sizeof (orientNames) / sizeof (orientNames[0]))
 
 static void
-_TIFFPrintField(FILE* fd, const TIFFFieldInfo *fip,
+_TIFFPrintField(FILE* fd, const TIFFField *fip,
 		uint32 value_count, void *raw_data)
 {
 	uint32 j;
@@ -500,7 +500,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		count = (short) TIFFGetTagListCount(tif);
 		for(i = 0; i < count; i++) {
 			uint32 tag = TIFFGetTagListEntry(tif, i);
-			const TIFFFieldInfo *fip;
+			const TIFFField *fip;
 			uint32 value_count;
 			int mem_alloc = 0;
 			void *raw_data;
@@ -545,11 +545,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 					}
 				} else {
 					/*
-					 * XXX: Should be fixed and removed, see the
-					 * notes related to TIFFTAG_PAGENUMBER,
+					 * XXX: Should be fixed and removed,
+					 * see the notes related to
+					 * TIFFTAG_PAGENUMBER,
 					 * TIFFTAG_HALFTONEHINTS,
 					 * TIFFTAG_YCBCRSUBSAMPLING and
-					 * TIFFTAG_DOTRANGE tags in tif_dir.c. */
+					 * TIFFTAG_DOTRANGE tags in tif_dir.c.
+					 */
 					char *tmp;
 					raw_data = _TIFFmalloc(
 					    _TIFFDataSize(fip->field_type)
@@ -565,10 +567,10 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			}
 
 			/*
-			 * Catch the tags which needs to be specially handled and
-			 * pretty print them. If tag not handled in
-			 * _TIFFPrettyPrintField() fall down and print it as any other
-			 * tag.
+			 * Catch the tags which needs to be specially handled
+			 * and pretty print them. If tag not handled in
+			 * _TIFFPrettyPrintField() fall down and print it as
+			 * any other tag.
 			 */
 			if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data)) {
 				if(mem_alloc)

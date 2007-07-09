@@ -391,7 +391,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	default: {
 		TIFFTagValue *tv;
 		int tv_size, iCustom;
-		const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
+		const TIFFField *fip = TIFFFindField(tif, tag, TIFF_ANY);
 
 		/*
 		 * This can happen if multiple images are open with different
@@ -608,7 +608,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	}
 	}
 	if (status) {
-		TIFFSetFieldBit(tif, _TIFFFieldWithTag(tif, tag)->field_bit);
+		TIFFSetFieldBit(tif, TIFFFieldWithTag(tif, tag)->field_bit);
 		tif->tif_flags |= TIFF_DIRTYDIRECT;
 	}
 
@@ -619,14 +619,14 @@ badvalue:
 	TIFFErrorExt(tif->tif_clientdata, module,
 		     "%s: Bad value %d for \"%s\" tag",
 		     tif->tif_name, v,
-		     _TIFFFieldWithTag(tif, tag)->field_name);
+		     TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 badvalue32:
 	TIFFErrorExt(tif->tif_clientdata, module,
 		     "%s: Bad value %ld for \"%s\" tag",
 		     tif->tif_name, v32,
-		     _TIFFFieldWithTag(tif, tag)->field_name);
+		     TIFFFieldWithTag(tif, tag)->field_name);
 	va_end(ap);
 	return (0);
 }
@@ -643,7 +643,7 @@ badvalue32:
 static int
 OkToChangeTag(TIFF* tif, uint32 tag)
 {
-	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
+	const TIFFField* fip = TIFFFindField(tif, tag, TIFF_ANY);
 	if (!fip) {			/* unknown tag */
 		TIFFErrorExt(tif->tif_clientdata, "TIFFSetField", "%s: Unknown %stag %u",
 		    tif->tif_name, isPseudoTag(tag) ? "pseudo-" : "", tag);
@@ -851,15 +851,18 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 			break;
 		default:
 			{
-				const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
+				const TIFFField* fip =
+					TIFFFindField(tif, tag, TIFF_ANY);
 				int i;
 
 				/*
-				 * This can happen if multiple images are open with different
-				 * codecs which have private tags.  The global tag information
-				 * table may then have tags that are valid for one file but not
-				 * the other. If the client tries to get a tag that is not valid
-				 * for the image's codec then we'll arrive here.
+				 * This can happen if multiple images are open
+				 * with different codecs which have private
+				 * tags.  The global tag information table may
+				 * then have tags that are valid for one file
+				 * but not the other. If the client tries to
+				 * get a tag that is not valid for the image's
+				 * codec then we'll arrive here.
 				 */
 				if( fip == NULL || fip->field_bit != FIELD_CUSTOM )
 				{
@@ -1003,7 +1006,7 @@ TIFFGetField(TIFF* tif, uint32 tag, ...)
 int
 TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 {
-	const TIFFFieldInfo* fip = _TIFFFindFieldInfo(tif, tag, TIFF_ANY);
+	const TIFFField* fip = TIFFFindField(tif, tag, TIFF_ANY);
 	return (fip && (isPseudoTag(tag) || TIFFFieldSet(tif, fip->field_bit)) ?
 	    (*tif->tif_tagmethods.vgetfield)(tif, tag, ap) : 0);
 }

@@ -1053,7 +1053,7 @@ JPEGPreDecode(TIFF* tif, uint16 s)
 			     * try to deduce Intergraph files by the presense
 			     * of the tag 33918.
 			     */
-			    if (!_TIFFFindFieldInfo(tif, 33918, TIFF_ANY)) {
+			    if (!TIFFFindField(tif, 33918, TIFF_ANY)) {
 					TIFFWarningExt(tif->tif_clientdata, module,
 					"Decompressor will try reading with "
 					"sampling %d,%d.",
@@ -1867,7 +1867,7 @@ static int
 JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	JPEGState* sp = JState(tif);
-	const TIFFFieldInfo* fip;
+	const TIFFField* fip;
 	uint32 v32;
 
 	assert(sp != NULL);
@@ -1909,7 +1909,7 @@ JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 		return (*sp->vsetparent)(tif, tag, ap);
 	}
 
-	if ((fip = _TIFFFieldWithTag(tif, tag))) {
+	if ((fip = TIFFFieldWithTag(tif, tag))) {
 		TIFFSetFieldBit(tif, fip->field_bit);
 	} else {
 		return (0);

@@ -569,7 +569,7 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 		default:
 			return (*sp->vsetparent)(tif,tag,ap);
 	}
-	TIFFSetFieldBit(tif,_TIFFFieldWithTag(tif,tag)->field_bit);
+	TIFFSetFieldBit(tif,TIFFFieldWithTag(tif,tag)->field_bit);
 	tif->tif_flags|=TIFF_DIRTYDIRECT;
 	return(1);
 }

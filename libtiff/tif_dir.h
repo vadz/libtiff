@@ -31,7 +31,7 @@
  */
 
 typedef struct {
-	const TIFFFieldInfo  *info;
+	const TIFFField *info;
 	int             count;
 	void           *value;
 } TIFFTagValue;
@@ -179,11 +179,6 @@ extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray);
 extern int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
 extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
 
-#define _TIFFFindFieldInfo         TIFFFindFieldInfo
-#define _TIFFFindFieldInfoByName   TIFFFindFieldInfoByName
-#define _TIFFFieldWithTag          TIFFFieldWithTag
-#define _TIFFFieldWithName         TIFFFieldWithName
-
 struct _TIFFFieldInfoArray;
 
 struct _TIFFField {
@@ -200,8 +195,6 @@ struct _TIFFField {
 	char* field_name;                                     /* ASCII name */
 	const struct _TIFFFieldInfoArray* field_subfields;    /* if field points to child ifds, child ifd field definition array */
 };
-
-typedef struct _TIFFField TIFFField;
 
 typedef enum {
 	tfiatImage,
