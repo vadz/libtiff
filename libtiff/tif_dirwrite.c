@@ -562,7 +562,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 				uint32 n;
 				for (n=0; n<tif->tif_nfields; n++) {
 					const TIFFField* o;
-					o = tif->tif_fieldinfo[n];
+					o = tif->tif_fields[n];
 					if ((o->field_bit>=FIELD_CODEC)&&(TIFFFieldSet(tif,o->field_bit)))
 					{
 						switch (o->get_field_type)

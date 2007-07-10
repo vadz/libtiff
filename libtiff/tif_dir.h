@@ -91,18 +91,15 @@ typedef struct {
 } TIFFDirectory;
 
 /*
- * Field flags used to indicate fields that have
- * been set in a directory, and to reference fields
- * when manipulating a directory.
+ * Field flags used to indicate fields that have been set in a directory, and
+ * to reference fields when manipulating a directory.
  */
 
 /*
- * FIELD_IGNORE is used to signify tags that are to
- * be processed but otherwise ignored.  This permits
- * antiquated tags to be quietly read and discarded.
- * Note that a bit *is* allocated for ignored tags;
- * this is understood by the directory reading logic
- * which uses this fact to avoid special-case handling
+ * FIELD_IGNORE is used to signify tags that are to be processed but otherwise
+ * ignored.  This permits antiquated tags to be quietly read and discarded.
+ * Note that a bit *is* allocated for ignored tags; this is understood by the
+ * directory reading logic which uses this fact to avoid special-case handling
  */
 #define FIELD_IGNORE                   0
 
@@ -148,14 +145,12 @@ typedef struct {
 
 
 /*
- * Pseudo-tags don't normally need field bits since they
- * are not written to an output file (by definition).
- * The library also has express logic to always query a
- * codec for a pseudo-tag so allocating a field bit for
- * one is a waste.   If codec wants to promote the notion
- * of a pseudo-tag being ``set'' or ``unset'' then it can
- * do using internal state flags without polluting the
- * field bit space defined for real tags.
+ * Pseudo-tags don't normally need field bits since they are not written to an
+ * output file (by definition). The library also has express logic to always
+ * query a codec for a pseudo-tag so allocating a field bit for one is a
+ * waste.   If codec wants to promote the notion of a pseudo-tag being ``set''
+ * or ``unset'' then it can do using internal state flags without polluting
+ * the field bit space defined for real tags.
  */
 #define FIELD_PSEUDO			0
 
@@ -170,9 +165,65 @@ typedef struct {
 #define FieldSet(fields, f)		(fields[(f)/32] & BITn(f))
 #define ResetFieldBit(fields, f)	(fields[(f)/32] &= ~BITn(f))
 
+typedef enum {
+	TIFF_SETGET_UNDEFINED = 0,
+	TIFF_SETGET_ASCII = 1,
+	TIFF_SETGET_UINT8 = 2,
+	TIFF_SETGET_SINT8 = 3,
+	TIFF_SETGET_UINT16 = 4,
+	TIFF_SETGET_SINT16 = 5,
+	TIFF_SETGET_UINT32 = 6,
+	TIFF_SETGET_SINT32 = 7,
+	TIFF_SETGET_UINT64 = 8,
+	TIFF_SETGET_SINT64 = 9,
+	TIFF_SETGET_FLOAT = 10,
+	TIFF_SETGET_DOUBLE = 11,
+	TIFF_SETGET_IFD8 = 12,
+	TIFF_SETGET_INT = 13,
+	TIFF_SETGET_UINT16_PAIR = 14,
+	TIFF_SETGET_C0_ASCII = 15,
+	TIFF_SETGET_C0_UINT8 = 16,
+	TIFF_SETGET_C0_SINT8 = 17,
+	TIFF_SETGET_C0_UINT16 = 18,
+	TIFF_SETGET_C0_SINT16 = 19,
+	TIFF_SETGET_C0_UINT32 = 20,
+	TIFF_SETGET_C0_SINT32 = 21,
+	TIFF_SETGET_C0_UINT64 = 22,
+	TIFF_SETGET_C0_SINT64 = 23,
+	TIFF_SETGET_C0_FLOAT = 24,
+	TIFF_SETGET_C0_DOUBLE = 25,
+	TIFF_SETGET_C0_IFD8 = 26,
+	TIFF_SETGET_C16_ASCII = 27,
+	TIFF_SETGET_C16_UINT8 = 28,
+	TIFF_SETGET_C16_SINT8 = 29,
+	TIFF_SETGET_C16_UINT16 = 30,
+	TIFF_SETGET_C16_SINT16 = 31,
+	TIFF_SETGET_C16_UINT32 = 32,
+	TIFF_SETGET_C16_SINT32 = 33,
+	TIFF_SETGET_C16_UINT64 = 34,
+	TIFF_SETGET_C16_SINT64 = 35,
+	TIFF_SETGET_C16_FLOAT = 36,
+	TIFF_SETGET_C16_DOUBLE = 37,
+	TIFF_SETGET_C16_IFD8 = 38,
+	TIFF_SETGET_C32_ASCII = 39,
+	TIFF_SETGET_C32_UINT8 = 40,
+	TIFF_SETGET_C32_SINT8 = 41,
+	TIFF_SETGET_C32_UINT16 = 42,
+	TIFF_SETGET_C32_SINT16 = 43,
+	TIFF_SETGET_C32_UINT32 = 44,
+	TIFF_SETGET_C32_SINT32 = 45,
+	TIFF_SETGET_C32_UINT64 = 46,
+	TIFF_SETGET_C32_SINT64 = 47,
+	TIFF_SETGET_C32_FLOAT = 48,
+	TIFF_SETGET_C32_DOUBLE = 49,
+	TIFF_SETGET_C32_IFD8 = 50,
+	TIFF_SETGET_OTHER = 51
+} TIFFSetGetFieldType;
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
 extern const TIFFFieldInfoArray* _TIFFGetFieldInfo(void);
 extern const TIFFFieldInfoArray* _TIFFGetExifFieldInfo(void);
 extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray);

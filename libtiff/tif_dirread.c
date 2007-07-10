@@ -35,7 +35,7 @@
  *   eliminating current use of the IGNORE value, and therefore eliminating
  *   current irrational behaviour on tags with tag id code 0
  * - add a field 'field_info' to the TIFFDirEntry structure, and set that with
- *   the pointer to the appropriate TIFFFieldInfo structure early on in
+ *   the pointer to the appropriate TIFFField structure early on in
  *   TIFFReadDirectory, so as to eliminate current possibly repetitive lookup.
  */
 
@@ -3390,7 +3390,7 @@ TIFFReadDirectory(TIFF* tif)
 		}
 		if (dp->tdir_tag!=IGNORE)
 		{
-			fip=tif->tif_fieldinfo[fii];
+			fip=tif->tif_fields[fii];
 			if (fip->field_bit==FIELD_IGNORE)
 				dp->tdir_tag=IGNORE;
 			else
@@ -3893,9 +3893,9 @@ TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint32* fii)
 			return;
 		}
 		mb=(ma+mc)/2;
-		if (tif->tif_fieldinfo[mb]->field_tag==(uint32)tagid)
+		if (tif->tif_fields[mb]->field_tag==(uint32)tagid)
 			break;
-		if (tif->tif_fieldinfo[mb]->field_tag<(uint32)tagid)
+		if (tif->tif_fields[mb]->field_tag<(uint32)tagid)
 			ma=mb;
 		else
 			mc=mb;
@@ -3904,7 +3904,7 @@ TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint32* fii)
 	{
 		if (mb==0)
 			break;
-		if (tif->tif_fieldinfo[mb-1]->field_tag!=(uint32)tagid)
+		if (tif->tif_fields[mb-1]->field_tag!=(uint32)tagid)
 			break;
 		mb--;
 	}
@@ -3958,7 +3958,7 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 		}
 		if (dp->tdir_tag!=IGNORE)
 		{
-			fip=tif->tif_fieldinfo[fii];
+			fip=tif->tif_fields[fii];
 			if (fip->field_bit==FIELD_IGNORE)
 				dp->tdir_tag=IGNORE;
 			else
@@ -3968,12 +3968,12 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 				{
 					fii++;
 					if ((fii==tif->tif_nfields)||
-					    (tif->tif_fieldinfo[fii]->field_tag!=(uint32)dp->tdir_tag))
+					    (tif->tif_fields[fii]->field_tag!=(uint32)dp->tdir_tag))
 					{
 						fii=0xFFFF;
 						break;
 					}
-					fip=tif->tif_fieldinfo[fii];
+					fip=tif->tif_fields[fii];
 				}
 				if (fii==0xFFFF)
 				{
@@ -4444,7 +4444,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 	const TIFFField* fip;
 	TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 	assert(fii!=0xFFFFFFFF);
-	fip=tif->tif_fieldinfo[fii];
+	fip=tif->tif_fields[fii];
 	assert(fip->set_field_type!=TIFF_SETGET_OTHER);  /* if so, we shouldn't arrive here but deal with this in specialized code */
 	assert(fip->set_field_type!=TIFF_SETGET_INT);    /* if so, we shouldn't arrive here as this is only the case for pseudo-tags */
 	err=TIFFReadDirEntryErrOk;
@@ -4808,6 +4808,28 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				else
 				{
 					err=TIFFReadDirEntryFloatArray(tif,dp,&data);
+					if (err==TIFFReadDirEntryErrOk)
+					{
+						int m;
+						m=TIFFSetField(tif,dp->tdir_tag,(uint16)(dp->tdir_count),data);
+						if (data!=0)
+							_TIFFfree(data);
+						if (!m)
+							return(0);
+					}
+				}
+			}
+			break;
+		case TIFF_SETGET_C16_DOUBLE:
+			{
+				double* data;
+				assert(fip->field_readcount==TIFF_VARIABLE);
+				assert(fip->field_passcount==1);
+				if (dp->tdir_count>0xFFFF)
+					err=TIFFReadDirEntryErrCount;
+				else
+				{
+					err=TIFFReadDirEntryDoubleArray(tif,dp,&data);
 					if (err==TIFFReadDirEntryErrOk)
 					{
 						int m;
