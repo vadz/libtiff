@@ -1,3 +1,9 @@
+2007-07-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_stream.cxx: Adapt to use toff_t again.  Update to
+	use standard C++ library size types and attempt to detect overflow
+	cases.
+
 2007-07-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_jpeg.c, tif_dir.h, tif_dir.c, tif_dirinfo.c, tiffio.h,
