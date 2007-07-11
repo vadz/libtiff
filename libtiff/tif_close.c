@@ -69,7 +69,7 @@ TIFFCleanup(TIFF* tif)
 	if (tif->tif_rawdata && (tif->tif_flags&TIFF_MYBUFFER))
 		_TIFFfree(tif->tif_rawdata);
 	if (isMapped(tif))
-		TIFFUnmapFileContents(tif, tif->tif_base, tif->tif_size);
+		TIFFUnmapFileContents(tif, tif->tif_base, (toff_t)tif->tif_size);
 
 	/* Clean up custom fields */
 	if (tif->tif_nfields > 0)

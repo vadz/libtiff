@@ -190,7 +190,7 @@ struct tiff {
 	tmsize_t             tif_rawcc;        /* bytes unread from raw buffer */
 	/* memory-mapped file support */
 	uint8*               tif_base;         /* base of mapped file */
-	tmsize_t             tif_size;         /* size of mapped file region (bytes) */
+	tmsize_t             tif_size;         /* size of mapped file region (bytes, thus tmsize_t) */
 	TIFFMapFileProc      tif_mapproc;      /* map file method */
 	TIFFUnmapFileProc    tif_unmapproc;    /* unmap file method */
 	/* input/output callback methods */
