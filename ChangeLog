@@ -1,5 +1,9 @@
 2007-07-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/tiff2pdf.c: Added missed extern optind as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1567
+
 	* libtiff/{tif_close.c, tif_dirinfo.c, tiffiop.c, tif_dirread.c,
 	tif_dir.h, tif_dir.c, tiffio.h}: Transition to the new-style tag
 	extending scheme completed.
