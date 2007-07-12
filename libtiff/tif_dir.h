@@ -250,7 +250,7 @@ struct _TIFFField {
 typedef enum {
 	tfiatImage,
 	tfiatExif,
-	tfiatOther,
+	tfiatOther
 } TIFFFieldInfoArrayType;
 
 struct _TIFFFieldInfoArray {
