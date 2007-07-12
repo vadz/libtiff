@@ -537,6 +537,7 @@ t2p_unmapproc(thandle_t handle, tdata_t data, toff_t offset)
 int main(int argc, char** argv){
 
 	extern char *optarg;
+	extern int optind;
 	const char *outfilename = NULL;
 	T2P *t2p = NULL;
 	TIFF *input = NULL, *output = NULL;
@@ -2593,8 +2594,9 @@ dataready:
 		bufferoffset = TIFFWriteEncodedStrip(output, (tstrip_t)0,
 						     buffer,
 						     stripsize * stripcount); 
-	} else {
+	} else
 #endif
+	{
 		bufferoffset = TIFFWriteEncodedStrip(output, (tstrip_t)0,
 						     buffer,
 						     t2p->tiff_datasize); 

@@ -1,3 +1,9 @@
+2007-07-12  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiff2pdf.c: Added missed extern optind as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1567
+
 2007-07-03  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2ps.c:  Added support 16-bit images as per bug
