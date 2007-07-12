@@ -402,14 +402,14 @@ t2p_sizeproc(thandle_t handle)
 }
 
 static int 
-t2p_mapproc(thandle_t handle, void **data, tmsize_t *offset) 
+t2p_mapproc(thandle_t handle, void **data, toff_t *offset) 
 { 
 	(void) handle, (void) data, (void) offset;
 	return -1; 
 }
 
 static void 
-t2p_unmapproc(thandle_t handle, void *data, tmsize_t offset)
+t2p_unmapproc(thandle_t handle, void *data, toff_t offset)
 { 
 	(void) handle, (void) data, (void) offset;
 }
