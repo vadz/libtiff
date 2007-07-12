@@ -114,6 +114,11 @@ BigTIFF support changes:
 Other important backward incompatible changes in the public API:
 
 <UL>
+	<LI> TIFFMergeFieldInfo() returns non-void result now. It returns 0
+	if successful and -1 if failed. Though this is now obsoleted function
+	and should not be used in new programs. Use the new tag extension
+	scheme instead.
+
 	<LI> TIFFFieldWithTag() and TIFFFieldWithName() functions now return
 	pointer to TIFFField constant object instead of TIFFFieldInfo.
 

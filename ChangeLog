@@ -1,3 +1,9 @@
+2007-07-12  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_close.c, tif_dirinfo.c, tiffiop.c, tif_dirread.c,
+	tif_dir.h, tif_dir.c, tiffio.h}: Transition to the new-style tag
+	extending scheme completed.
+
 2007-07-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_stream.cxx: Adapt to use toff_t again.  Update to
