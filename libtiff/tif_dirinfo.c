@@ -324,7 +324,7 @@ tagNameCompare(const void* a, const void* b)
 int
 _TIFFMergeFields(TIFF* tif, const TIFFField info[], uint32 n)
 {
-	const char module[] = "_TIFFMergeField";
+	const char module[] = "_TIFFMergeFields";
 	const char reason[] = "for fields array";
 	TIFFField** tp;
 	uint32 i;
@@ -662,7 +662,10 @@ _TIFFCreateAnonField(TIFF *tif, uint32 tag, TIFFDataType field_type)
 static TIFFSetGetFieldType
 _TIFFSetGetType(TIFFDataType type, short count, unsigned char passcount)
 {
-	if (count == 1 && passcount == 0) {
+	if (type == TIFF_ASCII && count == TIFF_VARIABLE && passcount == 0)
+		return TIFF_SETGET_ASCII;
+
+	else if (count == 1 && passcount == 0) {
 		switch (type)
 		{
 			case TIFF_BYTE:
