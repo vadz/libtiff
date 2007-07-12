@@ -224,45 +224,41 @@ typedef enum {
 extern "C" {
 #endif
 
-extern const TIFFFieldInfoArray* _TIFFGetFieldInfo(void);
-extern const TIFFFieldInfoArray* _TIFFGetExifFieldInfo(void);
-extern void _TIFFSetupFieldInfo(TIFF* tif, const TIFFFieldInfoArray* infoarray);
-extern int _TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
+extern const TIFFFieldArray* _TIFFGetFields(void);
+extern const TIFFFieldArray* _TIFFGetExifFields(void);
+extern void _TIFFSetupFields(TIFF* tif, const TIFFFieldArray* infoarray);
 extern void _TIFFPrintFieldInfo(TIFF*, FILE*);
-
-struct _TIFFFieldInfoArray;
-
-struct _TIFFField {
-	uint32 field_tag;                                     /* field's tag */
-	short field_readcount;                                /* read count/TIFF_VARIABLE/TIFF_SPP */
-	short field_writecount;                               /* write count/TIFF_VARIABLE */
-	TIFFDataType field_type;                              /* type of associated data */
-	uint32 reserved;                                      /* reserved for future extension */
-	TIFFSetGetFieldType set_field_type;                   /* type to be passed to TIFFSetField */
-	TIFFSetGetFieldType get_field_type;                   /* type to be passed to TIFFGetField */
-	unsigned short field_bit;                             /* bit in fieldsset bit vector */
-	unsigned char field_oktochange;                       /* if true, can change while writing */
-	unsigned char field_passcount;                        /* if true, pass dir count on set */
-	char* field_name;                                     /* ASCII name */
-	const struct _TIFFFieldInfoArray* field_subfields;    /* if field points to child ifds, child ifd field definition array */
-};
 
 typedef enum {
 	tfiatImage,
 	tfiatExif,
 	tfiatOther
-} TIFFFieldInfoArrayType;
+} TIFFFieldArrayType;
 
-struct _TIFFFieldInfoArray {
-	TIFFFieldInfoArrayType type;    /* array type, will be used to determine if IFD is image and such */
-	uint32 allocated;               /* allocated size, 0 if constant, other if modified by future definition extension support */
-	uint32 used;                    /* size of array */
-	const TIFFField* fieldinfo;     /* actual field info */
+struct _TIFFFieldArray {
+	TIFFFieldArrayType type;    /* array type, will be used to determine if IFD is image and such */
+	uint32 allocated_size;      /* 0 if array is constant, other if modified by future definition extension support */
+	uint32 count;               /* number of elements in fields array */
+	TIFFField* fields;          /* actual field info */
+};
+
+struct _TIFFField {
+	uint32 field_tag;                       /* field's tag */
+	short field_readcount;                  /* read count/TIFF_VARIABLE/TIFF_SPP */
+	short field_writecount;                 /* write count/TIFF_VARIABLE */
+	TIFFDataType field_type;                /* type of associated data */
+	uint32 reserved;                        /* reserved for future extension */
+	TIFFSetGetFieldType set_field_type;     /* type to be passed to TIFFSetField */
+	TIFFSetGetFieldType get_field_type;     /* type to be passed to TIFFGetField */
+	unsigned short field_bit;               /* bit in fieldsset bit vector */
+	unsigned char field_oktochange;         /* if true, can change while writing */
+	unsigned char field_passcount;          /* if true, pass dir count on set */
+	char* field_name;                       /* ASCII name */
+	TIFFFieldArray* field_subfields;        /* if field points to child ifds, child ifd field definition array */
 };
 
 extern int _TIFFMergeFields(TIFF*, const TIFFField[], uint32);
-extern const TIFFField* _TIFFFindOrRegisterFieldInfo(TIFF *, uint32,
-						     TIFFDataType);
+extern const TIFFField* _TIFFFindOrRegisterField(TIFF *, uint32, TIFFDataType);
 extern  TIFFField* _TIFFCreateAnonField(TIFF *, uint32, TIFFDataType);
 
 #if defined(__cplusplus)

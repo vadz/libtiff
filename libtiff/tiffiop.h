@@ -208,6 +208,10 @@ struct tiff {
 	const TIFFField*     tif_foundfield;   /* cached pointer to already found tag */
 	TIFFTagMethods       tif_tagmethods;   /* tag get/set/print routines */
 	TIFFClientInfoLink*  tif_clientinfo;   /* extra client information. */
+	/* Backward compatibility stuff. We need these two fields for
+	 * setting up an old tag extension scheme. */
+	TIFFFieldArray*      tif_fieldscompat;
+	uint32               tif_nfieldscompat;
 };
 
 #define isPseudoTag(t) (t > 0xffff)            /* is tag value normal or pseudo */

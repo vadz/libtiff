@@ -309,7 +309,7 @@ extern uint32 TIFFGetTagListEntry( TIFF *, int tag_index );
 #define FIELD_CUSTOM    65
 
 typedef struct _TIFFField TIFFField;
-typedef struct _TIFFFieldInfoArray TIFFFieldInfoArray;
+typedef struct _TIFFFieldArray TIFFFieldArray;
 
 extern const TIFFField* TIFFFindField(TIFF *, uint32, TIFFDataType);
 extern const TIFFField* TIFFFieldWithTag(TIFF*, uint32);
@@ -338,7 +338,7 @@ extern int TIFFVGetField(TIFF* tif, uint32 tag, va_list ap);
 extern int TIFFGetFieldDefaulted(TIFF* tif, uint32 tag, ...);
 extern int TIFFVGetFieldDefaulted(TIFF* tif, uint32 tag, va_list ap);
 extern int TIFFReadDirectory(TIFF* tif);
-extern int TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* infoarray);
+extern int TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldArray* infoarray);
 extern int TIFFReadEXIFDirectory(TIFF* tif, uint64 diroff);
 extern uint64 TIFFScanlineSize64(TIFF* tif);
 extern tmsize_t TIFFScanlineSize(TIFF* tif);
@@ -524,7 +524,7 @@ typedef	struct {
 	char	*field_name;		/* ASCII name */
 } TIFFFieldInfo;
 
-extern void TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
+extern int TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
 extern const TIFFFieldInfo* TIFFFindFieldInfo(TIFF*, uint32, TIFFDataType);
 extern const TIFFFieldInfo* TIFFFindFieldInfoByName(TIFF* , const char *,
 						    TIFFDataType);

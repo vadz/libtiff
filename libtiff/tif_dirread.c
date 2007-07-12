@@ -3916,7 +3916,8 @@ TIFFReadDirectoryFindFieldInfo(TIFF* tif, uint16 tagid, uint32* fii)
  * The code is very similar to TIFFReadDirectory().
  */
 int
-TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* infoarray)
+TIFFReadCustomDirectory(TIFF* tif, uint64 diroff,
+			const TIFFFieldArray* infoarray)
 {
 	static const char module[] = "TIFFReadCustomDirectory";
 	TIFFDirEntry* dir;
@@ -3925,7 +3926,7 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 	uint16 di;
 	const TIFFField* fip;
 	uint32 fii;
-	_TIFFSetupFieldInfo(tif,infoarray);
+	_TIFFSetupFields(tif, infoarray);
 	dircount=TIFFFetchDirectory(tif,diroff,&dir,NULL);
 	if (!dircount)
 	{
@@ -4021,9 +4022,9 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff, const TIFFFieldInfoArray* info
 int
 TIFFReadEXIFDirectory(TIFF* tif, uint64 diroff)
 {
-	const TIFFFieldInfoArray* exifFieldInfoArray;
-	exifFieldInfoArray = _TIFFGetExifFieldInfo();
-	return TIFFReadCustomDirectory(tif, diroff, exifFieldInfoArray);  
+	const TIFFFieldArray* exifFieldArray;
+	exifFieldArray = _TIFFGetExifFields();
+	return TIFFReadCustomDirectory(tif, diroff, exifFieldArray);  
 }
 
 static int
