@@ -537,6 +537,7 @@ t2p_unmapproc(thandle_t handle, void *data, tmsize_t offset)
 int main(int argc, char** argv){
 
 	extern char *optarg;
+	extern int optind;
 	const char *outfilename = NULL;
 	T2P *t2p = NULL;
 	TIFF *input = NULL, *output = NULL;
