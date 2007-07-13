@@ -1,3 +1,7 @@
+2007-07-13  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff 3.9.0beta released.
+
 2007-07-12  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Added missed extern optind as per bug

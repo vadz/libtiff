@@ -1,7 +1,7 @@
 # Helper functions for option handling.                    -*- Autoconf -*-
-
-# Copyright (C) 2004, 2005 Free Software Foundation, Inc.
-# Written by Gary V. Vaughan <gary@gnu.org>
+#
+#   Copyright (C) 2004, 2005 Free Software Foundation, Inc.
+#   Written by Gary V. Vaughan, 2004
 #
 # This file is free software; the Free Software Foundation gives
 # unlimited permission to copy and/or distribute it, with or without

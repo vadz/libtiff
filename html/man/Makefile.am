@@ -102,9 +102,9 @@ INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY 
 INDEXEND = '</ul></BODY></HTML>'
 
 .PHONY: index
-index: $(docfiles)
+index:
 	${ECHO} ${INDEXSTART} > $(indexfile)
-	for i in $^; do							\
+	for i in $(docfiles); do					\
 		${ECHO} '<li><A HREF='$$i'>'$$i'</a>' >> $(indexfile);  \
 	done
 	${ECHO} ${INDEXEND} >> $(indexfile)
@@ -112,9 +112,7 @@ index: $(docfiles)
 manpages = $(docfiles:.html=)
 
 .PHONY: htmldoc
-htmldoc: $(docfiles)
-
-$(docfiles):
+htmldoc:
 	for i in $(manpages); do					\
 		${GROFF} $(MANSRCDIR)/$$i > $(HTMLMANDIR)/$$i.html;	\
 	done
