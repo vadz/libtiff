@@ -40,11 +40,11 @@
 /*      existing TIFF directory.                                        */
 /************************************************************************/
 
-TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, int nDirOffset )
+TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, toff_t nDirOffset )
 
 {
     TIFFOvrCache	*psCache;
-    uint32		nBaseDirOffset;
+    toff_t		nBaseDirOffset;
 
     psCache = (TIFFOvrCache *) _TIFFmalloc(sizeof(TIFFOvrCache));
     psCache->nDirOffset = nDirOffset;
@@ -136,8 +136,8 @@ static void TIFFWriteOvrRow( TIFFOvrCache * psCache )
 {
     int		nRet, iTileX, iTileY = psCache->nBlockOffset;
     unsigned char *pabyData;
-    uint32	nBaseDirOffset;
-    uint32 RowsInStrip;
+    toff_t	nBaseDirOffset;
+    uint32      RowsInStrip;
 
 /* -------------------------------------------------------------------- */
 /*      If the output cache is multi-byte per sample, and the file      */
