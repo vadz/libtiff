@@ -161,10 +161,10 @@ TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 		stripsize=size;
 	if (!TIFFFillStrip(tif,strip))
 		return((tmsize_t)(-1));
-	if ((*tif->tif_decodestrip)(tif,buf,size,plane)<=0)
+	if ((*tif->tif_decodestrip)(tif,buf,stripsize,plane)<=0)
 		return((tmsize_t)(-1));
-	(*tif->tif_postdecode)(tif,buf,size);
-	return(size);
+	(*tif->tif_postdecode)(tif,buf,stripsize);
+	return(stripsize);
 }
 
 static tmsize_t
