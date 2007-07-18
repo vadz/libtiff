@@ -2358,7 +2358,8 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 	return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEntry* direntry, double** value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEntry* direntry, double** value)
 {
 	enum TIFFReadDirEntryErr err;
 	uint32 count;
@@ -3105,87 +3106,120 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong(int32 value)
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
+/*
+ * Largest 32-bit unsigned integer value.
+ */
+#if defined(__WIN32__) && defined(_MSC_VER)
+# define TIFF_UINT32_MAX 0xFFFFFFFFI64
+#else
+# define TIFF_UINT32_MAX 0xFFFFFFFFLL
+#endif
+
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
 {
-	if (value>0xFFFFFFFFLL)
+	if (value > TIFF_UINT32_MAX)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong8(int64 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeLongSlong8(int64 value)
 {
-	if ((value<0)||(value>0xFFFFFFFFLL))
+	if ((value<0) || (value > TIFF_UINT32_MAX))
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeSlongLong(uint32 value)
+#undef TIFF_UINT32_MAX
+
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeSlongLong(uint32 value)
 {
-	if (value>0x7FFFFFFFLL)
+	if (value > 0x7FFFFFFFUL)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeSlongLong8(uint64 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeSlongLong8(uint64 value)
 {
-	if (value>0x7FFFFFFFLL)
+	if (value > 0x7FFFFFFFUL)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeSlongSlong8(int64 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeSlongSlong8(int64 value)
 {
-	if ((value<-0x80000000LL)||(value>0x7FFFFFFFLL))
+	if ((value < 0L-0x80000000L) || (value > 0x7FFFFFFFL))
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Sbyte(int8 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeLong8Sbyte(int8 value)
 {
-	if (value<0)
+	if (value < 0)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Sshort(int16 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeLong8Sshort(int16 value)
 {
-	if (value<0)
+	if (value < 0)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong(int32 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeLong8Slong(int32 value)
 {
-	if (value<0)
+	if (value < 0)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLong8Slong8(int64 value)
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeLong8Slong8(int64 value)
 {
-	if (value<0)
+	if (value < 0)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeSlong8Long8(uint64 value)
+/*
+ * Largest 64-bit signed integer value.
+ */
+#if defined(__WIN32__) && defined(_MSC_VER)
+# define TIFF_INT64_MAX 0x7FFFFFFFFFFFFFFFI64
+#else
+# define TIFF_INT64_MAX 0x7FFFFFFFFFFFFFFFLL
+#endif
+
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryCheckRangeSlong8Long8(uint64 value)
 {
-	if (value>0x7FFFFFFFFFFFFFFFLL)
+	if (value > TIFF_INT64_MAX)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, tmsize_t size, void* dest)
+#undef TIFF_INT64_MAX
+
+static enum TIFFReadDirEntryErr
+TIFFReadDirEntryData(TIFF* tif, uint64 offset, tmsize_t size, void* dest)
 {
 	assert(size>0);
 	if (!isMapped(tif)) {
@@ -3206,60 +3240,83 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryData(TIFF* tif, uint64 offset, t
 
 static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, const char* module, const char* tagname, int recover)
 {
-	if (!recover)
-	{
-		switch (err)
-		{
+	if (!recover) {
+		switch (err) {
 			case TIFFReadDirEntryErrCount:
-				TIFFErrorExt(tif->tif_clientdata,module,"Incorrect count for \"%s\"",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+					     "Incorrect count for \"%s\"",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrType:
-				TIFFErrorExt(tif->tif_clientdata,module,"Incompatible type for \"%s\"",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+					     "Incompatible type for \"%s\"",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrIo:
-				TIFFErrorExt(tif->tif_clientdata,module,"IO error during reading of \"%s\"",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+					     "IO error during reading of \"%s\"",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrRange:
-				TIFFErrorExt(tif->tif_clientdata,module,"Incorrect value for \"%s\"",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+					     "Incorrect value for \"%s\"",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrPsdif:
-				TIFFErrorExt(tif->tif_clientdata,module,"Cannot handle different values per sample for \"%s\"",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+			"Cannot handle different values per sample for \"%s\"",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrSizesan:
-				TIFFErrorExt(tif->tif_clientdata,module,"Sanity check on size of \"%s\" value failed",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+				"Sanity check on size of \"%s\" value failed",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrAlloc:
-				TIFFErrorExt(tif->tif_clientdata,module,"Out of memory reading of \"%s\"",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+					     "Out of memory reading of \"%s\"",
+					     tagname);
 				break;
 			default:
 				assert(0);   /* we should never get here */
 				break;
 		}
-	}
-	else
-	{
-		switch (err)
-		{
+	} else {
+		switch (err) {
 			case TIFFReadDirEntryErrCount:
-				TIFFErrorExt(tif->tif_clientdata,module,"Incorrect count for \"%s\"; tag ignored",tagname);
+				TIFFErrorExt(tif->tif_clientdata, module,
+				"Incorrect count for \"%s\"; tag ignored",
+					     tagname);
 				break;
 			case TIFFReadDirEntryErrType:
-				TIFFWarningExt(tif->tif_clientdata,module,"Incompatible type for \"%s\"; tag ignored",tagname);
+				TIFFWarningExt(tif->tif_clientdata, module,
+				"Incompatible type for \"%s\"; tag ignored",
+					       tagname);
 				break;
 			case TIFFReadDirEntryErrIo:
-				TIFFWarningExt(tif->tif_clientdata,module,"IO error during reading of \"%s\"; tag ignored",tagname);
+				TIFFWarningExt(tif->tif_clientdata, module,
+			"IO error during reading of \"%s\"; tag ignored",
+					       tagname);
 				break;
 			case TIFFReadDirEntryErrRange:
-				TIFFWarningExt(tif->tif_clientdata,module,"Incorrect value for \"%s\"; tag ignored",tagname);
+				TIFFWarningExt(tif->tif_clientdata, module,
+				"Incorrect value for \"%s\"; tag ignored",
+					       tagname);
 				break;
 			case TIFFReadDirEntryErrPsdif:
-				TIFFWarningExt(tif->tif_clientdata,module,"Cannot handle different values per sample for \"%s\"; tag ignored",tagname);
+				TIFFWarningExt(tif->tif_clientdata, module,
+	"Cannot handle different values per sample for \"%s\"; tag ignored",
+					       tagname);
 				break;
 			case TIFFReadDirEntryErrSizesan:
-				TIFFWarningExt(tif->tif_clientdata,module,"Sanity check on size of \"%s\" value failed; tag ignored",tagname);
+				TIFFWarningExt(tif->tif_clientdata, module,
+		"Sanity check on size of \"%s\" value failed; tag ignored",
+					       tagname);
 				break;
 			case TIFFReadDirEntryErrAlloc:
-				TIFFWarningExt(tif->tif_clientdata,module,"Out of memory reading of \"%s\"; tag ignored",tagname);
+				TIFFWarningExt(tif->tif_clientdata, module,
+				"Out of memory reading of \"%s\"; tag ignored",
+					       tagname);
 				break;
 			default:
 				assert(0);   /* we should never get here */
