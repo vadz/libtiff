@@ -219,9 +219,6 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 	m |= O_BINARY;
 #endif
 
-
-	m |= O_LARGEFILE;
-
 	fd = _wopen(name, m, 0666);
 	if (fd < 0) {
 		TIFFErrorExt(0, module, "%s: Cannot open", name);
