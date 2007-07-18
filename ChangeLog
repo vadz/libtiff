@@ -1,3 +1,10 @@
+2007-07-18  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{Makefile.am, Makefile.v}: Do not distribute tiffconf.h, 
+	remove tif_config.h/tiffconf.h during cleaning. As per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1573
+
 2007-07-13  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff 3.9.0beta released.
