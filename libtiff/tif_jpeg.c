@@ -77,7 +77,7 @@ int TIFFFillTile(TIFF* tif, uint32 tile);
 */
 
 /* Define "boolean" as unsigned char, not int, per Windows custom. */
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(__WIN32__) && !defined(__MINGW32__)
 # ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
    typedef unsigned char boolean;
 # endif
