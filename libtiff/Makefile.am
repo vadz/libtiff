@@ -36,7 +36,6 @@ EXTRA_DIST = Makefile.vc \
 
 HDRS = \
 	tiff.h \
-        tiffconf.h \
 	tiffio.h \
 	tiffvers.h
 
