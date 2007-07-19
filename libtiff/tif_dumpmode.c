@@ -80,11 +80,19 @@ DumpModeDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 	static const char module[] = "DumpModeDecode";
 	(void) s;
 	if (tif->tif_rawcc < cc) {
+#if defined(__WIN32__) && defined(_MSC_VER)
 		TIFFErrorExt(tif->tif_clientdata, module,
-		    "Not enough data for scanline %lud, expected a request for at most %lld bytes, got a request for %lld bytes",
-		    (unsigned long) tif->tif_row,
-		    (signed long long) tif->tif_rawcc,
-		    (signed long long) cc);
+"Not enough data for scanline %lu, expected a request for at most %I64d bytes, got a request for %I64d bytes",
+		             (unsigned long) tif->tif_row,
+		             (signed __int64) tif->tif_rawcc,
+		             (signed __int64) cc);
+#else
+		TIFFErrorExt(tif->tif_clientdata, module,
+"Not enough data for scanline %lu, expected a request for at most %lld bytes, got a request for %lld bytes",
+		             (unsigned long) tif->tif_row,
+		             (signed long long) tif->tif_rawcc,
+		             (signed long long) cc);
+#endif
 		return (0);
 	}
 	/*

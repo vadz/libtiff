@@ -224,9 +224,17 @@ LogL16Decode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 					tp[i++] |= (int16)*bp++ << shft;
 			}
 		if (i != npixels) {
+#if defined(__WIN32__) && defined(_MSC_VER)
 			TIFFErrorExt(tif->tif_clientdata, module,
-			    "Not enough data at row %lud (short %llud pixels)",
-			    (unsigned long) tif->tif_row, (unsigned long long) (npixels - i));
+			    "Not enough data at row %lu (short %I64d pixels)",
+				     (unsigned long) tif->tif_row,
+				     (unsigned __int64) (npixels - i));
+#else
+			TIFFErrorExt(tif->tif_clientdata, module,
+			    "Not enough data at row %lu (short %llu pixels)",
+				     (unsigned long) tif->tif_row,
+				     (unsigned long long) (npixels - i));
+#endif
 			tif->tif_rawcp = (uint8*) bp;
 			tif->tif_rawcc = cc;
 			return (0);
@@ -274,9 +282,17 @@ LogLuvDecode24(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 	tif->tif_rawcp = (uint8*) bp;
 	tif->tif_rawcc = cc;
 	if (i != npixels) {
+#if defined(__WIN32__) && defined(_MSC_VER)
 		TIFFErrorExt(tif->tif_clientdata, module,
-		    "Not enough data at row %lud (short %llud pixels)",
-		    (unsigned long) tif->tif_row, (unsigned long long) (npixels - i));
+			"Not enough data at row %lu (short %I64d pixels)",
+			     (unsigned long) tif->tif_row,
+			     (unsigned __int64) (npixels - i));
+#else
+		TIFFErrorExt(tif->tif_clientdata, module,
+			"Not enough data at row %lu (short %llu pixels)",
+			     (unsigned long) tif->tif_row,
+			     (unsigned long long) (npixels - i));
+#endif
 		return (0);
 	}
 	(*sp->tfunc)(sp, op, npixels);
@@ -331,9 +347,17 @@ LogLuvDecode32(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 					tp[i++] |= (uint32)*bp++ << shft;
 			}
 		if (i != npixels) {
+#if defined(__WIN32__) && defined(_MSC_VER)
 			TIFFErrorExt(tif->tif_clientdata, module,
-			    "Not enough data at row %lud (short %llud pixels)",
-			    (unsigned long) tif->tif_row, (unsigned long long) (npixels - i));
+			"Not enough data at row %lu (short %I64d pixels)",
+				     (unsigned long) tif->tif_row,
+				     (unsigned __int64) (npixels - i));
+#else
+			TIFFErrorExt(tif->tif_clientdata, module,
+			"Not enough data at row %lu (short %llu pixels)",
+				     (unsigned long) tif->tif_row,
+				     (unsigned long long) (npixels - i));
+#endif
 			tif->tif_rawcp = (uint8*) bp;
 			tif->tif_rawcc = cc;
 			return (0);
