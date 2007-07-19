@@ -76,7 +76,7 @@ TIFFCleanup(TIFF* tif)
 	/*
          * Clean up custom fields.
          */
-	if (tif->tif_nfields > 0) {
+	if (tif->tif_fields && tif->tif_nfields > 0) {
 		uint32 i;
 
 		for (i = 0; i < tif->tif_nfields; i++) {
