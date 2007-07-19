@@ -85,20 +85,43 @@ _TIFFPrintField(FILE* fd, const TIFFField *fip,
 			    (unsigned long)((uint32 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_SLONG)
 			fprintf(fd, "%ld", (long)((int32 *) raw_data)[j]);
+		else if(fip->field_type == TIFF_IFD)
+			fprintf(fd, "0x%lx",
+				(unsigned long)((uint32 *) raw_data)[j]);
 		else if(fip->field_type == TIFF_RATIONAL
 			|| fip->field_type == TIFF_SRATIONAL
 			|| fip->field_type == TIFF_FLOAT)
 			fprintf(fd, "%f", ((float *) raw_data)[j]);
-		else if(fip->field_type == TIFF_IFD)
-			fprintf(fd, "0x%ulx", ((uint32 *) raw_data)[j]);
+		else if(fip->field_type == TIFF_LONG8)
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, "%I64u",
+			    (unsigned __int64)((uint64 *) raw_data)[j]);
+#else
+			fprintf(fd, "%llu",
+			    (unsigned long long)((uint64 *) raw_data)[j]);
+#endif
+		else if(fip->field_type == TIFF_SLONG8)
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, "%I64d", (__int64)((int64 *) raw_data)[j]);
+#else
+			fprintf(fd, "%lld", (long long)((int64 *) raw_data)[j]);
+#endif
+		else if(fip->field_type == TIFF_IFD8)
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, "0x%I64x",
+				(unsigned __int64)((uint64 *) raw_data)[j]);
+#else
+			fprintf(fd, "0x%llx",
+				(unsigned long long)((uint64 *) raw_data)[j]);
+#endif
+		else if(fip->field_type == TIFF_FLOAT)
+			fprintf(fd, "%f", ((float *)raw_data)[j]);
+		else if(fip->field_type == TIFF_DOUBLE)
+			fprintf(fd, "%f", ((double *) raw_data)[j]);
 		else if(fip->field_type == TIFF_ASCII) {
 			fprintf(fd, "%s", (char *) raw_data);
 			break;
 		}
-		else if(fip->field_type == TIFF_DOUBLE)
-			fprintf(fd, "%f", ((double *) raw_data)[j]);
-		else if(fip->field_type == TIFF_FLOAT)
-			fprintf(fd, "%f", ((float *)raw_data)[j]);
 		else {
 			fprintf(fd, "<unsupported data type in TIFFPrint>");
 			break;
@@ -200,8 +223,15 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	uint16 i;
 	long l, n;
 
+#if defined(__WIN32__) && defined(_MSC_VER)
+	fprintf(fd, "TIFF Directory at offset 0x%I64x (%I64u)\n",
+		(unsigned __int64) tif->tif_diroff,
+		(unsigned __int64) tif->tif_diroff);
+#else
 	fprintf(fd, "TIFF Directory at offset 0x%llx (%llu)\n",
-		(unsigned long long) tif->tif_diroff, (unsigned long long) tif->tif_diroff);
+		(unsigned long long) tif->tif_diroff,
+		(unsigned long long) tif->tif_diroff);
+#endif
 	if (TIFFFieldSet(tif,FIELD_SUBFILETYPE)) {
 		fprintf(fd, "  Subfile Type:");
 		sep = " ";
@@ -486,7 +516,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif, FIELD_SUBIFD)) {
 		fprintf(fd, "  SubIFD Offsets:");
 		for (i = 0; i < td->td_nsubifd; i++)
-			fprintf(fd, " %5llu", (unsigned long long) td->td_subifd[i]);
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, " %5I64u",
+				(unsigned __int64) td->td_subifd[i]);
+#else
+			fprintf(fd, " %5llu",
+				(unsigned long long) td->td_subifd[i]);
+#endif
 		fputc('\n', fd);
 	}
 
@@ -572,12 +608,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			 * _TIFFPrettyPrintField() fall down and print it as
 			 * any other tag.
 			 */
-			if (_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data)) {
-				if(mem_alloc)
-					_TIFFfree(raw_data);
-				continue;
-			}
-			else
+			if (!_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data))
 				_TIFFPrintField(fd, fip, value_count, raw_data);
 
 			if(mem_alloc)
@@ -595,10 +626,17 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		    (long) td->td_nstrips,
 		    isTiled(tif) ? "Tiles" : "Strips");
 		for (s = 0; s < td->td_nstrips; s++)
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, "    %3lu: [%8I64u, %8I64u]\n",
+			    (unsigned long) s,
+			    (unsigned __int64) td->td_stripoffset[s],
+			    (unsigned __int64) td->td_stripbytecount[s]);
+#else
 			fprintf(fd, "    %3lu: [%8llu, %8llu]\n",
 			    (unsigned long) s,
 			    (unsigned long long) td->td_stripoffset[s],
 			    (unsigned long long) td->td_stripbytecount[s]);
+#endif
 	}
 }
 
