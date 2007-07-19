@@ -174,9 +174,17 @@ TIFFRawStripSize64(TIFF* tif, uint32 strip)
 
 	if (bytecount == 0)
 	{
+#if defined(__WIN32__) && defined(_MSC_VER)
 		TIFFErrorExt(tif->tif_clientdata, module,
-		    "%llu: Invalid strip byte count, strip %lu",
-		    (unsigned long long) bytecount, (unsigned long) strip);
+			     "%I64u: Invalid strip byte count, strip %lu",
+			     (unsigned __int64) bytecount,
+			     (unsigned long) strip);
+#else
+		TIFFErrorExt(tif->tif_clientdata, module,
+			     "%llu: Invalid strip byte count, strip %lu",
+			     (unsigned long long) bytecount,
+			     (unsigned long) strip);
+#endif
 		bytecount = (uint64) -1;
 	}
 
