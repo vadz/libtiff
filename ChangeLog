@@ -1,3 +1,15 @@
+2007-07-19  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_stream.cxx: Put all callback functions declarations
+	inside extern "C" block.
+
+	* libtiff/{tif_lzw.c, tif_luv.c, tif_dumpmode.c, tif_print.c,
+	tif_read.c, tif_strip.c, tif_thunder.c}: Use "%I64d" printf()
+	formatter instead of "%lld" with MSVC compiler.
+
+	* libtiff/{tiffiop.h, tif_aux.c}:  Added _TIFFUInt64ToFloat() and
+	_TIFFUInt64ToDouble() functions.
+
 2007-07-18  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_dirread.c: Handle the case of MSVC 6 when using 64-bit
