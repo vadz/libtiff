@@ -93,7 +93,6 @@ extern "C" {
 	static int 	_tiffDummyMapProc(thandle_t , void** base, toff_t* size );
 	static void     _tiffDummyUnmapProc(thandle_t , void* base, toff_t size );
 	static TIFF*    _tiffStreamOpen(const char* name, const char* mode, void *fd);
-}
 
 struct tiffis_data
 {
@@ -390,6 +389,8 @@ _tiffStreamOpen(const char* name, const char* mode, void *fd)
 
 	return (tif);
 }
+
+} /* extern "C" */
 
 TIFF*
 TIFFStreamOpen(const char* name, ostream *os)
