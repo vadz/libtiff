@@ -273,7 +273,7 @@ _TIFFGetExifFields(void)
 void
 _TIFFSetupFields(TIFF* tif, const TIFFFieldArray* fieldarray)
 {
-	if (tif->tif_fields) {
+	if (tif->tif_fields && tif->tif_nfields > 0) {
 		uint32 i;
 
 		for (i = 0; i < tif->tif_nfields; i++) {
@@ -286,6 +286,7 @@ _TIFFSetupFields(TIFF* tif, const TIFFFieldArray* fieldarray)
 		}
 
 		_TIFFfree(tif->tif_fields);
+		tif->tif_fields = NULL;
 		tif->tif_nfields = 0;
 	}
 	if (!_TIFFMergeFields(tif, fieldarray->fields, fieldarray->count)) {
@@ -343,7 +344,7 @@ _TIFFMergeFields(TIFF* tif, const TIFFField info[], uint32 n)
 
         tif->tif_foundfield = NULL;
 
-	if (tif->tif_nfields > 0) {
+	if (tif->tif_fields && tif->tif_nfields > 0) {
 		tif->tif_fields = (TIFFField**)
 			_TIFFCheckRealloc(tif, tif->tif_fields,
 					  (tif->tif_nfields + n),
@@ -472,9 +473,8 @@ TIFFFindField(TIFF* tif, uint32 tag, TIFFDataType dt)
 		return tif->tif_foundfield;
 
 	/* If we are invoked with no field information, then just return. */
-	if ( !tif->tif_fields ) {
+	if (!tif->tif_fields)
 		return NULL;
-	}
 
 	/* NB: use sorted search (e.g. binary search) */
 
@@ -499,9 +499,8 @@ _TIFFFindFieldByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 		return (tif->tif_foundfield);
 
 	/* If we are invoked with no field information, then just return. */
-	if ( !tif->tif_fields ) {
+	if (!tif->tif_fields)
 		return NULL;
-	}
 
 	/* NB: use sorted search (e.g. binary search) */
 
