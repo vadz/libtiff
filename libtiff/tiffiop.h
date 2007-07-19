@@ -308,6 +308,9 @@ extern TIFFErrorHandlerExt _TIFFerrorHandlerExt;
 extern void* _TIFFCheckMalloc(TIFF* tif, tmsize_t nmemb, tmsize_t elem_size, const char* what);
 extern void* _TIFFCheckRealloc(TIFF* tif, void* buffer, tmsize_t nmemb, tmsize_t elem_size, const char* what);
 
+extern double _TIFFUInt64ToDouble(uint64);
+extern float _TIFFUInt64ToFloat(uint64);
+
 extern int TIFFInitDumpMode(TIFF*, int);
 #ifdef PACKBITS_SUPPORT
 extern int TIFFInitPackBits(TIFF*, int);
