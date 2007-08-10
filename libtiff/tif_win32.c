@@ -95,9 +95,9 @@ _tiffWriteProc(thandle_t fd, void* buf, tmsize_t size)
 static uint64
 _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 {
-	LARGE_INTEGER off_in, off_out;
+	LARGE_INTEGER offli;
 	DWORD dwMoveMethod;
-	off_in.QuadPart = off;
+	offli.QuadPart = off;
 	switch(whence)
 	{
 		case SEEK_SET:
@@ -113,9 +113,10 @@ _tiffSeekProc(thandle_t fd, uint64 off, int whence)
 			dwMoveMethod = FILE_BEGIN;
 			break;
 	}
-	if (SetFilePointerEx(fd,off_in,&off_out,dwMoveMethod)==0)
-		off_out.QuadPart=0;
-	return(off_out.QuadPart);
+	offli.LowPart=SetFilePointer(fd,offli.LowPart,&offli.HighPart,dwMoveMethod);
+	if ((offli.LowPart==INVALID_SET_FILE_POINTER)&&(GetLastError()!=NO_ERROR))
+		offli.QuadPart=0;
+	return(offli.QuadPart);
 }
 
 static int

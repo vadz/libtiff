@@ -1,3 +1,10 @@
+2007-08-10  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* libtiff/tif_win32.c: use SetFilePointer instead of 
+	SetFilePointerEx, as per bug
+
+	http://bugzilla.remotesensing.org/show_bug.cgi?id=1580
+
 2007-07-19  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_stream.cxx: Put all callback functions declarations
