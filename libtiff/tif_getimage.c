@@ -431,8 +431,6 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			    photoTag, img->photometric);
 			return (0);
 	}
-	img->SubsamplingHor = 1;
-	img->SubsamplingVer = 1;
 	img->Map = NULL;
 	img->BWmap = NULL;
 	img->PALmap = NULL;
@@ -806,17 +804,18 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	uint32 pos;
 	unsigned char* buf;
 	uint32 rowsperstrip;
+	uint16 subsamplinghor,subsamplingver;
 	uint32 imagewidth = img->width;
 	tmsize_t scanline;
 	int32 fromskew, toskew;
 	int ret = 1, flip;
 
-	buf = (unsigned char*) _TIFFmalloc(TIFFStripSize(tif));  
+	buf = (unsigned char*) _TIFFmalloc(TIFFStripSize(tif));
 	if (buf == 0) {
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "No space for strip buffer");
 		return (0);
 	}
-	_TIFFmemset(buf, 0, TIFFStripSize(tif));  
+	_TIFFmemset(buf, 0, TIFFStripSize(tif));
 
 	flip = setorientation(img);
 	if (flip & FLIP_VERTICALLY) {
@@ -828,15 +827,16 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	}
 
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
-	scanline = TIFFScanlineSize(tif);  
+	TIFFGetFieldDefaulted(tif, TIFFTAG_YCBCRSUBSAMPLING, &subsamplinghor, &subsamplingver);
+	scanline = TIFFScanlineSize(tif);
 	fromskew = (w < imagewidth ? imagewidth - w : 0);
 	for (row = 0; row < h; row += nrow)
 	{
 		rowstoread = rowsperstrip - (row + img->row_offset) % rowsperstrip;
 		nrow = (row + rowstoread > h ? h - row : rowstoread);
 		nrowsub = nrow;
-		if ((nrowsub%(img->SubsamplingVer))!=0)
-			nrowsub+=img->SubsamplingVer-nrowsub%(img->SubsamplingVer);
+		if ((nrowsub%subsamplingver)!=0)
+			nrowsub+=subsamplingver-nrowsub%subsamplingver;
 		if (TIFFReadEncodedStrip(tif,
 		    TIFFComputeStrip(tif,row+img->row_offset, 0),
 		    buf,
@@ -2445,8 +2445,10 @@ PickContigCase(TIFFRGBAImage* img)
 					 * Joris: added support for the [1,2] case, nonetheless, to accomodate
 					 * some OJPEG files
 					 */
-					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &img->SubsamplingHor, &img->SubsamplingVer);
-					switch ((img->SubsamplingHor<<4)|img->SubsamplingVer) {
+					uint16 SubsamplingHor;
+					uint16 SubsamplingVer;
+					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &SubsamplingHor, &SubsamplingVer);
+					switch ((SubsamplingHor<<4)|SubsamplingVer) {
 						case 0x44:
 							img->put.contig = putcontig8bitYCbCr44tile;
 							break;

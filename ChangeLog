@@ -1,5 +1,10 @@
 2007-08-10  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
+	* libtiff/tif_getimage.c: removed SubsamplingHor and SubsamplingVer 
+	from _TIFFRGBAImage structure to revert unwanted ABI change.
+
+2007-08-10  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
 	* libtiff/tif_win32.c: use SetFilePointer instead of 
 	SetFilePointerEx, as per bug
 
