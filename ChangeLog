@@ -1,6 +1,11 @@
 2007-08-24  Frank Warmerdam  <warmerdam@pobox.com>
 
-	* tif_dirinfo.c: _TIFFMergeFields() now only merges in field
+	* tif_dirwrite.c: Write the tif_nextdiroff value instead of a fixed
+	zero when writing directory contents to preserve the ability to 
+	rewrite directories in place, even in the middle of a directory
+	chain.
+
+	* tif_dirinfo.c:  _TIFFMergeFields() now only merges in field
 	definitions that are missing.  Existing definitions are silently
 	ignored. 
 

@@ -781,7 +781,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			n+=4;
 			o++;
 		}
-		*(uint32*)n=0;
+		*(uint32*)n = tif->tif_nextdiroff;
 	}
 	else
 	{
@@ -811,7 +811,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			n+=8;
 			o++;
 		}
-		*(uint64*)n=0;
+		*(uint64*)n = tif->tif_nextdiroff;
 	}
 	_TIFFfree(dir);
 	dir=NULL;
