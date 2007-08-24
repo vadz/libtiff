@@ -1,5 +1,9 @@
 2007-08-24  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tif_dirinfo.c: _TIFFMergeFields() now only merges in field
+	definitions that are missing.  Existing definitions are silently
+	ignored. 
+
 	* tif_dirread.c: Add runtime error for fields for which no definition
 	is found (in addition to an assert for developers) in 
 	TIFFFetchNormalTag().  Not sure if this is needed, but it seems 

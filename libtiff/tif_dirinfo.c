@@ -330,18 +330,6 @@ _TIFFMergeFields(TIFF* tif, const TIFFField info[], uint32 n)
 	TIFFField** tp;
 	uint32 i;
 
-	for (i = 0; i < n; i++) {
-		const TIFFField *fip =
-			TIFFFindField(tif, info[i].field_tag, TIFF_ANY);
-		if (fip) {
-			TIFFErrorExt(tif->tif_clientdata, module,
-			"Field with tag %lu is already registered as \"%s\"",
-				     (unsigned int) info[i].field_tag,
-				     fip->field_name);
-			return 0;
-		}
-	}
-
         tif->tif_foundfield = NULL;
 
 	if (tif->tif_fields && tif->tif_nfields > 0) {
@@ -359,12 +347,21 @@ _TIFFMergeFields(TIFF* tif, const TIFFField info[], uint32 n)
 			     "Failed to allocate fields array");
 		return 0;
 	}
+
 	tp = tif->tif_fields + tif->tif_nfields;
-	for (i = 0; i < n; i++)
-		*tp++ = (TIFFField *) (info + i);	/* XXX */
+	for (i = 0; i < n; i++) {
+		const TIFFField *fip =
+			TIFFFindField(tif, info[i].field_tag, TIFF_ANY);
+
+                /* only add definitions that aren't already present */
+		if (!fip) {
+                        tif->tif_fields[tif->tif_nfields] = (TIFFField *) (info+i);
+                        tif->tif_nfields++;
+                }
+	}
 
         /* Sort the field info by tag number */
-	qsort(tif->tif_fields, tif->tif_nfields += n,
+	qsort(tif->tif_fields, tif->tif_nfields,
 	      sizeof(TIFFField *), tagCompare);
 
 	return n;
