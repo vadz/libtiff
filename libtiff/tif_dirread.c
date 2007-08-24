@@ -4502,6 +4502,13 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 	const TIFFField* fip;
 	TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 	assert(fii!=0xFFFFFFFF);
+        if( fii == 0xFFFFFFFF )
+        {
+            TIFFErrorExt(tif->tif_clientdata, "TIFFFetchNormalTag",
+                         "No definition found for tag %d",
+                         dp->tdir_tag);
+            return 0;
+        }
 	fip=tif->tif_fields[fii];
 	assert(fip->set_field_type!=TIFF_SETGET_OTHER);  /* if so, we shouldn't arrive here but deal with this in specialized code */
 	assert(fip->set_field_type!=TIFF_SETGET_INT);    /* if so, we shouldn't arrive here as this is only the case for pseudo-tags */
