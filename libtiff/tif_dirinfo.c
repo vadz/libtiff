@@ -596,18 +596,6 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 	TIFFFieldInfo** tp;
 	int i;
 
-	for (i = 0; i < n; i++) {
-		const TIFFFieldInfo *fip =
-			_TIFFFindFieldInfo(tif, info[i].field_tag, TIFF_ANY);
-		if (fip) {
-			TIFFErrorExt(tif->tif_clientdata, module,
-			"Field with tag %lu is already registered as \"%s\"",
-				     (unsigned int) info[i].field_tag,
-				     fip->field_name);
-			return 0;
-		}
-	}
-
         tif->tif_foundfield = NULL;
 
 	if (tif->tif_nfields > 0) {
@@ -627,10 +615,19 @@ _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 	}
 	tp = tif->tif_fieldinfo + tif->tif_nfields;
 	for (i = 0; i < n; i++)
-		*tp++ = (TIFFFieldInfo*) (info + i);	/* XXX */
+        {
+            const TIFFFieldInfo *fip =
+                _TIFFFindFieldInfo(tif, info[i].field_tag, info[i].field_type);
+
+            /* only add definitions that aren't already present */
+            if (!fip) {
+                *tp++ = (TIFFFieldInfo*) (info + i);
+                tif->tif_nfields++;
+            }
+        }
 
         /* Sort the field info by tag number */
-        qsort(tif->tif_fieldinfo, tif->tif_nfields += n,
+        qsort(tif->tif_fieldinfo, tif->tif_nfields,
 	      sizeof (TIFFFieldInfo*), tagCompare);
 
 	return n;
