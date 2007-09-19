@@ -25,11 +25,30 @@
 
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
-#EXTRA_DIST = Makefile.vc
+EXTRA_DIST = \
+	$(TESTSCRIPTS) \
+	$(IMAGES)
 
-TESTS = $(check_PROGRAMS)
+# All of the tests to execute via 'make check'
+TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
+# Executable programs which need to be built in order to support tests
 check_PROGRAMS = ascii_tag long_tag short_tag strip_rw
+
+# Test scripts to execute
+TESTSCRIPTS = \
+	tiffinfo.sh
+
+IMAGES = \
+	images/minisblack-1c-16b.tiff \
+	images/minisblack-1c-8b.tiff \
+	images/miniswhite-1c-1b.tiff \
+	images/palette-1c-1b.tiff \
+	images/palette-1c-4b.tiff \
+	images/palette-1c-8b.tiff \
+	images/README.txt \
+	images/rgb-3c-16b.tiff \
+	images/rgb-3c-8b.tiff
 
 ascii_tag_SOURCES = ascii_tag.c
 ascii_tag_LDADD = $(LIBTIFF)

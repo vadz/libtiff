@@ -1,3 +1,11 @@
+2007-09-19  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/images: Added a small collection of test images for use by
+	test programs and scripts.
+	* test/tiffinfo.sh: A trivial example test script.
+	* test/common.sh: Added small script for setting the environment
+	used by script-based tests.
+
 2007-08-24  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_dirwrite.c: Write the tif_nextdiroff value instead of a fixed
