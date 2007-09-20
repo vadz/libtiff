@@ -4245,9 +4245,9 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
  */
 static uint16
 TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
-    uint64 *nextdiroff)
+                   uint64 *nextdiroff)
 {
-	static const char module[] = "TIFFFetchDirectoryClassic";
+	static const char module[] = "TIFFFetchDirectory";
 
 	void* origdir;
 	uint16 dircount16;
