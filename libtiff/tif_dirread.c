@@ -3339,16 +3339,18 @@ TIFFReadDirectory(TIFF* tif)
 	uint16 di;
 	const TIFFField* fip;
 	uint32 fii;
+        toff_t nextdiroff;
 	tif->tif_diroff=tif->tif_nextdiroff;
 	if (!TIFFCheckDirOffset(tif,tif->tif_nextdiroff))
 		return 0;           /* last offset or bad offset (IFD looping) */
 	(*tif->tif_cleanup)(tif);   /* cleanup any previous compression state */
 	tif->tif_curdir++;
-	dircount=TIFFFetchDirectory(tif,tif->tif_nextdiroff,&dir,&tif->tif_nextdiroff);
+        nextdiroff = tif->tif_nextdiroff;
+	dircount=TIFFFetchDirectory(tif,nextdiroff,&dir,&tif->tif_nextdiroff);
 	if (!dircount)
 	{
 		TIFFErrorExt(tif->tif_clientdata,module,
-		    "Failed to read directory at offset %llu",tif->tif_nextdiroff);
+		    "Failed to read directory at offset %llu",nextdiroff);
 		return 0;
 	}
 	TIFFReadDirectoryCheckOrder(tif,dir,dircount);
