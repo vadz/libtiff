@@ -1405,10 +1405,11 @@ TIFFWriteDirectoryTagLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, 
     uint32* q;
     int o;
 
+    /* is this just a counting pass? */
     if (dir==NULL)
     {
-        (*ndir)++;  /* crash - makes tracebacks easier */
-        return(1);  /* why do we return success? */
+        (*ndir)++;
+        return(1);
     }
 
     /* We always write LONG8 for BigTIFF, no checking needed. */
