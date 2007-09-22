@@ -1339,7 +1339,7 @@ static const TIFFField pixarlogFields[] = {
 int
 TIFFInitPixarLog(TIFF* tif, int scheme)
 {
-	const char module[] = "TIFFInitPixarLog";
+	static const char module[] = "TIFFInitPixarLog";
 
 	PixarLogState* sp;
 
