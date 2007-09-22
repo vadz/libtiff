@@ -591,8 +591,8 @@ TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 int
 _TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], int n)
 {
-	const char module[] = "_TIFFMergeFieldInfo";
-	const char reason[] = "for field info array";
+	static const char module[] = "_TIFFMergeFieldInfo";
+	static const char reason[] = "for field info array";
 	TIFFFieldInfo** tp;
 	int i;
 

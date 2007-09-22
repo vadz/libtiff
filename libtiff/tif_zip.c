@@ -342,7 +342,7 @@ static const TIFFFieldInfo zipFieldInfo[] = {
 int
 TIFFInitZIP(TIFF* tif, int scheme)
 {
-	const char module[] = "TIFFInitZIP";
+	static const char module[] = "TIFFInitZIP";
 	ZIPState* sp;
 
 	assert( (scheme == COMPRESSION_DEFLATE)
