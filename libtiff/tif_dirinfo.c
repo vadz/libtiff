@@ -42,10 +42,10 @@
  *       values accordingly.
  */
 
-static const TIFFFieldArray tiffFieldArray;
-static const TIFFFieldArray exifFieldArray;
+static TIFFFieldArray tiffFieldArray;
+static TIFFFieldArray exifFieldArray;
 
-static const TIFFField
+static TIFFField
 tiffFields[] = {
 	{ TIFFTAG_SUBFILETYPE, 1, 1, TIFF_LONG, 0, TIFF_SETGET_UINT32, TIFF_SETGET_UNDEFINED, FIELD_SUBFILETYPE, 1, 0, "SubfileType", NULL },
 	{ TIFFTAG_OSUBFILETYPE, 1, 1, TIFF_SHORT, 0, TIFF_SETGET_UNDEFINED, TIFF_SETGET_UNDEFINED, FIELD_SUBFILETYPE, 1, 0, "OldSubfileType", NULL },
@@ -193,7 +193,7 @@ tiffFields[] = {
 	/* end DNG tags */
 };
 
-static const TIFFField
+static TIFFField
 exifFields[] = {
 	{ EXIFTAG_EXPOSURETIME, 1, 1, TIFF_RATIONAL, 0, TIFF_SETGET_DOUBLE, TIFF_SETGET_UNDEFINED, FIELD_CUSTOM, 1, 0, "ExposureTime", NULL },
 	{ EXIFTAG_FNUMBER, 1, 1, TIFF_RATIONAL, 0, TIFF_SETGET_DOUBLE, TIFF_SETGET_UNDEFINED, FIELD_CUSTOM, 1, 0, "FNumber", NULL },
@@ -253,9 +253,9 @@ exifFields[] = {
 	{ EXIFTAG_IMAGEUNIQUEID, 33, 33, TIFF_ASCII, 0, TIFF_SETGET_ASCII, TIFF_SETGET_UNDEFINED, FIELD_CUSTOM, 1, 0, "ImageUniqueID", NULL }
 };
 
-static const TIFFFieldArray
+static TIFFFieldArray
 tiffFieldArray = { tfiatImage, 0, TIFFArrayCount(tiffFields), tiffFields };
-static const TIFFFieldArray
+static TIFFFieldArray
 exifFieldArray = { tfiatExif, 0, TIFFArrayCount(exifFields), exifFields };
 
 const TIFFFieldArray*
