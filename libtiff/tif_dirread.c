@@ -3831,7 +3831,12 @@ TIFFReadDirectory(TIFF* tif)
 		dir=NULL;
 	}
 	if (!TIFFFieldSet(tif, FIELD_MAXSAMPLEVALUE))
-		tif->tif_dir.td_maxsamplevalue = (uint16)((1L<<tif->tif_dir.td_bitspersample)-1);
+	{
+		if (tif->tif_dir.td_bitspersample>=16)
+			tif->tif_dir.td_maxsamplevalue=0xFFFF;
+		else
+			tif->tif_dir.td_maxsamplevalue = (uint16)((1L<<tif->tif_dir.td_bitspersample)-1);
+	}
 	/*
 	 * XXX: We can optimize checking for the strip bounds using the sorted
 	 * bytecounts array. See also comments for TIFFAppendToStrip()

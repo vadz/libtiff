@@ -1,3 +1,16 @@
+2007-09-27  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* tif_dirread.c: Made calculation of td_maxsamplevalue more robust
+	when dealing with large bitspersample values, shutting up purification
+	tools that warn about truncation, though it remains incorrect and 
+	indicates a conceptual problem there.
+
+	* tif_open.c: Moved early exit in case of 'h' flag (to disable reading of
+	first IFD) to proper place because it badly interfered with memory mapping,
+	resulting in mapping flag even with dummy mapping functions that returned
+	0 whilst at the same time the mapping tif_size wasn't set, thus resulting
+	in continuous incorrect beyond-eof errors.
+
 2007-09-24  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* tif_dirinfo.c: Fixed (MSVC) compiler reports about 
