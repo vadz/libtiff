@@ -1,3 +1,9 @@
+2007-09-28  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* tif_dirread.c: Logical cast working around compiler warning
+
+	* tif_read.c: Correction of some error flags and parameter lists
+
 2007-09-27  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* tif_dirread.c: Made calculation of td_maxsamplevalue more robust

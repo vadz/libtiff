@@ -781,7 +781,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			n+=4;
 			o++;
 		}
-		*(uint32*)n = tif->tif_nextdiroff;
+		*(uint32*)n = (uint32)tif->tif_nextdiroff;
 	}
 	else
 	{
