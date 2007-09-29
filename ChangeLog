@@ -1,3 +1,11 @@
+2007-09-29  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* tif_dirread.c: Strip chopping interfered badly with uncompressed 
+	subsampled images because it tried to divide subsamples rowblock, leading 
+	to all sorts of errors throughout the library for these images. Fixed by 
+	making strip chopping divide in row counts that are multiple of vertical 
+	subsampling value.
+
 2007-09-28  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* tif_dirread.c: Logical cast working around compiler warning

@@ -5255,9 +5255,11 @@ static void
 ChopUpSingleUncompressedStrip(TIFF* tif)
 {
 	register TIFFDirectory *td = &tif->tif_dir;
-	uint64 bytecount = td->td_stripbytecount[0];
-	uint64 offset = td->td_stripoffset[0];
-	uint64 rowbytes = TIFFVTileSize64(tif, 1), stripbytes;
+	uint64 bytecount;
+	uint64 offset;
+	uint32 rowblock;
+	uint64 rowblockbytes;
+	uint64 stripbytes;
 	uint32 strip;
 	uint64 nstrips64;
 	uint32 nstrips32;
@@ -5265,16 +5267,27 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	uint64* newcounts;
 	uint64* newoffsets;
 
+	bytecount = td->td_stripbytecount[0];
+	offset = td->td_stripoffset[0];
+	assert(td->td_planarconfig == PLANARCONFIG_CONTIG);
+	if ((td->td_photometric == PHOTOMETRIC_YCBCR)&&
+	    (!isUpSampled(tif)))
+		rowblock = td->td_ycbcrsubsampling[1];
+	else
+		rowblock = 1;
+	rowblockbytes = TIFFVTileSize64(tif, rowblock);
 	/*
 	 * Make the rows hold at least one scanline, but fill specified amount
 	 * of data if possible.
 	 */
-	if (rowbytes > STRIP_SIZE_DEFAULT) {
-		stripbytes = rowbytes;
-		rowsperstrip = 1;
-	} else if (rowbytes > 0 ) {
-		rowsperstrip = (uint32) (STRIP_SIZE_DEFAULT / rowbytes);
-		stripbytes = rowbytes * rowsperstrip;
+	if (rowblockbytes > STRIP_SIZE_DEFAULT) {
+		stripbytes = rowblockbytes;
+		rowsperstrip = rowblock;
+	} else if (rowblockbytes > 0 ) {
+		uint32 rowblocksperstrip;
+		rowblocksperstrip = (uint32) (STRIP_SIZE_DEFAULT / rowblockbytes);
+		rowsperstrip = rowblocksperstrip * rowblock;
+		stripbytes = rowblocksperstrip * rowblockbytes;
 	}
 	else
 	    return;
