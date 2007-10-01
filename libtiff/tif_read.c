@@ -436,7 +436,7 @@ TIFFReadEncodedTile(TIFF* tif, uint32 tile, void* buf, tmsize_t size)
 		return ((tmsize_t)(-1));
 	if (tile >= td->td_nstrips) {
 		TIFFErrorExt(tif->tif_clientdata, module,
-		    "%lud: Tile out of range, max %lud",
+		    "%lu: Tile out of range, max %lu",
 		    (unsigned long) tile, (unsigned long) td->td_nstrips);
 		return ((tmsize_t)(-1));
 	}
@@ -463,7 +463,7 @@ TIFFReadRawTile1(TIFF* tif, uint32 tile, void* buf, tmsize_t size, const char* m
 
 		if (!SeekOK(tif, td->td_stripoffset[tile])) {
 			TIFFErrorExt(tif->tif_clientdata, module,
-			    "Seek error at row %lud, col %lud, tile %lud",
+			    "Seek error at row %lu, col %lu, tile %lu",
 			    (unsigned long) tif->tif_row,
 			    (unsigned long) tif->tif_col,
 			    (unsigned long) tile);
@@ -639,7 +639,7 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 				tif->tif_curtile = NOTILE;
 				if ((tif->tif_flags & TIFF_MYBUFFER) == 0) {
 					TIFFErrorExt(tif->tif_clientdata, module,
-					    "Data buffer too small to hold tile %lud",
+					    "Data buffer too small to hold tile %lu",
 					    (unsigned long) tile);
 					return (0);
 				}
@@ -690,7 +690,7 @@ TIFFReadBufferSetup(TIFF* tif, void* bp, tmsize_t size)
 	}
 	if (tif->tif_rawdata == NULL) {
 		TIFFErrorExt(tif->tif_clientdata, module,
-		    "No space for data buffer at scanline %lud",
+		    "No space for data buffer at scanline %lu",
 		    (unsigned long) tif->tif_row);
 		tif->tif_rawdatasize = 0;
 		return (0);

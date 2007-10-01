@@ -1,3 +1,7 @@
+2007-10-01  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* changed some more incorrect %lud printf flags to %lu
+
 2007-09-29  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* tif_dirread.c: Strip chopping interfered badly with uncompressed 

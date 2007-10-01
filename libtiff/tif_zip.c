@@ -170,7 +170,7 @@ ZIPDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 			break;
 		if (state == Z_DATA_ERROR) {
 			TIFFErrorExt(tif->tif_clientdata, module,
-			    "Decoding error at scanline %lud, %s",
+			    "Decoding error at scanline %lu, %s",
 			    (unsigned long) tif->tif_row, sp->stream.msg);
 			if (inflateSync(&sp->stream) != Z_OK)
 				return (0);
@@ -184,7 +184,7 @@ ZIPDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 	} while (sp->stream.avail_out > 0);
 	if (sp->stream.avail_out != 0) {
 		TIFFErrorExt(tif->tif_clientdata, module,
-		    "Not enough data at scanline %lud (short %llud bytes)",
+		    "Not enough data at scanline %lu (short %llu bytes)",
 		    (unsigned long) tif->tif_row, (unsigned long long) sp->stream.avail_out);
 		return (0);
 	}
