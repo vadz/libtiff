@@ -1552,7 +1552,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				t2p->pdf_palette[(i*4)]  = (unsigned char) (r[i]>>8);
 				t2p->pdf_palette[(i*4)+1]= (unsigned char) (g[i]>>8);
 				t2p->pdf_palette[(i*4)+2]= (unsigned char) (b[i]>>8);
-				t2p->pdf_palette[(i*4)+2]= (unsigned char) (a[i]>>8);
+				t2p->pdf_palette[(i*4)+3]= (unsigned char) (a[i]>>8);
 			}
 			t2p->pdf_palettesize *= 4;
 			break;
