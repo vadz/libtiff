@@ -1,3 +1,7 @@
+2007-10-11  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* html/index.html: Update "people responsible" section.
+
 2007-10-05  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2pdf.c: Fix problem with alpha setting in some cases
