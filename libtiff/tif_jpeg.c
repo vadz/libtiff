@@ -1334,10 +1334,8 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
 			sp->scancount ++;
 			tif->tif_row += sp->v_sampling;
-			/* increment/decrement of buf and cc is still incorrect, but should not matter
-			 * TODO: resolve this */
-			buf += sp->bytesperline;
-			cc -= sp->bytesperline;
+			buf += clumps_per_line*samples_per_clump;
+			cc -= clumps_per_line*samples_per_clump;
 			nrows -= sp->v_sampling;
 		} while (nrows > 0);
 
