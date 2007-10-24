@@ -1,3 +1,9 @@
+2007-10-24  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* tif_dirread.c: Fixed problem with bogus file triggering 
+	assert(td->td_planarconfig == PLANARCONFIG_CONTIG) in 
+	ChopUpSingleUncompressedStrip
+
 2007-10-22  Joris Van Damme  <joris.at.lebbeke@skynet.be>
 
 	* tif_jpeg.c: Resolved buffer incrementation bug that lead to faulty images

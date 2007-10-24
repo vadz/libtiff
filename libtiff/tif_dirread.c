@@ -3868,8 +3868,10 @@ TIFFReadDirectory(TIFF* tif)
 	 * side effect, however, is that the RowsPerStrip tag
 	 * value may be changed.
 	 */
-	if (tif->tif_dir.td_nstrips == 1 && tif->tif_dir.td_compression == COMPRESSION_NONE &&  
-	    (tif->tif_flags & (TIFF_STRIPCHOP|TIFF_ISTILED)) == TIFF_STRIPCHOP)
+	if ((tif->tif_dir.td_planarconfig==PLANARCONFIG_CONTIG)&&
+	    (tif->tif_dir.td_nstrips==1)&&
+	    (tif->tif_dir.td_compression==COMPRESSION_NONE)&&  
+	    ((tif->tif_flags&(TIFF_STRIPCHOP|TIFF_ISTILED))==TIFF_STRIPCHOP))
 		ChopUpSingleUncompressedStrip(tif);
 
 	/*
