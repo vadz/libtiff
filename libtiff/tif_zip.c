@@ -67,7 +67,7 @@
  */
 typedef struct {
 	TIFFPredictorState predict;
-	z_stream        stream;
+        z_stream        stream;
 	int             zipquality;            /* compression level */
 	int             state;                 /* state flags */
 #define ZSTATE_INIT_DECODE 0x01
@@ -127,7 +127,7 @@ ZIPPreDecode(TIFF* tif, uint16 s)
 	assert(sp != NULL);
 
 	if( (sp->state & ZSTATE_INIT_DECODE) == 0 )
-		ZIPSetupDecode(tif);
+            tif->tif_setupdecode( tif );
 
 	sp->stream.next_in = tif->tif_rawdata;
 	assert(sizeof(sp->stream.avail_in)==4);  /* if this assert gets raised,
@@ -224,7 +224,7 @@ ZIPPreEncode(TIFF* tif, uint16 s)
 	(void) s;
 	assert(sp != NULL);
 	if( sp->state != ZSTATE_INIT_ENCODE )
-	    ZIPSetupEncode(tif);
+            tif->tif_setupencode( tif );
 
 	sp->stream.next_out = tif->tif_rawdata;
 	assert(sizeof(sp->stream.avail_out)==4);  /* if this assert gets raised,

@@ -41,9 +41,12 @@ typedef struct {
 	tmsize_t        rowsize;	/* tile/strip row size */
 
 	TIFFPostMethod  pfunc;		/* horizontal differencer/accumulator */
-	TIFFCodeMethod  coderow;	/* parent codec encode/decode row */
-	TIFFCodeMethod  codestrip;	/* parent codec encode/decode strip */
-	TIFFCodeMethod  codetile;	/* parent codec encode/decode tile */ 
+	TIFFCodeMethod  encoderow;	/* parent codec encode/decode row */
+	TIFFCodeMethod  encodestrip;	/* parent codec encode/decode strip */
+	TIFFCodeMethod  encodetile;	/* parent codec encode/decode tile */ 
+	TIFFCodeMethod  decoderow;	/* parent codec encode/decode row */
+	TIFFCodeMethod  decodestrip;	/* parent codec encode/decode strip */
+	TIFFCodeMethod  decodetile;	/* parent codec encode/decode tile */ 
 	TIFFVGetMethod  vgetparent;	/* super-class method */
 	TIFFVSetMethod  vsetparent;	/* super-class method */
 	TIFFPrintMethod printdir;	/* super-class method */
