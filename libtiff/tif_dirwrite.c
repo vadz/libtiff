@@ -100,6 +100,8 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 	 */
 	if (done)
 	{
+                tsize_t orig_rawcc = tif->tif_rawcc;
+
 		if (tif->tif_flags & TIFF_POSTENCODE) {
 			tif->tif_flags &= ~TIFF_POSTENCODE;
 			if (!(*tif->tif_postencode)(tif)) {
@@ -112,9 +114,12 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 		(*tif->tif_close)(tif);		/* shutdown encoder */
 		/*
 		 * Flush any data that might have been written
-		 * by the compression close+cleanup routines.
+ 		 * by the compression close+cleanup routines.  But
+                 * be careful not to write stuff if we didn't add data
+                 * in the previous steps as the "rawcc" data may well be
+                 * a previously read tile/strip in mixed read/write mode.
 		 */
-		if (tif->tif_rawcc > 0 
+		if (tif->tif_rawcc > 0 && tif->tif_rawcc != orig_rawcc
                     && (tif->tif_flags & TIFF_BEENWRITING) != 0
                     && !TIFFFlushData1(tif)) {
 			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
