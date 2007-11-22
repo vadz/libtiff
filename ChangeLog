@@ -1,5 +1,15 @@
 2007-11-22  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tif_write.c: Rip out the fancy logic in TIFFAppendToStrip() for 
+	establishing if an existing tile can be rewritten to the same location 
+	by comparing the current size to all the other blocks in the same 
+	directory.  This is dangerous in many situations and can easily 
+	corrupt a file.  (observed in esoteric GDAL situation that's hard to
+	document).  This change involves leaving the stripbytecount[] values 
+	unaltered till TIFFAppendToStrip().  Now we only write a block back
+	to the same location it used to be at if the new data is the same
+	size or smaller - otherwise we move it to the end of file.
+
 	* tif_dirwrite.c: Try to avoid writing out a full readbuffer of tile
 	data when writing the directory just because we have BEENWRITING at
 	some point in the past.  This was causing odd junk to be written out
