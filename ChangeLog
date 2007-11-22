@@ -1,3 +1,14 @@
+2007-11-22  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_predict.c: use working buffer in PredictorEncodeTile to avoid
+	modifying callers buffer. 
+	http://trac.osgeo.org/gdal/ticket/1965
+
+	* tif_predict.c/h, tif_lzw.c, tif_zip.c: Improvements so that 
+	predictor based encoding and decoding works in read-write update
+	mode properly. 
+	http://trac.osgeo.org/gdal/ticket/1948
+
 2007-10-05  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiff2pdf.c: Fixed setting of alpha value per report on list.
