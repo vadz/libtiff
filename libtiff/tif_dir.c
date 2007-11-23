@@ -1456,7 +1456,7 @@ TIFFUnlinkDirectory(TIFF* tif, uint16 dirn)
 		tif->tif_rawdata = NULL;
 		tif->tif_rawcc = 0;
 	}
-	tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP|TIFF_POSTENCODE|TIFF_BUF2WRITE);
+	tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP|TIFF_POSTENCODE|TIFF_BUF4WRITE);
 	TIFFFreeDirectory(tif);
 	TIFFDefaultDirectory(tif);
 	tif->tif_diroff = 0;			/* force link on next write */
