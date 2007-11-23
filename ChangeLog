@@ -5,7 +5,7 @@
 	rawcp/rawcc buffer are for writing and thus may require flushing.
 	Necessary to distinguish whether they need to be written to disk when
 	in mixed read/write mode and doing a mixture of writing followed by
-	reading.  http://trac.osgeo.org/gdal/ticket/1948
+	reading.  http://trac.osgeo.org/gdal/ticket/1758
 
 2007-11-23  Andrey Kiselev  <dron@ak4719.spb.edu>
 
