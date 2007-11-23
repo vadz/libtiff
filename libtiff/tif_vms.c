@@ -344,13 +344,13 @@ asm("_$$PsectAttributes_NOSHR$$_TIFFerrorHandler")
 /* IEEE floting point handling */
 
 typedef	struct ieeedouble {
-	u_long	mant2;			/* fix NDR: full 8-byte swap */
-	u_long	mant	: 20,
+	unsigned long	mant2;          /* fix NDR: full 8-byte swap */
+	unsigned long	mant	: 20,
 		exp	: 11,
 		sign	: 1;
 } ieeedouble;
 typedef	struct ieeefloat {
-	u_long	mant	: 23,
+	unsigned long   mant	: 23,
 		exp	: 8,
 		sign	: 1;
 } ieeefloat;
@@ -361,7 +361,7 @@ typedef	struct ieeefloat {
  */
 
 typedef	struct {
-	u_long	mant1	: 7,
+	unsigned long	mant1	: 7,
 		exp	: 8,
 		sign	: 1,
 		mant2	: 16,
@@ -369,7 +369,7 @@ typedef	struct {
 		mant4   : 16;
 } nativedouble;
 typedef	struct {
-	u_long	mant1	: 7,
+	unsigned long	mant1	: 7,
 		exp	: 8,
 		sign	: 1,
 		mant2	: 16;
