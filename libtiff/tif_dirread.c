@@ -3875,6 +3875,12 @@ TIFFReadDirectory(TIFF* tif)
 	    ((tif->tif_flags&(TIFF_STRIPCHOP|TIFF_ISTILED))==TIFF_STRIPCHOP))
 		ChopUpSingleUncompressedStrip(tif);
 
+        /*
+         * Clear the dirty directory flag. 
+         */
+	tif->tif_flags &= ~TIFF_DIRTYDIRECT;
+	tif->tif_flags &= ~TIFF_DIRTYSTRIP;
+
 	/*
 	 * Reinitialize i/o since we are starting on a new directory.
 	 */
@@ -4002,6 +4008,7 @@ TIFFReadCustomDirectory(TIFF* tif, uint64 diroff,
 		return 0;
 	}
 	TIFFFreeDirectory(tif);
+	_TIFFmemset(&tif->tif_dir, 0, sizeof(TIFFDirectory));
 	TIFFReadDirectoryCheckOrder(tif,dir,dircount);
 	for (di=0, dp=dir; di<dircount; di++, dp++)
 	{
