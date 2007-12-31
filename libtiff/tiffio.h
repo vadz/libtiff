@@ -392,6 +392,8 @@ extern int TIFFSetSubDirectory(TIFF*, uint64);
 extern int TIFFUnlinkDirectory(TIFF*, uint16);
 extern int TIFFSetField(TIFF*, uint32, ...);
 extern int TIFFVSetField(TIFF*, uint32, va_list);
+extern int TIFFRewriteField(TIFF *tif , uint16 tag, TIFFDataType type, 
+                            uint32 count, void *data );
 extern int TIFFWriteDirectory(TIFF *);
 extern int TIFFCheckpointDirectory(TIFF *);
 extern int TIFFRewriteDirectory(TIFF *);

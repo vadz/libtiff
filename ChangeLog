@@ -1,3 +1,21 @@
+2007-12-31  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_dirwrite.c: Added TIFFRewriteField().  This new function
+	rewrites one field "on disk" updating an existing directory 
+	entry.  Lots of limitations still...
+
+	* tiffiop.h, tif_write.c, tif_dirread.c, tif_flush.c: Keep track of 
+	TIFF_DIRTYSTRIP separately from TIFF_DIRTYDIRECT to indicate that 
+	the strip offset/size values are dirty but nothing else about the 
+	directory is dirty.  In flush handle "just stripmaps dirty" as a
+	special case that just rewrites these values without otherwise 
+	modifying the directory on disk using TIFFRewriteField().  
+
+	We also modify logic so that in update mode the directory is not
+	marked dirty on read, but only when something is changed.  This
+	means we need to keep track of updates to the stripmap stuff in 
+	TIFFAppendToStrip().
+
 2007-12-10  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_jpeg.c: Improve ability to switch between encoding and decoding

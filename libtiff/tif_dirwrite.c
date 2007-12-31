@@ -834,7 +834,8 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 	if (imagedone)
 	{
 		TIFFFreeDirectory(tif);
-		tif->tif_flags&=~TIFF_DIRTYDIRECT;
+		tif->tif_flags &= ~TIFF_DIRTYDIRECT;
+		tif->tif_flags &= ~TIFF_DIRTYSTRIP;
 		(*tif->tif_cleanup)(tif);
 		/*
 		* Reset directory-related state for subsequent
@@ -2292,4 +2293,350 @@ TIFFLinkDirectory(TIFF* tif)
 	return (1);
 }
 
+/************************************************************************/
+/*                          TIFFRewriteField()                          */
+/*                                                                      */
+/*      Rewrite a field in the directory on disk without regard to      */
+/*      updating the TIFF directory structure in memory.  Currently     */
+/*      only supported for field that already exist in the on-disk      */
+/*      directory.  Mainly used for updating stripoffset /              */
+/*      stripbytecount values after the directory is already on         */
+/*      disk.                                                           */
+/*                                                                      */
+/*      Returns zero on failure, and one on success.                    */
+/************************************************************************/
+
+int
+TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype, 
+                 uint32 count, void* data)
+{
+    static const char module[] = "TIFFResetField";
+    const TIFFField* fip = NULL;
+    uint16 dircount;
+    uint32 dirsize;
+    uint8 direntry_raw[20];
+    uint16 entry_tag = 0;
+    uint16 entry_type = 0;
+    uint64 entry_count = 0;
+    uint64 entry_offset = 0;
+    int    value_in_entry = 0;
+    uint32 i;
+    uint64 read_offset;
+    uint8 *buf_to_write = NULL;
+    TIFFDataType datatype;
+
+/* -------------------------------------------------------------------- */
+/*      Find field definition.                                          */
+/* -------------------------------------------------------------------- */
+    fip = TIFFFindField(tif, tag, TIFF_ANY);
+
+/* -------------------------------------------------------------------- */
+/*      Do some checking this is a straight forward case.               */
+/* -------------------------------------------------------------------- */
+    if( isMapped(tif) )
+    {
+        TIFFErrorExt( tif->tif_clientdata, module, 
+                      "Memory mapped files not currently supported for this operation." );
+        return 0;
+    }
+
+    if( tif->tif_diroff == 0 )
+    {
+        TIFFErrorExt( tif->tif_clientdata, module, 
+                      "Attempt to reset field on directory not already on disk." );
+        return 0;
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Read the directory entry count.                                 */
+/* -------------------------------------------------------------------- */
+    if (!SeekOK(tif, tif->tif_diroff)) {
+        TIFFErrorExt(tif->tif_clientdata, module,
+                     "%s: Seek error accessing TIFF directory",
+                     tif->tif_name);
+        return 0;
+    }
+
+    read_offset = tif->tif_diroff;
+
+    if (!(tif->tif_flags&TIFF_BIGTIFF))
+    {
+        if (!ReadOK(tif, &dircount, sizeof (uint16))) {
+            TIFFErrorExt(tif->tif_clientdata, module,
+                         "%s: Can not read TIFF directory count",
+                         tif->tif_name);
+            return 0;
+        }
+        if (tif->tif_flags & TIFF_SWAB)
+            TIFFSwabShort(&dircount);
+        dirsize = 12;
+        read_offset += 2;
+    } else {
+        uint64 dircount64;
+        if (!ReadOK(tif, &dircount64, sizeof (uint64))) {
+            TIFFErrorExt(tif->tif_clientdata, module,
+                         "%s: Can not read TIFF directory count",
+                         tif->tif_name);
+            return 0;
+        }
+        if (tif->tif_flags & TIFF_SWAB)
+            TIFFSwabLong8(&dircount64);
+        dircount = (uint16)dircount64;
+        dirsize = 20;
+        read_offset += 8;
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Read through directory to find target tag.                      */
+/* -------------------------------------------------------------------- */
+    while( dircount > 0 )
+    {
+        if (!ReadOK(tif, direntry_raw, dirsize)) {
+            TIFFErrorExt(tif->tif_clientdata, module,
+                         "%s: Can not read TIFF directory entry.",
+                         tif->tif_name);
+            return 0;
+        }
+
+        memcpy( &entry_tag, direntry_raw + 0, sizeof(uint16) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabShort( &entry_tag );
+
+        if( entry_tag == tag )
+            break;
+
+        read_offset += dirsize;
+    }
+
+    if( entry_tag != tag )
+    {
+        TIFFErrorExt(tif->tif_clientdata, module,
+                     "%s: Could not find tag %d.",
+                     tif->tif_name, tag );
+        return 0;
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Extract the type, count and offset for this entry.              */
+/* -------------------------------------------------------------------- */
+    memcpy( &entry_type, direntry_raw + 2, sizeof(uint16) );
+    if (tif->tif_flags&TIFF_SWAB)
+        TIFFSwabShort( &entry_type );
+
+    if (!(tif->tif_flags&TIFF_BIGTIFF))
+    {
+        uint32 value;
+        
+        memcpy( &value, direntry_raw + 4, sizeof(uint32) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong( &value );
+        entry_count = value;
+
+        memcpy( &value, direntry_raw + 8, sizeof(uint32) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong( &value );
+        entry_offset = value;
+    }
+    else
+    {
+        memcpy( &entry_count, direntry_raw + 4, sizeof(uint64) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong8( &entry_count );
+
+        memcpy( &entry_offset, direntry_raw + 12, sizeof(uint64) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong8( &entry_offset );
+    }
+
+/* -------------------------------------------------------------------- */
+/*      What data type do we want to write this as?                     */
+/* -------------------------------------------------------------------- */
+    if( TIFFDataWidth(in_datatype) == 8 && !(tif->tif_flags&TIFF_BIGTIFF) )
+    {
+        if( in_datatype == TIFF_LONG8 )
+            datatype = TIFF_LONG;
+        else if( in_datatype == TIFF_SLONG8 )
+            datatype = TIFF_SLONG;
+        else if( in_datatype == TIFF_IFD8 )
+            datatype = TIFF_IFD;
+        else
+            datatype = in_datatype;
+    }
+    else 
+        datatype = in_datatype;
+
+/* -------------------------------------------------------------------- */
+/*      Prepare buffer of actual data to write.  This includes          */
+/*      swabbing as needed.                                             */
+/* -------------------------------------------------------------------- */
+    buf_to_write = (uint8 *) _TIFFmalloc(count * TIFFDataWidth(datatype));
+    if( buf_to_write == NULL )
+    {
+        TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+        return 0;
+    }
+
+    if( datatype == in_datatype )
+        memcpy( buf_to_write, data, count * TIFFDataWidth(datatype) );
+    else if( datatype == TIFF_SLONG && in_datatype == TIFF_SLONG8 )
+    {
+        for( i = 0; i < count; i++ )
+        {
+            ((int32 *) buf_to_write)[i] = 
+                (int32) ((int64 *) data)[i];
+            if( (int64) ((int32 *) buf_to_write)[i] != ((int64 *) data)[i] )
+            {
+                _TIFFfree( buf_to_write );
+                TIFFErrorExt( tif->tif_clientdata, module, 
+                              "Value exceeds 32bit range of output type." );
+                return 0;
+            }
+        }
+    }
+    else if( (datatype == TIFF_LONG && in_datatype == TIFF_LONG8)
+             || (datatype == TIFF_IFD && in_datatype == TIFF_IFD8) )
+    {
+        for( i = 0; i < count; i++ )
+        {
+            ((uint32 *) buf_to_write)[i] = 
+                (uint32) ((uint64 *) data)[i];
+            if( (uint64) ((uint32 *) buf_to_write)[i] != ((uint64 *) data)[i] )
+            {
+                _TIFFfree( buf_to_write );
+                TIFFErrorExt( tif->tif_clientdata, module, 
+                              "Value exceeds 32bit range of output type." );
+                return 0;
+            }
+        }
+    }
+
+    if( TIFFDataWidth(datatype) > 1 && (tif->tif_flags&TIFF_SWAB) )
+    {
+        if( TIFFDataWidth(datatype) == 2 )
+            TIFFSwabArrayOfShort( (uint16 *) buf_to_write, count );
+        else if( TIFFDataWidth(datatype) == 4 )
+            TIFFSwabArrayOfLong( (uint32 *) buf_to_write, count );
+        else if( TIFFDataWidth(datatype) == 8 )
+            TIFFSwabArrayOfLong8( (uint64 *) buf_to_write, count );
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Is this a value that fits into the directory entry?             */
+/* -------------------------------------------------------------------- */
+    if (!(tif->tif_flags&TIFF_BIGTIFF))
+    {
+        if( TIFFDataWidth(datatype) * count <= 4 )
+        {
+            entry_offset = read_offset + 8;
+            value_in_entry = 1;
+        }
+    }
+    else
+    {
+        if( TIFFDataWidth(datatype) * count <= 8 )
+        {
+            entry_offset = read_offset + 12;
+            value_in_entry = 1;
+        }
+    }
+
+/* -------------------------------------------------------------------- */
+/*      If the tag type, and count match, then we just write it out     */
+/*      over the old values without altering the directory entry at     */
+/*      all.                                                            */
+/* -------------------------------------------------------------------- */
+    if( entry_count == count && entry_type == (uint16) datatype )
+    {
+        if (!SeekOK(tif, entry_offset)) {
+            _TIFFfree( buf_to_write );
+            TIFFErrorExt(tif->tif_clientdata, module,
+                         "%s: Seek error accessing TIFF directory",
+                         tif->tif_name);
+            return 0;
+        }
+        if (!WriteOK(tif, buf_to_write, count*TIFFDataWidth(datatype))) {
+            _TIFFfree( buf_to_write );
+            TIFFErrorExt(tif->tif_clientdata, module,
+                         "Error writing directory link");
+            return (0);
+        }
+
+        _TIFFfree( buf_to_write );
+        return 1;
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Otherwise, we write the new tag data at the end of the file.    */
+/* -------------------------------------------------------------------- */
+    if( !value_in_entry )
+    {
+        entry_offset = TIFFSeekFile(tif,0,SEEK_END);
+        
+        if (!WriteOK(tif, buf_to_write, count*TIFFDataWidth(datatype))) {
+            _TIFFfree( buf_to_write );
+            TIFFErrorExt(tif->tif_clientdata, module,
+                         "Error writing directory link");
+            return (0);
+        }
+        
+        _TIFFfree( buf_to_write );
+    }
+    else
+    {
+        memcpy( &entry_offset, buf_to_write, count*TIFFDataWidth(datatype));
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Adjust the directory entry.                                     */
+/* -------------------------------------------------------------------- */
+    entry_type = datatype;
+    memcpy( direntry_raw + 2, &entry_type, sizeof(uint16) );
+    if (tif->tif_flags&TIFF_SWAB)
+        TIFFSwabShort( direntry_raw + 2 );
+
+    if (!(tif->tif_flags&TIFF_BIGTIFF))
+    {
+        uint32 value;
+
+        value = entry_count;
+        memcpy( direntry_raw + 4, &value, sizeof(uint32) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong( direntry_raw + 4 );
+
+        value = entry_offset;
+        memcpy( direntry_raw + 8, &value, sizeof(uint32) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong( direntry_raw + 8 );
+    }
+    else
+    {
+        memcpy( direntry_raw + 4, &entry_count, sizeof(uint64) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong8( direntry_raw + 4 );
+
+        memcpy( direntry_raw + 12, &entry_offset, sizeof(uint64) );
+        if (tif->tif_flags&TIFF_SWAB)
+            TIFFSwabLong8( direntry_raw + 12 );
+    }
+
+/* -------------------------------------------------------------------- */
+/*      Write the directory entry out to disk.                          */
+/* -------------------------------------------------------------------- */
+    if (!SeekOK(tif, read_offset )) {
+        TIFFErrorExt(tif->tif_clientdata, module,
+                     "%s: Seek error accessing TIFF directory",
+                     tif->tif_name);
+        return 0;
+    }
+
+    if (!WriteOK(tif, direntry_raw,dirsize))
+    {
+        TIFFErrorExt(tif->tif_clientdata, module,
+                     "%s: Can not write TIFF directory entry.",
+                     tif->tif_name);
+        return 0;
+    }
+    
+    return 1;
+}
 /* vim: set ts=8 sts=8 sw=8 noet: */
