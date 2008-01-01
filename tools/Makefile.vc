@@ -48,4 +48,5 @@ tiffgt.exe:
 
 clean:
 	-del *.exe
+	-del *.exe.manifest
 	-del *.obj

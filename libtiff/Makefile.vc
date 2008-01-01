@@ -97,5 +97,5 @@ clean:
 	-del *.obj
 	-del *.lib
 	-del *.dll
-	-del *.exe
+	-del *.dll.manifest
 	-del *.pdb

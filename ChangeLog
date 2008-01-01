@@ -1,5 +1,8 @@
 2008-01-01  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* Makefile.vc, libtiff/Makefile.vc, tools/Makefile.vc: Improve clean
+	targets.
+
 	* tools/tiffinfo.c, tools/tiffcmp.c, tools/gif2tiff.c, tools/bmp2tiff.c
 	tools/tiff2pdf.c: Fix 64-bit warnings when compiling under MSVC 2005 
 	(x64). 
