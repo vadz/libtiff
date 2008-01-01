@@ -52,6 +52,10 @@
 # define O_BINARY	0
 #endif
 
+#if defined(_WIN32)
+typedef	TIFF_SSIZE_T	ssize_t;
+#endif
+
 static union
 {
 	TIFFHeaderClassic classic;
