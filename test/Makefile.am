@@ -33,7 +33,7 @@ EXTRA_DIST = \
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
 # Executable programs which need to be built in order to support tests
-check_PROGRAMS = ascii_tag long_tag short_tag strip_rw
+check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite
 
 # Test scripts to execute
 TESTSCRIPTS = \
@@ -58,6 +58,8 @@ short_tag_SOURCES = short_tag.c check_tag.c
 short_tag_LDADD = $(LIBTIFF)
 strip_rw_SOURCES = strip_rw.c strip.c test_arrays.c test_arrays.h
 strip_rw_LDADD = $(LIBTIFF)
+rewrite_SOURCES = rewrite_tag.c
+rewrite_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
