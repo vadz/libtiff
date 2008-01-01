@@ -1,5 +1,7 @@
 2008-01-01  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirwrite.c: #ifdef out lots of unused functions.
+
 	* Makefile.vc, libtiff/Makefile.vc, tools/Makefile.vc: Improve clean
 	targets.
 
