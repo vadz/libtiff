@@ -222,7 +222,7 @@ PredictorSetupEncode(TIFF* tif)
 
 #define REPEAT4(n, op)		\
     switch (n) {		\
-    default: { int i; for (i = n-4; i > 0; i--) { op; } } \
+    default: { tmsize_t i; for (i = n-4; i > 0; i--) { op; } } \
     case 4:  op;		\
     case 3:  op;		\
     case 2:  op;		\

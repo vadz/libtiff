@@ -111,7 +111,7 @@ NeXTDecode(TIFF* tif, uint8* buf, tmsize_t occ, uint16 s)
 			 */
 			op = row;
 			for (;;) {
-				grey = (n>>6) & 0x3;
+				grey = (uint32)((n>>6) & 0x3);
 				n &= 0x3f;
 				/*
 				 * Ensure the run does not exceed the scanline

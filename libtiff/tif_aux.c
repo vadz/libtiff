@@ -69,7 +69,7 @@ TIFFDefaultTransferFunction(TIFFDirectory* td)
 	if (td->td_bitspersample >= sizeof(tmsize_t) * 8 - 2)
 		return 0;
 
-	n = 1<<td->td_bitspersample;
+	n = ((tmsize_t)1)<<td->td_bitspersample;
 	nbytes = n * sizeof (uint16);
 	if (!(tf[0] = (uint16 *)_TIFFmalloc(nbytes)))
 		return 0;
