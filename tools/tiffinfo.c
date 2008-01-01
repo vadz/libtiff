@@ -254,7 +254,7 @@ TIFFReadSeparateStripData(TIFF* tif)
 
 static void
 ShowTile(uint32 row, uint32 col, tsample_t sample,
-    unsigned char* pp, uint32 nrow, uint32 rowsize)
+    unsigned char* pp, uint32 nrow, tsize_t rowsize)
 {
 	uint32 cc;
 

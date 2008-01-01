@@ -250,7 +250,7 @@ readscreen(void)
     global = buf[4] & 0x80;
     if (global) {
         globalbits = (buf[4] & 0x07) + 1;
-        fread(globalmap,3,1<<globalbits,infile);
+        fread(globalmap,3,((size_t)1)<<globalbits,infile);
     }
 }
 
@@ -285,7 +285,7 @@ readgifimage(char* mode)
 
         fprintf(stderr, "   local colors: %d\n", 1<<localbits);
 
-        fread(localmap, 3, 1<<localbits, infile);
+        fread(localmap, 3, ((size_t)1)<<localbits, infile);
         initcolors(localmap, 1<<localbits);
     } else if (global) {
         initcolors(globalmap, 1<<globalbits);

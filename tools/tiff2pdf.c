@@ -862,7 +862,7 @@ void tiff2pdf_usage(){
 int tiff2pdf_match_paper_size(float* width, float* length, char* papersize){
 
 	int i=0;
-	int len=0;
+	size_t len=0;
 	const char* sizes[]={
 		"LETTER", "A4", "LEGAL",
 		"EXECUTIVE", "LETTER", "LEGAL", "LEDGER", "TABLOID", 
@@ -3627,7 +3627,7 @@ tsize_t t2p_write_pdf_name(unsigned char* name, TIFF* output){
 	uint32 i=0;
 	char buffer[64];
 	uint16 nextchar=0;
-	uint32 namelen=0;
+	size_t namelen=0;
 	
 	namelen = strlen((char *)name);
 	if (namelen>126) {
@@ -3724,7 +3724,7 @@ tsize_t t2p_write_pdf_string(unsigned char* pdfstr, TIFF* output){
 	tsize_t written = 0;
 	uint32 i = 0;
 	char buffer[64];
-	uint32 len = 0;
+	size_t len = 0;
 	
 	len = strlen((char *)pdfstr);
 	written += t2pWriteFile(output, (tdata_t) "(", 1);
@@ -4807,7 +4807,7 @@ tsize_t t2p_write_pdf_transfer_dict(T2P* t2p, TIFF* output, uint16 i){
 	buflen=sprintf(buffer, "/Size [%u] \n", (1<<t2p->tiff_bitspersample));
 	written += t2pWriteFile(output, (tdata_t) buffer, buflen);
 	written += t2pWriteFile(output, (tdata_t) "/BitsPerSample 16 \n", 19);
-	written += t2p_write_pdf_stream_dict(1<<(t2p->tiff_bitspersample+1), 0, output);
+	written += t2p_write_pdf_stream_dict(((tsize_t)1)<<(t2p->tiff_bitspersample+1), 0, output);
 
 	return(written);
 }
@@ -4818,7 +4818,7 @@ tsize_t t2p_write_pdf_transfer_stream(T2P* t2p, TIFF* output, uint16 i){
 
 	written += t2p_write_pdf_stream(
 		t2p->tiff_transferfunction[i], 
-		(1<<(t2p->tiff_bitspersample+1)), 
+		(((tsize_t)1)<<(t2p->tiff_bitspersample+1)), 
 		output);
 
 	return(written);

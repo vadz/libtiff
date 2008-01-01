@@ -52,7 +52,7 @@ static	uint32 imagelength;
 static	void usage(void);
 static	int tiffcmp(TIFF*, TIFF*);
 static	int cmptags(TIFF*, TIFF*);
-static	int ContigCompare(int, uint32, unsigned char*, unsigned char*, int);
+static	int ContigCompare(int, uint32, unsigned char*, unsigned char*, tsize_t);
 static	int SeparateCompare(int, int, uint32, unsigned char*, unsigned char*);
 static	void PrintIntDiff(uint32, int, uint32, uint32, uint32);
 static	void PrintFloatDiff(uint32, int, uint32, double, double);
@@ -309,7 +309,7 @@ cmptags(TIFF* tif1, TIFF* tif2)
 
 static int
 ContigCompare(int sample, uint32 row,
-	      unsigned char* p1, unsigned char* p2, int size)
+	      unsigned char* p1, unsigned char* p2, tsize_t size)
 {
     uint32 pix;
     int ppb = 8 / bitspersample;
