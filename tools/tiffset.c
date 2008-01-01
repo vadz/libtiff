@@ -29,7 +29,11 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.12  2007-02-24 17:14:14  dron
+ * Revision 1.13  2008-01-01 15:46:28  fwarmerdam
+ * Changes to reflect the fact that TIFFFieldWithTag() and TIFFFieldWithName()
+ * now return TIFFField pointers instead of TIFFFieldInfo pointers.
+ *
+ * Revision 1.12  2007/02/24 17:14:14  dron
  * Properly handle tags with TIFF_VARIABLE writecount. As per bug
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=1350
  *
@@ -47,6 +51,7 @@
 #include <stdlib.h>
 
 #include "tiffio.h"
+#include "tif_dir.h"
 
 static char* usageMsg[] = {
 "usage: tiffset [options] filename",
@@ -65,10 +70,10 @@ usage(void)
 	exit(-1);
 }
 
-static const TIFFFieldInfo *
+static const TIFFField *
 GetField(TIFF *tiff, const char *tagname)
 {
-    const TIFFFieldInfo *fip;
+    const TIFFField *fip;
 
     if( atoi(tagname) > 0 )
         fip = TIFFFieldWithTag(tiff, (ttag_t)atoi(tagname));
@@ -77,7 +82,7 @@ GetField(TIFF *tiff, const char *tagname)
 
     if (!fip) {
         fprintf( stderr, "Field name %s not recognised.\n", tagname );
-        return (TIFFFieldInfo *)NULL;
+        return (TIFFField *)NULL;
     }
 
     return fip;
@@ -98,7 +103,7 @@ main(int argc, char* argv[])
 
     for( arg_index = 1; arg_index < argc-1; arg_index++ ) {
         if (strcmp(argv[arg_index],"-s") == 0 && arg_index < argc-3) {
-            const TIFFFieldInfo *fip;
+            const TIFFField *fip;
             const char *tagname;
 
             arg_index++;
@@ -262,9 +267,9 @@ main(int argc, char* argv[])
             }
         } else if (strcmp(argv[arg_index],"-sf") == 0 && arg_index < argc-3) {
             FILE    *fp;
-            const TIFFFieldInfo *fip;
+            const TIFFField *fip;
             char    *text;
-            int     len;
+            size_t  len;
 
             arg_index++;
             fip = GetField(tiff, argv[arg_index]);
