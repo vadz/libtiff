@@ -2665,12 +2665,12 @@ TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype,
     {
         uint32 value;
 
-        value = entry_count;
+        value = (uint32) entry_count;
         memcpy( direntry_raw + 4, &value, sizeof(uint32) );
         if (tif->tif_flags&TIFF_SWAB)
             TIFFSwabLong( (uint32 *) (direntry_raw + 4) );
 
-        value = entry_offset;
+        value = (uint32) entry_offset;
         memcpy( direntry_raw + 8, &value, sizeof(uint32) );
         if (tif->tif_flags&TIFF_SWAB)
             TIFFSwabLong( (uint32 *) (direntry_raw + 8) );
