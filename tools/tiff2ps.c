@@ -145,7 +145,7 @@ void    PSHead(FILE*, TIFF*, uint32, uint32, double, double, double, double);
 void	PSTail(FILE*, int);
 
 #if	defined( EXP_ASCII85ENCODER)
-int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, int raw_l );
+tsize_t Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, tsize_t raw_l );
 #endif
 
 static	void usage(int);
@@ -1180,7 +1180,7 @@ PS_Lvl2ImageDict(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 
 /* Flip the byte order of buffers with 16 bit samples */
 static void
-PS_FlipBytes(unsigned char* buf, int count)
+PS_FlipBytes(unsigned char* buf, tsize_t count)
 {
 	int i;
 	unsigned char temp;
@@ -1210,7 +1210,7 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	tsize_t chunk_size, byte_count;
 
 #if defined( EXP_ASCII85ENCODER )
-	int			ascii85_l;	/* Length, in bytes, of ascii85_p[] data */
+	tsize_t			ascii85_l;	/* Length, in bytes, of ascii85_p[] data */
 	uint8		*	ascii85_p = 0;	/* Holds ASCII85 encoded data */
 #endif
 
@@ -1494,7 +1494,8 @@ void
 PSDataColorContig(FILE* fd, TIFF* tif, uint32 w, uint32 h, int nc)
 {
 	uint32 row;
-	int breaklen = MAXLINE, cc, es = samplesperpixel - nc;
+	int breaklen = MAXLINE, es = samplesperpixel - nc;
+	tsize_t cc;
 	unsigned char *tf_buf;
 	unsigned char *cp, c;
 
@@ -1556,7 +1557,8 @@ void
 PSDataColorSeparate(FILE* fd, TIFF* tif, uint32 w, uint32 h, int nc)
 {
 	uint32 row;
-	int breaklen = MAXLINE, cc;
+	int breaklen = MAXLINE;
+	tsize_t cc;
 	tsample_t s, maxs;
 	unsigned char *tf_buf;
 	unsigned char *cp, c;
@@ -1590,7 +1592,8 @@ PSDataPalette(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 {
 	uint16 *rmap, *gmap, *bmap;
 	uint32 row;
-	int breaklen = MAXLINE, cc, nc;
+	int breaklen = MAXLINE, nc;
+	tsize_t cc;
 	unsigned char *tf_buf;
 	unsigned char *cp, c;
 
@@ -1667,7 +1670,7 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	tstrip_t s;
 
 #if defined( EXP_ASCII85ENCODER )
-	int	ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
+	tsize_t	ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
 	uint8	*ascii85_p = 0;		/* Holds ASCII85 encoded data */
 #endif
 
@@ -1705,7 +1708,7 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 		Ascii85Init();
 
 	for (s = 0; s < TIFFNumberOfStrips(tif); s++) {
-		int cc = TIFFReadEncodedStrip(tif, s, tf_buf, stripsize);
+		tmsize_t cc = TIFFReadEncodedStrip(tif, s, tf_buf, stripsize);
 		if (cc < 0) {
 			TIFFError(filename, "Can't read strip");
 			break;
@@ -1790,14 +1793,15 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 {
 	uint32 *bc;
 	uint32 bufsize;
-	int breaklen = MAXLINE, cc;
+	int breaklen = MAXLINE;
+	tmsize_t cc;
 	uint16 fillorder;
 	unsigned char *tf_buf;
 	unsigned char *cp, c;
 	tstrip_t s;
 
 #if defined( EXP_ASCII85ENCODER )
-	int			ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
+	tsize_t 		ascii85_l;		/* Length, in bytes, of ascii85_p[] data */
 	uint8		*	ascii85_p = 0;		/* Holds ASCII85 encoded data */
 #endif
 
@@ -1995,11 +1999,11 @@ Ascii85Flush(FILE* fd)
 *
 *****************************************************************************/
 
-int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, int raw_l )
+tsize_t Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, tsize_t raw_l )
 
 {
     char                        ascii85[5];     /* Encoded 5 tuple */
-    int                         ascii85_l;      /* Number of bytes written to ascii85_p[] */
+    tsize_t                     ascii85_l;      /* Number of bytes written to ascii85_p[] */
     int                         rc;             /* Return code */
     uint32                      val32;          /* Unencoded 4 tuple */
 
@@ -2056,7 +2060,7 @@ int Ascii85EncodeBlock( uint8 * ascii85_p, unsigned f_eod, const uint8 * raw_p, 
     
         if ( raw_l > 0 )
         {
-            int             len;                /* Output this many bytes */
+            tsize_t         len;                /* Output this many bytes */
     
             len = raw_l + 1;
             val32 = *++raw_p << 24;             /* Prime the pump */
