@@ -1,3 +1,8 @@
+2008-01-30  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tif_fax3.c: Make find0span() and find1span() non-inline to
+	make MSVC 6.0 compiler happy.
+
 2007-11-26  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_fax3.c: fix leak of FAXCS state (per bug 1603).
