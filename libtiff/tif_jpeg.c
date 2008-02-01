@@ -681,6 +681,16 @@ JPEGFixupTagsSubsampling(TIFF* tif)
 	 */
 	static const char module[] = "JPEGFixupTagsSubsampling";
 	struct JPEGFixupTagsSubsamplingData m;
+
+        if( tif->tif_dir.td_stripbytecount == NULL
+            || tif->tif_dir.td_stripbytecount[0] == 0 )
+        {
+            /* Do not even try to check if the first strip/tile does not
+               yet exist, as occurs when GDAL has created a new NULL file
+               for instance. */
+            return;
+        }
+
 	m.tif=tif;
 	m.buffersize=2048;
 	m.buffer=_TIFFmalloc(m.buffersize);
