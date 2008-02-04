@@ -137,3 +137,5 @@ EXPORTS TIFFOpen
  	TIFFAccessTagMethods
  	TIFFGetClientInfo
  	TIFFSetClientInfo
+	TIFFSwabLong8
+	TIFFSwabArrayOfLong8
