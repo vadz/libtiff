@@ -4667,18 +4667,15 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount==2);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count!=2)
-					assert(0);
-				else
+					return(0);
+				err=TIFFReadDirEntryShortArray(tif,dp,&data);
+				if (err==TIFFReadDirEntryErrOk)
 				{
-					err=TIFFReadDirEntryShortArray(tif,dp,&data);
-					if (err==TIFFReadDirEntryErrOk)
-					{
-						int m;
-						m=TIFFSetField(tif,dp->tdir_tag,data[0],data[1]);
-						_TIFFfree(data);
-						if (!m)
-							return(0);
-					}
+					int m;
+					m=TIFFSetField(tif,dp->tdir_tag,data[0],data[1]);
+					_TIFFfree(data);
+					if (!m)
+						return(0);
 				}
 			}
 			break;

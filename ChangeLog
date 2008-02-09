@@ -1,3 +1,9 @@
+2008-02-09  Joris Van Damme  <joris.at.lebbeke@skynet.be>
+
+	* tif_dirread.c: Added handling for the case of number of values for 
+	PageNumber tag different from 2 (previously resulted in an assert 
+	indicating lack of handling and was forgotten about)
+
 2008-02-01  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Do not try to fixup subsampling tags based on 
