@@ -69,9 +69,11 @@ int
 main(int argc, char **argv)
 {
 	TIFF		*tif;
-	int		i;
+	unsigned int	i;
 	unsigned char	buf[3] = { 0, 127, 255 };
 	char		*value;
+        (void) argc;
+        (void) argv;
 
 	/* Test whether we can write tags. */
 	tif = TIFFOpen(filename, "w");
@@ -116,11 +118,12 @@ main(int argc, char **argv)
 
 	/* InkNames tag has special form, so we handle it separately. */
 	if (!TIFFSetField(tif, TIFFTAG_NUMBEROFINKS, 3)) {
-		fprintf (stderr, "Can't set tag %d.\n", TIFFTAG_NUMBEROFINKS);
+		fprintf (stderr, "Can't set tag %d (NUMBEROFINKS).\n",
+                         TIFFTAG_NUMBEROFINKS);
 		goto failure;
 	}
 	if (!TIFFSetField(tif, TIFFTAG_INKNAMES, ink_names_size, ink_names)) {
-		fprintf (stderr, "Can't set tag %d.\n", TIFFTAG_INKNAMES);
+		fprintf (stderr, "Can't set tag %d (INKNAMES).\n", TIFFTAG_INKNAMES);
 		goto failure;
 	}
 
@@ -150,7 +153,7 @@ main(int argc, char **argv)
 
 	if (!TIFFGetField(tif, TIFFTAG_INKNAMES, &value)
 	    || memcmp(value, ink_names, ink_names_size)) {
-		fprintf (stderr, "Can't get tag %d.\n", TIFFTAG_INKNAMES);
+		fprintf (stderr, "Can't get tag %d (INKNAMES).\n", TIFFTAG_INKNAMES);
 		goto failure;
 	}
 

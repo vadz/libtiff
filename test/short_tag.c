@@ -39,7 +39,8 @@
 
 #include "tiffio.h"
 
-extern int CheckShortField(TIFF *, ttag_t, uint16);
+extern int CheckShortField(TIFF *tif, ttag_t field, uint16 value);
+extern int CheckLongField(TIFF *tif, ttag_t field, uint32 value);
 
 const char	*filename = "short_test.tiff";
 
@@ -73,8 +74,10 @@ int
 main(int argc, char **argv)
 {
 	TIFF		*tif;
-	int		i;
+	unsigned int	i;
 	unsigned char	buf[3] = { 0, 127, 255 };
+        (void) argc;
+        (void) argv;
 
 	/* Test whether we can write tags. */
 	tif = TIFFOpen(filename, "w");
