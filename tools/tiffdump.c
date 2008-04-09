@@ -46,14 +46,14 @@
 # include <io.h>
 #endif
 
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
+
 #include "tiffio.h"
 
 #ifndef O_BINARY
 # define O_BINARY	0
-#endif
-
-#if defined(_WIN32)
-typedef	TIFF_SSIZE_T	ssize_t;
 #endif
 
 static union
@@ -69,20 +69,26 @@ int bigendian;
 int bigtiff;
 uint32 maxitems = 24;   /* maximum indirect data items to print */
 
-char* bytefmt = "%s%#02x";    /* BYTE */
-char* sbytefmt = "%s%d";      /* SBYTE */
-char* shortfmt = "%s%u";      /* SHORT */
-char* sshortfmt = "%s%d";     /* SSHORT */
-char* longfmt = "%s%lu";      /* LONG */
-char* slongfmt = "%s%ld";     /* SLONG */
-char* long8fmt = "%s%llu";    /* LONG8 */
-char* slong8fmt = "%s%lld";   /* SLONG8 */
-char* rationalfmt = "%s%g";   /* RATIONAL */
-char* srationalfmt = "%s%g";  /* SRATIONAL */
-char* floatfmt = "%s%g";      /* FLOAT */
-char* doublefmt = "%s%g";     /* DOUBLE */
-char* ifdfmt = "%s%#04x";     /* IFD offset */
-char* ifd8fmt = "%s%#08x";    /* IFD offset8*/
+const char* bytefmt = "%s%#02x";	/* BYTE */
+const char* sbytefmt = "%s%d";		/* SBYTE */
+const char* shortfmt = "%s%u";		/* SHORT */
+const char* sshortfmt = "%s%d";		/* SSHORT */
+const char* longfmt = "%s%lu";		/* LONG */
+const char* slongfmt = "%s%ld";		/* SLONG */
+const char* ifdfmt = "%s%#04lx";	/* IFD offset */
+#if defined(__WIN32__) && defined(_MSC_VER)
+const char* long8fmt = "%s%I64u";	/* LONG8 */
+const char* slong8fmt = "%s%I64d";	/* SLONG8 */
+const char* ifd8fmt = "%s%#08I64x";	/* IFD offset8*/
+#else
+const char* long8fmt = "%s%llu";	/* LONG8 */
+const char* slong8fmt = "%s%lld";	/* SLONG8 */
+const char* ifd8fmt = "%s%#08llx";	/* IFD offset8*/
+#endif
+const char* rationalfmt = "%s%g";	/* RATIONAL */
+const char* srationalfmt = "%s%g";	/* SRATIONAL */
+const char* floatfmt = "%s%g";		/* FLOAT */
+const char* doublefmt = "%s%g";		/* DOUBLE */
 
 static void dump(int, uint64);
 extern int optind;
@@ -166,7 +172,8 @@ dump(int fd, uint64 diroff)
 #endif
 		Fatal("Not a TIFF or MDI file, bad magic number %u (%#x)",
 		    hdr.common.tiff_magic, hdr.common.tiff_magic);
-	if (hdr.common.tiff_magic == TIFF_BIGENDIAN || hdr.common.tiff_magic == MDI_BIGENDIAN)
+	if (hdr.common.tiff_magic == TIFF_BIGENDIAN
+	    || hdr.common.tiff_magic == MDI_BIGENDIAN)
 		swabflag = !bigendian;
 	else
 		swabflag = bigendian;
@@ -215,7 +222,7 @@ dump(int fd, uint64 diroff)
 	}
 }
 
-static int datawidth[] = {
+static const int datawidth[] = {
 	0, /* 00 = undefined */
 	1, /* 01 = TIFF_BYTE */
 	1, /* 02 = TIFF_ASCII */
@@ -247,7 +254,7 @@ static void PrintData(FILE*, uint16, uint32, unsigned char*);
  * We read directories sequentially.
  */
 static uint64
-ReadDirectory(int fd, unsigned ix, uint64 off)
+ReadDirectory(int fd, unsigned int ix, uint64 off)
 {
 	uint16 dircount;
 	uint32 direntrysize;
@@ -258,7 +265,11 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 
 	if (off == 0)			/* no more directories */
 		goto done;
-	if (lseek(fd, off, 0) != (off_t)off) {
+#if defined(__WIN32__) && defined(_MSC_VER)
+	if (_lseeki64(fd, (__int64)off, SEEK_SET) != (__int64)off) {
+#else
+	if (lseek(fd, (off_t)off, SEEK_SET) != (off_t)off) {
+#endif
 		Fatal("Seek error accessing TIFF directory");
 		goto done;
 	}
@@ -294,33 +305,39 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 	if (n != dircount*direntrysize) {
 		n /= direntrysize;
 		Error(
-	    "Could only read %u of %u entries in directory at offset %#llx",
-		    n, dircount, (unsigned long long) off);
+#if defined(__WIN32__) && defined(_MSC_VER)
+	    "Could only read %lu of %u entries in directory at offset %#I64x",
+		      (unsigned long)n, dircount, (unsigned __int64) off);
+#else
+	    "Could only read %lu of %u entries in directory at offset %#llx",
+		      (unsigned long)n, dircount, (unsigned long long) off);
+#endif
 		dircount = n;
 		nextdiroff = 0;
-	}
-	else
-	{
-		if (!bigtiff)
-		{
+	} else {
+		if (!bigtiff) {
 			uint32 nextdiroff32;
 			if (read(fd, (char*) &nextdiroff32, sizeof (uint32)) != sizeof (uint32))
 				nextdiroff32 = 0;
 			if (swabflag)
 				TIFFSwabLong(&nextdiroff32);
 			nextdiroff = nextdiroff32;
-		}
-		else
-		{
+		} else {
 			if (read(fd, (char*) &nextdiroff, sizeof (uint64)) != sizeof (uint64))
 				nextdiroff = 0;
 			if (swabflag)
 				TIFFSwabLong8(&nextdiroff);
 		}
 	}
+#if defined(__WIN32__) && defined(_MSC_VER)
+	printf("Directory %u: offset %I64u (%#I64x) next %I64u (%#I64x)\n", ix,
+	    (unsigned __int64)off, (unsigned __int64)off,
+	    (unsigned __int64)nextdiroff, (unsigned __int64)nextdiroff);
+#else
 	printf("Directory %u: offset %llu (%#llx) next %llu (%#llx)\n", ix,
 	    (unsigned long long)off, (unsigned long long)off,
 	    (unsigned long long)nextdiroff, (unsigned long long)nextdiroff);
+#endif
 	for (dp = (uint8*)dirmem, n = dircount; n > 0; n--) {
 		uint16 tag;
 		uint16 type;
@@ -359,7 +376,11 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 				TIFFSwabLong8(&count);
 			dp += sizeof(uint64);
 		}
-		printf("%llu<", (unsigned long long) count);
+#if defined(__WIN32__) && defined(_MSC_VER)
+		printf("%I64u<", (unsigned __int64)count);
+#else
+		printf("%llu<", (unsigned long long)count);
+#endif
 		if (type >= NWIDTHS)
 			typewidth = 0;
 		else
@@ -410,22 +431,27 @@ ReadDirectory(int fd, unsigned ix, uint64 off)
 		if (!datafits)
 		{
 			datamem = _TIFFmalloc((uint32)datasize);
-			if (datamem)
-			{
-				if (lseek(fd,dataoffset,0) != (off_t)dataoffset)
-				{
-					Error("Seek error accessing tag %u value",tag);
+			if (datamem) {
+#if defined(__WIN32__) && defined(_MSC_VER)
+				if (_lseeki64(fd, (__int64)dataoffset, SEEK_SET)
+				    != (off_t)dataoffset) {
+#else
+				if (lseek(fd, (off_t)dataoffset, 0) !=
+				    (off_t)dataoffset) {
+#endif
+					Error(
+				"Seek error accessing tag %u value", tag);
 					_TIFFfree(datamem);
 					datamem = NULL;
 				}
-				if (read(fd, datamem, datasize) != (ssize_t)datasize)
+				if (read(fd, datamem, datasize) != (TIFF_SSIZE_T)datasize)
 				{
-					Error("Read error accessing tag %u value",tag);
+					Error(
+				"Read error accessing tag %u value", tag);
 					_TIFFfree(datamem);
 					datamem = NULL;
 				}
-			}
-			else
+			} else
 				Error("No space for data for tag %u",tag);
 		}
 		if (datamem)
@@ -475,9 +501,9 @@ done:
 	return (nextdiroff);
 }
 
-static struct tagname {
+static const struct tagname {
 	uint16 tag;
-	char* name;
+	const char* name;
 } tagnames[] = {
     { TIFFTAG_SUBFILETYPE,	"SubFileType" },
     { TIFFTAG_OSUBFILETYPE,	"OldSubFileType" },
@@ -576,7 +602,7 @@ static struct tagname {
 static void
 PrintTag(FILE* fd, uint16 tag)
 {
-	register struct tagname *tp;
+	const struct tagname *tp;
 
 	for (tp = tagnames; tp < &tagnames[NTAGS]; tp++)
 		if (tp->tag == tag) {
@@ -589,7 +615,7 @@ PrintTag(FILE* fd, uint16 tag)
 static void
 PrintType(FILE* fd, uint16 type)
 {
-	static char *typenames[] = {
+	static const char *typenames[] = {
 	    "0",
 	    "BYTE",
 	    "ASCII",
@@ -693,7 +719,11 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 	case TIFF_LONG8: {
 		uint64 *llp = (uint64*)data;
 		while (count-- > 0) {
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, long8fmt, sep, (unsigned __int64) *llp++);
+#else
 			fprintf(fd, long8fmt, sep, (unsigned long long) *llp++);
+#endif
 			sep = " ";
 		}
 		break;
@@ -701,7 +731,11 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 	case TIFF_SLONG8: {
 		int64 *llp = (int64*)data;
 		while (count-- > 0)
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, slong8fmt, sep, (__int64) *llp++), sep = " ";
+#else
 			fprintf(fd, slong8fmt, sep, (long long) *llp++), sep = " ";
+#endif
 		break;
 	}
 	case TIFF_RATIONAL: {
@@ -756,7 +790,11 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 	case TIFF_IFD8: {
 		uint64 *llp = (uint64*)data;
 		while (count-- > 0) {
+#if defined(__WIN32__) && defined(_MSC_VER)
+			fprintf(fd, ifd8fmt, sep, (unsigned __int64) *llp++);
+#else
 			fprintf(fd, ifd8fmt, sep, (unsigned long long) *llp++);
+#endif
 			sep = " ";
 		}
 		break;
