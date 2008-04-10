@@ -1,3 +1,21 @@
+2008-04-10  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_flush.c tif_dirwrite.c tiffio.h tiffiop.h}:
+	TIFFRewriteField() renamed into _TIFFRewriteField() and moved out
+	from the public interface. Type of its 'count' parameter changed
+	from uint32 to tmsize_t.
+
+	* /libtiff/tiffiop.h: Make tif_nfields and tif_nfieldscompat fields
+	of the tiff structure have the size_t type instead of uint32.
+
+2008-04-09  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffdump.c: Added support for MSVS 6.0.
+
+	* libtiff/tif_dirread.c: Use custom functions _TIFFUInt64ToFloat()
+	and _TIFFUInt64ToDouble() to convert 64-bit integers into floating
+	point values on MSVS 6.0 platform.
+
 2008-03-14  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_dirread.c: Removed sanity checks on tags larger than 4MB in
