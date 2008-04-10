@@ -2374,20 +2374,19 @@ TIFFLinkDirectory(TIFF* tif)
 /************************************************************************/
 
 int
-TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype, 
-                 uint32 count, void* data)
+_TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype, 
+                  tmsize_t count, void* data)
 {
     static const char module[] = "TIFFResetField";
     const TIFFField* fip = NULL;
     uint16 dircount;
-    uint32 dirsize;
+    tmsize_t dirsize;
     uint8 direntry_raw[20];
     uint16 entry_tag = 0;
     uint16 entry_type = 0;
     uint64 entry_count = 0;
     uint64 entry_offset = 0;
     int    value_in_entry = 0;
-    uint32 i;
     uint64 read_offset;
     uint8 *buf_to_write = NULL;
     TIFFDataType datatype;
@@ -2536,17 +2535,18 @@ TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype,
 /*      Prepare buffer of actual data to write.  This includes          */
 /*      swabbing as needed.                                             */
 /* -------------------------------------------------------------------- */
-    buf_to_write = (uint8 *) _TIFFmalloc(count * TIFFDataWidth(datatype));
-    if( buf_to_write == NULL )
-    {
-        TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+    buf_to_write =
+	    (uint8 *)_TIFFCheckMalloc(tif, count, TIFFDataWidth(datatype),
+				      "for field buffer.");
+    if (!buf_to_write)
         return 0;
-    }
 
     if( datatype == in_datatype )
         memcpy( buf_to_write, data, count * TIFFDataWidth(datatype) );
     else if( datatype == TIFF_SLONG && in_datatype == TIFF_SLONG8 )
     {
+	tmsize_t i;
+
         for( i = 0; i < count; i++ )
         {
             ((int32 *) buf_to_write)[i] = 
@@ -2563,6 +2563,8 @@ TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype,
     else if( (datatype == TIFF_LONG && in_datatype == TIFF_LONG8)
              || (datatype == TIFF_IFD && in_datatype == TIFF_IFD8) )
     {
+	tmsize_t i;
+
         for( i = 0; i < count; i++ )
         {
             ((uint32 *) buf_to_write)[i] = 
@@ -2612,7 +2614,7 @@ TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype,
 /*      over the old values without altering the directory entry at     */
 /*      all.                                                            */
 /* -------------------------------------------------------------------- */
-    if( entry_count == count && entry_type == (uint16) datatype )
+    if( entry_count == (uint64)count && entry_type == (uint16) datatype )
     {
         if (!SeekOK(tif, entry_offset)) {
             _TIFFfree( buf_to_write );
