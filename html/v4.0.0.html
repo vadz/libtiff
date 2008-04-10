@@ -114,6 +114,10 @@ BigTIFF support changes:
 Other important backward incompatible changes in the public API:
 
 <UL>
+	<LI> TIFFRewriteField() renamed into _TIFFRewriteField() and moved out
+	from the public interface (from tiffio.h to tiffiop.h). Type of its
+	'count' parameter changed from uint32 to tmsize_t.
+
 	<LI> TIFFMergeFieldInfo() returns non-void result now. It returns 0
 	if successful and -1 if failed. Though this is now obsoleted function
 	and should not be used in new programs. Use the new tag extension
