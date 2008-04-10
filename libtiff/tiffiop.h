@@ -206,14 +206,14 @@ struct tiff {
 	TIFFPostMethod       tif_postdecode;   /* post decoding routine */
 	/* tag support */
 	TIFFField**          tif_fields;       /* sorted table of registered tags */
-	uint32               tif_nfields;      /* # entries in registered tag table */
+	size_t               tif_nfields;      /* # entries in registered tag table */
 	const TIFFField*     tif_foundfield;   /* cached pointer to already found tag */
 	TIFFTagMethods       tif_tagmethods;   /* tag get/set/print routines */
 	TIFFClientInfoLink*  tif_clientinfo;   /* extra client information. */
 	/* Backward compatibility stuff. We need these two fields for
 	 * setting up an old tag extension scheme. */
 	TIFFFieldArray*      tif_fieldscompat;
-	uint32               tif_nfieldscompat;
+	size_t               tif_nfieldscompat;
 };
 
 #define isPseudoTag(t) (t > 0xffff)            /* is tag value normal or pseudo */
@@ -223,7 +223,7 @@ struct tiff {
 #define isFillOrder(tif, o) (((tif)->tif_flags & (o)) != 0)
 #define isUpSampled(tif) (((tif)->tif_flags & TIFF_UPSAMPLED) != 0)
 #define TIFFReadFile(tif, buf, size) \
-	((*(tif)->tif_readproc)((tif)->tif_clientdata,buf,size))
+	((*(tif)->tif_readproc)((tif)->tif_clientdata,(buf),(size)))
 #define TIFFWriteFile(tif, buf, size) \
 	((*(tif)->tif_writeproc)((tif)->tif_clientdata,(buf),(size)))
 #define TIFFSeekFile(tif, off, whence) \
@@ -235,7 +235,7 @@ struct tiff {
 #define TIFFMapFileContents(tif, paddr, psize) \
 	((*(tif)->tif_mapproc)((tif)->tif_clientdata,(paddr),(psize)))
 #define TIFFUnmapFileContents(tif, addr, size) \
-	((*(tif)->tif_unmapproc)((tif)->tif_clientdata,addr,size))
+	((*(tif)->tif_unmapproc)((tif)->tif_clientdata,(addr),(size)))
 
 /*
  * Default Read/Seek/Write definitions.
