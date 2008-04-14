@@ -751,8 +751,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		else
 		{
 			enum TIFFReadDirEntryErr err;
-			uint32 offset;
-			offset=*(uint32*)(&direntry->tdir_offset);
+			uint32 offset = direntry->tdir_offset.toff_long;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong(&offset);
 			err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
@@ -770,8 +769,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		else
 		{
 			enum TIFFReadDirEntryErr err;
-			uint64 offset;
-			offset=direntry->tdir_offset;
+			uint64 offset = direntry->tdir_offset.toff_long8;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong8(&offset);
 			err=TIFFReadDirEntryData(tif,offset,(tmsize_t)datasize,data);
@@ -2757,7 +2755,8 @@ static void TIFFReadDirEntryCheckedSbyte(TIFF* tif, TIFFDirEntry* direntry, int8
 
 static void TIFFReadDirEntryCheckedShort(TIFF* tif, TIFFDirEntry* direntry, uint16* value)
 {
-	*value=*(uint16*)(&direntry->tdir_offset);
+	*value = direntry->tdir_offset.toff_short;
+	//*value=*(uint16*)(&direntry->tdir_offset);
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabShort(value);
 }
@@ -2788,8 +2787,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirE
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		enum TIFFReadDirEntryErr err;
-		uint32 offset;
-		offset=*(uint32*)(&direntry->tdir_offset);
+		uint32 offset = direntry->tdir_offset.toff_long;
 		if (tif->tif_flags&TIFF_SWAB)
 			TIFFSwabLong(&offset);
 		err=TIFFReadDirEntryData(tif,offset,8,value);
@@ -2797,7 +2795,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedLong8(TIFF* tif, TIFFDirE
 			return(err);
 	}
 	else
-		*value=direntry->tdir_offset;
+		*value = direntry->tdir_offset.toff_long8;
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabLong8(value);
 	return(TIFFReadDirEntryErrOk);
@@ -2808,8 +2806,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSlong8(TIFF* tif, TIFFDir
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		enum TIFFReadDirEntryErr err;
-		uint32 offset;
-		offset=*(uint32*)(&direntry->tdir_offset);
+		uint32 offset = direntry->tdir_offset.toff_long;
 		if (tif->tif_flags&TIFF_SWAB)
 			TIFFSwabLong(&offset);
 		err=TIFFReadDirEntryData(tif,offset,8,value);
@@ -2832,8 +2829,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedRational(TIFF* tif, TIFFD
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		enum TIFFReadDirEntryErr err;
-		uint32 offset;
-		offset=*(uint32*)(&direntry->tdir_offset);
+		uint32 offset = direntry->tdir_offset.toff_long;
 		if (tif->tif_flags&TIFF_SWAB)
 			TIFFSwabLong(&offset);
 		err=TIFFReadDirEntryData(tif,offset,8,m);
@@ -2841,7 +2837,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedRational(TIFF* tif, TIFFD
 			return(err);
 	}
 	else
-		*(uint64*)m=direntry->tdir_offset;
+		*(uint64*)m = direntry->tdir_offset.toff_long8;
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabArrayOfLong(m,2);
 	if (m[0]==0)
@@ -2861,8 +2857,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSrational(TIFF* tif, TIFF
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		enum TIFFReadDirEntryErr err;
-		uint32 offset;
-		offset=*(uint32*)(&direntry->tdir_offset);
+		uint32 offset = direntry->tdir_offset.toff_long;
 		if (tif->tif_flags&TIFF_SWAB)
 			TIFFSwabLong(&offset);
 		err=TIFFReadDirEntryData(tif,offset,8,m);
@@ -2870,7 +2865,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedSrational(TIFF* tif, TIFF
 			return(err);
 	}
 	else
-		*(uint64*)m=direntry->tdir_offset;
+		*(uint64*)m=direntry->tdir_offset.toff_long8;
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabArrayOfLong(m,2);
 	if ((int32)m[0]==0)
@@ -2896,8 +2891,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedDouble(TIFF* tif, TIFFDir
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		enum TIFFReadDirEntryErr err;
-		uint32 offset;
-		offset=*(uint32*)(&direntry->tdir_offset);
+		uint32 offset = direntry->tdir_offset.toff_long;
 		if (tif->tif_flags&TIFF_SWAB)
 			TIFFSwabLong(&offset);
 		err=TIFFReadDirEntryData(tif,offset,8,value);
@@ -2905,7 +2899,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckedDouble(TIFF* tif, TIFFDir
 			return(err);
 	}
 	else
-		*(uint64*)value=direntry->tdir_offset;
+		*(uint64*)value=direntry->tdir_offset.toff_long8;
 	if (tif->tif_flags&TIFF_SWAB)
 		TIFFSwabLong8((uint64*)value);
 	return(TIFFReadDirEntryErrOk);
@@ -4526,7 +4520,7 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 				TIFFSwabLong8((uint64*)ma);
 			mb->tdir_count=*(uint64*)ma;
 			ma+=sizeof(uint64);
-			mb->tdir_offset=*(uint64*)ma;
+			mb->tdir_offset.toff_long8=*(uint64*)ma;
 			ma+=sizeof(uint64);
 		}
 		mb++;
@@ -5252,7 +5246,7 @@ TIFFFetchSubjectDistance(TIFF* tif, TIFFDirEntry* dir)
 		}
 		else
 		{
-			*(uint64*)m=dir->tdir_offset;
+			*(uint64*)m=dir->tdir_offset.toff_long8;
 			err=TIFFReadDirEntryErrOk;
 		}
 	}
