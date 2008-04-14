@@ -1,6 +1,12 @@
+2008-04-14  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/{tif_dirread.c, tif_dirwrite.c, tiffiop.h}:
+	Get rid of some of "dereferencing type-punned" warnings by converting
+	tdir_offset field of TIFFDirEntry structure into union.
+
 2008-04-10  Andrey Kiselev  <dron@ak4719.spb.edu>
 
-	* libtiff/{tif_flush.c tif_dirwrite.c tiffio.h tiffiop.h}:
+	* libtiff/{tif_flush.c, tif_dirwrite.c, tiffio.h, tiffiop.h}:
 	TIFFRewriteField() renamed into _TIFFRewriteField() and moved out
 	from the public interface. Type of its 'count' parameter changed
 	from uint32 to tmsize_t.
