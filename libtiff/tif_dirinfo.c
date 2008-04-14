@@ -814,7 +814,8 @@ TIFFMergeFieldInfo(TIFF* tif, const TIFFFieldInfo info[], uint32 n)
 	static const char module[] = "TIFFMergeFieldInfo";
 	static const char reason[] = "for fields array";
 	TIFFField *tp;
-	uint32 i, nfields;
+	size_t nfields;
+	uint32 i;
 
 	if (tif->tif_nfieldscompat > 0) {
 		tif->tif_fieldscompat = (TIFFFieldArray *)
