@@ -50,6 +50,8 @@ IMAGES = \
 	images/rgb-3c-16b.tiff \
 	images/rgb-3c-8b.tiff
 
+noinst_HEADERS = tifftest.h
+
 ascii_tag_SOURCES = ascii_tag.c
 ascii_tag_LDADD = $(LIBTIFF)
 long_tag_SOURCES = long_tag.c check_tag.c
