@@ -1,3 +1,10 @@
+2008-04-15  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* test/: Test suite updated. Everything is passed now.
+
+	* libtiff/tif_dirinfo.c: Fixed description of the
+	TIFFTAG_NUMBEROFINKS tag.
+
 2008-04-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/{tif_dirread.c, tif_dirwrite.c, tiffiop.h}:
