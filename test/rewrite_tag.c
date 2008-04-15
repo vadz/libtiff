@@ -26,7 +26,7 @@
 /*
  * TIFF Library
  *
- * Module to test TIFFRewriteField().
+ * Module to test _TIFFRewriteField().
  */
 
 #include "tif_config.h"
@@ -38,6 +38,7 @@
 #endif 
 
 #include "tiffio.h"
+#include "tiffiop.h"
 
 const uint32	width = 10;
 const uint32	length = 40;
@@ -142,11 +143,11 @@ int rewrite_test( const char *filename, int length, int bigtiff,
 
 {
     TIFF		*tif;
-    int		i;
-    unsigned char   buf[10] = {5,6,7,8,9,10,11,12,13,14};
-    uint64         *rowoffset, *rowbytes;
-    uint64         *upd_rowoffset;
-    uint32         *upd_bytecount;
+    int			i;
+    unsigned char	buf[10] = {5,6,7,8,9,10,11,12,13,14};
+    uint64		*rowoffset, *rowbytes;
+    uint64		*upd_rowoffset;
+    uint32		*upd_bytecount;
 
     /* Test whether we can write tags. */
     if( bigtiff )
@@ -222,8 +223,8 @@ int rewrite_test( const char *filename, int length, int bigtiff,
     for( i = 0; i < length; i++ )
         upd_rowoffset[i] = base_value + i*10;
 
-    if( !TIFFRewriteField( tif, TIFFTAG_STRIPOFFSETS, TIFF_LONG8, 
-                           length, upd_rowoffset ) )
+    if( !_TIFFRewriteField( tif, TIFFTAG_STRIPOFFSETS, TIFF_LONG8, 
+                            length, upd_rowoffset ) )
     {
         fprintf (stderr, "Can't rewrite STRIPOFFSETS.\n");
         goto failure;
@@ -235,8 +236,8 @@ int rewrite_test( const char *filename, int length, int bigtiff,
     for( i = 0; i < length; i++ )
         upd_bytecount[i] = 100 + i*10;
 
-    if( !TIFFRewriteField( tif, TIFFTAG_STRIPBYTECOUNTS, TIFF_LONG, 
-                           length, upd_bytecount ) )
+    if( !_TIFFRewriteField( tif, TIFFTAG_STRIPBYTECOUNTS, TIFF_LONG, 
+                            length, upd_bytecount ) )
     {
         fprintf (stderr, "Can't rewrite STRIPBYTECOUNTS.\n");
         goto failure;
