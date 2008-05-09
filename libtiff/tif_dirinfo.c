@@ -504,13 +504,9 @@ _TIFFFindFieldByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	key.field_name = (char *)field_name;
 	key.field_type = dt;
 
-        {
-          size_t tif_nfields = tif->tif_nfields;
-          ret = (const TIFFField **) lfind(&pkey, tif->tif_fields,
-                                           &tif_nfields, /* size_t pointer */
-                                           sizeof(TIFFField *), tagNameCompare);
-          tif->tif_nfields = (uint32) tif_nfields;
-        }
+	ret = (const TIFFField **) lfind(&pkey, tif->tif_fields,
+					 &tif->tif_nfields,
+					 sizeof(TIFFField *), tagNameCompare);
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 }
 
@@ -904,15 +900,11 @@ TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	key.field_name = (char *)field_name;
 	key.field_type = dt;
 
-        {
-          size_t tif_nfields = tif->tif_nfields;
-          ret = (const TIFFFieldInfo **) lfind(&pkey,
-                                               tif->tif_fields,
-                                               &tif->tif_nfields,
-                                               sizeof(TIFFFieldInfo *),
-                                               tagNameCompare);
-          tif->tif_nfields = (uint32) tif_nfields;
-        }
+	ret = (const TIFFFieldInfo **) lfind(&pkey,
+					     tif->tif_fields,
+					     &tif->tif_nfields,
+					     sizeof(TIFFFieldInfo *),
+					     tagNameCompare);
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 #endif
 	return NULL;
