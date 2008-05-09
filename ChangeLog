@@ -1,3 +1,8 @@
+2008-05-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): Libtool 2.2.4 does not like
+	"ACLOCAL_AMFLAGS=-I ./m4".  It wants "ACLOCAL_AMFLAGS=-I m4".
+
 2008-04-15  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* test/: Test suite updated. Everything is passed now.
