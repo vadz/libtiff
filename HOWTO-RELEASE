@@ -24,7 +24,7 @@ utilities to release a package.
    Version should be updated in two places: in the second argument of the
    AC_INIT macro and in LIBTIFF_xxx_VERSION variables.
 
-5. autoconf
+5. ./autogen.sh
 
 6. sh configure
 

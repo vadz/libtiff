@@ -27,7 +27,8 @@ LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 EXTRA_DIST = \
 	$(TESTSCRIPTS) \
-	$(IMAGES)
+	$(IMAGES) \
+	common.sh
 
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
