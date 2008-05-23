@@ -720,10 +720,8 @@ tiffcp(TIFF* in, TIFF* out)
 				const char* cp = inknames;
 				while (ninks > 1) {
 					cp = strchr(cp, '\0');
-					if (cp) {
-						cp++;
-						inknameslen += (strlen(cp) + 1);
-					}
+                                        cp++;
+                                        inknameslen += (strlen(cp) + 1);
 					ninks--;
 				}
 				TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
@@ -1178,9 +1176,11 @@ DECLAREreadFunc(readSeparateStripsIntoBuffer)
 {
 	int status = 1;
 	tsize_t scanlinesize = TIFFScanlineSize(in);
-	tdata_t scanline = _TIFFmalloc(scanlinesize);
+	tdata_t scanline;
 	if (!scanlinesize)
 		return 0;
+
+        scanline = _TIFFmalloc(scanlinesize);
 
 	(void) imagewidth;
 	if (scanline) {

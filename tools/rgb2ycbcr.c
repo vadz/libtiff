@@ -278,6 +278,7 @@ tiffcvt(TIFF* in, TIFF* out)
 	float floatv;
 	char *stringv;
 	uint32 longv;
+        int result;
 
 	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
 	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
@@ -322,7 +323,9 @@ tiffcvt(TIFF* in, TIFF* out)
 	rowsperstrip = TIFFDefaultStripSize(out, rowsperstrip);
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
 
-	return (cvtRaster(out, raster, width, height));
+	result = cvtRaster(out, raster, width, height);
+        _TIFFfree(raster);
+        return result;
 }
 
 char* stuff[] = {

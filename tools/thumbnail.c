@@ -100,6 +100,8 @@ main(int argc, char* argv[])
     if (out == NULL)
 	return 2;
     in = TIFFOpen(argv[optind], "r");
+    if( in == NULL )
+        return 2;
 
     thumbnail = (uint8*) _TIFFmalloc(tnw * tnh);
     if (!thumbnail) {
