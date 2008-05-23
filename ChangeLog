@@ -1,5 +1,7 @@
 2008-05-23  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tools/tiffdither.c: remove dead onestrip code.  avoid memory leak.
+
 	* tools/rgb2ycbcr.c: fix memory leak of raster buffer.
 
 	* tools/tiffcp.c: Simplify inknames code to avoid pointless test.
