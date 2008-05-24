@@ -1,5 +1,13 @@
 2008-05-23  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_fax3.c: Add an assert in an effort to detect a
+	possible runtime problem reported by coverity.
+
+	* contrib/iptcutil/iptcutil.c: Fixed memory leak of str.
+
+	* tools/tiffcrop.c, man/tiffcrop.1: Major update from Richard Nolde.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1888
+
 	* tools/tiffdither.c: remove dead onestrip code.  avoid memory leak.
 
 	* tools/rgb2ycbcr.c: fix memory leak of raster buffer.

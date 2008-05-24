@@ -569,6 +569,7 @@ static const int _msbmask[9] =
 		length -= bit;					\
 		_FlushBits(tif);				\
 	}							\
+        assert( length < 9 );                                   \
 	data |= (bits & _msbmask[length]) << (bit - length);	\
 	bit -= length;						\
 	if (bit == 0)						\

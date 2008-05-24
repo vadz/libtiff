@@ -294,7 +294,10 @@ int formatIPTC(FILE *ifile, FILE *ofile)
     {
       c = str[tagindx] = getc(ifile);
       if (c == EOF)
-        return -1;
+      {
+          free(str);
+          return -1;
+      }
     }
     str[ taglen ] = 0;
 
