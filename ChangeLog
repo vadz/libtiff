@@ -1,3 +1,13 @@
+2008-05-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test {tiff2pdf.sh tiff2ps-EPS1.sh tiff2ps-PS1.sh tiff2ps-PS2.sh
+	tiff2ps-PS3.sh tiffcp-g3-1d-fill.sh tiffcp-g3-1d.sh
+	tiffcp-g3-2d-fill.sh tiffcp-g3-2d.sh tiffcp-g3.sh tiffcp-g4.sh
+	tiffcp-split-join.sh tiffcp-split.sh tiffcp-thumbnail.sh
+	tiffdump.sh tiffinfo.sh}: Added more test scripts based on
+	suggestions from Lee Howard posted to the tiff list on 13 Sep
+	2007.
+
 2008-05-23  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_fax3.c: Add an assert in an effort to detect a

@@ -38,7 +38,22 @@ check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite
 
 # Test scripts to execute
 TESTSCRIPTS = \
-	tiffinfo.sh
+	tiffcp-g3.sh \
+	tiffcp-g3-1d.sh \
+	tiffcp-g3-1d-fill.sh \
+	tiffcp-g3-2d.sh \
+	tiffcp-g3-2d-fill.sh \
+	tiffcp-g4.sh \
+	tiffcp-thumbnail.sh \
+	tiffdump.sh \
+	tiffinfo.sh \
+	tiffcp-split.sh \
+	tiffcp-split-join.sh \
+	tiff2ps-PS1.sh \
+	tiff2ps-PS2.sh \
+	tiff2ps-PS3.sh \
+	tiff2ps-EPS1.sh \
+	tiff2pdf.sh
 
 IMAGES = \
 	images/minisblack-1c-16b.tiff \

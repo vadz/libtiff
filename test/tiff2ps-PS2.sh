@@ -1,11 +1,11 @@
 #!/bin/sh
 #
-# Basic sanity check for tiffinfo.
+# Basic sanity check for tiffps with PostScript Level 2 output
 #
 . ${srcdir}/common.sh
-outfile=deleteme-$$.txt
-operation=tiffinfo
-${TIFFINFO} -c -D -d -j -s ${IMG_MINISBLACK_1C_16B} > $outfile
+outfile=deleteme-$$.ps
+operation=tiff2ps
+${TIFF2PS} -a -2 ${IMG_MINISWHITE_1C_1B} > $outfile
 status=$?
 
 if test $status -eq 0

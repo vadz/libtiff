@@ -1,11 +1,11 @@
 #!/bin/sh
 #
-# Basic sanity check for tiffinfo.
+# Basic sanity check for tiffcp with G3 compression
 #
 . ${srcdir}/common.sh
-outfile=deleteme-$$.txt
-operation=tiffinfo
-${TIFFINFO} -c -D -d -j -s ${IMG_MINISBLACK_1C_16B} > $outfile
+outfile=deleteme-$$.tif
+operation=tiffcp
+${TIFFCP} -c g3 ${IMG_MINISWHITE_1C_1B} $outfile
 status=$?
 
 if test $status -eq 0
