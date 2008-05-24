@@ -1,4 +1,3 @@
-# $Id$
 #
 # Tag Image File Format (TIFF) Software
 #
