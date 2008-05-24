@@ -47,8 +47,8 @@ utilities to release a package.
     be created in the top level package directory.
 
 14. Copy to ftp.remotesensing.org ftp site. 
-    scp tiff-*.tar.gz ftp.remotesensing.org:/var/ftp/libtiff/
-    scp tiff-*.zip ftp.remotesensing.org:/var/ftp/libtiff/
+    scp tiff-*.tar.gz tiff-*.zip \
+    	frankw@upload.osgeo.org:/osgeo/download/libtiff
 
 15. Announce to list, tiff@lists.maptools.org
 
