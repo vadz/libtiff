@@ -1145,7 +1145,10 @@ TIFFWriteAnyArray(TIFF* tif,
 		}
 		break;
 	case TIFF_DOUBLE:
-		return (TIFFWriteDoubleArray(tif, dir, v));
+                {
+                    if( !TIFFWriteDoubleArray(tif, dir, v))
+                        goto out;
+                }
 	default:
 		/* TIFF_NOTYPE */
 		/* TIFF_ASCII */
