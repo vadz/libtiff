@@ -1,3 +1,12 @@
+2008-05-24  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_codec.c: Avoid NULL pointer dereferencing for exotic 
+	compression codec codes.
+
+	* tif_dirwrite.c: fix potential memory leak.
+
+	* tif_dirread.c: Fix unchecked malloc result.
+ 
 2008-05-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test {tiff2pdf.sh tiff2ps-EPS1.sh tiff2ps-PS1.sh tiff2ps-PS2.sh
