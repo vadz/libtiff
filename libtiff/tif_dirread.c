@@ -4138,6 +4138,9 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 	td->td_stripbytecount = (uint64*)
 	    _TIFFCheckMalloc(tif, td->td_nstrips, sizeof (uint64),
 		"for \"StripByteCounts\" array");
+        if( td->td_stripbytecount == NULL )
+            return -1;
+
 	if (td->td_compression != COMPRESSION_NONE) {
 		uint64 space;
 		uint64 filesize;
