@@ -1,3 +1,8 @@
+2008-05-26  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tiffconf.vc.h: Added JBIG_SUPPORT and MDI_SUPPORT items
+	in windows version (care of Edward Lam).
+
 2008-05-24  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_codec.c: Avoid NULL pointer dereferencing for exotic 
