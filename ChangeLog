@@ -1,5 +1,7 @@
 2008-05-26  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tif_config.*.h, tiffconf.*.h: Remove SIZEOF_LONG definition, unused.
+
 	* libtiff/tif_win32.c: Replace custom Win32 memory api with generic
 	POSIX one.  No apparent value to use of GlobalAlloc() in the modern
 	age.  http://bugzilla.maptools.org/show_bug.cgi?id=1885

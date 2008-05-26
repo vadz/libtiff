@@ -19,9 +19,6 @@
 /* The size of a `int', as computed by sizeof. */
 #define SIZEOF_INT 4
 
-/* The size of a `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
-
 /* Signed 8-bit type */
 #define TIFF_INT8_T signed char
 

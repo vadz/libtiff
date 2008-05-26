@@ -39,9 +39,6 @@
 /* The size of a `int', as computed by sizeof. */
 #define SIZEOF_INT 4
 
-/* The size of a `long', as computed by sizeof. */
-#define SIZEOF_LONG 4
-
 /* Compatibility stuff. */
 
 /* Define as 0 or 1 according to the floating point format suported by the
