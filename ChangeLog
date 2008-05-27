@@ -1,3 +1,8 @@
+2008-05-27  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff.def: Add TIFFFindField
+	http://bugzilla.maptools.org/show_bug.cgi?id=1891
+
 2008-05-26  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_config.*.h, tiffconf.*.h: Remove SIZEOF_LONG definition, unused.

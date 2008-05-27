@@ -139,3 +139,4 @@ EXPORTS TIFFOpen
  	TIFFSetClientInfo
 	TIFFSwabLong8
 	TIFFSwabArrayOfLong8
+	TIFFFindField
