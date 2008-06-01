@@ -795,6 +795,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		uint8* n;
+		uint32 nTmp;
 		TIFFDirEntry* o;
 		n=dirmem;
 		*(uint16*)n=ndir;
@@ -812,15 +813,19 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabShort((uint16*)n);
 			n+=2;
-			*(uint32*)n=(uint32)o->tdir_count;
+			nTmp = (uint32)o->tdir_count;
+			_TIFFmemcpy(n,&nTmp,4);
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong((uint32*)n);
 			n+=4;
+			/* This is correct. The data has been */
+			/* swabbed previously in TIFFWriteDirectoryTagData */
 			_TIFFmemcpy(n,&o->tdir_offset,4);
 			n+=4;
 			o++;
 		}
-		*(uint32*)n = (uint32)tif->tif_nextdiroff;
+		nTmp = (uint32)tif->tif_nextdiroff;
+		_TIFFmemcpy(n,&nTmp,4);
 	}
 	else
 	{
@@ -842,7 +847,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabShort((uint16*)n);
 			n+=2;
-			*(uint64*)n=o->tdir_count;
+			_TIFFmemcpy(n,&o->tdir_count,8);
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong8((uint64*)n);
 			n+=8;
@@ -850,7 +855,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			n+=8;
 			o++;
 		}
-		*(uint64*)n = tif->tif_nextdiroff;
+		_TIFFmemcpy(n,&tif->tif_nextdiroff,8);
 	}
 	_TIFFfree(dir);
 	dir=NULL;

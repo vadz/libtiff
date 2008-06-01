@@ -1,3 +1,9 @@
+2008-06-01  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirwrite.c: Fix alignment problems affecting architectures
+	like Sparc/Solaris.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1892
+
 2008-05-27  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff.def: Add TIFFFindField
