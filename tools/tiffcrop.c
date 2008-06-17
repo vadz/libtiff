@@ -123,6 +123,10 @@ extern int getopt(int, char**, char*);
 # define unlink delete
 #endif
 
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+
 #define	streq(a,b)	(strcmp((a),(b)) == 0)
 #define	strneq(a,b,n)	(strncmp((a),(b),(n)) == 0)
 
@@ -934,6 +938,9 @@ main(int argc, char* argv[])
   unsigned int  total_images = 0;
   unsigned int  end_of_input = FALSE;
 
+  extern int optind;
+  extern char* optarg;
+  
   initImageData(&image);
   initCropMasks(&crop);
   initPageSetup(&page, sections, seg_buffs);
@@ -2024,23 +2031,23 @@ computeInputPixelOffsets(struct crop_mask *crop, struct image_data *image,
       if (x1 < 1)
         crop->regionlist[i].x1 = 0;
       else
-        crop->regionlist[i].x1 = x1 - 1;
+        crop->regionlist[i].x1 = (int) (x1 - 1);
 
       if (x2 > image->width - 1)
         crop->regionlist[i].x2 = image->width - 1;
       else
-        crop->regionlist[i].x2 = x2 - 1;
+        crop->regionlist[i].x2 = (int) (x2 - 1);
       zwidth  = crop->regionlist[i].x2 - crop->regionlist[i].x1 + 1; 
 
       if (y1 < 1)
         crop->regionlist[i].y1 = 0;
       else
-        crop->regionlist[i].y1 = y1 - 1;
+        crop->regionlist[i].y1 = (int) (y1 - 1);
 
       if (y2 > image->length - 1)
         crop->regionlist[i].y2 = image->length - 1;
       else
-        crop->regionlist[i].y2 = y2 - 1;
+        crop->regionlist[i].y2 = (int) (y2 - 1);
 
       zlength = crop->regionlist[i].y2 - crop->regionlist[i].y1 + 1; 
 
@@ -2423,8 +2430,8 @@ getCropOffsets(struct image_data *image, struct crop_mask *crop)
       } /* end switch statement */
     buffsize = (uint32)((ceil)(((zwidth * image->bps + 7 ) / 8) * image->spp)
 		    * (ceil(zlength)));
-    crop->regionlist[i].width = zwidth;
-    crop->regionlist[i].length = zlength;
+    crop->regionlist[i].width = (int) zwidth;
+    crop->regionlist[i].length = (int) zlength;
     crop->regionlist[i].buffsize = buffsize;
     crop->bufftotal += buffsize;
 

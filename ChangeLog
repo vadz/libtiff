@@ -1,5 +1,7 @@
 2008-06-17  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tools/tiffcrop.c: Fix some portability problems.
+
 	* libtiff/tif_ojpeg.c: Use same jpeg/win32 boolean/FAR hacks as are
 	used in tif_jpeg.c.
 
