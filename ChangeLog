@@ -1,5 +1,8 @@
 2008-06-17  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_ojpeg.c: Use same jpeg/win32 boolean/FAR hacks as are
+	used in tif_jpeg.c.
+
 	* libtiff/tif_win32.c: Ensure TIFFOpenW() uses same FILE_SHARE flags
 	as TIFFOpen().
 

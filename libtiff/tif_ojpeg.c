@@ -188,6 +188,20 @@ static const TIFFField ojpegFields[] = {
 #include <setjmp.h>
 #endif
 
+/* We undefine FAR to avoid conflict with JPEG definition */
+
+#ifdef FAR
+#undef FAR
+#endif
+
+/* Define "boolean" as unsigned char, not int, per Windows custom. */
+#if defined(__WIN32__) && !defined(__MINGW32__)
+# ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
+   typedef unsigned char boolean;
+# endif
+# define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
+#endif
+
 #include "jpeglib.h"
 #include "jerror.h"
 
