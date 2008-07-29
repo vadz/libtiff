@@ -1,3 +1,9 @@
+2008-07-29  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_strip.c: Replace assertions related to samplesperpixel != 3 or 
+	the subsampling values not being 1, 2 or 4 (for jpeg compressed images)
+	with control logic to return runtime errors (c/o Even Rouault) (#1927).
+
 2008-06-17  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiffcrop.c: Fix some portability problems.
