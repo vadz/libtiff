@@ -3454,6 +3454,8 @@ TIFFReadDirectory(TIFF* tif)
 				TIFFWarningExt(tif->tif_clientdata, module,
 				    "Unknown field with tag %d (0x%x) encountered",
 				    dp->tdir_tag,dp->tdir_tag);
+                                /* the following knowingly leaks the 
+                                   anonymous field structure */
 				if (!_TIFFMergeFields(tif,
 					_TIFFCreateAnonField(tif,
 						dp->tdir_tag,
