@@ -434,7 +434,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 			if (datamem) {
 #if defined(__WIN32__) && defined(_MSC_VER)
 				if (_lseeki64(fd, (__int64)dataoffset, SEEK_SET)
-				    != (off_t)dataoffset) {
+				    != (__int64)dataoffset) {
 #else
 				if (lseek(fd, (off_t)dataoffset, 0) !=
 				    (off_t)dataoffset) {

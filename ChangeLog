@@ -1,3 +1,10 @@
+2008-08-12  Edward Lam  <edward@sidefx.com>
+
+	* tools/tiffdump.c: When compiling for Microsoft Windows, apply
+	consistent (__int64) casting when testing if _lseeki64 has
+	successfully seeked as requested.  This is necessary for large
+	file support to work since off_t is only 32-bit.
+
 2008-07-29  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_strip.c: Replace assertions related to samplesperpixel != 3 or 
