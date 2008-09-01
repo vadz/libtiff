@@ -66,7 +66,9 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryByte(TIFF* tif, TIFFDirEntry* di
 static enum TIFFReadDirEntryErr TIFFReadDirEntryShort(TIFF* tif, TIFFDirEntry* direntry, uint16* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryLong(TIFF* tif, TIFFDirEntry* direntry, uint32* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8(TIFF* tif, TIFFDirEntry* direntry, uint64* value);
+#ifdef notdef
 static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* direntry, float* value);
+#endif
 static enum TIFFReadDirEntryErr TIFFReadDirEntryDouble(TIFF* tif, TIFFDirEntry* direntry, double* value);
 static enum TIFFReadDirEntryErr TIFFReadDirEntryIfd8(TIFF* tif, TIFFDirEntry* direntry, uint64* value);
 
@@ -498,6 +500,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8(TIFF* tif, TIFFDirEntry* d
 	}
 }
 
+#ifdef notdef
 static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* direntry, float* value)
 {
 	enum TIFFReadDirEntryErr err;
@@ -599,6 +602,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* d
 			return(TIFFReadDirEntryErrType);
 	}
 }
+#endif /* def notdef */
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryDouble(TIFF* tif, TIFFDirEntry* direntry, double* value)
 {
@@ -732,6 +736,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		*value=0;
 		return(TIFFReadDirEntryErrOk);
 	}
+        (void) desttypesize;
 #ifdef notdef
 	if ((uint64)(4*1024*1024/typesize)<direntry->tdir_count)
 		return(TIFFReadDirEntryErrSizesan);

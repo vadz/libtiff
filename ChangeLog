@@ -1,5 +1,7 @@
 2008-09-01  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirread.c: Avoid unused TIFFReadDirEntryFloat() function.
+
 	* libtiff/tif_dirwrite.c: modified to write IFDs as either IFD8 or IFD
 	depending on whether the file is bigtiff or classic tiff.
 	http://bugzilla.maptools.org/show_bug.cgi?id=1917
