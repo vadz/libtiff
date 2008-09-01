@@ -93,9 +93,12 @@ static int TIFFWriteDirectoryTagDouble(TIFF* tif, uint32* ndir, TIFFDirEntry* di
 static int TIFFWriteDirectoryTagDoubleArray(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, double* value);
 static int TIFFWriteDirectoryTagDoublePerSample(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, double value);
 static int TIFFWriteDirectoryTagIfdArray(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint32* value);
+#ifdef notdef
 static int TIFFWriteDirectoryTagIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
+#endif
 static int TIFFWriteDirectoryTagShortLong(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 value);
 static int TIFFWriteDirectoryTagLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
+static int TIFFWriteDirectoryTagIfdIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
 #ifdef notdef
 static int TIFFWriteDirectoryTagShortLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value);
 #endif
@@ -726,7 +729,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 						goto bad;
 					break;
 				case TIFF_IFD8:
-					if (!TIFFWriteDirectoryTagIfd8Array(tif,&ndir,dir,tif->tif_dir.td_customValues[m].info->field_tag,tif->tif_dir.td_customValues[m].count,tif->tif_dir.td_customValues[m].value))
+					if (!TIFFWriteDirectoryTagIfdIfd8Array(tif,&ndir,dir,tif->tif_dir.td_customValues[m].info->field_tag,tif->tif_dir.td_customValues[m].count,tif->tif_dir.td_customValues[m].value))
 						goto bad;
 					break;
 				default:
@@ -1424,6 +1427,7 @@ TIFFWriteDirectoryTagIfdArray(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16
 	return(TIFFWriteDirectoryTagCheckedIfdArray(tif,ndir,dir,tag,count,value));
 }
 
+#ifdef notdef
 static int
 TIFFWriteDirectoryTagIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value)
 {
@@ -1434,6 +1438,7 @@ TIFFWriteDirectoryTagIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint1
 	}
 	return(TIFFWriteDirectoryTagCheckedIfd8Array(tif,ndir,dir,tag,count,value));
 }
+#endif
 
 static int
 TIFFWriteDirectoryTagShortLong(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 value)
@@ -1503,6 +1508,64 @@ TIFFWriteDirectoryTagLongLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, 
     }
 
     o=TIFFWriteDirectoryTagCheckedLongArray(tif,ndir,dir,tag,count,p);
+    _TIFFfree(p);
+
+    return(o);
+}
+
+/************************************************************************/
+/*                 TIFFWriteDirectoryTagIfdIfd8Array()                  */
+/*                                                                      */
+/*      Write either IFD8 or IFD array depending on file type.          */
+/************************************************************************/
+
+static int
+TIFFWriteDirectoryTagIfdIfd8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, uint16 tag, uint32 count, uint64* value)
+{
+    static const char module[] = "TIFFWriteDirectoryTagIfdIfd8Array";
+    uint64* ma;
+    uint32 mb;
+    uint32* p;
+    uint32* q;
+    int o;
+
+    /* is this just a counting pass? */
+    if (dir==NULL)
+    {
+        (*ndir)++;
+        return(1);
+    }
+
+    /* We always write IFD8 for BigTIFF, no checking needed. */
+    if( tif->tif_flags&TIFF_BIGTIFF )
+        return TIFFWriteDirectoryTagCheckedIfd8Array(tif,ndir,dir,
+                                                     tag,count,value);
+
+    /*
+    ** For classic tiff we want to verify everything is in range for IFD
+    ** and convert to long format.
+    */
+
+    p = _TIFFmalloc(count*sizeof(uint32));
+    if (p==NULL)
+    {
+        TIFFErrorExt(tif->tif_clientdata,module,"Out of memory");
+        return(0);
+    }
+
+    for (q=p, ma=value, mb=0; mb<count; ma++, mb++, q++)
+    {
+        if (*ma>0xFFFFFFFF)
+        {
+            TIFFErrorExt(tif->tif_clientdata,module,
+                         "Attempt to write value larger than 0xFFFFFFFF in Classic TIFF file.");
+            _TIFFfree(p);
+            return(0);
+        }
+        *q= (uint32)(*ma);
+    }
+
+    o=TIFFWriteDirectoryTagCheckedIfdArray(tif,ndir,dir,tag,count,p);
     _TIFFfree(p);
 
     return(o);
