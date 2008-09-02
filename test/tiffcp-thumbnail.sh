@@ -9,10 +9,11 @@ outfile2=deleteme-out-$$.tif
 operation=tiffcp
 ${TIFFCP} -c g3:1d ${IMG_MINISWHITE_1C_1B} ${outfile1}
 status=$?
-if test status -eq 0
+
+if test $status -eq 0
 then
   operation=thumbnail
-  ${THUMBNAIL} ${outfile1} ${outfile2}
+  ${THUMBNAIL} ${outfile1} ${outfile2} 2> /dev/null 
   status=$?
 fi
 
