@@ -1,3 +1,18 @@
+2008-09-03  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffsplit.c: Get rid of unsafe strcpy()/strcat() calls when
+	doing the filename/path construction.
+
+	* tools/tiff2pdf.c: More appropriate format string in
+	t2p_write_pdf_string(); avoid signed/unsigned mismatch.
+
+	* libtiff/tif_lzw.c: Properly zero out the codetable. As per bug
+
+	http://bugzilla.maptools.org/show_bug.cgi?id=1929
+
+	* libtiff/tif_lzw.c: Properly zero out the string table. Fixes
+	CVE-2008-2327 security issue.
+
 2008-05-24  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tif_dirwrite.c: Fix potential memory leak writing large double
