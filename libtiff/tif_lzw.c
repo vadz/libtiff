@@ -423,6 +423,8 @@ LZWDecode(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 			break;
 		if (code == CODE_CLEAR) {
 			free_entp = sp->dec_codetab + CODE_FIRST;
+			_TIFFmemset(free_entp, 0,
+				    (CSIZE - CODE_FIRST) * sizeof (code_t));
 			nbits = BITS_MIN;
 			nbitsmask = MAXCODE(BITS_MIN);
 			maxcodep = sp->dec_codetab + nbitsmask-1;
@@ -627,6 +629,8 @@ LZWDecodeCompat(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 			break;
 		if (code == CODE_CLEAR) {
 			free_entp = sp->dec_codetab + CODE_FIRST;
+			_TIFFmemset(free_entp, 0,
+				    (CSIZE - CODE_FIRST) * sizeof (code_t));
 			nbits = BITS_MIN;
 			nbitsmask = MAXCODE(BITS_MIN);
 			maxcodep = sp->dec_codetab + nbitsmask;
