@@ -45,6 +45,8 @@ extern int getopt(int, char**, char*);
 
 #define PATH_LENGTH 8192
 
+static const char TIFF_SUFFIX[] = ".tif";
+
 static	char fname[PATH_LENGTH];
 
 static	int tiffcp(TIFF*, TIFF*);
@@ -69,10 +71,19 @@ main(int argc, char* argv[])
 	in = TIFFOpen(argv[1], "r");
 	if (in != NULL) {
 		do {
-			char path[PATH_LENGTH];
+			size_t path_len;
+			char *path;
+			
 			newfilename();
-			snprintf(path, sizeof(path), "%s.tif", fname);
+
+			path_len = strlen(fname) + sizeof(TIFF_SUFFIX);
+			path = (char *) _TIFFmalloc(path_len);
+			strncpy(path, fname, path_len);
+			path[path_len - 1] = '\0';
+			strncat(path, TIFF_SUFFIX, path_len - strlen(path) - 1);
 			out = TIFFOpen(path, TIFFIsBigEndian(in)?"wb":"wl");
+			_TIFFfree(path);
+
 			if (out == NULL)
 				return (-2);
 			if (!tiffcp(in, out))
