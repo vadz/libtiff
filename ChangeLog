@@ -1,3 +1,8 @@
+2008-10-21  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_jbig.c: Support the JBIG-KIT 2.0 (compatibility with
+	the older versions retained).
+
 2008-09-05  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffsplit.c: Use dynamically allocated array instead of static

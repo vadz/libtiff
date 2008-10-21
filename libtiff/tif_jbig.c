@@ -106,8 +106,18 @@ static int JBIGDecode(TIFF* tif, tidata_t buffer, tsize_t size, tsample_t s)
                                   tif->tif_rawdatasize, NULL);
         if (JBG_EOK != decodeStatus)
         {
-                TIFFError("JBIG", "Error (%d) decoding: %s",
-                          decodeStatus, jbg_strerror(decodeStatus, JBG_EN));
+		/*
+		 * XXX: JBG_EN constant was defined in pre-2.0 releases of the
+		 * JBIG-KIT. Since the 2.0 the error reporting functions were
+		 * changed. We will handle both cases here.
+		 */
+                TIFFError("JBIG", "Error (%d) decoding: %s", decodeStatus,
+#if defined(JBG_EN)
+			  jbg_strerror(decodeStatus, JBG_EN)
+#else
+                          jbg_strerror(decodeStatus)
+#endif
+			 );
                 return 0;
         }
         
