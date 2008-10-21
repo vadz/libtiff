@@ -1,3 +1,8 @@
+2008-10-21  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_jbig.c: Support the JBIG-KIT 2.0 (compatibility with
+	the older versions retained).
+
 2008-10-09  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Add #ifdefs for changes needed if using
