@@ -59,6 +59,7 @@ TIFFFlush(TIFF* tif)
                                       tif->tif_dir.td_nstrips, sizes ) )
             {
                 tif->tif_flags &= ~TIFF_DIRTYSTRIP;
+                tif->tif_flags &= ~TIFF_BEENWRITING;
                 return 1;
             }
         }
@@ -72,6 +73,7 @@ TIFFFlush(TIFF* tif)
                                       tif->tif_dir.td_nstrips, sizes ) )
             {
                 tif->tif_flags &= ~TIFF_DIRTYSTRIP;
+                tif->tif_flags &= ~TIFF_BEENWRITING;
                 return 1;
             }
         }
