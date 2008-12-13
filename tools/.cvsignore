@@ -11,8 +11,9 @@ thumbnail
 tiff2bw
 tiff2ps
 tiff2rgba
-tiffcp
 tiffcmp
+tiffcp
+tiffcrop
 tiffdither
 tiffdump
 tiffinfo
