@@ -1,5 +1,11 @@
 2008-12-18  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_getimage.c,tiffio.h: removed all use of UaToAa and
+	Bitmap16to8 arrays in TIFFRGBAImage structure to restore ABI
+	compatability.  These were just an attempt to speed up processing
+	with precalculated tables.
+	  http://bugzilla.maptools.org/show_bug.cgi?id=1979
+
 	* libtiff/tif_codec.c: Avoid printing c->name if it does not exist.
 
 2008-10-21  Andrey Kiselev  <dron@ak4719.spb.edu>

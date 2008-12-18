@@ -4,18 +4,18 @@
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
  *
- * Permission to use, copy, modify, distribute, and sell this software and
+ * Permission to use, copy, modify, distribute, and sell this software and 
  * its documentation for any purpose is hereby granted without fee, provided
  * that (i) the above copyright notices and this permission notice appear in
  * all copies of the software and related documentation, and (ii) the names of
  * Sam Leffler and Silicon Graphics may not be used in any advertising or
  * publicity relating to the software without the specific, prior written
  * permission of Sam Leffler and Silicon Graphics.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * 
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+ * 
  * IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
  * ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
  * OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
@@ -37,7 +37,7 @@
  * TIFF is defined as an incomplete type to hide the
  * library's internal data structures from clients.
  */
-typedef struct tiff TIFF;
+typedef	struct tiff TIFF;
 
 /*
  * The following typedefs define the intrinsic size of
@@ -218,9 +218,6 @@ struct _TIFFRGBAImage {
 	TIFFYCbCrToRGB* ycbcr;                  /* YCbCr conversion state */
 	TIFFCIELabToRGB* cielab;                /* CIE L*a*b conversion state */
 
-	uint8* UaToAa;                          /* Unassociated alpha to associated alpha convertion LUT */
-	uint8* Bitdepth16To8;                   /* LUT for conversion from 16bit to 8bit values */
-
 	int row_offset;
 	int col_offset;
 };
@@ -259,15 +256,15 @@ typedef struct {
 #if defined(c_plusplus) || defined(__cplusplus)
 extern "C" {
 #endif
-typedef void (*TIFFErrorHandler)(const char*, const char*, va_list);
-typedef void (*TIFFErrorHandlerExt)(thandle_t, const char*, const char*, va_list);
-typedef uint32 (*TIFFReadWriteProc)(thandle_t, tdata_t, uint32);
-typedef uint64 (*TIFFSeekProc)(thandle_t, uint64, int);
-typedef int (*TIFFCloseProc)(thandle_t);
-typedef uint64 (*TIFFSizeProc)(thandle_t);
-typedef int (*TIFFMapFileProc)(thandle_t, tdata_t*, toff_t*);
-typedef void (*TIFFUnmapFileProc)(thandle_t, tdata_t, toff_t);
-typedef void (*TIFFExtendProc)(TIFF*);
+typedef	void (*TIFFErrorHandler)(const char*, const char*, va_list);
+typedef	void (*TIFFErrorHandlerExt)(thandle_t, const char*, const char*, va_list);
+typedef	tsize_t (*TIFFReadWriteProc)(thandle_t, tdata_t, tsize_t);
+typedef	toff_t (*TIFFSeekProc)(thandle_t, toff_t, int);
+typedef	int (*TIFFCloseProc)(thandle_t);
+typedef	toff_t (*TIFFSizeProc)(thandle_t);
+typedef	int (*TIFFMapFileProc)(thandle_t, tdata_t*, toff_t*);
+typedef	void (*TIFFUnmapFileProc)(thandle_t, tdata_t, toff_t);
+typedef	void (*TIFFExtendProc)(TIFF*); 
 
 extern	const char* TIFFGetVersion(void);
 
@@ -464,18 +461,17 @@ extern	tsize_t TIFFWriteEncodedStrip(TIFF*, tstrip_t, tdata_t, tsize_t);
 extern	tsize_t TIFFWriteRawStrip(TIFF*, tstrip_t, tdata_t, tsize_t);
 extern	tsize_t TIFFWriteEncodedTile(TIFF*, ttile_t, tdata_t, tsize_t);
 extern	tsize_t TIFFWriteRawTile(TIFF*, ttile_t, tdata_t, tsize_t);
-extern int TIFFDataWidth(TIFFDataType);    /* table of tag datatype widths */
-extern void TIFFSetWriteOffset(TIFF*, toff_t);
-extern void TIFFSwabShort(uint16*);
-extern void TIFFSwabLong(uint32*);
-extern void TIFFSwabLong8(uint64*);
-extern void TIFFSwabDouble(double*);
-extern void TIFFSwabArrayOfShort(uint16*, unsigned long);
-extern void TIFFSwabArrayOfTriples(uint8*, unsigned long);
-extern void TIFFSwabArrayOfLong(uint32*, unsigned long);
-extern void TIFFSwabArrayOfDouble(double*, unsigned long);
-extern void TIFFReverseBits(unsigned char *, unsigned long);
-extern const unsigned char* TIFFGetBitRevTable(int);
+extern	int TIFFDataWidth(TIFFDataType);    /* table of tag datatype widths */
+extern	void TIFFSetWriteOffset(TIFF*, toff_t);
+extern	void TIFFSwabShort(uint16*);
+extern	void TIFFSwabLong(uint32*);
+extern	void TIFFSwabDouble(double*);
+extern	void TIFFSwabArrayOfShort(uint16*, unsigned long);
+extern	void TIFFSwabArrayOfTriples(uint8*, unsigned long);
+extern	void TIFFSwabArrayOfLong(uint32*, unsigned long);
+extern	void TIFFSwabArrayOfDouble(double*, unsigned long);
+extern	void TIFFReverseBits(unsigned char *, unsigned long);
+extern	const unsigned char* TIFFGetBitRevTable(int);
 
 #ifdef LOGLUV_PUBLIC
 #define U_NEU		0.210526316
