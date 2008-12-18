@@ -1,3 +1,7 @@
+2008-12-18  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_codec.c: Avoid printing c->name if it does not exist.
+
 2008-10-21  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* libtiff/tif_jbig.c: Support the JBIG-KIT 2.0 (compatibility with
@@ -24,6 +28,13 @@
 	CVE-2008-2327 security issue.
 
 2008-05-24  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_codec.c: Avoid NULL pointer dereferencing for exotic 
+	compression codec codes.
+
+	* tif_dirread.c: zero tif->tif_dir after freeing the directory
+	in TIFFReadCustomDirectory().  I don't exactly remember why this
+	was important. 
 
 	* tif_dirwrite.c: Fix potential memory leak writing large double
 	tags. 
