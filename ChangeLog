@@ -1,3 +1,9 @@
+2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_getimage.c, tiffio.h: More ABI corrections. 
+	Removed SubsamplingHor/Ver from TIFFRGBAImage structure.
+	  http://bugzilla.maptools.org/show_bug.cgi?id=1980
+
 2008-12-18  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_getimage.c,tiffio.h: removed all use of UaToAa and

@@ -194,8 +194,6 @@ struct _TIFFRGBAImage {
 	int alpha;                              /* type of alpha data present */
 	uint32 width;                           /* image width */
 	uint32 height;                          /* image height */
-	uint16 SubsamplingHor;                  /* subsampling factors */
-	uint16 SubsamplingVer;
 	uint16 bitspersample;                   /* image bits/sample */
 	uint16 samplesperpixel;                 /* image samples/pixel */
 	uint16 orientation;                     /* image orientation */
