@@ -1,5 +1,7 @@
 2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dir.c, tiffio.h: Introduce TIFFUnsetField() function.
+
 	* libtiff/tif_jpeg.c: Avoid errors if the application writes a full
 	strip for the last partial strip in a jpeg compressed file.
 	http://bugzilla.maptools.org/show_bug.cgi?id=1981
