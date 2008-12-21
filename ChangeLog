@@ -1,5 +1,11 @@
 2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_jpeg.c: Avoid errors if the application writes a full
+	strip for the last partial strip in a jpeg compressed file.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1981
+
+2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
+
 	* libtiff/tif_getimage.c, tiffio.h: More ABI corrections. 
 	Removed SubsamplingHor/Ver from TIFFRGBAImage structure.
 	  http://bugzilla.maptools.org/show_bug.cgi?id=1980
