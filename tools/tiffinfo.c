@@ -130,7 +130,7 @@ main(int argc, char* argv[])
 					tiffinfo(tif, order, flags);
 			} else {
 				do {
-					uint32 offset;
+					uint64 offset;
 
 					tiffinfo(tif, order, flags);
 					if (TIFFGetField(tif, TIFFTAG_EXIFIFD,

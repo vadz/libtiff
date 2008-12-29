@@ -1,3 +1,9 @@
+2008-12-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffinfo.c (main): Offset to EXIF IFD requires a 64-bit
+	type now.  Fixes crash when dumping files containing an EXIF IFD.
+	* m4/libtool.m4: Update to libtool 2.2.6.
+
 2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dir.c, tiffio.h: Introduce TIFFUnsetField() function.
