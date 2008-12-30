@@ -731,7 +731,7 @@ TIFFFlushData1(TIFF* tif)
  * appended to the end of the file.
  */
 void
-TIFFSetWriteOffset(TIFF* tif, uint64 off)
+TIFFSetWriteOffset(TIFF* tif, toff_t off)
 {
 	tif->tif_curoff = off;
 }
