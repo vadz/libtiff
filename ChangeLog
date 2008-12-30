@@ -1,5 +1,7 @@
 2008-12-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffinfoce.c (main): Use toff_t for offset type when
+	retrieving offset of EXIF IFD.
 	* libtiff/tiffio.h: Undeprecate toff_t and restore its use in the
 	TIFFClientOpen() callback and other external function definitions.
 	* tools/tiffinfo.c (main): Offset to EXIF IFD requires a 64-bit
