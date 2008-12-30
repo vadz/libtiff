@@ -1740,9 +1740,10 @@ TIFFWriteDirectoryTagSubifd(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 		}
 		pa=tif->tif_dir.td_subifd;
 		pb=o;
-		for (p=0; p<tif->tif_dir.td_nsubifd; p++)
+		for (p=0; p < tif->tif_dir.td_nsubifd; p++)
 		{
-			assert(*pa<=0xFFFFFFFFUL);
+                        assert(pa != 0);
+			assert(*pa <= 0xFFFFFFFFUL);
 			*pb++=(uint32)(*pa++);
 		}
 		n=TIFFWriteDirectoryTagCheckedIfdArray(tif,ndir,dir,TIFFTAG_SUBIFD,tif->tif_dir.td_nsubifd,o);

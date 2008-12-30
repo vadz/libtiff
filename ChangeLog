@@ -1,3 +1,8 @@
+2008-12-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/thumbnail.c: Eliminate crash noticed while running test
+	suite.
+
 2008-12-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_ojpeg.c (OJPEGLibjpegJpegSourceMgrFillInputBuffer):

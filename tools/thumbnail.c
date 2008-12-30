@@ -161,6 +161,16 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 		  CopyField(tag, longv);
 		}
 		break;
+	case TIFF_LONG8:
+		{ uint64 longv8;
+		  CopyField(tag, longv8);
+		}
+		break;
+	case TIFF_SLONG8:
+		{ int64 longv8;
+		  CopyField(tag, longv8);
+		}
+		break;
 	case TIFF_RATIONAL:
 		if (count == 1) {
 			float floatv;
@@ -184,7 +194,11 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 			CopyField(tag, doubleav);
 		}
 		break;
-          default:
+	case TIFF_IFD8:
+		{ toff_t ifd8;
+		  CopyField(tag, ifd8);
+		}
+		break;          default:
                 TIFFError(TIFFFileName(in),
                           "Data type %d is not supported, tag %d skipped.",
                           tag, type);
@@ -555,7 +569,7 @@ generateThumbnail(TIFF* in, TIFF* out)
     uint16 bps, spp;
     tsize_t rowsize, rastersize;
     tstrip_t s, ns = TIFFNumberOfStrips(in);
-    uint32 diroff[1];
+    toff_t diroff[1];
 
     TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &sw);
     TIFFGetField(in, TIFFTAG_IMAGELENGTH, &sh);
@@ -596,7 +610,7 @@ generateThumbnail(TIFF* in, TIFF* out)
     cpTag(in, out, TIFFTAG_IMAGEDESCRIPTION,	(uint16) -1, TIFF_ASCII);
     cpTag(in, out, TIFFTAG_DATETIME,		(uint16) -1, TIFF_ASCII);
     cpTag(in, out, TIFFTAG_HOSTCOMPUTER,	(uint16) -1, TIFF_ASCII);
-    diroff[0] = 0;
+    diroff[0] = 0UL;
     TIFFSetField(out, TIFFTAG_SUBIFD, 1, diroff);
     return (TIFFWriteEncodedStrip(out, 0, thumbnail, tnw*tnh) != -1 &&
             TIFFWriteDirectory(out) != -1);
