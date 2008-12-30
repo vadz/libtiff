@@ -1,5 +1,7 @@
 2008-12-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_ojpeg.c (OJPEGLibjpegJpegSourceMgrFillInputBuffer):
+	Initialize stack variables to avoid compiler warning.
 	* tools/tiffinfoce.c (main): Use toff_t for offset type when
 	retrieving offset of EXIF IFD.
 	* libtiff/tiffio.h: Undeprecate toff_t and restore its use in the
