@@ -1,3 +1,8 @@
+2008-12-31  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiffcrop.c, man/tiffcrop.1: A major update from Richard
+	Nolde.  
+
 2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Avoid errors if the application writes a full
