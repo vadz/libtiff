@@ -22,6 +22,7 @@ fi
 
 if test $status -eq 0
 then
+  :
   rm -f ${conjoined} ${splitfile}*
 else
   echo "Test failed (${operation} returned ${status}).  Please inspect these output files:"

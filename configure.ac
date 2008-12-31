@@ -178,6 +178,7 @@ INT16_T='signed short'
 AC_MSG_RESULT($INT16_T)
 AC_DEFINE_UNQUOTED(TIFF_INT16_T,$INT16_T,[Signed 16-bit type])
 
+
 AC_MSG_CHECKING(for unsigned 16-bit type)
 UINT16_T='unsigned short'
 AC_MSG_RESULT($UINT16_T)
@@ -185,77 +186,100 @@ AC_DEFINE_UNQUOTED(TIFF_UINT16_T,$UINT16_T,[Unsigned 16-bit type])
 
 AC_MSG_CHECKING(for signed 32-bit type)
 INT32_T='none'
+INT32_FORMAT='none'
 if test $ac_cv_sizeof_signed_int -eq 4
 then
   INT32_T='signed int'
+  INT32_FORMAT='"%d"'
 elif test $ac_cv_sizeof_signed_long -eq 4
 then
   INT32_T='signed long'
+  INT32_FORMAT='"%ld"'
 fi
 AC_MSG_RESULT($INT32_T)
 AC_DEFINE_UNQUOTED(TIFF_INT32_T,$INT32_T,[Signed 32-bit type])
+AC_DEFINE_UNQUOTED(TIFF_INT32_FORMAT,$INT32_FORMAT,[Signed 32-bit type formatter])
 
 AC_MSG_CHECKING(for unsigned 32-bit type)
 UINT32_T='none'
+UINT32_FORMAT='none'
 if test $ac_cv_sizeof_unsigned_int -eq 4
 then
   UINT32_T='unsigned int'
+  UINT32_FORMAT='"%u"'
 elif test $ac_cv_sizeof_unsigned_long -eq 4
 then
   UINT32_T='unsigned long'
+  UINT32_FORMAT='"%lu"'
 fi
 AC_MSG_RESULT($UINT32_T)
 AC_DEFINE_UNQUOTED(TIFF_UINT32_T,$UINT32_T,[Unsigned 32-bit type])
+AC_DEFINE_UNQUOTED(TIFF_UINT32_FORMAT,$UINT32_FORMAT,[Unsigned 32-bit type formatter])
 
 AC_MSG_CHECKING(for signed 64-bit type)
 INT64_T='none'
+INT64_FORMAT='none'
 if test $ac_cv_sizeof_signed_long -eq 8
 then
   INT64_T='signed long'
+  INT64_FORMAT='"%ld"'
 elif test $ac_cv_sizeof_signed_long_long -eq 8
 then
+  INT64_FORMAT='"%lld"'
   INT64_T='signed long long'
 fi
 AC_MSG_RESULT($INT64_T)
 AC_DEFINE_UNQUOTED(TIFF_INT64_T,$INT64_T,[Signed 64-bit type])
+AC_DEFINE_UNQUOTED(TIFF_INT64_FORMAT,$INT64_FORMAT,[Signed 64-bit type formatter])
 
 AC_MSG_CHECKING(for unsigned 64-bit type)
 UINT64_T='none'
+UINT64_FORMAT='none'
 if test $ac_cv_sizeof_unsigned_long -eq 8
 then
   UINT64_T='unsigned long'
+  UINT64_FORMAT='"%lu"'
 elif test $ac_cv_sizeof_unsigned_long_long -eq 8
 then
   UINT64_T='unsigned long long'
+  UINT64_FORMAT='"%llu"'
 fi
 AC_MSG_RESULT($UINT64_T)
 AC_DEFINE_UNQUOTED(TIFF_UINT64_T,$UINT64_T,[Unsigned 64-bit type])
+AC_DEFINE_UNQUOTED(TIFF_UINT64_FORMAT,$UINT64_FORMAT,[Unsigned 64-bit type formatter])
 
 # Determine TIFF equivalent of ssize_t
 AC_MSG_CHECKING(for signed size type)
 SSIZE_T='unknown'
+SSIZE_FORMAT='unknown'
 if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long'
+  SSIZE_FORMAT='"%ld"'
 elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long long'
+  SSIZE_FORMAT='"%lld"'
 fi
 AC_MSG_RESULT($SSIZE_T)
 AC_DEFINE_UNQUOTED(TIFF_SSIZE_T,$SSIZE_T,[Signed size type])
+AC_DEFINE_UNQUOTED(TIFF_SSIZE_FORMAT,$SSIZE_FORMAT,[Signed size type formatter])
 
 # Determine the type to use for the difference between two pointers.
 # We will default to the POSIX ptrdiff_t if it is available, but will
 # be prepared for the case when it is not.
 PTRDIFF_T='unknown'
+PTRDIFF_FORMAT='"%ld"'
 AC_CHECK_TYPE(ptrdiff_t,[PTRDIFF_T=ptrdiff_t])
 if test $PTRDIFF_T = unknown
 then
   PTRDIFF_T=$SSIZE_T
+  PTRDIFF_FORMAT=$SSIZE_FORMAT
 fi
 AC_MSG_CHECKING(for pointer difference type)
 AC_MSG_RESULT($PTRDIFF_T)
 AC_DEFINE_UNQUOTED(TIFF_PTRDIFF_T,$PTRDIFF_T,[Pointer difference type])
+AC_DEFINE_UNQUOTED(TIFF_PTRDIFF_FORMAT,$PTRDIFF_FORMAT,[Pointer difference type formatter])
 
 dnl Some compilers (IBM VisualAge) has these types defined, so check it here:
 AC_CHECK_TYPES([int8, int16, int32],,,

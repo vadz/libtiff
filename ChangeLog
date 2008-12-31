@@ -1,3 +1,10 @@
+2008-12-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffio.h: GCC will now validate format specifications
+	for TIFFError(), TIFFErrorExt(), TIFFWarning(), and
+	TIFFWarningExt() in order to reveal bugs.
+	* Many fixes throughout to work better as a 64-bit build. 
+
 2008-12-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/{tiff2pdf.c, tiff2ps.c, tiffinfo.c}: Offset and length

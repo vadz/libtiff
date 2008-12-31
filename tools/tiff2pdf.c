@@ -661,8 +661,8 @@ int main(int argc, char** argv){
 					_TIFFmalloc(strlen(optarg) + 1);
 				if(t2p->pdf_creator==NULL){
 					TIFFError(TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for main", 
-						  strlen(optarg) + 1); 
+				"Can't allocate %lu bytes of memory for main", 
+						  (unsigned long) strlen(optarg) + 1); 
 					goto fail;
 				}
 				strcpy((char *)t2p->pdf_creator, optarg);
@@ -674,8 +674,8 @@ int main(int argc, char** argv){
 				if(t2p->pdf_author==NULL){
 					TIFFError(
 						TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for main", 
-						strlen(optarg) + 1); 
+				"Can't allocate %lu bytes of memory for main", 
+						(unsigned long) strlen(optarg) + 1); 
 					goto fail;
 				}
 				strcpy((char *)t2p->pdf_author, optarg);
@@ -687,8 +687,8 @@ int main(int argc, char** argv){
 				if(t2p->pdf_title==NULL){
 					TIFFError(
 						TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for main", 
-						strlen(optarg) + 1); 
+				"Can't allocate %lu bytes of memory for main", 
+						(unsigned long) strlen(optarg) + 1); 
 					goto fail;
 				}
 				strcpy((char *)t2p->pdf_title, optarg);
@@ -700,8 +700,8 @@ int main(int argc, char** argv){
 				if(t2p->pdf_subject==NULL){
 					TIFFError(
 						TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for main", 
-						strlen(optarg)+1); 
+				"Can't allocate %lu bytes of memory for main", 
+						(unsigned long) strlen(optarg)+1); 
 					goto fail;
 				}
 				strcpy((char *)t2p->pdf_subject, optarg);
@@ -713,8 +713,8 @@ int main(int argc, char** argv){
 				if(t2p->pdf_keywords==NULL){
 					TIFFError(
 						TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for main", 
-						strlen(optarg) + 1); 
+				"Can't allocate %lu bytes of memory for main", 
+						(unsigned long) strlen(optarg) + 1); 
 					goto fail;
 				}
 				strcpy((char *)t2p->pdf_keywords, optarg);
@@ -929,8 +929,8 @@ T2P* t2p_init(){
 	if(t2p==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %u bytes of memory for t2p_init", 
-			sizeof(T2P));
+			"Can't allocate %lu bytes of memory for t2p_init", 
+			(unsigned long) sizeof(T2P));
 		return( (T2P*) NULL );
 	}
 	_TIFFmemset(t2p, 0x00, sizeof(T2P));
@@ -1063,8 +1063,8 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	if(t2p->tiff_pages==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %u bytes of memory for tiff_pages array, %s", 
-			directorycount * sizeof(T2P_PAGE), 
+			"Can't allocate %lu bytes of memory for tiff_pages array, %s", 
+			(unsigned long) directorycount * sizeof(T2P_PAGE), 
 			TIFFFileName(input));
 		t2p->t2p_error = T2P_ERR_ERROR;
 		return;
@@ -1074,8 +1074,8 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	if(t2p->tiff_tiles==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %u bytes of memory for tiff_tiles array, %s", 
-			directorycount * sizeof(T2P_TILES), 
+			"Can't allocate %lu bytes of memory for tiff_tiles array, %s", 
+			(unsigned long) directorycount * sizeof(T2P_TILES), 
 			TIFFFileName(input));
 		t2p->t2p_error = T2P_ERR_ERROR;
 		return;
@@ -1206,8 +1206,8 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			if( t2p->tiff_tiles[i].tiles_tiles == NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory for t2p_read_tiff_init, %s", 
-					t2p->tiff_tiles[i].tiles_tilecount * sizeof(T2P_TILE), 
+					"Can't allocate %lu bytes of memory for t2p_read_tiff_init, %s", 
+					(unsigned long) t2p->tiff_tiles[i].tiles_tilecount * sizeof(T2P_TILE), 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
@@ -1447,8 +1447,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"No support for palettized image %s with not one sample per pixel", 
-					TIFFFileName(input), 
-					t2p->tiff_samplesperpixel);
+					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
 			}
@@ -1517,8 +1516,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"No support for palettized CMYK image %s with not one sample per pixel", 
-					TIFFFileName(input), 
-					t2p->tiff_samplesperpixel);
+					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
 			}
@@ -1597,8 +1595,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			TIFFError(
 				TIFF2PDF_MODULE, 
 				"No support for %s with photometric interpretation LogL/LogLuv", 
-				TIFFFileName(input),
-				t2p->tiff_photometric);
+				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return;
 		default:
@@ -2077,8 +2074,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				_TIFFmalloc(t2p->tiff_datasize);
 			if (buffer == NULL) {
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2106,8 +2103,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                         memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer == NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2133,8 +2130,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                                 memset(buffer, 0, t2p->tiff_datasize);
 				if(buffer == NULL) {
 					TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-						t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+						(unsigned long) t2p->tiff_datasize, 
 						TIFFFileName(input));
 					t2p->t2p_error = T2P_ERR_ERROR;
 					return(0);
@@ -2209,8 +2206,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                                 memset(buffer, 0, t2p->tiff_datasize);
 				if(buffer==NULL){
 					TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-						t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+						(unsigned long) t2p->tiff_datasize, 
 						TIFFFileName(input));
 					t2p->t2p_error = T2P_ERR_ERROR;
 					return(0);
@@ -2252,8 +2249,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                         memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2314,8 +2311,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                 memset(buffer, 0, t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-				t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+				(unsigned long) t2p->tiff_datasize, 
 				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return(0);
@@ -2352,8 +2349,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                         memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2361,8 +2358,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			samplebuffer = (unsigned char*) _TIFFmalloc(stripsize);
 			if(samplebuffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2401,8 +2398,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
                 memset(buffer, 0, t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-				t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+				(unsigned long) t2p->tiff_datasize, 
 				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return(0);
@@ -2434,8 +2431,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2p->tiff_datasize * t2p->tiff_samplesperpixel);
 			if(samplebuffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 			  _TIFFfree(buffer);
@@ -2464,8 +2461,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2p->tiff_width*t2p->tiff_length*4);
 			if(samplebuffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %u bytes of memory for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				_TIFFfree(buffer);
@@ -2657,9 +2654,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image_tile, %s", 
-					t2p->tiff_datasize, 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2678,9 +2675,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image_tile, %s", 
-					t2p->tiff_datasize, 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2707,9 +2704,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer=(unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image, %s", 
-					t2p->tiff_datasize, 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2748,7 +2745,7 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer= (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image_tile, %s", 
 					t2p->tiff_datasize, 
 					TIFFFileName(input));
@@ -2791,9 +2788,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 		buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
-				"Can't allocate %u bytes of memory for "
+				"Can't allocate %lu bytes of memory for "
                                 "t2p_readwrite_pdf_image_tile, %s", 
-				t2p->tiff_datasize, 
+				(unsigned long) t2p->tiff_datasize, 
 				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return(0);
@@ -2824,9 +2821,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image_tile, %s", 
-					t2p->tiff_datasize, 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2834,9 +2831,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			samplebuffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(samplebuffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image_tile, %s", 
-					t2p->tiff_datasize, 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -2873,9 +2870,9 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
-					"Can't allocate %u bytes of memory "
+					"Can't allocate %lu bytes of memory "
                                         "for t2p_readwrite_pdf_image_tile, %s", 
-					t2p->tiff_datasize, 
+					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
@@ -5245,7 +5242,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 	if(t2p->pdf_xrefoffsets==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %lu bytes of memory for t2p_write_pdf", 
+			"Can't allocate %u bytes of memory for t2p_write_pdf", 
 			t2p->pdf_xrefcount * sizeof(uint32) );
 		return(written);
 	}

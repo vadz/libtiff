@@ -3407,7 +3407,7 @@ TIFFReadDirectory(TIFF* tif)
 	if (!dircount)
 	{
 		TIFFErrorExt(tif->tif_clientdata,module,
-		    "Failed to read directory at offset %llu",nextdiroff);
+		    "Failed to read directory at offset " TIFF_UINT64_FORMAT,nextdiroff);
 		return 0;
 	}
 	TIFFReadDirectoryCheckOrder(tif,dir,dircount);
@@ -4063,7 +4063,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 	if (!dircount)
 	{
 		TIFFErrorExt(tif->tif_clientdata,module,
-		    "Failed to read custom directory at offset %llu",diroff);
+		    "Failed to read custom directory at offset " TIFF_UINT64_FORMAT,diroff);
 		return 0;
 	}
 	TIFFFreeDirectory(tif);
@@ -4303,13 +4303,13 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 {
 	if ((uint64)count > dir->tdir_count) {
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
-	"incorrect count for field \"%s\" (%llu, expecting %lu); tag ignored",
+	"incorrect count for field \"%s\" (" TIFF_UINT64_FORMAT ", expecting %u); tag ignored",
 		    TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
 		return (0);
 	} else if ((uint64)count < dir->tdir_count) {
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
-	"incorrect count for field \"%s\" (%llu, expecting %lu); tag trimmed",
+	"incorrect count for field \"%s\" (" TIFF_UINT64_FORMAT ", expecting %u); tag trimmed",
 		    TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
 		return (1);

@@ -263,7 +263,7 @@ ShowTile(uint32 row, uint32 col, tsample_t sample,
 		printf(",%u", sample);
 	printf("):\n");
 	while (nrow-- > 0) {
-		for (cc = 0; cc < rowsize; cc++) {
+	  for (cc = 0; cc < (uint32) rowsize; cc++) {
 			printf(" %02x", *pp++);
 			if (((cc+1) % 24) == 0)
 				putchar('\n');

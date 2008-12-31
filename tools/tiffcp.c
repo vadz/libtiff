@@ -276,7 +276,7 @@ main(int argc, char* argv[])
 			return (-3);
 		if (diroff != 0 && !TIFFSetSubDirectory(in, diroff)) {
 			TIFFError(TIFFFileName(in),
-			    "Error, setting subdirectory at %#x", diroff);
+			    "Error, setting subdirectory at " TIFF_UINT64_FORMAT, diroff);
 			(void) TIFFClose(out);
 			return (1);
 		}
@@ -1348,7 +1348,7 @@ DECLAREwriteFunc(writeBufferToContigStrips)
 		tsize_t stripsize = TIFFVStripSize(out, nrows);
 		if (TIFFWriteEncodedStrip(out, strip++, buf, stripsize) < 0) {
 			TIFFError(TIFFFileName(out),
-			    "Error, can't write strip %lu", strip - 1);
+			    "Error, can't write strip %u", strip - 1);
 			return 0;
 		}
 		buf += stripsize;
@@ -1379,7 +1379,7 @@ DECLAREwriteFunc(writeBufferToSeparateStrips)
 			    nrows, imagewidth, 0, 0, spp, 1);
 			if (TIFFWriteEncodedStrip(out, strip++, obuf, stripsize) < 0) {
 				TIFFError(TIFFFileName(out),
-				    "Error, can't write strip %lu",
+				    "Error, can't write strip %u",
 				    strip - 1);
 				_TIFFfree(obuf);
 				return 0;

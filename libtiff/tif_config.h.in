@@ -260,8 +260,14 @@
 /* Signed 16-bit type */
 #undef TIFF_INT16_T
 
+/* Signed 32-bit type formatter */
+#undef TIFF_INT32_FORMAT
+
 /* Signed 32-bit type */
 #undef TIFF_INT32_T
+
+/* Signed 64-bit type formatter */
+#undef TIFF_INT64_FORMAT
 
 /* Signed 64-bit type */
 #undef TIFF_INT64_T
@@ -269,8 +275,14 @@
 /* Signed 8-bit type */
 #undef TIFF_INT8_T
 
+/* Pointer difference type formatter */
+#undef TIFF_PTRDIFF_FORMAT
+
 /* Pointer difference type */
 #undef TIFF_PTRDIFF_T
+
+/* Signed size type formatter */
+#undef TIFF_SSIZE_FORMAT
 
 /* Signed size type */
 #undef TIFF_SSIZE_T
@@ -278,8 +290,14 @@
 /* Unsigned 16-bit type */
 #undef TIFF_UINT16_T
 
+/* Unsigned 32-bit type formatter */
+#undef TIFF_UINT32_FORMAT
+
 /* Unsigned 32-bit type */
 #undef TIFF_UINT32_T
+
+/* Unsigned 64-bit type formatter */
+#undef TIFF_UINT64_FORMAT
 
 /* Unsigned 64-bit type */
 #undef TIFF_UINT64_T

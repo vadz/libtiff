@@ -16393,6 +16393,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+
 { $as_echo "$as_me:$LINENO: checking for unsigned 16-bit type" >&5
 $as_echo_n "checking for unsigned 16-bit type... " >&6; }
 UINT16_T='unsigned short'
@@ -16407,12 +16408,15 @@ _ACEOF
 { $as_echo "$as_me:$LINENO: checking for signed 32-bit type" >&5
 $as_echo_n "checking for signed 32-bit type... " >&6; }
 INT32_T='none'
+INT32_FORMAT='none'
 if test $ac_cv_sizeof_signed_int -eq 4
 then
   INT32_T='signed int'
+  INT32_FORMAT='"%d"'
 elif test $ac_cv_sizeof_signed_long -eq 4
 then
   INT32_T='signed long'
+  INT32_FORMAT='"%ld"'
 fi
 { $as_echo "$as_me:$LINENO: result: $INT32_T" >&5
 $as_echo "$INT32_T" >&6; }
@@ -16422,15 +16426,23 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<_ACEOF
+#define TIFF_INT32_FORMAT $INT32_FORMAT
+_ACEOF
+
+
 { $as_echo "$as_me:$LINENO: checking for unsigned 32-bit type" >&5
 $as_echo_n "checking for unsigned 32-bit type... " >&6; }
 UINT32_T='none'
+UINT32_FORMAT='none'
 if test $ac_cv_sizeof_unsigned_int -eq 4
 then
   UINT32_T='unsigned int'
+  UINT32_FORMAT='"%u"'
 elif test $ac_cv_sizeof_unsigned_long -eq 4
 then
   UINT32_T='unsigned long'
+  UINT32_FORMAT='"%lu"'
 fi
 { $as_echo "$as_me:$LINENO: result: $UINT32_T" >&5
 $as_echo "$UINT32_T" >&6; }
@@ -16440,14 +16452,22 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<_ACEOF
+#define TIFF_UINT32_FORMAT $UINT32_FORMAT
+_ACEOF
+
+
 { $as_echo "$as_me:$LINENO: checking for signed 64-bit type" >&5
 $as_echo_n "checking for signed 64-bit type... " >&6; }
 INT64_T='none'
+INT64_FORMAT='none'
 if test $ac_cv_sizeof_signed_long -eq 8
 then
   INT64_T='signed long'
+  INT64_FORMAT='"%ld"'
 elif test $ac_cv_sizeof_signed_long_long -eq 8
 then
+  INT64_FORMAT='"%lld"'
   INT64_T='signed long long'
 fi
 { $as_echo "$as_me:$LINENO: result: $INT64_T" >&5
@@ -16458,15 +16478,23 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<_ACEOF
+#define TIFF_INT64_FORMAT $INT64_FORMAT
+_ACEOF
+
+
 { $as_echo "$as_me:$LINENO: checking for unsigned 64-bit type" >&5
 $as_echo_n "checking for unsigned 64-bit type... " >&6; }
 UINT64_T='none'
+UINT64_FORMAT='none'
 if test $ac_cv_sizeof_unsigned_long -eq 8
 then
   UINT64_T='unsigned long'
+  UINT64_FORMAT='"%lu"'
 elif test $ac_cv_sizeof_unsigned_long_long -eq 8
 then
   UINT64_T='unsigned long long'
+  UINT64_FORMAT='"%llu"'
 fi
 { $as_echo "$as_me:$LINENO: result: $UINT64_T" >&5
 $as_echo "$UINT64_T" >&6; }
@@ -16476,16 +16504,24 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<_ACEOF
+#define TIFF_UINT64_FORMAT $UINT64_FORMAT
+_ACEOF
+
+
 # Determine TIFF equivalent of ssize_t
 { $as_echo "$as_me:$LINENO: checking for signed size type" >&5
 $as_echo_n "checking for signed size type... " >&6; }
 SSIZE_T='unknown'
+SSIZE_FORMAT='unknown'
 if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long'
+  SSIZE_FORMAT='"%ld"'
 elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long long'
+  SSIZE_FORMAT='"%lld"'
 fi
 { $as_echo "$as_me:$LINENO: result: $SSIZE_T" >&5
 $as_echo "$SSIZE_T" >&6; }
@@ -16495,10 +16531,16 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<_ACEOF
+#define TIFF_SSIZE_FORMAT $SSIZE_FORMAT
+_ACEOF
+
+
 # Determine the type to use for the difference between two pointers.
 # We will default to the POSIX ptrdiff_t if it is available, but will
 # be prepared for the case when it is not.
 PTRDIFF_T='unknown'
+PTRDIFF_FORMAT='"%ld"'
 { $as_echo "$as_me:$LINENO: checking for ptrdiff_t" >&5
 $as_echo_n "checking for ptrdiff_t... " >&6; }
 if test "${ac_cv_type_ptrdiff_t+set}" = set; then
@@ -16600,6 +16642,7 @@ fi
 if test $PTRDIFF_T = unknown
 then
   PTRDIFF_T=$SSIZE_T
+  PTRDIFF_FORMAT=$SSIZE_FORMAT
 fi
 { $as_echo "$as_me:$LINENO: checking for pointer difference type" >&5
 $as_echo_n "checking for pointer difference type... " >&6; }
@@ -16608,6 +16651,11 @@ $as_echo "$PTRDIFF_T" >&6; }
 
 cat >>confdefs.h <<_ACEOF
 #define TIFF_PTRDIFF_T $PTRDIFF_T
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define TIFF_PTRDIFF_FORMAT $PTRDIFF_FORMAT
 _ACEOF
 
 
@@ -24314,11 +24362,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:24317: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:24365: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:24321: \$? = $ac_status" >&5
+   echo "$as_me:24369: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -24413,11 +24461,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:24416: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:24464: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:24420: \$? = $ac_status" >&5
+   echo "$as_me:24468: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -24465,11 +24513,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:24468: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:24516: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:24472: \$? = $ac_status" >&5
+   echo "$as_me:24520: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
