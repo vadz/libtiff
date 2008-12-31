@@ -382,7 +382,7 @@ TIFFReadRawData(TIFF* tif, int bitrev)
 {
 	tstrip_t nstrips = TIFFNumberOfStrips(tif);
 	const char* what = TIFFIsTiled(tif) ? "Tile" : "Strip";
-	uint32* stripbc;
+	uint64* stripbc;
 
 	TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbc);
 	if (nstrips > 0) {

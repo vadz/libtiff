@@ -92,6 +92,8 @@ uint32 TIFF_WriteOverview( TIFF *hTIFF, uint32 nXSize, uint32 nYSize,
     toff_t	nBaseDirOffset;
     toff_t	nOffset;
 
+    (void) bUseSubIFDs;
+
     nBaseDirOffset = TIFFCurrentDirOffset( hTIFF );
 
     TIFFCreateDirectory( hTIFF );
@@ -696,6 +698,9 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
     unsigned char	*pabySrcTile;
     uint16		*panRedMap, *panGreenMap, *panBlueMap;
     TIFFErrorHandler    pfnWarning;
+
+    (void) pfnProgress;
+    (void) pProgressData;
 
 /* -------------------------------------------------------------------- */
 /*      Get the base raster size.                                       */

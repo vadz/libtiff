@@ -1,5 +1,9 @@
 2008-12-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/{tiff2pdf.c, tiff2ps.c, tiffinfo.c}: Offset and length
+	tags now require 64-bit parameter rather than 32-bit.
+	* libtiff/tif_dirread.c: Fixed issues with unaligned access to
+	64-bit values.
 	* tools/thumbnail.c: Eliminate crash noticed while running test
 	suite.
 

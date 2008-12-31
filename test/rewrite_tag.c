@@ -147,7 +147,7 @@ int rewrite_test( const char *filename, int length, int bigtiff,
     unsigned char	buf[10] = {5,6,7,8,9,10,11,12,13,14};
     uint64		*rowoffset, *rowbytes;
     uint64		*upd_rowoffset;
-    uint32		*upd_bytecount;
+    uint64		*upd_bytecount;
 
     /* Test whether we can write tags. */
     if( bigtiff )
@@ -232,11 +232,11 @@ int rewrite_test( const char *filename, int length, int bigtiff,
 
     _TIFFfree( upd_rowoffset );
 
-    upd_bytecount = (uint32 *) _TIFFmalloc(sizeof(uint32) * length);
+    upd_bytecount = (uint64 *) _TIFFmalloc(sizeof(uint64) * length);
     for( i = 0; i < length; i++ )
         upd_bytecount[i] = 100 + i*10;
 
-    if( !_TIFFRewriteField( tif, TIFFTAG_STRIPBYTECOUNTS, TIFF_LONG, 
+    if( !_TIFFRewriteField( tif, TIFFTAG_STRIPBYTECOUNTS, TIFF_LONG8, 
                             length, upd_bytecount ) )
     {
         fprintf (stderr, "Can't rewrite STRIPBYTECOUNTS.\n");

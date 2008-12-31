@@ -335,12 +335,12 @@ char *super_fgets(char *b, int *blen, FILE *file)
     c=fgetc(file);
     if (c == EOF || c == '\n')
       break;
-    if (((int)q - (int)b + 1 ) >= (int) len)
+    if (((long)q - (long)b + 1 ) >= (long) len)
       {
-        int
+        long
           tlen;
 
-        tlen=(int)q-(int)b;
+        tlen=(long)q-(long)b;
         len<<=1;
         b=(char *) realloc((char *) b,(len+2));
         if ((char *) b == (char *) NULL)
@@ -355,7 +355,7 @@ char *super_fgets(char *b, int *blen, FILE *file)
       int
         tlen;
 
-      tlen=(int)q - (int)b;
+      tlen=(long)q - (long)b;
       if (tlen == 0)
         return (char *) NULL;
       b[tlen] = '\0';
@@ -388,7 +388,7 @@ int main(int argc, char *argv[])
 
   if( argc < 2 )
     {
-      printf(usage);
+      puts(usage);
 	    return 1;
     }
 
@@ -447,7 +447,7 @@ int main(int argc, char *argv[])
       }
     else
       {
-        printf(usage);
+        puts(usage);
 	      return 1;
       }
   }

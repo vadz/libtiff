@@ -1205,7 +1205,8 @@ PS_Lvl2page(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 {
 	uint16 fillorder;
 	int use_rawdata, tiled_image, breaklen = MAXLINE;
-	uint32 chunk_no, num_chunks, *bc;
+	uint32 chunk_no, num_chunks;
+        uint64 *bc;
 	unsigned char *buf_data, *cp;
 	tsize_t chunk_size, byte_count;
 
@@ -1791,7 +1792,7 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 void
 PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 {
-	uint32 *bc;
+	uint64 *bc;
 	uint32 bufsize;
 	int breaklen = MAXLINE;
 	tmsize_t cc;

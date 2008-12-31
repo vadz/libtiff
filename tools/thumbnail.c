@@ -282,11 +282,11 @@ cpStrips(TIFF* in, TIFF* out)
 
     if (buf) {
 	tstrip_t s, ns = TIFFNumberOfStrips(in);
-	tsize_t *bytecounts;
+	uint64 *bytecounts;
 
 	TIFFGetField(in, TIFFTAG_STRIPBYTECOUNTS, &bytecounts);
 	for (s = 0; s < ns; s++) {
-	    if (bytecounts[s] > bufsize) {
+	  if (bytecounts[s] > (uint64) bufsize) {
 		buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[s]);
 		if (!buf)
 		    goto bad;
@@ -316,11 +316,11 @@ cpTiles(TIFF* in, TIFF* out)
 
     if (buf) {
 	ttile_t t, nt = TIFFNumberOfTiles(in);
-	tsize_t *bytecounts;
+	uint64 *bytecounts;
 
 	TIFFGetField(in, TIFFTAG_TILEBYTECOUNTS, &bytecounts);
 	for (t = 0; t < nt; t++) {
-	    if (bytecounts[t] > bufsize) {
+	    if (bytecounts[t] > (uint64) bufsize) {
 		buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[t]);
 		if (!buf)
 		    goto bad;

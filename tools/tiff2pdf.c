@@ -1825,7 +1825,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 
 void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 
-	uint32* sbc=NULL;
+	uint64* sbc=NULL;
 #if defined(JPEG_SUPPORT) || defined (OJPEG_SUPPORT)
 	unsigned char* jpt=NULL;
 	tstrip_t i=0;
@@ -1935,7 +1935,7 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 
 void t2p_read_tiff_size_tile(T2P* t2p, TIFF* input, ttile_t tile){
 
-	uint32* tbc = NULL;
+	uint64* tbc = NULL;
 	uint16 edge=0;
 #ifdef JPEG_SUPPORT
 	unsigned char* jpt;
@@ -2064,7 +2064,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 #ifdef JPEG_SUPPORT
 	unsigned char* jpt;
 	float* xfloatp;
-	uint32* sbc;
+	uint64* sbc;
 	unsigned char* stripbuffer;
 	tsize_t striplength=0;
 	uint32 max_striplength=0;
