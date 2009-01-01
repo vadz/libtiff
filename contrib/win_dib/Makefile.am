@@ -25,3 +25,4 @@
 
 EXTRA_DIST = Makefile.w95 README.Tiffile README.tiff2dib Tiffile.cpp tiff2dib.c
 
+INCLUDES = -I../../libtiff -I$(top_srcdir)/libtiff

@@ -244,7 +244,7 @@ LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 EXTRA_DIST = README Makefile.vc
 addtiffo_SOURCES = addtiffo.c tif_overview.c tif_ovrcache.c tif_ovrcache.h
 addtiffo_LDADD = $(LIBTIFF)
-INCLUDES = -I$(top_srcdir)/libtiff
+INCLUDES = -I../../libtiff -I$(top_srcdir)/libtiff
 all: all-am
 
 .SUFFIXES:

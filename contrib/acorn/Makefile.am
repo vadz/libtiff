@@ -25,3 +25,4 @@
 
 EXTRA_DIST = Makefile.acorn ReadMe SetVars cleanlib convert install
 
+INCLUDES = -I../../libtiff -I$(top_srcdir)/libtiff

@@ -403,7 +403,7 @@ tiffsplit_LDADD = $(LIBTIFF) $(LIBPORT)
 tiffgt_SOURCES = tiffgt.c
 tiffgt_CFLAGS = $(CFLAGS) $(GLUT_CFLAGS) $(AM_CFLAGS)
 tiffgt_LDADD = $(LIBTIFF) $(LIBPORT) $(X_LIBS) $(GLUT_LIBS)
-INCLUDES = -I$(top_srcdir)/libtiff
+INCLUDES = -I../libtiff -I$(top_srcdir)/libtiff
 all: all-am
 
 .SUFFIXES:

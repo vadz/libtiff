@@ -25,3 +25,4 @@
 
 EXTRA_DIST = README mfs_file.c
 
+INCLUDES = -I../../libtiff -I$(top_srcdir)/libtiff

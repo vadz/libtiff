@@ -220,6 +220,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = README mfs_file.c
+INCLUDES = -I../../libtiff -I$(top_srcdir)/libtiff
 all: all-am
 
 .SUFFIXES:

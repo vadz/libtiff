@@ -25,3 +25,4 @@
 
 EXTRA_DIST = README tiffstream.cpp tiffstream.h
 
+INCLUDES = -I../../libtiff -I$(top_srcdir)/libtiff
