@@ -774,8 +774,8 @@ PixarLogDecode(TIFF* tif, tidata_t op, tsize_t occ, tsample_t s)
 	 */
 	if (nsamples % llen) { 
 		TIFFWarningExt(tif->tif_clientdata, module,
-			"%s: stride %lu is not a multiple of sample count, "
-			"%lu, data truncated.", tif->tif_name, llen, nsamples);
+			"%s: stride %d is not a multiple of sample count, "
+			"%d, data truncated.", tif->tif_name, llen, nsamples);
 		nsamples -= nsamples % llen;
 	}
 

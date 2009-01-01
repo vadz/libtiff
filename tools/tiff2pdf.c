@@ -1447,8 +1447,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"No support for palettized image %s with not one sample per pixel", 
-					TIFFFileName(input), 
-					t2p->tiff_samplesperpixel);
+					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
 			}
@@ -1517,8 +1516,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				TIFFError(
 					TIFF2PDF_MODULE, 
 					"No support for palettized CMYK image %s with not one sample per pixel", 
-					TIFFFileName(input), 
-					t2p->tiff_samplesperpixel);
+					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return;
 			}
@@ -1597,8 +1595,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			TIFFError(
 				TIFF2PDF_MODULE, 
 				"No support for %s with photometric interpretation LogL/LogLuv", 
-				TIFFFileName(input),
-				t2p->tiff_photometric);
+				TIFFFileName(input));
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return;
 		default:
@@ -5245,7 +5242,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 	if(t2p->pdf_xrefoffsets==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
-			"Can't allocate %lu bytes of memory for t2p_write_pdf", 
+			"Can't allocate %u bytes of memory for t2p_write_pdf", 
 			t2p->pdf_xrefcount * sizeof(uint32) );
 		return(written);
 	}

@@ -863,7 +863,7 @@ static int writeBufferToContigStrips(TIFF* out, uint8* buf, uint32 imagelength,
 		tsize_t stripsize = TIFFVStripSize(out, nrows);
 		if (TIFFWriteEncodedStrip(out, strip++, buf, stripsize) < 0) {
 			TIFFError(TIFFFileName(out),
-				  "Error, can't write strip %lu", strip - 1);
+				  "Error, can't write strip %u", strip - 1);
 			return 0;
 		}
 		buf += stripsize;
@@ -927,7 +927,7 @@ writeBufferToSeparateStrips (TIFF* out, uint8* buf,
 
       if (TIFFWriteEncodedStrip(out, strip++, obuf, stripsize) < 0)
         {
-	TIFFError(TIFFFileName(out), "Error, can't write strip %lu", strip - 1);
+	TIFFError(TIFFFileName(out), "Error, can't write strip %u", strip - 1);
 	_TIFFfree(obuf);
 	return 0;
 	}

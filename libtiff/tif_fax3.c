@@ -183,10 +183,10 @@ Fax3PreDecode(TIFF* tif, tsample_t s)
 static void
 Fax3Unexpected(const char* module, TIFF* tif, uint32 line, uint32 a0)
 {
-	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad code word at line %lu of %s %lu (x %lu)",
-		tif->tif_name, (unsigned long) line, isTiled(tif) ? "tile" : "strip",
-	   (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
-	   (unsigned long) a0);
+	TIFFErrorExt(tif->tif_clientdata, module, "%s: Bad code word at line %u of %s %u (x %u)",
+		     tif->tif_name, line, isTiled(tif) ? "tile" : "strip",
+		     (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
+		     a0);
 }
 #define	unexpected(table, a0)	Fax3Unexpected(module, tif, sp->line, a0)
 
@@ -194,33 +194,33 @@ static void
 Fax3Extension(const char* module, TIFF* tif, uint32 line, uint32 a0)
 {
 	TIFFErrorExt(tif->tif_clientdata, module,
-	    "%s: Uncompressed data (not supported) at line %lu of %s %lu (x %lu)",
-	    tif->tif_name, (unsigned long) line, isTiled(tif) ? "tile" : "strip",
-       (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
-       (unsigned long) a0);
+		     "%s: Uncompressed data (not supported) at line %u of %s %u (x %u)",
+		     tif->tif_name, line, isTiled(tif) ? "tile" : "strip",
+		     (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
+		     a0);
 }
 #define	extension(a0)	Fax3Extension(module, tif, sp->line, a0)
 
 static void
 Fax3BadLength(const char* module, TIFF* tif, uint32 line, uint32 a0, uint32 lastx)
 {
-	TIFFWarningExt(tif->tif_clientdata, module, "%s: %s at line %lu of %s %lu (got %lu, expected %lu)",
-	    tif->tif_name,
-	    a0 < lastx ? "Premature EOL" : "Line length mismatch",
-	    (unsigned long) line, isTiled(tif) ? "tile" : "strip",
-        (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
-        (unsigned long) a0, lastx);
+	TIFFWarningExt(tif->tif_clientdata, module, "%s: %s at line %u of %s %u (got %u, expected %u)",
+		       tif->tif_name,
+		       a0 < lastx ? "Premature EOL" : "Line length mismatch",
+		       line, isTiled(tif) ? "tile" : "strip",
+		       (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
+		       a0, lastx);
 }
 #define	badlength(a0,lastx)	Fax3BadLength(module, tif, sp->line, a0, lastx)
 
 static void
 Fax3PrematureEOF(const char* module, TIFF* tif, uint32 line, uint32 a0)
 {
-	TIFFWarningExt(tif->tif_clientdata, module, "%s: Premature EOF at line %lu of %s %lu (x %lu)",
+	TIFFWarningExt(tif->tif_clientdata, module, "%s: Premature EOF at line %u of %s %u (x %u)",
 	    tif->tif_name,
-	    (unsigned long) line, isTiled(tif) ? "tile" : "strip",
-        (unsigned long) (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
-        (unsigned long) a0);
+		       line, isTiled(tif) ? "tile" : "strip",
+		       (isTiled(tif) ? tif->tif_curtile : tif->tif_curstrip),
+		       a0);
 }
 #define	prematureEOF(a0)	Fax3PrematureEOF(module, tif, sp->line, a0)
 

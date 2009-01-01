@@ -71,6 +71,8 @@ static int
 DumpModeDecode(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 {
 	(void) s;
+/*         fprintf(stderr,"DumpModeDecode: scanline %ld, expected %ld bytes, got %ld bytes\n", */
+/*                 (long) tif->tif_row, (long) tif->tif_rawcc, (long) cc); */
 	if (tif->tif_rawcc < cc) {
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 		    "DumpModeDecode: Not enough data for scanline %d",

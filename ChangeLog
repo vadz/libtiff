@@ -1,3 +1,10 @@
+2008-12-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffio.h: GCC will now validate format specifications
+	for TIFFError(), TIFFErrorExt(), TIFFWarning(), and
+	TIFFWarningExt() in order to reveal bugs.  Cleaned up resulting
+	warnings throughout for 32 bit build only.
+
 2008-12-31  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiffcrop.c, man/tiffcrop.1: A major update from Richard
