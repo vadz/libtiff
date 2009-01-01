@@ -1,5 +1,6 @@
 2008-12-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* Update to use current FSF autotools versions.
 	* libtiff/tiffio.h: GCC will now validate format specifications
 	for TIFFError(), TIFFErrorExt(), TIFFWarning(), and
 	TIFFWarningExt() in order to reveal bugs.  Cleaned up resulting
