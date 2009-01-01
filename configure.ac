@@ -114,6 +114,53 @@ AC_CHECK_TYPES([int8, int16, int32],,,
 #endif
 ])
 
+# Obtain size of a 'signed long' and define as SIZEOF_SIGNED_LONG
+AC_CHECK_SIZEOF(signed long)
+
+# Obtain size of a 'unsigned long' and define as SIZEOF_UNSIGNED_LONG
+AC_CHECK_SIZEOF(unsigned long)
+
+# Obtain size of a 'long long' and define as SIZEOF_SIGNED_LONG_LONG.
+# If 'long long' is not supported then the value defined is zero.
+AC_CHECK_SIZEOF(signed long long)
+
+# Obtain size of a 'unsigned long long' and define as
+# SIZEOF_UNSIGNED_LONG_LONG.  If 'unsigned long long' is not
+# supported then the value defined is zero.
+AC_CHECK_SIZEOF(unsigned long long)
+
+AC_MSG_CHECKING(for signed 64-bit type)
+INT64_T='none'
+INT64_FORMAT='none'
+if test $ac_cv_sizeof_signed_long -eq 8
+then
+  INT64_T='signed long'
+  INT64_FORMAT='"%ld"'
+elif test $ac_cv_sizeof_signed_long_long -eq 8
+then
+  INT64_FORMAT='"%lld"'
+  INT64_T='signed long long'
+fi
+AC_MSG_RESULT($INT64_T)
+AC_DEFINE_UNQUOTED(TIFF_INT64_T,$INT64_T,[Signed 64-bit type])
+AC_DEFINE_UNQUOTED(TIFF_INT64_FORMAT,$INT64_FORMAT,[Signed 64-bit type formatter])
+
+AC_MSG_CHECKING(for unsigned 64-bit type)
+UINT64_T='none'
+UINT64_FORMAT='none'
+if test $ac_cv_sizeof_unsigned_long -eq 8
+then
+  UINT64_T='unsigned long'
+  UINT64_FORMAT='"%lu"'
+elif test $ac_cv_sizeof_unsigned_long_long -eq 8
+then
+  UINT64_T='unsigned long long'
+  UINT64_FORMAT='"%llu"'
+fi
+AC_MSG_RESULT($UINT64_T)
+AC_DEFINE_UNQUOTED(TIFF_UINT64_T,$UINT64_T,[Unsigned 64-bit type])
+AC_DEFINE_UNQUOTED(TIFF_UINT64_FORMAT,$UINT64_FORMAT,[Unsigned 64-bit type formatter])
+
 dnl Checks for library functions.
 AC_CHECK_FUNCS([floor isascii memmove memset mmap pow setmode sqrt strchr strrchr strstr strtol])
 

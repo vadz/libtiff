@@ -1,3 +1,8 @@
+2009-01-01  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Updated to test for 64-bit types.  This version of
+	the library does not require a 64-bit type, but tiffcrop needs it.
+
 2008-12-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* Update to use current FSF autotools versions.
