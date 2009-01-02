@@ -5,7 +5,9 @@ TIFF Software Distribution
 --------------------------
 This file is just a placeholder; all the documentation is now in
 HTML in the html directory.  To view the documentation point your
-favorite WWW viewer at html/index.html; e.g.
+favorite WWW viewer at html/index.html; 
+
+e.g.
 
     netscape html/index.html
 
