@@ -1,3 +1,9 @@
+2009-01-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffiop.h: Add private type declarations for int64, and
+	uint64 so that bundled utilities (like tiffcrop) can use it when
+	necessary.
+
 2009-01-01  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Updated to test for 64-bit types.  This version of
