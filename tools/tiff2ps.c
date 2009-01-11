@@ -41,6 +41,23 @@
 /*
  * Revision history
  *
+ * 2005-June-3
+ *    Richard Nolde: Added support for rotations of 90, 180, 270
+ *    and auto using -r <90|180|270|auto>.  Auto picks the best
+ *    fit for the image on the specified paper size (eg portrait
+ *    or landscape) if -h or -w is specified. Rotation is in
+ *    degrees counterclockwise since that is how Postscript does
+ *    it.  Auto rotates 90 degrees ccw to produce landscape.
+ *
+ *    Added maxPageWidth option using -W flag. MaxPageHeight and
+ *    MaxPageWidth are mutually exclusive since the aspect ratio
+ *    cannot be maintained if you set both.
+ *    Rewrote PlaceImage to allow maxPageHeight and maxPageWidth
+ *    options to work with values smaller or larger than the
+ *    physical paper size and still preserve the aspect ratio.
+ *    This is accomplished by creating multiple pages across
+ *    as well as down if need be.
+ *
  * 2001-Mar-21
  *    I (Bruce A. Mallett) added this revision history comment ;)
  *
@@ -106,6 +123,9 @@
 #define	FALSE	0
 #endif
 
+#define HORIZONTAL 1
+#define VERTICAL   2
+
 int	ascii85 = FALSE;		/* use ASCII85 encoding */
 int	interpolate = TRUE;		/* interpolate level2 image */
 int	level2 = FALSE;			/* generate PostScript level 2 */
@@ -115,9 +135,11 @@ int	generateEPSF = TRUE;		/* generate Encapsulated PostScript */
 int	PSduplex = FALSE;		/* enable duplex printing */
 int	PStumble = FALSE;		/* enable top edge binding */
 int	PSavoiddeadzone = TRUE;		/* enable avoiding printer deadzone */
-double	maxPageHeight = 0;		/* maximum size to fit on page */
+double	maxPageHeight = 0;		/* maximum height to select from image and print per page */
+double	maxPageWidth  = 0;		/* maximum width  to select from image and print per page */
 double	splitOverlap = 0;		/* amount for split pages to overlag */
-int	rotate = FALSE;			/* rotate image by 180 degrees */
+int	rotate = FALSE;			/* rotate image by angle 90, 180, 270 degrees */
+int	rotation = 0;                   /* optional value for rotation angle */
 char	*filename;			/* input filename */
 int	useImagemask = FALSE;		/* Use imagemask instead of image operator */
 uint16	res_unit = 0;			/* Resolution units: 2 - inches, 3 - cm */
@@ -164,7 +186,7 @@ main(int argc, char* argv[])
 	extern int optind;
 	FILE* output = stdout;
 
-	while ((c = getopt(argc, argv, "b:d:h:H:L:i:w:l:o:O:acelmrxyzps1238DT")) != -1)
+	while ((c = getopt(argc, argv, "b:d:h:H:W:L:i:w:l:o:O:r:acelmxyzps1238DT")) != -1)
 		switch (c) {
 		case 'b':
 			bottommargin = atof(optarg);
@@ -195,6 +217,10 @@ main(int argc, char* argv[])
 			maxPageHeight = atof(optarg);
 			if (pageHeight==0) pageHeight = maxPageHeight;
 			break;
+		case 'W':
+			maxPageWidth = atof(optarg);
+			if (pageWidth==0) pageWidth = maxPageWidth;
+			break;
 		case 'L':
 			splitOverlap = atof(optarg);
 			break;
@@ -224,6 +250,21 @@ main(int argc, char* argv[])
 			break;
 		case 'r':
 			rotate = TRUE;
+                        if (strcmp (optarg, "auto") == 0)
+                          rotation = 0;
+                        else
+ 			  rotation = atoi(optarg);
+                        switch (rotation)
+                          {
+			  case   0:
+                          case  90:
+                          case 180:
+                          case 270:
+			    break;
+			  default:
+                            fprintf (stderr, "Rotation angle must be 90, 180, 270 (degrees ccw) or auto\n");
+			    exit (-2);
+			  }
 			break;
 		case 's':
 			printAll = FALSE;
@@ -468,88 +509,192 @@ static	char *hex = "0123456789abcdef";
  * pagewidth & pageheight are inches
  */
 int
-PlaceImage(FILE *fp, double pagewidth, double pageheight,
-	   double imagewidth, double imageheight, int splitpage,
-	   double lm, double bm, int cnt)
+PlaceImage(TIFF *tif, FILE *fp, int *npages, uint32 w, uint32 h,
+           double pagewidth, double pageheight,
+	   double imagewidth, double imageheight,
+           int splitpage, double lm, double bm, int cnt)
 {
+        int    i       = 0;
+        int    ximages = 0;
+        int    splitaxis = 0;
 	double xtran = 0;
 	double ytran = 0;
 	double xscale = 1;
 	double yscale = 1;
-	double left_offset = lm * PS_UNIT_SIZE;
-	double bottom_offset = bm * PS_UNIT_SIZE;
-	double subimageheight;
-	double splitheight;
-	double overlap;
+	double left_margin    = 0;
+	double bottom_margin  = 0;
+	double left_offset    = lm * PS_UNIT_SIZE;
+	double bottom_offset  = bm * PS_UNIT_SIZE;
+	double splitwidth     = 0;
+	double splitheight    = 0;
+	double subimageheight = 0;
+	double subimagewidth  = 0;
+	double overlap        = 0;
+	double overlapspace   = 0;
 
 	pagewidth *= PS_UNIT_SIZE;
 	pageheight *= PS_UNIT_SIZE;
 
-	if (maxPageHeight==0)
-		splitheight = 0;
-	else
-		splitheight = maxPageHeight * PS_UNIT_SIZE;
-	overlap = splitOverlap * PS_UNIT_SIZE;
+	splitheight = maxPageHeight * PS_UNIT_SIZE;
+	splitwidth  = maxPageWidth  * PS_UNIT_SIZE;
+	overlap     = splitOverlap  * PS_UNIT_SIZE;
+        /* These have to be mutually exclusive to maintain the aspect ratio */
+        if (splitheight != 0)
+          splitaxis = VERTICAL;
+        else {
+           if (splitwidth != 0)
+             splitaxis = HORIZONTAL;
+           else {
+             fprintf (stderr, "You must specify either a maximum page height or width\n");
+             return (0);
+           }
+        }
 
-	/*
-	 * WIDTH:
-	 *      if too wide, scrunch to fit
-	 *      else leave it alone
-	 */
-	if (imagewidth <= pagewidth) {
-		xscale = imagewidth;
-	} else {
-		xscale = pagewidth;
+        if (splitaxis == VERTICAL) {
+  	  if (imageheight <= splitheight) {
+	    /* Simple case, no splitting or scaling for image height */
+	    yscale = imageheight;
+	    ytran = pageheight - imageheight;
+	  } else { /* imageheight > splitheight */
+	      subimageheight = imageheight - ((splitheight - overlap) * splitpage);
+
+              yscale = imageheight * (pageheight / splitheight);
+	      ytran  = pageheight - subimageheight * (pageheight / splitheight);
+	    
+              if (subimageheight > splitheight) {
+	        splitpage++;
+	      } else {
+		  splitpage = 0;
+	          } 
+	  }
+	  bottom_offset += ytran / (cnt?2:1);
+          left_margin = left_offset / (cnt ? 2 : 1);
+	  /*
+           * WIDTH: We can't rescale height based on width so we need to make multiple
+           *   pages from each horizontal segment if the image is wider than pagewidth
+           */
+
+          ximages = ceil (imagewidth / pagewidth);
+          overlapspace = (ximages - 1) * overlap;
+          if (((imagewidth + overlapspace) * (pageheight / splitheight)) > (ximages * pagewidth)) {
+            ximages++;
+            overlapspace += overlap;
+	  }
+          xscale = (imagewidth + overlapspace) * (pageheight / splitheight);
+	  if (imagewidth <= pagewidth) {
+            left_offset = left_margin;
+            bottom_offset = bottom_margin;
+	    fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
+	    fprintf(fp, "%f %f scale\n", xscale, yscale);
+	  } else {
+            for (i = 0; i < ximages; i++) {
+              xtran = i * (pagewidth - ((i > 0) ? overlap : 0));
+	      left_offset = -xtran + left_margin;
+
+ 	      fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
+	      fprintf(fp, "%f %f scale\n", xscale, yscale);
+
+              if ( i < (ximages - 1)) {
+  	        PSpage(fp, tif, w, h);
+	        fprintf(fp, "end\n");
+	        fprintf(fp, "grestore\n");
+	        fprintf(fp, "showpage\n");
+ 	        (*npages)++;
+	        fprintf(fp, "%%%%Page: %d %d\n", (*npages), (*npages));
+	        fprintf(fp, "gsave\n");
+	        fprintf(fp, "100 dict begin\n");
+	        }
+	    }
+	  }
+        } else {  /* splitaxis is HORIZONTAL */
+          ximages = ceil (imagewidth / splitwidth);
+          overlapspace = (ximages - 1) * overlap;
+          if (((imagewidth + overlapspace) * (pagewidth / splitwidth)) > (ximages * pagewidth)) {
+            ximages++;
+            overlapspace += overlap;
+	  }
+  	  if (ximages == 1) {
+	    /* Simple case, no splitting or scaling for image width */
+	    xscale = imagewidth;
+	    xtran = 0;
+            splitpage = 0;
+	  } else {
+	      subimagewidth  = imagewidth  - ((splitwidth - overlap) * splitpage);
+
+              xscale = imagewidth * (pagewidth / splitwidth);
+	      xtran  = imagewidth - (subimagewidth * (pagewidth / splitwidth));
+
+              splitheight = pageheight;
+	      subimageheight = imageheight - ((splitheight - overlap) * splitpage);
+              yscale = (imageheight + overlapspace);
+	      ytran  = pageheight - subimageheight  + (overlapspace * (pagewidth / splitwidth));
+
+              if (subimageheight > splitheight) {
+	        splitpage++;
+	      } else {
+		  splitpage = 0;
+	          } 
+	  }
+          bottom_margin = bottom_offset / (cnt ? 2 : 1);
+ 	  bottom_offset = bottom_margin + ytran;
+          left_margin = left_offset / (cnt ? 2 : 1);
+	  if (imagewidth <= pagewidth) {
+            left_offset = left_margin;
+            bottom_offset = bottom_margin;
+	    fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
+	    fprintf(fp, "%f %f scale\n", xscale, yscale);
+	  } else {
+              for (i = 0; i < ximages; i++) {
+                xtran = i * (pagewidth - ((i > 0) ? overlap : 0));
+	        left_offset = left_margin - xtran;
+ 	        fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
+	        fprintf(fp, "%f %f scale\n", xscale, yscale);
+                if ( i < (ximages - 1)) {
+  	          PSpage(fp, tif, w, h);
+	          fprintf(fp, "end\n");
+	          fprintf(fp, "grestore\n");
+	          fprintf(fp, "showpage\n");
+ 	          (*npages)++;
+	          fprintf(fp, "%%%%Page: %d %d\n", (*npages), (*npages));
+	          fprintf(fp, "gsave\n");
+	          fprintf(fp, "100 dict begin\n");
+	        }
+	      }
+	  }
 	}
 
-	/* HEIGHT:
-	 *      if too long, scrunch to fit
-	 *      if too short, move to top of page
-	 */
-	if (imageheight <= pageheight) {
-		yscale = imageheight;
-		ytran = pageheight - imageheight;
-	} else if (imageheight > pageheight &&
-		(splitheight == 0 || imageheight <= splitheight)) {
-		yscale = pageheight;
-	} else /* imageheight > splitheight */ {
-		subimageheight = imageheight - (pageheight-overlap)*splitpage;
-		if (subimageheight <= pageheight) {
-			yscale = imageheight;
-			ytran = pageheight - subimageheight;
-			splitpage = 0;
-		} else if ( subimageheight > pageheight && subimageheight <= splitheight) {
-			yscale = imageheight * pageheight / subimageheight;
-			ytran = 0;
-			splitpage = 0;
-		} else /* sumimageheight > splitheight */ {
-			yscale = imageheight;
-			ytran = pageheight - subimageheight;
-			splitpage++;
-		}
-	}
-	
-	bottom_offset += ytran / (cnt?2:1);
-	if (cnt)
-	    left_offset += xtran / 2;
-	fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
-	fprintf(fp, "%f %f scale\n", xscale, yscale);
 	if (rotate)
-	    fputs ("1 1 translate 180 rotate\n", fp);
+	    {
+	    if (rotation == 180 )
+              {
+    	      fprintf(fp, "%f %f translate\n", left_offset, bottom_offset);
+	      fprintf(fp, "%f %f scale\n", xscale, yscale);
+              }
+            else
+              {
+    	      fprintf(fp, "%f %f translate\n", bottom_offset, left_offset);
+	      fprintf(fp, "%f %f scale\n", yscale, xscale);
+              }
+	    fprintf (fp, "1 1 translate %d rotate\n", rotation);
+            }
 
 	return splitpage;
-}
-
+} 
 
 /* returns the sequence number of the page processed */
 int
 TIFF2PS(FILE* fd, TIFF* tif,
 	double pw, double ph, double lm, double bm, int cnt)
 {
-	uint32 w, h;
-	float ox, oy;
-        double prw, prh;
-	double scale = 1.0;
+	uint32 w = 0, h = 0;
+	float  ox, oy;
+        double maxsource, maxtarget;    /* Used for auto rotations */
+        double hcenter, vcenter;        /* Used for centering */
+        double prw, prh;    /* Original Image width and height in Postscript points */
+	double psw, psh;    /* Scaled image width and height in Postscript points */
+	double xscale = 1.0, yscale = 1.0, scale = 1.0;
+	double left_offset = lm * PS_UNIT_SIZE;
+	double bottom_offset = bm * PS_UNIT_SIZE;
 	uint32 subfiletype;
 	uint16* sampleinfo;
 	static int npages = 0;
@@ -559,15 +704,54 @@ TIFF2PS(FILE* fd, TIFF* tif,
 		ox = 0;
 	if (!TIFFGetField(tif, TIFFTAG_YPOSITION, &oy))
 		oy = 0;
-	setupPageState(tif, &w, &h, &prw, &prh);
-
 	do {
 		tf_numberstrips = TIFFNumberOfStrips(tif);
 		TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP,
 		    &tf_rowsperstrip);
 		setupPageState(tif, &w, &h, &prw, &prh);
-		if (!npages)
-			PSHead(fd, tif, w, h, prw, prh, ox, oy);
+                if (pw != 0) {
+                    psw = pw * PS_UNIT_SIZE;
+		    if (res_unit == RESUNIT_CENTIMETER)
+			psw *= 2.54F;
+		}
+                else
+                  psw = prw;
+
+                if (ph != 0) {
+                    psh = ph * PS_UNIT_SIZE;
+ 		    if (res_unit == RESUNIT_CENTIMETER)
+			psh *= 2.54F;
+		}
+                else
+                  psh = prh;
+
+                /* auto rotate for best fit */
+                if (rotate && rotation == 0) {
+                  maxsource = (prw >= prh) ? prw : prh;
+                  maxtarget = (psw >= psh) ? psw : psh;
+                  if (((maxsource == prw) && (maxtarget != psw)) ||
+                      ((maxsource == prh) && (maxtarget != psh))) {
+		    rotation = 90;
+		  } 
+		}
+
+                /* scaling depends on rotation and new page size */
+                switch (rotation) {
+                  case   0:  
+                  case 180:
+                    xscale = (psw - left_offset)/prw;
+                    yscale = (psh - bottom_offset)/prh;
+		    if (!npages)
+		      PSHead(fd, tif, w, h, psw, psh, ox, oy);
+                    break;
+		  case  90:
+                  case 270:
+                    xscale = (psw - bottom_offset) /prh;
+                    yscale = (psh - left_offset) /prw;
+		    if (!npages)
+		      PSHead(fd, tif, w, h, psh, psw, oy, ox);
+                    break;
+		}
 		TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE,
 		    &bitspersample);
 		TIFFGetFieldDefaulted(tif, TIFFTAG_SAMPLESPERPIXEL,
@@ -600,19 +784,6 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			npages++;
 			fprintf(fd, "%%%%Page: %d %d\n", npages, npages);
 			if (!generateEPSF && ( level2 || level3 )) {
-				double psw, psh;
-				if (pw != 0.0) {
-					psw = pw * PS_UNIT_SIZE;
-					if (res_unit == RESUNIT_CENTIMETER)
-						psw *= 2.54F;
-				} else
-					psw=rotate ? prh:prw;
-				if (ph != 0.0) {
-					psh = ph * PS_UNIT_SIZE;
-					if (res_unit == RESUNIT_CENTIMETER)
-						psh *= 2.54F;
-				} else
-					psh=rotate ? prw:prh;
 				fprintf(fd,
 	"1 dict begin /PageSize [ %f %f ] def currentdict end setpagedevice\n",
 					psw, psh);
@@ -622,15 +793,11 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			}
 			fprintf(fd, "gsave\n");
 			fprintf(fd, "100 dict begin\n");
+                        /* N.B. Setting maxPageHeight also sets ph if not set explicitly */
 			if (pw != 0 || ph != 0) {
-				double psw = pw, psh = ph;
-				if (!psw)
-					psw = prw;
-				if (!psh)
-					psh = prh;
-				if (maxPageHeight) { /* used -H option */
-					split = PlaceImage(fd,psw,psh,prw,prh,
-							   0,lm,bm,cnt);
+				if (maxPageHeight || maxPageWidth)  { /* used -H or -W options */
+				  split = PlaceImage(tif,fd,&npages,w,h,pw,ph,prw,prh,
+				     0,lm,bm,cnt);
 					while( split ) {
 					    PSpage(fd, tif, w, h);
 					    fprintf(fd, "end\n");
@@ -641,37 +808,82 @@ TIFF2PS(FILE* fd, TIFF* tif,
 						    npages, npages);
 					    fprintf(fd, "gsave\n");
 					    fprintf(fd, "100 dict begin\n");
-					    split = PlaceImage(fd,psw,psh,prw,prh,
-							       split,lm,bm,cnt);
+					    split = PlaceImage(tif,fd,&npages,w,h,pw,ph,prw,prh,
+						split,lm,bm,cnt);
 					}
-				} else {
-					double left_offset = lm * PS_UNIT_SIZE;
-					double bottom_offset = bm * PS_UNIT_SIZE;
-					psw *= PS_UNIT_SIZE;
-					psh *= PS_UNIT_SIZE;
+				} 
+                                else {
+				    /* NB: maintain image aspect ratio */
+                                    scale = (xscale < yscale) ? xscale : yscale; 
+				    if (scale > 1.0)
+				       	scale = 1.0;
 
-					/* NB: maintain image aspect ratio */
-					scale = psw/prw < psh/prh ?
-						psw/prw : psh/prh;
-					if (scale > 1.0)
-						scale = 1.0;
-					if (cnt) {
-						bottom_offset +=
-							(psh - prh * scale) / 2;
-						left_offset +=
-							(psw - prw * scale) / 2;
-					}
-					fprintf(fd, "%f %f translate\n",
-						left_offset, bottom_offset);
-					fprintf(fd, "%f %f scale\n",
-						prw * scale, prh * scale);
-					if (rotate)
-						fputs ("1 1 translate 180 rotate\n", fd);
+                                    /* Adjust offsets for centering */
+				    if (cnt) {
+                                      switch (rotation) {
+					case   90:
+                                        case  270:
+					    hcenter = (psw - prh * scale) / 2;
+					    vcenter = (psh - prw * scale) / 2;
+                                            break;
+					case    0:
+                                        case  180:
+					default:
+					    hcenter = (psw - prw * scale) / 2;
+					    vcenter = (psh - prh * scale) / 2;
+                                            break;
+				      }
+				    }
+				  else 
+                                      hcenter = 0.0, vcenter = 0.0;
+                                  if (cnt)
+  				     fprintf (fd, "%f %f translate\n", hcenter, vcenter);
+                                  switch (rotation) {
+ 				    case 0:
+				        fprintf (fd, "%f %f scale\n", prw * scale, prh * scale);
+                                        break;
+ 			       	    case 90:
+					fprintf (fd, "%f %f scale\n1 0 translate 90 rotate\n", prh * scale, prw * scale);
+                                        break;
+                                    case 180:
+					fprintf (fd, "%f %f scale\n1 1 translate 180 rotate\n", prw * scale, prh * scale);
+					break;
+				    case 270:
+					fprintf (fd, "%f %f scale\n0 1 translate 270 rotate\n", prh * scale, prw * scale);
+				        break;
+			            default:
+			                fprintf (stderr, "Unsupported angle. No rotation\n");
+					fprintf (fd, "%f %f scale\n", prw * scale, prh * scale);
+                                        break;
+				  }
 				}
 			} else {
-				fprintf(fd, "%f %f scale\n", prw, prh);
-				if (rotate)
-					fputs ("1 1 translate 180 rotate\n", fd);
+			    if (rotate)
+                              {
+			      /* Width and height have already been enchanged for 90/270 rotations */
+			      switch (rotation) {
+			         case   0:
+			             fprintf (fd, "%f %f scale\n", prw, prh);
+				 case  90:
+				     fprintf (fd, "%f %f scale\n1 0 translate 90 rotate\n", prw, prh); 
+                                     break;
+                                 case 180:
+			             fprintf (fd, "%f %f scale\n1 1 translate 180 rotate\n", prw, prh);
+                                     break;
+			         case 270:
+				     fprintf (fd, "%f %f scale\n0 1 translate 270 rotate\n", prw, prh); 
+                                     break;
+			         default:
+			             fprintf (stderr, "Unsupported angle. No rotation\n");
+			             fprintf( fd, "%f %f scale\n", prw, prh);
+                                     break;
+			         }
+			      }
+                            else
+			      {
+			      fprintf (stderr, "No rotation\n");
+			      fprintf (fd, "%f %f scale\n", prw, prh);
+			      }
 			}
 			PSpage(fd, tif, w, h);
 			fprintf(fd, "end\n");
@@ -686,7 +898,6 @@ TIFF2PS(FILE* fd, TIFF* tif,
 
 	return(npages);
 }
-
 
 static char DuplexPreamble[] = "\
 %%BeginFeature: *Duplex True\n\
@@ -735,8 +946,13 @@ PSHead(FILE *fd, TIFF *tif, uint32 w, uint32 h,
 	fprintf(fd, "%%%%DocumentData: Clean7Bit\n");
 	fprintf(fd, "%%%%Origin: %ld %ld\n", (long) ox, (long) oy);
 	/* NB: should use PageBoundingBox */
-	fprintf(fd, "%%%%BoundingBox: 0 0 %ld %ld\n",
-	    (long) ceil(pw), (long) ceil(ph));
+        if (rotate && (rotation == 90 || rotation == 270))
+ 	  fprintf(fd, "%%%%BoundingBox: 0 0 %ld %ld\n",
+	    (long) ceil(ph), (long) ceil(pw));
+        else
+          fprintf(fd, "%%%%BoundingBox: 0 0 %ld %ld\n",
+	    (long) ceil(pw), (long) ceil(ph));         
+
 	fprintf(fd, "%%%%LanguageLevel: %d\n", (level3 ? 3 : (level2 ? 2 : 1)));
 	fprintf(fd, "%%%%Pages: (atend)\n");
 	fprintf(fd, "%%%%EndComments\n");
@@ -2119,6 +2335,7 @@ char* stuff[] = {
 " -h #          assume printed page height is # inches (default 11)",
 " -w #          assume printed page width is # inches (default 8.5)",
 " -H #          split image if height is more than # inches",
+" -W #          split image if width is more than # inches",
 " -L #          overLap split images by # inches",
 " -i #          enable/disable (Nz/0) pixel interpolation (default: enable)",
 " -l #          set the left margin to # inches",
@@ -2126,7 +2343,7 @@ char* stuff[] = {
 " -o #          convert directory at file offset #",
 " -O file       write PostScript to file instead of standard output",
 " -p            generate regular PostScript",
-" -r            rotate by 180 degrees",
+" -r # or auto  rotate by 90, 180, 270 degrees or auto",
 " -s            generate PostScript for a single image",
 " -T            print pages for top edge binding",
 " -x            override resolution units as centimeters",

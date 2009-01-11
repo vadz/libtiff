@@ -25,68 +25,12 @@
 .\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 .\" OF THIS SOFTWARE.
 .\" 
-.\" Additional code Copyright (c) 2008 Richard Nolde 
-.\" Updated 5/2008 Add support for the options below to extract 
-.\" sections of image(s) and to modify the whole image or selected portion
-.\" with rotations, mirroring, and colorscale/colormap inversion of selected
-.\" types of TIFF images when appropriate
-.\" 
-.\" Options: 
-.\" -h             Display the syntax guide.
-.\" -v             Report the version and last build date for tiffcrop
-.\" -z x1,y1,x2,y2:x3,y3,x4,y4:..xN,yN,xN + 1, yN + 1 
-.\" Specify a series of coordinates to define regions
-.\" -e c|d|i|m|s   Export mode for images and selections from input images
-.\" Modes may be abbreviated to the first letter.
-.\" combined   All images and selections are written to a single file (default)
-.\" with multiple selections from one image combined into a single image
-.\" divided    All images and selections are written to a single file
-.\" with each selection from one image written to a new image
-.\" image      Each input image is written to a new file (numeric filename sequence)
-.\" with multiple selections from the image combined into one image
-.\" multiple   Each input image is written to a new file (numeric filename sequence)
-.\" with each selection from the image written to a new image
-.\" separate   Individual selections from each image are written to separate files
-.\" -e a|i|s       Export mode for images and selections from input images
-.\" a   all images and selections are written to a single file (default)
-.\" i   new file for each source image (numeric filename sequence)
-.\" s   new file for each selection within each source image 
-.\" c  create a composite image from all selections from an individual image
-.\" i  create individual images from each selection from an individual image 
-.\" -U units    [in, cm, px ] inches, centimeters or pixels
-.\" -H #         set horizontal resolution of output images to #
-.\" -V #         set vertical resolution of output images to #
-.\" -J #         set horizontal margin of output page to # expressed in current units
-.\" -K #         set vertical margin of output page to # expressed in current units
-.\" -X #         horizontal dimension of region to extract expressed in current units
-.\" -Y #         vertical dimension of region to extract expressed in current units
-.\" -O orient    orientation for output image, portrait, landscape, auto
-.\" -P page      page size for output image segments, eg letter, legal, tabloid, etc.
-.\" -S cols:rows divide the image into equal sized segments using cols across and rows down
-.\" -X #        horizontal dimension of region to extract expressed in current units
-.\" -Y #        vertical dimension of region to extract expressed in current units
-.\" -E t|l|r|b  edge to use as origin
-.\" -m #,#,#,#  margins from edges for selection: top, left, bottom, right (comma separated)
-.\" -Z #:#,#:#  up to 32 zones of the image designated as zone X of Y, 
-.\" eg 1:3 would be first of three equal portions measured from reference edge
-.\" -N odd|even|#,#-#,#|last         sequences and ranges of images within file to process
-.\" the words odd or even may be used to specify all odd or even numbered images
-.\" the word last may be used in place of a number in the sequence to indicate 
-.\" the final image in the file without knowing how many images there are
-.\" -R #        rotate image or crop selection by 90,180,or 270 degrees clockwise  
-.\" -F h|v      flip (mirror) image or crop selection horizontally or vertically 
-.\" -I [black|white|preserve|update]
-.\" Invert color space, eg dark to light for bilevel and grayscale images
-.\" set the PHOTOMETRIC_INTERPRETATION tag to MinIsBlack or MinIsWhite,
-.\" without altering the image data if argument is white or black.
-.\" If the argument is preserve or update, the data values are modified:
-.\" update inverts the data and the PHOTOMETRIC_INTERPRETATION tag,
-.\" preserve inverts the data but not the PHOTOMETRIC_INTERPRETATION tag
-.\" 
+.\" Additional code Copyright (c) 2006-2009 Richard Nolde 
+.\" Lasted Updated 12/2008
 .\" .if n .po 0
-.TH "TIFFCROP" "1" "April 06, 2007" "libtiff" ""
+.TH "TIFFCROP" "1" "December, 2008" "libtiff" ""
 .SH "NAME"
-tiffcrop \- copy, convert, crop, extract, and/or process one or more
+tiffcrop \- select, copy, crop, convert, extract, and/or process one or more
 .SM TIFF
 files.
 .SH "SYNOPSIS"
@@ -110,27 +54,29 @@ or to improve efficiency when the regions of interest must be rotated.
 It can also be used to subdivide all or part of a processed image into 
 smaller sections and export individual images or sections of images
 as separate files or separate images within one or more files derived
-from the original input images(s).
+from the original input image or images.
 .PP 
 The available functions can be grouped broadly into three classes:
 .IP 
 Those that select individual images or sections of images from the input files.
-The options \-Z for Zones, \-z for Regions, \-X and \-Y for fixed sized selections,
-\-m for Margins, \-U for units, and \-E for Edge reference provide a variety of 
+The options \-N for sequences or lists of individual images in the input files,
+\-Z for zones, \-z for regions, \-X and \-Y for fixed sized selections,
+\-m for margins, \-U for units, and \-E for edge reference provide a variety of 
 ways to specify portions of the input image.
 .IP 
 Those that allow the individual images or selections to be exported to one or
 more output files in different groupings and control the organization of the 
-data in the output images. The options \-P for Page size grouping, \-S for 
-Subdivision into columns and rows and \-e for export mode options that produce
+data in the output images. The options \-P for page size grouping, \-S for 
+subdivision into columns and rows and \-e for export mode options that produce
 one or more files from each input image. The options \-r, \-s, \-t, \-w  control 
-Strip and Tile format and sizes while \-B \-L \-c \-f modify the endian addressing
+strip and tile format and sizes while \-B \-L \-c \-f modify the endian addressing
 scheme, the compression options, and the bit fill sequence of images as they
 are written.
 .IP 
 Those that perform some action on each image that is selected from the input file.
-The options include \-R for Rotate, \-I for Inversion of the Photometric 
-Interpretation, and \-F to Flip (mirror) the image horizontally or vertically.
+The options include \-R for rotate, \-I for inversion of the photometric 
+interpretation and/or data values, and \-F to flip (mirror) the image horizontally
+or vertically.
 .PP 
 
 Functions are applied to the input image(s) in the following order:
@@ -158,11 +104,11 @@ directory of an input file to the associated directory in the output file.
 Options can be used to force the resultant image to be written as strips 
 or tiles of data, respectively.
 .PP 
-.I tiffcrop
+.I Tiffcrop
 can be used to reorganize the storage characteristics of data
 in a file, and to reorganize, extract, rotate, and otherwise
 process the image data as specified at the same time whereas 
-tiffcp does not alter the image data itself. 
+tiffcp does not alter the image data within the file. 
 .PP 
 Using the options for selecting individual input images and the 
 options for exporting images and/or segments defined as zones or
@@ -180,12 +126,13 @@ Display the syntax summary for tiffcrop.
 Report the current version and last modification date for tiffcrop.
 .TP 
 .B \-N odd|even|#,#\-#,#|last
-Specify one or more series or range(s) of images within file to process.
+Specify one or more series or range(s) of images within each file to process.
 The words
 .B odd
 or
 .B even
-may be used to specify all odd or even numbered images. The word
+may be used to specify all odd or even numbered images couting from one.
+ The word
 .B last 
 may be used in place of a number in the sequence to indicate the 
 final image in the file without knowing how many images there are.
@@ -206,12 +153,14 @@ option has no effect on export layout when multiple zones or regions
 are not being exported to composite images. Edges may be abbreviated
 to the first letter.
 .TP 
-.B \-e c|d|i|m|s
+.B \-e combined|divided|image|multiple|separate
 Specify the export mode for images and selections from input images.
-Modes may be abbreviated to the first letter.
+The final filename on the command line is considered to be the 
+destination file or filename stem for automatically generated 
+sequences of files. Modes may be abbreviated to the first letter.
 .IP 
-combined   All images and selections are written to a single file (default)
-with multiple selections from one image combined into a single image
+combined   All images and selections are written to a single file with
+multiple selections from one image combined into a single image (default)
 .IP 
 divided    All images and selections are written to a single file
 with each selection from one image written to a new image
@@ -234,7 +183,7 @@ TIFF file (which defaults to inches if not specified in the IFD).
 Specify margins to be removed from the input image. The order must 
 be top, left, bottom, right with only commas separating the elements 
 of the list. Margins are scaled according to the current units and 
-removed before any other extractions are computed. Captial M was in use.
+removed before any other extractions are computed..
 .TP 
 .B \-X #
 Set the horizontal (X\-axis) dimension of a region to extract relative to 
@@ -282,7 +231,7 @@ MinIsBlack or MinIsWhite, without altering the image data. If the argument
 is data or both, the data values of the image are modified. Specifying both 
 inverts the data and the PHOTOMETRIC_INTERPRETATION tag, whereas using data
 inverts the data but not the PHOTOMETRIC_INTERPRETATION tag.
-No support for color images.
+No support for modifying the color space of color images in this release.
 .TP 
 .B \-H #
 Set the horizontal resolution of output images to #
@@ -303,13 +252,15 @@ expressed in the current units.
 .B \-O portrait|landscape|auto
 Set the output orientation of the pages or sections.
 Auto will use the arrangement that requires the fewest pages.
-.TP 
-.B \-S cols:rows
-Divide each image into cols across and rows down equal sections.
+This option is only meaningful in conjunction with the -P
+option to format an image to fit on a specific paper size.
 .TP 
 .B \-P page
 Format the output images to fit on page size paper. Use
 \-P list to show the supported page sizes and dimensions.
+.TP 
+.B \-S cols:rows
+Divide each image into cols across and rows down equal sections.
 .TP 
 .B \-B
 Force output to be written with Big\-Endian byte order.
@@ -397,7 +348,7 @@ Ignore non\-fatal read errors and continue processing of the input file.
 .TP 
 .B \-l
 Specify the length of a tile (in pixels).
-.I tiffcrop
+.I Tiffcrop
 attempts to set the tile dimensions so
 that no more than 8 kilobytes of data appear in a tile.
 .TP 
@@ -411,7 +362,7 @@ Suppress the use of memory\-mapped files when reading images.
 .TP 
 .B \-p
 Specify the planar configuration to use in writing image data
-that has more than one 8\-bit sample per pixel.
+that has more than one sample per pixel.
 By default,
 .I tiffcrop
 will create a new file with the same planar configuration as
@@ -452,6 +403,37 @@ that no more than 8 kilobytes of data appear in a tile.
 .I tiffcrop
 attempts to set the tile dimensions so
 that no more than 8 kilobytes of data appear in a tile.
+.TP
+Debug and dump facility
+.B \-D opt1:value1,opt2:value2,opt3:value3:opt4:value4
+Display program progress and/or dump raw data to non\-TIFF files.
+Options include the following and must be joined as a comma
+separate list. The use of this option is generally limited to
+program debugging and development of future options. An equal sign
+may be substituted for the colon in option:value pairs.
+.IP
+debug:N         Display limited program progress indicators where larger N
+increase the level of detail.
+.IP
+format:txt|raw  Format any logged data as ASCII text or raw binary 
+values. ASCII text dumps include strings of ones and zeroes representing
+the binary values in the image data plus identifying headers.
+.IP
+level:N         Specify the level of detail presented in the dump files.
+This can vary from dumps of the entire input or output image data to dumps
+of data processed by specific functions. Current range of levels is 1 to 3.
+.IP
+input:full\-path\-to\-directory/input\-dumpname
+.IP
+output:full\-path\-to\-directory/output\-dumpname
+.IP
+When dump files are being written, each image will be written to a separate
+file with the name built by adding a numeric sequence value to the dumpname
+and an extension of .txt for ASCII dumps or .bin for binary dumps.
+
+The four debug/dump options are independent, though it makes little sense to
+specify a dump file without specifying a detail level.
+
 .SH "EXAMPLES"
 The following concatenates two files and writes the result using 
 .SM LZW
@@ -502,14 +484,16 @@ tiffcrop \-N last \-R 90 \-O auto \-P tabloid \-U in \-J 0.25 \-K 0.25 \-H 300 \
 The output images will have a specified resolution of 300 dpi in both
 directions. The orientation of each page will be determined by whichever
 choice requires the fewest pages. To specify a specific orientation, use
-the portrait or landscape option.
+the portrait or landscape option. The paper size option does not resample
+the image. It breaks each original image into a series of smaller images
+that will fit on the target paper size at the specified resolution.
 .fi 
 .RE
 .PP 
 Extract two regions 2048 pixels wide by 2048 pixels high from each page of
 a multi\-page input file and write each region to a separate output file.
 .RS
-tiffcrop \-U px \-z 1,1,2048,2048:1,2049,2048,4097 \-e separate  CheckScans.tiff Check.tiff
+tiffcrop \-U px \-z 1,1,2048,2048:1,2049,2048,4097 \-e separate  CheckScans.tiff Check
 .fi 
 .RE
 The output file names will use the stem Check with a numeric suffix which is
@@ -520,14 +504,10 @@ the export option to \-e multiple.
 
 .SH "NOTES"
 .PP 
-Not all options work with all 
-.I  TIFF
-data types. In general, bilevel, grayscale, palette and RGB(A) data in 8 or 16 bit
-formats should work, but I have limited access to sample images in uncommon formats
-or formats with other color models.
-Floating point data types will probably not be handled correctly by functions that
-manipulate individual images. Tiffcrop is derived
-from code in
+In general, bilevel, grayscale, palette and RGB(A) data with bit depths
+from one to 32 bits should work in both interleaved and separate plane
+formats. Floating point data types are supported at bit depts of 16, 24, 32 and 64
+bits per sample. Tiffcrop is derived from code in
 .I tiffcp
 with extensive modifications and additions to support the selection of input images
 and regions and the exporting of them to one or more output files in various
@@ -540,7 +520,8 @@ usage that is independent of the number of images in the file. In addition to th
 memory required by the input and output buffers associated with
 .I LIBTIFF
 one or more buffers at least as large as the largest image to be read will be
-required. The design favors large volume document processing uses over scientific or graphical manipulation of large datasets as might be found in research scenarios.
+required. The design favors large volume document processing uses over scientific or 
+graphical manipulation of large datasets as might be found in research scenarios.
 .SH "SEE ALSO"
 .BR pal2rgb (1),
 .BR tiffinfo (1),
