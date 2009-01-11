@@ -31,7 +31,7 @@
  * some of the original functions have been extended to support arbitrary bit
  * depths. These functions are presented at the top of this file.
  *
- * Additions (c) Richard Nolde 2006-2009 Last Updated 12/31/2008 
+ * Additions (c) Richard Nolde 2006-2009 Last Updated 1/6/2009 
  * IN NO EVENT SHALL RICHARD NOLDE BE LIABLE FOR ANY SPECIAL, INCIDENTAL, 
  * INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER 
  * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ADVISED OF 
@@ -112,6 +112,7 @@
  */
 
 #include "tif_config.h"
+#include "tiffiop.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,12 +142,9 @@ extern int getopt(int, char**, char*);
 #define PATH_MAX 1024
 #endif
 
-#ifndef HAVE_INT64
-typedef int64_t   int64;
-typedef uint64_t uint64; 
-#endif
-
+#ifndef streq
 #define	streq(a,b)	(strcmp((a),(b)) == 0)
+#endif
 #define	strneq(a,b,n)	(strncmp((a),(b),(n)) == 0)
 
 /* NB: the uint32 casts are to silence certain ANSI-C compilers */
@@ -593,7 +591,7 @@ static int  dump_buffer (FILE *, int, uint32, uint32, uint32, unsigned char *);
 /* The following functions are taken largely intact from tiffcp */
 
 static   char tiffcrop_version_id[] = "2.0";
-static   char tiffcrop_rev_date[] = "01-01-2009";
+static   char tiffcrop_rev_date[] = "01-06-2009";
 static   char* stuff[] = {
 "usage: tiffcrop [options] source1 ... sourceN  destination",
 "where options are:",
@@ -1402,7 +1400,7 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
 			   tiffcrop_version_id, tiffcrop_rev_date);
  	        TIFFError ("Tiffcp code", "Copyright (c) 1988-1997 Sam Leffler");
 		TIFFError ("           ", "Copyright (c) 1991-1997 Silicon Graphics, Inc");
-                TIFFError ("Tiffcrop additions", "Copyright (c) 2007-2008 Richard Nolde");
+                TIFFError ("Tiffcrop additions", "Copyright (c) 2007-2009 Richard Nolde");
 	        exit (0);
 		break;
       case 'w':	/* tile width */
@@ -2445,10 +2443,10 @@ extractContigSamples8bits (uint8 *in, uint8 *out, uint32 cols,
                            tsample_t sample, uint16 spp, uint16 bps, 
                            tsample_t count, uint32 start, uint32 end)
   {
-  int    ready_bits, sindex;
+  int    ready_bits = 0, sindex = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint8  maskbits, matchbits;
-  uint8  buff1, buff2;
+  uint8  maskbits = 0, matchbits = 0;
+  uint8  buff1 = 0, buff2 = 0;
   uint8 *src = in;
   uint8 *dst = out;
 
@@ -2522,11 +2520,11 @@ extractContigSamples16bits (uint8 *in, uint8 *out, uint32 cols,
                             tsample_t sample, uint16 spp, uint16 bps, 
                             tsample_t count, uint32 start, uint32 end)
   {
-  int    ready_bits, sindex;
+  int    ready_bits = 0, sindex = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint16 maskbits, matchbits;
+  uint16 maskbits = 0, matchbits = 0;
   uint16 buff1 = 0, buff2 = 0;
-  uint8  bytebuff;
+  uint8  bytebuff = 0;
   uint8 *src = in;
   uint8 *dst = out;
   unsigned char swapbuff[2];
@@ -2618,11 +2616,11 @@ extractContigSamples24bits (uint8 *in, uint8 *out, uint32 cols,
  	                    tsample_t sample, uint16 spp, uint16 bps, 
                             tsample_t count, uint32 start, uint32 end)
   {
-  int    ready_bits, sindex;
+  int    ready_bits = 0, sindex = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint32 maskbits, matchbits;
+  uint32 maskbits = 0, matchbits = 0;
   uint32 buff1 = 0, buff2 = 0;
-  uint8  bytebuff1, bytebuff2;
+  uint8  bytebuff1 = 0, bytebuff2 = 0;
   uint8 *src = in;
   uint8 *dst = out;
   unsigned char  swapbuff[4];
@@ -2724,12 +2722,12 @@ extractContigSamples32bits (uint8 *in, uint8 *out, uint32 cols,
                             tsample_t sample, uint16 spp, uint16 bps, 
  			    tsample_t count, uint32 start, uint32 end)
   {
-  int    ready_bits, sindex, shift_width;
+  int    ready_bits = 0, sindex = 0, shift_width = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint32 longbuff1, longbuff2;
-  uint64 maskbits, matchbits;
+  uint32 longbuff1 = 0, longbuff2 = 0;
+  uint64 maskbits = 0, matchbits = 0;
   uint64 buff1 = 0, buff2 = 0, buff3 = 0;
-  uint8  bytebuff1, bytebuff2, bytebuff3, bytebuff4;
+  uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   uint8 *src = in;
   uint8 *dst = out;
   unsigned char swapbuff1[4];
@@ -2854,10 +2852,10 @@ extractContigSamplesShifted8bits (uint8 *in, uint8 *out, uint32 cols,
 			          tsample_t count, uint32 start, uint32 end,
  	                          int shift)
   {
-  int    ready_bits, sindex;
+  int    ready_bits = 0, sindex = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint8  maskbits, matchbits;
-  uint8  buff1, buff2;
+  uint8  maskbits = 0, matchbits = 0;
+  uint8  buff1 = 0, buff2 = 0;
   uint8 *src = in;
   uint8 *dst = out;
 
@@ -2934,11 +2932,11 @@ extractContigSamplesShifted16bits (uint8 *in, uint8 *out, uint32 cols,
   			           tsample_t count, uint32 start, uint32 end,
  	                           int shift)
   {
-  int    ready_bits, sindex;
+  int    ready_bits = 0, sindex = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint16 maskbits, matchbits;
+  uint16 maskbits = 0, matchbits = 0;
   uint16 buff1 = 0, buff2 = 0;
-  uint8  bytebuff;
+  uint8  bytebuff = 0;
   uint8 *src = in;
   uint8 *dst = out;
   unsigned char swapbuff[2];
@@ -3032,11 +3030,11 @@ extractContigSamplesShifted24bits (uint8 *in, uint8 *out, uint32 cols,
                                    tsample_t count, uint32 start, uint32 end,
 	                           int shift)
   {
-  int    ready_bits, sindex;
+  int    ready_bits = 0, sindex = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint32 maskbits, matchbits;
+  uint32 maskbits = 0, matchbits = 0;
   uint32 buff1 = 0, buff2 = 0;
-  uint8  bytebuff1, bytebuff2;
+  uint8  bytebuff1 = 0, bytebuff2 = 0;
   uint8 *src = in;
   uint8 *dst = out;
   unsigned char  swapbuff[4];
@@ -3142,12 +3140,12 @@ extractContigSamplesShifted32bits (uint8 *in, uint8 *out, uint32 cols,
  			           tsample_t count, uint32 start, uint32 end,
 	                           int shift)
   {
-  int    ready_bits, sindex, shift_width;
+  int    ready_bits = 0, sindex = 0, shift_width = 0;
   uint32 col, src_byte, src_bit, bit_offset;
-  uint32 longbuff1, longbuff2;
-  uint64 maskbits, matchbits;
+  uint32 longbuff1 = 0, longbuff2 = 0;
+  uint64 maskbits = 0, matchbits = 0;
   uint64 buff1 = 0, buff2 = 0, buff3 = 0;
-  uint8  bytebuff1, bytebuff2, bytebuff3, bytebuff4;
+  uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   uint8 *src = in;
   uint8 *dst = out;
   unsigned char swapbuff1[4];
@@ -3394,13 +3392,13 @@ combineSeparateSamples8bits (uint8 *in[], uint8 *out, uint32 row,
                             uint32 cols, uint16 spp, uint16 bps, 
  	                    FILE *dumpfile, int format, int level)
   {
-  int    ready_bits;
-  int    bytes_per_sample;
+  int    ready_bits = 0;
+  int    bytes_per_sample = 0;
   uint32 dst_rowsize; 
   uint32 bit_offset;
   uint32 col, src_byte = 0, src_bit = 0;
-  uint8  maskbits, matchbits;
-  uint8  buff1, buff2;
+  uint8  maskbits = 0, matchbits = 0;
+  uint8  buff1 = 0, buff2 = 0;
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
@@ -3489,13 +3487,13 @@ combineSeparateSamples16bits (uint8 *in[], uint8 *out, uint32 row,
                               uint32 cols, uint16 spp, uint16 bps, 
  	                      FILE *dumpfile, int format, int level)
   {
-  int    ready_bits, bytes_per_sample;
+  int    ready_bits = 0, bytes_per_sample = 0;
   uint32 dst_rowsize; 
   uint32 bit_offset;
   uint32 col, src_byte = 0, src_bit = 0;
-  uint16 maskbits, matchbits;
+  uint16 maskbits = 0, matchbits = 0;
   uint16 buff1 = 0, buff2 = 0;
-  uint8  bytebuff;
+  uint8  bytebuff = 0;
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
@@ -3600,13 +3598,13 @@ combineSeparateSamples24bits (uint8 *in[], uint8 *out, uint32 row,
                               uint32 cols, uint16 spp, uint16 bps, 
 	                      FILE *dumpfile, int format, int level)
   {
-  int    ready_bits, bytes_per_sample;
+  int    ready_bits = 0, bytes_per_sample = 0;
   uint32 dst_rowsize; 
   uint32 bit_offset;
   uint32 col, src_byte = 0, src_bit = 0;
-  uint32 maskbits, matchbits;
-  uint32 buff1, buff2;
-  uint8  bytebuff1, bytebuff2;
+  uint32 maskbits = 0, matchbits = 0;
+  uint32 buff1 = 0, buff2 = 0;
+  uint8  bytebuff1 = 0, bytebuff2 = 0;
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
@@ -3731,15 +3729,15 @@ combineSeparateSamples32bits (uint8 *in[], uint8 *out, uint32 row,
                               uint32 cols, uint16 spp, uint16 bps, 
 	                      FILE *dumpfile, int format, int level)
   {
-  int    ready_bits, bytes_per_sample, shift_width;
+  int    ready_bits = 0, bytes_per_sample = 0, shift_width = 0;
   uint32 dst_rowsize; 
   uint32 bit_offset;
   uint32 src_byte = 0, src_bit = 0;
   uint32 col;
-  uint32 longbuff1, longbuff2;
-  uint64 maskbits, matchbits;
-  uint64 buff1, buff2, buff3;
-  uint8  bytebuff1, bytebuff2, bytebuff3, bytebuff4;
+  uint32 longbuff1 = 0, longbuff2 = 0;
+  uint64 maskbits = 0, matchbits = 0;
+  uint64 buff1 = 0, buff2 = 0, buff3 = 0;
+  uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
@@ -4004,7 +4002,7 @@ static int readSeparateStripsIntoBuffer (TIFF *in, uint8 *obuf, uint32 length,
 	    && !ignore)
         {
         TIFFError(TIFFFileName(in),
-	         "Error, can't read scanline %lu for sample",
+	         "Error, can't read scanline %lu for sample %d",
 		  (unsigned long) row, s + 1);
         for (i = 0; i < s; i++)
           _TIFFfree (srcbuffs[i]);
@@ -6756,11 +6754,11 @@ static int
 rotateContigSamples8bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width, 
                          uint32 length,   uint32 col, uint8 *src, uint8 *dst)
   {
-  int      ready_bits;
-  uint32   src_byte, src_bit;
-  uint32   row, rowsize, bit_offset;
-  uint8    matchbits, maskbits;
-  uint8    buff1, buff2;
+  int      ready_bits = 0;
+  uint32   src_byte = 0, src_bit = 0;
+  uint32   row, rowsize = 0, bit_offset = 0;
+  uint8    matchbits = 0, maskbits = 0;
+  uint8    buff1 = 0, buff2 = 0;
   uint8   *next;
   tsample_t sample;
 
@@ -6832,12 +6830,12 @@ static int
 rotateContigSamples16bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width, 
                          uint32 length,   uint32 col, uint8 *src, uint8 *dst)
   {
-  int      ready_bits;
+  int      ready_bits = 0;
   uint32   row, rowsize, bit_offset;
-  uint32   src_byte, src_bit;
-  uint16   matchbits, maskbits;
-  uint16   buff1, buff2;
-  uint8    bytebuff;
+  uint32   src_byte = 0, src_bit = 0;
+  uint16   matchbits = 0, maskbits = 0;
+  uint16   buff1 = 0, buff2 = 0;
+  uint8    bytebuff = 0;
   uint8    swapbuff[2];
   uint8   *next;
   tsample_t sample;
@@ -6923,12 +6921,12 @@ static int
 rotateContigSamples24bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width, 
                           uint32 length,   uint32 col, uint8 *src, uint8 *dst)
   {
-  int      ready_bits;
+  int      ready_bits = 0;
   uint32   row, rowsize, bit_offset;
-  uint32   src_byte, src_bit;
-  uint32   matchbits, maskbits;
-  uint32   buff1, buff2;
-  uint8    bytebuff1, bytebuff2;
+  uint32   src_byte = 0, src_bit = 0;
+  uint32   matchbits = 0, maskbits = 0;
+  uint32   buff1 = 0, buff2 = 0;
+  uint8    bytebuff1 = 0, bytebuff2 = 0;
   uint8    swapbuff[4];
   uint8   *next;
   tsample_t sample;
@@ -7027,14 +7025,14 @@ static int
 rotateContigSamples32bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width, 
                           uint32 length,   uint32 col, uint8 *src, uint8 *dst)
   {
-  int    ready_bits, shift_width;
+  int    ready_bits = 0, shift_width = 0;
   int    bytes_per_sample, bytes_per_pixel;
   uint32 row, rowsize, bit_offset;
   uint32 src_byte, src_bit;
-  uint32 longbuff1, longbuff2;
-  uint64 maskbits, matchbits;
+  uint32 longbuff1 = 0, longbuff2 = 0;
+  uint64 maskbits = 0, matchbits = 0;
   uint64 buff1 = 0, buff2 = 0, buff3 = 0;
-  uint8  bytebuff1, bytebuff2, bytebuff3, bytebuff4;
+  uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   unsigned char  swapbuff1[4];
   unsigned char  swapbuff2[4];
   uint8   *next;
@@ -7430,11 +7428,11 @@ static int
 reverseSamples8bits (uint16 spp, uint16 bps, uint32 width, 
                      uint8 *ibuff, uint8 *obuff)
   {
-  int      ready_bits;
+  int      ready_bits = 0;
   uint32   col;
   uint32   src_byte, src_bit;
-  uint32   bit_offset;
-  uint8    matchbits, maskbits;
+  uint32   bit_offset = 0;
+  uint8    matchbits = 0, maskbits = 0;
   uint8    buff1 = 0, buff2 = 0;
   unsigned char *src;
   unsigned char *dst;
@@ -7494,13 +7492,13 @@ static int
 reverseSamples16bits (uint16 spp, uint16 bps, uint32 width, 
                       uint8 *ibuff, uint8 *obuff)
   {
-  int      ready_bits;
+  int      ready_bits = 0;
   uint32   col;
-  uint32   src_byte, src_bit;
-  uint32   bit_offset;
-  uint16   matchbits, maskbits;
+  uint32   src_byte = 0, src_bit = 0;
+  uint32   bit_offset = 0;
+  uint16   matchbits = 0, maskbits = 0;
   uint16   buff1 = 0, buff2 = 0;
-  uint8    bytebuff;
+  uint8    bytebuff = 0;
   unsigned char *src;
   unsigned char *dst;
   unsigned char  swapbuff[2];
@@ -7578,13 +7576,13 @@ static int
 reverseSamples24bits (uint16 spp, uint16 bps, uint32 width, 
                       uint8 *ibuff, uint8 *obuff)
   {
-  int      ready_bits;
+  int      ready_bits = 0;
   uint32   col;
-  uint32   src_byte, src_bit;
-  uint32   bit_offset;
-  uint32   matchbits, maskbits;
+  uint32   src_byte = 0, src_bit = 0;
+  uint32   bit_offset = 0;
+  uint32   matchbits = 0, maskbits = 0;
   uint32   buff1 = 0, buff2 = 0;
-  uint8    bytebuff1, bytebuff2;
+  uint8    bytebuff1 = 0, bytebuff2 = 0;
   unsigned char *src;
   unsigned char *dst;
   unsigned char  swapbuff[4];
@@ -7675,15 +7673,15 @@ static int
 reverseSamples32bits (uint16 spp, uint16 bps, uint32 width, 
                       uint8 *ibuff, uint8 *obuff)
   {
-  int    ready_bits, shift_width;
+  int    ready_bits = 0, shift_width = 0;
   int    bytes_per_sample, bytes_per_pixel;
   uint32 bit_offset;
   uint32 src_byte = 0, src_bit = 0;
   uint32 col;
-  uint32 longbuff1, longbuff2;
-  uint64 maskbits, matchbits;
+  uint32 longbuff1 = 0, longbuff2 = 0;
+  uint64 maskbits = 0, matchbits = 0;
   uint64 buff1 = 0, buff2 = 0, buff3 = 0;
-  uint8  bytebuff1, bytebuff2, bytebuff3, bytebuff4;
+  uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   unsigned char *src;
   unsigned char *dst;
   unsigned char  swapbuff1[4];

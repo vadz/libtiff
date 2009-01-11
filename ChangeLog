@@ -1,3 +1,13 @@
+2009-01-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2ps.c: Incorporated significant functionality update
+	from Richard Nolde.  In particular, support for rotating the image
+	by 90, 180, 270, and 'auto' has been added.  Still waiting for
+	documentation patch to man/tiff2ps.1.
+
+	* tools/tiffcrop.c: Incorporated significant functionality update
+	from Richard Nolde.
+
 2009-01-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tiffiop.h: Add private type declarations for int64, and
