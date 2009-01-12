@@ -53,7 +53,8 @@ TESTSCRIPTS = \
 	tiff2ps-PS2.sh \
 	tiff2ps-PS3.sh \
 	tiff2ps-EPS1.sh \
-	tiff2pdf.sh
+	tiff2pdf.sh \
+	tiffcrop.sh
 
 IMAGES = \
 	images/minisblack-1c-16b.tiff \

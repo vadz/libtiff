@@ -881,7 +881,7 @@ TIFF2PS(FILE* fd, TIFF* tif,
 			      }
                             else
 			      {
-			      fprintf (stderr, "No rotation\n");
+			      /* fprintf (stderr, "No rotation\n"); */
 			      fprintf (fd, "%f %f scale\n", prw, prh);
 			      }
 			}

@@ -1,3 +1,10 @@
+2009-01-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/tiffcrop.sh: New test script for tiffcrop from Richard
+	Nolde.
+
+	* tools/tiff2ps.c: Remove spurious message to stderr.
+
 2009-01-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2ps.c: Incorporated significant functionality update
