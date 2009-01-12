@@ -2,8 +2,7 @@
 
 	* tools/tiff2ps.c: Incorporated significant functionality update
 	from Richard Nolde.  In particular, support for rotating the image
-	by 90, 180, 270, and 'auto' has been added.  Still waiting for
-	documentation patch to man/tiff2ps.1.
+	by 90, 180, 270, and 'auto' has been added.
 
 	* tools/tiffcrop.c: Incorporated significant functionality update
 	from Richard Nolde.
