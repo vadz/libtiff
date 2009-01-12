@@ -1,3 +1,7 @@
+2009-01-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2ps.c: Remove spurious message printed to stderr. 
+
 2009-01-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2ps.c: Incorporated significant functionality update
