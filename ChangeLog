@@ -1,3 +1,7 @@
+2009-01-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* Update autotools for 4.0.0 beta3
+
 2009-01-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/tiffcrop.sh: New test script for tiffcrop from Richard
