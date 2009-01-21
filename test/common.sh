@@ -1,5 +1,10 @@
 # Common code fragment for tests
 #
+if test "$VERBOSE" = TRUE
+then
+  set -x
+fi
+
 BUILDDIR=`pwd`
 SRCDIR=`dirname $0`
 SRCDIR=`cd $SRCDIR && pwd`

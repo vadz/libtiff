@@ -1,3 +1,8 @@
+2009-01-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/common.sh: Execute tests like 'make VERBOSE=TRUE check' in
+	order to trace full execution detail while executing the test suite.
+
 2009-01-20  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiffsplit.c: fix sampleformat to be shortv instead of longv.
