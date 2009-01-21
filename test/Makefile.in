@@ -265,6 +265,7 @@ EXTRA_DIST = \
 
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
+CLEANFILES = test_packbits.tif deleteme*
 
 # Test scripts to execute
 TESTSCRIPTS = \
@@ -589,6 +590,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

@@ -33,6 +33,8 @@ EXTRA_DIST = \
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
+CLEANFILES = test_packbits.tif deleteme*
+
 # Executable programs which need to be built in order to support tests
 check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite
 

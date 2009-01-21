@@ -1,5 +1,8 @@
 2009-01-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* test/Makefile.am (CLEANFILES): Make sure that test output files
+	are removed by 'make clean'
+
 	* Update autotools for 4.0.0 beta3
 
 2009-01-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
