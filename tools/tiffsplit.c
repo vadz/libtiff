@@ -240,13 +240,13 @@ cpStrips(TIFF* in, TIFF* out)
 		TIFFGetField(in, TIFFTAG_STRIPBYTECOUNTS, &bytecounts);
 		for (s = 0; s < ns; s++) {
 			if (bytecounts[s] > (uint64)bufsize) {
-				buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[s]);
+				buf = (unsigned char *)_TIFFrealloc(buf, (tmsize_t)bytecounts[s]);
 				if (!buf)
 					return (0);
-				bufsize = bytecounts[s];
+				bufsize = (tmsize_t)bytecounts[s];
 			}
-			if (TIFFReadRawStrip(in, s, buf, bytecounts[s]) < 0 ||
-			    TIFFWriteRawStrip(out, s, buf, bytecounts[s]) < 0) {
+			if (TIFFReadRawStrip(in, s, buf, (tmsize_t)bytecounts[s]) < 0 ||
+			    TIFFWriteRawStrip(out, s, buf, (tmsize_t)bytecounts[s]) < 0) {
 				_TIFFfree(buf);
 				return (0);
 			}
@@ -270,13 +270,13 @@ cpTiles(TIFF* in, TIFF* out)
 		TIFFGetField(in, TIFFTAG_TILEBYTECOUNTS, &bytecounts);
 		for (t = 0; t < nt; t++) {
 			if (bytecounts[t] > (uint64) bufsize) {
-				buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[t]);
+				buf = (unsigned char *)_TIFFrealloc(buf, (tmsize_t)bytecounts[t]);
 				if (!buf)
 					return (0);
-				bufsize = bytecounts[t];
+				bufsize = (tmsize_t)bytecounts[t];
 			}
-			if (TIFFReadRawTile(in, t, buf, bytecounts[t]) < 0 ||
-			    TIFFWriteRawTile(out, t, buf, bytecounts[t]) < 0) {
+			if (TIFFReadRawTile(in, t, buf, (tmsize_t)bytecounts[t]) < 0 ||
+			    TIFFWriteRawTile(out, t, buf, (tmsize_t)bytecounts[t]) < 0) {
 				_TIFFfree(buf);
 				return (0);
 			}

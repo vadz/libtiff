@@ -578,7 +578,7 @@ PlaceImage(TIFF *tif, FILE *fp, int *npages, uint32 w, uint32 h,
            *   pages from each horizontal segment if the image is wider than pagewidth
            */
 
-          ximages = ceil (imagewidth / pagewidth);
+          ximages = (int) ceil (imagewidth / pagewidth);
           overlapspace = (ximages - 1) * overlap;
           if (((imagewidth + overlapspace) * (pageheight / splitheight)) > (ximages * pagewidth)) {
             ximages++;
@@ -611,7 +611,7 @@ PlaceImage(TIFF *tif, FILE *fp, int *npages, uint32 w, uint32 h,
 	    }
 	  }
         } else {  /* splitaxis is HORIZONTAL */
-          ximages = ceil (imagewidth / splitwidth);
+          ximages = (int) ceil (imagewidth / splitwidth);
           overlapspace = (ximages - 1) * overlap;
           if (((imagewidth + overlapspace) * (pagewidth / splitwidth)) > (ximages * pagewidth)) {
             ximages++;
@@ -2034,11 +2034,11 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 	 * Find largest strip:
 	 */
 
-	bufsize = bc[0];
+	bufsize = (uint32) bc[0];
 
 	for ( s = 0; ++s < (tstrip_t)tf_numberstrips; ) {
 		if ( bc[s] > bufsize )
-			bufsize = bc[s];
+			bufsize = (uint32) bc[s];
 	}
 
 	tf_buf = (unsigned char*) _TIFFmalloc(bufsize);
@@ -2070,7 +2070,7 @@ PSRawDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 #endif
 
 	for (s = 0; s < (tstrip_t) tf_numberstrips; s++) {
-		cc = TIFFReadRawStrip(tif, s, tf_buf, bc[s]);
+		cc = TIFFReadRawStrip(tif, s, tf_buf, (tmsize_t) bc[s]);
 		if (cc < 0) {
 			TIFFError(filename, "Can't read strip");
 			break;

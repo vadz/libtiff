@@ -448,7 +448,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 					_TIFFfree(datamem);
 					datamem = NULL;
 				}
-				if (read(fd, datamem, datasize) != (TIFF_SSIZE_T)datasize)
+				if (read(fd, datamem, (size_t)datasize) != (TIFF_SSIZE_T)datasize)
 				{
 					Error(
 				"Read error accessing tag %u value", tag);
@@ -471,23 +471,23 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 						break;
 					case TIFF_SHORT:
 					case TIFF_SSHORT:
-						TIFFSwabArrayOfShort((uint16*)datamem,count);
+						TIFFSwabArrayOfShort((uint16*)datamem,(tmsize_t)count);
 						break;
 					case TIFF_LONG:
 					case TIFF_SLONG:
 					case TIFF_FLOAT:
 					case TIFF_IFD:
-						TIFFSwabArrayOfLong((uint32*)datamem,count);
+						TIFFSwabArrayOfLong((uint32*)datamem,(tmsize_t)count);
 						break;
 					case TIFF_RATIONAL:
 					case TIFF_SRATIONAL:
-						TIFFSwabArrayOfLong((uint32*)datamem,count*2);
+						TIFFSwabArrayOfLong((uint32*)datamem,(tmsize_t)count*2);
 						break;
 					case TIFF_DOUBLE:
 					case TIFF_LONG8:
 					case TIFF_SLONG8:
 					case TIFF_IFD8:
-						TIFFSwabArrayOfLong8((uint64*)datamem,count);
+						TIFFSwabArrayOfLong8((uint64*)datamem,(tmsize_t)count);
 						break;
 				}
 			}
