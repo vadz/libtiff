@@ -46,12 +46,12 @@
 # include <io.h>
 #endif
 
-#ifndef HAVE_GETOPT
-extern int getopt(int, char**, char*);
-#endif
-
 #ifdef NEED_LIBPORT
 # include "libport.h"
+#endif
+
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
 #endif
 
 #include "tiffio.h"
