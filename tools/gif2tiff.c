@@ -44,6 +44,10 @@
 # include <unistd.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "tiffio.h"
 
 #define	GIFGAMMA	(1.5)		/* smaller makes output img brighter */

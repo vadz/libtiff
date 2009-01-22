@@ -43,6 +43,10 @@
 # include <io.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "tiffio.h"
 
 float	defxres = 204.;		/* default x resolution (pixels/inch) */
