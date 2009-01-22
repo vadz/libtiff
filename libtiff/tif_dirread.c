@@ -5041,7 +5041,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 			break;
 		case TIFF_SETGET_C32_SINT8:
 			{
-				int8* data;
+				int8* data = NULL;
 				assert(fip->field_readcount==TIFF_VARIABLE2);
 				assert(fip->field_passcount==1);
 				err=TIFFReadDirEntrySbyteArray(tif,dp,&data);
@@ -5075,7 +5075,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 			break;
 		case TIFF_SETGET_C32_SINT16:
 			{
-				int16* data;
+				int16* data = NULL;
 				assert(fip->field_readcount==TIFF_VARIABLE2);
 				assert(fip->field_passcount==1);
 				err=TIFFReadDirEntrySshortArray(tif,dp,&data);
@@ -5109,7 +5109,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 			break;
 		case TIFF_SETGET_C32_SINT32:
 			{
-				int32* data;
+				int32* data = NULL;
 				assert(fip->field_readcount==TIFF_VARIABLE2);
 				assert(fip->field_passcount==1);
 				err=TIFFReadDirEntrySlongArray(tif,dp,&data);
@@ -5143,7 +5143,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 			break;
 		case TIFF_SETGET_C32_SINT64:
 			{
-				int64* data;
+				int64* data = NULL;
 				assert(fip->field_readcount==TIFF_VARIABLE2);
 				assert(fip->field_passcount==1);
 				err=TIFFReadDirEntrySlong8Array(tif,dp,&data);

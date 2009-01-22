@@ -1,3 +1,8 @@
+2009-01-22  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirinfo.c,tif_dirread.c: Avoid warnings
+	about unused parameters, and uninitialized variables.
+
 2009-01-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/common.sh: Execute tests like 'make VERBOSE=TRUE check' in

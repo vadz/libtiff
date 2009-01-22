@@ -906,6 +906,10 @@ TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 					     sizeof(TIFFFieldInfo *),
 					     tagNameCompare);
 	return tif->tif_foundfield = (ret ? *ret : NULL);
+#else
+        (void) tif;
+        (void) field_name;
+        (void) dt;
 #endif
 	return NULL;
 }
@@ -937,6 +941,10 @@ TIFFFindFieldInfo(TIFF* tif, uint32 tag, TIFFDataType dt)
 					       sizeof(TIFFFieldInfo *),
 					       tagCompare);
 	return tif->tif_foundfield = (ret ? *ret : NULL);
+#else
+        (void) tif;
+        (void) tag;
+        (void) dt;
 #endif
 	return NULL;
 }
