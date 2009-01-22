@@ -1,5 +1,8 @@
 2009-01-22  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* port,tools: Introduce libport.h, and include in tools if NEED_LIBPORT
+	defined, primarily to reduce prototype warnings on windows. 
+
 	* libtiff/tif_dirinfo.c,tif_dirread.c: Avoid warnings
 	about unused parameters, and uninitialized variables.
 

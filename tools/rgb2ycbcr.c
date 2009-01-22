@@ -34,6 +34,10 @@
 # include <unistd.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "tiffio.h"
 
 #define	streq(a,b)	(strcmp(a,b) == 0)

@@ -117,7 +117,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 #include <math.h>
 #include <ctype.h>
 #include <limits.h>
@@ -126,6 +125,10 @@
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
 #endif
 
 #ifndef HAVE_GETOPT
@@ -1855,6 +1858,7 @@ main(int argc, char* argv[])
   uint32 deftilelength = (uint32) -1;
   uint32 defrowsperstrip = (uint32) 0;
   uint32 dirnum = 0;
+  extern int   optind;
 
   TIFF *in = NULL;
   TIFF *out = NULL;

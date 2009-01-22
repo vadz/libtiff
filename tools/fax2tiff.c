@@ -44,6 +44,10 @@
 # include <io.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "tiffiop.h"
 
 #ifndef EXIT_SUCCESS

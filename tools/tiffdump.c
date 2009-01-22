@@ -50,6 +50,10 @@
 extern int getopt(int, char**, char*);
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "tiffio.h"
 
 #ifndef O_BINARY

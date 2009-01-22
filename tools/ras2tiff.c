@@ -35,6 +35,10 @@
 # include <unistd.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "rasterfile.h"
 #include "tiffio.h"
 
