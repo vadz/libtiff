@@ -1,5 +1,7 @@
 2009-01-23  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tools/tiffcrop.c: initialize xres/yres values. 
+
 	* test/*.sh - default ${srcdir} to local directory.
 
 	* test/common.sh - start verbose mode after common settings. 

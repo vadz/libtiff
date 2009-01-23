@@ -4948,7 +4948,7 @@ static int
 loadImage(TIFF* in, struct image_data *image, struct dump_opts * dump, unsigned char **read_ptr)
   {
   uint32   i;
-  float    xres, yres;
+  float    xres=0.0, yres=0.0;
   uint16   nstrips, ntiles, planar, bps, spp, res_unit, photometric, orientation;
   uint32   width, length, rowsperstrip;
   uint32   stsize, tlsize, buffsize, scanlinesize;
