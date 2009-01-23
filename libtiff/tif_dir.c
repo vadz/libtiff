@@ -700,7 +700,7 @@ TIFFUnsetField(TIFF* tif, uint32 tag)
         TIFFClrFieldBit(tif, fip->field_bit);
     else
     {
-        TIFFTagValue *tv;
+        TIFFTagValue *tv = NULL;
         int i;
 
         for (i = 0; i < td->td_customValueCount; i++) {
