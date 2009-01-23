@@ -258,6 +258,25 @@ tiffFieldArray = { tfiatImage, 0, TIFFArrayCount(tiffFields), tiffFields };
 static TIFFFieldArray
 exifFieldArray = { tfiatExif, 0, TIFFArrayCount(exifFields), exifFields };
 
+/*
+ *  We have our own local lfind() equivelent to avoid subtle differences
+ *  in types passed to lfind() on different systems. 
+ */
+
+static void *
+td_lfind(const void *key, const void *base, size_t *nmemb, size_t size,
+         int(*compar)(const void *, const void *))
+{
+    char *element, *end;
+
+    end = (char *)base + *nmemb * size;
+    for (element = (char *)base; element < end; element += size)
+        if (!compar(element, key))		/* key found */
+            return element;
+
+    return NULL;
+}
+
 const TIFFFieldArray*
 _TIFFGetFields(void)
 {
@@ -504,9 +523,10 @@ _TIFFFindFieldByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	key.field_name = (char *)field_name;
 	key.field_type = dt;
 
-	ret = (const TIFFField **) lfind(&pkey, tif->tif_fields,
-					 &tif->tif_nfields,
-					 sizeof(TIFFField *), tagNameCompare);
+	ret = (const TIFFField **) 
+            td_lfind(&pkey, tif->tif_fields, &tif->tif_nfields,
+                     sizeof(TIFFField *), tagNameCompare);
+
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 }
 
@@ -900,11 +920,9 @@ TIFFFindFieldInfoByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 	key.field_name = (char *)field_name;
 	key.field_type = dt;
 
-	ret = (const TIFFFieldInfo **) lfind(&pkey,
-					     tif->tif_fields,
-					     &tif->tif_nfields,
-					     sizeof(TIFFFieldInfo *),
-					     tagNameCompare);
+	ret = (const TIFFFieldInfo **) 
+            td_lfind(&pkey, tif->tif_fields, &tif->tif_nfields,
+                     sizeof(TIFFFieldInfo *), tagNameCompare );
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 #else
         (void) tif;
