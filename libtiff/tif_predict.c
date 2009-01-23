@@ -36,9 +36,12 @@
 
 static void horAcc8(TIFF* tif, uint8* cp0, tmsize_t cc);
 static void horAcc16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static void horAcc32(TIFF* tif, uint8* cp0, tmsize_t cc);
 static void swabHorAcc16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static void swabHorAcc32(TIFF* tif, uint8* cp0, tmsize_t cc);
 static void horDiff8(TIFF* tif, uint8* cp0, tmsize_t cc);
 static void horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static void horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc);
 static void fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc);
 static void fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc);
 static int PredictorDecodeRow(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s);
@@ -60,7 +63,8 @@ PredictorSetup(TIFF* tif)
 			return 1;
 		case PREDICTOR_HORIZONTAL:
 			if (td->td_bitspersample != 8
-			    && td->td_bitspersample != 16) {
+			    && td->td_bitspersample != 16
+			    && td->td_bitspersample != 32) {
 				TIFFErrorExt(tif->tif_clientdata, module,
 				    "Horizontal differencing \"Predictor\" not supported with %d-bit samples",
 				    td->td_bitspersample);
@@ -109,6 +113,7 @@ PredictorSetupDecode(TIFF* tif)
 		switch (td->td_bitspersample) {
 			case 8:  sp->decodepfunc = horAcc8; break;
 			case 16: sp->decodepfunc = horAcc16; break;
+			case 32: sp->decodepfunc = horAcc32; break;
 		}
 		/*
 		 * Override default decoding method with one that does the
@@ -135,7 +140,10 @@ PredictorSetupDecode(TIFF* tif)
 			if (sp->decodepfunc == horAcc16) {
 				sp->decodepfunc = swabHorAcc16;
 				tif->tif_postdecode = _TIFFNoPostDecode;
-			} /* else handle 32-bit case... */
+            } else if (sp->decodepfunc == horAcc32) {
+				sp->decodepfunc = swabHorAcc32;
+				tif->tif_postdecode = _TIFFNoPostDecode;
+            }
 		}
 	}
 
@@ -184,6 +192,7 @@ PredictorSetupEncode(TIFF* tif)
 		switch (td->td_bitspersample) {
 			case 8:  sp->encodepfunc = horDiff8; break;
 			case 16: sp->encodepfunc = horDiff16; break;
+			case 32: sp->encodepfunc = horDiff32; break;
 		}
 		/*
 		 * Override default encoding method with one that does the
@@ -307,6 +316,43 @@ horAcc16(TIFF* tif, uint8* cp0, tmsize_t cc)
 	tmsize_t wc = cc / 2;
 
 	assert((cc%(2*stride))==0);
+
+	if (wc > stride) {
+		wc -= stride;
+		do {
+			REPEAT4(stride, wp[stride] += wp[0]; wp++)
+			wc -= stride;
+		} while (wc > 0);
+	}
+}
+
+static void
+swabHorAcc32(TIFF* tif, uint8* cp0, tmsize_t cc)
+{
+	tmsize_t stride = PredictorState(tif)->stride;
+	uint32* wp = (uint32*) cp0;
+	tmsize_t wc = cc / 4;
+
+	assert((cc%(4*stride))==0);
+
+	if (wc > stride) {
+		TIFFSwabArrayOfLong(wp, wc);
+		wc -= stride;
+		do {
+			REPEAT4(stride, wp[stride] += wp[0]; wp++)
+			wc -= stride;
+		} while (wc > 0);
+	}
+}
+
+static void
+horAcc32(TIFF* tif, uint8* cp0, tmsize_t cc)
+{
+	tmsize_t stride = PredictorState(tif)->stride;
+	uint32* wp = (uint32*) cp0;
+	tmsize_t wc = cc / 4;
+
+	assert((cc%(4*stride))==0);
 
 	if (wc > stride) {
 		wc -= stride;
@@ -461,6 +507,26 @@ horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc)
 	tmsize_t wc = cc/2;
 
 	assert((cc%(2*stride))==0);
+
+	if (wc > stride) {
+		wc -= stride;
+		wp += wc - 1;
+		do {
+			REPEAT4(stride, wp[stride] -= wp[0]; wp--)
+			wc -= stride;
+		} while (wc > 0);
+	}
+}
+
+static void
+horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc)
+{
+	TIFFPredictorState* sp = PredictorState(tif);
+	tmsize_t stride = sp->stride;
+	int32 *wp = (int32*) cp0;
+	tmsize_t wc = cc/4;
+
+	assert((cc%(4*stride))==0);
 
 	if (wc > stride) {
 		wc -= stride;
