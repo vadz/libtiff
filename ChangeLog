@@ -1,5 +1,7 @@
 2009-01-23  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* test/*.sh - default ${srcdir} to local directory.
+
 	* test/common.sh - start verbose mode after common settings. 
 
 	* libtiff/tif_dirinfo.c: Replace lfind() with local equivelent to 

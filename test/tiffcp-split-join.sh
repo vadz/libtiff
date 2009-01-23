@@ -6,7 +6,7 @@
 # then we use tiffsplit to split them out again, and then we use
 # tiffcp to recombine again.
 
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 conjoined=deleteme-conjoined-$$.tif
 reconjoined=deleteme-reconjoined-$$.tif
 splitfile=deleteme-split-$$

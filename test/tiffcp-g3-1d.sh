@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiffcp with G3 compression and 1 dimensional encoding.
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 outfile=deleteme-$$.tif
 operation=tiffcp
 ${TIFFCP} -c g3:1d ${IMG_MINISWHITE_1C_1B} $outfile

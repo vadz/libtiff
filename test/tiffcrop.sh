@@ -4,7 +4,7 @@
 #
 # Created by Richard Nolde
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 
 TCSTATUS=0
 TMPPREFIX=deleteme-

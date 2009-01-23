@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiffps with PostScript Level 1 encapsulated output
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 
 outfile=deleteme-$$.ps
 operation=tiff2ps

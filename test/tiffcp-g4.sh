@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiffcp with G4 compression
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 outfile=deleteme-$$.tif
 operation=tiffcp
 ${TIFFCP} -c g4 ${IMG_MINISWHITE_1C_1B} $outfile

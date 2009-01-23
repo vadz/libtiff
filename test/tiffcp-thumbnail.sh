@@ -2,7 +2,7 @@
 #
 # Basic sanity check for thumbnail
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 
 outfile1=deleteme-in-$$.tif
 outfile2=deleteme-out-$$.tif

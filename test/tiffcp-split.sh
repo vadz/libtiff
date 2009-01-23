@@ -5,7 +5,7 @@
 # First we use tiffcp to join our test files into a multi-frame TIFF
 # and then we use tiffsplit to split them out again.
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 conjoined=deleteme-conjoined-$$.tif
 splitfile=deleteme-split-$$
 

@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiffps with PostScript Level 1 output
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 outfile=deleteme-$$.ps
 operation=tiff2ps
 ${TIFF2PS} -a -1 ${IMG_MINISWHITE_1C_1B} > $outfile

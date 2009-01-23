@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiff2pdf
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 outfile=deleteme-$$.pdf
 
 operation=tiff2pdf

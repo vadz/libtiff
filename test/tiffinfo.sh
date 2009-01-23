@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiffinfo.
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 outfile=deleteme-$$.txt
 operation=tiffinfo
 ${TIFFINFO} -c -D -d -j -s ${IMG_MINISBLACK_1C_16B} > $outfile

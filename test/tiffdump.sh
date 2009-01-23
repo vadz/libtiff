@@ -2,7 +2,7 @@
 #
 # Basic sanity check for tiffdump
 #
-. ${srcdir}/common.sh
+. ${srcdir:-.}/common.sh
 outfile=deleteme-$$.txt
 operation=tiffdump
 ${TIFFDUMP} ${IMG_MINISWHITE_1C_1B} > $outfile
