@@ -1,5 +1,9 @@
 2009-01-23  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirwrite.c: Fix byte swapping of next directory offset.
+	
+	http://bugzilla.maptools.org/show_bug.cgi?id=1924
+
 	* tools/tiffcrop.c: initialize xres/yres values. 
 
 	* test/*.sh - default ${srcdir} to local directory.

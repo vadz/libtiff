@@ -828,6 +828,8 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			o++;
 		}
 		nTmp = (uint32)tif->tif_nextdiroff;
+		if (tif->tif_flags&TIFF_SWAB)
+			TIFFSwabLong(&nTmp);
 		_TIFFmemcpy(n,&nTmp,4);
 	}
 	else
@@ -859,6 +861,8 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			o++;
 		}
 		_TIFFmemcpy(n,&tif->tif_nextdiroff,8);
+		if (tif->tif_flags&TIFF_SWAB)
+			TIFFSwabLong8((uint64*)n);
 	}
 	_TIFFfree(dir);
 	dir=NULL;
