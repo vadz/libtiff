@@ -1,10 +1,5 @@
 # Common code fragment for tests
 #
-if test "$VERBOSE" = TRUE
-then
-  set -x
-fi
-
 BUILDDIR=`pwd`
 SRCDIR=`dirname $0`
 SRCDIR=`cd $SRCDIR && pwd`
@@ -49,3 +44,9 @@ IMG_RGB_3C_8B=${IMAGES}/rgb-3c-8b.tiff
 
 # All uncompressed image files
 IMG_UNCOMPRESSED="${IMG_MINISBLACK_1C_16B} ${IMG_MINISBLACK_1C_8B} ${IMG_MINISWHITE_1C_1B} ${IMG_PALETTE_1C_1B} ${IMG_PALETTE_1C_4B} ${IMG_PALETTE_1C_4B} ${IMG_PALETTE_1C_8B} ${IMG_RGB_3C_8B}"
+
+if test "$VERBOSE" = TRUE
+then
+  set -x
+fi
+
