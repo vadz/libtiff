@@ -766,12 +766,17 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 		return(TIFFReadDirEntryErrOk);
 	}
         (void) desttypesize;
-#ifdef notdef
-	if ((uint64)(4*1024*1024/typesize)<direntry->tdir_count)
+
+        /* 
+         * As a sanity check, make sure we have no more than a 2GB tag array 
+         * in either the current data type or the dest data type.  This also
+         * avoids problems with overflow of tmsize_t on 32bit systems.
+         */
+	if ((uint64)(2147483647/typesize)<direntry->tdir_count)
 		return(TIFFReadDirEntryErrSizesan);
-	if ((uint64)(4*1024*1024/desttypesize)<direntry->tdir_count)
+	if ((uint64)(2147483647/desttypesize)<direntry->tdir_count)
 		return(TIFFReadDirEntryErrSizesan);
-#endif
+
 	*count=(uint32)direntry->tdir_count;
 	datasize=(*count)*typesize;
 	assert((tmsize_t)datasize>0);
