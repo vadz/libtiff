@@ -4581,7 +4581,6 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 	uint32 fii;
 	const TIFFField* fip;
 	TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
-	assert(fii != FAILED_FII);
         if( fii == FAILED_FII )
         {
             TIFFErrorExt(tif->tif_clientdata, "TIFFFetchNormalTag",

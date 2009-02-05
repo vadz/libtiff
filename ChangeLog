@@ -4,6 +4,7 @@
 	corrupt files rather than in response to library internal 
 	inconsistencies.  
 	http://bugzilla.maptools.org/show_bug.cgi?id=1995
+	http://bugzilla.maptools.org/show_bug.cgi?id=1991
 
 	* libtiff/tif_dirread.c: Fixed testing for failed result from
 	TIFFReadDirectoryFindFieldInfo().  
