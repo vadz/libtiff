@@ -1,7 +1,12 @@
 2009-02-05  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirread.c: Remove some assertions that blow due to
+	corrupt files rather than in response to library internal 
+	inconsistencies.  
+	http://bugzilla.maptools.org/show_bug.cgi?id=1995
+
 	* libtiff/tif_dirread.c: Fixed testing for failed result from
-	TIFFReadDirectoryFindFieldInfo().
+	TIFFReadDirectoryFindFieldInfo().  
 	http://bugzilla.maptools.org/show_bug.cgi?id=1992
 
 2009-01-23  Frank Warmerdam  <warmerdam@pobox.com>
