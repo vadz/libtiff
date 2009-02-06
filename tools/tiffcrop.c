@@ -4966,7 +4966,7 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts * dump, unsigned 
   TIFFGetField(in, TIFFTAG_IMAGELENGTH, &length);
   TIFFGetField(in, TIFFTAG_XRESOLUTION, &xres);
   TIFFGetField(in, TIFFTAG_YRESOLUTION, &yres);
-  TIFFGetFieldDefaulted(in, TIFFTAG_RESOLUTIONUNIT, &res_unit);
+  TIFFGetField(in, TIFFTAG_RESOLUTIONUNIT, &res_unit);
   scanlinesize = TIFFScanlineSize(in);
 
   image->bps = bps;
