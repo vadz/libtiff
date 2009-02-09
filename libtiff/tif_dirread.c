@@ -780,7 +780,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 	*count=(uint32)direntry->tdir_count;
 	datasize=(*count)*typesize;
 	assert((tmsize_t)datasize>0);
-	data=_TIFFmalloc(datasize);
+	data=_TIFFCheckMalloc(tif, *count, typesize, "ReadDirEntryArray");
 	if (data==0)
 		return(TIFFReadDirEntryErrAlloc);
 	if (!(tif->tif_flags&TIFF_BIGTIFF))

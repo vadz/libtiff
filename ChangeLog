@@ -1,3 +1,8 @@
+2009-02-09  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirread.c: Improve allocation safety when allocated
+	buffer for large tags.  (#1998)  Related to (#1993)
+
 2009-02-06  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/tiffcrop.c: Don't default image->res_unit to INCH.  Now the
