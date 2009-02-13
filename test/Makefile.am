@@ -56,18 +56,20 @@ TESTSCRIPTS = \
 	tiff2ps-PS3.sh \
 	tiff2ps-EPS1.sh \
 	tiff2pdf.sh \
-	tiffcrop.sh
+	tiffcrop.sh \
+	tiff2rgba.sh
 
 IMAGES = \
 	images/minisblack-1c-16b.tiff \
 	images/minisblack-1c-8b.tiff \
 	images/miniswhite-1c-1b.tiff \
+	images/miniswhite-2c-8b-alpha.tiff \
 	images/palette-1c-1b.tiff \
 	images/palette-1c-4b.tiff \
 	images/palette-1c-8b.tiff \
 	images/README.txt \
 	images/rgb-3c-16b.tiff \
-	images/rgb-3c-8b.tiff
+	images/rgb-3c-8b.tiff 
 
 noinst_HEADERS = tifftest.h
 
