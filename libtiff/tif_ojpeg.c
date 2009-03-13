@@ -237,6 +237,7 @@ typedef struct {
 	#endif
 	TIFFVGetMethod vgetparent;
 	TIFFVSetMethod vsetparent;
+	TIFFPrintMethod printdir;
 	uint64 file_size;
 	uint32 image_width;
 	uint32 image_length;
@@ -453,6 +454,7 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
 	tif->tif_tagmethods.vgetfield=OJPEGVGetField;
 	sp->vsetparent=tif->tif_tagmethods.vsetfield;
 	tif->tif_tagmethods.vsetfield=OJPEGVSetField;
+	sp->printdir=tif->tif_tagmethods.printdir;
 	tif->tif_tagmethods.printdir=OJPEGPrintDir;
 	/* Some OJPEG files don't have strip or tile offsets or bytecounts tags.
 	   Some others do, but have totally meaningless or corrupt values
@@ -624,6 +626,8 @@ OJPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd,"  JpegProc: %u\n",(unsigned int)sp->jpeg_proc);
 	if (TIFFFieldSet(tif,FIELD_OJPEG_JPEGRESTARTINTERVAL))
 		fprintf(fd,"  JpegRestartInterval: %u\n",(unsigned int)sp->restart_interval);
+	if (sp->printdir)
+		(*sp->printdir)(tif, fd, flags);
 }
 
 static int
@@ -917,6 +921,7 @@ OJPEGCleanup(TIFF* tif)
 	{
 		tif->tif_tagmethods.vgetfield=sp->vgetparent;
 		tif->tif_tagmethods.vsetfield=sp->vsetparent;
+		tif->tif_tagmethods.printdir=sp->printdir;
 		if (sp->qtable[0]!=0)
 			_TIFFfree(sp->qtable[0]);
 		if (sp->qtable[1]!=0)

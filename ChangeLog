@@ -1,3 +1,8 @@
+2009-03-12  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/{tif_fax3.c,tif_jpeg.c,tif_ojpeg.c}: Fix printdir chaining
+	for some codecs (#2020).
+
 2009-02-12  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_luv.c: Fix handling of tiled logluv images. 

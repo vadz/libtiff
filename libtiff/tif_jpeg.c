@@ -2009,6 +2009,8 @@ JPEGPrintDir(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_JPEGTABLES))
 		fprintf(fd, "  JPEG Tables: (%lu bytes)\n",
 			(unsigned long) sp->jpegtables_length);
+	if (sp->printdir)
+		(*sp->printdir)(tif, fd, flags);
 }
 
 static uint32

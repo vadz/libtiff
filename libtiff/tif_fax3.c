@@ -1256,6 +1256,8 @@ Fax3PrintDir(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_BADFAXRUN))
 		fprintf(fd, "  Consecutive Bad Fax Lines: %lu\n",
 		    (unsigned long) sp->badfaxrun);
+	if (sp->printdir)
+		(*sp->printdir)(tif, fd, flags);
 }
 
 static int
