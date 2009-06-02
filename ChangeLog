@@ -1,3 +1,7 @@
+2009-06-02  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/libtiff.def: Add TIFFUnsetField.
+
 2009-05-03  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/{tif_jpeg.c,tif_ojpeg.c,tif_getimage.c}: Fixed various
