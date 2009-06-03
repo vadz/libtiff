@@ -1,3 +1,9 @@
+2009-06-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_write.c: do not override the planar configuration to be
+	contig for one sample files if planar configuration is already set.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2057
+
 2009-06-02  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/libtiff.def: Add TIFFUnsetField.
