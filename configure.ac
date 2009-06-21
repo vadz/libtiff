@@ -633,6 +633,37 @@ if test "$HAVE_JBIG" = "yes" ; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl Should 8/12 bit jpeg mode be enabled?
+dnl ---------------------------------------------------------------------------
+
+HAVE_JPEG12=no
+
+AC_ARG_ENABLE(jpeg12,
+	      AS_HELP_STRING([--enable-jpeg12],
+			     [enable libjpeg 8/12bit dual mode]),,)
+AC_ARG_WITH(jpeg12-include-dir,
+	    AS_HELP_STRING([--with-jpeg12-include-dir=DIR],
+			   [location of libjpeg 12bit headers]),,)
+AC_ARG_WITH(jpeg12-lib,
+	    AS_HELP_STRING([--with-jpeg12-lib=LIBRARY],
+			   [path to libjpeg 12bit library]),,)
+
+if test "x$enable_jpeg12" == "xyes" ; then
+
+  if test "x$with_jpeg12_lib" != "x" ; then
+    LIBS="$with_jpeg12_lib $LIBS"
+  fi
+  
+  HAVE_JPEG12=yes
+
+  AC_DEFINE(JPEG_DUAL_MODE_8_12,1,[8/12 bit libjpeg dual mode enabled])
+  if test "x$with_jpeg12_include_dir" != "x" ; then
+    AC_DEFINE_UNQUOTED(LIBJPEG_12_PATH,"$with_jpeg12_include_dir/jpeglib.h",[12bit libjpeg primary include file with path])
+  fi
+fi
+
+
+dnl ---------------------------------------------------------------------------
 dnl Check for C++.
 dnl ---------------------------------------------------------------------------
 
@@ -803,6 +834,7 @@ LOC_MSG([  ZLIB support:                       ${HAVE_ZLIB}])
 LOC_MSG([  Pixar log-format algorithm:         ${HAVE_PIXARLOG}])
 LOC_MSG([  JPEG support:                       ${HAVE_JPEG}])
 LOC_MSG([  Old JPEG support:                   ${HAVE_OJPEG}])
+LOC_MSG([  JPEG 8/12 bit dual mode:            ${HAVE_JPEG12}])
 LOC_MSG([  ISO JBIG support:                   ${HAVE_JBIG}])
 LOC_MSG()
 LOC_MSG([  C++ support:                        ${HAVE_CXX}])
