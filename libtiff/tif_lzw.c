@@ -675,6 +675,7 @@ LZWDecodeCompat(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 		}
 		oldcodep = codep;
 		if (code >= 256) {
+			char *op_orig = op;
 			/*
 		 	 * Code maps to a string, copy string
 			 * value to output (written in reverse).
@@ -709,7 +710,7 @@ LZWDecodeCompat(TIFF* tif, tidata_t op0, tsize_t occ0, tsample_t s)
 			tp = op;
 			do {
 				*--tp = codep->value;
-			} while( (codep = codep->next) != NULL);
+			} while( (codep = codep->next) != NULL && tp > op_orig);
 		} else
 			*op++ = code, occ--;
 	}
