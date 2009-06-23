@@ -88,6 +88,17 @@ int TIFFReInitJPEG_12( TIFF *tif, int scheme, int is_encode );
 #include "jpeglib.h"
 #include "jerror.h"
 
+/* 
+ * Do we want to do special processing suitable for when JSAMPLE is a
+ * 16bit value?  
+ */
+
+#if defined(JPEG_LIB_MK1)
+#  define JPEG_LIB_MK1_OR_12BIT 1
+#elif BITS_IN_JSAMPLE == 12
+#  define JPEG_LIB_MK1_OR_12BIT 1
+#endif
+
 /*
  * We are using width_in_blocks which is supposed to be private to
  * libjpeg. Unfortunately, the libjpeg delivered with Cygwin has
@@ -1299,7 +1310,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 		JDIMENSION clumps_per_line = sp->cinfo.d.comp_info[1].downsampled_width;            
 		int samples_per_clump = sp->samplesperclump;
 
-#if defined(JPEG_LIB_MK1) || BITS_IN_JSAMPLE == 12
+#if defined(JPEG_LIB_MK1_OR_12BIT)
 		unsigned short* tmpbuf = _TIFFmalloc(sizeof(unsigned short) *
 		    sp->cinfo.d.output_width *
 		    sp->cinfo.d.num_components);
@@ -1330,7 +1341,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
 				for (ypos = 0; ypos < vsamp; ypos++) {
 					JSAMPLE *inptr = sp->ds_buffer[ci][sp->scancount*vsamp + ypos];
-#if defined(JPEG_LIB_MK1) || BITS_IN_JSAMPLE == 12
+#if defined(JPEG_LIB_MK1_OR_12BIT)
 					JSAMPLE *outptr = (JSAMPLE*)tmpbuf + clumpoffset;
 #else
 					JSAMPLE *outptr = (JSAMPLE*)buf + clumpoffset;
@@ -1357,7 +1368,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 				}
 			}
 
-#if defined(JPEG_LIB_MK1) || BITS_IN_JSAMPLE == 12
+#if defined(JPEG_LIB_MK1_OR_12BIT)
 			{
 				if (sp->cinfo.d.data_precision == 8)
 				{
@@ -1398,7 +1409,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 			nrows -= sp->v_sampling;
 		} while (nrows > 0);
 
-#if defined(JPEG_LIB_MK1) || BITS_IN_JSAMPLE == 12
+#if defined(JPEG_LIB_MK1_OR_12BIT)
 		_TIFFfree(tmpbuf);
 #endif
 
