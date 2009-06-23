@@ -789,7 +789,6 @@ JPEGFixupTagsSubsamplingSec(struct JPEGFixupTagsSubsamplingData* data)
 			case JPEG_MARKER_SOS:
 			case JPEG_MARKER_DHT:
 			case JPEG_MARKER_DRI:
-			case JPEG_MARKER_SOF1:
 				/* this type of marker has data, but it has no use to us and should be skipped */
 				{
 					uint16 n;
@@ -803,6 +802,7 @@ JPEGFixupTagsSubsamplingSec(struct JPEGFixupTagsSubsamplingData* data)
 				}
 				break;
 			case JPEG_MARKER_SOF0:
+			case JPEG_MARKER_SOF1:
 				/* this marker contains the subsampling factors we're scanning for */
 				{
 					uint16 n;
