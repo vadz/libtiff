@@ -55,6 +55,7 @@ OBJ	= \
 	tif_getimage.obj \
 	tif_jbig.obj \
 	tif_jpeg.obj \
+	tif_jpeg_12.obj \
 	tif_ojpeg.obj \
 	tif_flush.obj \
 	tif_luv.obj \
