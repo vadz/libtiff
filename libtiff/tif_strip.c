@@ -327,12 +327,11 @@ TIFFScanlineSize64(TIFF* tif)
                                          "Invalid YCbCr subsampling");
                             return 0;
 			}
-			samplingblock_samples=ycbcrsubsampling[0]*ycbcrsubsampling[1]+2;
-			samplingblocks_hor=TIFFhowmany_32(td->td_imagewidth,ycbcrsubsampling[0]);
-			samplingrow_samples=multiply_64(tif,samplingblocks_hor,samplingblock_samples,module);
-			samplingrow_size=TIFFhowmany_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module),8);
-			assert((samplingrow_size%ycbcrsubsampling[1])==0);
-			scanline_size=(samplingrow_size/ycbcrsubsampling[1]);
+			samplingblock_samples = ycbcrsubsampling[0]*ycbcrsubsampling[1]+2;
+			samplingblocks_hor = TIFFhowmany_32(td->td_imagewidth,ycbcrsubsampling[0]);
+			samplingrow_samples = multiply_64(tif,samplingblocks_hor,samplingblock_samples,module);
+			samplingrow_size = TIFFhowmany_64(multiply_64(tif,samplingrow_samples,td->td_bitspersample,module),8);
+			scanline_size = (samplingrow_size/ycbcrsubsampling[1]);
 		}
 		else
 		{

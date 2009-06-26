@@ -1,3 +1,8 @@
+2009-06-26  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_strip.c: Remove an inappropriate assertion that often
+	fails on oddly sized 12bit jpeg compressed ycbcr images.
+
 2009-06-22  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_lzw.c: Fix buffer underflow bug. 
