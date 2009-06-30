@@ -1,3 +1,10 @@
+2009-06-30  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_lzw.c: back out patch from #2065 and apply patch from 
+	#1085 for a better underflow fix that errors properly.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2065
+	http://bugzilla.maptools.org/show_bug.cgi?id=1985
+
 2009-06-26  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_strip.c: Remove an inappropriate assertion that often

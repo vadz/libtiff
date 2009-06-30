@@ -437,7 +437,7 @@ LZWDecode(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 			NextCode(tif, sp, bp, code, GetNextCode);
 			if (code == CODE_EOI)
 				break;
-			if (code == CODE_CLEAR) {
+			if (code >= CODE_CLEAR) {
 				TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 				"LZWDecode: Corrupted LZW table at scanline %d",
 					     tif->tif_row);
@@ -649,7 +649,7 @@ LZWDecodeCompat(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 			NextCode(tif, sp, bp, code, GetNextCodeCompat);
 			if (code == CODE_EOI)
 				break;
-			if (code == CODE_CLEAR) {
+			if (code >= CODE_CLEAR) {
 				TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 				"LZWDecode: Corrupted LZW table at scanline %d",
 					     tif->tif_row);
@@ -690,7 +690,6 @@ LZWDecodeCompat(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 		}
 		oldcodep = codep;
 		if (code >= 256) {
-			char *op_orig = op;
 			/*
 			 * Code maps to a string, copy string
 			 * value to output (written in reverse).
@@ -726,7 +725,7 @@ LZWDecodeCompat(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 			tp = op;
 			do {
 				*--tp = codep->value;
-			} while( (codep = codep->next) != NULL && tp > op_orig);
+			} while( (codep = codep->next) != NULL );
 		} else
 			*op++ = code, occ--;
 	}
