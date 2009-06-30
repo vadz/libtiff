@@ -365,6 +365,8 @@ processCompressOptions(char* opt)
 		defcompression = COMPRESSION_ADOBE_DEFLATE;
 	} else if (strneq(opt, "jbig", 4)) {
 		defcompression = COMPRESSION_JBIG;
+	} else if (strneq(opt, "sgilog", 6)) {
+		defcompression = COMPRESSION_SGILOG;
 	} else
 		return (0);
 	return (1);
@@ -398,6 +400,7 @@ char* stuff[] = {
 " -c packbits     compress output with packbits encoding",
 " -c g3[:opts]    compress output with CCITT Group 3 encoding",
 " -c g4           compress output with CCITT Group 4 encoding",
+" -c sgilog       compress output with SGILOG encoding",
 " -c none         use no compression algorithm on output",
 "",
 "Group 3 options:",

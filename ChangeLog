@@ -1,5 +1,13 @@
 2009-06-30  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tests/tiffcp-logluv.sh: minimal testing of sgilog compression.
+
+	* tools/tiffcp.c: add -c sgilog support.
+
+	* libtiff/tif_luv.c: correct return codes from encoderow to be
+	1 on success instead of zero.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2069
+
 	* libtiff/tif_lzw.c: back out patch from #2065 and apply patch from 
 	#1085 for a better underflow fix that errors properly.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2065

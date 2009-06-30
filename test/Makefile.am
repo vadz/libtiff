@@ -46,6 +46,7 @@ TESTSCRIPTS = \
 	tiffcp-g3-2d.sh \
 	tiffcp-g3-2d-fill.sh \
 	tiffcp-g4.sh \
+	tiffcp-logluv.sh \
 	tiffcp-thumbnail.sh \
 	tiffdump.sh \
 	tiffinfo.sh \
@@ -68,6 +69,7 @@ IMAGES = \
 	images/palette-1c-4b.tiff \
 	images/palette-1c-8b.tiff \
 	images/README.txt \
+	images/logluv-3c-16b.tiff \
 	images/rgb-3c-16b.tiff \
 	images/rgb-3c-8b.tiff 
 

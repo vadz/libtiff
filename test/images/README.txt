@@ -12,6 +12,7 @@ palette-1c-8b.tiff
 rgb-3c-16b.tiff
 rgb-3c-8b.tiff
 
+logluv-3c-16b.tiff: logluv compression/photometric interp
 minisblack-2c-8b-alpha.tiff: grey+alpha
 
 
