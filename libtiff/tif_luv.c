@@ -451,7 +451,7 @@ LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tif->tif_rawcp = op;
 	tif->tif_rawcc = tif->tif_rawdatasize - occ;
 
-	return (0);
+	return (1);
 }
 
 /*
@@ -496,7 +496,7 @@ LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tif->tif_rawcp = op;
 	tif->tif_rawcc = tif->tif_rawdatasize - occ;
 
-	return (0);
+	return (1);
 }
 
 /*
@@ -585,7 +585,7 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tif->tif_rawcp = op;
 	tif->tif_rawcc = tif->tif_rawdatasize - occ;
 
-	return (0);
+	return (1);
 }
 
 /*
@@ -598,7 +598,7 @@ LogLuvEncodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tsize_t rowlen = TIFFScanlineSize(tif);
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
+	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 1)
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -613,7 +613,7 @@ LogLuvEncodeTile(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tsize_t rowlen = TIFFTileRowSize(tif);
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
+	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 1)
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
