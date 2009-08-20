@@ -24,8 +24,8 @@ dnl OF THIS SOFTWARE.
 
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT([LibTIFF Software], 3.9.0beta, [tiff@lists.maptools.org], tiff)
+AC_PREREQ(2.64)
+AC_INIT([LibTIFF Software],[3.9.0beta],[tiff@lists.maptools.org],[tiff])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(m4)
 AC_LANG(C)
@@ -68,18 +68,34 @@ AC_SUBST(LIBTIFF_VERSION)
 AC_SUBST(LIBTIFF_VERSION_INFO)
 AC_SUBST(LIBTIFF_RELEASE_DATE)
 
+# Ensure that make can run correctly
+AM_SANITY_CHECK
+
 dnl Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_STDC
+AC_PROG_CPP
+LT_PATH_LD
+
 AM_PROG_CC_C_O
+LT_PATH_LD
 
 dnl We want warnings. As many warnings as possible.
 VL_PROG_CC_WARNINGS()
-
 AC_PROG_INSTALL
+AC_PROG_MAKE_SET
 AC_PROG_LN_S
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
-AC_LIBTOOL_WIN32_DLL
+
+dnl Tests for Windows
+AC_EXEEXT
+AC_OBJEXT
+
+dnl initialize libtool
+LT_INIT([win32-dll])
+LT_LANG([C++])
+
+# Enable support for silent build rules
+AM_SILENT_RULES
 
 dnl Checks for libraries.
 AC_CHECK_LIB([c], [main])
