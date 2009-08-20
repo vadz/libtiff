@@ -24,8 +24,8 @@ dnl OF THIS SOFTWARE.
 
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT([LibTIFF Software], 4.0.0beta3, [tiff@lists.maptools.org], tiff)
+AC_PREREQ(2.64)
+AC_INIT([LibTIFF Software],[4.0.0beta3],[tiff@lists.maptools.org],[tiff])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(m4)
 AC_LANG(C)
@@ -100,8 +100,17 @@ VL_PROG_CC_WARNINGS()
 
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+
+dnl Tests for Windows
+AC_EXEEXT
+AC_OBJEXT
+
+dnl initialize libtool
+LT_INIT([win32-dll])
+LT_LANG([C++])
+
+# Enable support for silent build rules
+AM_SILENT_RULES
 
 dnl Checks for libraries.
 AC_CHECK_LIB([c], [main])

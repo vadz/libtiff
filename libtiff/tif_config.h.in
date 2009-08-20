@@ -161,8 +161,14 @@
 /* Support ISO JBIG compression (requires JBIG-KIT library) */
 #undef JBIG_SUPPORT
 
+/* 8/12 bit libjpeg dual mode enabled */
+#undef JPEG_DUAL_MODE_8_12
+
 /* Support JPEG compression (requires IJG JPEG library) */
 #undef JPEG_SUPPORT
+
+/* 12bit libjpeg primary include file with path */
+#undef LIBJPEG_12_PATH
 
 /* Support LogLuv high dynamic range encoding */
 #undef LOGLUV_SUPPORT
@@ -200,6 +206,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
