@@ -1,5 +1,10 @@
 2009-08-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/{rgb2ycbcr.c, tiff2rgba.c}: Applied patch for
+	CVE-2009-2347 libtiff: integer overflows in various inter-color
+	space conversion tools.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2079
+
 	* configure.ac: Updated autotools.  Autoconf 2.64, Automake 1.11,
 	libtool 2.2.6.  Enabled support for silent build rules
 	(--enable-silent-rules or 'make V=0') and colorized tests.

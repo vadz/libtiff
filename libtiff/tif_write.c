@@ -630,7 +630,7 @@ TIFFAppendToStrip(TIFF* tif, tstrip_t strip, tidata_t data, tsize_t cc)
 
             if( td->td_stripbytecount[strip] != 0 
                 && td->td_stripoffset[strip] != 0 
-                && td->td_stripbytecount[strip] >= cc )
+                && (tsize_t) td->td_stripbytecount[strip] >= cc )
             {
                 /* 
                  * There is already tile data on disk, and the new tile
