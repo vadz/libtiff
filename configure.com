@@ -1314,7 +1314,7 @@ $COPY SYS$INPUT 'CURRENT'TIF_CONFIG.H
 #define PACKAGE_NAME "LibTIFF Software"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "LibTIFF Software 3.9.0beta for VMS"
+#define PACKAGE_STRING "LibTIFF Software 3.9.0 for VMS"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "tiff"
