@@ -1,5 +1,9 @@
 2009-08-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_print.c (TIFFPrintDirectory): Applied patch for "tag
+	error may cause segfault in tif_print.c."
+	http://bugzilla.maptools.org/show_bug.cgi?id=1896
+
 	* tools/{rgb2ycbcr.c, tiff2rgba.c}: Applied patch for
 	CVE-2009-2347 libtiff: integer overflows in various inter-color
 	space conversion tools.
