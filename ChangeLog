@@ -1,3 +1,11 @@
+2009-08-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/Makefile.am (AUTOMAKE_OPTIONS): Colorized tests was not
+	actually activated since it needed to be enabled in this
+	Makefile.am.  Also activated parallel-tests mode since it offers
+	useful features such as per-test .log files and a summary test
+	report .log file.
+
 2009-08-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 3.9.0 released.
