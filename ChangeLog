@@ -1,5 +1,8 @@
 2009-08-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* test/tiffcp-logluv.sh: Fix test so that it works with a VPATH
+	build.
+
 	* test/Makefile.am (AUTOMAKE_OPTIONS): Colorized tests was not
 	actually activated since it needed to be enabled in this
 	Makefile.am.  Also activated parallel-tests mode since it offers

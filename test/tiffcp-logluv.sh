@@ -5,8 +5,9 @@
 . ${srcdir:-.}/common.sh
 outfile=deleteme-raw-$$.tif
 outfile2=deleteme-sgilog-$$.tif
+infile=${srcdir:-.}/images/logluv-3c-16b.tiff
 operation=tiffcp
-${TIFFCP} -c none images/logluv-3c-16b.tiff ${outfile}
+${TIFFCP} -c none ${infile} ${outfile}
 status=$?
 
 if test $status -eq 0 ; then
