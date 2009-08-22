@@ -60,6 +60,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+XFAIL_TESTS =
 check_PROGRAMS = ascii_tag$(EXEEXT) long_tag$(EXEEXT) \
 	short_tag$(EXEEXT) strip_rw$(EXEEXT) rewrite$(EXEEXT)
 subdir = test
@@ -373,6 +374,8 @@ EXTRA_DIST = \
 
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
+
+# Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif deleteme*
 
 # Test scripts to execute

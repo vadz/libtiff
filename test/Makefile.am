@@ -35,6 +35,10 @@ EXTRA_DIST = \
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
+# Tests which are expected to fail
+XFAIL_TESTS =
+
+# Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif deleteme*
 
 # Executable programs which need to be built in order to support tests
