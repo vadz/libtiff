@@ -1,7 +1,9 @@
 2009-08-23  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/Makefile.am, test/tiffcrop*.sh: Split previously existing
-	tiffcrop.sh into a collection of many specific tests.
+	tiffcrop.sh into a collection of many specific tests.  Re-wrote
+	all of the existing tests to be based on some simple shell
+	functions.  Make distcheck works again.
 
 2009-08-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 

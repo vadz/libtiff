@@ -4,29 +4,7 @@
 #
 . ${srcdir:-.}/common.sh
 
-outfile1=deleteme-in-$$.tif
-outfile2=deleteme-out-$$.tif
-stderr=deleteme-stderr-$$.tif
-operation=tiffcp
-${TIFFCP} -c g3:1d ${IMG_MINISWHITE_1C_1B} ${outfile1} 2> $stderr
-status=$?
-
-if test $status -eq 0
-then
-  operation=thumbnail
-  ${THUMBNAIL} ${outfile1} ${outfile2} 2>> $stderr
-  status=$?
-fi
-
-if test $status -eq 0
-then
-  rm -f ${outfile1} ${outfile2}
-else
-  cat $stderr
-  echo "Test failed (${operation} returned ${status}).  Please inspect these output files:"
-  echo "  " ${outfile1} ${outfile2}
-fi
-
-rm -f $stderr
-
-exit $status
+outfile1=o-tiffcp-thumbnail-in.tif
+outfile2=o-tiffcp-thumbnail-out.tif
+f_test_convert "${TIFFCP} -c g3:1d" "${IMG_MINISWHITE_1C_1B}" "${outfile1}"
+f_test_convert "${THUMBNAIL}" "${outfile1}" "${outfile2}"

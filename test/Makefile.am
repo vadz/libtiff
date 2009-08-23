@@ -43,7 +43,7 @@ XFAIL_TESTS = \
 	tiffcrop-R90-minisblack-2c-8b-alpha.sh
 
 # Extra files which should be cleaned by 'make clean'
-CLEANFILES = test_packbits.tif deleteme*
+CLEANFILES = test_packbits.tif o-*
 
 # Executable programs which need to be built in order to support tests
 check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite
@@ -107,7 +107,16 @@ TESTSCRIPTS = \
 	tiffcrop-R90-palette-1c-8b.sh \
 	tiffcrop-R90-rgb-3c-16b.sh \
 	tiffcrop-R90-rgb-3c-8b.sh \
-	tiff2rgba.sh
+	tiff2rgba-logluv-3c-16b.sh \
+	tiff2rgba-minisblack-1c-16b.sh \
+	tiff2rgba-minisblack-1c-8b.sh \
+	tiff2rgba-minisblack-2c-8b-alpha.sh \
+	tiff2rgba-miniswhite-1c-1b.sh \
+	tiff2rgba-palette-1c-1b.sh \
+	tiff2rgba-palette-1c-4b.sh \
+	tiff2rgba-palette-1c-8b.sh \
+	tiff2rgba-rgb-3c-16b.sh \
+	tiff2rgba-rgb-3c-8b.sh
 
 # This list should contain all of the TIFF files in the 'images'
 # subdirectory which are intended to be used as input images for
@@ -125,7 +134,8 @@ TIFFIMAGES = \
 	images/rgb-3c-8b.tiff
 
 # This list should include all of the files in the 'images'
-# subdirectory which are intended to be distributed.
+# subdirectory which are intended to be distributed.  This may include
+# files which are not currently used by the tests.
 IMAGES_EXTRA_DIST = \
 	images/README.txt \
 	$(TIFFIMAGES)
@@ -145,6 +155,22 @@ rewrite_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
+generate-tiff2rgba-tests:
+	for file in $(TIFFIMAGES) ; \
+	do \
+	base=`basename $$file .tiff` ; \
+	testscript=$(srcdir)/tiff2rgba-$$base.sh ; \
+	( \
+	  echo "#!/bin/sh" ; \
+	  echo ". \$${srcdir:-.}/common.sh" ; \
+	  echo "infile=\"$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiff2rgba-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFF2RGBA\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
+	) > $$testscript ; \
+	chmod +x $$testscript ; \
+	done
+
 # Test rotations
 generate-tiffcrop-R90-tests:
 	for file in $(TIFFIMAGES) ; \
@@ -154,7 +180,10 @@ generate-tiffcrop-R90-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -R90\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-R90-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-R90-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -R90\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -168,7 +197,10 @@ generate-tiffcrop-doubleflip-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -F both\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-doubleflip-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-doubleflip-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -F both\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -182,7 +214,10 @@ generate-tiffcrop-extract-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 100 -Y 100\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-extract-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-extract-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 100 -Y 100\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -196,7 +231,10 @@ generate-tiffcrop-extractz14-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -E left -Z1:4,2:4\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-extractz14-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-extractz14-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -E left -Z1:4,2:4\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -206,3 +244,7 @@ generate-tiffcrop-tests: \
 	generate-tiffcrop-doubleflip-tests \
 	generate-tiffcrop-extract-tests \
 	generate-tiffcrop-extractz14-tests
+
+generate-tests: \
+	generate-tiff2rgba-tests \
+	generate-tiffcrop-tests

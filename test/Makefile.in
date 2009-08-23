@@ -383,7 +383,7 @@ XFAIL_TESTS = \
 
 
 # Extra files which should be cleaned by 'make clean'
-CLEANFILES = test_packbits.tif deleteme*
+CLEANFILES = test_packbits.tif o-*
 
 # Test scripts to execute
 TESTSCRIPTS = \
@@ -444,7 +444,16 @@ TESTSCRIPTS = \
 	tiffcrop-R90-palette-1c-8b.sh \
 	tiffcrop-R90-rgb-3c-16b.sh \
 	tiffcrop-R90-rgb-3c-8b.sh \
-	tiff2rgba.sh
+	tiff2rgba-logluv-3c-16b.sh \
+	tiff2rgba-minisblack-1c-16b.sh \
+	tiff2rgba-minisblack-1c-8b.sh \
+	tiff2rgba-minisblack-2c-8b-alpha.sh \
+	tiff2rgba-miniswhite-1c-1b.sh \
+	tiff2rgba-palette-1c-1b.sh \
+	tiff2rgba-palette-1c-4b.sh \
+	tiff2rgba-palette-1c-8b.sh \
+	tiff2rgba-rgb-3c-16b.sh \
+	tiff2rgba-rgb-3c-8b.sh
 
 
 # This list should contain all of the TIFF files in the 'images'
@@ -464,7 +473,8 @@ TIFFIMAGES = \
 
 
 # This list should include all of the files in the 'images'
-# subdirectory which are intended to be distributed.
+# subdirectory which are intended to be distributed.  This may include
+# files which are not currently used by the tests.
 IMAGES_EXTRA_DIST = \
 	images/README.txt \
 	$(TIFFIMAGES)
@@ -912,8 +922,26 @@ tiffcrop-R90-rgb-3c-16b.sh.log: tiffcrop-R90-rgb-3c-16b.sh
 	@p='tiffcrop-R90-rgb-3c-16b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tiffcrop-R90-rgb-3c-8b.sh.log: tiffcrop-R90-rgb-3c-8b.sh
 	@p='tiffcrop-R90-rgb-3c-8b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
-tiff2rgba.sh.log: tiff2rgba.sh
-	@p='tiff2rgba.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-logluv-3c-16b.sh.log: tiff2rgba-logluv-3c-16b.sh
+	@p='tiff2rgba-logluv-3c-16b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-minisblack-1c-16b.sh.log: tiff2rgba-minisblack-1c-16b.sh
+	@p='tiff2rgba-minisblack-1c-16b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-minisblack-1c-8b.sh.log: tiff2rgba-minisblack-1c-8b.sh
+	@p='tiff2rgba-minisblack-1c-8b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-minisblack-2c-8b-alpha.sh.log: tiff2rgba-minisblack-2c-8b-alpha.sh
+	@p='tiff2rgba-minisblack-2c-8b-alpha.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-miniswhite-1c-1b.sh.log: tiff2rgba-miniswhite-1c-1b.sh
+	@p='tiff2rgba-miniswhite-1c-1b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-palette-1c-1b.sh.log: tiff2rgba-palette-1c-1b.sh
+	@p='tiff2rgba-palette-1c-1b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-palette-1c-4b.sh.log: tiff2rgba-palette-1c-4b.sh
+	@p='tiff2rgba-palette-1c-4b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-palette-1c-8b.sh.log: tiff2rgba-palette-1c-8b.sh
+	@p='tiff2rgba-palette-1c-8b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-rgb-3c-16b.sh.log: tiff2rgba-rgb-3c-16b.sh
+	@p='tiff2rgba-rgb-3c-16b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tiff2rgba-rgb-3c-8b.sh.log: tiff2rgba-rgb-3c-8b.sh
+	@p='tiff2rgba-rgb-3c-8b.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 .test.log:
 	@p='$<'; $(am__check_pre) $(TEST_LOG_COMPILE) "$$tst" $(am__check_post)
 @am__EXEEXT_TRUE@.test$(EXEEXT).log:
@@ -1074,6 +1102,22 @@ uninstall-am:
 	recheck recheck-html tags uninstall uninstall-am
 
 
+generate-tiff2rgba-tests:
+	for file in $(TIFFIMAGES) ; \
+	do \
+	base=`basename $$file .tiff` ; \
+	testscript=$(srcdir)/tiff2rgba-$$base.sh ; \
+	( \
+	  echo "#!/bin/sh" ; \
+	  echo ". \$${srcdir:-.}/common.sh" ; \
+	  echo "infile=\"$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiff2rgba-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFF2RGBA\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
+	) > $$testscript ; \
+	chmod +x $$testscript ; \
+	done
+
 # Test rotations
 generate-tiffcrop-R90-tests:
 	for file in $(TIFFIMAGES) ; \
@@ -1083,7 +1127,10 @@ generate-tiffcrop-R90-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -R90\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-R90-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-R90-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -R90\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -1097,7 +1144,10 @@ generate-tiffcrop-doubleflip-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -F both\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-doubleflip-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-doubleflip-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -F both\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -1111,7 +1161,10 @@ generate-tiffcrop-extract-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 100 -Y 100\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-extract-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-extract-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 100 -Y 100\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -1125,7 +1178,10 @@ generate-tiffcrop-extractz14-tests:
 	( \
 	  echo "#!/bin/sh" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -E left -Z1:4,2:4\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-extractz14-$$base.tiff\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
+	  echo "outfile=\"o-tiffcrop-extractz14-$$base.tiff\"" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -E left -Z1:4,2:4\" \$$infile \$$outfile" ; \
+	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
 	done
@@ -1135,6 +1191,10 @@ generate-tiffcrop-tests: \
 	generate-tiffcrop-doubleflip-tests \
 	generate-tiffcrop-extract-tests \
 	generate-tiffcrop-extractz14-tests
+
+generate-tests: \
+	generate-tiff2rgba-tests \
+	generate-tiffcrop-tests
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

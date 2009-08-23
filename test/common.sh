@@ -58,14 +58,38 @@ f_test_convert ()
   outfile=$3
   rm -f $outfile
   eval echo $command $infile $outfile
-  eval $command $infile $outfile
+  eval $MEMCHECK $command $infile $outfile
   status=$?
   if [ $status != 0 ] ; then
     echo "Returned failed status $status! Output (if any) is in ${outfile}."
-  else
-    rm -f $outfile
+    exit $status
   fi
-  exit $status
+}
+
+#
+# Execute a simple command (e.g. tiffinfo) with one input file
+#
+# f_test_exec command infile
+f_test_reader ()
+{ 
+  command=$1
+  infile=$2
+  eval echo $command $infile
+  eval $MEMCHECK $command $infile
+  status=$?
+  if [ $status != 0 ] ; then
+    echo "Returned failed status $status!"
+    exit $status
+  fi
+}
+
+#
+# Execute tiffinfo on a specified file to validate it
+#
+# f_tiffinfo_validate infile
+f_tiffinfo_validate ()
+{
+    f_test_reader "$TIFFINFO -D" $1
 }
 
 if test "$VERBOSE" = TRUE

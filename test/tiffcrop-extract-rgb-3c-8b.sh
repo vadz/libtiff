@@ -1,3 +1,6 @@
 #!/bin/sh
 . ${srcdir:-.}/common.sh
-f_test_convert "$TIFFCROP -U px -E top -X 100 -Y 100" "$srcdir/images/rgb-3c-8b.tiff" "deleteme-tiffcrop-extract-rgb-3c-8b.tiff"
+infile="$srcdir/images/rgb-3c-8b.tiff"
+outfile="o-tiffcrop-extract-rgb-3c-8b.tiff"
+f_test_convert "$TIFFCROP -U px -E top -X 100 -Y 100" $infile $outfile
+f_tiffinfo_validate $outfile

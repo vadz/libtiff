@@ -1,3 +1,6 @@
 #!/bin/sh
 . ${srcdir:-.}/common.sh
-f_test_convert "$TIFFCROP -F both" "$srcdir/images/rgb-3c-8b.tiff" "deleteme-tiffcrop-doubleflip-rgb-3c-8b.tiff"
+infile="$srcdir/images/rgb-3c-8b.tiff"
+outfile="o-tiffcrop-doubleflip-rgb-3c-8b.tiff"
+f_test_convert "$TIFFCROP -F both" $infile $outfile
+f_tiffinfo_validate $outfile
