@@ -27,6 +27,12 @@ AUTOMAKE_OPTIONS = 1.11 color-tests parallel-tests foreign
 
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
+# Environment parameters to be used during tests
+TESTS_ENVIRONMENT = \
+	MAKE="$(MAKE)" \
+	MAKEFLAGS="$(MAKEFLAGS)" \
+	MEMCHECK="$(MEMCHECK)"
+
 EXTRA_DIST = \
 	$(TESTSCRIPTS) \
 	$(IMAGES_EXTRA_DIST) \
@@ -154,6 +160,14 @@ rewrite_SOURCES = rewrite_tag.c
 rewrite_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
+
+# memcheck: valgrind's memory access checker
+memcheck:
+	$(MAKE) MEMCHECK='valgrind --tool=memcheck --leak-check=full --read-var-info=yes --track-origins=yes --num-callers=12 --quiet $(VALGRIND_EXTRA_OPTS)' check
+
+# ptrcheck: valgrind's experimental pointer checking tool.
+ptrcheck:
+	$(MAKE) MEMCHECK='valgrind --tool=exp-ptrcheck --quiet $(VALGRIND_EXTRA_OPTS)' check
 
 generate-tiff2rgba-tests:
 	for file in $(TIFFIMAGES) ; \

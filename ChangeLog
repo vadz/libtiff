@@ -4,6 +4,10 @@
 	tiffcrop.sh into a collection of many specific tests.  Re-wrote
 	all of the existing tests to be based on some simple shell
 	functions.  Make distcheck works again.
+	
+	Export certain variables (MAKE, MAKEFLAGS, MEMCHECK) to tests and
+	added 'memcheck' and 'ptrcheck' targets to make it easy to run the
+	tests under valgrind.
 
 2009-08-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
