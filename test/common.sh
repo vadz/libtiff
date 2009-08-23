@@ -1,5 +1,6 @@
 # Common code fragment for tests
 #
+srcdir=${srcdir:-.}
 BUILDDIR=`pwd`
 SRCDIR=`dirname $0`
 SRCDIR=`cd $SRCDIR && pwd`
@@ -45,6 +46,27 @@ IMG_MINISBLACK_2C_8B_ALPHA=${IMAGES}/minisblack-2c-8b-alpha.tiff
 
 # All uncompressed image files
 IMG_UNCOMPRESSED="${IMG_MINISBLACK_1C_16B} ${IMG_MINISBLACK_1C_8B} ${IMG_MINISWHITE_1C_1B} ${IMG_PALETTE_1C_1B} ${IMG_PALETTE_1C_4B} ${IMG_PALETTE_1C_4B} ${IMG_PALETTE_1C_8B} ${IMG_RGB_3C_8B}"
+
+#
+# Test a simple convert-like command.
+#
+# f_test_convert command infile outfile
+f_test_convert ()
+{ 
+  command=$1
+  infile=$2
+  outfile=$3
+  rm -f $outfile
+  eval echo $command $infile $outfile
+  eval $command $infile $outfile
+  status=$?
+  if [ $status != 0 ] ; then
+    echo "Returned failed status $status! Output (if any) is in ${outfile}."
+  else
+    rm -f $outfile
+  fi
+  exit $status
+}
 
 if test "$VERBOSE" = TRUE
 then

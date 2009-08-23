@@ -29,14 +29,18 @@ LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
 EXTRA_DIST = \
 	$(TESTSCRIPTS) \
-	$(IMAGES) \
+	$(IMAGES_EXTRA_DIST) \
 	common.sh
 
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
 # Tests which are expected to fail
-XFAIL_TESTS =
+XFAIL_TESTS = \
+	tiffcrop-doubleflip-minisblack-2c-8b-alpha.sh \
+	tiffcrop-extract-minisblack-2c-8b-alpha.sh \
+	tiffcrop-extractz14-minisblack-2c-8b-alpha.sh \
+	tiffcrop-R90-minisblack-2c-8b-alpha.sh
 
 # Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif deleteme*
@@ -63,21 +67,68 @@ TESTSCRIPTS = \
 	tiff2ps-PS3.sh \
 	tiff2ps-EPS1.sh \
 	tiff2pdf.sh \
-	tiffcrop.sh \
+	tiffcrop-doubleflip-logluv-3c-16b.sh \
+	tiffcrop-doubleflip-minisblack-1c-16b.sh \
+	tiffcrop-doubleflip-minisblack-1c-8b.sh \
+	tiffcrop-doubleflip-minisblack-2c-8b-alpha.sh \
+	tiffcrop-doubleflip-miniswhite-1c-1b.sh \
+	tiffcrop-doubleflip-palette-1c-1b.sh \
+	tiffcrop-doubleflip-palette-1c-4b.sh \
+	tiffcrop-doubleflip-palette-1c-8b.sh \
+	tiffcrop-doubleflip-rgb-3c-16b.sh \
+	tiffcrop-doubleflip-rgb-3c-8b.sh \
+	tiffcrop-extract-logluv-3c-16b.sh \
+	tiffcrop-extract-minisblack-1c-16b.sh \
+	tiffcrop-extract-minisblack-1c-8b.sh \
+	tiffcrop-extract-minisblack-2c-8b-alpha.sh \
+	tiffcrop-extract-miniswhite-1c-1b.sh \
+	tiffcrop-extract-palette-1c-1b.sh \
+	tiffcrop-extract-palette-1c-4b.sh \
+	tiffcrop-extract-palette-1c-8b.sh \
+	tiffcrop-extract-rgb-3c-16b.sh \
+	tiffcrop-extract-rgb-3c-8b.sh \
+	tiffcrop-extractz14-logluv-3c-16b.sh \
+	tiffcrop-extractz14-minisblack-1c-16b.sh \
+	tiffcrop-extractz14-minisblack-1c-8b.sh \
+	tiffcrop-extractz14-minisblack-2c-8b-alpha.sh \
+	tiffcrop-extractz14-miniswhite-1c-1b.sh \
+	tiffcrop-extractz14-palette-1c-1b.sh \
+	tiffcrop-extractz14-palette-1c-4b.sh \
+	tiffcrop-extractz14-palette-1c-8b.sh \
+	tiffcrop-extractz14-rgb-3c-16b.sh \
+	tiffcrop-extractz14-rgb-3c-8b.sh \
+	tiffcrop-R90-logluv-3c-16b.sh \
+	tiffcrop-R90-minisblack-1c-16b.sh \
+	tiffcrop-R90-minisblack-1c-8b.sh \
+	tiffcrop-R90-minisblack-2c-8b-alpha.sh \
+	tiffcrop-R90-miniswhite-1c-1b.sh \
+	tiffcrop-R90-palette-1c-1b.sh \
+	tiffcrop-R90-palette-1c-4b.sh \
+	tiffcrop-R90-palette-1c-8b.sh \
+	tiffcrop-R90-rgb-3c-16b.sh \
+	tiffcrop-R90-rgb-3c-8b.sh \
 	tiff2rgba.sh
 
-IMAGES = \
+# This list should contain all of the TIFF files in the 'images'
+# subdirectory which are intended to be used as input images for
+# tests.  All of these files should use the extension ".tiff".
+TIFFIMAGES = \
+	images/logluv-3c-16b.tiff \
 	images/minisblack-1c-16b.tiff \
 	images/minisblack-1c-8b.tiff \
+	images/minisblack-2c-8b-alpha.tiff \
 	images/miniswhite-1c-1b.tiff \
-	images/miniswhite-2c-8b-alpha.tiff \
 	images/palette-1c-1b.tiff \
 	images/palette-1c-4b.tiff \
 	images/palette-1c-8b.tiff \
-	images/README.txt \
-	images/logluv-3c-16b.tiff \
 	images/rgb-3c-16b.tiff \
-	images/rgb-3c-8b.tiff 
+	images/rgb-3c-8b.tiff
+
+# This list should include all of the files in the 'images'
+# subdirectory which are intended to be distributed.
+IMAGES_EXTRA_DIST = \
+	images/README.txt \
+	$(TIFFIMAGES)
 
 noinst_HEADERS = tifftest.h
 
@@ -94,3 +145,64 @@ rewrite_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
+# Test rotations
+generate-tiffcrop-R90-tests:
+	for file in $(TIFFIMAGES) ; \
+	do \
+	base=`basename $$file .tiff` ; \
+	testscript=$(srcdir)/tiffcrop-R90-$$base.sh ; \
+	( \
+	  echo "#!/bin/sh" ; \
+	  echo ". \$${srcdir:-.}/common.sh" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -R90\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-R90-$$base.tiff\"" ; \
+	) > $$testscript ; \
+	chmod +x $$testscript ; \
+	done
+
+# Test flip (mirror)
+generate-tiffcrop-doubleflip-tests:
+	for file in $(TIFFIMAGES) ; \
+	do \
+	base=`basename $$file .tiff` ; \
+	testscript=$(srcdir)/tiffcrop-doubleflip-$$base.sh ; \
+	( \
+	  echo "#!/bin/sh" ; \
+	  echo ". \$${srcdir:-.}/common.sh" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -F both\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-doubleflip-$$base.tiff\"" ; \
+	) > $$testscript ; \
+	chmod +x $$testscript ; \
+	done
+
+# Test extracting a section 100 pixels wide and 100 pixels high
+generate-tiffcrop-extract-tests:
+	for file in $(TIFFIMAGES) ; \
+	do \
+	base=`basename $$file .tiff` ; \
+	testscript=$(srcdir)/tiffcrop-extract-$$base.sh ; \
+	( \
+	  echo "#!/bin/sh" ; \
+	  echo ". \$${srcdir:-.}/common.sh" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 100 -Y 100\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-extract-$$base.tiff\"" ; \
+	) > $$testscript ; \
+	chmod +x $$testscript ; \
+	done
+
+# Test extracting the first and fourth quarters from the left side.
+generate-tiffcrop-extractz14-tests:
+	for file in $(TIFFIMAGES) ; \
+	do \
+	base=`basename $$file .tiff` ; \
+	testscript=$(srcdir)/tiffcrop-extractz14-$$base.sh ; \
+	( \
+	  echo "#!/bin/sh" ; \
+	  echo ". \$${srcdir:-.}/common.sh" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -E left -Z1:4,2:4\" \"\$$srcdir/$$file\" \"deleteme-tiffcrop-extractz14-$$base.tiff\"" ; \
+	) > $$testscript ; \
+	chmod +x $$testscript ; \
+	done
+
+generate-tiffcrop-tests: \
+	generate-tiffcrop-R90-tests \
+	generate-tiffcrop-doubleflip-tests \
+	generate-tiffcrop-extract-tests \
+	generate-tiffcrop-extractz14-tests
