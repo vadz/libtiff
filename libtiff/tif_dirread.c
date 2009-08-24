@@ -4140,6 +4140,8 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 			}
 			switch (dp->tdir_tag)
 			{
+				case IGNORE:
+					break;
 				case EXIFTAG_SUBJECTDISTANCE:
 					(void) TIFFFetchSubjectDistance(tif,dp);
 					break;

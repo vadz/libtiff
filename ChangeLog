@@ -1,3 +1,10 @@
+2009-08-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dirread.c (TIFFReadCustomDirectory): Apply patch
+	from Jay Berkenbilt for "Bug 1895 - logic error in tif_dirread.c:
+	segfault after setting tdir_tag = IGNORE".	
+	http://bugzilla.maptools.org/show_bug.cgi?id=1895
+
 2009-08-23  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/Makefile.am, test/tiffcrop*.sh: Split previously existing
