@@ -176,8 +176,9 @@ generate-tiff2rgba-tests:
 	testscript=$(srcdir)/tiff2rgba-$$base.sh ; \
 	( \
 	  echo "#!/bin/sh" ; \
+	  echo "# Generated file, master is Makefile.am" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
-	  echo "infile=\"$$srcdir/$$file\"" ; \
+	  echo "infile=\"\$$srcdir/$$file\"" ; \
 	  echo "outfile=\"o-tiff2rgba-$$base.tiff\"" ; \
 	  echo "f_test_convert \"\$$TIFF2RGBA\" \$$infile \$$outfile" ; \
 	  echo "f_tiffinfo_validate \$$outfile" ; \
@@ -193,6 +194,7 @@ generate-tiffcrop-R90-tests:
 	testscript=$(srcdir)/tiffcrop-R90-$$base.sh ; \
 	( \
 	  echo "#!/bin/sh" ; \
+	  echo "# Generated file, master is Makefile.am" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
 	  echo "infile=\"\$$srcdir/$$file\"" ; \
 	  echo "outfile=\"o-tiffcrop-R90-$$base.tiff\"" ; \
@@ -210,6 +212,7 @@ generate-tiffcrop-doubleflip-tests:
 	testscript=$(srcdir)/tiffcrop-doubleflip-$$base.sh ; \
 	( \
 	  echo "#!/bin/sh" ; \
+	  echo "# Generated file, master is Makefile.am" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
 	  echo "infile=\"\$$srcdir/$$file\"" ; \
 	  echo "outfile=\"o-tiffcrop-doubleflip-$$base.tiff\"" ; \
@@ -227,6 +230,7 @@ generate-tiffcrop-extract-tests:
 	testscript=$(srcdir)/tiffcrop-extract-$$base.sh ; \
 	( \
 	  echo "#!/bin/sh" ; \
+	  echo "# Generated file, master is Makefile.am" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
 	  echo "infile=\"\$$srcdir/$$file\"" ; \
 	  echo "outfile=\"o-tiffcrop-extract-$$base.tiff\"" ; \
@@ -244,6 +248,7 @@ generate-tiffcrop-extractz14-tests:
 	testscript=$(srcdir)/tiffcrop-extractz14-$$base.sh ; \
 	( \
 	  echo "#!/bin/sh" ; \
+	  echo "# Generated file, master is Makefile.am" ; \
 	  echo ". \$${srcdir:-.}/common.sh" ; \
 	  echo "infile=\"\$$srcdir/$$file\"" ; \
 	  echo "outfile=\"o-tiffcrop-extractz14-$$base.tiff\"" ; \

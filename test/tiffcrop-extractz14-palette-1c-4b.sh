@@ -1,4 +1,5 @@
 #!/bin/sh
+# Generated file, master is Makefile.am
 . ${srcdir:-.}/common.sh
 infile="$srcdir/images/palette-1c-4b.tiff"
 outfile="o-tiffcrop-extractz14-palette-1c-4b.tiff"
