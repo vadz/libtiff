@@ -57,7 +57,7 @@
     infile=$2
     outfile=$3
     rm -f $outfile
-    eval echo $command $infile $outfile
+    eval echo $MEMCHECK $command $infile $outfile
     eval $MEMCHECK $command $infile $outfile
   status=$?
   if [ $status != 0 ] ; then
@@ -74,7 +74,7 @@ f_test_reader ()
 { 
   command=$1
   infile=$2
-  eval echo $command $infile
+  eval echo $MEMCHECK $command $infile
   eval $MEMCHECK $command $infile
   status=$?
   if [ $status != 0 ] ; then
