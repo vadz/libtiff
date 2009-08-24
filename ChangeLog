@@ -1,5 +1,9 @@
 2009-08-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* man/{TIFFClose.3tiff,raw2tiff.1,tiffcmp.1,tiffsplit.1}: Applied
+	fixes for "Bug 2023 - nroff errors in manual pages".
+	http://bugzilla.maptools.org/show_bug.cgi?id=2023
+
 	* tools/{rgb2ycbcr.c, tiff2rgba.c}: Applied fixes for "Bug 2079 -
 	CVE-2009-2347 libtiff: integer overflows in various inter-color
 	space conversion tools".
