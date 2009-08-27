@@ -1,3 +1,9 @@
+2009-08-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_config.vc.h: tiffiop.h needs the TIFF_INT64_T and
+	TIFF_UINT64_T defines in order to compile.  Copy existing
+	definitions from tiffconf.vc.h.
+
 2009-08-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/Makefile.am (AUTOMAKE_OPTIONS): Colorized tests was not
