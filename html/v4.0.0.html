@@ -109,6 +109,17 @@ BigTIFF support changes:
 	in actual file size, you best use the newer TIFFTileSize64 or
 	TIFFScanlineSize64 function that returns an uint64 type.
 
+	<LI>These TIFF tags require a 64-bit type as an argument in
+	libtiff 4.0.0:
+	<UL>
+	<LI> TIFFTAG_FREEBYTECOUNTS
+	<LI> TIFFTAG_FREEOFFSETS
+	<LI> TIFFTAG_STRIPBYTECOUNTS
+	<LI> TIFFTAG_STRIPOFFSETS
+	<LI> TIFFTAG_TILEBYTECOUNTS
+	<LI> TIFFTAG_TILEOFFSETS
+	</UL>
+
 </UL>
 
 Other important backward incompatible changes in the public API:
@@ -133,6 +144,7 @@ Other important backward incompatible changes in the public API:
 	<LI> TIFFTagValue structure removed from the public tiffio.h
 	to private tif_dir.h and not accessible anymore. It should be unneeded
 	for high-level applications.
+
 </UL>
 
 <P><HR WIDTH=65% ALIGN=left>
