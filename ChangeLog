@@ -1,3 +1,9 @@
+2009-08-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff 4.0.0alpha4 released.
+
+	* HOWTO-RELEASE: Improved release instructions.
+
 2009-08-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* man/{TIFFClose.3tiff,raw2tiff.1,tiffcmp.1,tiffsplit.1}: Applied

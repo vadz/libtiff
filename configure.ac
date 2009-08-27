@@ -25,7 +25,7 @@ dnl OF THIS SOFTWARE.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.64)
-AC_INIT([LibTIFF Software],[4.0.0beta3],[tiff@lists.maptools.org],[tiff])
+AC_INIT([LibTIFF Software],[4.0.0beta4],[tiff@lists.maptools.org],[tiff])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(m4)
 AC_LANG(C)
@@ -42,31 +42,42 @@ dnl Don't fill the ALPHA_VERSION field, if not applicable.
 LIBTIFF_MAJOR_VERSION=4
 LIBTIFF_MINOR_VERSION=0
 LIBTIFF_MICRO_VERSION=0
-LIBTIFF_ALPHA_VERSION=beta3
+LIBTIFF_ALPHA_VERSION=beta4
 LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
 dnl This will be used with the 'make release' target
 LIBTIFF_RELEASE_DATE=`date +"%Y%m%d"`
 
-dnl Following version updating rules are quoted from the libtool manual.
+dnl Libtool library revision control info
+dnl See the libtool documentation under the heading "Libtool's versioning
+dnl system" in order to understand the meaning of these fields
 dnl
-dnl  - Update the version information only immediately before a public
-dnl    release of your software.  More frequent updates are unnecessary,
-dnl    and only guarantee that the current interface number gets larger 
-dnl    faster.                                                         
+dnl current
+dnl      The most recent interface number that this library implements.
+dnl revision
+dnl      The implementation number of the current interface.
+dnl age
+dnl      The difference between the newest and oldest interfaces that
+dnl      this library implements. In other words, the library implements
+dnl      all the interface numbers in the range from number current -
+dnl      age to current.
 dnl
-dnl  - If the library source code has not changed at all since the last
-dnl    update, then increment REVISION (`C:R:A' becomes `C:r+1:A').
+dnl Here are a set of rules to help you update your library version
+dnl information:
 dnl
-dnl  - If any interfaces have been added, removed, or changed since the
-dnl    last update, increment CURRENT, and set REVISION to 0.          
-dnl
-dnl  - If any interfaces have been added since the last public release,
-dnl    then increment AGE.                                             
-dnl
-dnl  - If any interfaces have been removed since the last public release,
-dnl    then set AGE to 0.                                                
+dnl  1. Start with version information of `0:0:0' for each libtool library.
+dnl  2. Update the version information only immediately before a public
+dnl     release of your software. More frequent updates are unnecessary, and
+dnl     only guarantee that the current interface number gets larger faster.
+dnl  3. If the library source code has changed at all since the last update,
+dnl     then increment revision (`c:r:a' becomes `c:r+1:a').
+dnl  4. If any interfaces have been added, removed, or changed since the last
+dnl     update, increment current, and set revision to 0.
+dnl  5. If any interfaces have been added since the last public release, then
+dnl     increment age.
+dnl  6. If any interfaces have been removed since the last public release,
+dnl     then set age to 0.                                
 LIBTIFF_CURRENT=5
-LIBTIFF_REVISION=0
+LIBTIFF_REVISION=1
 LIBTIFF_AGE=0
 LIBTIFF_VERSION_INFO=$LIBTIFF_CURRENT:$LIBTIFF_REVISION:$LIBTIFF_AGE
 

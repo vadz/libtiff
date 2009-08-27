@@ -16,7 +16,7 @@
 <UL>
 <HR SIZE=4 WIDTH=65% ALIGN=left>
 <B>Current Version</B>: v4.0.0<BR>
-<B>Previous Version</B>: <A HREF=v3.8.2.html>v3.8.2</a><BR>
+<B>Previous Version</B>: <A HREF=v3.9.0.html>v3.9.0</a><BR>
 <B>Master FTP Site</B>: <A HREF="ftp://ftp.remotesensing.org/pub/libtiff">
 ftp.remotesensing.org</a>, directory pub/libtiff</A><BR>
 <B>Master HTTP Site</B>: <A HREF="http://download.osgeo.org/libtiff">
@@ -142,6 +142,21 @@ Other important backward incompatible changes in the public API:
 
 <UL>
 
+	<LI>Updated autotools: Autoconf 2.64, Automake 1.11, libtool
+	2.2.6.
+
+	<LI>Enabled support for Automake silent build rules
+	(--enable-silent-rules or 'make V=0')
+
+	<LI>Enabled support for Automake colorized and parallel tests.
+
+	<LI>Added detection of 64-bit integer types since libtiff 4.0
+	requires use of 64-bit signed and unsigned integer types.
+
+	<LI>Libtiff now provides a more comprehensive test suite with
+	over 72 tests, which may be executed on Unix-like systems, or
+	under Microsoft Windows using MinGW/MSYS or Cygwin.
+
 </UL>
 
 <P><HR WIDTH=65% ALIGN=left>
@@ -152,29 +167,36 @@ Other important backward incompatible changes in the public API:
 
 <UL>
 
-	<LI>There is considerable change in some files
-	like tif_dirread and tif_dirwrite. These changes don't impact backwards
-	compatibility, they are mostly a clean rewrite that does allow BigTIFF 
-	support as well as somewhat more 
-	robust reading of the unexpected already and will also serve future API 
-	extension but does not impact current API or functionality in a negative way 
-	that you need to know about.
+        <LI>Patches/fixes made to stable libtiff (v3.9.0) are also
+        applied to 4.0.0.  There are too many to list here.  See the
+        distribution ChangeLog for a detailed change list.
 
-	<LI>Although there is still a functional definition for types like toff_t
-	(file offset), tstrip_t (strip index number), etc, we recommend against
-	using these in newer code. We have learned that it is next to impossible to
-	use these consistently and make real abstraction of the binary format of
-	these types. Instead, at a certain level we always end up doing casts
-	anyway, and taking the exact binary format into account, so these types are
-	nothing but dangerously misleading and obfuscating. You do not need to
-	update calling code that uses them, as 99.9% of such code will continue to
-	work. But we recommend against using them in newer calling code, and we
-	started replacing them with binary clear types like uint16, uint32 and such
-	in the library.
+	<LI>There is considerable change in some files like
+	tif_dirread and tif_dirwrite. These changes don't impact
+	backwards compatibility, they are mostly a clean rewrite that
+	does allow BigTIFF support as well as somewhat more robust
+	reading of the unexpected already and will also serve future
+	API extension but does not impact current API or functionality
+	in a negative way that you need to know about.
 
-	<LI>We do use and will continue to use one functional type that is an
-	exception to the above rule, being tmsize_t. This is a signed memory size
-	type, i.e. it is int32 on 32bit machines, or int64 on 64bit machines.
+	<LI>Although there is still a functional definition for types
+	like toff_t (file offset), tstrip_t (strip index number), etc,
+	we recommend against using these in newer code. We have
+	learned that it is next to impossible to use these
+	consistently and make real abstraction of the binary format of
+	these types. Instead, at a certain level we always end up
+	doing casts anyway, and taking the exact binary format into
+	account, so these types are nothing but dangerously misleading
+	and obfuscating. You do not need to update calling code that
+	uses them, as 99.9% of such code will continue to work. But we
+	recommend against using them in newer calling code, and we
+	started replacing them with binary clear types like uint16,
+	uint32 and such in the library.
+
+	<LI>We do use and will continue to use one functional type
+	that is an exception to the above rule, being tmsize_t. This
+	is a signed memory size type, i.e. it is int32 on 32bit
+	machines, or int64 on 64bit machines.
 
 </UL>
 
