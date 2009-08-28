@@ -1,3 +1,10 @@
+2009-08-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/Makefile.am (TIFFIMAGES): Add test images in BMP, GIF, and
+	PNM formats so that we will be able to test more of the tools.
+	While adding these test images I notice that bmp2tiff and gif2tiff
+	only support ancient versions of their respective formats.
+
 2009-08-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 4.0.0alpha4 released.

@@ -478,12 +478,26 @@ TIFFIMAGES = \
 	images/rgb-3c-16b.tiff \
 	images/rgb-3c-8b.tiff
 
+BMPIMAGES = \
+	images/palette-1c-8b.bmp \
+	images/rgb-3c-8b.bmp
+
+GIFIMAGES = \
+	images/palette-1c-8b.gif
+
+PNMIMAGES = \
+	images/minisblack-1c-8b.pgm \
+	images/miniswhite-1c-1b.pbm \
+	images/rgb-3c-8b.ppm
+
 
 # This list should include all of the files in the 'images'
 # subdirectory which are intended to be distributed.  This may include
 # files which are not currently used by the tests.
 IMAGES_EXTRA_DIST = \
 	images/README.txt \
+	$(BMPIMAGES) \
+	$(PNMIMAGES) \
 	$(TIFFIMAGES)
 
 noinst_HEADERS = tifftest.h

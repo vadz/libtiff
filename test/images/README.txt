@@ -15,6 +15,15 @@ rgb-3c-8b.tiff
 logluv-3c-16b.tiff: logluv compression/photometric interp
 minisblack-2c-8b-alpha.tiff: grey+alpha
 
+BMP files (anchient BMPv2 since v3 does not work):
 
+  palette-1c-8b.bmp
+  rgb-3c-8b.bmp
 
+GIF files (anchient GIF '87 since modern GIF does not work):
+  palette-1c-8b.gif
 
+PNM files:
+  minisblack-1c-8b.pgm
+  miniswhite-1c-1b.pbm
+  rgb-3c-8b.ppm
