@@ -43,10 +43,11 @@ TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
 # Tests which are expected to fail
 XFAIL_TESTS = \
+	tiffcrop-R90-minisblack-2c-8b-alpha.sh \
 	tiffcrop-doubleflip-minisblack-2c-8b-alpha.sh \
 	tiffcrop-extract-minisblack-2c-8b-alpha.sh \
-	tiffcrop-extractz14-minisblack-2c-8b-alpha.sh \
-	tiffcrop-R90-minisblack-2c-8b-alpha.sh
+	tiffcrop-extractz14-logluv-3c-16b.sh \
+	tiffcrop-extractz14-minisblack-2c-8b-alpha.sh
 
 # Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif o-*
