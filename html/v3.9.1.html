@@ -79,10 +79,9 @@ information is located here:
 	byte-count and strip-offset of zero.  This cast was added on
 	the day of the 3.9.0 release.
 
-	<li> libtiff/tif_dirwrite.c (_TIFFWriteDirectory): Fix for
-	"Bug 2088 - _TIFFWriteDirectory do not flush data sometimes".
-	This bug also caused libtiff to output a wrong last strip with
-	byte-count and strip-offset of zero.
+	<li> libtiff/tif_dirwrite.c: Back out changes from 2007-11-22
+	that resulted in the final strip not being written in some
+	circumstances.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2088
 
 </UL>
