@@ -1,5 +1,8 @@
 2009-08-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffinfo.c: tiffinfo should return error status to the
+	caller.  Register a private error callback to accomplish that.
+
 	* test/Makefile.am (TIFFIMAGES): Add test images in BMP, GIF, and
 	PNM formats so that we will be able to test more of the tools.
 	While adding these test images I notice that bmp2tiff and gif2tiff

@@ -42,18 +42,26 @@
 # include "libport.h"
 #endif
 
-#include "tiffio.h"
+#include "tiffiop.h"
 
-#define	streq(a,b)	(strcasecmp(a,b) == 0)
-
-int	showdata = 0;			/* show data */
-int	rawdata = 0;			/* show raw/decoded data */
-int	showwords = 0;			/* show data as bytes/words */
-int	readdata = 0;			/* read data in file */
-int	stoponerr = 1;			/* stop on first read error */
+static TIFFErrorHandler old_error_handler = 0;
+static int status = 0;                  /* exit status */
+static int showdata = 0;		/* show data */
+static int rawdata = 0;			/* show raw/decoded data */
+static int showwords = 0;		/* show data as bytes/words */
+static int readdata = 0;		/* read data in file */
+static int stoponerr = 1;		/* stop on first read error */
 
 static	void usage(void);
 static	void tiffinfo(TIFF*, uint16, long);
+
+static void
+PrivateErrorHandler(const char* module, const char* fmt, va_list ap)
+{
+        if (old_error_handler)
+                (*old_error_handler)(module,fmt,ap);
+	status = 1;
+}
 
 int
 main(int argc, char* argv[])
@@ -120,6 +128,10 @@ main(int argc, char* argv[])
 		}
 	if (optind >= argc)
 		usage();
+
+	old_error_handler = _TIFFerrorHandler;
+	(void) TIFFSetErrorHandler(PrivateErrorHandler);
+
 	multiplefiles = (argc - optind > 1);
 	for (; optind < argc; optind++) {
 		if (multiplefiles)
@@ -147,7 +159,7 @@ main(int argc, char* argv[])
 			TIFFClose(tif);
 		}
 	}
-	return (0);
+	return (status);
 }
 
 char* stuff[] = {
