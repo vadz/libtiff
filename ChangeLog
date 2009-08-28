@@ -1,5 +1,10 @@
 2009-08-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_write.c (TIFFAppendToStrip): Remove cast which
+	caused libtiff to output a wrong last strip with byte-count and
+	strip-offset of zero.  This cast was added on the day of the 3.9.0
+	release.
+
 	* libtiff/tif_config.vc.h: tiffiop.h needs the TIFF_INT64_T and
 	TIFF_UINT64_T defines in order to compile.  Copy existing
 	definitions from tiffconf.vc.h.
