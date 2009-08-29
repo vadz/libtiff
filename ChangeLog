@@ -1,3 +1,9 @@
+2009-08-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/{bmp2tiff_palette.sh, bmp2tiff_rgb.sh, gif2tiff.sh,
+	ppm2tiff_pbm.sh, ppm2tiff_pgm.sh, ppm2tiff_ppm.sh}: Additional
+	utilities tests.
+
 2009-08-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffinfo.c: tiffinfo should return error status to the

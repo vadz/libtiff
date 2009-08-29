@@ -395,6 +395,12 @@ CLEANFILES = test_packbits.tif o-*
 
 # Test scripts to execute
 TESTSCRIPTS = \
+	bmp2tiff_palette.sh \
+	bmp2tiff_rgb.sh \
+	gif2tiff.sh \
+	ppm2tiff_pbm.sh \
+	ppm2tiff_pgm.sh \
+	ppm2tiff_ppm.sh \
 	tiffcp-g3.sh \
 	tiffcp-g3-1d.sh \
 	tiffcp-g3-1d-fill.sh \
@@ -498,6 +504,7 @@ PNMIMAGES = \
 IMAGES_EXTRA_DIST = \
 	images/README.txt \
 	$(BMPIMAGES) \
+	$(GIFIMAGES) \
 	$(PNMIMAGES) \
 	$(TIFFIMAGES)
 
@@ -830,6 +837,18 @@ strip_rw.log: strip_rw$(EXEEXT)
 	@p='strip_rw$(EXEEXT)'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 rewrite.log: rewrite$(EXEEXT)
 	@p='rewrite$(EXEEXT)'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+bmp2tiff_palette.sh.log: bmp2tiff_palette.sh
+	@p='bmp2tiff_palette.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+bmp2tiff_rgb.sh.log: bmp2tiff_rgb.sh
+	@p='bmp2tiff_rgb.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+gif2tiff.sh.log: gif2tiff.sh
+	@p='gif2tiff.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+ppm2tiff_pbm.sh.log: ppm2tiff_pbm.sh
+	@p='ppm2tiff_pbm.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+ppm2tiff_pgm.sh.log: ppm2tiff_pgm.sh
+	@p='ppm2tiff_pgm.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+ppm2tiff_ppm.sh.log: ppm2tiff_ppm.sh
+	@p='ppm2tiff_ppm.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tiffcp-g3.sh.log: tiffcp-g3.sh
 	@p='tiffcp-g3.sh'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tiffcp-g3-1d.sh.log: tiffcp-g3-1d.sh

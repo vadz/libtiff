@@ -57,6 +57,12 @@ check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite
 
 # Test scripts to execute
 TESTSCRIPTS = \
+	bmp2tiff_palette.sh \
+	bmp2tiff_rgb.sh \
+	gif2tiff.sh \
+	ppm2tiff_pbm.sh \
+	ppm2tiff_pgm.sh \
+	ppm2tiff_ppm.sh \
 	tiffcp-g3.sh \
 	tiffcp-g3-1d.sh \
 	tiffcp-g3-1d-fill.sh \
@@ -158,6 +164,7 @@ PNMIMAGES = \
 IMAGES_EXTRA_DIST = \
 	images/README.txt \
 	$(BMPIMAGES) \
+	$(GIFIMAGES) \
 	$(PNMIMAGES) \
 	$(TIFFIMAGES)
 
