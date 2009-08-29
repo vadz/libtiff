@@ -2080,7 +2080,7 @@ DECLARESepPutFunc(putseparate8bitYCbCr11tile)
 static int
 initYCbCrConversion(TIFFRGBAImage* img)
 {
-	static char module[] = "initYCbCrConversion";
+	static const char module[] = "initYCbCrConversion";
 
 	float *luma, *refBlackWhite;
 
@@ -2109,7 +2109,7 @@ initYCbCrConversion(TIFFRGBAImage* img)
 static tileContigRoutine
 initCIELabConversion(TIFFRGBAImage* img)
 {
-	static char module[] = "initCIELabConversion";
+	static const char module[] = "initCIELabConversion";
 
 	float   *whitePoint;
 	float   refWhite[3];
