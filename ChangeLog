@@ -1,3 +1,10 @@
+2009-08-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* contrib/iptcutil/iptcutil.c,
+	libtiff/tif_getimage.c,libtiff/tif_jpeg.c,libtiff/tif_ojpeg.c,tools/tiffcrop.c,tools/tiffgt.c:
+	Applied patch from Oden Eriksson to allow building with GCC using
+	the "-Wformat -Werror=format-security" flags.
+
 2009-08-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 3.9.1 released.

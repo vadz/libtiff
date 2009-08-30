@@ -204,7 +204,7 @@ initImage(void)
         if (photo != (uint16) -1)
                 TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, photo);
         if (!TIFFRGBAImageBegin(&img, tif, stoponerr, title)) {
-                TIFFError(filelist[fileindex], title);
+                TIFFError(filelist[fileindex], "%s", title);
                 TIFFClose(tif);
                 tif = NULL;
                 return -1;

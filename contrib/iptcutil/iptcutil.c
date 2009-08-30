@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
 
   if( argc < 2 )
     {
-      printf(usage);
+      printf("%s\n", usage);
 	    return 1;
     }
 
@@ -444,7 +444,7 @@ int main(int argc, char *argv[])
       }
     else
       {
-        printf(usage);
+        printf("%s\n", usage);
 	      return 1;
       }
   }
