@@ -1981,7 +1981,7 @@ main(int argc, char* argv[])
                   (dump.format == DUMP_TEXT) ? "txt" : "raw");
           if ((dump.infile = fopen(temp_filename, dump.mode)) == NULL)
             {
-	    TIFFError ("Unable to open dump file %s for writing", temp_filename);
+	    TIFFError ("Unable to open dump file %s for writing", "%s", temp_filename);
 	    exit (-1);
             }
           dump_info(dump.infile, dump.format, "Reading image","%d from %s", 
@@ -1997,7 +1997,7 @@ main(int argc, char* argv[])
                   (dump.format == DUMP_TEXT) ? "txt" : "raw");
           if ((dump.outfile = fopen(temp_filename, dump.mode)) == NULL)
             {
-	    TIFFError ("Unable to open dump file %s for writing", temp_filename);
+	    TIFFError ("Unable to open dump file %s for writing", "%s", temp_filename);
 	    exit (-1);
             }
           dump_info(dump.outfile, dump.format, "Writing image","%d from %s", 
