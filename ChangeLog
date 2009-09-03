@@ -1,3 +1,9 @@
+2009-09-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_getimage.c: Fixed error recognition handling in RGBA
+	interface when stoponerror is set. 
+	http://bugzilla.maptools.org/show_bug.cgi?id=2071
+
 2009-08-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/{tiffcrop.c,tiffgt.c}: Applied patch from Oden Eriksson to
