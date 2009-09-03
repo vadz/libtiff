@@ -1,3 +1,10 @@
+2009-09-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_ojpeg.c (OJPEGWriteHeaderInfo): IJG JPEG 7 needs
+	do_fancy_upsampling=FALSE in order to read raw data.  Resolves
+	"Bug 2090 - OJPEG crash with libjpeg v7".
+	http://bugzilla.maptools.org/show_bug.cgi?id=2090
+
 2009-08-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* contrib/iptcutil/iptcutil.c,
