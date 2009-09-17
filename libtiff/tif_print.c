@@ -31,7 +31,7 @@
  */
 #include "tiffiop.h"
 #include <stdio.h>
-
+#include <string.h>
 #include <ctype.h>
 
 static const char *photoNames[] = {
