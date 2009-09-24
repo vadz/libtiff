@@ -1,5 +1,5 @@
 .\" $Id$
-.\" tiffcrop -- a port of tiffcp.c extended to include cropping of selections
+.\" tiffcrop -- a port of tiffcp.c extended to include extended processing of images
 .\" 
 .\" Original code:
 .\" 
@@ -26,7 +26,7 @@
 .\" OF THIS SOFTWARE.
 .\" 
 .\" Additional code Copyright (c) 2006-2009 Richard Nolde 
-.\" Lasted Updated 12/2008
+.\" Lasted Updated 9/2009
 .\" .if n .po 0
 .TH "TIFFCROP" "1" "December, 2008" "libtiff" ""
 .SH "NAME"
@@ -40,7 +40,7 @@ files.
 ]
 .I "src1.tif ... srcN.tif dst.tif"
 .SH "DESCRIPTION"
-.I tiffcrop
+.I Tiffcrop
 processes one or more files created according
 to the Tag Image File Format, Revision 6.0, specification
 into one or more
@@ -131,8 +131,10 @@ The words
 .B odd
 or
 .B even
-may be used to specify all odd or even numbered images couting from one.
- The word
+may be used to specify all odd or even numbered images counting from one.
+Note that internally, TIFF images are numbered from zero rather than one
+but since this convention is not obvious to most users, tiffcrop used 1
+to specifiy the first image in a multipage file.  The word
 .B last 
 may be used in place of a number in the sequence to indicate the 
 final image in the file without knowing how many images there are.
@@ -243,12 +245,14 @@ expressed in the current units.
 .TP 
 .B \-J #
 Set the horizontal margin of an output page size to #
-expressed in the current units.
+expressed in the current units when sectioning image into columns x rows
+subimages using the \-S cols:rows option.
 .TP 
 .B \-K #
 Set the vertical margin of an output page size to # 
-expressed in the current units.
-.TP 
+expressed in the current units when sectioning image into columns x rows
+submiages using the \-S cols:rows option.
+.TP
 .B \-O portrait|landscape|auto
 Set the output orientation of the pages or sections.
 Auto will use the arrangement that requires the fewest pages.
@@ -279,8 +283,8 @@ for no compression,
 for PackBits compression,
 .B lzw
 for Lempel\-Ziv & Welch compression,
-.B jpeg
-for baseline JPEG compression,
+.B jpeg 
+for baseline JPEG compression.
 .B zip
 for Deflate compression,
 .B g3
@@ -408,7 +412,7 @@ Debug and dump facility
 .B \-D opt1:value1,opt2:value2,opt3:value3:opt4:value4
 Display program progress and/or dump raw data to non\-TIFF files.
 Options include the following and must be joined as a comma
-separate list. The use of this option is generally limited to
+separated list. The use of this option is generally limited to
 program debugging and development of future options. An equal sign
 may be substituted for the colon in option:value pairs.
 .IP
@@ -433,7 +437,9 @@ and an extension of .txt for ASCII dumps or .bin for binary dumps.
 
 The four debug/dump options are independent, though it makes little sense to
 specify a dump file without specifying a detail level.
-
+.IP
+Note: Tiffcrop may be compiled with -DDEVELMODE to enable additional very
+ low level debug reporting.
 .SH "EXAMPLES"
 The following concatenates two files and writes the result using 
 .SM LZW
@@ -505,23 +511,50 @@ the export option to \-e multiple.
 .SH "NOTES"
 .PP 
 In general, bilevel, grayscale, palette and RGB(A) data with bit depths
-from one to 32 bits should work in both interleaved and separate plane
-formats. Floating point data types are supported at bit depts of 16, 24, 32 and 64
-bits per sample. Tiffcrop is derived from code in
+from 1 to 32 bits should work in both interleaved and separate plane
+formats. Unlike tiffcp, tiffcrop can read and write tiled images with
+bits per sample that are not a multiple of 8 in both interleaved and
+separate planar format. Floating point data types are supported at 
+bit depts of 16, 24, 32 and 64 bits per sample. 
+.PP
+Not all images can be converted from one compression scheme to another.
+Data with some photometric interpretations and/or bit depths are tied to 
+specific compression schemes and vice-versa, e.g. Group 3/4 compression
+is only usable for bilevel data. JPEG compression is only useable on 8
+bit per sample data (or 12 bit if 
+.I LibTIFF
+was compiled with 12 bit JPEG support). Support for OJPEG compressed 
+images is problematic at best. Since OJPEG compression is no longer 
+supported for writing images with LibTIFF, these images will be updated
+to the newer JPEG compression when they are copied or processed. This
+may cause the image to appear color shifted or distorted after conversion.
+In some cases, it is possible to remove the original compression from 
+image data using the option -cnone.
+.PP
+Tiffcrop does not currently provide options to up or downsample data to 
+different bit depths or convert data from one photometric interpretation 
+to another, e.g. 16 bits per sample to 8 bits per sample or RGB to grayscale. 
+.PP
+Tiffcrop is very loosely derived from code in
 .I tiffcp
-with extensive modifications and additions to support the selection of input images
-and regions and the exporting of them to one or more output files in various
-groupings. The image manipulation routines are entirely new and additional ones may
-be added in the future.
+with extensive modifications and additions to support the selection of input 
+images and regions and the exporting of them to one or more output files in 
+various groupings. The image manipulation routines are entirely new and 
+additional ones may be added in the future. It will handle tiled images with 
+bit depths that are not a multiple of eight that tiffcp may refuse to read.
 .PP 
 .I Tiffcrop
-was designed to handle large files containing many moderate sized images with memory
-usage that is independent of the number of images in the file. In addition to the 
-memory required by the input and output buffers associated with
-.I LIBTIFF
-one or more buffers at least as large as the largest image to be read will be
-required. The design favors large volume document processing uses over scientific or 
-graphical manipulation of large datasets as might be found in research scenarios.
+was designed to handle large files containing many moderate sized images 
+with memory usage that is independent of the number of images in the file. 
+In order to support compression modes that are not based on individual 
+scanlines, e.g. JPEG, it now reads images by strip or tile rather than by 
+indvidual scanlines. In addition to the memory required by the input and 
+output buffers associated with
+.I LibTIFF
+one or more buffers at least as large as the largest image to be read are
+required. The design favors large volume document processing uses over 
+scientific or graphical manipulation of large datasets as might be found 
+in research or remote sensing scenarios.
 .SH "SEE ALSO"
 .BR pal2rgb (1),
 .BR tiffinfo (1),
