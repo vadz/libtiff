@@ -1,3 +1,10 @@
+2009-09-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffcrop.c, man/tiffcrop.1: New tiffcrop from Richard
+	Nolde.  Major updates to add significant functionality for reading
+	and writing tile based images with bit depths not a multiple of 8
+	which cannot be handled by tiffcp.
+
 2009-09-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_ojpeg.c (OJPEGWriteHeaderInfo): IJG JPEG 7 needs
