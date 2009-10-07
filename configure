@@ -16307,7 +16307,7 @@ done
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking native cpu bit order" >&5
 $as_echo_n "checking native cpu bit order... " >&6; }
 case "$target_cpu" in
-    i*86*)
+    i*86*|x86_64*)
         HOST_FILLORDER=FILLORDER_LSB2MSB
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: lsb2msb" >&5
 $as_echo "lsb2msb" >&6; }

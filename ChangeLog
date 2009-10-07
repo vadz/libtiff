@@ -1,3 +1,7 @@
+2009-10-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: x86_64 should use the same fill order as i386.
+
 2009-09-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcrop.c, man/tiffcrop.1: New tiffcrop from Richard
