@@ -324,7 +324,7 @@ dnl Check the native cpu bit order.
 dnl ---------------------------------------------------------------------------
 AC_MSG_CHECKING([native cpu bit order])
 case "$target_cpu" in
-    i*86*)
+    i*86*|x86_64*)
         HOST_FILLORDER=FILLORDER_LSB2MSB
 	AC_MSG_RESULT([lsb2msb])
 	;;
