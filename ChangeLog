@@ -1,3 +1,8 @@
+2009-10-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/tools.html: Add manual page links, and a summary
+	description of tiffcrop.
+
 2009-10-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: x86_64 should use the same fill order as i386.
