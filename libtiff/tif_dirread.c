@@ -1426,7 +1426,14 @@ TIFFFetchFloatArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 {
 
 	if (dir->tdir_count == 1) {
-		v[0] = *(float*) &dir->tdir_offset;
+	        union
+		{
+		  float  f;
+		  uint32 i;
+		} float_union;
+
+		float_union.i=dir->tdir_offset;
+		v[0]=float_union.f;
 		TIFFCvtIEEEFloatToNative(tif, dir->tdir_count, v);
 		return (1);
 	} else	if (TIFFFetchData(tif, dir, (char*) v)) {

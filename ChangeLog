@@ -1,3 +1,8 @@
+2009-10-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dirread.c: Eliminate GCC "dereferencing type-punned
+	pointer" warnings.
+
 2009-10-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* html/tools.html: Add manual page links, and a summary
