@@ -1,3 +1,8 @@
+2009-10-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dirwrite.c (TIFFWriteAnyArray): Add missing break
+	statement so writing an array of TIFF_DOUBLE works.
+
 2009-10-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dirread.c: Eliminate GCC "dereferencing type-punned

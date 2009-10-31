@@ -1144,6 +1144,7 @@ TIFFWriteAnyArray(TIFF* tif,
                     if( !TIFFWriteDoubleArray(tif, dir, v))
                         goto out;
                 }
+		break;
 	default:
 		/* TIFF_NOTYPE */
 		/* TIFF_ASCII */
