@@ -1,5 +1,10 @@
 2009-10-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_lzw.c (LZWDecode, LZWDecodeCompat): Fix warnings
+	noticed in 64-bit build of libtiff with Visual Studio 2005.
+	Resolves "Bug 2067 - Visual Studio 2005 64-bit warnings in
+	tif_lzw.c", http://bugzilla.maptools.org/show_bug.cgi?id=2067
+
 	* libtiff/tif_pixarlog.c (PixarLogEncode): Fix non-important
 	warning noticed in Visual Studio 2005 build. Resolves "Bug 2068 -
 	Visual Studio 2005 64-bit warning in tif_pixarlog.c",
