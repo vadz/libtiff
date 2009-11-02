@@ -1,3 +1,8 @@
+2009-11-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* port/libport.h: Added header file for porting prototypes and
+	extern declarations.
+
 2009-10-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dirwrite.c (TIFFWriteAnyArray): Add missing break
