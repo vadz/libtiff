@@ -1212,7 +1212,7 @@ generate-tiffcrop-extract-tests:
 	  echo ". \$${srcdir:-.}/common.sh" ; \
 	  echo "infile=\"\$$srcdir/$$file\"" ; \
 	  echo "outfile=\"o-tiffcrop-extract-$$base.tiff\"" ; \
-	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 100 -Y 100\" \$$infile \$$outfile" ; \
+	  echo "f_test_convert \"\$$TIFFCROP -U px -E top -X 60 -Y 60\" \$$infile \$$outfile" ; \
 	  echo "f_tiffinfo_validate \$$outfile" ; \
 	) > $$testscript ; \
 	chmod +x $$testscript ; \
