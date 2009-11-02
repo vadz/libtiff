@@ -26,6 +26,6 @@
 EXTRA_DIST = Makefile.vc libport.h
 
 noinst_LTLIBRARIES	= libport.la
-libport_la_SOURCES	= dummy.c
+libport_la_SOURCES	= dummy.c libport.h
 libport_la_LIBADD	= @LTLIBOBJS@
 

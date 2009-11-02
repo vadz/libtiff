@@ -27,6 +27,11 @@
 #define	_LIBPORT_
 
 int getopt(int argc, char * const argv[], const char *optstring);
+extern   char *optarg;
+extern   int opterr;
+extern   int optind;
+extern   int optopt;
+
 int strcasecmp(const char *s1, const char *s2);
 
 #ifndef HAVE_GETOPT
