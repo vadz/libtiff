@@ -28,7 +28,7 @@
  * OR PERFORMANCE OF THIS SOFTWARE.
  *
  * Some portions of the current code are derived from tiffcp, primarly in 
- * the areas of lowlevel reading and writing of TAGSscanlines and tiles though
+ * the areas of lowlevel reading and writing of TAGS, scanlines and tiles though
  * some of the original functions have been extended to support arbitrary bit
  * depths. These functions are presented at the top of this file.
  *
@@ -105,12 +105,10 @@
  *                selects which functions dump data, with higher numbers selecting
  *                lower level, scanline level routines. Debug reports a limited set
  *                of messages to monitor progess without enabling dump logs.
- * -c for compression extended to allow explicit specification of RAW or AUTO mode
- *                with JPEG compression.
  */
 
-static   char tiffcrop_version_id[] = "2.1";
-static   char tiffcrop_rev_date[] = "09-18-2009";
+static   char tiffcrop_version_id[] = "2.2";
+static   char tiffcrop_rev_date[] = "11-03-2009";
 
 #include "tif_config.h"
 #include "tiffiop.h"
@@ -445,7 +443,7 @@ static int    pageNum = 0;
 static int    little_endian = 1;
 
 /* Functions adapted from tiffcp with additions or significant modifications */
-static int  readContigStripsIntoBuffer   (TIFF*, uint8*, uint32, uint32, tsample_t, struct dump_opts *);
+static int  readContigStripsIntoBuffer   (TIFF*, uint8*);
 static int  readSeparateStripsIntoBuffer (TIFF*, uint8*, uint32, uint32, tsample_t, struct dump_opts *);
 static int  readContigTilesIntoBuffer    (TIFF*, uint8*, uint32, uint32, uint32, uint32, tsample_t, uint16);
 static int  readSeparateTilesIntoBuffer  (TIFF*, uint8*, uint32, uint32, uint32, uint32, tsample_t, uint16);
@@ -866,7 +864,7 @@ static int readContigTilesIntoBuffer (TIFF* in, uint8* buf,
 		      TIFFError("readContigTilesIntoBuffer",
                                 "Unable to extract row %d from tile %lu", 
 				row, (unsigned long)TIFFCurrentTile(in));
-		      return (1);
+		      return 1;
 		      }
 		    break;
             case 1: if (bps == 1)
@@ -880,7 +878,7 @@ static int readContigTilesIntoBuffer (TIFF* in, uint8* buf,
 		        TIFFError("readContigTilesIntoBuffer",
                                   "Unable to extract row %d from tile %lu", 
 				  row, (unsigned long)TIFFCurrentTile(in));
-		        return (1);
+		        return 1;
 		        }
 		      break;
 		      }
@@ -894,7 +892,7 @@ static int readContigTilesIntoBuffer (TIFF* in, uint8* buf,
 		        TIFFError("readContigTilesIntoBuffer",
                                   "Unable to extract row %d from tile %lu", 
 			  	  row, (unsigned long)TIFFCurrentTile(in));
-		        return (1);
+		        return 1;
 		        }
 	            break;
             case 2: if (extractContigSamplesShifted24bits (src, dst, ncol,
@@ -906,7 +904,7 @@ static int readContigTilesIntoBuffer (TIFF* in, uint8* buf,
 		      TIFFError("readContigTilesIntoBuffer",
                                 "Unable to extract row %d from tile %lu", 
 		  	        row, (unsigned long)TIFFCurrentTile(in));
-		      return (1);
+		      return 1;
 		      }
 		    break;
             case 3:
@@ -920,11 +918,11 @@ static int readContigTilesIntoBuffer (TIFF* in, uint8* buf,
 		      TIFFError("readContigTilesIntoBuffer",
                                 "Unable to extract row %d from tile %lu", 
 			        row, (unsigned long)TIFFCurrentTile(in));
-		      return (1);
+		      return 1;
 		      }
 		    break;
             default: TIFFError("readContigTilesIntoBuffer", "Unsupported bit depth %d", bps);
-		     return (1);
+		     return 1;
 	    }
           }
         prev_trailing_bits += trailing_bits;
@@ -1100,12 +1098,12 @@ static int writeBufferToContigStrips(TIFF* out, uint8* buf, uint32 imagelength)
     if (TIFFWriteEncodedStrip(out, strip++, buf, stripsize) < 0)
       {
       TIFFError(TIFFFileName(out), "Error, can't write strip %u", strip - 1);
-      return 0;
+      return 1;
       }
     buf += stripsize;
     }
 
-  return 1;
+  return 0;
   }
 
 /* Abandon plans to modify code so that plannar orientation separate images
@@ -1135,12 +1133,12 @@ writeBufferToSeparateStrips (TIFF* out, uint8* buf,
   (void) TIFFGetFieldDefaulted(out, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
   (void) TIFFGetField(out, TIFFTAG_BITSPERSAMPLE, &bps);
   bytes_per_sample = (bps + 7) / 8;
-  rowsize = ((bps * spp * width) + 7) / 8;
-  rowstripsize = rowsperstrip * bytes_per_sample * (width + 1);
+  rowsize = ((bps * spp * width) + 7) / 8; /* source has interleaved samples */
+  rowstripsize = rowsperstrip * bytes_per_sample * (width + 1); 
 
   obuf = _TIFFmalloc (rowstripsize);
   if (obuf == NULL)
-    return (0);
+    return 1;
   
   for (s = 0; s < spp; s++)
     {
@@ -1155,7 +1153,7 @@ writeBufferToSeparateStrips (TIFF* out, uint8* buf,
       if (extractContigSamplesToBuffer(obuf, src, nrows, width, s, spp, bps, dump))
         {
         _TIFFfree(obuf);
-        return (0);
+        return 1;
 	}
       if ((dump->outfile != NULL) && (dump->level == 1))
         {
@@ -1169,13 +1167,13 @@ writeBufferToSeparateStrips (TIFF* out, uint8* buf,
         {
 	TIFFError(TIFFFileName(out), "Error, can't write strip %u", strip - 1);
 	_TIFFfree(obuf);
-	return 0;
+	return 1;
 	}
       }
     }      
 
   _TIFFfree(obuf);
-  return 1;
+  return 0;
 }
 
 /* Extract all planes from contiguous buffer into a single tile buffer 
@@ -1212,7 +1210,7 @@ static int writeBufferToContigTiles (TIFF* out, uint8* buf, uint32 imagelength,
 
   tilebuf = _TIFFmalloc(tile_buffsize);
   if (tilebuf == 0)
-    return 0;
+    return 1;
 
   src_rowsize = ((imagewidth * spp * bps) + 7) / 8;
   for (row = 0; row < imagelength; row += tl)
@@ -1235,7 +1233,7 @@ static int writeBufferToContigTiles (TIFF* out, uint8* buf, uint32 imagelength,
                   "Unable to extract data to tile for row %lu, col %lu",
                   (unsigned long) row, (unsigned long)col);
 	_TIFFfree(tilebuf);
-	return (0);
+	return 1;
         }
 
       if (TIFFWriteTile(out, tilebuf, col, row, 0, 0) < 0)
@@ -1244,13 +1242,13 @@ static int writeBufferToContigTiles (TIFF* out, uint8* buf, uint32 imagelength,
 	          "Cannot write tile at %lu %lu",
 	          (unsigned long) col, (unsigned long) row);
 	 _TIFFfree(tilebuf);
-	return 0;
+	return 1;
 	}
       }
     }
   _TIFFfree(tilebuf);
 
-  return 1;
+  return 0;
   } /* end writeBufferToContigTiles */
 
 /* Extract each plane from contiguous buffer into a single tile buffer 
@@ -1269,7 +1267,7 @@ static int writeBufferToSeparateTiles (TIFF* out, uint8* buf, uint32 imagelength
   uint8* bufp = (uint8*) buf;
 
   if (obuf == NULL)
-    return 0;
+    return 1;
 
   TIFFGetField(out, TIFFTAG_TILELENGTH, &tl);
   TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw);
@@ -1299,7 +1297,7 @@ static int writeBufferToSeparateTiles (TIFF* out, uint8* buf, uint32 imagelength
                     "Unable to extract data to tile for row %lu, col %lu sample %d",
                     (unsigned long) row, (unsigned long)col, (int)s);
 	  _TIFFfree(obuf);
-	  return (0);
+	  return 1;
           }
 
 	if (TIFFWriteTile(out, obuf, col, row, 0, s) < 0)
@@ -1309,14 +1307,14 @@ static int writeBufferToSeparateTiles (TIFF* out, uint8* buf, uint32 imagelength
 	             (unsigned long) col, (unsigned long) row,
 	             (unsigned long) s);
 	   _TIFFfree(obuf);
-	  return 0;
+	   return 1;
 	  }
 	}
       }
     }
   _TIFFfree(obuf);
 
-  return 1;
+  return 0;
   } /* end writeBufferToSeparateTiles */
 
 static void
@@ -2068,22 +2066,23 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
     if (*tiffout == NULL)
       {
       TIFFError("update_output_file", "Unable to open output file %s\n", exportname);
-      return (1);
+      return 1;
       }
     *page = 0; 
 
-    return (0);
+    return 0;
     }
   else 
     (*page)++;
 
-  return (0);
+  return 0;
   } /* end update_output_file */
 
 
 int
 main(int argc, char* argv[])
   {
+  extern int optind;
   uint16 defconfig = (uint16) -1;
   uint16 deffillorder = 0;
   uint32 deftilewidth = (uint32) 0;
@@ -2762,7 +2761,6 @@ extractContigSamples16bits (uint8 *in, uint8 *out, uint32 cols,
   uint8  bytebuff = 0;
   uint8 *src = in;
   uint8 *dst = out;
-  unsigned char swapbuff[2];
 
   if ((src == NULL) || (dst == NULL))
     {
@@ -2804,19 +2802,13 @@ extractContigSamples16bits (uint8 *in, uint8 *out, uint32 cols,
 
       src = in + src_byte;
       matchbits = maskbits << (16 - src_bit - bps); 
-      if (little_endian)
-        {
-        swapbuff[1] = *src;
-        swapbuff[0] = *(src + 1);
-        }
-      else
-        {
-        swapbuff[0] = *src;
-        swapbuff[1] = *(src + 1);
-	}
-      buff1 = *((uint16 *)swapbuff);
-      buff1 = (buff1 & matchbits) << (src_bit);
 
+      if (little_endian)
+        buff1 = (src[0] << 8) | src[1];
+      else
+        buff1 = (src[1] << 8) | src[0];
+
+      buff1 = (buff1 & matchbits) << (src_bit);
       if (ready_bits < 8) /* add another bps bits to the buffer */
         { 
         bytebuff = 0;
@@ -2858,7 +2850,6 @@ extractContigSamples24bits (uint8 *in, uint8 *out, uint32 cols,
   uint8  bytebuff1 = 0, bytebuff2 = 0;
   uint8 *src = in;
   uint8 *dst = out;
-  unsigned char  swapbuff[4];
 
   if ((in == NULL) || (out == NULL))
     {
@@ -2901,21 +2892,9 @@ extractContigSamples24bits (uint8 *in, uint8 *out, uint32 cols,
       src = in + src_byte;
       matchbits = maskbits << (32 - src_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[3] = *src;
-        swapbuff[2] = *(src + 1);
-        swapbuff[1] = *(src + 2);
-        swapbuff[0] = *(src + 3);
-        }
+	buff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
       else
-        {
-        swapbuff[0] = *src;
-        swapbuff[1] = *(src + 1);
-        swapbuff[2] = *(src + 2);
-        swapbuff[3] = *(src + 3);
-	}
-
-      buff1 = *((uint32 *)swapbuff);
+	buff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
       buff1 = (buff1 & matchbits) << (src_bit);
 
       if (ready_bits < 16) /* add another bps bits to the buffer */
@@ -2965,8 +2944,6 @@ extractContigSamples32bits (uint8 *in, uint8 *out, uint32 cols,
   uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   uint8 *src = in;
   uint8 *dst = out;
-  unsigned char swapbuff1[4];
-  unsigned char swapbuff2[4];
 
   if ((in == NULL) || (out == NULL))
     {
@@ -3012,37 +2989,15 @@ extractContigSamples32bits (uint8 *in, uint8 *out, uint32 cols,
       matchbits = maskbits << (64 - src_bit - bps); 
       if (little_endian)
         {
-        swapbuff1[3] = *src;
-        swapbuff1[2] = *(src + 1);
-        swapbuff1[1] = *(src + 2);
-        swapbuff1[0] = *(src + 3);
+	longbuff1 = (src[0] << 24) | (src[1] << 16)  | (src[2] << 8) | src[3];
+	longbuff2 = longbuff1;
         }
       else
         {
-        swapbuff1[0] = *src;
-        swapbuff1[1] = *(src + 1);
-        swapbuff1[2] = *(src + 2);
-        swapbuff1[3] = *(src + 3);
-	}
-      longbuff1 = *((uint32 *)swapbuff1);                  
-
-      memset (swapbuff2, '\0', sizeof(swapbuff2));
-      if (little_endian)
-        {
-        swapbuff2[3] = *src;
-        swapbuff2[2] = *(src + 1);
-        swapbuff2[1] = *(src + 2);
-        swapbuff2[0] = *(src + 3);
-        }
-      else
-        {
-        swapbuff2[0] = *src;
-        swapbuff2[1] = *(src + 1);
-        swapbuff2[2] = *(src + 2);
-        swapbuff2[3] = *(src + 3);
+	longbuff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+	longbuff2 = longbuff1;
 	}
 
-      longbuff2 = *((uint32 *)swapbuff2);
       buff3 = ((uint64)longbuff1 << 32) | longbuff2;
       buff1 = (buff3 & matchbits) << (src_bit);
 
@@ -3174,8 +3129,7 @@ extractContigSamplesShifted16bits (uint8 *in, uint8 *out, uint32 cols,
   uint8  bytebuff = 0;
   uint8 *src = in;
   uint8 *dst = out;
-  unsigned char swapbuff[2];
-
+  
   if ((src == NULL) || (dst == NULL))
     {
     TIFFError("extractContigSamplesShifted16bits","Invalid input or output buffer");
@@ -3216,17 +3170,10 @@ extractContigSamplesShifted16bits (uint8 *in, uint8 *out, uint32 cols,
       src = in + src_byte;
       matchbits = maskbits << (16 - src_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[1] = *src;
-        swapbuff[0] = *(src + 1);
-        }
+        buff1 = (src[0] << 8) | src[1];
       else
-        {
-        swapbuff[0] = *src;
-        swapbuff[1] = *(src + 1);
-	}
+        buff1 = (src[1] << 8) | src[0];
 
-      buff1 = *((uint16 *)swapbuff);
       if ((col == start) && (sindex == sample))
         buff2 = buff1 & ((uint16)-1) << (8 - shift);
 
@@ -3272,7 +3219,6 @@ extractContigSamplesShifted24bits (uint8 *in, uint8 *out, uint32 cols,
   uint8  bytebuff1 = 0, bytebuff2 = 0;
   uint8 *src = in;
   uint8 *dst = out;
-  unsigned char  swapbuff[4];
 
   if ((in == NULL) || (out == NULL))
     {
@@ -3315,21 +3261,10 @@ extractContigSamplesShifted24bits (uint8 *in, uint8 *out, uint32 cols,
       src = in + src_byte;
       matchbits = maskbits << (32 - src_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[3] = *src;
-        swapbuff[2] = *(src + 1);
-        swapbuff[1] = *(src + 2);
-        swapbuff[0] = *(src + 3);
-        }
+	buff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
       else
-        {
-        swapbuff[0] = *src;
-        swapbuff[1] = *(src + 1);
-        swapbuff[2] = *(src + 2);
-        swapbuff[3] = *(src + 3);
-	}
+	buff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
 
-      buff1 = *((uint32 *)swapbuff);
       if ((col == start) && (sindex == sample))
         buff2 = buff1 & ((uint32)-1) << (16 - shift);
 
@@ -3383,8 +3318,6 @@ extractContigSamplesShifted32bits (uint8 *in, uint8 *out, uint32 cols,
   uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   uint8 *src = in;
   uint8 *dst = out;
-  unsigned char swapbuff1[4];
-  unsigned char swapbuff2[4];
 
   if ((in == NULL) || (out == NULL))
     {
@@ -3430,37 +3363,15 @@ extractContigSamplesShifted32bits (uint8 *in, uint8 *out, uint32 cols,
       matchbits = maskbits << (64 - src_bit - bps); 
       if (little_endian)
         {
-        swapbuff1[3] = *src;
-        swapbuff1[2] = *(src + 1);
-        swapbuff1[1] = *(src + 2);
-        swapbuff1[0] = *(src + 3);
+	longbuff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+	longbuff2 = longbuff1;
         }
       else
         {
-        swapbuff1[0] = *src;
-        swapbuff1[1] = *(src + 1);
-        swapbuff1[2] = *(src + 2);
-        swapbuff1[3] = *(src + 3);
-	}
-      longbuff1 = *((uint32 *)swapbuff1);                  
-
-      memset (swapbuff2, '\0', sizeof(swapbuff2));
-      if (little_endian)
-        {
-        swapbuff2[3] = *src;
-        swapbuff2[2] = *(src + 1);
-        swapbuff2[1] = *(src + 2);
-        swapbuff2[0] = *(src + 3);
-        }
-      else
-        {
-        swapbuff2[0] = *src;
-        swapbuff2[1] = *(src + 1);
-        swapbuff2[2] = *(src + 2);
-        swapbuff2[3] = *(src + 3);
+	longbuff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+	longbuff2 = longbuff1;
 	}
 
-      longbuff2 = *((uint32 *)swapbuff2);
       buff3 = ((uint64)longbuff1 << 32) | longbuff2;
       if ((col == start) && (sindex == sample))
         buff2 = buff3 & ((uint64)-1) << (32 - shift);
@@ -3654,14 +3565,13 @@ extractContigSamplesToTileBuffer(uint8 *out, uint8 *in, uint32 rows, uint32 cols
   return (0);
   } /* end extractContigSamplesToTileBuffer */
 
-static int readContigStripsIntoBuffer (TIFF* in, uint8* buf, uint32 length, uint32 width, 
-                                       tsample_t spp, struct dump_opts * dump)
+static int readContigStripsIntoBuffer (TIFF* in, uint8* buf)
   {
   uint8* bufp = buf;
   int32  bytes_read = 0;
-  uint16 nstrips   = TIFFNumberOfStrips(in);
+  uint16 strip, nstrips   = TIFFNumberOfStrips(in);
   uint32 stripsize = TIFFStripSize(in);
-  uint32 rows = 0, strip;
+  uint32 rows = 0;
   uint32 rps = TIFFGetFieldDefaulted(in, TIFFTAG_ROWSPERSTRIP, &rps);
   tsize_t scanline_size = TIFFScanlineSize(in);
 
@@ -3669,9 +3579,9 @@ static int readContigStripsIntoBuffer (TIFF* in, uint8* buf, uint32 length, uint
     {
     bytes_read = TIFFReadEncodedStrip (in, strip, bufp, -1);
     rows = bytes_read / scanline_size;
-    if (bytes_read != (int32)stripsize)
-      TIFFError("", "Bytes read %lu does not match reported strip size %lu",
-		(unsigned long) bytes_read, (unsigned long)stripsize);
+    if ((strip < (nstrips - 1)) && (bytes_read != (int32)stripsize))
+      TIFFError("", "Strip %d: read %lu bytes, strip size %lu",
+		(int)strip + 1, (unsigned long) bytes_read, (unsigned long)stripsize);
 
     if (bytes_read < 0 && !ignore)
       {
@@ -3858,7 +3768,6 @@ combineSeparateSamples16bits (uint8 *in[], uint8 *out, uint32 cols,
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
-  unsigned char  swapbuff[2];
   char           action[8];
 
   if ((src == NULL) || (dst == NULL))
@@ -3890,17 +3799,10 @@ combineSeparateSamples16bits (uint8 *in[], uint8 *out, uint32 cols,
         {
 	src = in[s] + src_offset + src_byte;
         if (little_endian)
-          {
-          swapbuff[1] = *src;
-          swapbuff[0] = *(src + 1);
-          }
+          buff1 = (src[0] << 8) | src[1];
         else
-          {
-          swapbuff[0] = *src;
-          swapbuff[1] = *(src + 1);
-	  }
+          buff1 = (src[1] << 8) | src[0];
 
-	buff1 = *((uint16 *)swapbuff);
 	buff1 = (buff1 & matchbits) << (src_bit);
 
 	/* If we have a full buffer's worth, write it out */
@@ -3976,7 +3878,6 @@ combineSeparateSamples24bits (uint8 *in[], uint8 *out, uint32 cols,
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
-  unsigned char  swapbuff[4];
   char           action[8];
 
   if ((src == NULL) || (dst == NULL))
@@ -4008,21 +3909,9 @@ combineSeparateSamples24bits (uint8 *in[], uint8 *out, uint32 cols,
         {
 	src = in[s] + src_offset + src_byte;
         if (little_endian)
-          {
-          swapbuff[3] = *src;
-          swapbuff[2] = *(src + 1);
-          swapbuff[1] = *(src + 2);
-          swapbuff[0] = *(src + 3);
-          }
+	  buff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
         else
-          {
-          swapbuff[0] = *src;
-          swapbuff[1] = *(src + 1);
-          swapbuff[2] = *(src + 2);
-          swapbuff[3] = *(src + 3);
-	  }
-
-	buff1 = *((uint32 *)swapbuff);
+	  buff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
 	buff1 = (buff1 & matchbits) << (src_bit);
 
 	/* If we have a full buffer's worth, write it out */
@@ -4114,8 +4003,6 @@ combineSeparateSamples32bits (uint8 *in[], uint8 *out, uint32 cols,
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
-  unsigned char  swapbuff1[4];
-  unsigned char  swapbuff2[4];
   char           action[8];
 
   if ((src == NULL) || (dst == NULL))
@@ -4149,37 +4036,14 @@ combineSeparateSamples32bits (uint8 *in[], uint8 *out, uint32 cols,
 	src = in[s] + src_offset + src_byte;
 	if (little_endian)
 	  {
-	  swapbuff1[3] = *src;
-	  swapbuff1[2] = *(src + 1);
-	  swapbuff1[1] = *(src + 2);
-	  swapbuff1[0] = *(src + 3);
+	  longbuff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+          longbuff2 = longbuff1;
 	  }
 	else
 	  {
-	  swapbuff1[0] = *src;
-	  swapbuff1[1] = *(src + 1);
-	  swapbuff1[2] = *(src + 2);
-	  swapbuff1[3] = *(src + 3);
+	  longbuff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+          longbuff2 = longbuff1;
 	  }
-        longbuff1 = *((uint32 *)swapbuff1);                  
-
-	memset (swapbuff2, '\0', sizeof(swapbuff2));
-	if (little_endian)
-	  {
-	  swapbuff2[3] = *src;
-	  swapbuff2[2] = *(src + 1);
-	  swapbuff2[1] = *(src + 2);
-	  swapbuff2[0] = *(src + 3);
-	  }
-	else
-	  {
-	  swapbuff2[0] = *src;
-	  swapbuff2[1] = *(src + 1);
-	  swapbuff2[2] = *(src + 2);
-	  swapbuff2[3] = *(src + 3);
-	  }
-
-	longbuff2 = *((uint32 *)swapbuff2);
 	buff3 = ((uint64)longbuff1 << 32) | longbuff2;
 	buff1 = (buff3 & matchbits) << (src_bit);
 
@@ -4430,7 +4294,6 @@ combineSeparateTileSamples16bits (uint8 *in[], uint8 *out, uint32 cols,
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
-  unsigned char  swapbuff[2];
   char           action[8];
 
   if ((src == NULL) || (dst == NULL))
@@ -4461,17 +4324,9 @@ combineSeparateTileSamples16bits (uint8 *in[], uint8 *out, uint32 cols,
         {
 	src = in[s] + src_offset + src_byte;
         if (little_endian)
-          {
-          swapbuff[1] = *src;
-          swapbuff[0] = *(src + 1);
-          }
+          buff1 = (src[0] << 8) | src[1];
         else
-          {
-          swapbuff[0] = *src;
-          swapbuff[1] = *(src + 1);
-	  }
-
-	buff1 = *((uint16 *)swapbuff);
+          buff1 = (src[1] << 8) | src[0];
 	buff1 = (buff1 & matchbits) << (src_bit);
 
 	/* If we have a full buffer's worth, write it out */
@@ -4548,7 +4403,6 @@ combineSeparateTileSamples24bits (uint8 *in[], uint8 *out, uint32 cols,
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
-  unsigned char  swapbuff[4];
   char           action[8];
 
   if ((src == NULL) || (dst == NULL))
@@ -4579,21 +4433,9 @@ combineSeparateTileSamples24bits (uint8 *in[], uint8 *out, uint32 cols,
         {
 	src = in[s] + src_offset + src_byte;
         if (little_endian)
-          {
-          swapbuff[3] = *src;
-          swapbuff[2] = *(src + 1);
-          swapbuff[1] = *(src + 2);
-          swapbuff[0] = *(src + 3);
-          }
+	  buff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
         else
-          {
-          swapbuff[0] = *src;
-          swapbuff[1] = *(src + 1);
-          swapbuff[2] = *(src + 2);
-          swapbuff[3] = *(src + 3);
-	  }
-
-	buff1 = *((uint32 *)swapbuff);
+	  buff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
 	buff1 = (buff1 & matchbits) << (src_bit);
 
 	/* If we have a full buffer's worth, write it out */
@@ -4686,8 +4528,6 @@ combineSeparateTileSamples32bits (uint8 *in[], uint8 *out, uint32 cols,
   tsample_t s;
   unsigned char *src = in[0];
   unsigned char *dst = out;
-  unsigned char  swapbuff1[4];
-  unsigned char  swapbuff2[4];
   char           action[8];
 
   if ((src == NULL) || (dst == NULL))
@@ -4720,37 +4560,15 @@ combineSeparateTileSamples32bits (uint8 *in[], uint8 *out, uint32 cols,
 	src = in[s] + src_offset + src_byte;
 	if (little_endian)
 	  {
-	  swapbuff1[3] = *src;
-	  swapbuff1[2] = *(src + 1);
-	  swapbuff1[1] = *(src + 2);
-	  swapbuff1[0] = *(src + 3);
+	  longbuff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+	  longbuff2 = longbuff1;
 	  }
 	else
 	  {
-	  swapbuff1[0] = *src;
-	  swapbuff1[1] = *(src + 1);
-	  swapbuff1[2] = *(src + 2);
-	  swapbuff1[3] = *(src + 3);
-	  }
-        longbuff1 = *((uint32 *)swapbuff1);                  
-
-	memset (swapbuff2, '\0', sizeof(swapbuff2));
-	if (little_endian)
-	  {
-	  swapbuff2[3] = *src;
-	  swapbuff2[2] = *(src + 1);
-	  swapbuff2[1] = *(src + 2);
-	  swapbuff2[0] = *(src + 3);
-	  }
-	else
-	  {
-	  swapbuff2[0] = *src;
-	  swapbuff2[1] = *(src + 1);
-	  swapbuff2[2] = *(src + 2);
-	  swapbuff2[3] = *(src + 3);
+	  longbuff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+          longbuff2 = longbuff1;
 	  }
 
-	longbuff2 = *((uint32 *)swapbuff2);
 	buff3 = ((uint64)longbuff1 << 32) | longbuff2;
 	buff1 = (buff3 & matchbits) << (src_bit);
 
@@ -6026,7 +5844,7 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
     case STRIP:
          if (planar == PLANARCONFIG_CONTIG)
            {
-	     if (!(readContigStripsIntoBuffer(in, read_buff, length, width, spp, dump)))
+	     if (!(readContigStripsIntoBuffer(in, read_buff)))
 	     {
 	     TIFFError("loadImage", "Unable to read contiguous strips into buffer");
 	     return (-1);
@@ -6897,23 +6715,33 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
   uint16 input_jpeg_colormode, input_planar;
   struct cpTag* p;
 
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric);
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &spp);
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &bps);
+
   TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
   TIFFSetField(out, TIFFTAG_IMAGELENGTH, length);
 
   CopyField(TIFFTAG_BITSPERSAMPLE, bps);
   CopyField(TIFFTAG_SAMPLESPERPIXEL, spp);
 
+
   TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression);
+  /* This is the global variable compression which is set 
+   * if the user has specified a command line option for 
+   * a compression option.  Should be passed around in one
+   * of the parameters instead of as a global. If no user
+   * option specified it will still be (uint16) -1. */
   if (compression != (uint16)-1)
     TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
   else
-    {
+    { /* OJPEG is no longer supported for writing so upgrade to JPEG */
     if (input_compression == COMPRESSION_OJPEG)
       {
       TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
       compression = COMPRESSION_JPEG;
       }
-    else
+    else /* Use the compression from the input file */
       CopyField(TIFFTAG_COMPRESSION, compression);
     }
 
@@ -6925,27 +6753,24 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
 #endif
   if (compression == COMPRESSION_JPEG)
     {
-    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric))
+    if ((input_photometric == PHOTOMETRIC_PALETTE) ||  /* color map indexed */
+        (input_photometric == PHOTOMETRIC_MASK))       /* $holdout mask */
       {
-      if ((input_photometric == PHOTOMETRIC_PALETTE) ||  /* color map indexed */
-          (input_photometric == PHOTOMETRIC_MASK))       /* $holdout mask */
-        {
-	TIFFError ("writeSingleSection",
-                   "JPEG compression cannot be used with %s image data",
-		   (input_photometric == PHOTOMETRIC_PALETTE) ?
-                   "palette" : "mask");
-        return (-1);
-	}
-      if (input_photometric == PHOTOMETRIC_RGB)
-        {
-	if (jpegcolormode == JPEGCOLORMODE_RGB)
-	  TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
-	else
-	  TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-	} 
-      else
-	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, input_photometric);
+      TIFFError ("writeSingleSection",
+                 "JPEG compression cannot be used with %s image data",
+		 (input_photometric == PHOTOMETRIC_PALETTE) ?
+                 "palette" : "mask");
+      return (-1);
       }
+    if (input_photometric == PHOTOMETRIC_RGB)
+      {
+      if (jpegcolormode == JPEGCOLORMODE_RGB)
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
+      else
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+      } 
+    else
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, input_photometric);
     }
   else
     {
@@ -6956,13 +6781,13 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
       TIFFSetField(out, TIFFTAG_PHOTOMETRIC, image->photometric);
     }
 
-  if (((TIFFTAG_PHOTOMETRIC == PHOTOMETRIC_LOGL) ||
-       (TIFFTAG_PHOTOMETRIC ==  PHOTOMETRIC_LOGLUV)) &&
+  if (((input_photometric == PHOTOMETRIC_LOGL) ||
+       (input_photometric ==  PHOTOMETRIC_LOGLUV)) &&
       ((compression != COMPRESSION_SGILOG) && 
        (compression != COMPRESSION_SGILOG24)))
     {
-    TIFFError("writeSingleSection",
-              "LogL and LogLuv data require SGI_LOG or SGI_LOG24");
+    TIFFError("writeCroppedImage",
+              "LogL and LogLuv source data require SGI_LOG or SGI_LOG24 compression");
     return (-1);
     }
 
@@ -7563,6 +7388,10 @@ writeCroppedImage(TIFF *in, TIFF *out, struct image_data *image,
   uint16 input_jpeg_colormode, input_planar;
   struct cpTag* p;
 
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric);
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &spp);
+  TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &bps);
+
   TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
   TIFFSetField(out, TIFFTAG_IMAGELENGTH, length);
 
@@ -7591,44 +7420,52 @@ writeCroppedImage(TIFF *in, TIFF *out, struct image_data *image,
 #endif
   if (compression == COMPRESSION_JPEG)
     {
-    if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &input_photometric))
+    if ((input_photometric == PHOTOMETRIC_PALETTE) ||  /* color map indexed */
+        (input_photometric == PHOTOMETRIC_MASK))       /* $holdout mask */
       {
-      if ((input_photometric == PHOTOMETRIC_PALETTE) ||  /* color map indexed */
-          (input_photometric == PHOTOMETRIC_MASK))       /* $holdout mask */
-        {
-	TIFFError ("writeCroppedImage",
-                   "JPEG compression cannot be used with %s image data",
-		   (input_photometric == PHOTOMETRIC_PALETTE) ?
-                   "palette" : "mask");
-        return (-1);
-	}
-      if (input_photometric == PHOTOMETRIC_RGB)
-        {
-	if (jpegcolormode == JPEGCOLORMODE_RGB)
-	  TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
-	else
-	  TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-	} 
-      else
-	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, input_photometric);
+      TIFFError ("writeCroppedImage",
+                 "JPEG compression cannot be used with %s image data",
+      	        (input_photometric == PHOTOMETRIC_PALETTE) ?
+                 "palette" : "mask");
+      return (-1);
       }
+    if (input_photometric == PHOTOMETRIC_RGB)
+      {
+      if (jpegcolormode == JPEGCOLORMODE_RGB)
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_YCBCR);
+      else
+        TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+      } 
+    else
+      TIFFSetField(out, TIFFTAG_PHOTOMETRIC, input_photometric);
     }
   else
     {
     if (compression == COMPRESSION_SGILOG || compression == COMPRESSION_SGILOG24)
+      {
       TIFFSetField(out, TIFFTAG_PHOTOMETRIC, spp == 1 ?
 			PHOTOMETRIC_LOGL : PHOTOMETRIC_LOGLUV);
+      }
     else
-      TIFFSetField(out, TIFFTAG_PHOTOMETRIC, image->photometric);
+      {
+      if (input_compression == COMPRESSION_SGILOG ||
+          input_compression == COMPRESSION_SGILOG24)
+        {
+        TIFFSetField(out, TIFFTAG_PHOTOMETRIC, spp == 1 ?
+			  PHOTOMETRIC_LOGL : PHOTOMETRIC_LOGLUV);
+        }
+      else
+        TIFFSetField(out, TIFFTAG_PHOTOMETRIC, image->photometric);
+      }
     }
 
-  if (((TIFFTAG_PHOTOMETRIC == PHOTOMETRIC_LOGL) ||
-       (TIFFTAG_PHOTOMETRIC ==  PHOTOMETRIC_LOGLUV)) &&
+  if (((input_photometric == PHOTOMETRIC_LOGL) ||
+       (input_photometric ==  PHOTOMETRIC_LOGLUV)) &&
       ((compression != COMPRESSION_SGILOG) && 
        (compression != COMPRESSION_SGILOG24)))
     {
     TIFFError("writeCroppedImage",
-              "LogL and LogLuv data require SGI_LOG or SGI_LOG24");
+              "LogL and LogLuv source data require SGI_LOG or SGI_LOG24 compression");
     return (-1);
     }
 
@@ -7787,20 +7624,33 @@ writeCroppedImage(TIFF *in, TIFF *out, struct image_data *image,
   if (outtiled)
     {
     if (config == PLANARCONFIG_CONTIG)
-      writeBufferToContigTiles (out, crop_buff, length, width, spp, dump);
+      {
+      if (writeBufferToContigTiles (out, crop_buff, length, width, spp, dump))
+        TIFFError("","Unable to write contiguous tile data for page %d", pagenum);
+      }
     else
-      writeBufferToSeparateTiles (out, crop_buff, length, width, spp, dump);
+      {
+      if (writeBufferToSeparateTiles (out, crop_buff, length, width, spp, dump))
+        TIFFError("","Unable to write separate tile data for page %d", pagenum);
+      }
     }
   else
     {
     if (config == PLANARCONFIG_CONTIG)
-      writeBufferToContigStrips (out, crop_buff, length);
+      {
+      if (writeBufferToContigStrips (out, crop_buff, length))
+        TIFFError("","Unable to write contiguous strip data for page %d", pagenum);
+      }
     else
-      writeBufferToSeparateStrips(out, crop_buff, length, width, spp, dump);
+      {
+      if (writeBufferToSeparateStrips(out, crop_buff, length, width, spp, dump))
+        TIFFError("","Unable to write separate strip data for page %d", pagenum);
+      }
     }
 
   if (!TIFFWriteDirectory(out))
     {
+    TIFFError("","Failed to write IFD for page number %d", pagenum);
     TIFFClose(out);
     return (-1);
     }
@@ -7894,7 +7744,6 @@ rotateContigSamples16bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width,
   uint16   matchbits = 0, maskbits = 0;
   uint16   buff1 = 0, buff2 = 0;
   uint8    bytebuff = 0;
-  uint8    swapbuff[2];
   uint8   *next;
   tsample_t sample;
 
@@ -7935,17 +7784,10 @@ rotateContigSamples16bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width,
         }
       matchbits = maskbits << (16 - src_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[1] = *next;
-        swapbuff[0] = *(next + 1);
-        }
+        buff1 = (next[0] << 8) | next[1];
       else
-        {
-        swapbuff[0] = *next;
-        swapbuff[1] = *(next + 1);
-	}
+        buff1 = (next[1] << 8) | next[0];
 
-      buff1 = *((uint16 *)swapbuff);
       buff1 = (buff1 & matchbits) << (src_bit);
 
       /* If we have a full buffer's worth, write it out */
@@ -7985,7 +7827,6 @@ rotateContigSamples24bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width,
   uint32   matchbits = 0, maskbits = 0;
   uint32   buff1 = 0, buff2 = 0;
   uint8    bytebuff1 = 0, bytebuff2 = 0;
-  uint8    swapbuff[4];
   uint8   *next;
   tsample_t sample;
 
@@ -8027,21 +7868,9 @@ rotateContigSamples24bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width,
         }
       matchbits = maskbits << (32 - src_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[3] = *next;
-        swapbuff[2] = *(next + 1);
-        swapbuff[1] = *(next + 2);
-        swapbuff[0] = *(next + 3);
-        }
+	buff1 = (next[0] << 24) | (next[1] << 16) | (next[2] << 8) | next[3];
       else
-        {
-        swapbuff[0] = *next;
-        swapbuff[1] = *(next + 1);
-        swapbuff[2] = *(next + 2);
-        swapbuff[3] = *(next + 3);
-	}
-
-      buff1 = *((uint32 *)swapbuff);
+	buff1 = (next[3] << 24) | (next[2] << 16) | (next[1] << 8) | next[0];
       buff1 = (buff1 & matchbits) << (src_bit);
 
       /* If we have a full buffer's worth, write it out */
@@ -8091,8 +7920,6 @@ rotateContigSamples32bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width,
   uint64 maskbits = 0, matchbits = 0;
   uint64 buff1 = 0, buff2 = 0, buff3 = 0;
   uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
-  unsigned char  swapbuff1[4];
-  unsigned char  swapbuff2[4];
   uint8   *next;
   tsample_t sample;
 
@@ -8142,37 +7969,15 @@ rotateContigSamples32bits(uint16 rotation, uint16 spp, uint16 bps, uint32 width,
       matchbits = maskbits << (64 - src_bit - bps); 
       if (little_endian)
         {
-        swapbuff1[3] = *next;
-        swapbuff1[2] = *(next + 1);
-        swapbuff1[1] = *(next + 2);
-        swapbuff1[0] = *(next + 3);
+	longbuff1 = (next[0] << 24) | (next[1] << 16) | (next[2] << 8) | next[3];
+        longbuff2 = longbuff1;
         }
       else
         {
-        swapbuff1[0] = *next;
-        swapbuff1[1] = *(next + 1);
-        swapbuff1[2] = *(next + 2);
-        swapbuff1[3] = *(next + 3);
-	}
-      longbuff1 = *((uint32 *)swapbuff1);                  
-
-      memset (swapbuff2, '\0', sizeof(swapbuff2));
-      if (little_endian)
-        {
-        swapbuff2[3] = *next;
-        swapbuff2[2] = *(next + 1);
-        swapbuff2[1] = *(next + 2);
-        swapbuff2[0] = *(next + 3);
-        }
-      else
-        {
-        swapbuff2[0] = *next;
-        swapbuff2[1] = *(next + 1);
-        swapbuff2[2] = *(next + 2);
-        swapbuff2[3] = *(next + 3);
+	longbuff1 = (next[3] << 24) | (next[2] << 16) | (next[1] << 8) | next[0];
+        longbuff2 = longbuff1;
 	}
 
-      longbuff2 = *((uint32 *)swapbuff2);
       buff3 = ((uint64)longbuff1 << 32) | longbuff2;
       buff1 = (buff3 & matchbits) << (src_bit);
 
@@ -8572,7 +8377,6 @@ reverseSamples16bits (uint16 spp, uint16 bps, uint32 width,
   uint8    bytebuff = 0;
   unsigned char *src;
   unsigned char *dst;
-  unsigned char  swapbuff[2];
   tsample_t sample;
 
   if ((ibuff == NULL) || (obuff == NULL))
@@ -8604,17 +8408,9 @@ reverseSamples16bits (uint16 spp, uint16 bps, uint32 width,
       src = ibuff + src_byte;
       match_bits = mask_bits << (16 - high_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[1] = *src;
-        swapbuff[0] = *(src + 1);
-        }
+        buff1 = (src[0] << 8) | src[1];
       else
-        {
-        swapbuff[0] = *src;
-        swapbuff[1] = *(src + 1);
-	}
-
-      buff1 = *((uint16 *)swapbuff);
+        buff1 = (src[1] << 8) | src[0];
       buff1 = (buff1 & match_bits) << (high_bit);
       
       if (ready_bits < 8)
@@ -8656,7 +8452,6 @@ reverseSamples24bits (uint16 spp, uint16 bps, uint32 width,
   uint8    bytebuff1 = 0, bytebuff2 = 0;
   unsigned char *src;
   unsigned char *dst;
-  unsigned char  swapbuff[4];
   tsample_t sample;
 
   if ((ibuff == NULL) || (obuff == NULL))
@@ -8688,21 +8483,9 @@ reverseSamples24bits (uint16 spp, uint16 bps, uint32 width,
       src = ibuff + src_byte;
       match_bits = mask_bits << (32 - high_bit - bps); 
       if (little_endian)
-        {
-        swapbuff[3] = *src;
-        swapbuff[2] = *(src + 1);
-        swapbuff[1] = *(src + 2);
-        swapbuff[0] = *(src + 3);
-        }
+	buff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
       else
-        {
-        swapbuff[0] = *src;
-        swapbuff[1] = *(src + 1);
-        swapbuff[2] = *(src + 2);
-        swapbuff[3] = *(src + 3);
-	}
-
-      buff1 = *((uint32 *)swapbuff);
+	buff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
       buff1 = (buff1 & match_bits) << (high_bit);
 
       if (ready_bits < 16)
@@ -8755,8 +8538,6 @@ reverseSamples32bits (uint16 spp, uint16 bps, uint32 width,
   uint8  bytebuff1 = 0, bytebuff2 = 0, bytebuff3 = 0, bytebuff4 = 0;
   unsigned char *src;
   unsigned char *dst;
-  unsigned char  swapbuff1[4];
-  unsigned char  swapbuff2[4];
   tsample_t sample;
 
   if ((ibuff == NULL) || (obuff == NULL))
@@ -8797,37 +8578,14 @@ reverseSamples32bits (uint16 spp, uint16 bps, uint32 width,
       match_bits = mask_bits << (64 - high_bit - bps); 
       if (little_endian)
         {
-        swapbuff1[3] = *src;
-        swapbuff1[2] = *(src + 1);
-        swapbuff1[1] = *(src + 2);
-        swapbuff1[0] = *(src + 3);
+	longbuff1 = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+        longbuff2 = longbuff1;
         }
       else
         {
-        swapbuff1[0] = *src;
-        swapbuff1[1] = *(src + 1);
-        swapbuff1[2] = *(src + 2);
-        swapbuff1[3] = *(src + 3);
+	longbuff1 = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+        longbuff2 = longbuff1;
 	}
-      longbuff1 = *((uint32 *)swapbuff1);                  
-
-      memset (swapbuff2, '\0', sizeof(swapbuff2));
-      if (little_endian)
-        {
-        swapbuff2[3] = *src;
-        swapbuff2[2] = *(src + 1);
-        swapbuff2[1] = *(src + 2);
-        swapbuff2[0] = *(src + 3);
-        }
-      else
-        {
-        swapbuff2[0] = *src;
-        swapbuff2[1] = *(src + 1);
-        swapbuff2[2] = *(src + 2);
-        swapbuff2[3] = *(src + 3);
-	}
-
-      longbuff2 = *((uint32 *)swapbuff2);
       buff3 = ((uint64)longbuff1 << 32) | longbuff2;
       buff1 = (buff3 & match_bits) << (high_bit);
 
@@ -8873,7 +8631,7 @@ reverseSamplesBytes (uint16 spp, uint16 bps, uint32 width,
   uint32  col, bytes_per_pixel, col_offset;
   uint8   bytebuff1;
   unsigned char swapbuff[32];
-
+  
   if ((src == NULL) || (dst == NULL))
     {
     TIFFError("reverseSamplesBytes","Invalid input or output buffer");

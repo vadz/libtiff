@@ -1,3 +1,9 @@
+2009-11-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffcrop.c: Updated tiffcrop from Richard Nolde.  This
+	version has undergone substantial testing with arbitrary sample
+	bit depths.  Also eliminates GCC compilation warnings.
+
 2009-11-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* port/libport.h: Added header file for porting prototypes and
