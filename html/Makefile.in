@@ -344,7 +344,9 @@ docfiles = \
 	v3.8.0.html \
 	v3.8.1.html \
 	v3.8.2.html \
-	v3.9.0beta.html
+	v3.9.0beta.html \
+	v3.9.1.html \
+	v3.9.2.html
 
 dist_doc_DATA = $(docfiles)
 SUBDIRS = images man
