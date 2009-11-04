@@ -1,3 +1,7 @@
+2009-11-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff 4.0.0alpha5 released.
+
 2009-11-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcrop.c: Updated tiffcrop from Richard Nolde.  This
