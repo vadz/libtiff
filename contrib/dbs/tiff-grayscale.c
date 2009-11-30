@@ -86,6 +86,7 @@ int main(int argc, char **argv)
 
     if ((tif = TIFFOpen(argv[3], "w")) == NULL) {
         fprintf(stderr, "can't open %s as a TIFF file\n", argv[3]);
+		free(gray);
         return 0;
     }
 
