@@ -54,7 +54,7 @@ static const char photoTag[] = "PhotometricInterpretation";
  * Color conversion constants. We will define display types here.
  */
 
-TIFFDisplay display_sRGB = {
+static const TIFFDisplay display_sRGB = {
 	{			/* XYZ -> luminance matrix */
 		{  3.2410F, -1.5374F, -0.4986F },
 		{  -0.9692F, 1.8760F, 0.0416F },
