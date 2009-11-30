@@ -378,6 +378,10 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 			_TIFFsetShortArray(&td->td_transferfunction[i],
 			    va_arg(ap, uint16*), 1L<<td->td_bitspersample);
 		break;
+	case TIFFTAG_REFERENCEBLACKWHITE:
+		/* XXX should check for null range */
+		_TIFFsetFloatArray(&td->td_refblackwhite, va_arg(ap, float*), 6);
+		break;
 	case TIFFTAG_INKNAMES:
 		v = (uint16) va_arg(ap, uint16_vap);
 		s = va_arg(ap, char*);
@@ -887,6 +891,9 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 				*va_arg(ap, uint16**) = td->td_transferfunction[2];
 			}
 			break;
+		case TIFFTAG_REFERENCEBLACKWHITE:
+			*va_arg(ap, float**) = td->td_refblackwhite;
+			break;
 		case TIFFTAG_INKNAMES:
 			*va_arg(ap, char**) = td->td_inknames;
 			break;
@@ -1075,6 +1082,7 @@ TIFFFreeDirectory(TIFF* tif)
 	CleanupField(td_sampleinfo);
 	CleanupField(td_subifd);
 	CleanupField(td_inknames);
+	CleanupField(td_refblackwhite);
 	CleanupField(td_transferfunction[0]);
 	CleanupField(td_transferfunction[1]);
 	CleanupField(td_transferfunction[2]);

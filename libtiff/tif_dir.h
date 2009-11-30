@@ -82,6 +82,7 @@ typedef struct {
 	uint16  td_ycbcrpositioning;
 	/* Colorimetry parameters */
 	uint16* td_transferfunction[3];
+	float*	td_refblackwhite;
 	/* CMYK parameters */
 	int     td_inknameslen;
 	char*   td_inknames;
@@ -136,6 +137,7 @@ typedef struct {
 #define FIELD_HALFTONEHINTS            37
 #define FIELD_YCBCRSUBSAMPLING         39
 #define FIELD_YCBCRPOSITIONING         40
+#define	FIELD_REFBLACKWHITE            41
 #define FIELD_TRANSFERFUNCTION         44
 #define FIELD_INKNAMES                 46
 #define FIELD_SUBIFD                   49
