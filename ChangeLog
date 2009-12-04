@@ -1,3 +1,10 @@
+2009-12-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: Fix a couple of issues that trigger failures in
+	some cases when using TIFFReadScanline() with JPEG compressed 
+	subsampled ycbcr images.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1936
+
 2009-11-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 3.9.2 released.
