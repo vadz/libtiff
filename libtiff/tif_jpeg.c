@@ -184,6 +184,7 @@ static int JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s);
 static int JPEGEncode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s);
 static int JPEGEncodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s);
 static int JPEGInitializeLibJPEG(TIFF * tif, int decode );
+static int DecodeRowError(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s);
 
 #define	FIELD_JPEGTABLES	(FIELD_CODEC+0)
 
@@ -1166,7 +1167,7 @@ JPEGPreDecode(TIFF* tif, uint16 s)
 	if (downsampled_output) {
 		/* Need to use raw-data interface to libjpeg */
 		sp->cinfo.d.raw_data_out = TRUE;
-		tif->tif_decoderow = JPEGDecodeRaw;
+		tif->tif_decoderow = DecodeRowError;
 		tif->tif_decodestrip = JPEGDecodeRaw;
 		tif->tif_decodetile = JPEGDecodeRaw;
 	} else {
@@ -1293,6 +1294,19 @@ JPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 	    || TIFFjpeg_finish_decompress(sp);
 }
 
+/*ARGSUSED*/ static int
+DecodeRowError(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
+
+{
+    (void) buf;
+    (void) cc;
+    (void) s;
+
+    TIFFErrorExt(tif->tif_clientdata, "TIFFReadScanline",
+                 "scanline oriented access is not supported for downsampled JPEG compressed images, consider enabling TIFF_JPEGCOLORMODE as JPEGCOLORMODE_RGB." );
+    return 0;
+}
+
 /*
  * Decode a chunk of pixels.
  * Returned data is downsampled per sampling factors.
@@ -1306,6 +1320,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
 	/* data is expected to be read in multiples of a scanline */
 	if ( (nrows = sp->cinfo.d.image_height) ) {
+
 		/* Cb,Cr both have sampling factors 1, so this is correct */
 		JDIMENSION clumps_per_line = sp->cinfo.d.comp_info[1].downsampled_width;            
 		int samples_per_clump = sp->samplesperclump;
@@ -1319,6 +1334,12 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 		do {
 			jpeg_component_info *compptr;
 			int ci, clumpoffset;
+
+                        if( cc < sp->bytesperline * sp->v_sampling ) {
+                            TIFFErrorExt(tif->tif_clientdata, "JPEGDecodeRaw",
+                                         "application buffer not large enough for all data.");
+                            return 0;
+                        }
 
 			/* Reload downsampled-data buffer if needed */
 			if (sp->scancount >= DCTSIZE) {

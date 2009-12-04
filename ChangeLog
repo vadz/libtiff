@@ -1,5 +1,10 @@
 2009-12-03  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_jpeg.c: Made JPEGDecodeRaw() check for buffer overruns.
+	Made so that when working with downsampled images a stub function 
+	reporting an error is used for tif_decoderow.  We cannot meaningfully
+	support reading scanlines in this situation.  (#1936)
+
 	* libtiff/tif_jpeg.c: Ensure that tif_scanlinesize is computed after
 	resetting of the upsampling values (gdal:#3259).
 	http://bugzilla.maptools.org/show_bug.cgi?id=1936
