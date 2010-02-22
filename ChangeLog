@@ -7,6 +7,7 @@
 	* tools/tiff2pdf.c: Write the JPEG SOI headers into the TIFF strip 
 	data rather than skipping them.  This fixes the ability to view in
 	Acrobat Reader, Evince, and Ghostscript.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2135
 
 2010-01-06  Frank Warmerdam  <warmerdam@pobox.com>
 
