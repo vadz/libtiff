@@ -5399,3 +5399,10 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

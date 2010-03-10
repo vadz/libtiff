@@ -151,3 +151,10 @@
 #define IPTC_SUPPORT
 
 #endif /* _TIFFCONF_ */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

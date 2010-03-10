@@ -1,3 +1,9 @@
+2010-03-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_aux.c (_TIFFCheckRealloc): Improve error message so
+	that it is clearly a memory allocation error message, and also
+	includes the size of the allocation request.
+
 2010-02-22  Lee Howard  <faxguy@howardsilvan.com>
 
 	* libtiff/tif_jpeg.c: Do not generate a JPEGTables tag when creating

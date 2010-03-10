@@ -29,7 +29,12 @@
  ******************************************************************************
  *
  * $Log$
- * Revision 1.13  2008-01-01 15:46:28  fwarmerdam
+ * Revision 1.14  2010-03-10 18:56:50  bfriesen
+ * * libtiff/tif_aux.c (_TIFFCheckRealloc): Improve error message so
+ * that it is clearly a memory allocation error message, and also
+ * includes the size of the allocation request.
+ *
+ * Revision 1.13  2008/01/01 15:46:28  fwarmerdam
  * Changes to reflect the fact that TIFFFieldWithTag() and TIFFFieldWithName()
  * now return TIFFField pointers instead of TIFFFieldInfo pointers.
  *
@@ -317,3 +322,10 @@ main(int argc, char* argv[])
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

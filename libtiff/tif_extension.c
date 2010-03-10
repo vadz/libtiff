@@ -109,3 +109,10 @@ void TIFFSetClientInfo( TIFF *tif, void *data, const char *name )
 
     tif->tif_clientinfo = link;
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

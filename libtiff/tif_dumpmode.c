@@ -134,3 +134,10 @@ TIFFInitDumpMode(TIFF* tif, int scheme)
 	tif->tif_seek = DumpModeSeek;
 	return (1);
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

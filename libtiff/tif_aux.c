@@ -48,7 +48,9 @@ _TIFFCheckRealloc(TIFF* tif, void* buffer,
 
 	if (cp == NULL)
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "No space %s", what);
+			     "Failed to allocate memory for %s "
+			     "(%ld elements of %ld bytes each)",
+			     what,(long) nmemb, (long) elem_size);
 
 	return cp;
 }
@@ -320,4 +322,10 @@ _TIFFUInt64ToDouble(uint64 ui64)
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
-
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */
