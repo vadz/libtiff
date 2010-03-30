@@ -1,3 +1,9 @@
+2010-03-30  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_lzw.c: change type of dec_bitsleft field to uint64
+	to support operating on strips/tiles of more than 256MB.
+	http://trac.osgeo.org/gdal/ticket/3512
+
 2010-03-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_aux.c (_TIFFCheckRealloc): Improve error message so
