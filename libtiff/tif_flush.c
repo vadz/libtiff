@@ -80,7 +80,7 @@ TIFFFlush(TIFF* tif)
     }
 
     if ((tif->tif_flags & (TIFF_DIRTYDIRECT|TIFF_DIRTYSTRIP)) 
-        && !TIFFWriteDirectory(tif))
+        && !TIFFRewriteDirectory(tif))
         return (0);
 
     return (1);
