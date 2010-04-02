@@ -1,3 +1,13 @@
+2010-04-02  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_read.c (primarily): Add support for 
+	CHUNKY_STRIP_READ_SUPPORT where large strips are
+	read in chunks for applications using TIFFReadScanline().
+	This is intended to make it more practical work with very
+	large compressed one-strip files.   Feature is off by default.
+	Enable by defining CHUNK_STRIP_READ_SUPPORT as a macro.
+	http://trac.osgeo.org/gdal/ticket/3514
+
 2010-03-31  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_flush.c: Use TIFFRewriteDirectory() when flushing

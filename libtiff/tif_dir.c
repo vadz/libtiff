@@ -1504,6 +1504,8 @@ TIFFUnlinkDirectory(TIFF* tif, uint16 dirn)
 		_TIFFfree(tif->tif_rawdata);
 		tif->tif_rawdata = NULL;
 		tif->tif_rawcc = 0;
+                tif->tif_rawdataoff = 0;
+                tif->tif_rawdataloaded = 0;
 	}
 	tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP|TIFF_POSTENCODE|TIFF_BUF4WRITE);
 	TIFFFreeDirectory(tif);

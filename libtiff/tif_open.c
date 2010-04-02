@@ -426,6 +426,8 @@ TIFFClientOpen(
 	tif->tif_flags |= TIFF_MYBUFFER;
 	tif->tif_rawcp = tif->tif_rawdata = 0;
 	tif->tif_rawdatasize = 0;
+        tif->tif_rawdataoff = 0;
+        tif->tif_rawdataloaded = 0;
 
 	switch (mode[0]) {
 		case 'r':

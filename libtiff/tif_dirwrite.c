@@ -394,6 +394,8 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			tif->tif_rawdata = NULL;
 			tif->tif_rawcc = 0;
 			tif->tif_rawdatasize = 0;
+                        tif->tif_rawdataoff = 0;
+                        tif->tif_rawdataloaded = 0;
 		}
 		tif->tif_flags &= ~(TIFF_BEENWRITING|TIFF_BUFFERSETUP);
 	}
