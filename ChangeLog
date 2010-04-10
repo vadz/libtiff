@@ -1,3 +1,9 @@
+2010-04-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/ppm2tiff.c (main): While case for parsing comment line
+	requires extra parenthesis to work as expected.  Reported by
+	Thomas Sinclair.
+
 2010-02-22  Lee Howard  <faxguy@howardsilvan.com>
 
 	* libtiff/tif_jpeg.c: Do not generate a JPEGTables tag when creating
