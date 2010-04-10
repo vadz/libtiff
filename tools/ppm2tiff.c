@@ -173,7 +173,7 @@ main(int argc, char* argv[])
 		if (c == '#') {
 			do {
 			    c = fgetc(in);
-			} while(!strchr("\r\n", c) || feof(in));
+			} while(!(strchr("\r\n", c) || feof(in)));
 			continue;
 		}
 
