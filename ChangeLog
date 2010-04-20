@@ -1,3 +1,11 @@
+2010-04-20  Olivier Paquet  <olivier.paquet@gmail.com>
+
+	* libtiff/tif_dirinfo.c: Use correct set_field_type for
+	TIFFTAG_PIXAR_IMAGEFULLWIDTH, TIFFTAG_PIXAR_IMAGEFULLLENGTH,
+	TIFFTAG_PIXAR_MATRIX_WORLDTOSCREEN and TIFFTAG_PIXAR_MATRIX_WORLDTOCAMERA.
+	They were unreadable with TIFF_SETGET_UNDEFINED, a regression from 3.9.2.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2139
+
 2010-04-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dir.c (_TIFFVSetField): Add a special error case for
