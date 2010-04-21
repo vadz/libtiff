@@ -1612,12 +1612,16 @@ JPEGSetupEncode(TIFF* tif)
 
 	/* Create a JPEGTables field if appropriate */
 	if (sp->jpegtablesmode & (JPEGTABLESMODE_QUANT|JPEGTABLESMODE_HUFF)) {
-		if (!prepare_JPEGTables(tif))
-			return (0);
-		/* Mark the field present */
-		/* Can't use TIFFSetField since BEENWRITING is already set! */
-		TIFFSetFieldBit(tif, FIELD_JPEGTABLES);
-		tif->tif_flags |= TIFF_DIRTYDIRECT;
+                if( sp->jpegtables == NULL
+                    || memcpy(sp->jpegtables,"\0\0\0\0\0\0\0\0\0",8) == 0 )
+                {
+                        if (!prepare_JPEGTables(tif))
+                                return (0);
+                        /* Mark the field present */
+                        /* Can't use TIFFSetField since BEENWRITING is already set! */
+                        tif->tif_flags |= TIFF_DIRTYDIRECT;
+                        TIFFSetFieldBit(tif, FIELD_JPEGTABLES);
+                }
 	} else {
 		/* We do not support application-supplied JPEGTables, */
 		/* so mark the field not present */
