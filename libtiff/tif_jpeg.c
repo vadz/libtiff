@@ -1613,7 +1613,7 @@ JPEGSetupEncode(TIFF* tif)
 	/* Create a JPEGTables field if appropriate */
 	if (sp->jpegtablesmode & (JPEGTABLESMODE_QUANT|JPEGTABLESMODE_HUFF)) {
                 if( sp->jpegtables == NULL
-                    || memcpy(sp->jpegtables,"\0\0\0\0\0\0\0\0\0",8) == 0 )
+                    || memcmp(sp->jpegtables,"\0\0\0\0\0\0\0\0\0",8) == 0 )
                 {
                         if (!prepare_JPEGTables(tif))
                                 return (0);
