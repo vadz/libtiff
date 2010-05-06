@@ -1,3 +1,11 @@
+2010-05-05  Olivier Paquet  <olivier.paquet@gmail.com>
+
+	* libtiff/tif_print.c: Have TIFFTAG_REFERENCEBLACKWHITE always print 6
+	floats instead of 2*SamplesPerPixel.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2186
+	* man/TIFFGetField.3tiff, man/TIFFSetField.3tiff: Fixed doc to reflect the
+	fact that libtiff considers TIFFTAG_REFERENCEBLACKWHITE to be 6 floats.
+
 2010-04-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/ppm2tiff.c (main): While case for parsing comment line
