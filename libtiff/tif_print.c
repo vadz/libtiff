@@ -144,7 +144,7 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, ttag_t tag,
 			uint16 i;
 
 			fprintf(fd, "  Reference Black/White:\n");
-			for (i = 0; i < td->td_samplesperpixel; i++)
+			for (i = 0; i < 3; i++)
 			fprintf(fd, "    %2d: %5g %5g\n", i,
 				((float *)raw_data)[2*i+0],
 				((float *)raw_data)[2*i+1]);
