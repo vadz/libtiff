@@ -163,17 +163,6 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 			fprintf(fd, "  White Point: %g-%g\n",
 			    ((float *)raw_data)[0], ((float *)raw_data)[1]);
 			return 1;
-		case TIFFTAG_REFERENCEBLACKWHITE:
-		{
-			uint16 i;
-
-			fprintf(fd, "  Reference Black/White:\n");
-			for (i = 0; i < td->td_samplesperpixel; i++)
-			fprintf(fd, "    %2d: %5g %5g\n", i,
-			    ((float *)raw_data)[2*i+0],
-			    ((float *)raw_data)[2*i+1]);
-			return 1;
-		}
 		case TIFFTAG_XMLPACKET:
 		{
 			uint32 i;
@@ -496,6 +485,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 				    td->td_colormap[2][l]);
 		} else
 			fprintf(fd, "(present)\n");
+	}
+	if (TIFFFieldSet(tif,FIELD_REFBLACKWHITE)) {
+		fprintf(fd, "  Reference Black/White:\n");
+		for (i = 0; i < 3; i++)
+		fprintf(fd, "    %2d: %5g %5g\n", i,
+			td->td_refblackwhite[2*i+0],
+			td->td_refblackwhite[2*i+1]);
 	}
 	if (TIFFFieldSet(tif,FIELD_TRANSFERFUNCTION)) {
 		fprintf(fd, "  Transfer Function: ");
