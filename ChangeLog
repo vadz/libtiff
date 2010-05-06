@@ -1,3 +1,8 @@
+2010-05-06  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* html/man/TIFFGetField.3tiff.html, html/man/TIFFSetField.3tiff.html:
+	Regenerated from the source.
+
 2010-05-05  Olivier Paquet  <olivier.paquet@gmail.com>
 
 	* libtiff/tif_print.c: Fixed printing of TIFFTAG_REFERENCEBLACKWHITE which
