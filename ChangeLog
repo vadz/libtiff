@@ -1,3 +1,13 @@
+2010-05-05  Olivier Paquet  <olivier.paquet@gmail.com>
+
+	* libtiff/tif_print.c: Fixed printing of TIFFTAG_REFERENCEBLACKWHITE which
+	had stopped working. Also made it always print 6 floats instead of
+	2*SamplesPerPixel.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2191
+	http://bugzilla.maptools.org/show_bug.cgi?id=2186
+	* man/TIFFGetField.3tiff, man/TIFFSetField.3tiff: Fixed doc to reflect the
+	fact that libtiff considers TIFFTAG_REFERENCEBLACKWHITE to be 6 floats.
+
 2010-05-05  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Fix to use memcmp(), not memcpy() when checking
