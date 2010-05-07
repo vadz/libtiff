@@ -1,3 +1,12 @@
+2010-05-07  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: Ensure that quality is always set in 
+	JPEGPreEncode(), not just when we want to output local tables.  
+	Otherwise the quality used during compression may not be right and
+	might not match the tables in the tables tag.   This bug only occurs
+	when seeking between directories in the midst of writing blocks.
+	http://trac.osgeo.org/gdal/ticket/3539
+	
 2010-05-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* html/man/TIFFGetField.3tiff.html, html/man/TIFFSetField.3tiff.html:
