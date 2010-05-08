@@ -1,3 +1,11 @@
+2010-05-08  Olivier Paquet  <olivier.paquet@gmail.com>
+
+	* libtiff/tif_dirread.c: Restored TIFFReadDirEntryFloat function in order
+	to add missing TIFF_SETGET_FLOAT case to TIFFFetchNormalTag.
+	* libtiff/tif_dirinfo.c: Use correct set_field_type for
+	TIFFTAG_PIXAR_FOVCOT so it is readable again (regression from 3.9.2).
+	http://bugzilla.maptools.org/show_bug.cgi?id=2192
+
 2010-05-07  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: Ensure that quality is always set in 
