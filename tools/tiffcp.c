@@ -92,6 +92,7 @@ static	void usage(void);
 static char comma = ',';  /* (default) comma separator character */
 static TIFF* bias = NULL;
 static int pageNum = 0;
+static int pageInSeq = 0;
 
 static int nextSrcImage (TIFF *tif, char **imageSpec)
 /*
@@ -171,7 +172,7 @@ main(int argc, char* argv[])
 
 	*mp++ = 'w';
 	*mp = '\0';
-	while ((c = getopt(argc, argv, ",:b:c:f:l:o:z:p:r:w:aistBLMC")) != -1)
+	while ((c = getopt(argc, argv, ",:b:c:f:l:o:z:p:r:w:aistBLMCx")) != -1)
 		switch (c) {
                 case ',':
                         if (optarg[0] != '=') usage();
@@ -255,6 +256,9 @@ main(int argc, char* argv[])
 			break;
 		case 'C':
 			*mp++ = 'c'; *mp = '\0';
+			break;
+		case 'x':
+			pageInSeq = 1;
 			break;
 		case '?':
 			usage();
@@ -725,12 +729,19 @@ tiffcp(TIFF* in, TIFF* out)
 	}
 	{
 	  unsigned short pg0, pg1;
-	  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1)) {
-		if (pageNum < 0) /* only one input file */
+	  if(pageInSeq == 1) {
+	  	if (pageNum < 0) /* only one input file */ {
+		  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1)) 
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
-		else 
+		} else
 			TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
-	  }
+	  } else
+		  if (TIFFGetField(in, TIFFTAG_PAGENUMBER, &pg0, &pg1)) {
+			if (pageNum < 0) /* only one input file */
+				TIFFSetField(out, TIFFTAG_PAGENUMBER, pg0, pg1);
+			else 
+				TIFFSetField(out, TIFFTAG_PAGENUMBER, pageNum++, 0);
+		  }
 	}
 
 	for (p = tags; p < &tags[NTAGS]; p++)
