@@ -1,5 +1,16 @@
 2010-06-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* Update libtool to version 2.2.8.
+
+	* libtiff/tif_fax3.c (Fax3SetupState): Avoid under-allocation of
+	buffer due to integer overflow in TIFFroundup() and several other
+	potential overflows.  In conjunction with the fix to TIFFhowmany(),
+	fixes CVE-2010-1411.
+
+	* libtiff/tiffiop.h (TIFFhowmany): Return zero if parameters would
+	result in an integer overflow. This causes TIFFroundup() to also
+	return zero if there would be an integer overflow.
+
 	* contrib: Add an emacs formatting mode footer to all source files
 	so that emacs can be effectively used.
 
