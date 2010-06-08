@@ -600,6 +600,7 @@ TIFFReadBufferSetup(TIFF* tif, tdata_t bp, tsize_t size)
 			_TIFFfree(tif->tif_rawdata);
 		tif->tif_rawdata = NULL;
 	}
+
 	if (bp) {
 		tif->tif_rawdatasize = size;
 		tif->tif_rawdata = (tidata_t) bp;
@@ -609,7 +610,7 @@ TIFFReadBufferSetup(TIFF* tif, tdata_t bp, tsize_t size)
 		tif->tif_rawdata = (tidata_t) _TIFFmalloc(tif->tif_rawdatasize);
 		tif->tif_flags |= TIFF_MYBUFFER;
 	}
-	if (tif->tif_rawdata == NULL) {
+	if ((tif->tif_rawdata == NULL) || (tif->tif_rawdatasize == 0)) {
 		TIFFErrorExt(tif->tif_clientdata, module,
 		    "%s: No space for data buffer at scanline %ld",
 		    tif->tif_name, (long) tif->tif_row);

@@ -1,5 +1,30 @@
 2010-06-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcrop.c: Removed duplicated macros such as
+	TIFFhowmany().
+
+	* Update libtool to version 2.2.8.
+
+	* libtiff/tif_fax3.c (Fax3SetupState): Avoid under-allocation of
+	buffer due to integer overflow in TIFFroundup() and several other
+	potential overflows.  In conjunction with the fix to TIFFhowmany(),
+	fixes CVE-2010-1411.
+
+	* libtiff/tiffiop.h (TIFFhowmany): Return zero if parameters would
+	result in an integer overflow. This causes TIFFroundup() to also
+	return zero if there would be an integer overflow.
+
+	* libtiff/tif_read.c (TIFFReadBufferSetup): Return an error if
+	tif_rawdatasize becomes zero due to an initial raw size of zero or
+	an overflow reported by TIFFroundup().
+
+	* libtiff/tif_ojpeg.c (OJPEGReadBufferFill): Report an error and
+	avoid a crash if the input file is so broken that the strip
+	offsets are not defined.
+
+	* tools/tiffcp.c (main): tiffcp should not leak memory if an error
+	is reported when reading the input file.
+
 	* libtiff/tif_aux.c (_TIFFCheckRealloc): Produce a fully detailed
 	error message string.
 

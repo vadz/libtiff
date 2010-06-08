@@ -149,10 +149,6 @@ extern int getopt(int, char**, char*);
 #endif
 #define	strneq(a,b,n)	(strncmp((a),(b),(n)) == 0)
 
-/* NB: the uint32 casts are to silence certain ANSI-C compilers */
-#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
-#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
-
 #define	TRUE	1
 #define	FALSE	0
 

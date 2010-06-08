@@ -236,7 +236,9 @@ struct tiff {
 #endif
 
 /* NB: the uint32 casts are to silence certain ANSI-C compilers */
-#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
+#define TIFFhowmany(x, y) (((uint32)x < (0xffffffff - (uint32)(y-1))) ?	\
+			   ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y))) : \
+			   0U)
 #define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
 #define	TIFFroundup(x, y) (TIFFhowmany(x,y)*(y))
 
