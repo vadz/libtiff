@@ -39,52 +39,47 @@
  *    Suite 200
  *    Seattle, WA  98104
  *    206-622-5500
- *
+ *    
  *    (http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf)
  *
  * For Big TIFF design notes see the following link
  *    http://www.remotesensing.org/libtiff/bigtiffdesign.html
  */
+#define	TIFF_VERSION	        42
+#define TIFF_BIGTIFF_VERSION    43
 
-#define TIFF_VERSION_CLASSIC 42
-#define TIFF_VERSION_BIG 43
-
-#define TIFF_BIGENDIAN      0x4d4d
-#define TIFF_LITTLEENDIAN   0x4949
-#define MDI_LITTLEENDIAN    0x5045
-#define MDI_BIGENDIAN       0x4550
-
+#define	TIFF_BIGENDIAN		0x4d4d
+#define	TIFF_LITTLEENDIAN	0x4949
+#define	MDI_LITTLEENDIAN        0x5045
+#define	MDI_BIGENDIAN           0x4550
 /*
  * Intrinsic data types required by the file format:
  *
- * 8-bit quantities     int8/uint8
- * 16-bit quantities    int16/uint16
- * 32-bit quantities    int32/uint32
- * 64-bit quantities    int64/uint64
- * strings              unsigned char*
+ * 8-bit quantities	int8/uint8
+ * 16-bit quantities	int16/uint16
+ * 32-bit quantities	int32/uint32
+ * strings		unsigned char*
  */
 
 #ifndef HAVE_INT8
-typedef signed char int8;       /* NB: non-ANSI compilers may not grok */
+typedef	signed char int8;	/* NB: non-ANSI compilers may not grok */
 #endif
-typedef unsigned char uint8;
+typedef	unsigned char uint8;
 #ifndef HAVE_INT16
-typedef short int16;
+typedef	short int16;
 #endif
-typedef unsigned short uint16;  /* sizeof (uint16) must == 2 */
+typedef	unsigned short uint16;	/* sizeof (uint16) must == 2 */
 #if SIZEOF_INT == 4
 #ifndef HAVE_INT32
-typedef int int32;
+typedef	int int32;
 #endif
-typedef unsigned int uint32;    /* sizeof (uint32) must == 4 */
+typedef	unsigned int uint32;	/* sizeof (uint32) must == 4 */
 #elif SIZEOF_LONG == 4
 #ifndef HAVE_INT32
-typedef long int32;
+typedef	long int32;
 #endif
-typedef unsigned long uint32;   /* sizeof (uint32) must == 4 */
+typedef	unsigned long uint32;	/* sizeof (uint32) must == 4 */
 #endif
-typedef unsigned long long uint64;
-typedef signed long long int64;
 
 /* For TIFFReassignTagToIgnore */
 enum TIFFIgnoreSense /* IGNORE tag table */
@@ -97,22 +92,14 @@ enum TIFFIgnoreSense /* IGNORE tag table */
 /*
  * TIFF header.
  */
-typedef struct {
-	uint16 tiff_magic;      /* magic number (defines byte order) */
-	uint16 tiff_version;    /* TIFF version number */
-} TIFFHeaderCommon;
-typedef struct {
-	uint16 tiff_magic;      /* magic number (defines byte order) */
-	uint16 tiff_version;    /* TIFF version number */
-	uint32 tiff_diroff;     /* byte offset to first directory */
-} TIFFHeaderClassic;
-typedef struct {
-	uint16 tiff_magic;      /* magic number (defines byte order) */
-	uint16 tiff_version;    /* TIFF version number */
-	uint16 tiff_offsetsize; /* size of offsets, should be 8 */
-	uint16 tiff_unused;     /* unused word, should be 0 */
-	uint64 tiff_diroff;     /* byte offset to first directory */
-} TIFFHeaderBig;
+typedef	struct {
+	uint16	tiff_magic;	/* magic number (defines byte order) */
+#define TIFF_MAGIC_SIZE		2
+	uint16	tiff_version;	/* TIFF version number */
+#define TIFF_VERSION_SIZE	2
+	uint32	tiff_diroff;	/* byte offset to first directory */
+#define TIFF_DIROFFSET_SIZE	4
+} TIFFHeader;
 
 
 /*
@@ -126,27 +113,12 @@ typedef struct {
  * field to save space.  If the value is less than 4 bytes, it is
  * left-justified in the offset field.
  */
-typedef struct {
-	uint16 tdir_tag;        /* see below */
-	uint16 tdir_type;       /* data type; see below */
-} TIFFDirEntryCommon;
-typedef struct {
-	uint16 tdir_tag;        /* see below */
-	uint16 tdir_type;       /* data type; see below */
-	uint32 tdir_count;      /* number of items; length in spec */
-	uint32 tdir_offset;     /* byte offset to field data */
-} TIFFDirEntryClassic;
-typedef struct {
-	uint16 tdir_tag;        /* see below */
-	uint16 tdir_type;       /* data type; see below */
-	uint64 tdir_count;      /* number of items; length in spec */
-	uint64 tdir_offset;     /* byte offset to field data */
-} TIFFDirEntryBig;
-typedef union {
-	TIFFDirEntryCommon common;
-	TIFFDirEntryClassic classic;
-	TIFFDirEntryBig big;
-} TIFFDirEntryUnion;
+typedef	struct {
+	uint16		tdir_tag;	/* see below */
+	uint16		tdir_type;	/* data type; see below */
+	uint32		tdir_count;	/* number of items; length in spec */
+	uint32		tdir_offset;	/* byte offset to field data */
+} TIFFDirEntry;
 
 /*
  * NB: In the comments below,
@@ -162,24 +134,21 @@ typedef union {
  *
  * Note: RATIONALs are the ratio of two 32-bit integer values.
  */
-typedef enum {
-	TIFF_NOTYPE = 0,      /* placeholder */
-	TIFF_BYTE = 1,        /* 8-bit unsigned integer */
-	TIFF_ASCII = 2,       /* 8-bit bytes w/ last byte null */
-	TIFF_SHORT = 3,       /* 16-bit unsigned integer */
-	TIFF_LONG = 4,        /* 32-bit unsigned integer */
-	TIFF_RATIONAL = 5,    /* 64-bit unsigned fraction */
-	TIFF_SBYTE = 6,       /* !8-bit signed integer */
-	TIFF_UNDEFINED = 7,   /* !8-bit untyped data */
-	TIFF_SSHORT = 8,      /* !16-bit signed integer */
-	TIFF_SLONG = 9,       /* !32-bit signed integer */
-	TIFF_SRATIONAL = 10,  /* !64-bit signed fraction */
-	TIFF_FLOAT = 11,      /* !32-bit IEEE floating point */
-	TIFF_DOUBLE = 12,     /* !64-bit IEEE floating point */
-	TIFF_IFD = 13,        /* %32-bit unsigned integer (offset) */
-	TIFF_LONG8 = 16,      /* BigTIFF 64-bit unsigned integer */
-	TIFF_SLONG8 = 17,     /* BigTIFF 64-bit signed integer */
-	TIFF_IFD8 = 18,       /* BigTIFF 64-bit unsigned integer (offset) */
+typedef	enum {
+	TIFF_NOTYPE	= 0,	/* placeholder */
+	TIFF_BYTE	= 1,	/* 8-bit unsigned integer */
+	TIFF_ASCII	= 2,	/* 8-bit bytes w/ last byte null */
+	TIFF_SHORT	= 3,	/* 16-bit unsigned integer */
+	TIFF_LONG	= 4,	/* 32-bit unsigned integer */
+	TIFF_RATIONAL	= 5,	/* 64-bit unsigned fraction */
+	TIFF_SBYTE	= 6,	/* !8-bit signed integer */
+	TIFF_UNDEFINED	= 7,	/* !8-bit untyped data */
+	TIFF_SSHORT	= 8,	/* !16-bit signed integer */
+	TIFF_SLONG	= 9,	/* !32-bit signed integer */
+	TIFF_SRATIONAL	= 10,	/* !64-bit signed fraction */
+	TIFF_FLOAT	= 11,	/* !32-bit IEEE floating point */
+	TIFF_DOUBLE	= 12,	/* !64-bit IEEE floating point */
+	TIFF_IFD	= 13	/* %32-bit unsigned integer (offset) */
 } TIFFDataType;
 
 /*
@@ -676,3 +645,10 @@ typedef enum {
 #endif /* _TIFF_ */
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

@@ -48,3 +48,10 @@ strcasecmp(const char *s1, const char *s2)
 			return (0);
 	return (tolower(*us1) - tolower(*--us2));
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

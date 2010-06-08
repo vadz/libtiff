@@ -122,3 +122,10 @@ getopt(int argc, char * const argv[], const char *optstring)
 	}
 	return (optopt);			/* return option letter */
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

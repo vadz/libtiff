@@ -32,8 +32,8 @@
 
 #include <windows.h>
 
-static uint32
-_tiffReadProc(thandle_t fd, tdata_t buf, uint32 size)
+static tsize_t
+_tiffReadProc(thandle_t fd, tdata_t buf, tsize_t size)
 {
 	DWORD dwSizeRead;
 	if (!ReadFile(fd, buf, size, &dwSizeRead, NULL))
@@ -41,8 +41,8 @@ _tiffReadProc(thandle_t fd, tdata_t buf, uint32 size)
 	return ((tsize_t) dwSizeRead);
 }
 
-static uint32
-_tiffWriteProc(thandle_t fd, tdata_t buf, uint32 size)
+static tsize_t
+_tiffWriteProc(thandle_t fd, tdata_t buf, tsize_t size)
 {
 	DWORD dwSizeWritten;
 	if (!WriteFile(fd, buf, size, &dwSizeWritten, NULL))
@@ -50,14 +50,14 @@ _tiffWriteProc(thandle_t fd, tdata_t buf, uint32 size)
 	return ((tsize_t) dwSizeWritten);
 }
 
-static uint64
-_tiffSeekProc(thandle_t fd, uint64 off, int whence)
+static toff_t
+_tiffSeekProc(thandle_t fd, toff_t off, int whence)
 {
-	ULARGE_INTEGER li;
+        ULARGE_INTEGER li;
 	DWORD dwMoveMethod;
 
 	li.QuadPart = off;
-
+        
 	switch(whence)
 	{
 	case SEEK_SET:
@@ -83,7 +83,7 @@ _tiffCloseProc(thandle_t fd)
 	return (CloseHandle(fd) ? 0 : -1);
 }
 
-static uint64
+static toff_t
 _tiffSizeProc(thandle_t fd)
 {
 	return ((toff_t)GetFileSize(fd, NULL));
@@ -399,3 +399,10 @@ TIFFErrorHandler _TIFFerrorHandler = Win32ErrorHandler;
 #endif /* ndef _WIN32_WCE */
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

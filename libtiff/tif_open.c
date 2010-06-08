@@ -155,15 +155,6 @@ TIFFClientOpen(
 	int m;
 	const char* cp;
 
-	assert(sizeof(uint8)==1);
-	assert(sizeof(int8)==1);
-	assert(sizeof(uint16)==2);
-	assert(sizeof(int16)==2);
-	assert(sizeof(uint32)==4);
-	assert(sizeof(int32)==4);
-	assert(sizeof(uint64)==8);
-	assert(sizeof(int64)==8);
-
 	m = _TIFFgetMode(mode, module);
 	if (m == -1)
 		goto bad2;
@@ -222,18 +213,16 @@ TIFFClientOpen(
 	 * TIFF but only supports some braindead idea of what the
 	 * vendor thinks TIFF is):
 	 *
-	 * 'l' use little-endian byte order for creating a file
-	 * 'b' use big-endian byte order for creating a file
-	 * 'L' read/write information using LSB2MSB bit order
-	 * 'B' read/write information using MSB2LSB bit order
-	 * 'H' read/write information using host bit order
-	 * 'M' enable use of memory-mapped files when supported
-	 * 'm' disable use of memory-mapped files
-	 * 'C' enable strip chopping support when reading
-	 * 'c' disable strip chopping support
-	 * 'h' read TIFF header only, do not load the first IFD
-	 * '4' ClassicTIFF for creating a file (default)
-	 * '8' BigTIFF for creating a file
+	 * 'l'		use little-endian byte order for creating a file
+	 * 'b'		use big-endian byte order for creating a file
+	 * 'L'		read/write information using LSB2MSB bit order
+	 * 'B'		read/write information using MSB2LSB bit order
+	 * 'H'		read/write information using host bit order
+	 * 'M'		enable use of memory-mapped files when supported
+	 * 'm'		disable use of memory-mapped files
+	 * 'C'		enable strip chopping support when reading
+	 * 'c'		disable strip chopping support
+	 * 'h'		read TIFF header only, do not load the first IFD
 	 *
 	 * The use of the 'l' and 'b' flags is strongly discouraged.
 	 * These flags are provided solely because numerous vendors,
@@ -311,16 +300,12 @@ TIFFClientOpen(
 		case 'h':
 			tif->tif_flags |= TIFF_HEADERONLY;
 			break;
-		case '8':
-			if (m&O_CREAT)
-				tif->tif_flags |= TIFF_BIGTIFF;
-			break;
 		}
 	/*
 	 * Read in TIFF header.
 	 */
 	if (tif->tif_mode & O_TRUNC ||
-	    !ReadOK(tif, &tif->tif_header, sizeof (TIFFHeaderClassic))) {
+	    !ReadOK(tif, &tif->tif_header, sizeof (TIFFHeader))) {
 		if (tif->tif_mode == O_RDONLY) {
 			TIFFErrorExt(tif->tif_clientdata, name,
 				     "Cannot read TIFF header");
@@ -330,42 +315,28 @@ TIFFClientOpen(
 		 * Setup header and write.
 		 */
 #ifdef WORDS_BIGENDIAN
-		tif->tif_header.common.tiff_magic = tif->tif_flags & TIFF_SWAB
+		tif->tif_header.tiff_magic = tif->tif_flags & TIFF_SWAB
 		    ? TIFF_LITTLEENDIAN : TIFF_BIGENDIAN;
 #else
-		tif->tif_header.common.tiff_magic = tif->tif_flags & TIFF_SWAB
+		tif->tif_header.tiff_magic = tif->tif_flags & TIFF_SWAB
 		    ? TIFF_BIGENDIAN : TIFF_LITTLEENDIAN;
 #endif
-		if (!(tif->tif_flags&TIFF_BIGTIFF))
-		{
-			tif->tif_header.common.tiff_version = TIFF_VERSION_CLASSIC;
-			tif->tif_header.classic.tiff_diroff = 0;
-			if (tif->tif_flags & TIFF_SWAB)
-				TIFFSwabShort(&tif->tif_header.common.tiff_version);
-			tif->tif_header_size = sizeof(TIFFHeaderClassic);
-		}
-		else
-		{
-			tif->tif_header.common.tiff_version = TIFF_VERSION_BIG;
-			tif->tif_header.big.tiff_offsetsize = 8;
-			tif->tif_header.big.tiff_unused = 0;
-			tif->tif_header.big.tiff_diroff = 0;
-			if (tif->tif_flags & TIFF_SWAB)
-			{
-				TIFFSwabShort(&tif->tif_header.common.tiff_version);
-				TIFFSwabShort(&tif->tif_header.big.tiff_offsetsize);
-			}
-			tif->tif_header_size = sizeof (TIFFHeaderBig);
-		}
-		/*
-		 * The doc for "fopen" for some STD_C_LIBs says that if you
-		 * open a file for modify ("+"), then you must fseek (or
-		 * fflush?) between any freads and fwrites.  This is not
-		 * necessary on most systems, but has been shown to be needed
-		 * on Solaris.
-		 */
-		TIFFSeekFile( tif, 0, SEEK_SET );
-		if (!WriteOK(tif, &tif->tif_header, tif->tif_header_size)) {
+		tif->tif_header.tiff_version = TIFF_VERSION;
+		if (tif->tif_flags & TIFF_SWAB)
+			TIFFSwabShort(&tif->tif_header.tiff_version);
+		tif->tif_header.tiff_diroff = 0;	/* filled in later */
+
+
+                /*
+                 * The doc for "fopen" for some STD_C_LIBs says that if you 
+                 * open a file for modify ("+"), then you must fseek (or 
+                 * fflush?) between any freads and fwrites.  This is not
+                 * necessary on most systems, but has been shown to be needed
+                 * on Solaris. 
+                 */
+                TIFFSeekFile( tif, 0, SEEK_SET );
+               
+		if (!WriteOK(tif, &tif->tif_header, sizeof (TIFFHeader))) {
 			TIFFErrorExt(tif->tif_clientdata, name,
 				     "Error writing TIFF header");
 			goto bad;
@@ -373,7 +344,7 @@ TIFFClientOpen(
 		/*
 		 * Setup the byte order handling.
 		 */
-		TIFFInitOrder(tif, tif->tif_header.common.tiff_magic);
+		TIFFInitOrder(tif, tif->tif_header.tiff_magic);
 		/*
 		 * Setup default directory.
 		 */
@@ -388,14 +359,14 @@ TIFFClientOpen(
 	/*
 	 * Setup the byte order handling.
 	 */
-	if (tif->tif_header.common.tiff_magic != TIFF_BIGENDIAN &&
-	    tif->tif_header.common.tiff_magic != TIFF_LITTLEENDIAN
+	if (tif->tif_header.tiff_magic != TIFF_BIGENDIAN &&
+	    tif->tif_header.tiff_magic != TIFF_LITTLEENDIAN
 #if MDI_SUPPORT
 	    &&
 #if HOST_BIGENDIAN
-	    tif->tif_header.common.tiff_magic != MDI_BIGENDIAN
+	    tif->tif_header.tiff_magic != MDI_BIGENDIAN
 #else
-	    tif->tif_header.common.tiff_magic != MDI_LITTLEENDIAN
+	    tif->tif_header.tiff_magic != MDI_LITTLEENDIAN
 #endif
 	    ) {
 		TIFFErrorExt(tif->tif_clientdata, name,
@@ -405,58 +376,35 @@ TIFFClientOpen(
 		TIFFErrorExt(tif->tif_clientdata, name,
 			     "Not a TIFF file, bad magic number %d (0x%x)",
 #endif
-		    tif->tif_header.common.tiff_magic,
-		    tif->tif_header.common.tiff_magic);
+		    tif->tif_header.tiff_magic,
+		    tif->tif_header.tiff_magic);
 		goto bad;
 	}
-	TIFFInitOrder(tif, tif->tif_header.common.tiff_magic);
-	if (tif->tif_flags & TIFF_SWAB) 
-		TIFFSwabShort(&tif->tif_header.common.tiff_version);
-	if ((tif->tif_header.common.tiff_version != TIFF_VERSION_CLASSIC)&&
-	    (tif->tif_header.common.tiff_version != TIFF_VERSION_BIG)) {
+	TIFFInitOrder(tif, tif->tif_header.tiff_magic);
+	/*
+	 * Swap header if required.
+	 */
+	if (tif->tif_flags & TIFF_SWAB) {
+		TIFFSwabShort(&tif->tif_header.tiff_version);
+		TIFFSwabLong(&tif->tif_header.tiff_diroff);
+	}
+	/*
+	 * Now check version (if needed, it's been byte-swapped).
+	 * Note that this isn't actually a version number, it's a
+	 * magic number that doesn't change (stupid).
+	 */
+	if (tif->tif_header.tiff_version == TIFF_BIGTIFF_VERSION) {
+		TIFFErrorExt(tif->tif_clientdata, name,
+                          "This is a BigTIFF file.  This format not supported\n"
+                          "by this version of libtiff." );
+		goto bad;
+	}
+	if (tif->tif_header.tiff_version != TIFF_VERSION) {
 		TIFFErrorExt(tif->tif_clientdata, name,
 		    "Not a TIFF file, bad version number %d (0x%x)",
-		    tif->tif_header.common.tiff_version,
-		    tif->tif_header.common.tiff_version);
+		    tif->tif_header.tiff_version,
+		    tif->tif_header.tiff_version);
 		goto bad;
-	}
-	if (tif->tif_header.common.tiff_version == TIFF_VERSION_CLASSIC)
-	{
-		if (tif->tif_flags & TIFF_SWAB)
-			TIFFSwabLong(&tif->tif_header.classic.tiff_diroff);
-		tif->tif_header_size = sizeof(TIFFHeaderClassic);
-	}
-	else
-	{
-		if (!ReadOK(tif, ((uint8*)(&tif->tif_header) + sizeof(TIFFHeaderClassic)), (sizeof(TIFFHeaderBig)-sizeof(TIFFHeaderClassic))))
-		{
-			TIFFErrorExt(tif->tif_clientdata, name,
-				     "Cannot read TIFF header");
-			goto bad;
-		}
-		if (tif->tif_flags & TIFF_SWAB)
-		{
-			TIFFSwabShort(&tif->tif_header.big.tiff_offsetsize);
-			TIFFSwabLong8(&tif->tif_header.big.tiff_diroff);
-		}
-		if (tif->tif_header.big.tiff_offsetsize != 8)
-		{
-			TIFFErrorExt(tif->tif_clientdata, name,
-			    "Not a TIFF file, bad BigTIFF offsetsize %d (0x%x)",
-			    tif->tif_header.big.tiff_offsetsize,
-			    tif->tif_header.big.tiff_offsetsize);
-			goto bad;
-		}
-		if (tif->tif_header.big.tiff_unused != 0)
-		{
-			TIFFErrorExt(tif->tif_clientdata, name,
-			    "Not a TIFF file, bad BigTIFF unused %d (0x%x)",
-			    tif->tif_header.big.tiff_unused,
-			    tif->tif_header.big.tiff_unused);
-			goto bad;
-		}
-		tif->tif_header_size = sizeof(TIFFHeaderBig);
-		tif->tif_flags |= TIFF_BIGTIFF;
 	}
 	tif->tif_flags |= TIFF_MYBUFFER;
 	tif->tif_rawcp = tif->tif_rawdata = 0;
@@ -476,10 +424,7 @@ TIFFClientOpen(
 	 */
 	switch (mode[0]) {
 	case 'r':
-		if (!(tif->tif_flags&TIFF_BIGTIFF))
-			tif->tif_nextdiroff = tif->tif_header.classic.tiff_diroff;
-		else
-			tif->tif_nextdiroff = tif->tif_header.big.tiff_diroff;
+		tif->tif_nextdiroff = tif->tif_header.tiff_diroff;
 		/*
 		 * Try to use a memory-mapped file if the client
 		 * has not explicitly suppressed usage with the
@@ -674,7 +619,7 @@ TIFFIsMSB2LSB(TIFF* tif)
 int
 TIFFIsBigEndian(TIFF* tif)
 {
-	return (tif->tif_header.common.tiff_magic == TIFF_BIGENDIAN);
+	return (tif->tif_header.tiff_magic == TIFF_BIGENDIAN);
 }
 
 /*
@@ -741,3 +686,10 @@ TIFFGetUnmapFileProc(TIFF* tif)
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

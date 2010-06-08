@@ -827,3 +827,10 @@ const double array_double2[YSIZE * XSIZE] =
 const size_t array_double2_size = sizeof(array_double2);
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

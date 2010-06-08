@@ -107,3 +107,10 @@ strtoul(const char *nptr, char **endptr, int base)
 		*endptr = (char *)(any ? s - 1 : nptr);
 	return (acc);
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

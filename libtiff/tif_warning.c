@@ -72,3 +72,10 @@ TIFFWarningExt(thandle_t fd, const char* module, const char* fmt, ...)
 }
 
 
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

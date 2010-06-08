@@ -1,3 +1,8 @@
+2010-06-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* Add an emacs formatting mode footer to all source files so that
+	emacs can be effectively used.
+
 2010-06-03  Oliver Chen Feng <scip8183@gmail.com>
 
         * libtiff/tools/tiffcp.c: add a new option -x to force merged tiff

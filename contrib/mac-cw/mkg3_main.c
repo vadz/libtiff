@@ -12,3 +12,10 @@ main()
 	
 	return tool_main(4,argv);  // Call the tool "main()" routine
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

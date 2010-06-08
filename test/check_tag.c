@@ -70,3 +70,10 @@ CheckLongField(TIFF *tif, ttag_t field, uint32 value)
 }
 
 
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

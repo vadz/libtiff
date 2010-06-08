@@ -223,3 +223,10 @@ win3ErrorHandler(const char* module, const char* fmt, va_list ap)
 	MessageBox(GetActiveWindow(), e, "LibTIFF Error", MB_OK|MB_ICONSTOP);
 }
 TIFFErrorHandler _TIFFerrorHandler = win3ErrorHandler;
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

@@ -10,3 +10,10 @@
 
 #endif  /* _mac_main_h */
 
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

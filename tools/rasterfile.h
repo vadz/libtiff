@@ -40,3 +40,10 @@ struct rasterfile {
  *   compatibility, code reading rasterfiles must be prepared to compute the
  *   true length from the width, height, and depth fields.
  */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

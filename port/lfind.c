@@ -60,3 +60,10 @@ lfind(const void *key, const void *base, size_t *nmemb, size_t size,
 
 	return NULL;
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

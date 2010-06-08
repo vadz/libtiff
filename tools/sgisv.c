@@ -307,3 +307,10 @@ tiffsv(char* name, int x1, int x2, int y1, int y2)
 	(void) TIFFClose(tif);
 	_TIFFfree((char *)scrbuf);
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */
