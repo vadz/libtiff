@@ -332,3 +332,10 @@ void TIFFDestroyOvrCache( TIFFOvrCache * psCache )
     _TIFFfree( psCache->pabyRow2Blocks );
     _TIFFfree( psCache );
 }
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

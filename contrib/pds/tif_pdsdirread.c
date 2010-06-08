@@ -1122,3 +1122,10 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	td->td_stripoffset = newoffsets;
 }
 #endif /* STRIPCHOP_SUPPORT */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

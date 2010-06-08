@@ -890,3 +890,10 @@ void TIFFBuildOverviews( TIFF *hTIFF, int nOverviews, int * panOvList,
 }
 
 
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */
