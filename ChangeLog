@@ -1,5 +1,8 @@
 2010-06-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_aux.c (_TIFFCheckRealloc): Produce a fully detailed
+	error message string.
+
 	* Add an emacs formatting mode footer to all source files so that
 	emacs can be effectively used.
 

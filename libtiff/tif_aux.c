@@ -48,7 +48,9 @@ _TIFFCheckRealloc(TIFF* tif, tdata_t buffer,
 
 	if (cp == NULL)
 		TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-			     "No space %s", what);
+			     "Failed to allocate memory for %s "
+			     "(%ld elements of %ld bytes each)",
+			     what,(long) nmemb, (long) elem_size);
 
 	return cp;
 }
