@@ -1,5 +1,11 @@
 2010-06-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_dir.h: Restore ReferenceBlackWhite as a non-custom
+	field.  This avoids a multi-thread reentrancy problem as well as
+	fixing output of wrong tag value due to redundant definitions for
+	the same tag in the tiffFieldInfo[] array.  Resolves
+	http://bugzilla.maptools.org/show_bug.cgi?id=2185
+
 	* libtiff/tif_fax3.c (Fax3SetupState): Yesterday's fix for
 	CVE-2010-1411 was not complete.
 
