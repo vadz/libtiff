@@ -607,7 +607,8 @@ TIFFReadBufferSetup(TIFF* tif, tdata_t bp, tsize_t size)
 		tif->tif_flags &= ~TIFF_MYBUFFER;
 	} else {
 		tif->tif_rawdatasize = TIFFroundup(size, 1024);
-		tif->tif_rawdata = (tidata_t) _TIFFmalloc(tif->tif_rawdatasize);
+		if (tif->tif_rawdatasize > 0)
+			tif->tif_rawdata = (tidata_t) _TIFFmalloc(tif->tif_rawdatasize);
 		tif->tif_flags |= TIFF_MYBUFFER;
 	}
 	if ((tif->tif_rawdata == NULL) || (tif->tif_rawdatasize == 0)) {

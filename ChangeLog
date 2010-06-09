@@ -1,3 +1,8 @@
+2010-06-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_read.c (TIFFReadBufferSetup): Skip allocating
+	tif_rawdata if tif_rawdatasize becomes zero.
+
 2010-06-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcrop.c: Removed duplicated macros such as
