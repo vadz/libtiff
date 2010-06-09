@@ -1,3 +1,15 @@
+2010-06-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_fax3.c (Fax3SetupState): Yesterday's fix for
+	CVE-2010-1411 was not complete.
+
+	* libtiff/tiffiop.h (TIFFSafeMultiply): New macro to safely
+	multiply two integers.  Returns zero if there is an integer
+	overflow.
+
+	* tools/tiffcp.c (main): tiffcp should not leak memory if an error
+	is reported when reading the input file.
+
 2010-06-08  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* Update libtool to version 2.2.8.

@@ -269,6 +269,9 @@ struct tiff {
 #define TIFFhowmany8_64(x) (((x)&0x07)?((uint64)(x)>>3)+1:(uint64)(x)>>3)
 #define TIFFroundup_64(x, y) (TIFFhowmany_64(x,y)*(y))
 
+/* Safe multiply which returns zero if there is an integer overflow */
+#define TIFFSafeMultiply(t,v,m) ((((t)v*m)/(t)m == (t)v) ? (t)v*m : (t)0)
+
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))
 #define TIFFmin(A,B) ((A)<(B)?(A):(B))
 
