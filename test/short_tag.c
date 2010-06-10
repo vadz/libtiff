@@ -39,6 +39,7 @@
 
 #include "tiffio.h"
 
+extern int CheckLongField(TIFF *, ttag_t, uint32);
 extern int CheckShortField(TIFF *, ttag_t, uint16);
 
 const char	*filename = "short_test.tiff";

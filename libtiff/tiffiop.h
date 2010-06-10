@@ -243,7 +243,7 @@ struct tiff {
 #define	TIFFroundup(x, y) (TIFFhowmany(x,y)*(y))
 
 /* Safe multiply which returns zero if there is an integer overflow */
-#define TIFFSafeMultiply(t,v,m) ((((t)v*m)/(t)m == (t)v) ? (t)v*m : (t)0)
+#define TIFFSafeMultiply(t,v,m) ((((t)m != (t)0) && (((t)v*m)/(t)m == (t)v)) ? (t)v*m : (t)0)
 
 #define TIFFmax(A,B) ((A)>(B)?(A):(B))
 #define TIFFmin(A,B) ((A)<(B)?(A):(B))

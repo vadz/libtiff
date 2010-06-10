@@ -1,3 +1,8 @@
+2010-06-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffiop.h (TIFFSafeMultiply): Work properly if
+	multiplier is zero.
+
 2010-06-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dir.h: Restore ReferenceBlackWhite as a non-custom
