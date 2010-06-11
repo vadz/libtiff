@@ -1,5 +1,9 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcp.c (tiffcp): Applied Tom Lane's patch to reject
+	YCbCr subsampled data since tiffcp currently doesn't support it.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2097
+
 	* Update libtool to version 2.2.10.
 
 2010-06-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
