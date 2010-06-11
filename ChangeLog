@@ -1,3 +1,7 @@
+2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* Update libtool to version 2.2.10.
+
 2010-06-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tiffiop.h (TIFFSafeMultiply): Work properly if
