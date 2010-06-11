@@ -1,5 +1,12 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcrop.c: Applied patch from Richard Nolde: Corrected
+	European page size dimensions.  Added an option to allow the user
+	to specify a custom page size on the command line.  Fix the case
+	where a page size specified with a fractional part was being
+	coerced to an integer by retyping the variables that define the
+	paper size.
+
 	* html/index.html: Update for the 3.9.3 release.
 
 	* tools/tiffcp.c (tiffcp): Applied Tom Lane's patch to reject
