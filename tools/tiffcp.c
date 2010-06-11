@@ -558,34 +558,17 @@ tiffcp(TIFF* in, TIFF* out)
 	copyFunc cf;
 	uint32 width, length;
 	struct cpTag* p;
-	uint16 input_compression, input_photometric;
 
 	CopyField(TIFFTAG_IMAGEWIDTH, width);
 	CopyField(TIFFTAG_IMAGELENGTH, length);
 	CopyField(TIFFTAG_BITSPERSAMPLE, bitspersample);
 	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
-
-	/*
-	  For OJPEG we need to read the subsampled YCbCr data as upsampled
-	  RGB.  Since we don't write OJPEG format, automatically convert OJPEG
-	  format to modern JPEG format.
-	*/
-#if 1
-	if (TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression)
-	    && input_compression == COMPRESSION_OJPEG) {
-		TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
-
-		if (compression == (uint16)-1)
-			compression=COMPRESSION_JPEG;
-	}
-#endif
-
 	if (compression != (uint16)-1)
 		TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
 	else
 		CopyField(TIFFTAG_COMPRESSION, compression);
-	
 	if (compression == COMPRESSION_JPEG) {
+	    uint16 input_compression, input_photometric;
 
             if (TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression)
                  && input_compression == COMPRESSION_JPEG) {
@@ -611,7 +594,6 @@ tiffcp(TIFF* in, TIFF* out)
 			PHOTOMETRIC_LOGL : PHOTOMETRIC_LOGLUV);
 	else
 		CopyTag(TIFFTAG_PHOTOMETRIC, 1, TIFF_SHORT);
-
 	if (fillorder != 0)
 		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
 	else
