@@ -1,5 +1,7 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* html/index.html: Update for the 3.9.3 release.
+
 	* tools/tiffcp.c (tiffcp): Applied Tom Lane's patch to reject
 	YCbCr subsampled data since tiffcp currently doesn't support it.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2097
