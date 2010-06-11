@@ -323,7 +323,9 @@ struct paperdef {
   double asratio;
   };
 
-/* Paper Size       Width   Length  Aspect Ratio */
+/* European page sizes corrected from update sent by 
+ * thomas . jarosch @ intra2net . com on 5/7/2010
+ * Paper Size       Width   Length  Aspect Ratio */
 struct paperdef PaperTable[MAX_PAPERNAMES] = {
   {"default",         8.500,  14.000,  0.607},
   {"pa4",             8.264,  11.000,  0.751},
@@ -348,31 +350,31 @@ struct paperdef PaperTable[MAX_PAPERNAMES] = {
   {"envelope-dl",     4.333,   8.681,  0.499},
   {"envelope-c5",     6.389,   9.028,  0.708},
   {"europostcard",    4.139,   5.833,  0.710},
-  {"a0",             33.111,  46.806,  0.707},
-  {"a1",             23.389,  33.111,  0.706},
-  {"a2",             16.542,  23.389,  0.707},
-  {"a3",             11.694,  16.542,  0.707},
-  {"a4",              8.264,  11.694,  0.707},
-  {"a5",              5.833,   8.264,  0.706},
-  {"a6",              4.125,   5.833,  0.707},
-  {"a7",              2.917,   4.125,  0.707},
-  {"a8",              2.056,   2.917,  0.705},
-  {"a9",              1.458,   2.056,  0.709},
-  {"a10",             1.014,   1.458,  0.695},
-  {"b0",             39.375,  55.667,  0.707},
-  {"b1",             27.833,  39.375,  0.707},
-  {"b2",             19.681,  27.833,  0.707},
-  {"b3",             13.903,  19.681,  0.706},
-  {"b4",              9.847,  13.903,  0.708},
-  {"b5",              6.931,   9.847,  0.704},
-  {"b6",              4.917,   6.931,  0.709},
-  {"c0",             36.097,  51.069,  0.707},
-  {"c1",             25.514,  36.097,  0.707},
-  {"c2",             18.028,  25.514,  0.707},
-  {"c3",             12.750,  18.028,  0.707},
-  {"c4",              9.014,  12.750,  0.707},
-  {"c5",              6.375,   9.014,  0.707},
-  {"c6",              4.486,   6.375,  0.704},
+  {"a0",             33.110,  46.811,  0.707},
+  {"a1",             23.386,  33.110,  0.706},
+  {"a2",             16.535,  23.386,  0.707},
+  {"a3",             11.693,  16.535,  0.707},
+  {"a4",              8.268,  11.693,  0.707},
+  {"a5",              5.827,   8.268,  0.705},
+  {"a6",              4.134,   5.827,  0.709},
+  {"a7",              2.913,   4.134,  0.705},
+  {"a8",              2.047,   2.913,  0.703},
+  {"a9",              1.457,   2.047,  0.712},
+  {"a10",             1.024,   1.457,  0.703},
+  {"b0",             39.370,  55.669,  0.707},
+  {"b1",             27.835,  39.370,  0.707},
+  {"b2",             19.685,  27.835,  0.707},
+  {"b3",             13.898,  19.685,  0.706},
+  {"b4",              9.843,  13.898,  0.708},
+  {"b5",              6.929,   9.843,  0.704},
+  {"b6",              4.921,   6.929,  0.710},
+  {"c0",             36.102,  51.063,  0.707},
+  {"c1",             25.512,  36.102,  0.707},
+  {"c2",             18.031,  25.512,  0.707},
+  {"c3",             12.756,  18.031,  0.707},
+  {"c4",              9.016,  12.756,  0.707},
+  {"c5",              6.378,   9.016,  0.707},
+  {"c6",              4.488,   6.378,  0.704},
   {"",                0.000,   0.000,  1.000},
 };
 
@@ -694,6 +696,8 @@ static   char* stuff[] = {
 " ",
 " -O orient    orientation for output image, portrait, landscape, auto",
 " -P page      page size for output image segments, eg letter, legal, tabloid, etc",
+"              use #.#x#.# to specify a custom page size in the currently defined units",
+"              where #.# represents the width and length",        
 " -S cols:rows Divide the image into equal sized segments using cols across and rows down.",
 " ",
 " -F hor|vert|both",
@@ -957,7 +961,7 @@ static int  readSeparateTilesIntoBuffer (TIFF* in, uint8 *obuf,
     tbuff = (unsigned char *)_TIFFmalloc(tilesize + 8);
     if (!tbuff)
       {
-      TIFFError ("readSeparateStripsIntoBuffer", 
+      TIFFError ("readSeparateTilesIntoBuffer", 
                  "Unable to allocate tile read buffer for sample %d", sample);
       for (i = 0; i < sample; i++)
         _TIFFfree (srcbuffs[i]);
@@ -1522,7 +1526,7 @@ static struct cpTag {
 
 #define	CopyTag(tag, count, type)	cpTag(in, out, tag, count, type)
 
-/* Fucntions written by Richard Nolde, with exceptions noted. */
+/* Functions written by Richard Nolde, with exceptions noted. */
 void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32 *dirnum,
 	                    uint16 *defconfig, uint16 *deffillorder, uint32 *deftilewidth,
                             uint32 *deftilelength, uint32 *defrowsperstrip,
@@ -1894,6 +1898,12 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
 		  }
 		break;
       case 'P': /* page size selection */ 
+	        if (sscanf(optarg, "%lfx%lf", &page->width, &page->length) == 2)
+                  {
+                  strcpy (page->name, "Custom"); 
+                  page->mode |= PAGE_MODE_PAPERSIZE;
+                  break;
+                  }
                 if (get_page_geometry (optarg, page))
                   {
 		  if (!strcmp(optarg, "list"))
@@ -5442,9 +5452,9 @@ computeOutputPixelOffsets (struct crop_mask *crop, struct image_data *image,
                            struct dump_opts* dump)
   {
   double scale;
-  uint32 iwidth, ilength;          /* Input image width and length */
-  uint32 owidth, olength;          /* Output image width and length */
-  uint32 pwidth, plength;          /* Output page width and length */
+  double pwidth, plength;          /* Output page width and length in user units*/
+  uint32 iwidth, ilength;          /* Input image width and length in pixels*/
+  uint32 owidth, olength;          /* Output image width and length in pixels*/
   uint32 orows, ocols;             /* rows and cols for output */
   uint32 hmargin, vmargin;         /* Horizontal and vertical margins */
   uint32 x1, x2, y1, y2, line_bytes;
@@ -5510,7 +5520,7 @@ computeOutputPixelOffsets (struct crop_mask *crop, struct image_data *image,
                    "Hmargin: %3.2f, Vmargin: %3.2f\n",
 	     page->name, page->vres, page->hres,
              page->hmargin, page->vmargin);
-    TIFFError("", "Res_unit: %d, Scale: %3.2f, Page width: %d, length: %d\n", 
+    TIFFError("", "Res_unit: %d, Scale: %3.2f, Page width: %3.2f, length: %3.2f\n", 
            page->res_unit, scale, pwidth, plength);
     }
 
@@ -5699,8 +5709,77 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
     res_unit = RESUNIT_INCH;
   if (!TIFFGetField(in, TIFFTAG_COMPRESSION, &input_compression))
     input_compression = COMPRESSION_NONE;
-  scanlinesize = TIFFScanlineSize(in);
 
+#ifdef DEBUG2
+  char compressionid[16];
+
+  switch (compression)
+    {
+    case COMPRESSION_NONE:	/* 1  dump mode */
+         stcrcpy ("None/dump", compressionid);
+         break;         
+    case COMPRESSION_CCITTRLE:	  /* 2 CCITT modified Huffman RLE */
+         stcrcpy ("Huffman RLE", compressionid);
+         break;         
+    case COMPRESSION_CCITTFAX3:	  /* 3 CCITT Group 3 fax encoding */
+    case COMPRESSION_CCITT_T4:    /* 3 CCITT T.4 (TIFF 6 name) */
+         stcrcpy ("Group3 Fax", compressionid);
+         break;         
+    case COMPRESSION_CCITTFAX4:	  /* 4 CCITT Group 4 fax encoding */
+    case COMPRESSION_CCITT_T6:    /* 4 CCITT T.6 (TIFF 6 name) */
+         stcrcpy ("Group4 Fax", compressionid);
+         break;         
+    case COMPRESSION_LZW:	  /* 5 Lempel-Ziv  & Welch */
+         stcrcpy ("LZW", compressionid);
+         break;         
+    case COMPRESSION_OJPEG:	  /* 6 !6.0 JPEG */
+         stcrcpy ("Old Jpeg", compressionid);
+         break;         
+    case COMPRESSION_JPEG:	  /* 7 %JPEG DCT compression */
+         stcrcpy ("New Jpeg", compressionid);
+         break;         
+    case COMPRESSION_NEXT:	  /* 32766 NeXT 2-bit RLE */
+         stcrcpy ("Next RLE", compressionid);
+         break;         
+    case COMPRESSION_CCITTRLEW:   /* 32771 #1 w/ word alignment */
+         stcrcpy ("CITTRLEW", compressionid);
+         break;         
+    case COMPRESSION_PACKBITS:	  /* 32773 Macintosh RLE */
+         stcrcpy ("Mac Packbits", compressionid);
+         break;         
+    case COMPRESSION_THUNDERSCAN: /* 32809 ThunderScan RLE */
+         stcrcpy ("Thunderscan", compressionid);
+         break;         
+    case COMPRESSION_IT8CTPAD:	  /* 32895 IT8 CT w/padding */
+         stcrcpy ("IT8 padded", compressionid);
+         break;         
+    case COMPRESSION_IT8LW:	  /* 32896 IT8 Linework RLE */
+         stcrcpy ("IT8 RLE", compressionid);
+         break;         
+    case COMPRESSION_IT8MP:	  /* 32897 IT8 Monochrome picture */
+         stcrcpy ("IT8 mono", compressionid);
+         break;         
+    case COMPRESSION_IT8BL:	  /* 32898 IT8 Binary line art */
+         stcrcpy ("IT8 lineart", compressionid);
+         break;         
+    case COMPRESSION_PIXARFILM:	  /* 32908 Pixar companded 10bit LZW */
+         stcrcpy ("Pixar 10 bit", compressionid);
+         break;         
+    case COMPRESSION_PIXARLOG:	  /* 32909 Pixar companded 11bit ZIP */
+         stcrcpy ("Pixar 11bit", compressionid);
+         break;         
+    case COMPRESSION_DEFLATE:	  /* 32946 Deflate compression */
+         stcrcpy ("Deflate", compressionid);
+         break;         
+    case COMPRESSION_ADOBE_DEFLATE: /* 8 Deflate compression */
+         stcrcpy ("Adobe deflate", compressionid);
+         break;         
+    default:
+         stcrcpy ("None/unknown", compressionid);
+         break;         
+    }
+#endif
+  scanlinesize = TIFFScanlineSize(in);
   image->bps = bps;
   image->spp = spp;
   image->planar = planar;
@@ -5710,6 +5789,55 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
   image->yres = yres;
   image->res_unit = res_unit;
   image->photometric = photometric;
+
+#ifdef DEBUG2
+  char photmetricid[12];
+
+  switch (photometric)
+    {
+    case PHOTOMETRIC_MINISWHITE:
+         strcpy (photometricid, "MinIsWhite");
+         break;
+    case PHOTOMETRIC_MINISBLACK:
+         strcpy (photometricid, "MinIsBlack");
+         break;
+    case PHOTOMETRIC_RGB:
+         strcpy (photometricid, "RGB");
+         break;
+    case PHOTOMETRIC_PALETTE:
+         strcpy (photometricid, "Palette");
+         break;
+    case PHOTOMETRIC_MASK:
+         strcpy (photometricid, "Mask");
+         break;
+    case PHOTOMETRIC_SEPARATED:
+         strcpy (photometricid, "Separated");
+         break;
+    case PHOTOMETRIC_YCBCR:
+         strcpy (photometricid, "YCBCR");
+         break;
+    case PHOTOMETRIC_CIELAB:
+         strcpy (photometricid, "CIELab");
+         break;
+    case PHOTOMETRIC_ICCLAB:
+         strcpy (photometricid, "ICCLab");
+         break;
+    case PHOTOMETRIC_ITULAB:
+         strcpy (photometricid, "ITULab");
+         break;
+    case PHOTOMETRIC_LOGL:
+         strcpy (photometricid, "LogL");
+         break;
+    case PHOTOMETRIC_LOGLUV:
+         strcpy (photometricid, "LOGLuv");
+         break;
+    default:
+         strcpy (photometricid, "Unknown");
+         break;
+    }
+  TIFFError("loadImage", "Input photometric interpretation %s", photometricid);
+#endif
+
   image->orientation = orientation;
   switch (orientation)
     {
@@ -6776,6 +6904,12 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
     else
       TIFFSetField(out, TIFFTAG_PHOTOMETRIC, image->photometric);
     }
+
+#ifdef DEBUG2
+  TIFFError("writeSingleSection", "Input photometric: %s",
+	    (input_photmetric == PHOTMETRIC_RGB) ? "RGB" :
+	    ((input_photometric == PHOTOMETRIC_YCBCR) ?  "YCbCr" : "Not RGB or YCrCr"));
+#endif
 
   if (((input_photometric == PHOTOMETRIC_LOGL) ||
        (input_photometric ==  PHOTOMETRIC_LOGLUV)) &&
