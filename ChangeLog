@@ -1,5 +1,7 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 4.0.0alpha6 released.
+
 	* tools/tiffcrop.c: Applied patch from Richard Nolde: Corrected
 	European page size dimensions.  Added an option to allow the user
 	to specify a custom page size on the command line.  Fix the case
