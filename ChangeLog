@@ -1,5 +1,7 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 3.9.3 released.
+
 	* tools/tiffcp.c (tiffcp): Applied Tom Lane's patch to reject
 	YCbCr subsampled data since tiffcp currently doesn't support it.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2097
