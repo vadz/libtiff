@@ -125,6 +125,8 @@ main(int argc, char* argv[])
     return (0);
 }
 
+#define multiply(a,b) TIFFSafeMultiply(tsize_t,a,b)
+
 static int
 cvt_by_tile( TIFF *in, TIFF *out )
 
@@ -134,6 +136,7 @@ cvt_by_tile( TIFF *in, TIFF *out )
     uint32  tile_width, tile_height;
     uint32  row, col;
     uint32  *wrk_line;
+    tsize_t raster_size;
     int	    ok = 1;
 
     TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
@@ -151,7 +154,14 @@ cvt_by_tile( TIFF *in, TIFF *out )
     /*
      * Allocate tile buffer
      */
-    raster = (uint32*)_TIFFmalloc(tile_width * tile_height * sizeof (uint32));
+    raster_size = multiply(multiply(tile_width, tile_height), sizeof (uint32));
+    if (!raster_size) {
+	TIFFError(TIFFFileName(in),
+		  "Can't allocate buffer for raster of size %lux%lu",
+		  (unsigned long) tile_width, (unsigned long) tile_height);
+	return (0);
+    }
+    raster = (uint32*)_TIFFmalloc(raster_size);
     if (raster == 0) {
         TIFFError(TIFFFileName(in), "No space for raster buffer");
         return (0);
@@ -159,7 +169,7 @@ cvt_by_tile( TIFF *in, TIFF *out )
 
     /*
      * Allocate a scanline buffer for swapping during the vertical
-     * mirroring pass.
+     * mirroring pass.  (Request can't overflow given prior checks.)
      */
     wrk_line = (uint32*)_TIFFmalloc(tile_width * sizeof (uint32));
     if (!wrk_line) {
@@ -236,6 +246,7 @@ cvt_by_strip( TIFF *in, TIFF *out )
     uint32  width, height;		/* image width & height */
     uint32  row;
     uint32  *wrk_line;
+    tsize_t raster_size;
     int	    ok = 1;
 
     TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
@@ -251,7 +262,14 @@ cvt_by_strip( TIFF *in, TIFF *out )
     /*
      * Allocate strip buffer
      */
-    raster = (uint32*)_TIFFmalloc(width * rowsperstrip * sizeof (uint32));
+    raster_size = multiply(multiply(width, rowsperstrip), sizeof (uint32));
+    if (!raster_size) {
+	TIFFError(TIFFFileName(in),
+		  "Can't allocate buffer for raster of size %lux%lu",
+		  (unsigned long) width, (unsigned long) rowsperstrip);
+	return (0);
+    }
+    raster = (uint32*)_TIFFmalloc(raster_size);
     if (raster == 0) {
         TIFFError(TIFFFileName(in), "No space for raster buffer");
         return (0);
@@ -259,7 +277,7 @@ cvt_by_strip( TIFF *in, TIFF *out )
 
     /*
      * Allocate a scanline buffer for swapping during the vertical
-     * mirroring pass.
+     * mirroring pass.  (Request can't overflow given prior checks.)
      */
     wrk_line = (uint32*)_TIFFmalloc(width * sizeof (uint32));
     if (!wrk_line) {

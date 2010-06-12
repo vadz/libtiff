@@ -1,5 +1,14 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiff2rgba.c: Applied portion of patch (from Tom Lane)
+	which was left out in order to fully resolve "CVE-2009-2347
+	libtiff: integer overflows in various inter-color space conversion
+	tools". http://bugzilla.maptools.org/show_bug.cgi?id=2079
+
+	* libtiff/tiffiop.h (TIFFSafeMultiply): Need more castings to
+	avoid compiler warnings if parameter types are not sign
+	consistent.
+
 	* tools/tiffcrop.c: Applied patch from Richard Nolde: Corrected
 	European page size dimensions.  Added an option to allow the user
 	to specify a custom page size on the command line.  Fix the case
