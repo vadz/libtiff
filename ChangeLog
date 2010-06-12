@@ -1,5 +1,9 @@
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tiffiop.h (TIFFSafeMultiply): Need more castings to
+	avoid compiler warnings if parameter types are not sign
+	consistent.
+
 	* libtiff 4.0.0alpha6 released.
 
 	* tools/tiffcrop.c: Applied patch from Richard Nolde: Corrected
