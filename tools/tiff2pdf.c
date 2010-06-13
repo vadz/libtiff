@@ -1917,6 +1917,7 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 				t2p->tiff_datasize -=4; /* don't use SOI or EOI of strip */
 			}
 			t2p->tiff_datasize +=2; /* use EOI of last strip */
+			return;
 		}
 #endif
 		(void) 0;
@@ -2104,7 +2105,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		if (t2p->pdf_compression == T2P_COMPRESS_ZIP) {
 			buffer = (unsigned char*)
 				_TIFFmalloc(t2p->tiff_datasize);
-                        memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer == NULL){
 				TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2113,6 +2113,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
 			}
+                        memset(buffer, 0, t2p->tiff_datasize);
 			TIFFReadRawStrip(input, 0, (tdata_t) buffer,
 					 t2p->tiff_datasize);
 			if (t2p->tiff_fillorder==FILLORDER_LSB2MSB) {
@@ -2131,7 +2132,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			if(t2p->tiff_dataoffset != 0) {
 				buffer = (unsigned char*)
 					_TIFFmalloc(t2p->tiff_datasize);
-                                memset(buffer, 0, t2p->tiff_datasize);
 				if(buffer == NULL) {
 					TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2140,6 +2140,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 					t2p->t2p_error = T2P_ERR_ERROR;
 					return(0);
 				}
+                                memset(buffer, 0, t2p->tiff_datasize);
 				if(t2p->pdf_ojpegiflength==0){
 					inputoffset=t2pSeekFile(input, 0,
 								 SEEK_CUR);
@@ -2207,7 +2208,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				}
 				buffer = (unsigned char*)
 					_TIFFmalloc(t2p->tiff_datasize);
-                                memset(buffer, 0, t2p->tiff_datasize);
 				if(buffer==NULL){
 					TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2216,6 +2216,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 					t2p->t2p_error = T2P_ERR_ERROR;
 					return(0);
 				}
+                                memset(buffer, 0, t2p->tiff_datasize);
 				_TIFFmemcpy(buffer, t2p->pdf_ojpegdata, t2p->pdf_ojpegdatalength);
 				bufferoffset=t2p->pdf_ojpegdatalength;
 				stripcount=TIFFNumberOfStrips(input);
@@ -2250,7 +2251,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			uint32 count = 0;
 			buffer = (unsigned char*)
 				_TIFFmalloc(t2p->tiff_datasize);
-                        memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2259,6 +2259,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
 			}
+                        memset(buffer, 0, t2p->tiff_datasize);
 			if (TIFFGetField(input, TIFFTAG_JPEGTABLES, &count, &jpt) != 0) {
 				if(count > 4) {
 					_TIFFmemcpy(buffer, jpt, count);
@@ -2312,7 +2313,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 
 	if(t2p->pdf_sample==T2P_SAMPLE_NOTHING){
 		buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
-                memset(buffer, 0, t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2321,6 +2321,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return(0);
 		}
+                memset(buffer, 0, t2p->tiff_datasize);
 		stripsize=TIFFStripSize(input);
 		stripcount=TIFFNumberOfStrips(input);
 		for(i=0;i<stripcount;i++){
@@ -2350,7 +2351,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			stripcount=sepstripcount/t2p->tiff_samplesperpixel;
 			
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
-                        memset(buffer, 0, t2p->tiff_datasize);
 			if(buffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2359,6 +2359,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
 			}
+                        memset(buffer, 0, t2p->tiff_datasize);
 			samplebuffer = (unsigned char*) _TIFFmalloc(stripsize);
 			if(samplebuffer==NULL){
 				TIFFError(TIFF2PDF_MODULE, 
@@ -2399,7 +2400,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		}
 
 		buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
-                memset(buffer, 0, t2p->tiff_datasize);
 		if(buffer==NULL){
 			TIFFError(TIFF2PDF_MODULE, 
 	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
@@ -2408,6 +2408,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			t2p->t2p_error = T2P_ERR_ERROR;
 			return(0);
 		}
+                memset(buffer, 0, t2p->tiff_datasize);
 		stripsize=TIFFStripSize(input);
 		stripcount=TIFFNumberOfStrips(input);
 		for(i=0;i<stripcount;i++){
@@ -5250,7 +5251,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 		TIFFError(
 			TIFF2PDF_MODULE, 
 			"Can't allocate %u bytes of memory for t2p_write_pdf", 
-			t2p->pdf_xrefcount * sizeof(uint32) );
+			(unsigned int) (t2p->pdf_xrefcount * sizeof(uint32)) );
 		return(written);
 	}
 	t2p->pdf_xrefcount=0;

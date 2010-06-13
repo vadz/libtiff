@@ -1,3 +1,12 @@
+2010-06-13  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tiff2pdf.c: Fix assorted bugs in tiff2pdf: missing "return" 
+	in t2p_read_tiff_size() causes t2p->tiff_datasize to be set entirely 
+	wrong for COMPRESSION_JPEG case, resulting in memory stomp if actual 
+	size is larger.  Also, there are a bunch of places that try to 
+	memset() a malloc'd buffer before checking for malloc failure, which 
+	would result in core dump if there actually were a failure. (#2211)
+
 2010-06-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tiffiop.h (TIFFSafeMultiply): Need more castings to
