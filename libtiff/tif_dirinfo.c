@@ -271,7 +271,7 @@ td_lfind(const void *key, const void *base, size_t *nmemb, size_t size,
 
     end = (char *)base + *nmemb * size;
     for (element = (char *)base; element < end; element += size)
-        if (!compar(element, key))		/* key found */
+        if (!compar(key, element))		/* key found */
             return element;
 
     return NULL;

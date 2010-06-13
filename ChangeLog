@@ -1,6 +1,8 @@
 2010-06-13  Frank Warmerdam  <warmerdam@pobox.com>
 
-	* tiff2pdf.c: Fix assorted bugs in tiff2pdf: missing "return" 
+	* libtiff/tif_dirinfo.c: Fix invocation of tag compare function (#2201)
+
+	* tools/tiff2pdf.c: Fix assorted bugs in tiff2pdf: missing "return" 
 	in t2p_read_tiff_size() causes t2p->tiff_datasize to be set entirely 
 	wrong for COMPRESSION_JPEG case, resulting in memory stomp if actual 
 	size is larger.  Also, there are a bunch of places that try to 
