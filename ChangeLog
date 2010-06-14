@@ -1,5 +1,8 @@
 2010-06-13  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirread.c: Fixed bad handling of out of order tags
+	definated late by a codec (#2210)
+
 	* libtiff/tif_dirread.c: Fixed inadequate validation of the 
 	SubjectDistance field (#2212).
 
