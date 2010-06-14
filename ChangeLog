@@ -1,5 +1,8 @@
 2010-06-13  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirread.c: Fixed inadequate validation of the 
+	SubjectDistance field (#2212).
+
 	* tiff2pdf.c: Fix assorted bugs in tiff2pdf: missing "return" 
 	in t2p_read_tiff_size() causes t2p->tiff_datasize to be set entirely 
 	wrong for COMPRESSION_JPEG case, resulting in memory stomp if actual 

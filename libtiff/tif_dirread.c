@@ -1919,6 +1919,13 @@ TIFFFetchSubjectDistance(TIFF* tif, TIFFDirEntry* dir)
 	float v;
 	int ok = 0;
 
+    if( dir->tdir_count != 1 || dir->tdir_type != TIFF_RATIONAL )
+    {
+		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
+                       "incorrect count or type for SubjectDistance, tag ignored" );
+		return (0);
+    }
+
 	if (TIFFFetchData(tif, dir, (char *)l)
 	    && cvtRational(tif, dir, l[0], l[1], &v)) {
 		/*
