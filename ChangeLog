@@ -1,5 +1,11 @@
 2010-06-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcrop.c: Patch from Richard Nolde. Reject YCbCr
+	subsampled data since tiffcrop currently doesn't support it.  Fix
+	JPEG support.
+
+2010-06-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
 	* libtiff 3.9.4 released.
 
 2010-06-13  Frank Warmerdam  <warmerdam@pobox.com>
