@@ -195,7 +195,7 @@ dump(int fd, off_t diroff)
 	 */
 	if (hdr.tiff_magic != TIFF_BIGENDIAN && hdr.tiff_magic != TIFF_LITTLEENDIAN &&
 #if HOST_BIGENDIAN
-	    // MDI is sensitive to the host byte order, unlike TIFF
+	    /* MDI is sensitive to the host byte order, unlike TIFF */
 	    MDI_BIGENDIAN != hdr.tiff_magic )
 #else
 	    MDI_LITTLEENDIAN != hdr.tiff_magic )
