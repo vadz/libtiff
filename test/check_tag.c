@@ -29,6 +29,8 @@
  * Module to test LONG tags read/write functions.
  */
 
+#include "tif_config.h"
+
 #include "tiffio.h"
 
 int
