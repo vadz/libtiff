@@ -4803,7 +4803,7 @@ tsize_t t2p_write_pdf_transfer_dict(T2P* t2p, TIFF* output, uint16 i){
 	tsize_t written=0;
 	char buffer[32];
 	int buflen=0;
-	(void)i; // XXX
+	(void)i; /* XXX */
 
 	written += t2pWriteFile(output, (tdata_t) "/FunctionType 0 \n", 17);
 	written += t2pWriteFile(output, (tdata_t) "/Domain [0.0 1.0] \n", 19);

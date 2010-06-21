@@ -169,7 +169,7 @@ dump(int fd, uint64 diroff)
 		ReadError("TIFF header");
 	if (hdr.common.tiff_magic != TIFF_BIGENDIAN && hdr.common.tiff_magic != TIFF_LITTLEENDIAN &&
 #if HOST_BIGENDIAN
-	    // MDI is sensitive to the host byte order, unlike TIFF
+	    /* MDI is sensitive to the host byte order, unlike TIFF */
 	    MDI_BIGENDIAN != hdr.common.tiff_magic )
 #else
 	    MDI_LITTLEENDIAN != hdr.common.tiff_magic )
