@@ -31,6 +31,8 @@
 
 #include "tif_config.h"
 
+#include <stdio.h>
+
 #include "tiffio.h"
 
 int
