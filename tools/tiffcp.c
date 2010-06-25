@@ -794,9 +794,14 @@ typedef int (*writeFunc)(TIFF*, uint8*, uint32, uint32, tsample_t);
  */
 DECLAREcpFunc(cpContig2ContigByRow)
 {
-	tdata_t buf = _TIFFmalloc(TIFFScanlineSize(in));
+	tsize_t scanlinesize = TIFFScanlineSize(in);
+	tdata_t buf;
 	uint32 row;
 
+	buf = _TIFFmalloc(scanlinesize);
+	if (!buf)
+		return 0;
+	_TIFFmemset(buf, 0, scanlinesize);
 	(void) imagewidth; (void) spp;
 	for (row = 0; row < imagelength; row++) {
 		if (TIFFReadScanline(in, buf, row, 0) < 0 && !ignore) {
@@ -936,6 +941,7 @@ DECLAREcpFunc(cpDecodedStrips)
 	if (buf) {
 		tstrip_t s, ns = TIFFNumberOfStrips(in);
 		uint32 row = 0;
+		_TIFFmemset(buf, 0, stripsize);
 		for (s = 0; s < ns; s++) {
 			tsize_t cc = (row + rowsperstrip > imagelength) ?
 			    TIFFVStripSize(in, imagelength - row) : stripsize;
@@ -973,11 +979,16 @@ bad:
  */
 DECLAREcpFunc(cpSeparate2SeparateByRow)
 {
-	tdata_t buf = _TIFFmalloc(TIFFScanlineSize(in));
+	tsize_t scanlinesize = TIFFScanlineSize(in);
+	tdata_t buf;
 	uint32 row;
 	tsample_t s;
 
 	(void) imagewidth;
+	buf = _TIFFmalloc(scanlinesize);
+	if (!buf)
+		return 0;
+	_TIFFmemset(buf, 0, scanlinesize);
 	for (s = 0; s < spp; s++) {
 		for (row = 0; row < imagelength; row++) {
 			if (TIFFReadScanline(in, buf, row, s) < 0 && !ignore) {
@@ -1006,13 +1017,21 @@ bad:
  */
 DECLAREcpFunc(cpContig2SeparateByRow)
 {
-	tdata_t inbuf = _TIFFmalloc(TIFFScanlineSize(in));
-	tdata_t outbuf = _TIFFmalloc(TIFFScanlineSize(out));
+	tsize_t scanlinesizein = TIFFScanlineSize(in);
+	tsize_t scanlinesizeout = TIFFScanlineSize(out);
+	tdata_t inbuf;
+	tdata_t outbuf;
 	register uint8 *inp, *outp;
 	register uint32 n;
 	uint32 row;
 	tsample_t s;
 
+	inbuf = _TIFFmalloc(scanlinesizein);
+	outbuf = _TIFFmalloc(scanlinesizeout);
+	if (!inbuf || !outbuf)
+		return 0;
+	_TIFFmemset(inbuf, 0, scanlinesizein);
+	_TIFFmemset(outbuf, 0, scanlinesizeout);
 	/* unpack channels */
 	for (s = 0; s < spp; s++) {
 		for (row = 0; row < imagelength; row++) {
@@ -1051,13 +1070,21 @@ bad:
  */
 DECLAREcpFunc(cpSeparate2ContigByRow)
 {
-	tdata_t inbuf = _TIFFmalloc(TIFFScanlineSize(in));
-	tdata_t outbuf = _TIFFmalloc(TIFFScanlineSize(out));
+	tsize_t scanlinesizein = TIFFScanlineSize(in);
+	tsize_t scanlinesizeout = TIFFScanlineSize(out);
+	tdata_t inbuf;
+	tdata_t outbuf;
 	register uint8 *inp, *outp;
 	register uint32 n;
 	uint32 row;
 	tsample_t s;
 
+	inbuf = _TIFFmalloc(scanlinesizein);
+	outbuf = _TIFFmalloc(scanlinesizeout);
+	if (!inbuf || !outbuf)
+		return 0;
+	_TIFFmemset(inbuf, 0, scanlinesizein);
+	_TIFFmemset(outbuf, 0, scanlinesizeout);
 	for (row = 0; row < imagelength; row++) {
 		/* merge channels */
 		for (s = 0; s < spp; s++) {
@@ -1208,7 +1235,9 @@ DECLAREreadFunc(readSeparateStripsIntoBuffer)
 		return 0;
 
         scanline = _TIFFmalloc(scanlinesize);
-
+	if (!scanline)
+		return 0;
+	_TIFFmemset(scanline, 0, scanlinesize);
 	(void) imagewidth;
 	if (scanline) {
 		uint8* bufp = (uint8*) buf;
@@ -1244,7 +1273,8 @@ done:
 DECLAREreadFunc(readContigTilesIntoBuffer)
 {
 	int status = 1;
-	tdata_t tilebuf = _TIFFmalloc(TIFFTileSize(in));
+	tsize_t tilesize = TIFFTileSize(in);
+	tdata_t tilebuf;
 	uint32 imagew = TIFFScanlineSize(in);
 	uint32 tilew  = TIFFTileRowSize(in);
 	int iskew = imagew - tilew;
@@ -1253,8 +1283,10 @@ DECLAREreadFunc(readContigTilesIntoBuffer)
 	uint32 row;
 
 	(void) spp;
+	tilebuf = _TIFFmalloc(tilesize);
 	if (tilebuf == 0)
 		return 0;
+	_TIFFmemset(tilebuf, 0, tilesize);
 	(void) TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
         
@@ -1298,14 +1330,17 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
 	uint32 imagew = TIFFRasterScanlineSize(in);
 	uint32 tilew = TIFFTileRowSize(in);
 	int iskew  = imagew - tilew*spp;
-	tdata_t tilebuf = _TIFFmalloc(TIFFTileSize(in));
+	tsize_t tilesize = TIFFTileSize(in);
+	tdata_t tilebuf;
 	uint8* bufp = (uint8*) buf;
 	uint32 tw, tl;
 	uint32 row;
 	uint16 bps, bytes_per_sample;
 
+	tilebuf = _TIFFmalloc(tilesize);
 	if (tilebuf == 0)
 		return 0;
+	_TIFFmemset(tilebuf, 0, tilesize);
 	(void) TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bps);
@@ -1387,12 +1422,15 @@ DECLAREwriteFunc(writeBufferToSeparateStrips)
 {
 	uint32 rowsize = imagewidth * spp;
 	uint32 rowsperstrip;
-	tdata_t obuf = _TIFFmalloc(TIFFStripSize(out));
+	tsize_t stripsize = TIFFStripSize(out);
+	tdata_t obuf;
 	tstrip_t strip = 0;
 	tsample_t s;
 
+	obuf = _TIFFmalloc(stripsize);
 	if (obuf == NULL)
 		return (0);
+	_TIFFmemset(obuf, 0, stripsize);
 	(void) TIFFGetFieldDefaulted(out, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
 	for (s = 0; s < spp; s++) {
 		uint32 row;
@@ -1423,14 +1461,18 @@ DECLAREwriteFunc(writeBufferToContigTiles)
 	uint32 imagew = TIFFScanlineSize(out);
 	uint32 tilew  = TIFFTileRowSize(out);
 	int iskew = imagew - tilew;
-	tdata_t obuf = _TIFFmalloc(TIFFTileSize(out));
+	tsize_t tilesize = TIFFTileSize(out);
+	tdata_t obuf;
 	uint8* bufp = (uint8*) buf;
 	uint32 tl, tw;
 	uint32 row;
 
 	(void) spp;
+
+	obuf = _TIFFmalloc(TIFFTileSize(out));
 	if (obuf == NULL)
 		return 0;
+	_TIFFmemset(obuf, 0, tilesize);
 	(void) TIFFGetField(out, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw);
 	for (row = 0; row < imagelength; row += tilelength) {
@@ -1473,14 +1515,17 @@ DECLAREwriteFunc(writeBufferToSeparateTiles)
 	tsize_t tilew  = TIFFTileRowSize(out);
 	uint32 iimagew = TIFFRasterScanlineSize(out);
 	int iskew = iimagew - tilew*spp;
-	tdata_t obuf = _TIFFmalloc(TIFFTileSize(out));
+	tsize_t tilesize = TIFFTileSize(out);
+	tdata_t obuf;
 	uint8* bufp = (uint8*) buf;
 	uint32 tl, tw;
 	uint32 row;
 	uint16 bps, bytes_per_sample;
 
+	obuf = _TIFFmalloc(TIFFTileSize(out));
 	if (obuf == NULL)
 		return 0;
+	_TIFFmemset(obuf, 0, tilesize);
 	(void) TIFFGetField(out, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(out, TIFFTAG_BITSPERSAMPLE, &bps);

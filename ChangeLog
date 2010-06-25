@@ -1,3 +1,9 @@
+2010-06-25  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffcp.c: Initialize buffer arrays with zero to avoid
+	referencing to uninitialized memory in some cases (e.g. when tile size
+	set bigger than the image size).
+
 2010-06-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcrop.c: Patch from Richard Nolde. Reject YCbCr
