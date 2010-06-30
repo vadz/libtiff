@@ -197,7 +197,8 @@ typedef struct {
 	uint32 pdf_palettecs;
 	uint16 pdf_fitwindow;
 	uint32 pdf_startxref;
-	unsigned char* pdf_fileid;
+#define TIFF2PDF_FILEID_SIZE 33
+	char pdf_fileid[TIFF2PDF_FILEID_SIZE];
 #define TIFF2PDF_DATETIME_SIZE 17
 	char pdf_datetime[TIFF2PDF_DATETIME_SIZE];
 #define TIFF2PDF_CREATOR_SIZE 512
@@ -932,9 +933,6 @@ void t2p_free(T2P* t2p)
 		}
 		if(t2p->pdf_palette != NULL){
 			_TIFFfree( (tdata_t) t2p->pdf_palette);
-		}
-		if(t2p->pdf_fileid != NULL){
-			_TIFFfree( (tdata_t) t2p->pdf_fileid);
 		}
 #ifdef OJPEG_SUPPORT
 		if(t2p->pdf_ojpegdata != NULL){
@@ -5054,27 +5052,12 @@ tsize_t t2p_write_pdf_trailer(T2P* t2p, TIFF* output)
 	tsize_t written = 0;
 	char buffer[32];
 	int buflen = 0;
-	char fileidbuf[16];
-	int i = 0;
+	size_t i = 0;
 
-	((int*)fileidbuf)[0] = rand();
-	((int*)fileidbuf)[1] = rand();
-	((int*)fileidbuf)[2] = rand();
-	((int*)fileidbuf)[3] = rand();
-	t2p->pdf_fileid = (unsigned char*)_TIFFmalloc(33);
-	if(t2p->pdf_fileid == NULL) {
-		TIFFError(
-			TIFF2PDF_MODULE, 
-		"Can't allocate %u bytes of memory for t2p_write_pdf_trailer", 
-			33 );
-		t2p->t2p_error = T2P_ERR_ERROR;
-		return(0);
-	}
-	_TIFFmemset(t2p->pdf_fileid, 0x00, 33);
-	for (i = 0; i < 16; i++) {
-		sprintf((char *)t2p->pdf_fileid + 2 * i,
-			"%.2hhX", fileidbuf[i]);
-	}
+	for (i = 0; i < sizeof(t2p->pdf_fileid); i += 8)
+		snprintf(t2p->pdf_fileid + i, 9, "%.8X", rand());
+	t2p->pdf_fileid[sizeof(t2p->pdf_fileid) - 1] = '\0';
+
 	written += t2pWriteFile(output, (tdata_t) "trailer\n<<\n/Size ", 17);
 	buflen = sprintf(buffer, "%lu", (unsigned long)(t2p->pdf_xrefcount+1));
 	written += t2pWriteFile(output, (tdata_t) buffer, buflen);
@@ -5088,9 +5071,11 @@ tsize_t t2p_write_pdf_trailer(T2P* t2p, TIFF* output)
 	written += t2pWriteFile(output, (tdata_t) buffer, buflen);
 	_TIFFmemset(buffer, 0x00, 32);	
 	written += t2pWriteFile(output, (tdata_t) " 0 R \n/ID[<", 11);
-	written += t2pWriteFile(output, (tdata_t) t2p->pdf_fileid, 32);
+	written += t2pWriteFile(output, (tdata_t) t2p->pdf_fileid,
+				sizeof(t2p->pdf_fileid) - 1);
 	written += t2pWriteFile(output, (tdata_t) "><", 2);
-	written += t2pWriteFile(output, (tdata_t) t2p->pdf_fileid, 32);
+	written += t2pWriteFile(output, (tdata_t) t2p->pdf_fileid,
+				sizeof(t2p->pdf_fileid) - 1);
 	written += t2pWriteFile(output, (tdata_t) ">]\n>>\nstartxref\n", 16);
 	buflen=sprintf(buffer, "%lu", (unsigned long)t2p->pdf_startxref);
 	written += t2pWriteFile(output, (tdata_t) buffer, buflen);

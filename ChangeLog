@@ -1,5 +1,8 @@
 2010-06-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/tiff2pdf.c: Better generation of ID field in
+	t2p_write_pdf_trailer(). Get rid of GCC aliasing warnings.
+
 	* tools/tiff2pdf.c: Fixed computation of the tile buffer size when
 	converting JPEG encoded tiles.
 
