@@ -1,3 +1,9 @@
+2010-06-30  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiff2pdf.c: Better handling of string fields, use static
+	string buffers instead of dynamically allocated, use strncpy() instead
+	of strcpy(), control the string lengths.
+
 2010-06-25  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffcp.c: Initialize buffer arrays with zero to avoid
