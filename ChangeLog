@@ -1,5 +1,8 @@
 2010-06-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/tiff2pdf.c: Fixed computation of the tile buffer size when
+	converting JPEG encoded tiles.
+
 	* tools/tiff2pdf.c: Better handling of string fields, use static
 	string buffers instead of dynamically allocated, use strncpy() instead
 	of strcpy(), control the string lengths.
