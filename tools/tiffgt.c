@@ -40,6 +40,7 @@
 #endif
 
 #include "tiffio.h"
+#include "tiffiop.h"
 
 #ifndef HAVE_GETOPT
 extern int getopt(int, char**, char*);
@@ -224,21 +225,24 @@ initImage(void)
                 w = xmax;
         }
 
-        if (w != width || h != height) {
-            if (raster != NULL)
-                _TIFFfree(raster), raster = NULL;
-            raster = (uint32*) _TIFFmalloc(img.width * img.height * sizeof (uint32));
-            if (raster == NULL) {
-                width = height = 0;
-                TIFFError(filelist[fileindex], "No space for raster buffer");
-                cleanup_and_exit();
-            }
-            width = w;
-            height = h;
-        }
-        TIFFRGBAImageGet(&img, raster, img.width, img.height);
+	if (w != width || h != height) {
+		uint32 rastersize =
+			_TIFFMultiply32(tif, img.width, img.height, "allocating raster buffer");
+		if (raster != NULL)
+			_TIFFfree(raster), raster = NULL;
+		raster = (uint32*) _TIFFCheckMalloc(tif, rastersize, sizeof (uint32),
+						    "allocating raster buffer");
+		if (raster == NULL) {
+			width = height = 0;
+			TIFFError(filelist[fileindex], "No space for raster buffer");
+			cleanup_and_exit();
+		}
+		width = w;
+		height = h;
+	}
+	TIFFRGBAImageGet(&img, raster, img.width, img.height);
 #if HOST_BIGENDIAN
-        TIFFSwabArrayOfLong(raster,img.width*img.height);
+	TIFFSwabArrayOfLong(raster,img.width*img.height);
 #endif
 	return 0;
 }

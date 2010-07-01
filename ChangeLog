@@ -1,3 +1,16 @@
+2010-07-01  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffgt.c: Properly check the raster buffer allocations for
+	integer overflows. As per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2108
+
+	* m4/acinclude.m4: Update GL/GLU/GLUt/Pthread macros from the
+	upstream.
+
+	* libtiff/{tif_aux.c, tif_strip.c, tif_tile.c, tiffiop.h}: Move
+	multiply_32() and multiply_64() functions into tif_aux.c file and
+	rename them into _TIFFMultiply32() and _TIFFMultiply64() respectively.
+
 2010-06-30  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Better generation of ID field in
