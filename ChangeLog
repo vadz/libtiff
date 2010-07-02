@@ -1,5 +1,9 @@
 2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/{tiff2bw.c, thumbnail.c, pal2rgb.c}: Fix the count for
+	WhitePoint tag as per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2042
+
 	* libtiff/tif_getimage.c: Check the number of samples per pixel when
 	working with YCbCr image in PickContigCase(). As per bug
 	http://bugzilla.maptools.org/show_bug.cgi?id=2216
