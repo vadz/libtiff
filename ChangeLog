@@ -1,5 +1,9 @@
 2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/{tiff2bw.c, thumbnail.c, pal2rgb.c}: Fix the count for
+	WhitePoint tag as per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2042
+
 	* tools/tiffdump.c: Use PrintData() function instead of
 	PrintByte/Short/Long(). Should fix an issue reported at
 	http://bugzilla.maptools.org/show_bug.cgi?id=2116
