@@ -167,15 +167,18 @@ dump(int fd, uint64 diroff)
 	lseek(fd, (off_t) 0, 0);
 	if (read(fd, (char*) &hdr, sizeof (TIFFHeaderCommon)) != sizeof (TIFFHeaderCommon))
 		ReadError("TIFF header");
-	if (hdr.common.tiff_magic != TIFF_BIGENDIAN && hdr.common.tiff_magic != TIFF_LITTLEENDIAN &&
+	if (hdr.common.tiff_magic != TIFF_BIGENDIAN
+	    && hdr.common.tiff_magic != TIFF_LITTLEENDIAN &&
 #if HOST_BIGENDIAN
 	    /* MDI is sensitive to the host byte order, unlike TIFF */
-	    MDI_BIGENDIAN != hdr.common.tiff_magic )
+	    MDI_BIGENDIAN != hdr.common.tiff_magic
 #else
-	    MDI_LITTLEENDIAN != hdr.common.tiff_magic )
+	    MDI_LITTLEENDIAN != hdr.common.tiff_magic
 #endif
+	   ) {
 		Fatal("Not a TIFF or MDI file, bad magic number %u (%#x)",
 		    hdr.common.tiff_magic, hdr.common.tiff_magic);
+	}
 	if (hdr.common.tiff_magic == TIFF_BIGENDIAN
 	    || hdr.common.tiff_magic == MDI_BIGENDIAN)
 		swabflag = !bigendian;
@@ -438,11 +441,12 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 			if (datamem) {
 #if defined(__WIN32__) && defined(_MSC_VER)
 				if (_lseeki64(fd, (__int64)dataoffset, SEEK_SET)
-				    != (__int64)dataoffset) {
+				    != (__int64)dataoffset)
 #else
 				if (lseek(fd, (off_t)dataoffset, 0) !=
-				    (off_t)dataoffset) {
+				    (off_t)dataoffset)
 #endif
+				{
 					Error(
 				"Seek error accessing tag %u value", tag);
 					_TIFFfree(datamem);
