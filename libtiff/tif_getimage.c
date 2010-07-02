@@ -2466,7 +2466,7 @@ PickContigCase(TIFFRGBAImage* img)
 			}
 			break;
 		case PHOTOMETRIC_YCBCR:
-			if (img->bitspersample == 8)
+			if ((img->bitspersample==8) && (img->samplesperpixel==3))
 			{
 				if (initYCbCrConversion(img)!=0)
 				{
