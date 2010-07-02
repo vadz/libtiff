@@ -163,7 +163,9 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		 * work in with its normal work.
 		 */
 		if (tif->tif_flags & TIFF_SWAB) {
-			if (td->td_bitspersample == 16)
+			if (td->td_bitspersample == 8)
+				tif->tif_postdecode = _TIFFNoPostDecode;
+			else if (td->td_bitspersample == 16)
 				tif->tif_postdecode = _TIFFSwab16BitData;
 			else if (td->td_bitspersample == 24)
 				tif->tif_postdecode = _TIFFSwab24BitData;
