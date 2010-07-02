@@ -1,5 +1,9 @@
 2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* libtiff/tif_getimage.c: Avoid wrong math du to the signed/unsigned
+	integer type conversions. As per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2207
+
 	* tools/{tiff2bw.c, thumbnail.c, pal2rgb.c}: Fix the count for
 	WhitePoint tag as per bug
 	http://bugzilla.maptools.org/show_bug.cgi?id=2042
