@@ -252,9 +252,6 @@ static	int TIFFFetchData(int, TIFFDirEntry*, void*);
 static	void PrintTag(FILE*, uint16);
 static	void PrintType(FILE*, uint16);
 static	void PrintData(FILE*, uint16, uint32, unsigned char*);
-static	void PrintByte(FILE*, const char*, TIFFDirEntry*);
-static	void PrintShort(FILE*, const char*, TIFFDirEntry*);
-static	void PrintLong(FILE*, const char*, TIFFDirEntry*);
 
 /*
  * Read the next TIFF directory from a file
@@ -327,7 +324,14 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 			switch (dp->tdir_type) {
 			case TIFF_FLOAT:
 			case TIFF_UNDEFINED:
-			case TIFF_ASCII: {
+			case TIFF_ASCII:
+			case TIFF_BYTE:
+			case TIFF_SBYTE:
+			case TIFF_SHORT:
+			case TIFF_SSHORT:
+			case TIFF_LONG:
+			case TIFF_SLONG:
+			case TIFF_IFD: {
 				unsigned char data[4];
 				_TIFFmemcpy(data, &dp->tdir_offset, 4);
 				if (swabflag)
@@ -335,28 +339,7 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 				PrintData(stdout,
 				    dp->tdir_type, dp->tdir_count, data);
 				break;
-			}
-			case TIFF_BYTE:
-				PrintByte(stdout, bytefmt, dp);
-				break;
-			case TIFF_SBYTE:
-				PrintByte(stdout, sbytefmt, dp);
-				break;
-			case TIFF_SHORT:
-				PrintShort(stdout, shortfmt, dp);
-				break;
-			case TIFF_SSHORT:
-				PrintShort(stdout, sshortfmt, dp);
-				break;
-			case TIFF_LONG:
-				PrintLong(stdout, longfmt, dp);
-				break;
-			case TIFF_SLONG:
-				PrintLong(stdout, slongfmt, dp);
-				break;
-			case TIFF_IFD:
-				PrintLong(stdout, ifdfmt, dp);
-				break;
+				       }
 			}
 		} else {
 			unsigned char *data = (unsigned char *)_TIFFmalloc(space);
@@ -520,60 +503,6 @@ PrintType(FILE* fd, uint16 type)
 		fprintf(fd, "%u (%#x)", type, type);
 }
 #undef	NTYPES
-
-static void
-PrintByte(FILE* fd, const char* fmt, TIFFDirEntry* dp)
-{
-	char* sep = "";
-
-	if (hdr.tiff_magic == TIFF_BIGENDIAN) {
-		switch ((int)dp->tdir_count) {
-		case 4: fprintf(fd, fmt, sep, dp->tdir_offset&0xff);
-			sep = " ";
-		case 3: fprintf(fd, fmt, sep, (dp->tdir_offset>>8)&0xff);
-			sep = " ";
-		case 2: fprintf(fd, fmt, sep, (dp->tdir_offset>>16)&0xff);
-			sep = " ";
-		case 1: fprintf(fd, fmt, sep, dp->tdir_offset>>24);
-		}
-	} else {
-		switch ((int)dp->tdir_count) {
-		case 4: fprintf(fd, fmt, sep, dp->tdir_offset>>24);
-			sep = " ";
-		case 3: fprintf(fd, fmt, sep, (dp->tdir_offset>>16)&0xff);
-			sep = " ";
-		case 2: fprintf(fd, fmt, sep, (dp->tdir_offset>>8)&0xff);
-			sep = " ";
-		case 1: fprintf(fd, fmt, sep, dp->tdir_offset&0xff);
-		}
-	}
-}
-
-static void
-PrintShort(FILE* fd, const char* fmt, TIFFDirEntry* dp)
-{
-	char *sep = "";
-
-	if (hdr.tiff_magic == TIFF_BIGENDIAN) {
-		switch (dp->tdir_count) {
-		case 2: fprintf(fd, fmt, sep, dp->tdir_offset&0xffff);
-			sep = " ";
-		case 1: fprintf(fd, fmt, sep, dp->tdir_offset>>16);
-		}
-	} else {
-		switch (dp->tdir_count) {
-		case 2: fprintf(fd, fmt, sep, dp->tdir_offset>>16);
-			sep = " ";
-		case 1: fprintf(fd, fmt, sep, dp->tdir_offset&0xffff);
-		}
-	}
-}
-
-static void
-PrintLong(FILE* fd, const char* fmt, TIFFDirEntry* dp)
-{
-	fprintf(fd, fmt, "", (long) dp->tdir_offset);
-}
 
 #include <ctype.h>
 
