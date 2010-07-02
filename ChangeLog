@@ -1,3 +1,12 @@
+2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dir.c: Set the bogus post-decoding hook when processing
+	TIFFTAG_BITSPERSAMPLE in _TIFFVSetField() for the case of 8 bit when
+	we don't need any post-processing. That helps to reset the hook if we
+	previously set this field to some other value and the hook was
+	initialized accordingly. As per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2035
+
 2010-07-01  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffgt.c: Properly check the raster buffer allocations for
