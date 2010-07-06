@@ -1,5 +1,9 @@
 2010-07-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* tools/tiffset.c: Properly handle TIFFTAG_PAGENUMBER,
+	TIFFTAG_HALFTONEHINTS, TIFFTAG_YCBCRSUBSAMPLING, TIFFTAG_DOTRANGE
+	which should be set by value.
+
 	* libtiff/tif_dirinfo.c: Don't use assertions in _TIFFFieldWithTag()
 	and _TIFFFieldWithName() if the tag is not found in the tag table.
 	This should be normal situation and returned NULL value should be
