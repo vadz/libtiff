@@ -1,4 +1,9 @@
-2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
+2010-07-06  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dirinfo.c: Don't use assertions in _TIFFFieldWithTag()
+	and _TIFFFieldWithName() if the tag is not found in the tag table.
+	This should be normal situation and returned NULL value should be
+	properly handled by the caller.
 
 	* libtiff/{tif_dirwrite.c, tif_print.c}: Properly handle "DotRange"
 	tag as it can be either byte or short size and should be set and read
