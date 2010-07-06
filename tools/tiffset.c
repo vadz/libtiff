@@ -27,27 +27,6 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  ******************************************************************************
- *
- * $Log$
- * Revision 1.14  2010-03-10 18:56:50  bfriesen
- * * libtiff/tif_aux.c (_TIFFCheckRealloc): Improve error message so
- * that it is clearly a memory allocation error message, and also
- * includes the size of the allocation request.
- *
- * Revision 1.13  2008/01/01 15:46:28  fwarmerdam
- * Changes to reflect the fact that TIFFFieldWithTag() and TIFFFieldWithName()
- * now return TIFFField pointers instead of TIFFFieldInfo pointers.
- *
- * Revision 1.12  2007/02/24 17:14:14  dron
- * Properly handle tags with TIFF_VARIABLE writecount. As per bug
- * http://bugzilla.remotesensing.org/show_bug.cgi?id=1350
- *
- * Revision 1.11  2005/09/13 14:13:42  dron
- * Avoid warnings.
- *
- * Revision 1.10  2005/02/24 14:47:11  fwarmerdam
- * Updated header.
- *
  */
 
 
@@ -86,7 +65,7 @@ GetField(TIFF *tiff, const char *tagname)
         fip = TIFFFieldWithName(tiff, tagname);
 
     if (!fip) {
-        fprintf( stderr, "Field name %s not recognised.\n", tagname );
+        fprintf( stderr, "Field name \"%s\" is not recognised.\n", tagname );
         return (TIFFField *)NULL;
     }
 
@@ -230,7 +209,18 @@ main(int argc, char* argv[])
                         if (fip->field_passcount) {
                                 ret = TIFFSetField(tiff, fip->field_tag,
                                                    wc, array);
-                        } else {
+                        } else if (fip->field_tag == TIFFTAG_PAGENUMBER
+				   || fip->field_tag == TIFFTAG_HALFTONEHINTS
+				   || fip->field_tag == TIFFTAG_YCBCRSUBSAMPLING
+				   || fip->field_tag == TIFFTAG_DOTRANGE) {
+       				if (fip->field_type == TIFF_BYTE) {
+					ret = TIFFSetField(tiff, fip->field_tag,
+						((uint8 *)array)[0], ((uint8 *)array)[1]);
+				} else if (fip->field_type == TIFF_SHORT) {
+					ret = TIFFSetField(tiff, fip->field_tag,
+						((uint16 *)array)[0], ((uint16 *)array)[1]);
+				}
+			} else {
                                 ret = TIFFSetField(tiff, fip->field_tag,
                                                    array);
                         }
