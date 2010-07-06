@@ -42,6 +42,7 @@ extern	void TIFFCvtNativeToIEEEDouble(TIFF*, uint32, double*);
 static	int TIFFWriteNormalTag(TIFF*, TIFFDirEntry*, const TIFFFieldInfo*);
 static	void TIFFSetupShortLong(TIFF*, ttag_t, TIFFDirEntry*, uint32);
 static	void TIFFSetupShort(TIFF*, ttag_t, TIFFDirEntry*, uint16);
+static	int TIFFSetupBytePair(TIFF*, ttag_t, TIFFDirEntry*);
 static	int TIFFSetupShortPair(TIFF*, ttag_t, TIFFDirEntry*);
 static	int TIFFWritePerSampleShorts(TIFF*, ttag_t, TIFFDirEntry*);
 static	int TIFFWritePerSampleAnys(TIFF*, TIFFDataType, ttag_t, TIFFDirEntry*);
@@ -291,12 +292,6 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 			    _TIFFSampleToTagType(tif), fip->field_tag, dir))
 				goto bad;
 			break;
-		case FIELD_PAGENUMBER:
-		case FIELD_HALFTONEHINTS:
-		case FIELD_YCBCRSUBSAMPLING:
-			if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
-				goto bad;
-			break;
 		case FIELD_INKNAMES:
 			if (!TIFFWriteInkNames(tif, dir))
 				goto bad;
@@ -336,12 +331,22 @@ _TIFFWriteDirectory(TIFF* tif, int done)
 			}
 			break;
 		default:
-			/* XXX: Should be fixed and removed. */
-			if (fip->field_tag == TIFFTAG_DOTRANGE) {
-				if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
-					goto bad;
-			}
-			else if (!TIFFWriteNormalTag(tif, dir, fip))
+			/*
+			 * XXX: Should be fixed and removed. See comments
+			 * related to these tags in tif_dir.c.
+			 */
+			if (fip->field_tag == TIFFTAG_PAGENUMBER
+			    || fip->field_tag == TIFFTAG_HALFTONEHINTS
+			    || fip->field_tag == TIFFTAG_YCBCRSUBSAMPLING
+			    || fip->field_tag == TIFFTAG_DOTRANGE) {
+				if (fip->field_type == TIFF_BYTE) {
+					if (!TIFFSetupBytePair(tif, fip->field_tag, dir))
+						goto bad;
+				} else if (fip->field_type == TIFF_SHORT) {
+					if (!TIFFSetupShortPair(tif, fip->field_tag, dir))
+						goto bad;
+				}
+			} else if (!TIFFWriteNormalTag(tif, dir, fip))
 				goto bad;
 			break;
 		}
@@ -874,6 +879,23 @@ TIFFWritePerSampleAnys(TIFF* tif,
 	return (status);
 }
 #undef NITEMS
+
+/*
+ * Setup a pair of bytes that are returned by
+ * value, rather than as a reference to an array.
+ */
+static int
+TIFFSetupBytePair(TIFF* tif, ttag_t tag, TIFFDirEntry* dir)
+{
+	char v[2];
+
+	TIFFGetField(tif, tag, &v[0], &v[1]);
+
+	dir->tdir_tag = (uint16) tag;
+	dir->tdir_type = (uint16) TIFF_BYTE;
+	dir->tdir_count = 2;
+	return (TIFFWriteByteArray(tif, dir, v));
+}
 
 /*
  * Setup a pair of shorts that are returned by

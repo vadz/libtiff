@@ -1,5 +1,12 @@
 2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* libtiff/{tif_dirwrite.c, tif_print.c}: Properly handle "DotRange"
+	tag as it can be either byte or short size and should be set and read
+	by value, not as an array. As per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2116
+
+2010-07-02  Andrey Kiselev  <dron@ak4719.spb.edu>
+
 	* libtiff/tif_getimage.c: Avoid wrong math du to the signed/unsigned
 	integer type conversions. As per bug
 	http://bugzilla.maptools.org/show_bug.cgi?id=2207
