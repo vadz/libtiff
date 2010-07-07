@@ -1,5 +1,9 @@
 2010-07-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
+	* lintiff/tif_dirread.c: Really reset the tag count in CheckDirCount()
+	to expected value as the warning message suggests. As per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=1963
+
 	* tools/tiffdump.c: Avoid integer overflows computing the buffer size
 	for large directories. As per bug
 	http://bugzilla.maptools.org/show_bug.cgi?id=2218
