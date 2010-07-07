@@ -4329,6 +4329,7 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 	"incorrect count for field \"%s\" (" TIFF_UINT64_FORMAT ", expecting %u); tag trimmed",
 		    TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
+		dir->tdir_count = count;
 		return (1);
 	}
 	return (1);
