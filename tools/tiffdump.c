@@ -52,6 +52,11 @@
 # define O_BINARY	0
 #endif
 
+/* Safe multiply which returns zero if there is an integer overflow */
+#ifndef TIFFSafeMultiply
+# define TIFFSafeMultiply(t,v,m) ((((t)m != (t)0) && (((t)((v*m)/m)) == (t)v)) ? (t)(v*m) : (t)0)
+#endif
+
 char*	appname;
 char*	curfile;
 int	swabflag;
@@ -314,7 +319,7 @@ ReadDirectory(int fd, unsigned ix, off_t off)
 			printf(">\n");
 			continue;
 		}
-		space = dp->tdir_count * datawidth[dp->tdir_type];
+		space = TIFFSafeMultiply(int, dp->tdir_count, datawidth[dp->tdir_type]);
 		if (space <= 0) {
 			printf(">\n");
 			Error("Invalid count for tag %u", dp->tdir_tag);
@@ -638,7 +643,7 @@ TIFFFetchData(int fd, TIFFDirEntry* dir, void* cp)
 	w = (dir->tdir_type < NWIDTHS ? datawidth[dir->tdir_type] : 0);
 	cc = dir->tdir_count * w;
 	if (lseek(fd, (off_t)dir->tdir_offset, 0) != (off_t)-1
-	    && read(fd, cp, cc) != -1) {
+	    && read(fd, cp, cc) == cc) {
 		if (swabflag) {
 			switch (dir->tdir_type) {
 			case TIFF_SHORT:

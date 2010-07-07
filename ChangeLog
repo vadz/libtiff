@@ -1,3 +1,9 @@
+2010-07-07  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffdump.c: Avoid integer overflows computing the buffer size
+	for large directories. As per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2218
+
 2010-07-06  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiffset.c: Properly handle TIFFTAG_PAGENUMBER,
