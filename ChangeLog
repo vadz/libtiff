@@ -1,3 +1,8 @@
+2010-07-08  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiff2pdf.c: Fixed ID buffer filling in
+	t2p_write_pdf_trailer(), thanks to Dmitry V. Levin.
+
 2010-07-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* lintiff/tif_dirread.c: Really reset the tag count in CheckDirCount()
