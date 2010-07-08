@@ -5054,9 +5054,8 @@ tsize_t t2p_write_pdf_trailer(T2P* t2p, TIFF* output)
 	int buflen = 0;
 	size_t i = 0;
 
-	for (i = 0; i < sizeof(t2p->pdf_fileid); i += 8)
+	for (i = 0; i < sizeof(t2p->pdf_fileid) - 8; i += 8)
 		snprintf(t2p->pdf_fileid + i, 9, "%.8X", rand());
-	t2p->pdf_fileid[sizeof(t2p->pdf_fileid) - 1] = '\0';
 
 	written += t2pWriteFile(output, (tdata_t) "trailer\n<<\n/Size ", 17);
 	buflen = sprintf(buffer, "%lu", (unsigned long)(t2p->pdf_xrefcount+1));
