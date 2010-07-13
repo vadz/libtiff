@@ -1,3 +1,9 @@
+2010-07-13  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffcrop.c: Patch from Richard Nolde to avoid a
+	potentially unterminated buffer due to using an exceptionally long
+	file name.
+
 2010-07-08  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* tools/tiff2pdf.c: Fixed ID buffer filling in

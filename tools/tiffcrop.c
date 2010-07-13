@@ -6,16 +6,16 @@
  * Original code:
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
- * Additions (c) Richard Nolde 2006-2009 
+ * Additions (c) Richard Nolde 2006-2010
  *
- * Permission to use, copy, modify, distribute, and sell this software and 
+ * Permission to use, copy, modify, distribute, and sell this software and
  * its documentation for any purpose is hereby granted without fee, provided
  * that (i) the above copyright notices and this permission notice appear in
  * all copies of the software and related documentation, and (ii) the names of
  * Sam Leffler and Silicon Graphics may not be used in any advertising or
  * publicity relating to the software without the specific, prior written
  * permission of Sam Leffler and Silicon Graphics.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
  * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
  * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
@@ -108,7 +108,7 @@
  */
 
 static   char tiffcrop_version_id[] = "2.3";
-static   char tiffcrop_rev_date[] = "06-15-2010";
+static   char tiffcrop_rev_date[] = "07-12-2010";
 
 #include "tif_config.h"
 #include "tiffiop.h"
@@ -149,12 +149,13 @@ extern int getopt(int, char**, char*);
 #endif
 #define	strneq(a,b,n)	(strncmp((a),(b),(n)) == 0)
 
-/* NB: the uint32 casts are to silence certain ANSI-C compilers */
-#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
-#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
-
 #define	TRUE	1
 #define	FALSE	0
+
+#ifndef TIFFhowmany
+#define TIFFhowmany(x, y) ((((uint32)(x))+(((uint32)(y))-1))/((uint32)(y)))
+#define TIFFhowmany8(x) (((x)&0x07)?((uint32)(x)>>3)+1:(uint32)(x)>>3)
+#endif
 
 /*
  * Definitions and data structures required to support cropping and image
@@ -204,6 +205,7 @@ extern int getopt(int, char**, char*);
 #define MAX_IMAGES 2048  /* number of images in descrete list, not in the file */
 #define MAX_SAMPLES   8  /* maximum number of samples per pixel supported */
 #define MAX_BITS_PER_SAMPLE 64 /* maximum bit depth supported */
+#define MAX_EXPORT_PAGES 999999  /* maximum number of export pages per file */
 
 #define DUMP_NONE   0
 #define DUMP_TEXT   1
@@ -1674,9 +1676,6 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
                     (opt_ptr = strtok (NULL, ",")), i++)
                     {
 		    opt_offset = strpbrk(opt_ptr, ":=");
-		    /*
-		    opt_offset = strchr(opt_ptr, ':');
-		    */
                     if (opt_offset == NULL)
                       {
                       TIFFError("Invalid dump option", "%s", optarg);
@@ -1721,12 +1720,18 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
                       { /* Look for dump level specification */
                       if (strncmp (opt_ptr, "lev", 3) == 0)
                         dump->level = atoi(opt_offset + 1);
-                      /* Look for input data dump file name */
+                        /* Look for input data dump file name */
                       if (strncmp (opt_ptr, "in", 2) == 0)
+                        {
                         strncpy (dump->infilename, opt_offset + 1, PATH_MAX - 20);
-                       /* Look for output data dump file name */
+                        dump->infilename[PATH_MAX - 20] = '\0';
+                        }
+                        /* Look for output data dump file name */
                       if (strncmp (opt_ptr, "out", 3) == 0)
-                          strncpy (dump->outfilename, opt_offset + 1, PATH_MAX - 20);
+                        {
+                        strncpy (dump->outfilename, opt_offset + 1, PATH_MAX - 20);
+                        dump->outfilename[PATH_MAX - 20] = '\0';
+                        }
                       if (strncmp (opt_ptr, "deb", 3) == 0)
 			dump->debug = atoi(opt_offset + 1);
 		      }
@@ -2035,7 +2040,6 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
   char   export_ext[16];
   char   exportname[PATH_MAX];
 
-  strcpy (export_ext, ".tiff");
   if (autoindex && (*tiffout != NULL))
     {   
     /* Close any export file that was previously opened */
@@ -2043,7 +2047,11 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
     *tiffout = NULL;
     }
 
-  strncpy (exportname, outname, PATH_MAX - 15);
+  strcpy (export_ext, ".tiff");
+  memset (exportname, '\0', PATH_MAX);
+
+  /* Leave room for page number portion of the new filename */
+  strncpy (exportname, outname, PATH_MAX - 16);
   if (*tiffout == NULL)   /* This is a new export file */
     {
     if (autoindex)
@@ -2057,13 +2065,21 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
       else
         strncpy (export_ext, ".tiff", 5);
       export_ext[5] = '\0';
-
-      sprintf (filenum, "-%03d%s", findex, export_ext);
-      filenum[15] = '\0';
-      strncat (exportname, filenum, 14);
-      }
-
-    *tiffout = TIFFOpen(exportname, mode);
+ 
+     /* MAX_EXPORT_PAGES limited to 6 digits to prevent string overflow of pathname */
+     if (findex > MAX_EXPORT_PAGES)
+       {
+       TIFFError("update_output_file", "Maximum of %d pages per file exceeded.\n", MAX_EXPORT_PAGES);
+       return 1;
+       }
+ 
+    sprintf (filenum, "-%03d%s", findex, export_ext);
+    filenum[14] = '\0';
+    strncat (exportname, filenum, 15);
+    }
+  exportname[PATH_MAX - 1] = '\0';
+  
+  *tiffout = TIFFOpen(exportname, mode);
     if (*tiffout == NULL)
       {
       TIFFError("update_output_file", "Unable to open output file %s\n", exportname);

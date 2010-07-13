@@ -18,9 +18,6 @@
    packages produce RGBA files but don't mark the alpha properly. */
 #undef DEFAULT_EXTRASAMPLE_AS_ALPHA
 
-/* Use the Apple OpenGL framework. */
-#undef HAVE_APPLE_OPENGL_FRAMEWORK
-
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
@@ -35,6 +32,18 @@
 
 /* Define to 1 if you have the `getopt' function. */
 #undef HAVE_GETOPT
+
+/* Define to 1 if you have the <GLUT/glut.h> header file. */
+#undef HAVE_GLUT_GLUT_H
+
+/* Define to 1 if you have the <GL/glut.h> header file. */
+#undef HAVE_GL_GLUT_H
+
+/* Define to 1 if you have the <GL/glu.h> header file. */
+#undef HAVE_GL_GLU_H
+
+/* Define to 1 if you have the <GL/gl.h> header file. */
+#undef HAVE_GL_GL_H
 
 /* Define as 0 or 1 according to the floating point format suported by the
    machine */
@@ -87,6 +96,12 @@
 
 /* Define to 1 if you have the `mmap' function. */
 #undef HAVE_MMAP
+
+/* Define to 1 if you have the <OpenGL/glu.h> header file. */
+#undef HAVE_OPENGL_GLU_H
+
+/* Define to 1 if you have the <OpenGL/gl.h> header file. */
+#undef HAVE_OPENGL_GL_H
 
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
@@ -147,6 +162,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Use nonstandard varargs form for the GLU tesselator callback */
+#undef HAVE_VARARGS_GLU_TESSCB
 
 /* Define to 1 if you have the <windows.h> header file. */
 #undef HAVE_WINDOWS_H
