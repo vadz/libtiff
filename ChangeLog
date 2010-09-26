@@ -1,3 +1,9 @@
+2010-09-25  Lee Howard <faxguy@howardsilvan.com>
+
+	* tools/tiff2ps.c: improvements and enhancements from Richard Nolde
+	with additional command line options for Document Title, 
+	Document Creator, and Page Orientation
+
 2010-07-13  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcrop.c: Patch from Richard Nolde to avoid a
