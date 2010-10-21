@@ -1,3 +1,11 @@
+2010-10-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiffinfo.c: avoid direct reference to _TIFFerrorHandler.
+	
+	* libtiff/tif_config.vc.h: define snprintf to _snprintf for tiff2pdf.
+
+	* libtiff/libtiff.def: export _TIFFCheckMalloc for tools.
+
 2010-09-25  Lee Howard <faxguy@howardsilvan.com>
 
 	* tools/tiff2ps.c: improvements and enhancements from Richard Nolde

@@ -129,8 +129,7 @@ main(int argc, char* argv[])
 	if (optind >= argc)
 		usage();
 
-	old_error_handler = _TIFFerrorHandler;
-	(void) TIFFSetErrorHandler(PrivateErrorHandler);
+	old_error_handler = TIFFSetErrorHandler(PrivateErrorHandler);
 
 	multiplefiles = (argc - optind > 1);
 	for (; optind < argc; optind++) {

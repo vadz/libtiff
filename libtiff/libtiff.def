@@ -141,3 +141,4 @@ EXPORTS TIFFOpen
 	TIFFSwabArrayOfLong8
 	TIFFFindField
 	TIFFUnsetField
+	_TIFFCheckMalloc
