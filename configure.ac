@@ -135,6 +135,9 @@ case "${host_os}" in
         ;;
 esac
 
+tiff_libs_private=
+AC_SUBST(tiff_libs_private)
+
 dnl Checks for header files.
 AC_CHECK_HEADERS([assert.h fcntl.h io.h limits.h malloc.h search.h sys/time.h unistd.h])
 
@@ -506,6 +509,7 @@ fi
 if test "$HAVE_ZLIB" = "yes" ; then
   AC_DEFINE(ZIP_SUPPORT,1,[Support Deflate compression])
   LIBS="-lz $LIBS"
+  tiff_libs_private="-lz ${tiff_libs_private}"
 
   if test "$HAVE_RPATH" = "yes" -a "x$with_zlib_lib_dir" != "x" ; then
     LIBDIR="-R $with_zlib_lib_dir $LIBDIR"
@@ -574,6 +578,7 @@ fi
 if test "$HAVE_JPEG" = "yes" ; then
   AC_DEFINE(JPEG_SUPPORT,1,[Support JPEG compression (requires IJG JPEG library)])
   LIBS="-ljpeg $LIBS"
+  tiff_libs_private="-ljpeg ${tiff_libs_private}"
 
   if test "$HAVE_RPATH" = "yes" -a "x$with_jpeg_lib_dir" != "x" ; then
     LIBDIR="-R $with_jpeg_lib_dir $LIBDIR"
@@ -642,6 +647,7 @@ fi
 if test "$HAVE_JBIG" = "yes" ; then
   AC_DEFINE(JBIG_SUPPORT,1,[Support ISO JBIG compression (requires JBIG-KIT library)])
   LIBS="-ljbig $LIBS"
+  tiff_libs_private="-ljbig ${tiff_libs_private}"
 
   if test "$HAVE_RPATH" = "yes" -a "x$with_jbig_lib_dir" != "x" ; then
     LIBDIR="-R $with_jbig_lib_dir $LIBDIR"
@@ -820,6 +826,7 @@ AC_CONFIG_FILES([Makefile \
                  html/Makefile \
 		 html/images/Makefile \
 		 html/man/Makefile \
+                 libtiff-4.pc \
                  libtiff/Makefile \
                  man/Makefile \
 		 port/Makefile \
