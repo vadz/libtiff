@@ -766,6 +766,7 @@ int main(int argc, char** argv){
 		goto fail;
 	}
 
+	goto success;
 fail:
 	ret = EXIT_FAILURE;
 success:
