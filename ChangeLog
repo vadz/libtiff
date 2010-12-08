@@ -1,3 +1,13 @@
+2010-12-08  Lee Howard <faxguy@howardsilvan.com>
+
+        * libtiff/tif_dirread.c: fix crash when reading a badly-constructed
+        TIFF per http://bugzilla.maptools.org/show_bug.cgi?id=1994
+
+2010-12-06  Lee Howard <faxguy@howardsilvan.com>
+
+        * libtiff/tif_open.c: Fix mode check before opening a file.
+        http://bugzilla.maptools.org/show_bug.cgi?id=1906
+
 2010-11-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff-4.pc.in: Added libtiff pkg-config .pc file support.
