@@ -1,3 +1,19 @@
+2010-12-08  Lee Howard <faxguy@howardsilvan.com>
+
+	* libtiff/tif_dirread.c: fix crash when reading a badly-constructed
+	TIFF per http://bugzilla.maptools.org/show_bug.cgi?id=1994
+
+2010-12-07  Lee Howard <faxguy@howardsilvan.com>
+
+	* libtiff/tif_jpeg.c, libtiff/tif_strip.c: apply patch for 
+	CVE-2010-3087 per bug
+	http://bugzilla.maptools.org/show_bug.cgi?id=2140
+
+2010-12-06  Lee Howard <faxguy@howardsilvan.com>
+
+	* libtiff/tif_open.c: Fix mode check before opening a file.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1906
+
 2010-09-25  Lee Howard <faxguy@howardsilvan.com>
 
 	* tools/tiff2ps.c: improvements and enhancements from Richard Nolde

@@ -105,7 +105,20 @@ TIFFReadDirectory(TIFF* tif)
 			     tif->tif_name, tif->tif_nextdiroff);
 		return 0;
 	}
-
+	{
+		TIFFDirEntry* ma;
+		uint16 mb;
+		for (ma=dir, mb=0; mb<dircount; ma++, mb++)
+		{
+			TIFFDirEntry* na;
+			uint16 nb;
+			for (na=ma+1, nb=mb+1; nb<dircount; na++, nb++)
+			{
+				if (ma->tdir_tag==na->tdir_tag)
+					na->tdir_tag=IGNORE;
+			}
+		}
+	}
 	tif->tif_flags &= ~TIFF_BEENWRITING;	/* reset before new dir */
 	/*
 	 * Setup default value and then make a pass over
