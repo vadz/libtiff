@@ -1,5 +1,10 @@
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_dirread.c: modify warnings
+	http://bugzilla.maptools.org/show_bug.cgi?id=2016
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
         * libtiff/tif_ojpeg.c: fix buffer overflow on problem data
         http://bugzilla.maptools.org/show_bug.cgi?id=1999
 
