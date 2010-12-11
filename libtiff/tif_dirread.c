@@ -3410,7 +3410,7 @@ TIFFReadDirectory(TIFF* tif)
 	TIFFDirEntry* dp;
 	uint16 di;
 	const TIFFField* fip;
-	uint32 fii;
+	uint32 fii=FAILED_FII;
         toff_t nextdiroff;
 	tif->tif_diroff=tif->tif_nextdiroff;
 	if (!TIFFCheckDirOffset(tif,tif->tif_nextdiroff))
@@ -3713,7 +3713,7 @@ TIFFReadDirectory(TIFF* tif)
 					uint32 countpersample;
 					uint32 countrequired;
 					uint32 incrementpersample;
-					uint16* value;
+					uint16* value=NULL;
 					countpersample=(1L<<tif->tif_dir.td_bitspersample);
 					if ((dp->tdir_tag==TIFFTAG_TRANSFERFUNCTION)&&(dp->tdir_count==(uint64)countpersample))
 					{
@@ -5318,6 +5318,7 @@ TIFFFetchSubjectDistance(TIFF* tif, TIFFDirEntry* dir)
 	static const char module[] = "TIFFFetchSubjectDistance";
 	enum TIFFReadDirEntryErr err;
 	UInt64Aligned_t m;
+    m.l=0;
 	assert(sizeof(double)==8);
 	assert(sizeof(uint64)==8);
 	assert(sizeof(uint32)==4);
