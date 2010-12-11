@@ -1,5 +1,11 @@
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_ojpeg.c, libtiff/tif_pixarlog.c,
+	  libtiff/tif_zip.c: fix build errors for VC6
+	http://bugzilla.maptools.org/show_bug.cgi?id=2105
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_stream.cxx: warnings cleanup
 	http://bugzilla.maptools.org/show_bug.cgi?id=2091
 	* libtiff/tif_dirread.c: warnings cleanup
