@@ -3803,8 +3803,7 @@ TIFFReadDirectory(TIFF* tif)
 		}
 		if (!TIFFFieldSet(tif,FIELD_SAMPLESPERPIXEL))
 		{
-			if ((tif->tif_dir.td_photometric==PHOTOMETRIC_RGB)
-			    || (tif->tif_dir.td_photometric==PHOTOMETRIC_YCBCR))
+			if (tif->tif_dir.td_photometric==PHOTOMETRIC_RGB)
 			{
 				TIFFWarningExt(tif->tif_clientdata,module,
 				    "SamplesPerPixel tag is missing, "
@@ -3812,12 +3811,21 @@ TIFFReadDirectory(TIFF* tif)
 				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,3))
 					goto bad;
 			}
-			else if ((tif->tif_dir.td_photometric==PHOTOMETRIC_MINISWHITE)
-				 || (tif->tif_dir.td_photometric==PHOTOMETRIC_MINISBLACK))
+			if (tif->tif_dir.td_photometric==PHOTOMETRIC_YCBCR)
 			{
 				TIFFWarningExt(tif->tif_clientdata,module,
 				    "SamplesPerPixel tag is missing, "
-				    "assuming correct SamplesPerPixel value is 1");
+				    "applying correct SamplesPerPixel value of 3");
+				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,3))
+					goto bad;
+			}
+			else if ((tif->tif_dir.td_photometric==PHOTOMETRIC_MINISWHITE)
+				 || (tif->tif_dir.td_photometric==PHOTOMETRIC_MINISBLACK))
+			{
+				/*
+				 * SamplesPerPixel tag is missing, but is not required
+				 * by spec.  Assume correct SamplesPerPixel value of 1.
+				 */
 				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,1))
 					goto bad;
 			}
