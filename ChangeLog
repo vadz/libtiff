@@ -1,5 +1,12 @@
 2010-12-08  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_ojpeg.c: fix crash when reading a TIFF with a zero
+	or missing byte-count tag
+	* tools/tiffsplit.c: abort when reading a TIFF without a byte-count
+	per http://bugzilla.maptools.org/show_bug.cgi?id=1996
+
+2010-12-08  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_dirread.c: fix crash when reading a badly-constructed
 	TIFF per http://bugzilla.maptools.org/show_bug.cgi?id=1994
 
