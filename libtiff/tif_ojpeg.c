@@ -1942,8 +1942,14 @@ OJPEGReadBufferFill(OJPEGState* sp)
 					{
 						if (sp->in_buffer_file_pos>=sp->file_size)
 							sp->in_buffer_file_pos=0;
+						else if (sp->tif->tif_dir.td_stripbytecount==NULL)
+							sp->in_buffer_file_togo=sp->file_size-sp->in_buffer_file_pos;
 						else
 						{
+							if (sp->tif->tif_dir.td_stripbytecount == 0) {
+								TIFFErrorExt(sp->tif->tif_clientdata,sp->tif->tif_name,"Strip byte counts are missing");
+								return(0);
+							}
 							sp->in_buffer_file_togo=sp->tif->tif_dir.td_stripbytecount[sp->in_buffer_next_strile];
 							if (sp->in_buffer_file_togo==0)
 								sp->in_buffer_file_pos=0;
