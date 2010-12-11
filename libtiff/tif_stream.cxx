@@ -167,7 +167,7 @@ _tiffosSeekProc(thandle_t fd, uint64 off, int whence)
 			uint64 new_offset = static_cast<uint64>(data->start_pos) + off;
 
 			// Verify that value does not overflow
-			ios::off_type offset = new_offset;
+			ios::off_type offset = static_cast<ios::off_type>(new_offset);
 			if (static_cast<uint64>(offset) != new_offset)
 				return static_cast<uint64>(-1);
 			
@@ -177,7 +177,7 @@ _tiffosSeekProc(thandle_t fd, uint64 off, int whence)
 	case SEEK_CUR:
 		{
 			// Verify that value does not overflow
-			ios::off_type offset = off;
+			ios::off_type offset = static_cast<ios::off_type>(off);
 			if (static_cast<uint64>(offset) != off)
 				return static_cast<uint64>(-1);
 
@@ -187,7 +187,7 @@ _tiffosSeekProc(thandle_t fd, uint64 off, int whence)
 	case SEEK_END:
 		{
 			// Verify that value does not overflow
-			ios::off_type offset = off;
+			ios::off_type offset = static_cast<ios::off_type>(off);
 			if (static_cast<uint64>(offset) != off)
 				return static_cast<uint64>(-1);
 
@@ -241,11 +241,11 @@ _tiffosSeekProc(thandle_t fd, uint64 off, int whence)
 				os->put('\0');
 
 			// retry the seek
-			os->seekp(static_cast<uint64>(origin) + off, ios::beg);
+			os->seekp(static_cast<ios::off_type>(static_cast<uint64>(origin) + off), ios::beg);
 		}
 	}
 
-	return os->tellp();
+	return static_cast<uint64>(os->tellp());
 }
 
 static uint64
@@ -260,7 +260,7 @@ _tiffisSeekProc(thandle_t fd, uint64 off, int whence)
 			uint64 new_offset = static_cast<uint64>(data->start_pos) + off;
 			
 			// Verify that value does not overflow
-			ios::off_type offset = new_offset;
+			ios::off_type offset = static_cast<ios::off_type>(new_offset);
 			if (static_cast<uint64>(offset) != new_offset)
 				return static_cast<uint64>(-1);
 
@@ -270,7 +270,7 @@ _tiffisSeekProc(thandle_t fd, uint64 off, int whence)
 	case SEEK_CUR:
 		{
 			// Verify that value does not overflow
-			ios::off_type offset = off;
+			ios::off_type offset = static_cast<ios::off_type>(off);
 			if (static_cast<uint64>(offset) != off)
 				return static_cast<uint64>(-1);
 
@@ -280,11 +280,11 @@ _tiffisSeekProc(thandle_t fd, uint64 off, int whence)
 	case SEEK_END:
 		{
 			// Verify that value does not overflow
-			ios::off_type offset = off;
+			ios::off_type offset = static_cast<ios::off_type>(off);
 			if (static_cast<uint64>(offset) != off)
 				return static_cast<uint64>(-1);
 
-			data->stream->seekg(off, ios::end);
+			data->stream->seekg(offset, ios::end);
 			break;
 		}
 	}
