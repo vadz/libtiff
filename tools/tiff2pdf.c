@@ -187,6 +187,7 @@ typedef struct {
 	float pdf_pagelength;
 	float pdf_imagewidth;
 	float pdf_imagelength;
+	int pdf_image_fillpage; /* 0 (default: no scaling, 1:scale imagesize to pagesize */
 	T2P_BOX pdf_mediabox;
 	T2P_BOX pdf_imagebox;
 	uint16 pdf_majorversion;
@@ -519,6 +520,7 @@ t2p_unmapproc(thandle_t handle, void *data, toff_t offset)
     -l: length in units
     -r: 'd' for resolution default, 'o' for resolution override
     -p: paper size, eg "letter", "legal", "a4"
+    -F: make the tiff fill the PDF page
     -f: set pdf "fit window" user preference
     -b:	set PDF "Interpolate" user preference
     -e: date, overrides image or current date/time default, YYYYMMDDHHMMSS
@@ -573,7 +575,7 @@ int main(int argc, char** argv){
 
 	while (argv &&
 	       (c = getopt(argc, argv,
-			   "o:q:u:x:y:w:l:r:p:e:c:a:t:s:k:jzndifbh")) != -1){
+			   "o:q:u:x:y:w:l:r:p:e:c:a:t:s:k:jzndifbhF")) != -1){
 		switch (c) {
 			case 'o':
 				outfilename = optarg;
@@ -653,6 +655,9 @@ int main(int argc, char** argv){
 				break;
 			case 'i':
 				t2p->pdf_colorspace_invert=1;
+				break;
+			case 'F':
+				t2p->pdf_image_fillpage = 1;
 				break;
 			case 'f': 
 				t2p->pdf_fitwindow=1;
@@ -802,6 +807,7 @@ void tiff2pdf_usage(){
 	" -l: length in units",
 	" -r: 'd' for resolution default, 'o' for resolution override",
 	" -p: paper size, eg \"letter\", \"legal\", \"A4\"",
+  " -F: make the tiff fill the PDF page",
 	" -f: set PDF \"Fit Window\" user preference",
 	" -e: date, overrides image or current date/time default, YYYYMMDDHHMMSS",
 	" -c: sets document creator, overrides image software default",
@@ -4145,6 +4151,8 @@ void t2p_compose_pdf_page(T2P* t2p){
 	uint32 tilelength=0;
 	int istiled=0;
 	float f=0;
+	float width_ratio=0;
+	float length_ratio=0;
 	
 	t2p->pdf_xres = t2p->tiff_xres;
 	t2p->pdf_yres = t2p->tiff_yres;
@@ -4156,8 +4164,18 @@ void t2p_compose_pdf_page(T2P* t2p){
 		t2p->pdf_xres = t2p->pdf_defaultxres;
 	if(t2p->pdf_yres == 0.0)
 		t2p->pdf_yres = t2p->pdf_defaultyres;
-	if (t2p->tiff_resunit != RESUNIT_CENTIMETER	/* RESUNIT_NONE and */
-	    && t2p->tiff_resunit != RESUNIT_INCH) {	/* other cases */
+	if (t2p->pdf_image_fillpage) {
+		width_ratio = t2p->pdf_defaultpagewidth/t2p->tiff_width;
+		length_ratio = t2p->pdf_defaultpagelength/t2p->tiff_length;
+		if (width_ratio < length_ratio ) {
+			t2p->pdf_imagewidth = t2p->pdf_defaultpagewidth;
+			t2p->pdf_imagelength = t2p->tiff_length * width_ratio;
+		} else {
+			t2p->pdf_imagewidth = t2p->tiff_width * length_ratio;
+			t2p->pdf_imagelength = t2p->pdf_defaultpagelength;
+		}
+	} else if (t2p->tiff_resunit != RESUNIT_CENTIMETER	/* RESUNIT_NONE and */
+		&& t2p->tiff_resunit != RESUNIT_INCH) {	/* other cases */
 		t2p->pdf_imagewidth = ((float)(t2p->tiff_width))/t2p->pdf_xres;
 		t2p->pdf_imagelength = ((float)(t2p->tiff_length))/t2p->pdf_yres;
 	} else {

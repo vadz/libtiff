@@ -1,5 +1,10 @@
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
+	* tools/tiff2pdf.c: add fill-page option
+	http://bugzilla.maptools.org/show_bug.cgi?id=2051
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_dirread.c: modify warnings
 	http://bugzilla.maptools.org/show_bug.cgi?id=2016
 
