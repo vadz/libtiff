@@ -1565,7 +1565,6 @@ OJPEGReadHeaderInfoSecStreamSof(TIFF* tif, uint8 marker_id)
 		OJPEGReadSkip(sp,4);
 	else
 	{
-		/* TODO: probably best to also add check on allowed upper bound, especially x, may cause buffer overflow otherwise i think */
 		/* Y: Number of lines */
 		if (OJPEGReadWord(sp,&p)==0)
 			return(0);
@@ -1581,6 +1580,11 @@ OJPEGReadHeaderInfoSecStreamSof(TIFF* tif, uint8 marker_id)
 		if (((uint32)p<sp->image_width) && ((uint32)p<sp->strile_width))
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,"JPEG compressed data indicates unexpected width");
+			return(0);
+		}
+		if ((uint32)p>sp->strile_width)
+		{
+			TIFFErrorExt(tif->tif_clientdata,module,"JPEG compressed data image width exceeds expected image width");
 			return(0);
 		}
 		sp->sof_x=p;

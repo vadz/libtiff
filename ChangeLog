@@ -1,5 +1,10 @@
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_ojpeg.c: fix buffer overflow on problem data
+        http://bugzilla.maptools.org/show_bug.cgi?id=1999
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
 	* tools/tiffinfoce.c: strip byte counts are uint64* now
 
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
