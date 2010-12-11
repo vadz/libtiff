@@ -1903,7 +1903,7 @@ OJPEGReadBufferFill(OJPEGState* sp)
 				sp->in_buffer_file_pos_log=1;
 			}
 			m=OJPEG_BUFFER;
-			if ((tmsize_t)m>sp->in_buffer_file_togo)
+			if ((uint64)m>sp->in_buffer_file_togo)
 				m=(uint16)sp->in_buffer_file_togo;
 			n=TIFFReadFile(sp->tif,sp->in_buffer,(tmsize_t)m);
 			if (n==0)
