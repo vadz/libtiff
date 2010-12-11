@@ -1,4 +1,9 @@
-2010-12-08  Lee Howard <faxguy@howardsilvan.com>
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
+        * libtiff/tif_ojpeg.c: fix buffer overflow on problem data
+        http://bugzilla.maptools.org/show_bug.cgi?id=1999
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
 	* libtiff/tif_ojpeg.c: fix crash when reading a TIFF with a zero
 	or missing byte-count tag
