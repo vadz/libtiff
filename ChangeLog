@@ -1,4 +1,8 @@
-2010-12-08  Lee Howard <faxguy@howardsilvan.com>
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
+	* tools/tiffinfoce.c: strip byte counts are uint64* now
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
         * libtiff/tif_ojpeg.c: fix crash when reading a TIFF with a zero
         or missing byte-count tag
