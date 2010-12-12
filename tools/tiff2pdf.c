@@ -4662,14 +4662,6 @@ tsize_t t2p_write_pdf_xobject_cs(T2P* t2p, TIFF* output){
 			Y_W = 1.0F;
 			buflen=sprintf(buffer, "[%.4f %.4f %.4f] \n", X_W, Y_W, Z_W);
 			written += t2pWriteFile(output, (tdata_t) buffer, buflen);
-			X_W = 0.3457F; /* 0.3127F; */ /* D50, commented D65 */
-			Y_W = 0.3585F; /* 0.3290F; */
-			Z_W = 1.0F - (X_W + Y_W);
-			X_W /= Y_W;
-			Z_W /= Y_W;
-			Y_W = 1.0F;
-			buflen=sprintf(buffer, "[%.4f %.4f %.4f] \n", X_W, Y_W, Z_W);
-			written += t2pWriteFile(output, (tdata_t) buffer, buflen);
 			written += t2pWriteFile(output, (tdata_t) "/Range ", 7);
 			buflen=sprintf(buffer, "[%d %d %d %d] \n", 
 				t2p->pdf_labrange[0], 
