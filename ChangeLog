@@ -1,5 +1,10 @@
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
+	* tools/tiff2pdf.c: remove invalid duplication for Lab 
+	http://bugzilla.maptools.org/show_bug.cgi?id=2162
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_jpeg.c: fix use of clumplines calculation
 	http://bugzilla.maptools.org/show_bug.cgi?id=2149
 
