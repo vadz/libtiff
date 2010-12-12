@@ -1909,7 +1909,7 @@ JPEGEncodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 			sp->scancount = 0;
 		}
 		tif->tif_row += sp->v_sampling;
-		buf += sp->bytesperline;
+		buf += bytesperclumpline;
 		nrows -= sp->v_sampling;
 	}
 	return (1);

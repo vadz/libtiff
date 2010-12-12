@@ -1,5 +1,10 @@
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_jpeg.c: fix use of clumplines calculation
+	http://bugzilla.maptools.org/show_bug.cgi?id=2149
+
+2010-12-11  Lee Howard <faxguy@howardsilvan.com>
+
 	* tools/fax2ps.c: replace unsafe tmpfile() with mkstemp()
 	http://bugzilla.maptools.org/show_bug.cgi?id=2118
 
