@@ -1,3 +1,8 @@
+2010-12-12  Lee Howard <faxguy@howardsilvan.com>
+
+	* libtiff/tif_dirread.c: fix for Zeiss LSM and Canon CR2 files
+	http://bugzilla.maptools.org/show_bug.cgi?id=2164
+
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
 	* tools/tiff2pdf.c: remove invalid duplication for Lab

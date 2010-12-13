@@ -2727,7 +2727,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleShort(TIFF* tif, TIFFDi
 	uint16* m;
 	uint16* na;
 	uint16 nb;
-	if (direntry->tdir_count!=(uint64)tif->tif_dir.td_samplesperpixel)
+	if (direntry->tdir_count<(uint64)tif->tif_dir.td_samplesperpixel)
 		return(TIFFReadDirEntryErrCount);
 	err=TIFFReadDirEntryShortArray(tif,direntry,&m);
 	if (err!=TIFFReadDirEntryErrOk)
@@ -2755,7 +2755,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleDouble(TIFF* tif, TIFFD
 	double* m;
 	double* na;
 	uint16 nb;
-	if (direntry->tdir_count!=(uint64)tif->tif_dir.td_samplesperpixel)
+	if (direntry->tdir_count<(uint64)tif->tif_dir.td_samplesperpixel)
 		return(TIFFReadDirEntryErrCount);
 	err=TIFFReadDirEntryDoubleArray(tif,direntry,&m);
 	if (err!=TIFFReadDirEntryErrOk)
