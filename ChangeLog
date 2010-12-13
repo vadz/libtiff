@@ -1,5 +1,11 @@
 2010-12-12  Lee Howard <faxguy@howardsilvan.com>
 
+	* tools/tiff2pdf.c: fix colors for images with RGBA 
+	interleaved data
+	http://bugzilla.maptools.org/show_bug.cgi?id=2250
+
+2010-12-12  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_dirread.c: fix for Zeiss LSM and Canon CR2 files
 	http://bugzilla.maptools.org/show_bug.cgi?id=2164
 
