@@ -107,8 +107,8 @@
  *                of messages to monitor progess without enabling dump logs.
  */
 
-static   char tiffcrop_version_id[] = "2.3";
-static   char tiffcrop_rev_date[] = "07-12-2010";
+static   char tiffcrop_version_id[] = "2.4";
+static   char tiffcrop_rev_date[] = "12-13-2010";
 
 #include "tif_config.h"
 #include "tiffiop.h"
@@ -132,6 +132,10 @@ static   char tiffcrop_rev_date[] = "07-12-2010";
 
 #ifndef HAVE_GETOPT
 extern int getopt(int, char**, char*);
+#endif
+
+#ifdef NEED_LIBPORT
+# include "libport.h"
 #endif
 
 #include "tiffio.h"
@@ -1475,7 +1479,7 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 		break;
           default:
                 TIFFError(TIFFFileName(in),
-                          "Data type %d is not supported, tag %d skipped.",
+                          "Data type %d is not supported, tag %d skipped",
                           tag, type);
 	}
 }
@@ -2069,7 +2073,7 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
       /* MAX_EXPORT_PAGES limited to 6 digits to prevent string overflow of pathname */
       if (findex > MAX_EXPORT_PAGES)
 	{
-	TIFFError("update_output_file", "Maximum of %d pages per file exceeded.\n", MAX_EXPORT_PAGES);
+	TIFFError("update_output_file", "Maximum of %d pages per file exceeded", MAX_EXPORT_PAGES);
         return 1;
         }
 
@@ -2082,7 +2086,7 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
     *tiffout = TIFFOpen(exportname, mode);
     if (*tiffout == NULL)
       {
-      TIFFError("update_output_file", "Unable to open output file %s\n", exportname);
+      TIFFError("update_output_file", "Unable to open output file %s", exportname);
       return 1;
       }
     *page = 0; 
@@ -2406,7 +2410,7 @@ static int dump_data (FILE *dumpfile, int format, char *dump_tag, unsigned char 
 
   if (dumpfile == NULL)
     {
-    TIFFError ("", "Invalid FILE pointer for dump file\n");
+    TIFFError ("", "Invalid FILE pointer for dump file");
     return (1);
     }
 
@@ -2429,7 +2433,7 @@ static int dump_data (FILE *dumpfile, int format, char *dump_tag, unsigned char 
     {
     if ((fwrite (data, 1, count, dumpfile)) != count)
       {
-      TIFFError ("", "Unable to write binary data to dump file\n");
+      TIFFError ("", "Unable to write binary data to dump file");
       return (1);
       }
     }
@@ -2445,7 +2449,7 @@ static int dump_byte (FILE *dumpfile, int format, char *dump_tag, unsigned char 
 
   if (dumpfile == NULL)
     {
-    TIFFError ("", "Invalid FILE pointer for dump file\n");
+    TIFFError ("", "Invalid FILE pointer for dump file");
     return (1);
     }
 
@@ -2464,7 +2468,7 @@ static int dump_byte (FILE *dumpfile, int format, char *dump_tag, unsigned char 
     {
     if ((fwrite (&data, 1, 1, dumpfile)) != 1)
       {
-      TIFFError ("", "Unable to write binary data to dump file\n");
+      TIFFError ("", "Unable to write binary data to dump file");
       return (1);
       }
     }
@@ -2480,7 +2484,7 @@ static int dump_short (FILE *dumpfile, int format, char *dump_tag, uint16 data)
 
   if (dumpfile == NULL)
     {
-    TIFFError ("", "Invalid FILE pointer for dump file\n");
+    TIFFError ("", "Invalid FILE pointer for dump file");
     return (1);
     }
 
@@ -2501,7 +2505,7 @@ static int dump_short (FILE *dumpfile, int format, char *dump_tag, uint16 data)
     {
     if ((fwrite (&data, 2, 1, dumpfile)) != 2)
       {
-      TIFFError ("", "Unable to write binary data to dump file\n");
+      TIFFError ("", "Unable to write binary data to dump file");
       return (1);
       }
     }
@@ -2517,7 +2521,7 @@ static int dump_long (FILE *dumpfile, int format, char *dump_tag, uint32 data)
 
   if (dumpfile == NULL)
     {
-    TIFFError ("", "Invalid FILE pointer for dump file\n");
+    TIFFError ("", "Invalid FILE pointer for dump file");
     return (1);
     }
 
@@ -2538,7 +2542,7 @@ static int dump_long (FILE *dumpfile, int format, char *dump_tag, uint32 data)
     {
     if ((fwrite (&data, 4, 1, dumpfile)) != 4)
       {
-      TIFFError ("", "Unable to write binary data to dump file\n");
+      TIFFError ("", "Unable to write binary data to dump file");
       return (1);
       }
     }
@@ -2553,7 +2557,7 @@ static int dump_wide (FILE *dumpfile, int format, char *dump_tag, uint64 data)
 
   if (dumpfile == NULL)
     {
-    TIFFError ("", "Invalid FILE pointer for dump file\n");
+    TIFFError ("", "Invalid FILE pointer for dump file");
     return (1);
     }
 
@@ -2574,7 +2578,7 @@ static int dump_wide (FILE *dumpfile, int format, char *dump_tag, uint64 data)
     {
     if ((fwrite (&data, 8, 1, dumpfile)) != 8)
       {
-      TIFFError ("", "Unable to write binary data to dump file\n");
+      TIFFError ("", "Unable to write binary data to dump file");
       return (1);
       }
     }
@@ -2603,7 +2607,7 @@ static int dump_buffer (FILE* dumpfile, int format, uint32 rows, uint32 width,
 
   if (dumpfile == NULL)
     {
-    TIFFError ("", "Invalid FILE pointer for dump file\n");
+    TIFFError ("", "Invalid FILE pointer for dump file");
     return (1);
     }
 
@@ -5271,8 +5275,8 @@ getCropOffsets(struct image_data *image, struct crop_mask *crop, struct dump_opt
   {
   struct offset offsets;
   int    i;
-  int32  test2;
-  uint32 test, seg, total, need_buff = 0;
+  int32  test;
+  uint32 seg, total, need_buff = 0;
   uint32 buffsize;
   uint32 zwidth, zlength;
 
@@ -5359,12 +5363,17 @@ getCropOffsets(struct image_data *image, struct crop_mask *crop, struct dump_opt
 
            crop->regionlist[i].x1 = offsets.startx + 
                                   (uint32)(offsets.crop_width * 1.0 * (seg - 1) / total);
-           test = offsets.startx + 
-                  (uint32)(offsets.crop_width * 1.0 * seg / total);
-           if (test > image->width - 1)
-             crop->regionlist[i].x2 = image->width - 1;
+           test = (int32)offsets.startx + 
+                  (int32)(offsets.crop_width * 1.0 * seg / total);
+           if (test < 1 )
+             crop->regionlist[i].x2 = 0;
            else
-             crop->regionlist[i].x2 = test - 1;
+	     {
+	     if (test > (int32)(image->width - 1))
+               crop->regionlist[i].x2 = image->width - 1;
+             else
+	       crop->regionlist[i].x2 = test - 1;
+             }
            zwidth = crop->regionlist[i].x2 - crop->regionlist[i].x1  + 1;
 
 	   /* This is passed to extractCropZone or extractCompositeZones */
@@ -5379,17 +5388,22 @@ getCropOffsets(struct image_data *image, struct crop_mask *crop, struct dump_opt
 	   crop->regionlist[i].x1 = offsets.startx;
            crop->regionlist[i].x2 = offsets.endx;
 
-           test2 = offsets.endy - (uint32)(offsets.crop_length * 1.0 * seg / total);
-           if (test2 < 1 )
+           test = offsets.endy - (uint32)(offsets.crop_length * 1.0 * seg / total);
+           if (test < 1 )
 	     crop->regionlist[i].y1 = 0;
            else
-	     crop->regionlist[i].y1 = test2 + 1;
+	     crop->regionlist[i].y1 = test + 1;
 
-           test = offsets.endy - (uint32)(offsets.crop_length * 1.0 * (seg - 1) / total);
-           if (test > (image->length - 1))
-             crop->regionlist[i].y2 = image->length - 1;
-           else 
-             crop->regionlist[i].y2 = test;
+           test = offsets.endy - (offsets.crop_length * 1.0 * (seg - 1) / total);
+           if (test < 1 )
+             crop->regionlist[i].y2 = 0;
+           else
+	     {
+             if (test > (int32)(image->length - 1))
+               crop->regionlist[i].y2 = image->length - 1;
+             else 
+               crop->regionlist[i].y2 = test;
+	     }
            zlength = crop->regionlist[i].y2 - crop->regionlist[i].y1 + 1;
 
 	   /* This is passed to extractCropZone or extractCompositeZones */
@@ -5407,12 +5421,16 @@ getCropOffsets(struct image_data *image, struct crop_mask *crop, struct dump_opt
            crop->regionlist[i].x1 = offsets.startx +
                                   (uint32)(offsets.crop_width  * (total - seg) * 1.0 / total);
            test = offsets.startx + 
-	          (uint32)(offsets.crop_width * (total - seg + 1) * 1.0 / total);
-
-           if (test > image->width - 1)
-             crop->regionlist[i].x2 = image->width - 1;
+	          (offsets.crop_width * (total - seg + 1) * 1.0 / total);
+           if (test < 1 )
+             crop->regionlist[i].x2 = 0;
            else
-             crop->regionlist[i].x2 = test - 1;
+	     {
+	     if (test > (int32)(image->width - 1))
+               crop->regionlist[i].x2 = image->width - 1;
+             else
+               crop->regionlist[i].x2 = test - 1;
+             }
            zwidth = crop->regionlist[i].x2 - crop->regionlist[i].x1  + 1;
 
 	   /* This is passed to extractCropZone or extractCompositeZones */
@@ -5430,10 +5448,15 @@ getCropOffsets(struct image_data *image, struct crop_mask *crop, struct dump_opt
 
            crop->regionlist[i].y1 = offsets.starty + (uint32)(offsets.crop_length * 1.0 * (seg - 1) / total);
            test = offsets.starty + (uint32)(offsets.crop_length * 1.0 * seg / total);
-	   if (test > image->length - 1)
-	     crop->regionlist[i].y2 = image->length - 1;
+           if (test < 1 )
+             crop->regionlist[i].y2 = 0;
            else
-	     crop->regionlist[i].y2 = test - 1;
+	     {
+	     if (test > (int32)(image->length - 1))
+	       crop->regionlist[i].y2 = image->length - 1;
+             else
+	       crop->regionlist[i].y2 = test - 1;
+	     }
            zlength = crop->regionlist[i].y2 - crop->regionlist[i].y1 + 1;
 
 	   /* This is passed to extractCropZone or extractCompositeZones */
@@ -5535,10 +5558,10 @@ computeOutputPixelOffsets (struct crop_mask *crop, struct image_data *image,
   if (dump->debug)
     {
     TIFFError("", "Page size: %s, Vres: %3.2f, Hres: %3.2f, "
-                   "Hmargin: %3.2f, Vmargin: %3.2f\n",
+                   "Hmargin: %3.2f, Vmargin: %3.2f",
 	     page->name, page->vres, page->hres,
              page->hmargin, page->vmargin);
-    TIFFError("", "Res_unit: %d, Scale: %3.2f, Page width: %3.2f, length: %3.2f\n", 
+    TIFFError("", "Res_unit: %d, Scale: %3.2f, Page width: %3.2f, length: %3.2f", 
            page->res_unit, scale, pwidth, plength);
     }
 
@@ -5954,7 +5977,7 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
     jpegcolormode = JPEGCOLORMODE_RGB;
     TIFFSetField(in, TIFFTAG_JPEGCOLORMODE, JPEGCOLORMODE_RGB);
     }
-  /* The clause up to the read statement are taken from Tom Lane's tiffcp patch */
+  /* The clause up to the read statement is taken from Tom Lane's tiffcp patch */
   else 
     {   /* Otherwise, can't handle subsampled input */
     if (input_photometric == PHOTOMETRIC_YCBCR)
@@ -5964,14 +5987,13 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
       if (subsampling_horiz != 1 || subsampling_vert != 1)
         {
 	TIFFError("loadImage", 
-		"Can't copy/convert subsampled image with subsampling %d horiz %d vert.\n",
+		"Can't copy/convert subsampled image with subsampling %d horiz %d vert",
                 subsampling_horiz, subsampling_vert);
         return (-1);
         }
 	}
     }
  
-
   read_buff = *read_ptr;
   if (!read_buff)
     read_buff = (unsigned char *)_TIFFmalloc(buffsize);
@@ -6520,7 +6542,7 @@ extractImageSection(struct image_data *image, struct pageseg *section,
     {
     if ((bitarray = (char *)malloc(img_width)) == NULL)
       {
-      TIFFError ("", "DEBUG: Unable to allocate debugging bitarray\n");
+      TIFFError ("", "DEBUG: Unable to allocate debugging bitarray");
       return (-1);
       }
     }
@@ -6557,7 +6579,7 @@ extractImageSection(struct image_data *image, struct pageseg *section,
       src_offset = row_offset + col_offset;
 
 #ifdef DEVELMODE
-        TIFFError ("", "Src offset: %8d, Dst offset: %8d\n", src_offset, dst_offset); 
+        TIFFError ("", "Src offset: %8d, Dst offset: %8d", src_offset, dst_offset); 
 #endif
       _TIFFmemcpy (sect_buff + dst_offset, src_buff + src_offset, full_bytes);
       dst_offset += full_bytes;
@@ -7039,7 +7061,7 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
            }
          else
            {
-	   TIFFError("writeCroppedImage",
+	   TIFFError("writeSingleSection",
                      "JPEG compression requires 8 or 12 bits per sample");
            return (-1);
            }
