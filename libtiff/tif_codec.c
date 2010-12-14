@@ -69,6 +69,9 @@ static int NotConfigured(TIFF*, int);
 #ifndef LOGLUV_SUPPORT
 #define TIFFInitSGILog NotConfigured
 #endif
+#ifndef LZMA_SUPPORT
+#define TIFFInitLZMA NotConfigured
+#endif
 
 /*
  * Compression schemes statically built into the library.
@@ -95,6 +98,7 @@ TIFFCodec _TIFFBuiltinCODECS[] = {
     { "PixarLog",	COMPRESSION_PIXARLOG,	TIFFInitPixarLog },
     { "SGILog",		COMPRESSION_SGILOG,	TIFFInitSGILog },
     { "SGILog24",	COMPRESSION_SGILOG24,	TIFFInitSGILog },
+    { "LZMA",		COMPRESSION_LZMA,	TIFFInitLZMA },
     { NULL,             0,                      NULL }
 };
 

@@ -371,6 +371,11 @@ processCompressOptions(char* opt)
 		if (cp)
 			defpredictor = atoi(cp+1);
 		defcompression = COMPRESSION_ADOBE_DEFLATE;
+	} else if (strneq(opt, "lzma", 4)) {
+		char* cp = strchr(opt, ':');
+		if (cp)
+			defpredictor = atoi(cp+1);
+		defcompression = COMPRESSION_LZMA;
 	} else if (strneq(opt, "jbig", 4)) {
 		defcompression = COMPRESSION_JBIG;
 	} else if (strneq(opt, "sgilog", 6)) {
@@ -403,6 +408,7 @@ char* stuff[] = {
 "",
 " -c lzw[:opts]   compress output with Lempel-Ziv & Welch encoding",
 " -c zip[:opts]   compress output with deflate encoding",
+" -c lzma[:opts]  compress output with LZMA encoding",
 " -c jpeg[:opts]  compress output with JPEG encoding",
 " -c jbig         compress output with ISO JBIG encoding",
 " -c packbits     compress output with packbits encoding",
@@ -423,7 +429,7 @@ char* stuff[] = {
 " r               output color image as RGB rather than YCbCr",
 "For example, -c jpeg:r:50 to get JPEG-encoded RGB data with 50% comp. quality",
 "",
-"LZW and deflate options:",
+"LZW, Deflate (ZIP) and LZMA options:",
 " #               set predictor value",
 "For example, -c lzw:2 to get LZW-encoded data with horizontal differencing",
 "",
@@ -698,6 +704,7 @@ tiffcp(TIFF* in, TIFF* out)
 		case COMPRESSION_LZW:
 		case COMPRESSION_ADOBE_DEFLATE:
 		case COMPRESSION_DEFLATE:
+                case COMPRESSION_LZMA:
 			if (predictor != (uint16)-1)
 				TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
 			else
@@ -1234,7 +1241,7 @@ DECLAREreadFunc(readSeparateStripsIntoBuffer)
 	if (!scanlinesize)
 		return 0;
 
-        scanline = _TIFFmalloc(scanlinesize);
+	scanline = _TIFFmalloc(scanlinesize);
 	if (!scanline)
 		return 0;
 	_TIFFmemset(scanline, 0, scanlinesize);

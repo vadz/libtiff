@@ -195,6 +195,9 @@
    */
 #undef LT_OBJDIR
 
+/* Support LZMA2 compression */
+#undef LZMA_SUPPORT
+
 /* Support LZW algorithm */
 #undef LZW_SUPPORT
 

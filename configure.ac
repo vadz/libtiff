@@ -659,6 +659,57 @@ if test "$HAVE_JBIG" = "yes" ; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl Check for liblzma2.
+dnl ---------------------------------------------------------------------------
+
+HAVE_LZMA=no
+
+AC_ARG_ENABLE(lzma,
+	      AS_HELP_STRING([--disable-lzma],
+			     [disable liblzma usage (required for LZMA2 compression, enabled by default)]),,)
+AC_ARG_WITH(lzma-include-dir,
+	    AS_HELP_STRING([--with-lzma-include-dir=DIR],
+			   [location of liblzma headers]),,)
+AC_ARG_WITH(lzma-lib-dir,
+	    AS_HELP_STRING([--with-lzma-lib-dir=DIR],
+			   [location of liblzma library binary]),,)
+
+if test "x$enable_lzma" != "xno" ; then
+
+  if test "x$with_lzma_lib_dir" != "x" ; then
+    LDFLAGS="-L$with_lzma_lib_dir $LDFLAGS"
+  fi
+  
+  AC_CHECK_LIB(lzma, lzma_code, [lzma_lib=yes], [lzma_lib=no],)
+  if test "$lzma_lib" = "no" -a "x$with_lzma_lib_dir" != "x"; then
+    AC_MSG_ERROR([lzma library not found at $with_lzma_lib_dir])
+  fi
+    
+  if test "x$with_lzma_include_dir" != "x" ; then
+    CPPFLAGS="-I$with_lzma_include_dir $CPPFLAGS"
+  fi
+  AC_CHECK_HEADER(lzma.h, [lzma_h=yes], [lzma_h=no])
+  if test "$lzma_h" = "no" -a "x$with_lzma_include_dir" != "x" ; then
+    AC_MSG_ERROR([Liblzma headers not found at $with_lzma_include_dir])
+  fi
+
+  if test "$lzma_lib" = "yes" -a "$lzma_h" = "yes" ; then
+    HAVE_LZMA=yes
+  fi
+
+fi
+
+if test "$HAVE_LZMA" = "yes" ; then
+  AC_DEFINE(LZMA_SUPPORT,1,[Support LZMA2 compression])
+  LIBS="-llzma $LIBS"
+
+  if test "$HAVE_RPATH" = "yes" -a "x$with_lzma_lib_dir" != "x" ; then
+    LIBDIR="-R $with_lzma_lib_dir $LIBDIR"
+  fi
+
+fi
+
+dnl ---------------------------------------------------------------------------
 dnl Should 8/12 bit jpeg mode be enabled?
 dnl ---------------------------------------------------------------------------
 
@@ -863,6 +914,7 @@ LOC_MSG([  JPEG support:                       ${HAVE_JPEG}])
 LOC_MSG([  Old JPEG support:                   ${HAVE_OJPEG}])
 LOC_MSG([  JPEG 8/12 bit dual mode:            ${HAVE_JPEG12}])
 LOC_MSG([  ISO JBIG support:                   ${HAVE_JBIG}])
+LOC_MSG([  LZMA2 support:                      ${HAVE_LZMA}])
 LOC_MSG()
 LOC_MSG([  C++ support:                        ${HAVE_CXX}])
 LOC_MSG()

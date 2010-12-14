@@ -83,10 +83,12 @@ for no compression,
 for PackBits compression,
 .B lzw
 for Lempel-Ziv & Welch compression,
-.B jpeg
-for baseline JPEG compression,
 .B zip
 for Deflate compression,
+.B lzma
+for LZMA compression,
+.B jpeg
+for baseline JPEG compression,
 .B g3
 for CCITT Group 3 (T.4) compression,
 and
@@ -118,16 +120,16 @@ list to the ``g3'' option; e.g.
 .B "\-c g3:2d:fill"
 to get 2D-encoded data with byte-aligned EOL codes.
 .IP
-.SM LZW
+.SM LZW, Deflate
+and
+.SM LZMA
 compression can be specified together with a 
 .I predictor
 value.
-A predictor value of 2 causes
-each scanline of the output image to undergo horizontal
-differencing before it is encoded; a value
-of 1 forces each scanline to be encoded without differencing.
-LZW-specific options are specified by appending a ``:''-separated
-list to the ``lzw'' option; e.g.
+A predictor value of 2 causes each scanline of the output image to undergo
+horizontal differencing before it is encoded; a value of 1 forces each
+scanline to be encoded without differencing. LZW-specific options are
+specified by appending a ``:''-separated list to the ``lzw'' option; e.g.
 .B "\-c lzw:2"
 for
 .SM LZW
