@@ -60,6 +60,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+XFAIL_TESTS =
 check_PROGRAMS = ascii_tag$(EXEEXT) long_tag$(EXEEXT) \
 	short_tag$(EXEEXT) strip_rw$(EXEEXT) rewrite$(EXEEXT)
 subdir = test
@@ -276,7 +277,6 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
@@ -310,7 +310,6 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -345,6 +344,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -382,9 +382,6 @@ EXTRA_DIST = \
 
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
-
-# Tests which are expected to fail
-XFAIL_TESTS =
 
 # Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif o-*
@@ -785,12 +782,10 @@ check-TESTS:
 	@list='$(RECHECK_LOGS)'; test -z "$$list" || rm -f $$list
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@list='$(TEST_LOGS)';						\
-	{ echo "TEST_LOGS = ";						\
-	  for f in $$list; do						\
-	    test .log = $$f || echo $$f;				\
-	  done;								\
-	} | { tr '\012\015' '  '; echo; }				\
-	  | $(MAKE) -f Makefile -f - $(AM_MAKEFLAGS) $(TEST_SUITE_LOG)
+	list=`for f in $$list; do					\
+	  test .log = $$f || echo $$f;					\
+	done | tr '\012\015' '  '`;					\
+	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$list"
 
 .log.html:
 	@list='$(RST2HTML) $$RST2HTML rst2html rst2html.py';		\
