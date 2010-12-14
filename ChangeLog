@@ -1,5 +1,11 @@
 2010-12-13  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_jpeg.c: reduce usage of JCS_UNKNOWN in order
+	to improve compatibility with various viewers
+	submitted by e-mail from Dwight Kelly <dkelly@apago.com>
+
+2010-12-13  Lee Howard <faxguy@howardsilvan.com>
+
 	* tools/fax2ps.c: be consistent with page-numbering
 	http://bugzilla.maptools.org/show_bug.cgi?id=2225
 
