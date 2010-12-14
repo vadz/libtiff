@@ -1,5 +1,10 @@
 2010-12-13  Lee Howard <faxguy@howardsilvan.com>
 
+	* tools/fax2ps.c: be consistent with page-numbering
+	http://bugzilla.maptools.org/show_bug.cgi?id=2225
+
+2010-12-13  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_color.c: prevent crash in handling bad TIFFs
 	resolves CVE-2010-2595
 	http://bugzilla.maptools.org/show_bug.cgi?id=2208
