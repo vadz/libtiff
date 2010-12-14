@@ -42,8 +42,7 @@ EXTRA_DIST = \
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
 # Tests which are expected to fail
-XFAIL_TESTS = \
-	tiffcrop-extractz14-logluv-3c-16b.sh
+XFAIL_TESTS =
 
 # Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif o-*
