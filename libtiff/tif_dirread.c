@@ -83,6 +83,7 @@ TIFFReadDirectory(TIFF* tif)
 	const TIFFFieldInfo* fip;
 	size_t fix;
 	uint16 dircount;
+	uint16 previous_tag = 0;
 	int diroutoforderwarning = 0, compressionknown = 0;
 	int haveunknowntags = 0;
 
@@ -176,23 +177,24 @@ TIFFReadDirectory(TIFF* tif)
 
 		if (dp->tdir_tag == IGNORE)
 			continue;
-		if (fix >= tif->tif_nfields)
-			fix = 0;
 
 		/*
 		 * Silicon Beach (at least) writes unordered
 		 * directory tags (violating the spec).  Handle
 		 * it here, but be obnoxious (maybe they'll fix it?).
 		 */
-		if (dp->tdir_tag < tif->tif_fieldinfo[fix]->field_tag) {
+		if (dp->tdir_tag < previous_tag) {
 			if (!diroutoforderwarning) {
 				TIFFWarningExt(tif->tif_clientdata, module,
 	"%s: invalid TIFF directory; tags are not sorted in ascending order",
 					    tif->tif_name);
 				diroutoforderwarning = 1;
 			}
-			fix = 0;			/* O(n^2) */
 		}
+		previous_tag = dp->tdir_tag;
+		if (fix >= tif->tif_nfields ||
+		    dp->tdir_tag < tif->tif_fieldinfo[fix]->field_tag)
+			fix = 0;			/* O(n^2) */
 		while (fix < tif->tif_nfields &&
 		    tif->tif_fieldinfo[fix]->field_tag < dp->tdir_tag)
 			fix++;
