@@ -1,5 +1,11 @@
 2010-12-14  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_strip.c: use TIFFGetFieldDefaulted instead
+	of TIFFGetField when we assume that it will succeed
+	http://bugzilla.maptools.org/show_bug.cgi?id=2215
+
+2010-12-14  Lee Howard <faxguy@howardsilvan.com>
+
 	* tools/gif2tiff.c: fix buffer overrun
 	http://bugzilla.maptools.org/show_bug.cgi?id=2270
 
