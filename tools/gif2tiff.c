@@ -507,6 +507,10 @@ rasterize(int interleaved, char* mode)
     strip = 0;
     stripsize = TIFFStripSize(tif);
     for (row=0; row<height; row += rowsperstrip) {
+	if (rowsperstrip > height-row) {
+	    rowsperstrip = height-row;
+	    stripsize = TIFFVStripSize(tif, rowsperstrip);
+	}
 	if (TIFFWriteEncodedStrip(tif, strip, newras+row*width, stripsize) < 0)
 	    break;
 	strip++;
