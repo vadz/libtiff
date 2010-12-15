@@ -1,5 +1,11 @@
 2010-12-14  Lee Howard <faxguy@howardsilvan.com>
 
+	* libtiff/tif_dirread.c: tolerate some cases where
+	FIELD_COLORMAP is missing
+	http://bugzilla.maptools.org/show_bug.cgi?id=2189
+
+2010-12-14  Lee Howard <faxguy@howardsilvan.com>
+
 	* libtiff/tif_read.c: change read_ahead to tmsize_t
 	http://bugzilla.maptools.org/show_bug.cgi?id=2222
 
