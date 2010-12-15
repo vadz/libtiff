@@ -34,8 +34,7 @@ EXTRA_DIST = Makefile.vc \
 	     tif_config.wince.h \
 	     tiffconf.vc.h \
 	     tiffconf.wince.h \
-	     libtiff.def \
-	     tif_win32.c
+	     libtiff.def 
 
 libtiffinclude_HEADERS = \
 	tiff.h \
@@ -90,7 +89,6 @@ libtiff_la_SOURCES = \
 	tif_swab.c \
 	tif_thunder.c \
 	tif_tile.c \
-	tif_unix.c \
 	tif_version.c \
 	tif_warning.c \
 	tif_write.c \
@@ -98,6 +96,14 @@ libtiff_la_SOURCES = \
 
 libtiffxx_la_SOURCES = \
 	tif_stream.cxx
+
+if WIN32_IO
+EXTRA_DIST += tif_unix.c
+libtiff_la_SOURCES += tif_win32.c
+else
+EXTRA_DIST += tif_win32.c
+libtiff_la_SOURCES += tif_unix.c
+endif
 
 lib_LTLIBRARIES = libtiff.la
 if HAVE_CXX

@@ -1,5 +1,11 @@
 2010-12-14  Lee Howard <faxguy@howardsilvan.com>
 
+	* configure.ac, libtiff/Makefile.am: Build tif_win32.c on
+	Windows except on Cygwin
+	http://bugzilla.maptools.org/show_bug.cgi?id=2224
+
+2010-12-14  Lee Howard <faxguy@howardsilvan.com>
+
 	* tools/gif2tiff.c: fix buffer overrun
 	http://bugzilla.maptools.org/show_bug.cgi?id=2270
 

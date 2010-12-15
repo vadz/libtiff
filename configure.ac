@@ -777,6 +777,25 @@ fi
 AM_CONDITIONAL(HAVE_OPENGL, test "$HAVE_OPENGL" = "yes")
 
 dnl ---------------------------------------------------------------------------
+dnl Check for Win32 IO: make sure we have windows.h but not cygwin
+dnl this must be after the ogl test, since that looks for windows.h and we
+dnl test it
+dnl ---------------------------------------------------------------------------
+
+win32_io_ok=no
+case "${host_os}" in
+    cygwin*)
+        ;;
+    *)
+        if test x"$ac_cv_header_windows_h" = xyes; then 
+            win32_io_ok=yes
+	    AC_DEFINE(USE_WIN32_FILEIO,1,[define to use win32 IO system])
+	fi
+        ;;
+esac
+AM_CONDITIONAL([WIN32_IO], [test "$win32_io_ok" = yes])
+
+dnl ---------------------------------------------------------------------------
 dnl Check for X Athena Widgets
 dnl ---------------------------------------------------------------------------
 
@@ -898,6 +917,7 @@ LOC_MSG([  C compiler:                         ${CC} ${CFLAGS}])
 LOC_MSG([  C++ compiler:                       ${CXX} ${CXXFLAGS}])
 LOC_MSG([  Enable runtime linker paths:        ${HAVE_RPATH}])
 LOC_MSG([  Support Microsoft Document Imaging: ${HAVE_MDI}])
+LOC_MSG([  Use win32 IO:                       ${win32_io_ok}])
 LOC_MSG()
 LOC_MSG([ Support for internal codecs:])
 LOC_MSG([  CCITT Group 3 & 4 algorithms:       ${HAVE_CCITT}])
