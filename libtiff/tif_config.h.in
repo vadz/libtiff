@@ -341,6 +341,9 @@
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
+/* define to use win32 IO system */
+#undef USE_WIN32_FILEIO
+
 /* Version number of package */
 #undef VERSION
 
