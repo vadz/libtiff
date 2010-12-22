@@ -1,4 +1,8 @@
-<<<<<<< ChangeLog
+2010-12-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/Makefile.am (libtiff_la_SOURCES): Added tif_lzma.c to
+	Makefile.
+
 2010-12-14  Andrey Kiselev  <dron@ak4719.spb.edu>
 
 	* configure.ac, libtiff/{tif_codec.c, tif_config.h.in, tiff.h,
@@ -6,12 +10,6 @@
 	TIFF compression scheme LZMA reserving a new value 34925 for
 	Compression tag. As per
 	bug http://bugzilla.maptools.org/show_bug.cgi?id=2221
-
-=======
-2010-12-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
-
-	* libtiff/Makefile.am (libtiff_la_SOURCES): Added tif_lzma.c to
-	Makefile.
 
 2010-12-14  Lee Howard <faxguy@howardsilvan.com>
 
@@ -41,7 +39,6 @@
 	to improve compatibility with various viewers
 	submitted by e-mail from Dwight Kelly <dkelly@apago.com>
 
->>>>>>> 1.829
 2010-12-13  Lee Howard <faxguy@howardsilvan.com>
 
 	* tools/fax2ps.c: be consistent with page-numbering
