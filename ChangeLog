@@ -1,3 +1,12 @@
+2010-12-23  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffcp.c, man/tiffcp.1: Added support for specifying the
+	compression level parameter (preset) for Deflate and LZMA encoders,
+	e.g "-c lzma:p1" or "-c zip:p9".
+
+	* libtiff/tif_lzma.c: Properly set the LZMA2 compression level
+	(preset) in LZMAVSetField().
+
 2010-12-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/Makefile.am (libtiff_la_SOURCES): Added tif_lzma.c to
