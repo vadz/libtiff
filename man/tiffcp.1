@@ -86,7 +86,7 @@ for Lempel-Ziv & Welch compression,
 .B zip
 for Deflate compression,
 .B lzma
-for LZMA compression,
+for LZMA2 compression,
 .B jpeg
 for baseline JPEG compression,
 .B g3
@@ -122,18 +122,31 @@ to get 2D-encoded data with byte-aligned EOL codes.
 .IP
 .SM LZW, Deflate
 and
-.SM LZMA
+.SM LZMA2
 compression can be specified together with a 
 .I predictor
-value.
-A predictor value of 2 causes each scanline of the output image to undergo
-horizontal differencing before it is encoded; a value of 1 forces each
-scanline to be encoded without differencing. LZW-specific options are
-specified by appending a ``:''-separated list to the ``lzw'' option; e.g.
+value. A predictor value of 2 causes each scanline of the output image to
+undergo horizontal differencing before it is encoded; a value of 1 forces each
+scanline to be encoded without differencing. A value 3 is for floating point
+predictor which you can use if the encoded data are in floating point format.
+LZW-specific options are specified by appending a ``:''-separated list to the
+``lzw'' option; e.g.
 .B "\-c lzw:2"
 for
 .SM LZW
 compression with horizontal differencing.
+.IP
+.SM Deflate
+and
+.SM LZMA2
+encoders support various compression levels (or encoder presets) set as
+character ``p'' and a preset number. ``p1'' is the fastest one with the worst
+compression ratio and ``p9'' is the slowest but with the best possible ratio;
+e.g.
+.B "\-c zip:3:p9"
+for
+.SM Deflate
+encoding with maximum compression level and floating point predictor.
 .TP
 .B \-f
 Specify the bit fill order to use in writing output data.

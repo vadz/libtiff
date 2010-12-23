@@ -74,6 +74,7 @@ static uint32 tilelength;
 static uint16 config;
 static uint16 compression;
 static uint16 predictor;
+static int preset;
 static uint16 fillorder;
 static uint16 orientation;
 static uint32 rowsperstrip;
@@ -84,6 +85,7 @@ static int quality = 75;		/* JPEG quality */
 static int jpegcolormode = JPEGCOLORMODE_RGB;
 static uint16 defcompression = (uint16) -1;
 static uint16 defpredictor = (uint16) -1;
+static int defpreset =  -1;
 
 static int tiffcp(TIFF*, TIFF*);
 static int processCompressOptions(char*);
@@ -291,6 +293,7 @@ main(int argc, char* argv[])
 			config = defconfig;
 			compression = defcompression;
 			predictor = defpredictor;
+                        preset = defpreset;
 			fillorder = deffillorder;
 			rowsperstrip = defrowsperstrip;
 			tilewidth = deftilewidth;
@@ -313,6 +316,21 @@ main(int argc, char* argv[])
 	return (0);
 }
 
+static void
+processZIPOptions(char* cp)
+{
+	if ( (cp = strchr(cp, ':')) ) {
+		do {
+			cp++;
+			if (isdigit((int)*cp))
+				defpredictor = atoi(cp);
+			else if (*cp == 'p')
+				defpreset = atoi(++cp);
+			else
+				usage();
+		} while( (cp = strchr(cp, ':')) );
+	}
+}
 
 static void
 processG3Options(char* cp)
@@ -367,14 +385,10 @@ processCompressOptions(char* opt)
 			defpredictor = atoi(cp+1);
 		defcompression = COMPRESSION_LZW;
 	} else if (strneq(opt, "zip", 3)) {
-		char* cp = strchr(opt, ':');
-		if (cp)
-			defpredictor = atoi(cp+1);
+		processZIPOptions(opt);
 		defcompression = COMPRESSION_ADOBE_DEFLATE;
 	} else if (strneq(opt, "lzma", 4)) {
-		char* cp = strchr(opt, ':');
-		if (cp)
-			defpredictor = atoi(cp+1);
+		processZIPOptions(opt);
 		defcompression = COMPRESSION_LZMA;
 	} else if (strneq(opt, "jbig", 4)) {
 		defcompression = COMPRESSION_JBIG;
@@ -408,7 +422,7 @@ char* stuff[] = {
 "",
 " -c lzw[:opts]   compress output with Lempel-Ziv & Welch encoding",
 " -c zip[:opts]   compress output with deflate encoding",
-" -c lzma[:opts]  compress output with LZMA encoding",
+" -c lzma[:opts]  compress output with LZMA2 encoding",
 " -c jpeg[:opts]  compress output with JPEG encoding",
 " -c jbig         compress output with ISO JBIG encoding",
 " -c packbits     compress output with packbits encoding",
@@ -429,9 +443,12 @@ char* stuff[] = {
 " r               output color image as RGB rather than YCbCr",
 "For example, -c jpeg:r:50 to get JPEG-encoded RGB data with 50% comp. quality",
 "",
-"LZW, Deflate (ZIP) and LZMA options:",
+"LZW, Deflate (ZIP) and LZMA2 options:",
 " #               set predictor value",
-"For example, -c lzw:2 to get LZW-encoded data with horizontal differencing",
+" p#              set compression level (preset)",
+"For example, -c lzw:2 to get LZW-encoded data with horizontal differencing,",
+"-c zip:3:p9 for Deflate encoding with maximum compression level and floating",
+"point predictor.",
 "",
 "Note that input filenames may be of the form filename,x,y,z",
 "where x, y, and z specify image numbers in the filename to copy.",
@@ -709,6 +726,13 @@ tiffcp(TIFF* in, TIFF* out)
 				TIFFSetField(out, TIFFTAG_PREDICTOR, predictor);
 			else
 				CopyField(TIFFTAG_PREDICTOR, predictor);
+			if (preset != -1) {
+                                if (compression == COMPRESSION_ADOBE_DEFLATE
+                                         || compression == COMPRESSION_DEFLATE)
+                                        TIFFSetField(out, TIFFTAG_ZIPQUALITY, preset);
+				else if (compression == COMPRESSION_LZMA)
+					TIFFSetField(out, TIFFTAG_LZMAPRESET, preset);
+                        }
 			break;
 		case COMPRESSION_CCITTFAX3:
 		case COMPRESSION_CCITTFAX4:
