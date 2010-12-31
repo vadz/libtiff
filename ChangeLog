@@ -1,3 +1,9 @@
+2010-12-31  Olivier Paquet  <olivier.paquet@gmail.com>
+
+	* libtiff/tif_dirread.c: Allow reading directories where
+	TIFFTAG_SMINSAMPLEVALUE and TIFFTAG_SMAXSAMPLEVALUE values differ for each
+	channel. The min/max of all channels is used as appropriate.
+
 2010-12-14  Lee Howard <faxguy@howardsilvan.com>
 
 	* libtiff/tif_dirread.c: tolerate some cases where

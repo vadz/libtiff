@@ -54,7 +54,7 @@ static	float TIFFFetchRational(TIFF*, TIFFDirEntry*);
 static	int TIFFFetchNormalTag(TIFF*, TIFFDirEntry*);
 static	int TIFFFetchPerSampleShorts(TIFF*, TIFFDirEntry*, uint16*);
 static	int TIFFFetchPerSampleLongs(TIFF*, TIFFDirEntry*, uint32*);
-static	int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*);
+static	int TIFFFetchPerSampleAnys(TIFF*, TIFFDirEntry*, double*, double*);
 static	int TIFFFetchShortArray(TIFF*, TIFFDirEntry*, uint16*);
 static	int TIFFFetchStripThing(TIFF*, TIFFDirEntry*, long, uint32**);
 static	int TIFFFetchRefBlackWhite(TIFF*, TIFFDirEntry*);
@@ -480,11 +480,18 @@ TIFFReadDirectory(TIFF* tif)
 			}
 			break;
 		case TIFFTAG_SMINSAMPLEVALUE:
+			{
+				double minv = 0.0, maxv = 0.0;
+				if (!TIFFFetchPerSampleAnys(tif, dp, &minv, &maxv) ||
+				    !TIFFSetField(tif, dp->tdir_tag, minv))
+					goto bad;
+			}
+			break;
 		case TIFFTAG_SMAXSAMPLEVALUE:
 			{
-				double dv = 0.0;
-				if (!TIFFFetchPerSampleAnys(tif, dp, &dv) ||
-				    !TIFFSetField(tif, dp->tdir_tag, dv))
+				double minv = 0.0, maxv = 0.0;
+				if (!TIFFFetchPerSampleAnys(tif, dp, &minv, &maxv) ||
+				    !TIFFSetField(tif, dp->tdir_tag, maxv))
 					goto bad;
 			}
 			break;
@@ -1852,11 +1859,11 @@ TIFFFetchPerSampleLongs(TIFF* tif, TIFFDirEntry* dir, uint32* pl)
 }
 
 /*
- * Fetch samples/pixel ANY values for the specified tag and verify that all
- * values are the same.
+ * Fetch samples/pixel ANY values for the specified tag and returns their min
+ * and max.
  */
 static int
-TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
+TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* minv, double* maxv)
 {
     uint16 samples = tif->tif_dir.td_samplesperpixel;
     int status = 0;
@@ -1874,17 +1881,16 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* pl)
             if( samples < check_count )
                 check_count = samples;
 
+            *minv = *maxv = v[0];
             for (i = 1; i < check_count; i++)
-                if (v[i] != v[0]) {
-			TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
-		"Cannot handle different per-sample values for field \"%s\"",
-			_TIFFFieldWithTag(tif, dir->tdir_tag)->field_name);
-			goto bad;
-                }
-            *pl = v[0];
+            {
+                if (v[i] < *minv)
+                    *minv = v[i];
+                if (v[i] > *maxv)
+                    *maxv = v[i];
+            }
             status = 1;
         }
-      bad:
         if (v && v != buf)
             _TIFFfree(v);
     }
