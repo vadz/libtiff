@@ -587,6 +587,11 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 				if (!TIFFWriteDirectoryTagShort(tif,&ndir,dir,TIFFTAG_YCBCRPOSITIONING,tif->tif_dir.td_ycbcrpositioning))
 					goto bad;
 			}
+			if (TIFFFieldSet(tif,FIELD_REFBLACKWHITE))
+			{
+				if (!TIFFWriteDirectoryTagRationalArray(tif,&ndir,dir,TIFFTAG_REFERENCEBLACKWHITE,6,tif->tif_dir.td_refblackwhite))
+					goto bad;
+			}
 			if (TIFFFieldSet(tif,FIELD_TRANSFERFUNCTION))
 			{
 				if (!TIFFWriteDirectoryTagTransferfunction(tif,&ndir,dir))
