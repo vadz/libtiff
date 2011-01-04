@@ -1,7 +1,7 @@
 2011-01-03  Lee Howard <faxguy@howardsilvan.com>
 
-	* libtiff/tif_jpeg.c: Fix regression with 3 band image caused by
-	commit on 2010-12-14 submitted by e-mail from 
+	* libtiff/tif_jpeg.c: Fix regressions with 2 and 3 band images
+	caused by commit on 2010-12-14.  Submitted by e-mail from 
 	Even Rouault <even.rouault@mines-paris.org>
 
 2010-12-31  Olivier Paquet  <olivier.paquet@gmail.com>
