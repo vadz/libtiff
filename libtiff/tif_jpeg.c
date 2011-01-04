@@ -1709,7 +1709,7 @@ JPEGPreEncode(TIFF* tif, uint16 s)
 				sp->cinfo.c.in_color_space = JCS_CMYK;
 			else
 				sp->cinfo.c.in_color_space = JCS_UNKNOWN;
-			if (!TIFFjpeg_set_colorspace(sp, (sp->cinfo.c.in_color_space == JCS_RGB) ? JCS_YCbCr : sp->cinfo.c.in_color_space))
+			if (!TIFFjpeg_set_colorspace(sp, sp->cinfo.c.in_color_space))
 				return (0);
 			/* jpeg_set_colorspace set all sampling factors to 1 */
 		}
