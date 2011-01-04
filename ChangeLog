@@ -1,3 +1,9 @@
+2011-01-03  Lee Howard <faxguy@howardsilvan.com>
+
+	* libtiff/tif_jpeg.c: Fix regression with 3 band image caused by
+	commit on 2010-12-14 submitted by e-mail from 
+	Even Rouault <even.rouault@mines-paris.org>
+
 2010-12-31  Olivier Paquet  <olivier.paquet@gmail.com>
 
 	* libtiff/tif_dirread.c: Allow reading directories where
