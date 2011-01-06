@@ -205,7 +205,7 @@ TIFFSeek(TIFF* tif, uint32 row, uint16 sample )
         
         if( !whole_strip )
         {
-                read_ahead = tif->tif_scanlinesize * 2 + 5000;
+                read_ahead = tif->tif_scanlinesize * 16 + 5000;
         }
 
         /*

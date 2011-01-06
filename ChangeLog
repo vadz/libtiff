@@ -1,3 +1,13 @@
+2011-01-06  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: ensure that rawcc and rawcp are maintained
+	during JPEGPreDecode and JPEGDecode calls.  
+	* libtiff/tif_read.c: arger read ahead for CHUNKY_STRIP_READ_SUPPORT, 
+	as compression formats like JPEG keep 16 lines interleaved in a sense 
+	and might need to touch	quite a bit of data. 
+	
+	http://trac.osgeo.org/gdal/ticket/3894
+
 2011-01-03  Lee Howard <faxguy@howardsilvan.com>
 
 	* libtiff/tif_jpeg.c: Fix regressions with 2 and 3 band images
