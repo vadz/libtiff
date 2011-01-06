@@ -1,5 +1,11 @@
 2011-01-06  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_pixarlog.c: Note that tif_rawcc/tif_rawcp are not 
+	maintained.  
+
+	* libtiff/tif_zip.c: Maintain tif_rawcc/tif_rawcp when decoding 
+	for CHUNKY_STRIP_READ_SUPPORT.
+
 	* libtiff/tif_jpeg.c: ensure that rawcc and rawcp are maintained
 	during JPEGPreDecode and JPEGDecode calls.  
 	* libtiff/tif_read.c: arger read ahead for CHUNKY_STRIP_READ_SUPPORT, 

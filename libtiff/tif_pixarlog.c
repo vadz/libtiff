@@ -83,7 +83,10 @@
  * The codec also handle byte swapping the encoded values as necessary
  * since the library does not have the information necessary
  * to know the bit depth of the raw unencoded buffer.
- * 
+ *
+ * NOTE: This decoder does not appear to update tif_rawcp, and tif_rawcc.
+ * This can cause problems with the implementation of CHUNKY_STRIP_READ_SUPPORT
+ * as noted in http://trac.osgeo.org/gdal/ticket/3894.   FrankW - Jan'11
  */
 
 #include "tif_predict.h"
