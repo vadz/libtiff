@@ -85,7 +85,9 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEn
 static enum TIFFReadDirEntryErr TIFFReadDirEntryIfd8Array(TIFF* tif, TIFFDirEntry* direntry, uint64** value);
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleShort(TIFF* tif, TIFFDirEntry* direntry, uint16* value);
+#if 0
 static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleDouble(TIFF* tif, TIFFDirEntry* direntry, double* value);
+#endif
 
 static void TIFFReadDirEntryCheckedByte(TIFF* tif, TIFFDirEntry* direntry, uint8* value);
 static void TIFFReadDirEntryCheckedSbyte(TIFF* tif, TIFFDirEntry* direntry, int8* value);
@@ -2758,6 +2760,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleShort(TIFF* tif, TIFFDi
 	return(err);
 }
 
+#if 0
 static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleDouble(TIFF* tif, TIFFDirEntry* direntry, double* value)
 {
 	enum TIFFReadDirEntryErr err;
@@ -2785,6 +2788,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleDouble(TIFF* tif, TIFFD
 	_TIFFfree(m);
 	return(err);
 }
+#endif
 
 static void TIFFReadDirEntryCheckedByte(TIFF* tif, TIFFDirEntry* direntry, uint8* value)
 {
@@ -3693,15 +3697,26 @@ TIFFReadDirectory(TIFF* tif)
 			case TIFFTAG_SMINSAMPLEVALUE:
 			case TIFFTAG_SMAXSAMPLEVALUE:
 				{
-					double value;
+
+					double *data;
 					enum TIFFReadDirEntryErr err;
-					err=TIFFReadDirEntryPersampleDouble(tif,dp,&value);
+					uint32 saved_flags;
+					int m;
+					if (dp->tdir_count != (uint64)tif->tif_dir.td_samplesperpixel)
+						err = TIFFReadDirEntryErrCount;
+					else
+						err = TIFFReadDirEntryDoubleArray(tif, dp, &data);
 					if (err!=TIFFReadDirEntryErrOk)
 					{
 						TIFFReadDirEntryOutputErr(tif,err,module,TIFFFieldWithTag(tif,dp->tdir_tag)->field_name,0);
 						goto bad;
 					}
-					if (!TIFFSetField(tif,dp->tdir_tag,value))
+					saved_flags = tif->tif_flags;
+					tif->tif_flags |= TIFF_PERSAMPLE;
+					m = TIFFSetField(tif,dp->tdir_tag,data);
+					tif->tif_flags = saved_flags;
+					_TIFFfree(data);
+					if (!m)
 						goto bad;
 				}
 				break;

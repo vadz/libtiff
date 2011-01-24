@@ -57,7 +57,8 @@ typedef struct {
 	uint16  td_samplesperpixel;
 	uint32  td_rowsperstrip;
 	uint16  td_minsamplevalue, td_maxsamplevalue;
-	double  td_sminsamplevalue, td_smaxsamplevalue;
+	double* td_sminsamplevalue;
+	double* td_smaxsamplevalue;
 	float   td_xresolution, td_yresolution;
 	uint16  td_resolutionunit;
 	uint16  td_planarconfig;

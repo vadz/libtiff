@@ -448,12 +448,18 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd, "  Min Sample Value: %u\n", td->td_minsamplevalue);
 	if (TIFFFieldSet(tif,FIELD_MAXSAMPLEVALUE))
 		fprintf(fd, "  Max Sample Value: %u\n", td->td_maxsamplevalue);
-	if (TIFFFieldSet(tif,FIELD_SMINSAMPLEVALUE))
-		fprintf(fd, "  SMin Sample Value: %g\n",
-		    td->td_sminsamplevalue);
-	if (TIFFFieldSet(tif,FIELD_SMAXSAMPLEVALUE))
-		fprintf(fd, "  SMax Sample Value: %g\n",
-		    td->td_smaxsamplevalue);
+	if (TIFFFieldSet(tif,FIELD_SMINSAMPLEVALUE)) {
+		fprintf(fd, "  SMin Sample Value:");
+		for (i = 0; i < td->td_samplesperpixel; ++i)
+			fprintf(fd, " %g", td->td_sminsamplevalue[i]);
+		fprintf(fd, "\n");
+	}
+	if (TIFFFieldSet(tif,FIELD_SMAXSAMPLEVALUE)) {
+		fprintf(fd, "  SMax Sample Value:");
+		for (i = 0; i < td->td_samplesperpixel; ++i)
+			fprintf(fd, " %g", td->td_smaxsamplevalue[i]);
+		fprintf(fd, "\n");
+	}
 	if (TIFFFieldSet(tif,FIELD_PLANARCONFIG)) {
 		fprintf(fd, "  Planar Configuration: ");
 		switch (td->td_planarconfig) {

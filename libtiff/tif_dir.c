@@ -70,6 +70,19 @@ void _TIFFsetFloatArray(float** fpp, float* fp, uint32 n)
 void _TIFFsetDoubleArray(double** dpp, double* dp, uint32 n)
     { setByteArray((void**) dpp, (void*) dp, n, sizeof (double)); }
 
+static void
+setDoubleArrayOneValue(double** vpp, double value, size_t nmemb)
+{
+	if (*vpp)
+		_TIFFfree(*vpp);
+	*vpp = _TIFFmalloc(nmemb*sizeof(double));
+	if (*vpp)
+	{
+		while (nmemb--)
+			((double*)*vpp)[nmemb] = value;
+	}
+}
+
 /*
  * Install extra samples information.
  */
@@ -242,10 +255,16 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		td->td_maxsamplevalue = (uint16) va_arg(ap, uint16_vap);
 		break;
 	case TIFFTAG_SMINSAMPLEVALUE:
-		td->td_sminsamplevalue = (double) va_arg(ap, double);
+		if (tif->tif_flags & TIFF_PERSAMPLE)
+			_TIFFsetDoubleArray(&td->td_sminsamplevalue, va_arg(ap, double*), td->td_samplesperpixel);
+		else
+			setDoubleArrayOneValue(&td->td_sminsamplevalue, va_arg(ap, double), td->td_samplesperpixel);
 		break;
 	case TIFFTAG_SMAXSAMPLEVALUE:
-		td->td_smaxsamplevalue = (double) va_arg(ap, double);
+		if (tif->tif_flags & TIFF_PERSAMPLE)
+			_TIFFsetDoubleArray(&td->td_smaxsamplevalue, va_arg(ap, double*), td->td_samplesperpixel);
+		else
+			setDoubleArrayOneValue(&td->td_smaxsamplevalue, va_arg(ap, double), td->td_samplesperpixel);
 		break;
 	case TIFFTAG_XRESOLUTION:
 		td->td_xresolution = (float) va_arg(ap, double);
@@ -393,6 +412,13 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 			_TIFFsetNString(&td->td_inknames, s, v);
 			td->td_inknameslen = v;
 		}
+		break;
+	case TIFFTAG_PERSAMPLE:
+		v = (uint16) va_arg(ap, uint16_vap);
+		if( v == PERSAMPLE_MULTI )
+			tif->tif_flags |= TIFF_PERSAMPLE;
+		else
+			tif->tif_flags &= ~TIFF_PERSAMPLE;
 		break;
 	default: {
 		TIFFTagValue *tv;
@@ -803,10 +829,32 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 			*va_arg(ap, uint16*) = td->td_maxsamplevalue;
 			break;
 		case TIFFTAG_SMINSAMPLEVALUE:
-			*va_arg(ap, double*) = td->td_sminsamplevalue;
+			if (tif->tif_flags & TIFF_PERSAMPLE)
+				*va_arg(ap, double**) = td->td_sminsamplevalue;
+			else
+			{
+				/* libtiff historially treats this as a single value. */
+				uint16 i;
+				double v = td->td_sminsamplevalue[0];
+				for (i=1; i < td->td_samplesperpixel; ++i)
+					if( td->td_sminsamplevalue[i] < v )
+						v = td->td_sminsamplevalue[i];
+				*va_arg(ap, double*) = v;
+			}
 			break;
 		case TIFFTAG_SMAXSAMPLEVALUE:
-			*va_arg(ap, double*) = td->td_smaxsamplevalue;
+			if (tif->tif_flags & TIFF_PERSAMPLE)
+				*va_arg(ap, double**) = td->td_smaxsamplevalue;
+			else
+			{
+				/* libtiff historially treats this as a single value. */
+				uint16 i;
+				double v = td->td_smaxsamplevalue[0];
+				for (i=1; i < td->td_samplesperpixel; ++i)
+					if( td->td_smaxsamplevalue[i] > v )
+						v = td->td_smaxsamplevalue[i];
+				*va_arg(ap, double*) = v;
+			}
 			break;
 		case TIFFTAG_XRESOLUTION:
 			*va_arg(ap, float*) = td->td_xresolution;
@@ -1090,6 +1138,8 @@ TIFFFreeDirectory(TIFF* tif)
 	int            i;
 
 	_TIFFmemset(td->td_fieldsset, 0, FIELD_SETLONGS);
+	CleanupField(td_sminsamplevalue);
+	CleanupField(td_smaxsamplevalue);
 	CleanupField(td_colormap[0]);
 	CleanupField(td_colormap[1]);
 	CleanupField(td_colormap[2]);

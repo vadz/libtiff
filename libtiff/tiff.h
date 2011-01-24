@@ -569,6 +569,9 @@ typedef enum {
 #define     SGILOGENCODE_NODITHER	0     /* do not dither encoded values*/
 #define     SGILOGENCODE_RANDITHER	1     /* randomly dither encd values */
 #define	TIFFTAG_LZMAPRESET		65562	/* LZMA2 preset (compression level) */
+#define TIFFTAG_PERSAMPLE       65563	/* interface for per sample tags */
+#define     PERSAMPLE_MERGED        0	/* present as a single value */
+#define     PERSAMPLE_MULTI         1	/* present as multiple values */
 
 /*
  * EXIF tags
