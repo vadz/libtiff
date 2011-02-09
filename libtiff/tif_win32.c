@@ -364,6 +364,10 @@ _TIFFmemcmp(const void* p1, const void* p2, tmsize_t c)
 
 #ifndef _WIN32_WCE
 
+#if (_MSC_VER < 1500)
+#  define vsnprintf _vsnprintf
+#endif
+
 static void
 Win32WarningHandler(const char* module, const char* fmt, va_list ap)
 {
@@ -373,14 +377,17 @@ Win32WarningHandler(const char* module, const char* fmt, va_list ap)
 	LPCTSTR szTitleText = "%s Warning";
 	LPCTSTR szDefaultModule = "LIBTIFF";
 	LPCTSTR szTmpModule = (module == NULL) ? szDefaultModule : module;
-	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, (strlen(szTmpModule) +
-		strlen(szTitleText) + strlen(fmt) + 128)*sizeof(char))) == NULL)
+        int nBufSize = (strlen(szTmpModule) +
+                        strlen(szTitleText) + strlen(fmt) + 256)*sizeof(char);
+
+	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, nBufSize)) == NULL)
 		return;
 	sprintf(szTitle, szTitleText, szTmpModule);
 	szTmp = szTitle + (strlen(szTitle)+2)*sizeof(char);
-	vsprintf(szTmp, fmt, ap);
+	vsnprintf(szTmp, nBufSize-(strlen(szTitle)+2)*sizeof(char), fmt, ap);
 	MessageBoxA(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONINFORMATION);
 	LocalFree(szTitle);
+
 	return;
 #else
 	if (module != NULL)
@@ -401,12 +408,14 @@ Win32ErrorHandler(const char* module, const char* fmt, va_list ap)
 	LPCTSTR szTitleText = "%s Error";
 	LPCTSTR szDefaultModule = "LIBTIFF";
 	LPCTSTR szTmpModule = (module == NULL) ? szDefaultModule : module;
-	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, (strlen(szTmpModule) +
-		strlen(szTitleText) + strlen(fmt) + 128)*sizeof(char))) == NULL)
+        int nBufSize = (strlen(szTmpModule) +
+                        strlen(szTitleText) + strlen(fmt) + 256)*sizeof(char);
+
+	if ((szTitle = (LPTSTR)LocalAlloc(LMEM_FIXED, nBufSize)) == NULL)
 		return;
 	sprintf(szTitle, szTitleText, szTmpModule);
 	szTmp = szTitle + (strlen(szTitle)+2)*sizeof(char);
-	vsprintf(szTmp, fmt, ap);
+	vsnprintf(szTmp, nBufSize-(strlen(szTitle)+2)*sizeof(char), fmt, ap);
 	MessageBoxA(GetFocus(), szTmp, szTitle, MB_OK | MB_ICONEXCLAMATION);
 	LocalFree(szTitle);
 	return;

@@ -1,3 +1,10 @@
+2011-02-09  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_win32.c: avoid error/warning buffer overrun problem
+	with non-console (popup message) builds on win32. 
+
+	http://bugzilla.maptools.org/show_bug.cgi?id=2293
+
 2011-01-24  Olivier Paquet  <olivier.paquet@gmail.com>
 
 	* libtiff/{tif_dir.{h,c}, tif_dirinfo.c, tif_dirread.c, tif_dirwrite.c,
