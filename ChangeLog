@@ -1,3 +1,7 @@
+2011-02-11  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_print.c: remove unused variable.
+
 2011-02-09  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_win32.c: avoid error/warning buffer overrun problem
