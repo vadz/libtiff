@@ -784,7 +784,6 @@ enable_fast_install
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
-with_gnu_ld
 enable_silent_rules
 enable_rpath
 enable_largefile
@@ -817,6 +816,8 @@ enable_cxx
 with_x
 enable_strip_chopping
 with_default_strip_size
+enable_defer_strile_load
+enable_chunky_strip_read
 enable_extrasample_as_alpha
 enable_check_ycbcr_subsampling
 '
@@ -829,12 +830,8 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP
 XMKMF'
@@ -1504,6 +1501,12 @@ Optional Features:
                           to convert single-strip uncompressed images to
                           mutiple strips of specified size to reduce memory
                           usage)
+  --enable-defer-strile-load
+                          enable deferred strip/tile offset/size loading
+                          (experimental)
+  --enable-chunky-strip-read
+                          enable reading large strips in chunks for
+                          TIFFReadScanline() (experimental)
   --disable-extrasample-as-alpha
                           the RGBA interface will treat a fourth sample with
                           no EXTRASAMPLE_ value as being ASSOCALPHA. Many
@@ -19678,6 +19681,38 @@ $as_echo "#define STRIPCHOP_DEFAULT TIFF_STRIPCHOP" >>confdefs.h
 cat >>confdefs.h <<_ACEOF
 #define STRIP_SIZE_DEFAULT $with_default_strip_size
 _ACEOF
+
+
+fi
+
+
+# Check whether --enable-defer-strile-load was given.
+if test "${enable_defer_strile_load+set}" = set; then :
+  enableval=$enable_defer_strile_load; HAVE_DEFER_STRILE_LOAD=$enableval
+else
+  HAVE_DEFER_STRILE_LOAD=no
+fi
+
+
+if test "$HAVE_DEFER_STRILE_LOAD" = "yes" ; then
+
+$as_echo "#define DEFER_STRILE_LOAD 1" >>confdefs.h
+
+
+fi
+
+
+# Check whether --enable-chunky-strip-read was given.
+if test "${enable_chunky_strip_read+set}" = set; then :
+  enableval=$enable_chunky_strip_read; HAVE_CHUNKY_STRIP_READ=$enableval
+else
+  HAVE_CHUNKY_STRIP_READ=no
+fi
+
+
+if test "$HAVE_CHUNKY_STRIP_READ" = "yes" ; then
+
+$as_echo "#define CHUNKY_STRIP_READ 1" >>confdefs.h
 
 
 fi

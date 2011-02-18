@@ -1,5 +1,9 @@
 2011-02-18  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* configure.ac, configure: Added support for --enable-chunky-strip-read
+	configure option to enable the experimental feature from a couple 
+	months ago for reading big strips in chunks. 
+
 	* configure.ac, tif_read.c, tif_readdir.c, tif_dir.h, tiffiop.h, 
 	tif_write.c, tif_print.c, tif_jpeg.c, tif_dirwrite.c, tif_write.c:
 	Implement optional support for deferring the load of strip/tile 
@@ -38,7 +42,7 @@
 
 	* libtiff/tif_jpeg.c: ensure that rawcc and rawcp are maintained
 	during JPEGPreDecode and JPEGDecode calls.  
-	* libtiff/tif_read.c: arger read ahead for CHUNKY_STRIP_READ_SUPPORT, 
+	* libtiff/tif_read.c: larger read ahead for CHUNKY_STRIP_READ_SUPPORT, 
 	as compression formats like JPEG keep 16 lines interleaved in a sense 
 	and might need to touch	quite a bit of data. 
 	

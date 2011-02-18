@@ -855,6 +855,22 @@ if test "$HAVE_DEFER_STRILE_LOAD" = "yes" ; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl Check for support of CHUNKY_STRIP_READ_SUPPORT, a mechanism to allowing
+dnl reading large strips (usually one strip files) in chunks when using
+dnl TIFFReadScanline().  This is an experimental feature in libtiff 4.0.
+dnl ---------------------------------------------------------------------------
+
+AC_ARG_ENABLE(chunky-strip-read,
+	      AS_HELP_STRING([--enable-chunky-strip-read],
+			     [enable reading large strips in chunks for TIFFReadScanline() (experimental)]),
+	      [HAVE_CHUNKY_STRIP_READ=$enableval], [HAVE_CHUNKY_STRIP_READ=no])
+
+if test "$HAVE_CHUNKY_STRIP_READ" = "yes" ; then
+  AC_DEFINE(CHUNKY_STRIP_READ,1,[enable partial strip reading for large strips (experimental)])
+
+fi
+
+dnl ---------------------------------------------------------------------------
 dnl Default subifd support.
 dnl ---------------------------------------------------------------------------
 AC_DEFINE(SUBIFD_SUPPORT,1,[Enable SubIFD tag (330) support])

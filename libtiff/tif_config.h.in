@@ -10,6 +10,9 @@
    lacking the tag (default enabled). */
 #undef CHECK_JPEG_YCBCR_SUBSAMPLING
 
+/* enable partial strip reading for large strips (experimental) */
+#undef CHUNKY_STRIP_READ
+
 /* Support C++ stream API (requires C++ compiler) */
 #undef CXX_SUPPORT
 
