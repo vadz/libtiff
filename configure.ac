@@ -866,7 +866,7 @@ AC_ARG_ENABLE(chunky-strip-read,
 	      [HAVE_CHUNKY_STRIP_READ=$enableval], [HAVE_CHUNKY_STRIP_READ=no])
 
 if test "$HAVE_CHUNKY_STRIP_READ" = "yes" ; then
-  AC_DEFINE(CHUNKY_STRIP_READ,1,[enable partial strip reading for large strips (experimental)])
+  AC_DEFINE(CHUNKY_STRIP_READ_SUPPORT,1,[enable partial strip reading for large strips (experimental)])
 
 fi
 

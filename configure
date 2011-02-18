@@ -19712,7 +19712,7 @@ fi
 
 if test "$HAVE_CHUNKY_STRIP_READ" = "yes" ; then
 
-$as_echo "#define CHUNKY_STRIP_READ 1" >>confdefs.h
+$as_echo "#define CHUNKY_STRIP_READ_SUPPORT 1" >>confdefs.h
 
 
 fi

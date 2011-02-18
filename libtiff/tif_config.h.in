@@ -11,7 +11,7 @@
 #undef CHECK_JPEG_YCBCR_SUBSAMPLING
 
 /* enable partial strip reading for large strips (experimental) */
-#undef CHUNKY_STRIP_READ
+#undef CHUNKY_STRIP_READ_SUPPORT
 
 /* Support C++ stream API (requires C++ compiler) */
 #undef CXX_SUPPORT
