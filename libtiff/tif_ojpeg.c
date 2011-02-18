@@ -967,6 +967,8 @@ OJPEGSubsamplingCorrect(TIFF* tif)
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	uint8 mh;
 	uint8 mv;
+        _TIFFFillStriles( tif );
+        
 	assert(sp->subsamplingcorrect_done==0);
 	if ((tif->tif_dir.td_samplesperpixel!=3) || ((tif->tif_dir.td_photometric!=PHOTOMETRIC_YCBCR) &&
 	    (tif->tif_dir.td_photometric!=PHOTOMETRIC_ITULAB)))
