@@ -498,6 +498,8 @@ TIFFWriteCheck(TIFF* tif, int tiles, const char* module)
 		    "Can not write scanlines to a tiled image");
 		return (0);
 	}
+
+        _TIFFFillStriles( tif );
         
 	/*
 	 * On the first write verify all the required information

@@ -3592,6 +3592,7 @@ TIFFReadDirectory(TIFF* tif)
 	if ((tif->tif_dir.td_compression==COMPRESSION_OJPEG)&&
 	    (tif->tif_dir.td_planarconfig==PLANARCONFIG_SEPARATE))
 	{
+                _TIFFFillStriles(tif);
 		dp=TIFFReadDirectoryFindEntry(tif,dir,dircount,TIFFTAG_STRIPOFFSETS);
 		if ((dp!=0)&&(dp->tdir_count==1))
 		{
@@ -3722,13 +3723,23 @@ TIFFReadDirectory(TIFF* tif)
 				break;
 			case TIFFTAG_STRIPOFFSETS:
 			case TIFFTAG_TILEOFFSETS:
+#if defined(DEFER_STRILE_LOAD)
+                                _TIFFmemcpy( &(tif->tif_dir.td_stripoffset_entry),
+                                             dp, sizeof(TIFFDirEntry) );
+#else                          
 				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripoffset))  
 					goto bad;
+#endif                                
 				break;
 			case TIFFTAG_STRIPBYTECOUNTS:
 			case TIFFTAG_TILEBYTECOUNTS:
+#if defined(DEFER_STRILE_LOAD)
+                                _TIFFmemcpy( &(tif->tif_dir.td_stripbytecount_entry),
+                                             dp, sizeof(TIFFDirEntry) );
+#else                          
 				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))  
 					goto bad;
+#endif                                
 				break;
 			case TIFFTAG_COLORMAP:
 			case TIFFTAG_TRANSFERFUNCTION:
@@ -3920,6 +3931,7 @@ TIFFReadDirectory(TIFF* tif)
 		       tif->tif_dir.td_stripbytecount[0] < TIFFScanlineSize64(tif) * tif->tif_dir.td_imagelength) )
 
 		} else if (tif->tif_dir.td_nstrips == 1
+                           && _TIFFFillStriles(tif)
 			   && tif->tif_dir.td_stripoffset[0] != 0
 			   && BYTECOUNTLOOKSBAD) {
 			/*
@@ -3933,6 +3945,8 @@ TIFFReadDirectory(TIFF* tif)
 			    TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
 			if(EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
+
+#if !defined(DEFER_STRILE_LOAD)
 		} else if (tif->tif_dir.td_planarconfig == PLANARCONFIG_CONTIG
 			   && tif->tif_dir.td_nstrips > 2
 			   && tif->tif_dir.td_compression == COMPRESSION_NONE
@@ -3944,12 +3958,17 @@ TIFFReadDirectory(TIFF* tif)
 			 * absolutely wrong values (it can be equal to
 			 * StripOffset array, for example). Catch this case
 			 * here.
+                         *
+                         * We avoid this check if deferring strile loading
+                         * as it would always force us to load the strip/tile
+                         * information.
 			 */
 			TIFFWarningExt(tif->tif_clientdata, module,
 			    "Wrong \"%s\" field, ignoring and calculating from imagelength",
 			    TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
 			if (EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
+#endif /* !defined(DEFER_STRILE_LOAD) */                        
 		}
 	}
 	if (dir)
@@ -3969,6 +3988,7 @@ TIFFReadDirectory(TIFF* tif)
 	 * bytecounts array. See also comments for TIFFAppendToStrip()
 	 * function in tif_write.c.
 	 */
+#if !defined(DEFER_STRILE_LOAD)        
 	if (tif->tif_dir.td_nstrips > 1) {
 		uint32 strip;
 
@@ -3981,6 +4001,8 @@ TIFFReadDirectory(TIFF* tif)
 			}
 		}
 	}
+#endif /* !defined(DEFER_STRILE_LOAD) */
+        
 	/*
 	 * An opportunity for compression mode dependent tag fixup
 	 */
@@ -4237,6 +4259,8 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 	TIFFDirEntry *dp;
 	TIFFDirectory *td = &tif->tif_dir;
 	uint32 strip;
+
+        _TIFFFillStriles( tif );
 
 	if (td->td_stripbytecount)
 		_TIFFfree(td->td_stripbytecount);
@@ -5419,6 +5443,8 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	uint64* newcounts;
 	uint64* newoffsets;
 
+        _TIFFFillStriles(tif);
+        
 	bytecount = td->td_stripbytecount[0];
 	offset = td->td_stripoffset[0];
 	assert(td->td_planarconfig == PLANARCONFIG_CONTIG);
@@ -5493,6 +5519,54 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	td->td_stripoffset = newoffsets;
 	td->td_stripbytecountsorted = 1;
 }
+
+int _TIFFFillStriles( TIFF *tif )
+{
+#if defined(DEFER_STRILE_LOAD)
+        register TIFFDirectory *td = &tif->tif_dir;
+        int return_value = 1;
+
+        if( td->td_stripoffset != NULL )
+                return 1;
+
+        if( td->td_stripoffset_entry.tdir_count == 0 )
+                return 0;
+
+        if (!TIFFFetchStripThing(tif,&(td->td_stripoffset_entry),
+                                 td->td_nstrips,&td->td_stripoffset))
+        {
+                return_value = 0;
+        }
+
+        if (!TIFFFetchStripThing(tif,&(td->td_stripbytecount_entry),
+                                 td->td_nstrips,&td->td_stripbytecount))
+        {
+                return_value = 0;
+        }
+
+        _TIFFmemset( &(td->td_stripoffset_entry), 0, sizeof(TIFFDirEntry));
+        _TIFFmemset( &(td->td_stripbytecount_entry), 0, sizeof(TIFFDirEntry));
+
+	if (tif->tif_dir.td_nstrips > 1 && return_value == 1 ) {
+		uint32 strip;
+
+		tif->tif_dir.td_stripbytecountsorted = 1;
+		for (strip = 1; strip < tif->tif_dir.td_nstrips; strip++) {
+			if (tif->tif_dir.td_stripoffset[strip - 1] >
+			    tif->tif_dir.td_stripoffset[strip]) {
+				tif->tif_dir.td_stripbytecountsorted = 0;
+				break;
+			}
+		}
+	}
+
+        return return_value;
+#else /* !defined(DEFER_STRILE_LOAD) */
+        (void) tif;
+        return 1;
+#endif 
+}
+
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
 /*

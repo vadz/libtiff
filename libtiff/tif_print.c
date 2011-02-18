@@ -138,6 +138,8 @@ static int
 _TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 		      uint32 value_count, void *raw_data)
 {
+        (void) tif;
+        
 	switch (tag)
 	{
 		case TIFFTAG_INKSET:
@@ -618,6 +620,9 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
         
 	if (tif->tif_tagmethods.printdir)
 		(*tif->tif_tagmethods.printdir)(tif, fd, flags);
+
+        _TIFFFillStriles( tif );
+        
 	if ((flags & TIFFPRINT_STRIPS) &&
 	    TIFFFieldSet(tif,FIELD_STRIPOFFSETS)) {
 		uint32 s;

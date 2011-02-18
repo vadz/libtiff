@@ -370,6 +370,9 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 	uint32 m;
 	if (tif->tif_mode == O_RDONLY)
 		return (1);
+
+        _TIFFFillStriles( tif );
+        
 	/*
 	 * Clear write state so that subsequent images with
 	 * different characteristics get the right buffers

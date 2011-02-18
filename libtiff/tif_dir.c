@@ -889,10 +889,12 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 			break;
 		case TIFFTAG_STRIPOFFSETS:
 		case TIFFTAG_TILEOFFSETS:
+			_TIFFFillStriles( tif );
 			*va_arg(ap, uint64**) = td->td_stripoffset;
 			break;
 		case TIFFTAG_STRIPBYTECOUNTS:
 		case TIFFTAG_TILEBYTECOUNTS:
+			_TIFFFillStriles( tif );
 			*va_arg(ap, uint64**) = td->td_stripbytecount;
 			break;
 		case TIFFTAG_MATTEING:
@@ -1163,6 +1165,11 @@ TIFFFreeDirectory(TIFF* tif)
 
 	td->td_customValueCount = 0;
 	CleanupField(td_customValues);
+
+#if defined(DEFER_STRILE_LOAD)
+        _TIFFmemset( &(td->td_stripoffset_entry), 0, sizeof(TIFFDirEntry));
+        _TIFFmemset( &(td->td_stripbytecount_entry), 0, sizeof(TIFFDirEntry));
+#endif        
 }
 #undef CleanupField
 
