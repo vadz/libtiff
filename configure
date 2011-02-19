@@ -784,6 +784,7 @@ enable_fast_install
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+with_gnu_ld
 enable_silent_rules
 enable_rpath
 enable_largefile
@@ -830,8 +831,12 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
+CPPFLAGS
 CXX
 CXXFLAGS
+LDFLAGS
+LIBS
+CPPFLAGS
 CCC
 CXXCPP
 XMKMF'
