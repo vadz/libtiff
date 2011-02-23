@@ -1,3 +1,12 @@
+2011-02-23  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiff2rgba.c: close source file on error to make leak 
+	detection easier.
+
+	* libtiff/tif_getimage.c: avoid leaks if TIFFRGBAImageBegin() fails.
+
+	http://bugzilla.maptools.org/show_bug.cgi?id=2295
+
 2011-02-22  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_lzma.c: Maintain tif_rawcc/tif_rawcp (CHUNKY_STRING_READ
