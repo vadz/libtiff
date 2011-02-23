@@ -1,5 +1,7 @@
 2011-02-23  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_jpeg.c: avoid divide by zero in degenerate case (#2296)
+
 	* tools/tiff2rgba.c: close source file on error to make leak 
 	detection easier.
 

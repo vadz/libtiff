@@ -1215,6 +1215,9 @@ JPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
         */
 	sp->src.next_input_byte = (const JOCTET*) tif->tif_rawcp;
 	sp->src.bytes_in_buffer = (size_t) tif->tif_rawcc;
+
+        if( sp->bytesperline == 0 )
+                return 0;
         
 	nrows = cc / sp->bytesperline;
 	if (cc % sp->bytesperline)
