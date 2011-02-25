@@ -1041,7 +1041,7 @@ TIFFWriteRationalArray(TIFF* tif, TIFFDirEntry* dir, float* v)
 			while (fv < 1L<<(31-3) && den < 1L<<(31-3))
 				fv *= 1<<3, den *= 1L<<3;
 		}
-		t[2*i+0] = (uint32) (sign * (fv + 0.5));
+		t[2*i+0] = (uint32) (sign * (int32)(fv + 0.5));
 		t[2*i+1] = den;
 	}
 	status = TIFFWriteData(tif, dir, (char *)t);

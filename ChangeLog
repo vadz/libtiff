@@ -1,3 +1,9 @@
+2011-02-25  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_dirwrite.c: Avoid undefined behaviour when casting from
+	float to unsigned integer in TIFFWriteRationalArray() as reported by
+	Kareem Shehata.
+
 2011-01-03  Lee Howard <faxguy@howardsilvan.com>
 
 	* libtiff/tif_jpeg.c: Fix regressions with 2 and 3 band images
@@ -87,8 +93,8 @@
 
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
-        * libtiff/tif_ojpeg.c: fix buffer overflow on problem data
-        http://bugzilla.maptools.org/show_bug.cgi?id=1999
+	* libtiff/tif_ojpeg.c: fix buffer overflow on problem data
+	http://bugzilla.maptools.org/show_bug.cgi?id=1999
 
 2010-12-11  Lee Howard <faxguy@howardsilvan.com>
 
@@ -132,7 +138,7 @@
 
 2010-07-07  Andrey Kiselev  <dron@ak4719.spb.edu>
 
-	* lintiff/tif_dirread.c: Really reset the tag count in CheckDirCount()
+	* libtiff/tif_dirread.c: Really reset the tag count in CheckDirCount()
 	to expected value as the warning message suggests. As per bug
 	http://bugzilla.maptools.org/show_bug.cgi?id=1963
 
