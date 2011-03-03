@@ -1,3 +1,14 @@
+2011-03-02  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_fax3.h: Protect against a fax VL(n) codeword commanding 
+	a move left.  Without this, a malicious input file can generate an 
+	indefinitely large series of runs without a0 ever reaching the right 
+	margin, thus overrunning our buffer of run lengths.  Per CVE-2011-0192.
+	This is a modified version of a patch proposed by Drew Yao of Apple 
+	Product Security.  It adds an unexpected() report, and disallows the 
+	equality case, since emitting a run without increasing a0 still allows 
+	buffer overrun.
+
 2011-02-23  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_jpeg.c: avoid divide by zero in degenerate case (#2296)
