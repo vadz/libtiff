@@ -1,3 +1,8 @@
+2011-03-10  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_fax3.h: Fix to last change allowing zero length 
+	runs at the start of a scanline - needed for legal cases.
+
 2011-03-02  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_fax3.h: Protect against a fax VL(n) codeword commanding 
