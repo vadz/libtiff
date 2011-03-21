@@ -1,3 +1,12 @@
+2011-03-12  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_thunder.c: Correct potential buffer overflow with 
+	thunder encoded files with wrong bitspersample set.  The libtiff 
+	development team would like to thank Marin Barbella and TippingPoint's
+	Zero Day Initiative for reporting this vulnerability (ZDI-CAN-1004,
+	CVE-2011-1167).
+	http://bugzilla.maptools.org/show_bug.cgi?id=2300
+
 2011-03-10  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_fax3.h: Fix to last change allowing zero length 
