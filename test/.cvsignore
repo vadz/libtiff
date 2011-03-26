@@ -8,4 +8,5 @@ long_tag
 rewrite
 short_tag
 strip_rw
-
+*.log
+o-*
