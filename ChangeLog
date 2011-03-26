@@ -1,3 +1,8 @@
+2011-03-26  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiffset.c: add -d and -sd switches to allow operation on
+	a particular directory, not just the first (jef).
+
 2011-03-21  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_thunder.c: Correct potential buffer overflow with 
