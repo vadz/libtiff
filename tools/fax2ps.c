@@ -381,12 +381,10 @@ main(int argc, char** argv)
 	int n;
 	FILE* fd;
 	char buf[16*1024];
-	char temp[1024];
 
-	strcpy(temp, "/tmp/fax2psXXXXXX");
-	fd = fdopen(mkstemp(temp), "w+");
+	fd = tmpfile();
 	if (fd == NULL) {
-	    fprintf(stderr, "Could not create temp file \"%s\"\n", temp);
+	    fprintf(stderr, "Could not obtain temporary file.\n");
 	    exit(-2);
 	}
 #if defined(HAVE_SETMODE) && defined(O_BINARY)
