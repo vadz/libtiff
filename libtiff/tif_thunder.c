@@ -143,7 +143,7 @@ ThunderDecode(TIFF* tif, uint8* op, tmsize_t maxpixels)
 	tif->tif_rawcp = (uint8*) bp;
 	tif->tif_rawcc = cc;
 	if (npixels != maxpixels) {
-#if defined(__WIN32__) && defined(_MSC_VER)
+#if defined(__WIN32__) && (defined(_MSC_VER) || defined(__MINGW32__))
 		TIFFErrorExt(tif->tif_clientdata, module,
 			     "%s data at scanline %lu (%I64u != %I64u)",
 			     npixels < maxpixels ? "Not enough" : "Too much",

@@ -549,7 +549,7 @@ LZWDecode(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 	sp->dec_maxcodep = maxcodep;
 
 	if (occ > 0) {
-#if defined(__WIN32__) && defined(_MSC_VER)
+#if defined(__WIN32__) && (defined(_MSC_VER) || defined(__MINGW32__))
 		TIFFErrorExt(tif->tif_clientdata, module,
 			"Not enough data at scanline %d (short %I64d bytes)",
 			     tif->tif_row, (unsigned __int64) occ);
@@ -753,7 +753,7 @@ LZWDecodeCompat(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 	sp->dec_maxcodep = maxcodep;
 
 	if (occ > 0) {
-#if defined(__WIN32__) && defined(_MSC_VER)
+#if defined(__WIN32__) && (defined(_MSC_VER) || defined(__MINGW32__))
 		TIFFErrorExt(tif->tif_clientdata, module,
 			"Not enough data at scanline %d (short %I64d bytes)",
 			     tif->tif_row, (unsigned __int64) occ);

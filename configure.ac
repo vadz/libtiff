@@ -248,9 +248,19 @@ then
   INT64_FORMAT='"%ld"'
 elif test $ac_cv_sizeof_signed_long_long -eq 8
 then
-  INT64_FORMAT='"%lld"'
   INT64_T='signed long long'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'long long', but uses printf from WIN32 CRT
+      INT64_FORMAT='"%I64d"'
+      ;;
+    *)
+      INT64_FORMAT='"%lld"'
+      ;;
+  esac
 fi
+
+
 AC_MSG_RESULT($INT64_T)
 AC_DEFINE_UNQUOTED(TIFF_INT64_T,$INT64_T,[Signed 64-bit type])
 AC_DEFINE_UNQUOTED(TIFF_INT64_FORMAT,$INT64_FORMAT,[Signed 64-bit type formatter])
@@ -265,7 +275,15 @@ then
 elif test $ac_cv_sizeof_unsigned_long_long -eq 8
 then
   UINT64_T='unsigned long long'
-  UINT64_FORMAT='"%llu"'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'unsigned long long', but uses printf from WIN32 CRT
+      UINT64_FORMAT='"%I64u"'
+      ;;
+    *)
+      UINT64_FORMAT='"%llu"'
+      ;;
+  esac
 fi
 AC_MSG_RESULT($UINT64_T)
 AC_DEFINE_UNQUOTED(TIFF_UINT64_T,$UINT64_T,[Unsigned 64-bit type])

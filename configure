@@ -784,7 +784,6 @@ enable_fast_install
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
-with_gnu_ld
 enable_silent_rules
 enable_rpath
 enable_largefile
@@ -831,12 +830,8 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP
 XMKMF'
@@ -16924,9 +16919,19 @@ then
   INT64_FORMAT='"%ld"'
 elif test $ac_cv_sizeof_signed_long_long -eq 8
 then
-  INT64_FORMAT='"%lld"'
   INT64_T='signed long long'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'long long', but uses printf from WIN32 CRT
+      INT64_FORMAT='"%I64d"'
+      ;;
+    *)
+      INT64_FORMAT='"%lld"'
+      ;;
+  esac
 fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $INT64_T" >&5
 $as_echo "$INT64_T" >&6; }
 
@@ -16951,7 +16956,15 @@ then
 elif test $ac_cv_sizeof_unsigned_long_long -eq 8
 then
   UINT64_T='unsigned long long'
-  UINT64_FORMAT='"%llu"'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'unsigned long long', but uses printf from WIN32 CRT
+      UINT64_FORMAT='"%I64u"'
+      ;;
+    *)
+      UINT64_FORMAT='"%llu"'
+      ;;
+  esac
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $UINT64_T" >&5
 $as_echo "$UINT64_T" >&6; }

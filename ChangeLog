@@ -1,5 +1,18 @@
 2011-04-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* configure.ac: Support configuring TIFF_INT64_FORMAT and
+	TIFF_UINT64_FORMAT appropriately for MinGW32.
+
+	* tools/tiffdump.c (ReadDirectory): MinGW32 needs to use WIN32
+	printf conventions for 64-bit types because it uses the WIN32 CRT.
+
+	* libtiff/{tif_dumpmode.c,tif_luv.c,tif_lzw.c,tif_print.c,
+	tif_read.c,tif_strip.c,tif_thunder.c}: MinGW32 needs to use WIN32
+	printf conventions for 64-bit types because it uses the WIN32 CRT.
+
+	* tools/tiff2pdf.c (t2p_write_pdf_string): Fix printf syntax not
+	understood by WIN32 CRT.
+
 	* libtiff/tif_ojpeg.c: Fixes to compile with MinGW32 GCC.
 
 	* tools/fax2ps.c (main): Use tmpfile() rather than mkstemp() since
