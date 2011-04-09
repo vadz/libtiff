@@ -59,7 +59,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-target_triplet = @target@
 bin_PROGRAMS = bmp2tiff$(EXEEXT) fax2ps$(EXEEXT) fax2tiff$(EXEEXT) \
 	gif2tiff$(EXEEXT) pal2rgb$(EXEEXT) ppm2tiff$(EXEEXT) \
 	ras2tiff$(EXEEXT) raw2tiff$(EXEEXT) rgb2ycbcr$(EXEEXT) \
@@ -364,11 +363,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
-target = @target@
 target_alias = @target_alias@
-target_cpu = @target_cpu@
-target_os = @target_os@
-target_vendor = @target_vendor@
 tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
