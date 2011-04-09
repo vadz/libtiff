@@ -1,5 +1,9 @@
 2011-04-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 4.0.0beta7 released.
+
+2011-04-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
 	* configure.ac: Should use AC_CANONICAL_HOST since host specifies
 	the run-time target whereas target is used to specify the final
 	output target if the package is a build tool (like a compiler),

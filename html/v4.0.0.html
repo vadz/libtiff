@@ -16,7 +16,7 @@
 <UL>
 <HR SIZE=4 WIDTH=65% ALIGN=left>
 <B>Current Version</B>: v4.0.0<BR>
-<B>Previous Version</B>: <A HREF=v3.9.3.html>v3.9.3</a><BR>
+<B>Previous Version</B>: <A HREF=v3.9.5.html>v3.9.5</a><BR>
 <B>Master FTP Site</B>: <A HREF="ftp://ftp.remotesensing.org/pub/libtiff">
 ftp.remotesensing.org</a>, directory pub/libtiff</A><BR>
 <B>Master HTTP Site</B>: <A HREF="http://download.osgeo.org/libtiff">
@@ -26,10 +26,11 @@ http://download.osgeo.org/libtiff</a>
 
 <P>
 This document describes the changes made to the software between the
-<I>previous</I> and <I>current</I> versions (see above).
-If you don't find something listed here, then it was not done in this
-timeframe, or it was not considered important enough to be mentioned.
-The following information is located here:
+<I>previous</I> and <I>current</I> versions (see above).  If you don't
+find something listed here, then it was not done in this timeframe, or
+it was not considered important enough to be mentioned. Please consult
+the ChangeLog file in the source package for full change details.  The
+following information is located here:
 <UL>
 <LI><A HREF="#hightlights">Major Changes</A>
 <LI><A HREF="#configure">Changes in the software configuration</A>
@@ -154,8 +155,8 @@ Other important backward incompatible changes in the public API:
 
 <UL>
 
-	<LI>Updated autotools: Autoconf 2.65, Automake 1.11, libtool
-	2.2.10.
+	<LI>Updated autotools: Autoconf 2.68, Automake 1.11.1, libtool
+	2.4.
 
 	<LI>Enabled support for Automake silent build rules
 	(--enable-silent-rules or 'make V=0')
@@ -169,6 +170,21 @@ Other important backward incompatible changes in the public API:
 	over 72 tests, which may be executed on Unix-like systems, or
 	under Microsoft Windows using MinGW/MSYS or Cygwin.
 
+	<LI>--disable-lzma configure option to disable use of liblzma.
+
+	<LI>--enable-defer-strile-load configure option to enable
+	experimental deferred strip/tile offset/size loading.  May
+	cause some extremely sophisticated uses of libtiff to fail.
+
+	<LI>--enable-chunky-strip-read configure option to enable
+	experimental enable reading large strips in chunks in
+	TIFFReadScanline().
+
+	<LI>Now always uses WIN32 native I/O functions for Microsoft
+	Windows except for under Cygwin.
+
+	<LI>Now provides a pkg-config support file (libtiff-4.pc).
+
 </UL>
 
 <P><HR WIDTH=65% ALIGN=left>
@@ -179,7 +195,7 @@ Other important backward incompatible changes in the public API:
 
 <UL>
 
-        <LI>Patches/fixes made to stable libtiff (v3.9.0) are also
+        <LI>Patches/fixes made to stable libtiff (v3.9.X) are also
         applied to 4.0.0.  There are too many to list here.  See the
         distribution ChangeLog for a detailed change list.
 
@@ -210,6 +226,19 @@ Other important backward incompatible changes in the public API:
 	is a signed memory size type, i.e. it is int32 on 32bit
 	machines, or int64 on 64bit machines.
 
+	<LI>Optionally support LZMA compression via TIFF tag 34925.
+	Tiffcp supports compression levels similar to "-c lzma:p1" or
+	"-c zip:p9 for setting the LZMA compression parameters.
+
+	<LI>Optionally defer the load of strip/tile offset and size
+	tags for optimized scanning of directories.  Enabled with the
+	--enable-defer-strile-load configure option (DEFER_STRILE_LOAD
+	#define in tif_config.h).
+
+	<LI>Optionally enable experimental support for reading big
+	strips in chunks.  Enabled with the --enable-chunky-strip-read
+	configure option.
+
 </UL>
 
 <P><HR WIDTH=65% ALIGN=left>
@@ -219,6 +248,9 @@ Other important backward incompatible changes in the public API:
 <P><A NAME="tools"><B><FONT SIZE=+3>C</FONT>HANGES IN THE TOOLS:</B></A></P>
 
 <UL>
+
+	<LI>tiffset: add -d and -sd switches to allow operation on
+	a particular directory, not just the first.
 
 </UL>
 

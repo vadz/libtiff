@@ -31,7 +31,7 @@ Notes on releasing.
 
      4.0.0
       or
-     4.0.0beta
+     4.0.0beta7
 
    Version should be updated in two places: in the second argument of the
    AC_INIT macro and in LIBTIFF_xxx_VERSION variables.
@@ -49,7 +49,7 @@ Notes on releasing.
 
 6. Add an entry to Changelog similar to:
 
-     * libtiff 4.0.0alpha released.
+     * libtiff 4.0.0beta7 released.
 
 7. In the source tree do
 
@@ -99,7 +99,7 @@ Notes on releasing.
 
 13. In the source tree do
 
-      cvs tag Release-v4-0-0
+      cvs tag Release-v4-0-0beta7
 
     (or the appropriate name for the release)
 
