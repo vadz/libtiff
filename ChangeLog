@@ -1,3 +1,11 @@
+2011-04-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Should use AC_CANONICAL_HOST since host specifies
+	the run-time target whereas target is used to specify the final
+	output target if the package is a build tool (like a compiler),
+	which libtiff is not.  Resolves libtiff bug 2307 "Use
+	AC_CANONICAL_HOST macro".
+
 2011-04-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/fax2ps.c (main): Use tmpfile() rather than mkstemp() since

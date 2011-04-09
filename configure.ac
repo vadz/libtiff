@@ -30,8 +30,8 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(m4)
 AC_LANG(C)
 
-dnl Compute the canonical target-system type variable
-AC_CANONICAL_TARGET
+dnl Compute the canonical host (run-time) system type variable
+AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE
 dnl Do not rebuild generated files every time
@@ -51,7 +51,7 @@ LIBTIFF_RELEASE_DATE=`date +"%Y%m%d"`
 # in OpenBSD uses some special semantics for shared libraries. Their soname
 # contains only two numbers, major and minor.
 # See http://bugzilla.remotesensing.org/show_bug.cgi?id=838 for details.
-case "$target_os" in
+case "$host_os" in
     openbsd* | mirbsd*)
 	LIBTIFF_VERSION_INFO=$LIBTIFF_MAJOR_VERSION$LIBTIFF_MINOR_VERSION:$LIBTIFF_MICRO_VERSION:0
 	;;
@@ -190,7 +190,7 @@ dnl ---------------------------------------------------------------------------
 dnl Check the native cpu bit order.
 dnl ---------------------------------------------------------------------------
 AC_MSG_CHECKING([native cpu bit order])
-case "$target_cpu" in
+case "$host_cpu" in
     i*86*|x86_64*)
         HOST_FILLORDER=FILLORDER_LSB2MSB
 	AC_MSG_RESULT([lsb2msb])
