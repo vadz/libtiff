@@ -1,3 +1,12 @@
+2011-04-20  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirinfo.c,tiffio.h: Remove the obsolete 
+	TIFFMergeFieldInfo/TIFFFindFieldInfo/TIFFFindFieldInfoByName API. 
+	http://bugzilla.maptools.org/show_bug.cgi?id=2315
+
+	* libtiff/libtiff.def: add some missing (64bit) APIs.  
+	http://bugzilla.maptools.org/show_bug.cgi?id=2316
+
 2011-04-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 4.0.0beta7 released.
