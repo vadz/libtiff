@@ -1,3 +1,9 @@
+2011-05-16  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirinfo.c: Restore TIFFMergeFieldInfo() and
+	related declarations as they are in active use by libraries
+	such as libgeotiff, and work just fine.  (#2315)
+
 2011-04-20  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirinfo.c,tiffio.h: Remove the obsolete 

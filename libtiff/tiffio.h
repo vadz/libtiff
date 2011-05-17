@@ -512,6 +512,25 @@ extern int TIFFYCbCrToRGBInit(TIFFYCbCrToRGB*, float*, float*);
 extern void TIFFYCbCrtoRGB(TIFFYCbCrToRGB *, uint32, int32, int32,
     uint32 *, uint32 *, uint32 *);
 
+/****************************************************************************
+ *               O B S O L E T E D    I N T E R F A C E S
+ *
+ * Don't use this stuff in your applications, it may be removed in the future
+ * libtiff versions.
+ ****************************************************************************/
+typedef	struct {
+	ttag_t	field_tag;		/* field's tag */
+	short	field_readcount;	/* read count/TIFF_VARIABLE/TIFF_SPP */
+	short	field_writecount;	/* write count/TIFF_VARIABLE */
+	TIFFDataType field_type;	/* type of associated data */
+        unsigned short field_bit;	/* bit in fieldsset bit vector */
+	unsigned char field_oktochange;	/* if true, can change while writing */
+	unsigned char field_passcount;	/* if true, pass dir count on set */
+	char	*field_name;		/* ASCII name */
+} TIFFFieldInfo;
+
+extern int TIFFMergeFieldInfo(TIFF*, const TIFFFieldInfo[], uint32);
+        
 #if defined(c_plusplus) || defined(__cplusplus)
 }
 #endif
