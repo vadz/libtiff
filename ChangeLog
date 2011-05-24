@@ -1,3 +1,8 @@
+2011-05-24  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirread.c: produce special error message for zero tag
+	directories instead of error out on the malloc(0) failure.
+
 2011-05-16  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirinfo.c: Restore TIFFMergeFieldInfo() and
