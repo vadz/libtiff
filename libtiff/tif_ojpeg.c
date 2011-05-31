@@ -1433,12 +1433,15 @@ OJPEGReadHeaderInfoSecStreamDqt(TIFF* tif)
 			nb[sizeof(uint32)+1]=JPEG_MARKER_DQT;
 			nb[sizeof(uint32)+2]=0;
 			nb[sizeof(uint32)+3]=67;
-			if (OJPEGReadBlock(sp,65,&nb[sizeof(uint32)+4])==0)
+			if (OJPEGReadBlock(sp,65,&nb[sizeof(uint32)+4])==0) {
+				_TIFFfree(nb);
 				return(0);
+			}
 			o=nb[sizeof(uint32)+4]&15;
 			if (3<o)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Corrupt DQT marker in JPEG data");
+				_TIFFfree(nb);
 				return(0);
 			}
 			if (sp->qtable[o]!=0)
