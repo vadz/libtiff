@@ -1,5 +1,7 @@
 2011-05-31  Jim Meyering  <meyering@redhat.com>
 
+	* libtiff/tif_jpeg.c (JPEGInitializeLibJPEG): Remove declaration
+	and set of otherwise unused local, data_is_empty.
 	* libtiff/tif_jpeg.c (JPEGDecodeRaw) [JPEG_LIB_MK1_OR_12BIT]:
 	Diagnose out-of-memory failure and return 0 rather than
 	dereferencing NULL.
