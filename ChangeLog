@@ -1,5 +1,6 @@
 2011-05-31  Jim Meyering  <meyering@redhat.com>
 
+	* tools/rgb2ycbcr.c (cvtRaster): unchecked malloc
 	* libtiff/tif_jpeg.c, tools/tiff2pdf.c, tools/tiff2ps.c: mark
 	NULL-deref and possible overflow
 	* tools/tiff2pdf.c: remove decl+set of set-but-not-used local, "written"
