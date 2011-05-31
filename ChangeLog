@@ -1,5 +1,7 @@
 2011-05-31  Jim Meyering  <meyering@redhat.com>
 
+	* libtiff/tif_jpeg.c, tools/tiff2pdf.c, tools/tiff2ps.c: mark
+	NULL-deref and possible overflow
 	* tools/tiff2pdf.c: remove decl+set of set-but-not-used local, "written"
 	* libtiff/tif_jpeg.c (JPEGInitializeLibJPEG): Remove declaration
 	and set of otherwise unused local, data_is_empty.

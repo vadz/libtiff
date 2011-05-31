@@ -2375,6 +2375,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 		}
 
 		if(t2p->pdf_sample & T2P_SAMPLE_REALIZE_PALETTE){
+			// FIXME: overflow?
 			samplebuffer=(unsigned char*)_TIFFrealloc( 
 				(tdata_t) buffer, 
 				t2p->tiff_datasize * t2p->tiff_samplesperpixel);

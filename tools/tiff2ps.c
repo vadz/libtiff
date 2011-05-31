@@ -2595,6 +2595,7 @@ PSDataBW(FILE* fd, TIFF* tif, uint32 w, uint32 h)
 
 	(void) w; (void) h;
 	tf_buf = (unsigned char *) _TIFFmalloc(stripsize);
+	// FIXME
         memset(tf_buf, 0, stripsize);
 	if (tf_buf == NULL) {
 		TIFFError(filename, "No space for scanline buffer");
