@@ -1,5 +1,9 @@
 2011-05-31  Jim Meyering  <meyering@redhat.com>
 
+	* libtiff/tif_dirread.c (TIFFFetchStripThing): Free "data" also
+	upon failure to allocate "resizeddata".
+	* tools/tiff2ps.c (PSDataBW): Zero buffer *after* checking for
+	allocation failure, not before.
 	* libtiff/tif_ojpeg.c: plug leaks on OJPEG read failure path
 	* tools/rgb2ycbcr.c (cvtRaster): unchecked malloc
 	* libtiff/tif_jpeg.c, tools/tiff2pdf.c, tools/tiff2ps.c: mark

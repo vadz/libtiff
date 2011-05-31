@@ -5353,8 +5353,10 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp)
 	{
 		uint64* resizeddata;
 		resizeddata=(uint64*)_TIFFCheckMalloc(tif,nstrips,sizeof(uint64),"for strip array");
-		if (resizeddata==0)
+		if (resizeddata==0) {
+			_TIFFfree(data);
 			return(0);
+		}
 		if (dir->tdir_count<(uint64)nstrips)
 		{
 			_TIFFmemcpy(resizeddata,data,(uint32)dir->tdir_count*sizeof(uint64));
