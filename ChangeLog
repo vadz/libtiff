@@ -1,3 +1,9 @@
+2011-05-31  Jim Meyering  <meyering@redhat.com>
+
+	* libtiff/tif_jpeg.c (JPEGDecodeRaw) [JPEG_LIB_MK1_OR_12BIT]:
+	Diagnose out-of-memory failure and return 0 rather than
+	dereferencing NULL.
+
 2011-05-24  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dirread.c: produce special error message for zero tag

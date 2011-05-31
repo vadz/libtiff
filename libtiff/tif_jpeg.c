@@ -1351,6 +1351,11 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 		unsigned short* tmpbuf = _TIFFmalloc(sizeof(unsigned short) *
 		    sp->cinfo.d.output_width *
 		    sp->cinfo.d.num_components);
+		if(tmpbuf==NULL) {
+                        TIFFErrorExt(tif->tif_clientdata, "JPEGDecodeRaw",
+				     "Out of memory");
+			return 0;
+                }
 #endif
 
 		do {
