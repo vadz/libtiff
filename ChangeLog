@@ -1,5 +1,6 @@
 2011-05-31  Jim Meyering  <meyering@redhat.com>
 
+	* tools/tiff2pdf.c: remove decl+set of set-but-not-used local, "written"
 	* libtiff/tif_jpeg.c (JPEGInitializeLibJPEG): Remove declaration
 	and set of otherwise unused local, data_is_empty.
 	* libtiff/tif_jpeg.c (JPEGDecodeRaw) [JPEG_LIB_MK1_OR_12BIT]:

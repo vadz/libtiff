@@ -563,7 +563,6 @@ int main(int argc, char** argv){
 	const char *outfilename = NULL;
 	T2P *t2p = NULL;
 	TIFF *input = NULL, *output = NULL;
-	tsize_t written = 0;
 	int c, ret = EXIT_SUCCESS;
 
 	t2p = t2p_init();
@@ -764,7 +763,7 @@ int main(int argc, char** argv){
 	/*
 	 * Write
 	 */
-	written = t2p_write_pdf(t2p, input, output);
+	t2p_write_pdf(t2p, input, output);
 	if (t2p->t2p_error != 0) {
 		TIFFError(TIFF2PDF_MODULE,
 			  "An error occurred creating output PDF file");
