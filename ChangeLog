@@ -1,3 +1,8 @@
+2011-06-08  Dwight Kelly  <dkelly@apago.com>
+
+	* tif_apple.c: fix for Bug 2247 - tif_apple.c _tiffSizeProc() did
+	  not pass correct number arguments to TIFFErrorExt()
+
 2011-04-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 3.9.5 released.
