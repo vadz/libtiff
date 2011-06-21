@@ -148,4 +148,4 @@ EXPORTS TIFFOpen
 	TIFFSwabArrayOfLong8
 	TIFFFindField
 	TIFFUnsetField
-	TIFMergeFieldInfo
+	TIFFMergeFieldInfo
