@@ -61,7 +61,7 @@ If the specified
 already has a registered codec then it is
 .I overridden
 and any images with data encoded with this
-compression scheme will be decoded using the supplied coded.
+compression scheme will be decoded using the supplied codec.
 .PP
 .I TIFFIsCODECConfigured
 returns 1 if the codec is configured and working. Otherwise 0 will be returned.
