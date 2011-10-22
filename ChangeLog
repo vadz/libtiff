@@ -1,5 +1,7 @@
 2011-10-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* Update GNU libtool to 2.4.2.
+
 	* tools/tiffsplit.c (tiffcp): TIFFGetField count field should be
 	uint32 type for TIFFTAG_JPEGTABLES.  Patch by Christophe
 	Deroulers.
