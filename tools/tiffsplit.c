@@ -172,7 +172,7 @@ tiffcp(TIFF* in, TIFF* out)
 	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
 	CopyField(TIFFTAG_COMPRESSION, compression);
 	if (compression == COMPRESSION_JPEG) {
-		uint16 count = 0;
+		uint32 count = 0;
 		void *table = NULL;
 		if (TIFFGetField(in, TIFFTAG_JPEGTABLES, &count, &table)
 		    && count > 0 && table) {
