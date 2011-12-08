@@ -4026,7 +4026,11 @@ TIFFReadDirectory(TIFF* tif)
 	    (tif->tif_dir.td_nstrips==1)&&
 	    (tif->tif_dir.td_compression==COMPRESSION_NONE)&&  
 	    ((tif->tif_flags&(TIFF_STRIPCHOP|TIFF_ISTILED))==TIFF_STRIPCHOP))
+    {
+        if ( !_TIFFFillStriles(tif) || !tif->tif_dir.td_stripbytecount )
+            return 0;
 		ChopUpSingleUncompressedStrip(tif);
+    }
 
         /*
          * Clear the dirty directory flag. 
@@ -5459,8 +5463,6 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	uint64* newcounts;
 	uint64* newoffsets;
 
-        _TIFFFillStriles(tif);
-        
 	bytecount = td->td_stripbytecount[0];
 	offset = td->td_stripoffset[0];
 	assert(td->td_planarconfig == PLANARCONFIG_CONTIG);

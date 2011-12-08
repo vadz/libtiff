@@ -1,5 +1,8 @@
 2011-12-07  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* libtiff/tif_dirread.c: fixes to deal with invalid files where
+	_TIFFFillStriles() fails, and we try to chop up strips (gdal #4372)
+
 	* libtiff/tif_dirread.c: fix error reporting when there is no 
 	tag information struct and name (gdal #4373)
 
