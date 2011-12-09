@@ -3592,7 +3592,8 @@ TIFFReadDirectory(TIFF* tif)
 	if ((tif->tif_dir.td_compression==COMPRESSION_OJPEG)&&
 	    (tif->tif_dir.td_planarconfig==PLANARCONFIG_SEPARATE))
 	{
-                _TIFFFillStriles(tif);
+        if (!_TIFFFillStriles(tif))
+            goto bad;
 		dp=TIFFReadDirectoryFindEntry(tif,dir,dircount,TIFFTAG_STRIPOFFSETS);
 		if ((dp!=0)&&(dp->tdir_count==1))
 		{
@@ -4269,7 +4270,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 	TIFFDirectory *td = &tif->tif_dir;
 	uint32 strip;
 
-        _TIFFFillStriles( tif );
+    _TIFFFillStriles( tif );
 
 	if (td->td_stripbytecount)
 		_TIFFfree(td->td_stripbytecount);
