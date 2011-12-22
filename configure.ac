@@ -720,6 +720,7 @@ fi
 if test "$HAVE_LZMA" = "yes" ; then
   AC_DEFINE(LZMA_SUPPORT,1,[Support LZMA2 compression])
   LIBS="-llzma $LIBS"
+  tiff_libs_private="-llzma ${tiff_libs_private}"
 
   if test "$HAVE_RPATH" = "yes" -a "x$with_lzma_lib_dir" != "x" ; then
     LIBDIR="-R $with_lzma_lib_dir $LIBDIR"

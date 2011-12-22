@@ -1,3 +1,9 @@
+2011-12-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Add libtiff private dependency on -llzma for
+	pkg-config.  Patch by Mark Brand.
+	Updated Automake to 1.11.2.
+
 2011-12-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 4.0.0 released.
