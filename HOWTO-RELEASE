@@ -49,7 +49,7 @@ Notes on releasing.
 
 6. Add an entry to Changelog similar to:
 
-     * libtiff 4.0.0beta7 released.
+     * libtiff 4.0.0 released.
 
 7. In the source tree do
 
@@ -99,7 +99,7 @@ Notes on releasing.
 
 13. In the source tree do
 
-      cvs tag Release-v4-0-0beta7
+      cvs tag Release-v4-0-0
 
     (or the appropriate name for the release)
 
