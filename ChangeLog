@@ -1,5 +1,8 @@
 2011-12-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_win32.c: Eliminate some minor 64-bit warnings in
+	tif_win32.c.  Patch by Edward Lam.
+
 	* configure.ac: Add libtiff private dependency on -llzma for
 	pkg-config.  Patch by Mark Brand.
 	Updated Automake to 1.11.2.
