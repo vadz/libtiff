@@ -787,10 +787,10 @@ check-TESTS:
 	@list='$(RECHECK_LOGS)'; test -z "$$list" || rm -f $$list
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@list='$(TEST_LOGS)';						\
-	list=`for f in $$list; do					\
-	  test .log = $$f || echo $$f;					\
-	done | tr '\012\015' '  '`;					\
-	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$list"
+	{ echo "TEST_LOGS = \\";					\
+	  for f in $$list; do test .log = $$f || echo "$$f \\"; done;	\
+	} | sed '$$s/\\$$//'						\
+	  | $(MAKE) -f Makefile -f - $(AM_MAKEFLAGS) $(TEST_SUITE_LOG)
 
 .log.html:
 	@list='$(RST2HTML) $$RST2HTML rst2html rst2html.py';		\

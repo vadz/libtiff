@@ -68,7 +68,9 @@ host_triplet = @host@
 @WIN32_IO_FALSE@am__append_5 = tif_unix.c
 @HAVE_CXX_TRUE@am__append_6 = libtiffxx.la
 @HAVE_RPATH_TRUE@am__append_7 = $(LIBDIR)
-@HAVE_RPATH_TRUE@am__append_8 = $(LIBDIR)
+@HAVE_LD_VERSION_SCRIPT_TRUE@am__append_8 = -Wl,--version-script=$(srcdir)/libtiff.map
+@HAVE_RPATH_TRUE@am__append_9 = $(LIBDIR)
+@HAVE_LD_VERSION_SCRIPT_TRUE@am__append_10 = -Wl,--version-script=$(srcdir)/libtiffxx.map
 noinst_PROGRAMS = mkg3states$(EXEEXT)
 subdir = libtiff
 DIST_COMMON = $(am__libtiffinclude_HEADERS_DIST) $(noinst_HEADERS) \
@@ -360,7 +362,7 @@ LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 libtiffincludedir = $(includedir)
 EXTRA_DIST = Makefile.vc SConstruct tif_config.h-vms tif_config.vc.h \
 	tif_config.wince.h tiffconf.vc.h tiffconf.wince.h libtiff.def \
-	$(am__append_2) $(am__append_4)
+	libtiff.map libtiffxx.map $(am__append_2) $(am__append_4)
 libtiffinclude_HEADERS = tiff.h tiffio.h tiffvers.h $(am__append_1)
 noinst_HEADERS = \
 	t4.h \
@@ -387,10 +389,10 @@ libtiffxx_la_SOURCES = \
 
 lib_LTLIBRARIES = libtiff.la $(am__append_6)
 libtiff_la_LDFLAGS = -no-undefined -version-info \
-	$(LIBTIFF_VERSION_INFO) $(am__append_7)
+	$(LIBTIFF_VERSION_INFO) $(am__append_7) $(am__append_8)
 libtiff_la_LIBADD = $(LIBPORT)
 libtiffxx_la_LDFLAGS = -no-undefined -version-info \
-	$(LIBTIFF_VERSION_INFO) $(am__append_8)
+	$(LIBTIFF_VERSION_INFO) $(am__append_9) $(am__append_10)
 libtiffxx_la_LIBADD = $(LIBTIFF) $(LIBPORT)
 libtiffxx_la_DEPENDENCIES = libtiff.la
 mkg3states_SOURCES = mkg3states.c tif_fax3.h

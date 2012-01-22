@@ -672,6 +672,8 @@ LIBTOOL
 OBJDUMP
 DLLTOOL
 AS
+HAVE_LD_VERSION_SCRIPT_FALSE
+HAVE_LD_VERSION_SCRIPT_TRUE
 LN_S
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -774,6 +776,7 @@ ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
 enable_dependency_tracking
+enable_ld_version_script
 enable_shared
 enable_static
 with_pic
@@ -1460,6 +1463,8 @@ Optional Features:
 			  (and sometimes confusing) to the casual installer
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-ld-version-script
+                          enable linker version script (default is disabled)
   --enable-shared[=PKGS]  build shared libraries [default=yes]
   --enable-static[=PKGS]  build static libraries [default=yes]
   --enable-fast-install[=PKGS]
@@ -4561,6 +4566,66 @@ fi
 
 
 
+# Check if LD supports linker scripts, and define automake conditional
+# HAVE_LD_VERSION_SCRIPT if so.  This functionality is currently
+# constrained to compilers using GNU ld on ELF systems or systems
+# which provide an adequate emulation thereof.
+# Check whether --enable-ld-version-script was given.
+if test "${enable_ld_version_script+set}" = set; then :
+  enableval=$enable_ld_version_script; have_ld_version_script=$enableval
+else
+  have_ld_version_script=no
+fi
+
+if test "$have_ld_version_script" != no; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking if LD -Wl,--version-script works" >&5
+$as_echo_n "checking if LD -Wl,--version-script works... " >&6; }
+  save_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS -Wl,--version-script=conftest.map"
+  cat > conftest.map <<EOF
+VERS_1 {
+        global: sym;
+};
+
+VERS_2 {
+        global: sym;
+} VERS_1;
+EOF
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  have_ld_version_script=yes
+else
+  have_ld_version_script=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  rm -f conftest.map
+  LDFLAGS="$save_LDFLAGS"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_ld_version_script" >&5
+$as_echo "$have_ld_version_script" >&6; }
+fi
+ if test "$have_ld_version_script" = "yes"; then
+  HAVE_LD_VERSION_SCRIPT_TRUE=
+  HAVE_LD_VERSION_SCRIPT_FALSE='#'
+else
+  HAVE_LD_VERSION_SCRIPT_TRUE='#'
+  HAVE_LD_VERSION_SCRIPT_FALSE=
+fi
+
+
+
+
 
 
 case `pwd` in
@@ -6058,7 +6123,6 @@ fi
 $as_echo "$lt_cv_sharedlib_from_linklib_cmd" >&6; }
 sharedlib_from_linklib_cmd=$lt_cv_sharedlib_from_linklib_cmd
 test -z "$sharedlib_from_linklib_cmd" && sharedlib_from_linklib_cmd=$ECHO
-
 
 
 
@@ -19919,6 +19983,10 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
+if test -z "${HAVE_LD_VERSION_SCRIPT_TRUE}" && test -z "${HAVE_LD_VERSION_SCRIPT_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LD_VERSION_SCRIPT\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -22485,6 +22553,7 @@ echo "  Documentation directory:            ${LIBTIFF_DOCDIR}"
 echo "  C compiler:                         ${CC} ${CFLAGS}"
 echo "  C++ compiler:                       ${CXX} ${CXXFLAGS}"
 echo "  Enable runtime linker paths:        ${HAVE_RPATH}"
+echo "  Enable linker symbol versioning:    ${have_ld_version_script}"
 echo "  Support Microsoft Document Imaging: ${HAVE_MDI}"
 echo "  Use win32 IO:                       ${win32_io_ok}"
 echo ""

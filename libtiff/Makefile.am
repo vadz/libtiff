@@ -34,7 +34,9 @@ EXTRA_DIST = Makefile.vc \
 	     tif_config.wince.h \
 	     tiffconf.vc.h \
 	     tiffconf.wince.h \
-	     libtiff.def 
+	     libtiff.def \
+	     libtiff.map \
+	     libtiffxx.map
 
 libtiffinclude_HEADERS = \
 	tiff.h \
@@ -117,6 +119,9 @@ libtiff_la_LDFLAGS = \
 if HAVE_RPATH
 libtiff_la_LDFLAGS += $(LIBDIR)
 endif
+if HAVE_LD_VERSION_SCRIPT
+libtiff_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libtiff.map
+endif
 libtiff_la_LIBADD = $(LIBPORT)
 
 libtiffxx_la_LDFLAGS = \
@@ -124,6 +129,9 @@ libtiffxx_la_LDFLAGS = \
 	-version-info $(LIBTIFF_VERSION_INFO)
 if HAVE_RPATH
 libtiffxx_la_LDFLAGS += $(LIBDIR)
+endif
+if HAVE_LD_VERSION_SCRIPT
+libtiffxx_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libtiffxx.map
 endif
 libtiffxx_la_LIBADD = $(LIBTIFF) $(LIBPORT)
 libtiffxx_la_DEPENDENCIES = libtiff.la

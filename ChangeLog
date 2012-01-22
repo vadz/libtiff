@@ -1,3 +1,11 @@
+2012-01-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Add support for using library symbol versioning on
+	ELF systems with the GNU linker.  Support is enabled via
+	--enable-ld-version-script.  Disabled by default for now until
+	there is a decision for how to deploy a libtiff with versioned
+	symbols after libtiff 4.0.0 was already released.
+
 2011-12-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_win32.c: Eliminate some minor 64-bit warnings in
