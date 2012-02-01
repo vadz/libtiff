@@ -3439,6 +3439,11 @@ TIFFReadDirectory(TIFF* tif)
 		return 0;
 	}
 	TIFFReadDirectoryCheckOrder(tif,dir,dircount);
+
+        /*
+         * Mark duplicates of any tag to be ignored (bugzilla 1994)
+         * to avoid certain pathological problems.
+         */
 	{
 		TIFFDirEntry* ma;
 		uint16 mb;
@@ -3453,6 +3458,7 @@ TIFFReadDirectory(TIFF* tif)
 			}
 		}
 	}
+        
 	tif->tif_flags &= ~TIFF_BEENWRITING;    /* reset before new dir */
 	tif->tif_flags &= ~TIFF_BUF4WRITE;      /* reset before new dir */
 	/* free any old stuff and reinit */
