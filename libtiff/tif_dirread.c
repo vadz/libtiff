@@ -3689,7 +3689,7 @@ TIFFReadDirectory(TIFF* tif)
 						err=TIFFReadDirEntryPersampleShort(tif,dp,&value);
 					if (err!=TIFFReadDirEntryErrOk)
 					{
-                        fip = TIFFFieldWithTag(tif,dp->tdir_tag);
+						fip = TIFFFieldWithTag(tif,dp->tdir_tag);
 						TIFFReadDirEntryOutputErr(tif,err,module,fip ? fip->field_name : "unknown tagname",0);
 						goto bad;
 					}
@@ -3711,7 +3711,7 @@ TIFFReadDirectory(TIFF* tif)
 						err = TIFFReadDirEntryDoubleArray(tif, dp, &data);
 					if (err!=TIFFReadDirEntryErrOk)
 					{
-                        fip = TIFFFieldWithTag(tif,dp->tdir_tag);
+						fip = TIFFFieldWithTag(tif,dp->tdir_tag);
 						TIFFReadDirEntryOutputErr(tif,err,module,fip ? fip->field_name : "unknown tagname",0);
 						goto bad;
 					}
@@ -3769,7 +3769,7 @@ TIFFReadDirectory(TIFF* tif)
 						err=TIFFReadDirEntryShortArray(tif,dp,&value);
 					if (err!=TIFFReadDirEntryErrOk)
                     {
-                        fip = TIFFFieldWithTag(tif,dp->tdir_tag);
+						fip = TIFFFieldWithTag(tif,dp->tdir_tag);
 						TIFFReadDirEntryOutputErr(tif,err,module,fip ? fip->field_name : "unknown tagname",1);
                     }
 					else
@@ -3911,8 +3911,7 @@ TIFFReadDirectory(TIFF* tif)
 			}
 			TIFFWarningExt(tif->tif_clientdata, module,
 				"TIFF directory is missing required "
-				"\"%s\" field, calculating from imagelength",
-				TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
+				"\"StripByteCounts\" field, calculating from imagelength");
 			if (EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
 		/*
@@ -3947,8 +3946,7 @@ TIFFReadDirectory(TIFF* tif)
 			 * of estimating the size of a one strip image.
 			 */
 			TIFFWarningExt(tif->tif_clientdata, module,
-			    "Bogus \"%s\" field, ignoring and calculating from imagelength",
-			    TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
+			    "Bogus \"StripByteCounts\" field, ignoring and calculating from imagelength");
 			if(EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
 
@@ -3970,8 +3968,7 @@ TIFFReadDirectory(TIFF* tif)
                          * information.
 			 */
 			TIFFWarningExt(tif->tif_clientdata, module,
-			    "Wrong \"%s\" field, ignoring and calculating from imagelength",
-			    TIFFFieldWithTag(tif,TIFFTAG_STRIPBYTECOUNTS)->field_name);
+			    "Wrong \"StripByteCounts\" field, ignoring and calculating from imagelength");
 			if (EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
 #endif /* !defined(DEFER_STRILE_LOAD) */                        
@@ -4405,14 +4402,14 @@ static int
 CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 {
 	if ((uint64)count > dir->tdir_count) {
-        const TIFFField* fip = TIFFFieldWithTag(tif, dir->tdir_tag);
+		const TIFFField* fip = TIFFFieldWithTag(tif, dir->tdir_tag);
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 	"incorrect count for field \"%s\" (" TIFF_UINT64_FORMAT ", expecting %u); tag ignored",
 		    fip ? fip->field_name : "unknown tagname",
 		    dir->tdir_count, count);
 		return (0);
 	} else if ((uint64)count < dir->tdir_count) {
-        const TIFFField* fip = TIFFFieldWithTag(tif, dir->tdir_tag);
+		const TIFFField* fip = TIFFFieldWithTag(tif, dir->tdir_tag);
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 	"incorrect count for field \"%s\" (" TIFF_UINT64_FORMAT ", expecting %u); tag trimmed",
 		    fip ? fip->field_name : "unknown tagname",
@@ -5358,7 +5355,7 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp)
 	err=TIFFReadDirEntryLong8Array(tif,dir,&data);
 	if (err!=TIFFReadDirEntryErrOk)
 	{
-        const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag); 
+		const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag); 
 		TIFFReadDirEntryOutputErr(tif,err,module,fip ? fip->field_name : "unknown tagname",0);
 		return(0);
 	}
