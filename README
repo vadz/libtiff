@@ -9,7 +9,7 @@ favorite WWW viewer at html/index.html;
 
 e.g.
 
-    netscape html/index.html
+    firefox html/index.html
 
 If you don't have an HTML viewer then you can read the HTML source
 or fetch a PostScript version of this documentation from the directory
