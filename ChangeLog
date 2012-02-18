@@ -1,3 +1,9 @@
+2012-02-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffio.h: Use double-underbar syntax in GCC printf
+	attribute specification to lessen the risk of accidental macro
+	substitution.  Patch from Vincent Torri.
+
 2012-01-31  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dir.c, libtiff/tif_dirread.c: Extra caution around

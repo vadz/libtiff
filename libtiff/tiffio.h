@@ -437,10 +437,10 @@ extern TIFF* TIFFClientOpen(const char*, const char*,
 	    TIFFMapFileProc, TIFFUnmapFileProc);
 extern const char* TIFFFileName(TIFF*);
 extern const char* TIFFSetFileName(TIFF*, const char *);
-extern void TIFFError(const char*, const char*, ...) __attribute__((format (printf,2,3)));
-extern void TIFFErrorExt(thandle_t, const char*, const char*, ...) __attribute__((format (printf,3,4)));
-extern void TIFFWarning(const char*, const char*, ...) __attribute__((format (printf,2,3)));
-extern void TIFFWarningExt(thandle_t, const char*, const char*, ...) __attribute__((format (printf,3,4)));
+extern void TIFFError(const char*, const char*, ...) __attribute__((__format__ (__printf__,2,3)));
+extern void TIFFErrorExt(thandle_t, const char*, const char*, ...) __attribute__((__format__ (__printf__,3,4)));
+extern void TIFFWarning(const char*, const char*, ...) __attribute__((__format__ (__printf__,2,3)));
+extern void TIFFWarningExt(thandle_t, const char*, const char*, ...) __attribute__((__format__ (__printf__,3,4)));
 extern TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler);
 extern TIFFErrorHandlerExt TIFFSetErrorHandlerExt(TIFFErrorHandlerExt);
 extern TIFFErrorHandler TIFFSetWarningHandler(TIFFErrorHandler);
