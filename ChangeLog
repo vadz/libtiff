@@ -1,5 +1,7 @@
 2012-02-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 4.0.1 released.
+
 	* Update automake used to 1.11.3.
 
 	* libtiff/tiffio.h: Use double-underbar syntax in GCC printf
