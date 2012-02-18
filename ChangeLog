@@ -1,3 +1,9 @@
+2012-02-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffio.h: Use double-underbar syntax in GCC printf
+	attribute specification to lessen the risk of accidental macro
+	substitution.  Patch from Vincent Torri.
+
 2012-01-23  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Add support for using library symbol versioning on
