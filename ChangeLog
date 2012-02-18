@@ -1,5 +1,7 @@
 2012-02-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 3.9.6 released.
+
 	* libtiff/tiffio.h: Use double-underbar syntax in GCC printf
 	attribute specification to lessen the risk of accidental macro
 	substitution.  Patch from Vincent Torri.
