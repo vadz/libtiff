@@ -1,3 +1,8 @@
+2012-03-30  Frank Warmerdam  <warmerdam@google.com>
+
+	* tif_getimage.c: Fix size overflow (zdi-can-1221,CVE-2012-1173)
+	care of Tom Lane @ Red Hat.
+
 2012-02-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 4.0.1 released.
