@@ -10,8 +10,10 @@ go out in a standard release.
 
 This document is new and will presumably evolve.
 
-1) The mailing list distro@vs.openwall.org can be used to notify folks
+1) The mailing list distros@vs.openwall.org can be used to notify folks
 at various linux OS distributions as well as the BSD folks about problems
-in libtiff. 
+in libtiff.  Make sure to prefix subject with [vs].  More info at:
+
+  http://oss-security.openwall.org/wiki/mailing-lists/distros
 
 ... to be continued ...
