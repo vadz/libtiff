@@ -1,3 +1,8 @@
+2012-05-19  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* man/TIFFGetField.3tiff: Correct the 'count' field type in the
+	example for how to retreive the value of unsupported tags.
+
 2012-03-30  Frank Warmerdam  <warmerdam@google.com>
 
 	* tif_getimage.c: Fix size overflow (zdi-can-1221,CVE-2012-1173)
