@@ -1954,6 +1954,11 @@ OJPEGReadBufferFill(OJPEGState* sp)
 			case osibsJpegInterchangeFormat:
 				sp->in_buffer_source=osibsStrile;
 			case osibsStrile:
+				if (!_TIFFFillStriles( sp->tif ) 
+				    || sp->tif->tif_dir.td_stripoffset == NULL
+				    || sp->tif->tif_dir.td_stripbytecount == NULL)
+					return 0;
+
 				if (sp->in_buffer_next_strile==sp->in_buffer_strile_count)
 					sp->in_buffer_source=osibsEof;
 				else

@@ -1,5 +1,8 @@
 2012-05-23  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_ojpeg.c: make things more resilient in the face of files without
+	stripbytecounts or stripoffsets or where loading these fails. 
+
 	* libtiff/tif_print.c: be careful about whether min/max values are singular
 	or one per sample.
 
