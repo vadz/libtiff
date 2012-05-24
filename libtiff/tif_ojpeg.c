@@ -1146,7 +1146,9 @@ OJPEGWriteHeaderInfo(TIFF* tif)
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	uint8** m;
 	uint32 n;
-	assert(sp->libjpeg_session_active==0);
+	/* if a previous attempt failed, don't try again */
+	if (sp->libjpeg_session_active != 0) 
+		return 0;
 	sp->out_state=ososSoi;
 	sp->restart_index=0;
 	jpeg_std_error(&(sp->libjpeg_jpeg_error_mgr));

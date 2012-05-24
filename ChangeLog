@@ -1,5 +1,8 @@
 2012-05-23  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_ojpeg.c: if OJPEGWriteHeader() fails once do not bother trying again on 
+	the same image. 
+
 	* libtiff/tif_ojpeg.c: make things more resilient in the face of files without
 	stripbytecounts or stripoffsets or where loading these fails. 
 
