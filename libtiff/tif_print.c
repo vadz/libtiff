@@ -449,14 +449,16 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 	if (TIFFFieldSet(tif,FIELD_MAXSAMPLEVALUE))
 		fprintf(fd, "  Max Sample Value: %u\n", td->td_maxsamplevalue);
 	if (TIFFFieldSet(tif,FIELD_SMINSAMPLEVALUE)) {
+		int count = (tif->tif_flags & TIFF_PERSAMPLE) ? td->td_samplesperpixel : 1;
 		fprintf(fd, "  SMin Sample Value:");
-		for (i = 0; i < td->td_samplesperpixel; ++i)
+		for (i = 0; i < count; ++i)
 			fprintf(fd, " %g", td->td_sminsamplevalue[i]);
 		fprintf(fd, "\n");
 	}
 	if (TIFFFieldSet(tif,FIELD_SMAXSAMPLEVALUE)) {
+		int count = (tif->tif_flags & TIFF_PERSAMPLE) ? td->td_samplesperpixel : 1;
 		fprintf(fd, "  SMax Sample Value:");
-		for (i = 0; i < td->td_samplesperpixel; ++i)
+		for (i = 0; i < count; ++i)
 			fprintf(fd, " %g", td->td_smaxsamplevalue[i]);
 		fprintf(fd, "\n");
 	}
