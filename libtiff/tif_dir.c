@@ -122,6 +122,10 @@ setExtraSamples(TIFFDirectory* td, va_list ap, uint32* v)
 #undef EXTRASAMPLE_COREL_UNASSALPHA
 }
 
+/*
+ * Confirm we have "samplesperpixel" ink names separated by \0.  Returns 
+ * zero if the ink names are not as expected.
+ */
 static uint32
 checkInkNamesString(TIFF* tif, uint32 slen, const char* s)
 {
@@ -132,9 +136,9 @@ checkInkNamesString(TIFF* tif, uint32 slen, const char* s)
 		const char* ep = s+slen;
 		const char* cp = s;
 		for (; i > 0; i--) {
-			for (; *cp != '\0'; cp++)
-				if (cp >= ep)
-					goto bad;
+			for (; cp < ep && *cp != '\0'; cp++) {}
+			if (cp >= ep)
+				goto bad;
 			cp++;				/* skip \0 */
 		}
 		return ((uint32)(cp-s));

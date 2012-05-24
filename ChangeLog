@@ -1,3 +1,8 @@
+2012-05-23  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_dir.c: avoid one byte past end of ink names reading
+	in some cases.
+
 2012-05-19  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* man/TIFFGetField.3tiff: Correct the 'count' field type in the
