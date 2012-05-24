@@ -1,5 +1,8 @@
 2012-05-23  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_print.c: Avoid confusion about count size when printing custom fields.
+	May affect things like ISOSpeedRatings.
+
 	* libtiff/tif_dir.c: avoid one byte past end of ink names reading
 	in some cases.
 
