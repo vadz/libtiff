@@ -1,5 +1,7 @@
 2012-05-23  Frank Warmerdam  <warmerdam@google.com>
 
+	* tools/tiffinfo.c: initialize h=0 to avoid undefined variable for degenerate files.
+
 	* libtiff/tif_ojpeg.c: if OJPEGWriteHeader() fails once do not bother trying again on 
 	the same image. 
 
