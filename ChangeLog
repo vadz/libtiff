@@ -1,12 +1,14 @@
 2012-05-23  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_pixarlog.c: avoid accessing out of the lookup arrays for out of range inputs. 
+
 	* tools/tiffinfo.c: initialize h=0 to avoid undefined variable for degenerate files.
 
-	* libtiff/tif_ojpeg.c: if OJPEGWriteHeader() fails once do not bother trying again on 
-	the same image. 
+	* libtiff/tif_ojpeg.c: if OJPEGWriteHeader() fails once do not bother trying again on
+	the same image.
 
 	* libtiff/tif_ojpeg.c: make things more resilient in the face of files without
-	stripbytecounts or stripoffsets or where loading these fails. 
+	stripbytecounts or stripoffsets or where loading these fails.
 
 	* libtiff/tif_print.c: be careful about whether min/max values are singular
 	or one per sample.
