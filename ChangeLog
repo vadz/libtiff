@@ -1,6 +1,11 @@
+2012-05-24  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_pixarlog.c: Allocate working buffer one word larger since we "forward
+	accumulate" and overwrite the end by one word in at least some cases.
+
 2012-05-23  Frank Warmerdam  <warmerdam@google.com>
 
-	* libtiff/tif_pixarlog.c: avoid accessing out of the lookup arrays for out of range inputs. 
+	* libtiff/tif_pixarlog.c: avoid accessing out of the lookup arrays for out of range inputs.
 
 	* tools/tiffinfo.c: initialize h=0 to avoid undefined variable for degenerate files.
 
