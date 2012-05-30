@@ -1,5 +1,10 @@
 2012-05-29  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_dir.c: avoid using specific set/get logic to process fields in custom directories,
+	like EXIF directories.  This fixes problems like a tag "320" existing in a custom directory getting
+	processed as if it were a colormap when it isn't really.  Damn the wide variety of argument formulations
+	to get/set functions for different tags!
+
 	* libtiff/tif_dir.c: Ensure that we keep track of when tif_rawdata
 	is a pointer into an mmap()ed file via TIFF_BUFFERMMAP flag.
 

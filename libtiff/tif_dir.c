@@ -161,8 +161,20 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	int status = 1;
 	uint32 v32, i, v;
 	char* s;
+	const TIFFField *fip = TIFFFindField(tif, tag, TIFF_ANY);
+	uint32 standard_tag = tag;
 
-	switch (tag) {
+	/*
+	 * We want to force the custom code to be used for custom
+	 * fields even if the tag happens to match a well known 
+	 * one - important for reinterpreted handling of standard
+	 * tag values in custom directories (ie. EXIF) 
+	 */
+	if (fip->field_bit == FIELD_CUSTOM) {
+		standard_tag = 0;
+	}
+
+	switch (standard_tag) {
 	case TIFFTAG_SUBFILETYPE:
 		td->td_subfiletype = (uint32) va_arg(ap, uint32);
 		break;
@@ -427,7 +439,6 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	default: {
 		TIFFTagValue *tv;
 		int tv_size, iCustom;
-		const TIFFField *fip = TIFFFindField(tif, tag, TIFF_ANY);
 
 		/*
 		 * This can happen if multiple images are open with different
@@ -799,8 +810,20 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 {
 	TIFFDirectory* td = &tif->tif_dir;
 	int ret_val = 1;
+	uint32 standard_tag = tag;
+	const TIFFField* fip = TIFFFindField(tif, tag, TIFF_ANY);
+	
+	/*
+	 * We want to force the custom code to be used for custom
+	 * fields even if the tag happens to match a well known 
+	 * one - important for reinterpreted handling of standard
+	 * tag values in custom directories (ie. EXIF) 
+	 */
+	if (fip->field_bit == FIELD_CUSTOM) {
+		standard_tag = 0;
+	}
 
-	switch (tag) {
+	switch (standard_tag) {
 		case TIFFTAG_SUBFILETYPE:
 			*va_arg(ap, uint32*) = td->td_subfiletype;
 			break;
@@ -975,8 +998,6 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 			break;
 		default:
 			{
-				const TIFFField* fip =
-					TIFFFindField(tif, tag, TIFF_ANY);
 				int i;
 
 				/*
