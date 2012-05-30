@@ -121,6 +121,7 @@ struct tiff {
         #define TIFF_BUF4WRITE  0x100000 /* rawcc bytes are for writing */
         #define TIFF_DIRTYSTRIP 0x200000 /* stripoffsets/stripbytecount dirty*/
         #define TIFF_PERSAMPLE  0x400000 /* get/set per sample tags as arrays */
+        #define TIFF_BUFFERMMAP 0x800000 /* read buffer (tif_rawdata) points into mmap() memory */
 	uint64               tif_diroff;       /* file offset of current directory */
 	uint64               tif_nextdiroff;   /* file offset of following directory */
 	uint64*              tif_dirlist;      /* list of offsets to already seen directories to prevent IFD looping */

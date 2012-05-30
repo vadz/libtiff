@@ -1,3 +1,8 @@
+2012-05-29  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_dir.c: Ensure that we keep track of when tif_rawdata
+	is a pointer into an mmap()ed file via TIFF_BUFFERMMAP flag.
+
 2012-05-24  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_pixarlog.c: Allocate working buffer one word larger since we "forward
