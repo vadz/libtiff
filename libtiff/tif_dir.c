@@ -502,7 +502,8 @@ _TIFFVSetField(TIFF* tif, ttag_t tag, va_list ap)
 		    && fip->field_tag != TIFFTAG_PAGENUMBER
 		    && fip->field_tag != TIFFTAG_HALFTONEHINTS
 		    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
-		    && fip->field_tag != TIFFTAG_DOTRANGE) {
+		    && fip->field_tag != TIFFTAG_DOTRANGE
+		    && fip->field_tag != TIFFTAG_WHITELEVEL) {
                     _TIFFmemcpy(tv->value, va_arg(ap, void *),
 				tv->count * tv_size);
 		} else {

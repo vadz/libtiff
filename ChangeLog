@@ -1,3 +1,8 @@
+2012-06-01  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_dir.c: Avoid generic handling of TIFFTAG_WHITELEVEL.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2321
+
 2012-05-19  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* man/TIFFGetField.3tiff: Correct the 'count' field type in the
