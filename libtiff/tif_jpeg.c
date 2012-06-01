@@ -1349,8 +1349,8 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
 #if defined(JPEG_LIB_MK1_OR_12BIT)
 		unsigned short* tmpbuf = _TIFFmalloc(sizeof(unsigned short) *
-		    sp->cinfo.d.output_width *
-		    sp->cinfo.d.num_components);
+						     sp->cinfo.d.output_width *
+						     sp->cinfo.d.num_components);
 		if(tmpbuf==NULL) {
                         TIFFErrorExt(tif->tif_clientdata, "JPEGDecodeRaw",
 				     "Out of memory");
@@ -1362,10 +1362,10 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 			jpeg_component_info *compptr;
 			int ci, clumpoffset;
 
-                        if( cc < sp->bytesperline * sp->v_sampling ) {
-                            TIFFErrorExt(tif->tif_clientdata, "JPEGDecodeRaw",
-                                         "application buffer not large enough for all data.");
-                            return 0;
+                        if( cc < sp->bytesperline ) {
+				TIFFErrorExt(tif->tif_clientdata, "JPEGDecodeRaw",
+					     "application buffer not large enough for all data.");
+				return 0;
                         }
 
 			/* Reload downsampled-data buffer if needed */
@@ -1381,8 +1381,8 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 			 */
 			clumpoffset = 0;    /* first sample in clump */
 			for (ci = 0, compptr = sp->cinfo.d.comp_info;
-			    ci < sp->cinfo.d.num_components;
-			    ci++, compptr++) {
+			     ci < sp->cinfo.d.num_components;
+			     ci++, compptr++) {
 				int hsamp = compptr->h_samp_factor;
 				int vsamp = compptr->v_samp_factor;
 				int ypos;
@@ -1394,7 +1394,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 					JSAMPLE *outptr = (JSAMPLE*)tmpbuf + clumpoffset;
 #else
 					JSAMPLE *outptr = (JSAMPLE*)buf + clumpoffset;
-					if (cc < clumpoffset + samples_per_clump * clumps_per_line) {
+					if (cc < clumpoffset + samples_per_clump*(clumps_per_line-1) + hsamp) {
 						TIFFErrorExt(tif->tif_clientdata, "JPEGDecodeRaw",
 							     "application buffer not large enough for all data, possible subsampling issue");
 						return 0;
@@ -1410,7 +1410,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 					} else {
 						int xpos;
 
-			/* general case */
+						/* general case */
 						for (nclump = clumps_per_line; nclump-- > 0; ) {
 							for (xpos = 0; xpos < hsamp; xpos++)
 								outptr[xpos] = *inptr++;
@@ -1433,9 +1433,9 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 					}
 				}
 				else
-					{         /* 12-bit */
+				{         /* 12-bit */
 					int value_pairs = (sp->cinfo.d.output_width
-					    * sp->cinfo.d.num_components) / 2;
+							   * sp->cinfo.d.num_components) / 2;
 					int iPair;
 					for( iPair = 0; iPair < value_pairs; iPair++ )
 					{
@@ -1443,7 +1443,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 						JSAMPLE *in_ptr = (JSAMPLE *) (tmpbuf + iPair * 2);
 						out_ptr[0] = (in_ptr[0] & 0xff0) >> 4;
 						out_ptr[1] = ((in_ptr[0] & 0xf) << 4)
-						    | ((in_ptr[1] & 0xf00) >> 8);
+							| ((in_ptr[1] & 0xf00) >> 8);
 						out_ptr[2] = ((in_ptr[1] & 0xff) >> 0);
 					}
 				}
@@ -1452,12 +1452,9 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
 			sp->scancount ++;
 			tif->tif_row += sp->v_sampling;
-/*
-			buf += clumps_per_line*samples_per_clump;
-			cc -= clumps_per_line*samples_per_clump;
-*/
-			buf += sp->bytesperline * sp->v_sampling;
-			cc -= sp->bytesperline * sp->v_sampling;
+
+			buf += sp->bytesperline;
+			cc -= sp->bytesperline;
 
 			nrows -= sp->v_sampling;
 		} while (nrows > 0);
@@ -1470,7 +1467,7 @@ JPEGDecodeRaw(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
 	/* Close down the decompressor if done. */
 	return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
-	    || TIFFjpeg_finish_decompress(sp);
+		|| TIFFjpeg_finish_decompress(sp);
 }
 
 

@@ -1,3 +1,11 @@
+2012-06-01  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_jpeg.c: Fix JPEGDecodeRaw() bugs.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2386
+
+	* tests/decode_raw.c, tests/images/quad-tile.jpg.tiff: add limited support
+	for testing jpeg in tiff image decoding including the "raw" decode interface.
+
 2012-05-31  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_jpeg.c: avoid overrunning the end of the output buffer in
