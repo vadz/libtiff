@@ -1,5 +1,9 @@
 2012-06-01  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_unix.c: use strerror() to return a more specific error message
+	on failed open.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2341
+
 	* libtiff/tif_jpeg.c: Fix JPEGDecodeRaw() bugs.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2386
 

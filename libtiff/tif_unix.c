@@ -186,7 +186,11 @@ TIFFOpen(const char* name, const char* mode)
 
 	fd = open(name, m, 0666);
 	if (fd < 0) {
-		TIFFErrorExt(0, module, "%s: Cannot open", name);
+		if (errno > 0 && strerror(errno) != NULL ) {
+			TIFFErrorExt(0, module, "%s: %s", name, strerror(errno) );
+		} else {
+			TIFFErrorExt(0, module, "%s: Cannot open", name);
+		}
 		return ((TIFF *)0);
 	}
 
