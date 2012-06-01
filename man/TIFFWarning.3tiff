@@ -31,7 +31,7 @@ TIFFWarning, TIFFSetWarningHandler \- library warning interface
 .sp
 .BI "void TIFFWarning(const char *" module ", const char *" fmt ", " ... ")"
 .sp
-.B "#include <stdargh.h>"
+.B "#include <stdarg.h>"
 .sp
 .BI "typedef void (*TIFFWarningHandler)(const char *" module ", const char *" fmt ", va_list " ap ");"
 .sp
