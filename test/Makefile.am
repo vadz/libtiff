@@ -48,7 +48,7 @@ XFAIL_TESTS =
 CLEANFILES = test_packbits.tif o-*
 
 # Executable programs which need to be built in order to support tests
-check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite
+check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite raw_decode
 
 # Test scripts to execute
 TESTSCRIPTS = \
@@ -124,7 +124,8 @@ TESTSCRIPTS = \
 	tiff2rgba-palette-1c-4b.sh \
 	tiff2rgba-palette-1c-8b.sh \
 	tiff2rgba-rgb-3c-16b.sh \
-	tiff2rgba-rgb-3c-8b.sh
+	tiff2rgba-rgb-3c-8b.sh \
+	tiff2rgba-quad-tile.jpg.sh
 
 # This list should contain all of the TIFF files in the 'images'
 # subdirectory which are intended to be used as input images for
@@ -139,7 +140,8 @@ TIFFIMAGES = \
 	images/palette-1c-4b.tiff \
 	images/palette-1c-8b.tiff \
 	images/rgb-3c-16b.tiff \
-	images/rgb-3c-8b.tiff
+	images/rgb-3c-8b.tiff \
+	images/quad-tile.jpg.tiff
 
 BMPIMAGES = \
 	images/palette-1c-8b.bmp \
@@ -175,6 +177,8 @@ strip_rw_SOURCES = strip_rw.c strip.c test_arrays.c test_arrays.h
 strip_rw_LDADD = $(LIBTIFF)
 rewrite_SOURCES = rewrite_tag.c
 rewrite_LDADD = $(LIBTIFF)
+raw_decode_SOURCES = raw_decode.c
+raw_decode_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
