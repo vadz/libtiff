@@ -1209,6 +1209,26 @@ DECLAREContigPutFunc(putgreytile)
 }
 
 /*
+ * 8-bit greyscale with associated alpha => colormap/RGBA
+ */
+DECLAREContigPutFunc(putagreytile)
+{
+    int samplesperpixel = img->samplesperpixel;
+    uint32** BWmap = img->BWmap;
+
+    (void) y;
+    while (h-- > 0) {
+	for (x = w; x-- > 0;)
+        {
+            *cp++ = BWmap[*pp][0] & (*(pp+1) << 24 | ~A1);
+            pp += samplesperpixel;
+        }
+	cp += toskew;
+	pp += fromskew;
+    }
+}
+
+/*
  * 16-bit greyscale => colormap/RGB
  */
 DECLAREContigPutFunc(put16bitbwtile)
@@ -2473,7 +2493,10 @@ PickContigCase(TIFFRGBAImage* img)
 						img->put.contig = put16bitbwtile;
 						break;
 					case 8:
-						img->put.contig = putgreytile;
+						if (img->alpha && img->samplesperpixel == 2)
+							img->put.contig = putagreytile;
+						else
+							img->put.contig = putgreytile;
 						break;
 					case 4:
 						img->put.contig = put4bitbwtile;

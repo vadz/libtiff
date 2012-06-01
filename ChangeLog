@@ -1,3 +1,8 @@
+2012-05-31  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_getimage.c: Add support for greyscale+alpha c/o Jérémie Laval.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2398
+
 2012-05-29  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_dir.c: avoid using specific set/get logic to process fields in custom directories,
@@ -72,6 +77,7 @@
 2011-12-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_win32.c: Eliminate some minor 64-bit warnings in
+
 	tif_win32.c.  Patch by Edward Lam.
 
 	* configure.ac: Add libtiff private dependency on -llzma for
