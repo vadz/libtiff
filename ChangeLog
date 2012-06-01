@@ -1,5 +1,9 @@
 2012-05-31  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_jpeg.c: avoid overrunning the end of the output buffer in
+	JPEGDecodeRaw() - mostly likely to occur when there is confusion about
+	sampling values.
+
 	* libtiff/tif_read.c: Make sure tif_rawdatasize is cleared when tif_rawdata is freed.
 
 	* libtiff/tif_getimage.c: Add support for greyscale+alpha c/o Jérémie Laval.
