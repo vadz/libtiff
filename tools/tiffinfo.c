@@ -150,8 +150,12 @@ main(int argc, char* argv[])
 					tiffinfo(tif, order, flags);
 					if (TIFFGetField(tif, TIFFTAG_EXIFIFD,
 							 &offset)) {
-						if (TIFFReadEXIFDirectory(tif, offset))
+						if (TIFFReadEXIFDirectory(tif, offset)) {
+							int old_readdata = readdata;
+							readdata = 0;
 							tiffinfo(tif, order, flags);
+							readdata = old_readdata;
+						}
 					}
 				} while (TIFFReadDirectory(tif));
 			}

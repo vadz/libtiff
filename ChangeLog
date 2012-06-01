@@ -1,5 +1,7 @@
 2012-06-01  Frank Warmerdam  <warmerdam@google.com>
 
+	* tools/tiffinfo.c: Do not try to read image data in EXIF directories.
+
 	* libtiff/tif_getimage.c: added support for _SEPARATED CMYK images.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2379
 
