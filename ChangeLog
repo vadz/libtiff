@@ -1,5 +1,7 @@
 2012-05-31  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_read.c: Make sure tif_rawdatasize is cleared when tif_rawdata is freed.
+
 	* libtiff/tif_getimage.c: Add support for greyscale+alpha c/o Jérémie Laval.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2398
 

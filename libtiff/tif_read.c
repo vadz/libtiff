@@ -529,6 +529,7 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 			if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
 				_TIFFfree(tif->tif_rawdata);
 				tif->tif_rawdata = NULL;
+				tif->tif_rawdatasize = 0;
 			}
 			tif->tif_flags &= ~TIFF_MYBUFFER;
 			/*
@@ -831,6 +832,7 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 			if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
 				_TIFFfree(tif->tif_rawdata);
 				tif->tif_rawdata = NULL;
+				tif->tif_rawdatasize = 0;
 			}
 			tif->tif_flags &= ~TIFF_MYBUFFER;
 			/*
@@ -920,6 +922,7 @@ TIFFReadBufferSetup(TIFF* tif, void* bp, tmsize_t size)
 		if (tif->tif_flags & TIFF_MYBUFFER)
 			_TIFFfree(tif->tif_rawdata);
 		tif->tif_rawdata = NULL;
+		tif->tif_rawdatasize = 0;
 	}
 	if (bp) {
 		tif->tif_rawdatasize = size;
