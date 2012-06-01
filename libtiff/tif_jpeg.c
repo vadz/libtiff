@@ -988,23 +988,23 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 	tsize_t nrows;
 	(void) s;
 
-    nrows = cc / sp->bytesperline;
-    if (cc % sp->bytesperline)
+	nrows = cc / sp->bytesperline;
+	if (cc % sp->bytesperline)
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name, "fractional scanline not read");
 
-    if( nrows > (int) sp->cinfo.d.image_height )
-        nrows = sp->cinfo.d.image_height;
+	if( nrows > (int) sp->cinfo.d.image_height )
+		nrows = sp->cinfo.d.image_height;
 
-    /* data is expected to be read in multiples of a scanline */
-    if (nrows) {
+	/* data is expected to be read in multiples of a scanline */
+	if (nrows) {
 		/* Cb,Cr both have sampling factors 1, so this is correct */
 		JDIMENSION clumps_per_line = sp->cinfo.d.comp_info[1].downsampled_width;            
 		int samples_per_clump = sp->samplesperclump;
 
 #ifdef JPEG_LIB_MK1
 		unsigned short* tmpbuf = _TIFFmalloc(sizeof(unsigned short) *
-		    sp->cinfo.d.output_width *
-		    sp->cinfo.d.num_components);
+						     sp->cinfo.d.output_width *
+						     sp->cinfo.d.num_components);
 #endif
 
 		do {
@@ -1024,8 +1024,8 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 			 */
 			clumpoffset = 0;    /* first sample in clump */
 			for (ci = 0, compptr = sp->cinfo.d.comp_info;
-			    ci < sp->cinfo.d.num_components;
-			    ci++, compptr++) {
+			     ci < sp->cinfo.d.num_components;
+			     ci++, compptr++) {
 				int hsamp = compptr->h_samp_factor;
 				int vsamp = compptr->v_samp_factor;
 				int ypos;
@@ -1048,7 +1048,7 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 					} else {
 						int xpos;
 
-			/* general case */
+						/* general case */
 						for (nclump = clumps_per_line; nclump-- > 0; ) {
 							for (xpos = 0; xpos < hsamp; xpos++)
 								outptr[xpos] = *inptr++;
@@ -1073,7 +1073,7 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 				else
 				{         /* 12-bit  */
 					int value_pairs = (sp->cinfo.d.output_width
-					    * sp->cinfo.d.num_components) / 2;
+							   * sp->cinfo.d.num_components) / 2;
 					int iPair;
 					for( iPair = 0; iPair < value_pairs; iPair++ )
 					{
@@ -1081,7 +1081,7 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 						JSAMPLE *in_ptr = tmpbuf + iPair * 2;
 						out_ptr[0] = (in_ptr[0] & 0xff0) >> 4;
 						out_ptr[1] = ((in_ptr[0] & 0xf) << 4)
-						    | ((in_ptr[1] & 0xf00) >> 8);
+							| ((in_ptr[1] & 0xf00) >> 8);
 						out_ptr[2] = ((in_ptr[1] & 0xff) >> 0);
 					}
 				}
@@ -1104,7 +1104,7 @@ JPEGDecodeRaw(TIFF* tif, tidata_t buf, tsize_t cc, tsample_t s)
 
 	/* Close down the decompressor if done. */
 	return sp->cinfo.d.output_scanline < sp->cinfo.d.output_height
-	    || TIFFjpeg_finish_decompress(sp);
+		|| TIFFjpeg_finish_decompress(sp);
 }
 
 
