@@ -1095,50 +1095,13 @@ JPEGPreDecode(TIFF* tif, uint16 s)
 		/* Component 0 should have expected sampling factors */
 		if (sp->cinfo.d.comp_info[0].h_samp_factor != sp->h_sampling ||
 		    sp->cinfo.d.comp_info[0].v_samp_factor != sp->v_sampling) {
-				TIFFWarningExt(tif->tif_clientdata, module,
-				    "Improper JPEG sampling factors %d,%d\n"
-				    "Apparently should be %d,%d.",
-				    sp->cinfo.d.comp_info[0].h_samp_factor,
-				    sp->cinfo.d.comp_info[0].v_samp_factor,
-				    sp->h_sampling, sp->v_sampling);
-
-				/*
-				 * There are potential security issues here
-				 * for decoders that have already allocated
-				 * buffers based on the expected sampling
-				 * factors. Lets check the sampling factors
-				 * dont exceed what we were expecting.
-				 */
-				if (sp->cinfo.d.comp_info[0].h_samp_factor
-					> sp->h_sampling
-				    || sp->cinfo.d.comp_info[0].v_samp_factor
-					> sp->v_sampling) {
-					TIFFErrorExt(tif->tif_clientdata,
-						     module,
-					"Cannot honour JPEG sampling factors"
-					" that exceed those specified.");
-					return (0);
-				}
-
-			    /*
-			     * XXX: Files written by the Intergraph software
-			     * has different sampling factors stored in the
-			     * TIFF tags and in the JPEG structures. We will
-			     * try to deduce Intergraph files by the presense
-			     * of the tag 33918.
-			     */
-			    if (!TIFFFindField(tif, 33918, TIFF_ANY)) {
-					TIFFWarningExt(tif->tif_clientdata, module,
-					"Decompressor will try reading with "
-					"sampling %d,%d.",
-					sp->cinfo.d.comp_info[0].h_samp_factor,
-					sp->cinfo.d.comp_info[0].v_samp_factor);
-
-				    sp->h_sampling = (uint16)
-					sp->cinfo.d.comp_info[0].h_samp_factor;
-				    sp->v_sampling = (uint16)
-					sp->cinfo.d.comp_info[0].v_samp_factor;
-			    }
+			TIFFErrorExt(tif->tif_clientdata, module,
+				       "Improper JPEG sampling factors %d,%d\n"
+				       "Apparently should be %d,%d.",
+				       sp->cinfo.d.comp_info[0].h_samp_factor,
+				       sp->cinfo.d.comp_info[0].v_samp_factor,
+				       sp->h_sampling, sp->v_sampling);
+			return (0);
 		}
 		/* Rest should have sampling factors 1,1 */
 		for (ci = 1; ci < sp->cinfo.d.num_components; ci++) {
@@ -1160,11 +1123,11 @@ JPEGPreDecode(TIFF* tif, uint16 s)
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG &&
 	    sp->photometric == PHOTOMETRIC_YCBCR &&
 	    sp->jpegcolormode == JPEGCOLORMODE_RGB) {
-	/* Convert YCbCr to RGB */
+		/* Convert YCbCr to RGB */
 		sp->cinfo.d.jpeg_color_space = JCS_YCbCr;
 		sp->cinfo.d.out_color_space = JCS_RGB;
 	} else {
-			/* Suppress colorspace handling */
+		/* Suppress colorspace handling */
 		sp->cinfo.d.jpeg_color_space = JCS_UNKNOWN;
 		sp->cinfo.d.out_color_space = JCS_UNKNOWN;
 		if (td->td_planarconfig == PLANARCONFIG_CONTIG &&

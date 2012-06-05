@@ -1,3 +1,9 @@
+2012-06-04  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_jpeg.c: Remove code for fixing up h_sampling and v_sampling
+	in JPEGPreDecode().  If a fixup will be done it needs to be done sooner
+	in JPEGFixupTagsSubsampling() or else buffer sized may be wrong. 
+
 2012-06-01  Frank Warmerdam  <warmerdam@google.com>
 
 	* tools/tiffinfo.c: Do not try to read image data in EXIF directories.
