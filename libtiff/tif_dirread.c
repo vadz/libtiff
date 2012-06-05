@@ -46,7 +46,7 @@ static  TIFFDirEntry* TIFFReadDirectoryFind(TIFFDirEntry* dir,
 static	int EstimateStripByteCounts(TIFF*, TIFFDirEntry*, uint16);
 static	void MissingRequired(TIFF*, const char*);
 static	int TIFFCheckDirOffset(TIFF*, toff_t);
-static	int CheckDirCount(TIFF*, TIFFDirEntry*, uint32);
+static	int CheckDirCount(TIFF*, TIFFDirEntry*, uint32, int);
 static	uint16 TIFFFetchDirectory(TIFF*, toff_t, TIFFDirEntry**, toff_t *);
 static	tsize_t TIFFFetchData(TIFF*, TIFFDirEntry*, char*);
 static	tsize_t TIFFFetchString(TIFF*, TIFFDirEntry*, char*);
@@ -238,7 +238,7 @@ TIFFReadDirectory(TIFF* tif)
 			uint32 expected = (fip->field_readcount == TIFF_SPP) ?
 			    (uint32) td->td_samplesperpixel :
 			    (uint32) fip->field_readcount;
-			if (!CheckDirCount(tif, dp, expected))
+			if (!CheckDirCount(tif, dp, expected, TRUE))
 				goto ignore;
 		}
 
@@ -519,7 +519,7 @@ TIFFReadDirectory(TIFF* tif)
 				v = 1L<<td->td_bitspersample;
 				if (dp->tdir_tag == TIFFTAG_COLORMAP ||
 				    dp->tdir_count != v) {
-					if (!CheckDirCount(tif, dp, 3 * v))
+					if (!CheckDirCount(tif, dp, 3 * v, TRUE))
 						break;
 				}
 				v *= sizeof(uint16);
@@ -941,7 +941,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 			uint32 expected = (fip->field_readcount == TIFF_SPP) ?
 			    (uint32) td->td_samplesperpixel :
 			    (uint32) fip->field_readcount;
-			if (!CheckDirCount(tif, dp, expected))
+			if (!CheckDirCount(tif, dp, expected, TRUE))
 				goto ignore;
 		}
 
@@ -1109,7 +1109,7 @@ TIFFCheckDirOffset(TIFF* tif, toff_t diroff)
  * caller is expected to skip/ignore the tag if there is a mismatch.
  */
 static int
-CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
+CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count, int do_trim )
 {
 	if (count > dir->tdir_count) {
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
@@ -1117,7 +1117,7 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32 count)
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
 		    dir->tdir_count, count);
 		return (0);
-	} else if (count < dir->tdir_count) {
+	} else if (count < dir->tdir_count && do_trim) {
 		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
 	"incorrect count for field \"%s\" (%u, expecting %u); tag trimmed",
 		    _TIFFFieldWithTag(tif, dir->tdir_tag)->field_name,
@@ -1700,7 +1700,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp)
 		}
 		if (cp != NULL)
 			_TIFFfree(cp);
-	} else if (CheckDirCount(tif, dp, 1)) {	/* singleton value */
+	} else if (CheckDirCount(tif, dp, 1, TRUE)) {	/* singleton value */
 		switch (dp->tdir_type) {
 		case TIFF_BYTE:
 		case TIFF_SBYTE:
@@ -1787,7 +1787,7 @@ TIFFFetchPerSampleShorts(TIFF* tif, TIFFDirEntry* dir, uint16* pl)
     uint16 samples = tif->tif_dir.td_samplesperpixel;
     int status = 0;
 
-    if (CheckDirCount(tif, dir, (uint32) samples)) {
+    if (CheckDirCount(tif, dir, (uint32) samples, TIFFFieldSet(tif,FIELD_BITSPERSAMPLE))) {
         uint16 buf[10];
         uint16* v = buf;
 
@@ -1828,7 +1828,7 @@ TIFFFetchPerSampleLongs(TIFF* tif, TIFFDirEntry* dir, uint32* pl)
     uint16 samples = tif->tif_dir.td_samplesperpixel;
     int status = 0;
 
-    if (CheckDirCount(tif, dir, (uint32) samples)) {
+    if (CheckDirCount(tif, dir, (uint32) samples, TIFFFieldSet(tif,FIELD_BITSPERSAMPLE))) {
         uint32 buf[10];
         uint32* v = buf;
 
@@ -1868,7 +1868,7 @@ TIFFFetchPerSampleAnys(TIFF* tif, TIFFDirEntry* dir, double* minv, double* maxv)
     uint16 samples = tif->tif_dir.td_samplesperpixel;
     int status = 0;
 
-    if (CheckDirCount(tif, dir, (uint32) samples)) {
+    if (CheckDirCount(tif, dir, (uint32) samples, TIFFFieldSet(tif,FIELD_BITSPERSAMPLE))) {
         double buf[10];
         double* v = buf;
 
@@ -1908,7 +1908,7 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, long nstrips, uint32** lpp)
 	register uint32* lp;
 	int status;
 
-        CheckDirCount(tif, dir, (uint32) nstrips);
+        CheckDirCount(tif, dir, (uint32) nstrips, TRUE);
 
 	/*
 	 * Allocate space for strip information.

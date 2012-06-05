@@ -1,3 +1,10 @@
+2012-06-04  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_dirread.c: Avoid trusting samplesperpixel's default
+	of 1 for purposes of trimming tags.  This is to get some super
+	crappy OJPEG files to work again.  Grr. 
+	http://bugzilla.maptools.org/show_bug.cgi?id=2348
+
 2012-06-01  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_dir.c: Avoid generic handling of TIFFTAG_WHITELEVEL.
