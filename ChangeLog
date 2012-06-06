@@ -1,3 +1,10 @@
+2012-06-05  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_dir.c: Remove FIELD_CUSTOM handling for PAGENUMBER,
+	HALFTONEHINTS, and YCBCRSUBSAMPLING.  Implement DOTRANGE differently.
+	This is to avoid using special TIFFGetField/TIFFSetField rules for
+	these fields in non-image directories (like EXIF).
+
 2012-06-04  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_jpeg.c: Remove code for fixing up h_sampling and v_sampling
