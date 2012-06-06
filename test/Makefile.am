@@ -48,7 +48,7 @@ XFAIL_TESTS =
 CLEANFILES = test_packbits.tif o-*
 
 # Executable programs which need to be built in order to support tests
-check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite raw_decode
+check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite raw_decode custom_dir
 
 # Test scripts to execute
 TESTSCRIPTS = \
@@ -179,6 +179,8 @@ rewrite_SOURCES = rewrite_tag.c
 rewrite_LDADD = $(LIBTIFF)
 raw_decode_SOURCES = raw_decode.c
 raw_decode_LDADD = $(LIBTIFF)
+custom_dir_SOURCES = custom_dir.c
+custom_dir_LDADD = $(LIBTIFF)
 
 INCLUDES = -I$(top_srcdir)/libtiff
 
