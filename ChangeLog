@@ -1,5 +1,9 @@
 2012-06-05  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_tile.c, libtiff/tif_strip.c: Ensure that illegal
+	ycbcrsubsampling values result in a runtime error, not just an
+	assertion.
+
 	* tests/custom_dir.c: Add testing of EXIF and custom directory
 	reading and writing.
 
