@@ -141,6 +141,7 @@ main()
 	 * TIFF tags.
 	 */
 	
+	TIFFFreeDirectory( tif );
 	if (TIFFCreateCustomDirectory(tif, &customFieldArray) != 0) {
 		fprintf (stderr, "TIFFCreateEXIFDirectory() failed.\n" );
 		goto failure;
