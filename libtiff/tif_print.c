@@ -135,7 +135,7 @@ _TIFFPrintField(FILE* fd, const TIFFField *fip,
 }
 
 static int
-_TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
+_TIFFPrettyPrintField(TIFF* tif, const TIFFField *fip, FILE* fd, uint32 tag,
 		      uint32 value_count, void *raw_data)
 {
         (void) tif;
@@ -156,12 +156,15 @@ _TIFFPrettyPrintField(TIFF* tif, FILE* fd, uint32 tag,
 			}
 			return 1;
 		case TIFFTAG_DOTRANGE:
-			fprintf(fd, "  Dot Range: %u-%u\n",
-			    ((uint16*)raw_data)[0], ((uint16*)raw_data)[1]);
-			return 1;
+			if (value_count == 2 && fip->field_type == TIFF_SHORT) {
+				fprintf(fd, "  Dot Range: %u-%u\n",
+					((uint16*)raw_data)[0], ((uint16*)raw_data)[1]);
+				return 1;
+			}
+			return 0;
 		case TIFFTAG_WHITEPOINT:
 			fprintf(fd, "  White Point: %g-%g\n",
-			    ((float *)raw_data)[0], ((float *)raw_data)[1]);
+				((float *)raw_data)[0], ((float *)raw_data)[1]);
 			return 1;
 		case TIFFTAG_XMLPACKET:
 		{
@@ -571,46 +574,28 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 					value_count = td->td_samplesperpixel;
 				else
 					value_count = fip->field_readcount;
-				if ((fip->field_type == TIFF_ASCII
-				    || fip->field_readcount == TIFF_VARIABLE
-				    || fip->field_readcount == TIFF_VARIABLE2
-				    || fip->field_readcount == TIFF_SPP
-				    || value_count > 1)
-				    && fip->field_tag != TIFFTAG_PAGENUMBER
-				    && fip->field_tag != TIFFTAG_HALFTONEHINTS
-				    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
-				    && fip->field_tag != TIFFTAG_DOTRANGE) {
+				if (fip->field_tag == TIFFTAG_DOTRANGE
+				    && strcmp(fip->field_name,"DotRange") == 0) {
+					/* TODO: This is an evil exception and should not have been
+					   handled this way ... likely best if we move it into
+					   the directory structure with an explicit field in 
+					   libtiff 4.1 and assign it a FIELD_ value */
+					static uint16 dotrange[2];
+					raw_data = dotrange;
+					TIFFGetField(tif, tag, dotrange+0, dotrange+1);
+				} else if (fip->field_type == TIFF_ASCII
+					   || fip->field_readcount == TIFF_VARIABLE
+					   || fip->field_readcount == TIFF_VARIABLE2
+					   || fip->field_readcount == TIFF_SPP
+					   || value_count > 1) {
 					if(TIFFGetField(tif, tag, &raw_data) != 1)
 						continue;
-				} else if (fip->field_tag != TIFFTAG_PAGENUMBER
-				    && fip->field_tag != TIFFTAG_HALFTONEHINTS
-				    && fip->field_tag != TIFFTAG_YCBCRSUBSAMPLING
-				    && fip->field_tag != TIFFTAG_DOTRANGE) {
+				} else {
 					raw_data = _TIFFmalloc(
 					    _TIFFDataSize(fip->field_type)
 					    * value_count);
 					mem_alloc = 1;
 					if(TIFFGetField(tif, tag, raw_data) != 1) {
-						_TIFFfree(raw_data);
-						continue;
-					}
-				} else {
-					/*
-					 * XXX: Should be fixed and removed,
-					 * see the notes related to
-					 * TIFFTAG_PAGENUMBER,
-					 * TIFFTAG_HALFTONEHINTS,
-					 * TIFFTAG_YCBCRSUBSAMPLING and
-					 * TIFFTAG_DOTRANGE tags in tif_dir.c.
-					 */
-					char *tmp;
-					raw_data = _TIFFmalloc(
-					    _TIFFDataSize(fip->field_type)
-					    * value_count);
-					tmp = raw_data;
-					mem_alloc = 1;
-					if(TIFFGetField(tif, tag, tmp,
-					    tmp + _TIFFDataSize(fip->field_type)) != 1) {
 						_TIFFfree(raw_data);
 						continue;
 					}
@@ -623,7 +608,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			 * _TIFFPrettyPrintField() fall down and print it as
 			 * any other tag.
 			 */
-			if (!_TIFFPrettyPrintField(tif, fd, tag, value_count, raw_data))
+			if (!_TIFFPrettyPrintField(tif, fip, fd, tag, value_count, raw_data))
 				_TIFFPrintField(fd, fip, value_count, raw_data);
 
 			if(mem_alloc)

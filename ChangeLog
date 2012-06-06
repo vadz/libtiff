@@ -10,10 +10,10 @@
 	* libtiff/tif_dir.c, libtiff/tiffio.h: Add TIFFCreateCustomDirectory()
 	and TIFFCreateEXIFDirectory() functions.
 
-	* libtiff/tif_dir.c: Remove FIELD_CUSTOM handling for PAGENUMBER,
-	HALFTONEHINTS, and YCBCRSUBSAMPLING.  Implement DOTRANGE differently.
-	This is to avoid using special TIFFGetField/TIFFSetField rules for
-	these fields in non-image directories (like EXIF).
+	* libtiff/tif_dir.c, tif_print.c : Remove FIELD_CUSTOM handling for
+	PAGENUMBER, HALFTONEHINTS, and YCBCRSUBSAMPLING.  Implement DOTRANGE
+	differently.  This is to avoid using special TIFFGetField/TIFFSetField 
+	rules for these fields in non-image directories (like EXIF).
 
 2012-06-04  Frank Warmerdam  <warmerdam@google.com>
 
