@@ -53,7 +53,7 @@ static int readdata = 0;		/* read data in file */
 static int stoponerr = 1;		/* stop on first read error */
 
 static	void usage(void);
-static	void tiffinfo(TIFF*, uint16, long);
+static	void tiffinfo(TIFF*, uint16, long, int);
 
 static void
 PrivateErrorHandler(const char* module, const char* fmt, va_list ap)
@@ -139,22 +139,19 @@ main(int argc, char* argv[])
 		if (tif != NULL) {
 			if (dirnum != -1) {
 				if (TIFFSetDirectory(tif, (tdir_t) dirnum))
-					tiffinfo(tif, order, flags);
+					tiffinfo(tif, order, flags, 1);
 			} else if (diroff != 0) {
 				if (TIFFSetSubDirectory(tif, diroff))
-					tiffinfo(tif, order, flags);
+					tiffinfo(tif, order, flags, 1);
 			} else {
 				do {
 					toff_t offset;
 
-					tiffinfo(tif, order, flags);
+					tiffinfo(tif, order, flags, 1);
 					if (TIFFGetField(tif, TIFFTAG_EXIFIFD,
 							 &offset)) {
 						if (TIFFReadEXIFDirectory(tif, offset)) {
-							int old_readdata = readdata;
-							readdata = 0;
-							tiffinfo(tif, order, flags);
-							readdata = old_readdata;
+							tiffinfo(tif, order, flags, 0);
 						}
 					}
 				} while (TIFFReadDirectory(tif));
@@ -445,10 +442,10 @@ TIFFReadRawData(TIFF* tif, int bitrev)
 }
 
 static void
-tiffinfo(TIFF* tif, uint16 order, long flags)
+tiffinfo(TIFF* tif, uint16 order, long flags, int is_image)
 {
 	TIFFPrintDirectory(tif, stdout, flags);
-	if (!readdata)
+	if (!readdata || !is_image)
 		return;
 	if (rawdata) {
 		if (order) {
