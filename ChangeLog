@@ -1,5 +1,11 @@
 2012-06-05  Frank Warmerdam  <warmerdam@google.com>
 
+	* tests/custom_dir.c: Add testing of EXIF and custom directory
+	reading and writing.
+
+	* libtiff/tif_dir.c, libtiff/tiffio.h: Add TIFFCreateCustomDirectory()
+	and TIFFCreateEXIFDirectory() functions.
+
 	* libtiff/tif_dir.c: Remove FIELD_CUSTOM handling for PAGENUMBER,
 	HALFTONEHINTS, and YCBCRSUBSAMPLING.  Implement DOTRANGE differently.
 	This is to avoid using special TIFFGetField/TIFFSetField rules for
@@ -9,7 +15,7 @@
 
 	* libtiff/tif_jpeg.c: Remove code for fixing up h_sampling and v_sampling
 	in JPEGPreDecode().  If a fixup will be done it needs to be done sooner
-	in JPEGFixupTagsSubsampling() or else buffer sized may be wrong. 
+	in JPEGFixupTagsSubsampling() or else buffer sized may be wrong.
 
 2012-06-01  Frank Warmerdam  <warmerdam@google.com>
 
