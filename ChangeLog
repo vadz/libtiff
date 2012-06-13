@@ -1,5 +1,7 @@
 2012-06-12  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_print.c: Be careful about printing corrupt inknames.
+
 	* libtiff/tif_fax3.c: Ensure runs array is initialized to zeros.
 
 2012-06-07  Frank Warmerdam  <warmerdam@google.com>

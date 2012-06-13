@@ -34,6 +34,9 @@
 
 #include <ctype.h>
 
+static void
+_TIFFprintAsciiBounded(FILE* fd, const char* cp, int max_chars);
+
 static const char *photoNames[] = {
     "min-is-white",				/* PHOTOMETRIC_MINISWHITE */
     "min-is-black",				/* PHOTOMETRIC_MINISBLACK */
@@ -387,9 +390,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		fprintf(fd, "  Ink Names: ");
 		i = td->td_samplesperpixel;
 		sep = "";
-		for (cp = td->td_inknames; i > 0; cp = strchr(cp,'\0')+1, i--) {
+		for (cp = td->td_inknames; 
+		     i > 0 && cp < td->td_inknames + td->td_inknameslen; 
+		     cp = strchr(cp,'\0')+1, i--) {
+			int max_chars = 
+				td->td_inknameslen - (cp - td->td_inknames);
 			fputs(sep, fd);
-			_TIFFprintAscii(fd, cp);
+			_TIFFprintAsciiBounded(fd, cp, max_chars);
 			sep = ", ";
 		}
                 fputs("\n", fd);
@@ -666,7 +673,13 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 void
 _TIFFprintAscii(FILE* fd, const char* cp)
 {
-	for (; *cp != '\0'; cp++) {
+	_TIFFprintAsciiBounded( fd, cp, strlen(cp));
+}
+
+static void
+_TIFFprintAsciiBounded(FILE* fd, const char* cp, int max_chars)
+{
+	for (; max_chars > 0 && *cp != '\0'; cp++, max_chars--) {
 		const char* tp;
 
 		if (isprint((int)*cp)) {
