@@ -122,7 +122,7 @@ int test_packbits()
 
     TIFFClose(tif);
 
-    /* unlink(filename); */
+    unlink(filename);
 
     return 0;
 
