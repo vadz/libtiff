@@ -526,6 +526,7 @@ Fax3SetupState(TIFF* tif)
 					       "for Group 3/4 run arrays");
 	if (dsp->runs == NULL)
 		return (0);
+	memset( dsp->runs, 0, TIFFSafeMultiply(uint32,nruns,2));
 	dsp->curruns = dsp->runs;
 	if (needsRefLine)
 		dsp->refruns = dsp->runs + nruns;
