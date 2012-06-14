@@ -585,8 +585,8 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 				_TIFFmemcpy(tv->value, va_arg(ap, void *),
 				    tv->count * tv_size);
 			} else {
-				assert( tv->count == 1 );
 				char *val = (char *)tv->value;
+				assert( tv->count == 1 );
 
 				switch (fip->field_type) {
 				case TIFF_BYTE:
