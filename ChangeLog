@@ -1,3 +1,8 @@
+2012-06-15  Tom Lane  <tgl@sss.pgh.pa.us>
+
+	* tools/tiff2pdf.c: Defend against integer overflows while
+	calculating required buffer sizes (CVE-2012-2113).
+
 2012-06-12  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_print.c: Be careful about printing corrupt inknames.
