@@ -107,6 +107,7 @@ tsize_t
 TIFFVStripSize(TIFF* tif, uint32 nrows)
 {
 	TIFFDirectory *td = &tif->tif_dir;
+	uint32 stripsize;
 
 	if (nrows == (uint32) -1)
 		nrows = td->td_imagelength;
@@ -122,7 +123,7 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 		 * YCbCr data for the extended image.
 		 */
 		uint16 ycbcrsubsampling[2];
-		tsize_t w, scanline, samplingarea;
+		uint32 w, scanline, samplingarea;
 
 		TIFFGetFieldDefaulted(tif, TIFFTAG_YCBCRSUBSAMPLING,
 				      ycbcrsubsampling + 0,
@@ -141,13 +142,27 @@ TIFFVStripSize(TIFF* tif, uint32 nrows)
 		nrows = TIFFroundup(nrows, ycbcrsubsampling[1]);
 		/* NB: don't need TIFFhowmany here 'cuz everything is rounded */
 		scanline = multiply(tif, nrows, scanline, "TIFFVStripSize");
-		return ((tsize_t)
-		    summarize(tif, scanline,
-			      multiply(tif, 2, scanline / samplingarea,
-				       "TIFFVStripSize"), "TIFFVStripSize"));
+		/* a zero anywhere in here means overflow, must return zero */
+		if (scanline > 0) {
+			uint32 extra =
+			    multiply(tif, 2, scanline / samplingarea,
+				     "TIFFVStripSize");
+			if (extra > 0)
+				stripsize = summarize(tif, scanline, extra,
+						      "TIFFVStripSize");
+			else
+				stripsize = 0;
+		} else
+			stripsize = 0;
 	} else
-		return ((tsize_t) multiply(tif, nrows, TIFFScanlineSize(tif),
-					   "TIFFVStripSize"));
+		stripsize = multiply(tif, nrows, TIFFScanlineSize(tif),
+				     "TIFFVStripSize");
+	/* Because tsize_t is signed, we might have conversion overflow */
+	if (((tsize_t) stripsize) < 0) {
+		TIFFErrorExt(tif->tif_clientdata, tif->tif_name, "Integer overflow in %s", "TIFFVStripSize");
+		stripsize = 0;
+	}
+	return (tsize_t) stripsize;
 }
 
 
