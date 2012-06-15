@@ -266,7 +266,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 	uint16 dircount;
 	uint32 direntrysize;
 	void* dirmem = NULL;
-	uint64 nextdiroff;
+	uint64 nextdiroff = 0;
 	uint32 n;
 	uint8* dp;
 
@@ -289,7 +289,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 			TIFFSwabShort(&dircount);
 		direntrysize = 12;
 	} else {
-		uint64 dircount64;
+		uint64 dircount64 = 0;
 		if (read(fd, (char*) &dircount64, sizeof (uint64)) != sizeof (uint64)) {
 			ReadError("directory count");
 			goto done;
