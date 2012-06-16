@@ -11,6 +11,12 @@ tiffconf.h
 .deps
 .libs
 *.la
+*.lib
+*.ilk
+*.exp
+*.pdb
+*.dll
+*.manifest
 stamp-h1
 stamp-h2
 tif_config.h

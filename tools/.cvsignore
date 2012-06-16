@@ -24,3 +24,4 @@ tiff2pdf
 bmp2tiff
 .deps
 .libs
+*.manifest
