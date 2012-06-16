@@ -1,5 +1,7 @@
 2012-06-15  Frank Warmerdam  <warmerdam@google.com>
 
+	*  libtiff 4.0.2 released.
+
 	* tools/tif2pdf.c, tools/tifdump.c: avoid unitialized variable
 	warnings with clang.
 
