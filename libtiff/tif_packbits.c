@@ -241,7 +241,7 @@ PackBitsDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 				n = (long)occ;
 			}
 			occ -= n;
-			b = *bp++, cc--;      /* TODO: may be reading past input buffer here when input data is corrupt or ends prematurely */
+			b = *bp++, cc--;
 			while (n-- > 0)
 				*op++ = (uint8) b;
 		} else {		/* copy next n+1 bytes literally */
