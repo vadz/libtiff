@@ -1,5 +1,8 @@
 2012-06-20  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_fax3.c: fix memory initialization of runs, only
+	partly done.
+
 	* libtiff/tif_pixarlog.c: Make sure tbuf is large enough for one
 	full "stride" past the end.
 
