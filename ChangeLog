@@ -1,3 +1,8 @@
+2012-06-20  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_pixarlog.c: Make sure tbuf is large enough for one
+	full "stride" past the end.
+
 2012-06-19  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_packbits.c: fix read past end of data buffer. 
