@@ -82,18 +82,20 @@ static int check_rgb_pixel( int pixel, int red, int green, int blue, unsigned ch
 	return 1;
 }
 
-static int check_rgba_pixel( int pixel, int red, int green, int blue, int alpha, unsigned char *buffer ) {
+static int check_rgba_pixel( int pixel, int red, int green, int blue, int alpha, uint32 *buffer ) {
 	/* RGBA images are upside down - adjust for normal ordering */
 	int adjusted_pixel = pixel % 128 + (127 - (pixel/128)) * 128;
-	unsigned char *rgba = buffer + 4 * adjusted_pixel;
-	
-	if( rgba[0] == red && rgba[1] == green && rgba[2] == blue && rgba[3] == alpha ) {
+	uint32 rgba = buffer[adjusted_pixel];
+
+	if( TIFFGetR(rgba) == (uint32) red && TIFFGetG(rgba) == (uint32) green &&
+	    TIFFGetB(rgba) == (uint32) blue && TIFFGetA(rgba) == (uint32) alpha ) {
 		return 0;
 	}
 
 	fprintf( stderr, "Pixel %d did not match expected results.\n", pixel );
 	fprintf( stderr, "Expect: %3d %3d %3d %3d\n", red, green, blue, alpha );
-	fprintf( stderr, "   Got: %3d %3d %3d %3d\n", rgba[0], rgba[1], rgba[2], rgba[3] );
+	fprintf( stderr, "   Got: %3d %3d %3d %3d\n",
+		 TIFFGetR(rgba), TIFFGetG(rgba), TIFFGetB(rgba), TIFFGetA(rgba) );
 	return 1;
 }
 
@@ -105,6 +107,7 @@ main(int argc, char **argv)
 	unsigned short h, v;
 	int status;
 	unsigned char *buffer;
+	uint32 *rgba_buffer;
 	tsize_t sz, szout;
 
         (void) argc;
@@ -187,10 +190,10 @@ main(int argc, char **argv)
 	 */
 	tif = TIFFOpen(srcfile,"r");
 	
-	sz = 128 * 128 * 4;
-	buffer = (unsigned char *) malloc(sz);
+	sz = 128 * 128 * sizeof(uint32);
+	rgba_buffer = (uint32 *) malloc(sz);
 	
-	if (!TIFFReadRGBATile( tif, 1*128, 2*128, (uint32 *) buffer )) {
+	if (!TIFFReadRGBATile( tif, 1*128, 2*128, rgba_buffer )) {
 		fprintf( stderr, "TIFFReadRGBATile() returned failure code.\n" );
 		return 1;
 	}
@@ -201,13 +204,13 @@ main(int argc, char **argv)
 	 * accomplish it from the YCbCr subsampled buffer ourselves in which
 	 * case the results may be subtly different but similar.
 	 */
-	if (check_rgba_pixel( 0, 15, 0, 18, 255, buffer )
-	    || check_rgba_pixel( 64, 0, 0, 2, 255, buffer )
-	    || check_rgba_pixel( 512, 6, 36, 182, 255, buffer ) ) {
+	if (check_rgba_pixel( 0, 15, 0, 18, 255, rgba_buffer )
+	    || check_rgba_pixel( 64, 0, 0, 2, 255, rgba_buffer )
+	    || check_rgba_pixel( 512, 6, 36, 182, 255, rgba_buffer ) ) {
 		exit(1);
 	}	
 
-	free( buffer );
+	free( rgba_buffer );
 	TIFFClose(tif);
 	
 	exit( 0 );
