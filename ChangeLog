@@ -1,3 +1,8 @@
+2012-07-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/raw_decode.c: Add changes so that test can run with build
+	directory outside of source directory.
+
 2012-07-02  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_jpeg.c: Fix handling when writing RGBA jpeg compressed
