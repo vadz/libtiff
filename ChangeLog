@@ -1,3 +1,12 @@
+2012-07-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/raw_decode.c (main): Test fixes to work with IJG JPEG 7+.
+	IJG JPEG 7+ uses a different upsampling algorithm which produces
+	different numeric results.
+
+	* libtiff/tif_jpeg.c (JPEGPreDecode): Patch from Even Rouault to
+	work with IJG JPEG 7+.
+
 2012-07-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/raw_decode.c: Add changes so that test can run with build

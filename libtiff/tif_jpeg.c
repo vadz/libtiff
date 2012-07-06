@@ -1138,6 +1138,9 @@ JPEGPreDecode(TIFF* tif, uint16 s)
 	if (downsampled_output) {
 		/* Need to use raw-data interface to libjpeg */
 		sp->cinfo.d.raw_data_out = TRUE;
+#if JPEG_LIB_VERSION >= 70
+		sp->cinfo.d.do_fancy_upsampling = FALSE;
+#endif /* JPEG_LIB_VERSION >= 70 */
 		tif->tif_decoderow = DecodeRowError;
 		tif->tif_decodestrip = JPEGDecodeRaw;
 		tif->tif_decodetile = JPEGDecodeRaw;
