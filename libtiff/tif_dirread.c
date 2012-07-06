@@ -3313,10 +3313,15 @@ TIFFReadDirEntryData(TIFF* tif, uint64 offset, tmsize_t size, void* dest)
 		if (!ReadOK(tif,dest,size))
 			return(TIFFReadDirEntryErrIo);
 	} else {
-		tmsize_t ma,mb;
-		ma=(tmsize_t)offset;
+		size_t ma,mb;
+		ma=(size_t)offset;
 		mb=ma+size;
-		if (((uint64)ma!=offset)||(mb<ma)||(mb<size)||(mb>tif->tif_size))
+		if (((uint64)ma!=offset)
+		    || (mb < ma)
+		    || (mb - ma != (size_t) size)
+		    || (mb < (size_t)size)
+		    || (mb > (size_t)tif->tif_size)
+		    )
 			return(TIFFReadDirEntryErrIo);
 		_TIFFmemcpy(dest,tif->tif_base+ma,size);
 	}
