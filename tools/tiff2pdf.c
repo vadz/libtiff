@@ -1063,6 +1063,7 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 				"Can't set directory %u of input file %s", 
 				i,
 				TIFFFileName(input));
+			t2p->t2p_error = T2P_ERR_ERROR;
 			return;
 		}
 		if(TIFFGetField(input, TIFFTAG_PAGENUMBER, &pagen, &paged)){
