@@ -1,3 +1,9 @@
+2012-07-18  Tom Lane  <tgl@sss.pgh.pa.us>
+
+	* tools/tiff2pdf.c: Fail when TIFFSetDirectory() fails.  This
+	prevents core dumps or perhaps even arbitrary code execution when
+	processing a corrupt input file (CVE-2012-3401).
+
 2012-07-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/raw_decode.c (main): Test fixes to work with IJG JPEG 7+.
