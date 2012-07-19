@@ -1,3 +1,9 @@
+2012-07-19  Tom Lane  <tgl@sss.pgh.pa.us>
+
+	* tools/tiff2pdf.c: Fix two places where t2p_error didn't get set
+	after a malloc failure.  No crash risk AFAICS, but the program
+	might not report exit code 1 as desired.  h/t mancha@mac.hush.com
+
 2012-07-18  Tom Lane  <tgl@sss.pgh.pa.us>
 
 	* tools/tiff2pdf.c: Fail when TIFFSetDirectory() fails.  This
