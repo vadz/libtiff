@@ -3182,6 +3182,7 @@ int t2p_process_ojpeg_tables(T2P* t2p, TIFF* input){
 			"Can't allocate %u bytes of memory for t2p_process_ojpeg_tables, %s", 
 			2048, 
 			TIFFFileName(input));
+		t2p->t2p_error = T2P_ERR_ERROR;
 		return(0);
 	}
 	_TIFFmemset(t2p->pdf_ojpegdata, 0x00, 2048);
@@ -5229,6 +5230,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 			TIFF2PDF_MODULE, 
 			"Can't allocate %u bytes of memory for t2p_write_pdf", 
 			(unsigned int) (t2p->pdf_xrefcount * sizeof(uint32)) );
+		t2p->t2p_error = T2P_ERR_ERROR;
 		return(written);
 	}
 	t2p->pdf_xrefcount=0;
