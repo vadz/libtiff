@@ -319,6 +319,13 @@ extern const TIFFField* TIFFFindField(TIFF *, uint32, TIFFDataType);
 extern const TIFFField* TIFFFieldWithTag(TIFF*, uint32);
 extern const TIFFField* TIFFFieldWithName(TIFF*, const char *);
 
+extern uint32 TIFFFieldTag(const TIFFField*);
+extern const char* TIFFFieldName(const TIFFField*);
+extern TIFFDataType TIFFFieldDataType(const TIFFField*);
+extern int TIFFFieldPassCount(const TIFFField*);
+extern int TIFFFieldReadCount(const TIFFField*);
+extern int TIFFFieldWriteCount(const TIFFField*);
+
 typedef int (*TIFFVSetMethod)(TIFF*, uint32, va_list);
 typedef int (*TIFFVGetMethod)(TIFF*, uint32, va_list);
 typedef void (*TIFFPrintMethod)(TIFF*, FILE*, long);

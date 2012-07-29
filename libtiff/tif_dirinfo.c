@@ -556,6 +556,42 @@ TIFFFieldWithName(TIFF* tif, const char *field_name)
 	return (fip);
 }
 
+uint32
+TIFFFieldTag(const TIFFField* fip)
+{
+	return fip->field_tag;
+}
+
+const char *
+TIFFFieldName(const TIFFField* fip)
+{
+	return fip->field_name;
+}
+
+TIFFDataType
+TIFFFieldDataType(const TIFFField* fip)
+{
+	return fip->field_type;
+}
+
+int
+TIFFFieldPassCount(const TIFFField* fip)
+{
+	return fip->field_passcount;
+}
+
+int
+TIFFFieldReadCount(const TIFFField* fip)
+{
+	return fip->field_readcount;
+}
+
+int
+TIFFFieldWriteCount(const TIFFField* fip)
+{
+	return fip->field_writecount;
+}
+
 const TIFFField*
 _TIFFFindOrRegisterField(TIFF *tif, uint32 tag, TIFFDataType dt)
 

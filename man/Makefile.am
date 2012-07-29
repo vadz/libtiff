@@ -59,6 +59,12 @@ dist_man3_MANS = \
 	TIFFcolor.3tiff \
 	TIFFDataWidth.3tiff \
 	TIFFError.3tiff \
+	TIFFFieldDataType.3tiff \
+	TIFFFieldName.3tiff \
+	TIFFFieldPassCount.3tiff \
+	TIFFFieldReadCount.3tiff \
+	TIFFFieldTag.3tiff \
+	TIFFFieldWriteCount.3tiff \
 	TIFFFlush.3tiff \
 	TIFFGetField.3tiff \
 	TIFFmemory.3tiff \

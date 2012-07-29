@@ -1,3 +1,13 @@
+2012-07-26  Tom Lane  <tgl@sss.pgh.pa.us>
+
+	* libtiff/{tiffio.h, tif_dirinfo.c, libtiff.def}: Add six new
+ 	functions TIFFFieldTag(), TIFFFieldName(), TIFFFieldDataType(),
+	TIFFFieldPassCount(), TIFFFieldReadCount(), TIFFFieldWriteCount()
+	as external accessors for the opaque type TIFFField.
+
+	* tools/tiffset.c: Make tiffset use the above functions instead of
+	relying on library private headers.
+
 2012-07-19  Tom Lane  <tgl@sss.pgh.pa.us>
 
 	* tools/tiff2pdf.c: Fix two places where t2p_error didn't get set

@@ -119,6 +119,12 @@ EXPORTS TIFFOpen
 	TIFFSetTagExtender
 	TIFFFieldWithName
 	TIFFFieldWithTag
+	TIFFFieldTag
+	TIFFFieldName
+	TIFFFieldDataType
+	TIFFFieldPassCount
+	TIFFFieldReadCount
+	TIFFFieldWriteCount
 	TIFFCurrentDirOffset
 	TIFFWriteCheck
 	TIFFRGBAImageOK
