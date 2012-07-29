@@ -39,6 +39,12 @@ docfiles = \
 	TIFFcolor.3tiff.html \
 	TIFFDataWidth.3tiff.html \
 	TIFFError.3tiff.html \
+	TIFFFieldDataType.3tiff.html \
+	TIFFFieldName.3tiff.html \
+	TIFFFieldPassCount.3tiff.html \
+	TIFFFieldReadCount.3tiff.html \
+	TIFFFieldTag.3tiff.html \
+	TIFFFieldWriteCount.3tiff.html \
 	TIFFFlush.3tiff.html \
 	TIFFGetField.3tiff.html \
 	TIFFmemory.3tiff.html \
@@ -70,6 +76,7 @@ docfiles = \
 	TIFFWriteRawTile.3tiff.html \
 	TIFFWriteScanline.3tiff.html \
 	TIFFWriteTile.3tiff.html \
+	bmp2tiff.1.html \
 	fax2ps.1.html \
 	fax2tiff.1.html \
 	gif2tiff.1.html \
