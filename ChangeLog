@@ -1,3 +1,8 @@
+2012-08-02  Frank Warmerdam  <warmerdam@google.com>
+
+	* libtiff/tif_dirread.c: report error in case of mismatch value 
+	counts for tags (ie. DotRange).
+
 2012-07-26  Tom Lane  <tgl@sss.pgh.pa.us>
 
 	* libtiff/{tiffio.h, tif_dirinfo.c, libtiff.def}: Add six new

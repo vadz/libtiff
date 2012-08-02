@@ -4860,8 +4860,12 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				uint16* data;
 				assert(fip->field_readcount==2);
 				assert(fip->field_passcount==0);
-				if (dp->tdir_count!=2)
+				if (dp->tdir_count!=2) {
+					TIFFWarningExt(tif->tif_clientdata,module,
+						       "incorrect count for field \"%s\", expected 2, got %d",
+						       fip->field_name,(int)dp->tdir_count);
 					return(0);
+				}
 				err=TIFFReadDirEntryShortArray(tif,dp,&data);
 				if (err==TIFFReadDirEntryErrOk)
 				{
@@ -4878,8 +4882,12 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				uint8* data;
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
-				if (dp->tdir_count!=(uint64)fip->field_readcount)
-                                    /* corrupt file */;
+				if (dp->tdir_count!=(uint64)fip->field_readcount) {
+					TIFFWarningExt(tif->tif_clientdata,module,
+						       "incorrect count for field \"%s\", expected 2, got %d",
+						       fip->field_name,(int) fip->field_readcount, (int)dp->tdir_count);
+					return 0;
+				}
 				else
 				{
 					err=TIFFReadDirEntryByteArray(tif,dp,&data);
