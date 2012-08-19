@@ -154,9 +154,6 @@ LT_LANG([C++])
 # Enable support for silent build rules
 AM_SILENT_RULES
 
-dnl Checks for libraries.
-AC_CHECK_LIB([c], [main])
-
 dnl We don't need to add math library to all targets
 case "${host_os}" in
     cygwin* | mingw32* | beos* | darwin*)
@@ -813,10 +810,17 @@ dnl ---------------------------------------------------------------------------
 
 HAVE_OPENGL=no
 
+
 AC_PATH_XTRA
 
+dnl AX_CHECK_GL sets GL_CFLAGS & GL_LIBS.  Also PTHREAD_LIBS,
+dnl PTHREAD_CFLAGS, & PTHREAD_CC as a side-effect
 AX_CHECK_GL
+
+dnl AX_CHECK_GLU sets GLU_CFLAGS & GLU_LIBS
 AX_CHECK_GLU
+
+dnl AX_CHECK_GLUT sets GLUT_CFLAGS & GLUT_LIBS
 AX_CHECK_GLUT
 
 if test "$no_x" != "yes" -a "$no_gl" != "yes" \

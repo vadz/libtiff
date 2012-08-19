@@ -4884,7 +4884,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count!=(uint64)fip->field_readcount) {
 					TIFFWarningExt(tif->tif_clientdata,module,
-						       "incorrect count for field \"%s\", expected 2, got %d",
+						       "incorrect count for field \"%s\", expected %d, got %d",
 						       fip->field_name,(int) fip->field_readcount, (int)dp->tdir_count);
 					return 0;
 				}
