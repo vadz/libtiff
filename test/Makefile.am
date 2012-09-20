@@ -23,7 +23,7 @@
 
 # Process this file with automake to produce Makefile.in.
 
-AUTOMAKE_OPTIONS = 1.11 color-tests parallel-tests foreign
+AUTOMAKE_OPTIONS = 1.12 color-tests parallel-tests foreign
 
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
@@ -182,7 +182,7 @@ raw_decode_LDADD = $(LIBTIFF)
 custom_dir_SOURCES = custom_dir.c
 custom_dir_LDADD = $(LIBTIFF)
 
-INCLUDES = -I$(top_srcdir)/libtiff
+AM_CPPFLAGS = -I$(top_srcdir)/libtiff
 
 # memcheck: valgrind's memory access checker
 memcheck:
