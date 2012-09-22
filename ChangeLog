@@ -1,3 +1,7 @@
+2012-09-22  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* automake: Update to use GNU automake 1.12.4
+
 2012-07-19  Tom Lane  <tgl@sss.pgh.pa.us>
 
 	* tools/tiff2pdf.c: Fix two places where t2p_error didn't get set

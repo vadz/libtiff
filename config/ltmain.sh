@@ -1180,7 +1180,7 @@ func_enable_tag "$optarg"
   test "$opt_debug" = : || func_append preserve_args " --debug"
 
   case $host in
-    *cygwin* | *mingw* | *pw32* | *cegcc*)
+    *cygwin* | *mingw* | *pw32* | *cegcc* | *solaris2*)
       # don't eliminate duplications in $postdeps and $predeps
       opt_duplicate_compiler_generated_deps=:
       ;;
