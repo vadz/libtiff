@@ -1,7 +1,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-	Changes in TIFF v4.0.2
+	Changes in TIFF v4.0.3
 </TITLE>
 </HEAD>
 
@@ -14,8 +14,8 @@
 
 <UL>
 <HR SIZE=4 WIDTH=65% ALIGN=left>
-<B>Current Version</B>: v4.0.2<BR>
-<B>Previous Version</B>: <A HREF=v4.0.1.html>v4.0.1</a><BR>
+<B>Current Version</B>: v4.0.3<BR>
+<B>Previous Version</B>: <A HREF=v4.0.2.html>v4.0.2</a><BR>
 <B>Master FTP Site</B>: <A HREF="ftp://ftp.remotesensing.org/pub/libtiff">
 ftp.remotesensing.org</a>, directory pub/libtiff</A><BR>
 <B>Master HTTP Site</B>: <A HREF="http://www.remotesensing.org/libtiff">
@@ -57,7 +57,8 @@ information is located here:
 
 <UL>
 
-  <li> None
+  <li> Updated to use Automake 1.12.4.  Avoids security problem with
+  'make distcheck' (CVE-2012-3386).
 
 </UL>
 
@@ -69,21 +70,22 @@ information is located here:
 
 <UL>
 
-  <li> tif_getimage.c: added support for _SEPARATED CMYK images.
+  <li> Various memory buffer access fixes.
 
-  <li> tif_getimage.c: Added support for greyscale + alpha. 
+  <li> Fix handling when writing RGBA jpeg compressed imagery
+  (<A HREF="http://trac.osgeo.org/gdal/ticket/4732">http://trac.osgeo.org/gdal/ticket/4732</A>).
 
-  <li> Added TIFFCreateCustomDirectory() and TIFFCreateEXIFDirectory() functions.
-  <li> tif_print.c: Lots of fixes around printing corrupt or
-    hostile input.
-    
-  <li> Improve handling of corrupt ycbcrsubsampling values. 
+  <li> Fix to work properly with IJG JPEG 7+.
 
-  <li> tif_unix.c: use strerror to get meaningful error messages.
+  <li> New functions TIFFFieldTag(), TIFFFieldName(),
+  TIFFFieldDataType(), TIFFFieldPassCount(), TIFFFieldReadCount(),
+  TIFFFieldWriteCount() to use as external accessors for the opaque
+  type TIFFField.
 
-  <li> tif_jpeg.c: fix serious bugs in JPEGDecodeRaw().
+  <li> Fix bug rewriting image tiles in a compressed
+  file (<A HREF="http://trac.osgeo.org/gdal/ticket/4771">http://trac.osgeo.org/gdal/ticket/4771</A>).
 
-  <li> tif_jpeg.c:  Fix size overflow (zdi-can-1221,CVE-2012-1173).
+  <li> Add TIFF/FX tag support in libtiff.
 
 </UL>
 
@@ -95,8 +97,13 @@ information is located here:
 
 <UL>
 
-	<li> tiff2pdf:  Defend against integer overflows while
-	calculating required buffer sizes (CVE-2012-2113).
+  <li> tiff2pdf: Fail when TIFFSetDirectory() fails.  This prevents
+  core dumps or perhaps even arbitrary code execution when processing
+  a corrupt input file (CVE-2012-3401).
+
+  <li> tiff2pdf: Fix two places where t2p_error didn't get set after a
+  malloc failure.  No crash risk AFAICS, but the program might not
+  report exit code 1 as desired.
 
 </UL>
 

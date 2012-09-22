@@ -7,12 +7,13 @@ Notes on releasing.
    and that these tools are in your executable search path prior to
    any other installed versions.  Versions delivered with Linux may be
    altered so it is best to install official FSF releases. GNU 'm4'
-   1.4.6 or later is needed in order to avoid bugs in m4. These
-   packages may be downloaded from the following ftp locations:
+   1.4.16 is needed in order to avoid bugs in m4. These packages may
+   be downloaded from the following ftp locations:
 
      autoconf - ftp://ftp.gnu.org/pub/gnu/autoconf
      automake - ftp://ftp.gnu.org/pub/gnu/automake
      libtool  - ftp://ftp.gnu.org/pub/gnu/libtool
+     m4       - ftp://ftp.gnu.org/pub/gnu/m4
 
    Release builds should only be done on a system with a functioning
    and correctly set system clock and on a filesystem which accurately
