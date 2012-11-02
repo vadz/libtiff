@@ -1,3 +1,9 @@
+2012-11-01  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/ppm2tiff.c: avoid zero size buffer vulnerability.
+	CVE-2012-4564 - Thanks to Huzaifa Sidhpurwala of the 
+	Red Hat Security Response team for the fix.
+
 2012-10-18  Frank Warmerdam  <warmerdam@google.com>
 
 	* tif_zip.c: Avoid crash on NULL error messages.
