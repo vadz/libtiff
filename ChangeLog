@@ -1,3 +1,9 @@
+2012-11-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_{unix,vms,win32}.c (_TIFFmalloc): ANSI C does not
+	require malloc() to return NULL pointer if requested allocation
+	size is zero.  Assure that _TIFFmalloc does.
+
 2012-11-01  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/ppm2tiff.c: avoid zero size buffer vulnerability.
