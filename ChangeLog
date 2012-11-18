@@ -1,5 +1,7 @@
 2012-11-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* automake: Update Automake to 1.12.5 release.
+
 	* libtiff/tif_{unix,vms,win32}.c (_TIFFmalloc): ANSI C does not
 	require malloc() to return NULL pointer if requested allocation
 	size is zero.  Assure that _TIFFmalloc does.
