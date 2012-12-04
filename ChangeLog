@@ -1,3 +1,9 @@
+2012-12-03  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffset.c: tiffset now supports a -u option to unset a
+	tag.  Patch by Zach Baker. See
+	http://bugzilla.maptools.org/show_bug.cgi?id=2419
+
 2012-11-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* automake: Update Automake to 1.12.5 release.
