@@ -1,5 +1,9 @@
 2012-12-10  Tom Lane  <tgl@sss.pgh.pa.us>
 
+	* tools/ppm2tiff.c: Back-patch fix for CVE-2012-4564.
+
+2012-12-10  Tom Lane  <tgl@sss.pgh.pa.us>
+
 	* libtiff/tif_pixarlog.c: Back-patch recent security fixes for
 	tif_pixarlog.c, namely the fix for CVE-2012-4447 and protections
 	against accessing outside the lookup arrays for out of range
