@@ -1,5 +1,12 @@
 2012-12-10  Tom Lane  <tgl@sss.pgh.pa.us>
 
+	* tools/ppm2tiff.c: Improve previous patch for CVE-2012-4564:
+ 	check the linebytes calculation too, get the max() calculation
+ 	straight, avoid redundant error messages, check for malloc
+ 	failure.
+
+2012-12-10  Tom Lane  <tgl@sss.pgh.pa.us>
+
 	* libtiff/tif_pixarlog.c: Improve previous patch for CVE-2012-4447
  	(to enlarge tbuf for possible partial stride at end) so that
  	overflow in the integer addition is detected.  Per gripe from
