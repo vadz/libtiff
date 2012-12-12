@@ -514,8 +514,19 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 			continue;
 
 		if(fip->field_passcount) {
-			if(TIFFGetField(tif, tag, &value_count, &raw_data) != 1)
+			if (fip->field_readcount == TIFF_VARIABLE2 ) {
+				if(TIFFGetField(tif, tag, &value_count, &raw_data) != 1)
+					continue;
+			} else if (fip->field_readcount == TIFF_VARIABLE ) {
+				uint16 small_value_count;
+				if(TIFFGetField(tif, tag, &small_value_count, &raw_data) != 1)
+					continue;
+				value_count = small_value_count;
+			} else {
+				assert (fip->field_readcount == TIFF_VARIABLE
+					|| fip->field_readcount == TIFF_VARIABLE2);
 				continue;
+			} 
 		} else {
 			if (fip->field_readcount == TIFF_VARIABLE
 			    || fip->field_readcount == TIFF_VARIABLE2)
