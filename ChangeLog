@@ -1,5 +1,8 @@
 2013-01-18  Frank Warmerdam  <warmerdam@google.com>
 
+	* libtiff/tif_write.c: tmsize_t related casting warning fixed for
+	64bit linux. 
+
 	* libtiff/tif_read.c: uint64/tmsize_t change for MSVC warnings.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2427
 
