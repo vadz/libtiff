@@ -1,3 +1,10 @@
+2013-01-25  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2ps.c:Fix bug in auto rotate option code. Once a
+	rotation angle was set by the auto rotate check, it was retained
+	for all pages that followed instead of being retested for each
+	page.  Patch by Richard Nolde.
+
 2013-01-18  Frank Warmerdam  <warmerdam@google.com>
 
 	* libtiff/tif_write.c: tmsize_t related casting warning fixed for
