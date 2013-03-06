@@ -173,7 +173,7 @@ main(int argc, char* argv[])
 
 	*mp++ = 'w';
 	*mp = '\0';
-	while ((c = getopt(argc, argv, ",:b:c:f:l:o:z:p:r:w:aistBLMC8x")) != -1)
+	while ((c = getopt(argc, argv, ",:b:c:f:l:o:p:r:w:aistBLMC8x")) != -1)
 		switch (c) {
 		case ',':
 			if (optarg[0] != '=') usage();
@@ -408,7 +408,12 @@ char* stuff[] = {
 " -p separate     store samples separately (e.g. RRR...GGG...BBB...)",
 " -s              write output in strips",
 " -t              write output in tiles",
+" -x              force the merged tiff pages in sequence",
 " -8              write BigTIFF instead of default ClassicTIFF",
+" -B              write big-endian instead of native byte order",
+" -L              write little-endian instead of native byte order",
+" -M              disable use of memory-mapped files",
+" -C              disable strip chopping",
 " -i              ignore read errors",
 " -b file[,#]     bias (dark) monochrome image to be subtracted from all others",
 " -,=%            use % rather than , to separate image #'s (per Note below)",
@@ -430,7 +435,6 @@ char* stuff[] = {
 " -c g4           compress output with CCITT Group 4 encoding",
 " -c sgilog       compress output with SGILOG encoding",
 " -c none         use no compression algorithm on output",
-" -x              force the merged tiff pages in sequence",
 "",
 "Group 3 options:",
 " 1d              use default CCITT Group 3 1D-encoding",

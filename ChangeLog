@@ -1,3 +1,12 @@
+2013-03-05  Tom Lane  <tgl@sss.pgh.pa.us>
+
+	* html/man/tiff2ps.1.html, html/man/tiffcp.1.html,
+ 	html/man/tiffdither.1.html, man/tiff2ps.1, man/tiffcp.1,
+ 	man/tiffdither.1, tools/tiff2ps.c, tools/tiffcp.c,
+ 	tools/tiffdither.c: Sync tool usage printouts and man pages with
+ 	reality (quite a few options had escaped being documented in one
+ 	or both places).  Per an old report from Miroslav Vadkerti.
+
 2013-01-25  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2ps.c:Fix bug in auto rotate option code. Once a

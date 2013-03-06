@@ -260,9 +260,9 @@ main(int argc, char* argv[])
 		case 'c':
 			centered = 1;
 			break;
-                case 'C':
-                        creator = optarg;
-                        break;
+		case 'C':
+			creator = optarg;
+			break;
 		case 'd': /* without -a, this only processes one image at this IFD */
 			dirnum = atoi(optarg);
 			break;
@@ -3041,13 +3041,13 @@ char* stuff[] = {
 " -a            convert all directories in file (default is first), Not EPS",
 " -b #          set the bottom margin to # inches",
 " -c            center image (-b and -l still add to this)",
+" -C name       set postscript document creator name",
 " -d #          set initial directory to # counting from zero",
 " -D            enable duplex printing (two pages per sheet of paper)",
 " -e            generate Encapsulated PostScript (EPS) (implies -z)",
 " -h #          set printed page height to # inches (no default)",
 " -w #          set printed page width to # inches (no default)",
 " -H #          split image if height is more than # inches",
-" -P L or P     set optional PageOrientation DSC comment to Landscape or Portrait",
 " -W #          split image if width is more than # inches",
 " -L #          overLap split images by # inches",
 " -i #          enable/disable (Nz/0) pixel interpolation (default: enable)",
@@ -3055,7 +3055,8 @@ char* stuff[] = {
 " -m            use \"imagemask\" operator instead of \"image\"",
 " -o #          convert directory at file offset # bytes",
 " -O file       write PostScript to file instead of standard output",
-" -p            generate regular PostScript",
+" -p            generate regular (non-encapsulated) PostScript",
+" -P L or P     set optional PageOrientation DSC comment to Landscape or Portrait",
 " -r # or auto  rotate by 90, 180, 270 degrees or auto",
 " -s            generate PostScript for a single image",
 " -t name       set postscript document title. Otherwise the filename is used",

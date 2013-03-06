@@ -289,6 +289,7 @@ char* stuff[] = {
 "usage: tiffdither [options] input.tif output.tif",
 "where options are:",
 " -r #		make each strip have no more than # rows",
+" -t #		set the threshold value for dithering (default 128)",
 " -f lsb2msb	force lsb-to-msb FillOrder for output",
 " -f msb2lsb	force msb-to-lsb FillOrder for output",
 " -c lzw[:opts]	compress output with Lempel-Ziv & Welch encoding",
