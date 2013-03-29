@@ -1,3 +1,8 @@
+2013-03-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Applied patch by Brad Smith to improve pkg-config
+	static linking by adding -lm to Libs.private when needed.
+
 2013-03-05  Tom Lane  <tgl@sss.pgh.pa.us>
 
 	* html/man/tiff2ps.1.html, html/man/tiffcp.1.html,

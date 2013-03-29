@@ -154,17 +154,21 @@ LT_LANG([C++])
 # Enable support for silent build rules
 AM_SILENT_RULES
 
+tiff_libs_private=
+AC_SUBST(tiff_libs_private)
+
 dnl We don't need to add math library to all targets
 case "${host_os}" in
     cygwin* | mingw32* | beos* | darwin*)
         ;;
     *)
-	AC_CHECK_LIB(m,sin,,,)
+	AC_CHECK_LIB(m,sin,[libm_lib=yes], [libm_lib=no],)
+	if test "x$libm_lib" = "xyes" ; then
+	  LIBS="-lm $LIBS"
+	  tiff_libs_private="-lm ${tiff_libs_private}"
+	fi
         ;;
 esac
-
-tiff_libs_private=
-AC_SUBST(tiff_libs_private)
 
 dnl Checks for header files.
 AC_CHECK_HEADERS([assert.h fcntl.h io.h limits.h malloc.h search.h sys/time.h unistd.h])

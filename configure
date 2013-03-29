@@ -16088,6 +16088,9 @@ fi
 AM_BACKSLASH='\'
 
 
+tiff_libs_private=
+
+
 case "${host_os}" in
     cygwin* | mingw32* | beos* | darwin*)
         ;;
@@ -16129,19 +16132,17 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_sin" >&5
 $as_echo "$ac_cv_lib_m_sin" >&6; }
 if test "x$ac_cv_lib_m_sin" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBM 1
-_ACEOF
-
-  LIBS="-lm $LIBS"
-
+  libm_lib=yes
+else
+  libm_lib=no
 fi
 
+	if test "x$libm_lib" = "xyes" ; then
+	  LIBS="-lm $LIBS"
+	  tiff_libs_private="-lm ${tiff_libs_private}"
+	fi
         ;;
 esac
-
-tiff_libs_private=
-
 
 for ac_header in assert.h fcntl.h io.h limits.h malloc.h search.h sys/time.h unistd.h
 do :
