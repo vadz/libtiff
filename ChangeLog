@@ -1,5 +1,12 @@
 2013-05-02  Tom Lane  <tgl@sss.pgh.pa.us>
 
+	* tools/tiff2pdf.c: Rewrite JPEG marker parsing in
+	t2p_process_jpeg_strip to be at least marginally competent.  The
+	approach is still fundamentally flawed, but at least now it won't
+	stomp all over memory when given bogus input.  Fixes CVE-2013-1960.
+
+2013-05-02  Tom Lane  <tgl@sss.pgh.pa.us>
+
 	* contrib/dbs/xtiff/xtiff.c, libtiff/tif_codec.c,
  	libtiff/tif_dirinfo.c, tools/rgb2ycbcr.c, tools/tiff2bw.c,
  	tools/tiff2pdf.c, tools/tiff2ps.c, tools/tiffcrop.c,
