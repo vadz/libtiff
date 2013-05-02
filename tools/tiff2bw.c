@@ -205,7 +205,7 @@ main(int argc, char* argv[])
 		}
 	}
 	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
-	sprintf(thing, "B&W version of %s", argv[optind]);
+	snprintf(thing, sizeof(thing), "B&W version of %s", argv[optind]);
 	TIFFSetField(out, TIFFTAG_IMAGEDESCRIPTION, thing);
 	TIFFSetField(out, TIFFTAG_SOFTWARE, "tiff2bw");
 	outbuf = (unsigned char *)_TIFFmalloc(TIFFScanlineSize(out));

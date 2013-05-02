@@ -1,3 +1,16 @@
+2013-05-02  Tom Lane  <tgl@sss.pgh.pa.us>
+
+	* contrib/dbs/xtiff/xtiff.c, libtiff/tif_codec.c,
+ 	libtiff/tif_dirinfo.c, tools/rgb2ycbcr.c, tools/tiff2bw.c,
+ 	tools/tiff2pdf.c, tools/tiff2ps.c, tools/tiffcrop.c,
+ 	tools/tiffdither.c: Enlarge some fixed-size buffers that weren't
+ 	large enough, and eliminate substantially all uses of sprintf(buf,
+ 	...)  in favor of using snprintf(buf, sizeof(buf), ...), so as to
+ 	protect against overflow of fixed-size buffers.  This responds in
+ 	particular to CVE-2013-1961 concerning overflow in tiff2pdf.c's
+ 	t2p_write_pdf_page(), but in general it seems like a good idea to
+ 	deprecate use of sprintf().
+
 2013-03-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: Applied patch by Brad Smith to improve pkg-config

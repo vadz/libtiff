@@ -512,9 +512,9 @@ SetNameLabel()
     Arg args[1];
 
     if (tfMultiPage)
-        sprintf(buffer, "%s - page %d", fileName, tfDirectory);
+        snprintf(buffer, sizeof(buffer), "%s - page %d", fileName, tfDirectory);
     else
-        strcpy(buffer, fileName);
+        snprintf(buffer, sizeof(buffer), "%s", fileName);
     XtSetArg(args[0], XtNlabel, buffer);
     XtSetValues(labelWidget, args, 1);
 }

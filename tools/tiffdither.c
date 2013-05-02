@@ -260,7 +260,7 @@ main(int argc, char* argv[])
 		TIFFSetField(out, TIFFTAG_FILLORDER, fillorder);
 	else
 		CopyField(TIFFTAG_FILLORDER, shortv);
-	sprintf(thing, "Dithered B&W version of %s", argv[optind]);
+	snprintf(thing, sizeof(thing), "Dithered B&W version of %s", argv[optind]);
 	TIFFSetField(out, TIFFTAG_IMAGEDESCRIPTION, thing);
 	CopyField(TIFFTAG_PHOTOMETRIC, shortv);
 	CopyField(TIFFTAG_ORIENTATION, shortv);
