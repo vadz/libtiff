@@ -1,3 +1,8 @@
+2013-07-09  Frank Warmerdam  <warmerdam@google.com>
+
+	* tools/tiffinfo.c: Default various values fetched with 
+	TIFFGetField() to avoid being uninitialized.
+
 2013-05-02  Tom Lane  <tgl@sss.pgh.pa.us>
 
 	* tools/tiff2pdf.c: Rewrite JPEG marker parsing in

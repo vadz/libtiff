@@ -145,7 +145,7 @@ main(int argc, char* argv[])
 					tiffinfo(tif, order, flags, 1);
 			} else {
 				do {
-					toff_t offset;
+					toff_t offset=0;
 
 					tiffinfo(tif, order, flags, 1);
 					if (TIFFGetField(tif, TIFFTAG_EXIFIFD,
@@ -245,9 +245,9 @@ TIFFReadSeparateStripData(TIFF* tif)
 
 	buf = (unsigned char *)_TIFFmalloc(TIFFStripSize(tif));
 	if (buf) {
-		uint32 row, h;
+		uint32 row, h=0;
 		uint32 rowsperstrip = (uint32)-1;
-		tsample_t s, samplesperpixel;
+		tsample_t s, samplesperpixel=0;
 
 		TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 		TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
@@ -296,7 +296,7 @@ TIFFReadContigTileData(TIFF* tif)
 
 	buf = (unsigned char *)_TIFFmalloc(TIFFTileSize(tif));
 	if (buf) {
-		uint32 tw, th, w, h;
+		uint32 tw=0, th=0, w=0, h=0;
 		uint32 row, col;
 
 		TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
@@ -324,9 +324,9 @@ TIFFReadSeparateTileData(TIFF* tif)
 
 	buf = (unsigned char *)_TIFFmalloc(TIFFTileSize(tif));
 	if (buf) {
-		uint32 tw, th, w, h;
+		uint32 tw=0, th=0, w=0, h=0;
 		uint32 row, col;
-		tsample_t s, samplesperpixel;
+		tsample_t s, samplesperpixel=0;
 
 		TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
 		TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
@@ -398,7 +398,7 @@ TIFFReadRawData(TIFF* tif, int bitrev)
 {
 	tstrip_t nstrips = TIFFNumberOfStrips(tif);
 	const char* what = TIFFIsTiled(tif) ? "Tile" : "Strip";
-	uint64* stripbc;
+	uint64* stripbc=NULL;
 
 	TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbc);
 	if (nstrips > 0) {
