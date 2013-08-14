@@ -2461,7 +2461,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
-			  _TIFFfree(buffer);
+				_TIFFfree(buffer);
+				return(0);
 			} else {
 				buffer=samplebuffer;
 				t2p->tiff_datasize *= t2p->tiff_samplesperpixel;
