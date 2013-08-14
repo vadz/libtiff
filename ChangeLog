@@ -1,5 +1,8 @@
 2013-08-13  Frank Warmerdam  <warmerdam@pobox.com>
 
+	* tools/gif2tiff.c: Be more careful about corrupt or
+	hostile input files (#2450, CVE-2013-4231)
+
 	* tools/tiff2pdf.c: terminate after failure of allocating 
 	ycbcr buffer (bug #2449, CVE-2013-4232)
 

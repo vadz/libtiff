@@ -333,6 +333,8 @@ readraster(void)
     int status = 1;
 
     datasize = getc(infile);
+    if (datasize > 12)
+	return 0;
     clear = 1 << datasize;
     eoi = clear + 1;
     avail = clear + 2;
