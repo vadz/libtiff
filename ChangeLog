@@ -1,18 +1,25 @@
+2013-09-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dir.c (TIFFAdvanceDirectory): If nextdir is found to
+	be defective, then set it to zero before returning error in order
+	to terminate processing of truncated TIFF.  Issue found and fix
+	suggested by Richard Nolde.
+
 2013-08-14  Frank Warmerdam  <warmerdam@pobox.com>
 
-	* tools/gif2tiff.c: fix possible OOB write (#2452, CVE-2013-4244) 
+	* tools/gif2tiff.c: fix possible OOB write (#2452, CVE-2013-4244)
 
 2013-08-13  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* tools/gif2tiff.c: Be more careful about corrupt or
 	hostile input files (#2450, CVE-2013-4231)
 
-	* tools/tiff2pdf.c: terminate after failure of allocating 
+	* tools/tiff2pdf.c: terminate after failure of allocating
 	ycbcr buffer (bug #2449, CVE-2013-4232)
 
 2013-07-09  Frank Warmerdam  <warmerdam@google.com>
 
-	* tools/tiffinfo.c: Default various values fetched with 
+	* tools/tiffinfo.c: Default various values fetched with
 	TIFFGetField() to avoid being uninitialized.
 
 2013-05-02  Tom Lane  <tgl@sss.pgh.pa.us>
