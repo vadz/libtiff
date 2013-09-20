@@ -4216,8 +4216,8 @@ tsize_t t2p_write_pdf_page(uint32 object, T2P* t2p, TIFF* output){
 		written += t2pWriteFile(output, (tdata_t) ">> \n", 4);
 	}
 	written += t2pWriteFile(output, (tdata_t) "/ProcSet [ ", 11);
-	if(t2p->pdf_colorspace == T2P_CS_BILEVEL 
-		|| t2p->pdf_colorspace == T2P_CS_GRAY
+	if(t2p->pdf_colorspace & T2P_CS_BILEVEL 
+		|| t2p->pdf_colorspace & T2P_CS_GRAY
 		){
 		written += t2pWriteFile(output, (tdata_t) "/ImageB ", 8);
 	} else {
@@ -4672,7 +4672,7 @@ tsize_t t2p_write_pdf_xobject_stream_dict(ttile_t tile,
 					 (tdata_t) "\n/Interpolate true", 18);
 	if( (t2p->pdf_switchdecode != 0)
 #ifdef CCITT_SUPPORT
-		&& ! (t2p->pdf_colorspace == T2P_CS_BILEVEL 
+		&& ! (t2p->pdf_colorspace & T2P_CS_BILEVEL 
 		&& t2p->pdf_compression == T2P_COMPRESS_G4)
 #endif
 		){
