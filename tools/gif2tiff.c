@@ -312,7 +312,7 @@ readextension(void)
     char buf[255];
 
     (void) getc(infile);
-    while ((count = getc(infile)))
+    while ((count = getc(infile)) && count <= 255)
         fread(buf, 1, count, infile);
 }
 
@@ -346,7 +346,7 @@ readraster(void)
 	suffix[code] = code;
     }
     stackp = stack;
-    for (count = getc(infile); count > 0; count = getc(infile)) {
+    for (count = getc(infile); count > 0 && count <= 255; count = getc(infile)) {
 	fread(buf,1,count,infile);
 	for (ch=buf; count-- > 0; ch++) {
 	    datum += (unsigned long) *ch << bits;
