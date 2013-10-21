@@ -1,3 +1,13 @@
+2013-10-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dir.c: generate error in case of directory count
+	overflow.
+
+2013-10-01  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tiff.h, libtiff/tif_dirinfo.c: add definitions for
+	TIFF/EP CFARepeatPatternDim and CFAPattern tags (bug #2457)
+
 2013-09-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dir.c (TIFFAdvanceDirectory): If nextdir is found to
