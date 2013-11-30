@@ -1481,7 +1481,7 @@ TIFFNumberOfDirectories(TIFF* tif)
 	n = 0;
 	while (nextdir != 0 && TIFFAdvanceDirectory(tif, &nextdir, NULL))
         {
-		if(n++ == 0)
+		if(++n == 0)
                 {
                         TIFFErrorExt(tif->tif_clientdata, module,
                                      "Directory count exceeded 65535 limit, giving up on counting.");
