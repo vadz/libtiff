@@ -191,7 +191,7 @@ int rewrite_test( const char *filename, int length, int bigtiff,
 
     for (i = 0; i < length; i++ )
     {
-        if( !TIFFWriteScanline( tif, buf, i, 0 ) )
+        if( TIFFWriteScanline( tif, buf, i, 0 ) == -1 )
         {
             fprintf (stderr, "Can't write image data.\n");
             goto failure;
