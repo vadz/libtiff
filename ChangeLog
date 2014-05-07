@@ -1,3 +1,8 @@
+2014-05-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dirinfo.c (TIFFField) : Fix data type for
+	TIFFTAG_GLOBALPARAMETERSIFD tag.  Patch by Lee Howard.
+
 2013-11-30  Frank Warmerdam  <warmerdam@pobox.com>
 
 	* libtiff/tif_dir.c: fix last fix for TIFFNumberOfDirectories()
