@@ -506,7 +506,7 @@ static char* stuff[] = {
     "usage: tiff2rgba [-c comp] [-r rows] [-b] [-n] [-8] input... output",
     "where comp is one of the following compression algorithms:",
     " jpeg\t\tJPEG encoding",
-    " zip\t\tLempel-Ziv & Welch encoding",
+    " zip\t\tZip/Deflate encoding",
     " lzw\t\tLempel-Ziv & Welch encoding",
     " packbits\tPackBits encoding",
     " none\t\tno compression",

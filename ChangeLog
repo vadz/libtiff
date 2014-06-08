@@ -1,3 +1,8 @@
+2014-06-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2rgba.c (]): Fixed tiff2rgba usage message in that zip
+	was wrongly described.  Fix suggested by Miguel Medalha.
+
 2014-05-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dirinfo.c (TIFFField) : Fix data type for
