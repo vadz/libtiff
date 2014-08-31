@@ -1,3 +1,9 @@
+2014-08-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_dirread.c (TIFFReadDirEntryOutputErr): Incorrect
+	count for tag should be a warning rather than an error since
+	errors terminate processing.
+
 2014-06-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2rgba.c (]): Fixed tiff2rgba usage message in that zip

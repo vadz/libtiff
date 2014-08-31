@@ -3374,7 +3374,7 @@ static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, c
 	} else {
 		switch (err) {
 			case TIFFReadDirEntryErrCount:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFWarningExt(tif->tif_clientdata, module,
 				"Incorrect count for \"%s\"; tag ignored",
 					     tagname);
 				break;
