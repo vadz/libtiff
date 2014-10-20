@@ -1,3 +1,7 @@
+2014-10-20  Olivier Paquet  <olivier.paquet@gmail.com>
+	* tools/tiff2pdf.c: Preserve input file directory order when pages
+	are tagged with the same page number.
+
 2014-08-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dirread.c (TIFFReadDirEntryOutputErr): Incorrect

@@ -1197,12 +1197,18 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 
 /*
  * This function is used by qsort to sort a T2P_PAGE* array of page structures
- * by page number.
+ * by page number. If the page numbers are the same, we fall back to comparing
+ * directory numbers to preserve the order of the input file.
  */
 
 int t2p_cmp_t2p_page(const void* e1, const void* e2){
 
-	return( ((T2P_PAGE*)e1)->page_number - ((T2P_PAGE*)e2)->page_number );
+	int d;
+	d = (int32)(((T2P_PAGE*)e1)->page_number) - (int32)(((T2P_PAGE*)e2)->page_number);
+	if(d == 0){
+		d = (int32)(((T2P_PAGE*)e1)->page_directory) - (int32)(((T2P_PAGE*)e2)->page_directory);
+	}
+	return d;
 }
 
 /*
