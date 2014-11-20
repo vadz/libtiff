@@ -1,4 +1,8 @@
 2014-11-20  Even Rouault  <even.rouault@spatialys.com>
+	* libtiff/tif_jpeg.c: fix segfault in JPEGFixupTagsSubsampling() on
+	corrupted image where tif->tif_dir.td_stripoffset == NULL (bug #2471)
+
+2014-11-20  Even Rouault  <even.rouault@spatialys.com>
 	* automake: updated to 1.14.1
 	* libtool: updated to 2.4.3
 	* HOWTO-RELEASE: small update about autotools building order
