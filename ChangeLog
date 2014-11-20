@@ -1,3 +1,8 @@
+2014-11-20  Even Rouault  <even.rouault@spatialys.com>
+	* automake: updated to 1.14.1
+	* libtool: updated to 2.4.3
+	* HOWTO-RELEASE: small update about autotools building order
+
 2014-10-20  Olivier Paquet  <olivier.paquet@gmail.com>
 	* tools/tiff2pdf.c: Preserve input file directory order when pages
 	are tagged with the same page number.
