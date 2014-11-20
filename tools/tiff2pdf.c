@@ -411,8 +411,8 @@ t2p_seekproc(thandle_t handle, uint64 offset, int whence)
 static int 
 t2p_closeproc(thandle_t handle)
 { 
-	(void) handle;
-	return 0; 
+	T2P *t2p = (T2P*) handle;
+	return fclose(t2p->outputfile);
 }
 
 static uint64 

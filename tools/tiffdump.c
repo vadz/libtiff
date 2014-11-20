@@ -162,7 +162,9 @@ static void Fatal(const char*, ...);
 static void
 dump(int fd, uint64 diroff)
 {
-	unsigned i;
+	unsigned i, j;
+	uint64* visited_diroff = NULL;
+	unsigned int count_visited_dir = 0;
 
 	lseek(fd, (off_t) 0, 0);
 	if (read(fd, (char*) &hdr, sizeof (TIFFHeaderCommon)) != sizeof (TIFFHeaderCommon))
@@ -223,10 +225,27 @@ dump(int fd, uint64 diroff)
 		Fatal("Not a TIFF file, bad version number %u (%#x)",
 		    hdr.common.tiff_version, hdr.common.tiff_version);
 	for (i = 0; diroff != 0; i++) {
+		for(j=0; j<count_visited_dir; j++)
+		{
+		    if( visited_diroff[j] == diroff )
+		    {
+			free(visited_diroff);
+			Fatal("Cycle detected in chaining of TIFF directories!");
+		    }
+		}
+		visited_diroff = (uint64*) realloc(visited_diroff,
+				    (count_visited_dir + 1) * sizeof(uint64));
+		if( !visited_diroff )
+		    Fatal("Out of memory");
+		visited_diroff[count_visited_dir] = diroff;
+		count_visited_dir ++;
+
 		if (i > 0)
 			putchar('\n');
 		diroff = ReadDirectory(fd, i, diroff);
 	}
+	if( visited_diroff )
+	    free(visited_diroff);
 }
 
 static const int datawidth[] = {
@@ -452,7 +471,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 					_TIFFfree(datamem);
 					datamem = NULL;
 				}
-				if (read(fd, datamem, (size_t)datasize) != (TIFF_SSIZE_T)datasize)
+				else if (read(fd, datamem, (size_t)datasize) != (TIFF_SSIZE_T)datasize)
 				{
 					Error(
 				"Read error accessing tag %u value", tag);

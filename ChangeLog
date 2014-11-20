@@ -1,4 +1,32 @@
 2014-11-20  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_lzw.c: prevent potential null dereference of
+	sp->dec_codetab in LZWPreDecode (bug #2459)
+
+	* libtiff/tif_read.c: in TIFFReadBufferSetup(), avoid passing -1 size
+	to TIFFmalloc() if passed user buffer size is 0 (bug #2459)
+
+	* libtiff/tif_ojpeg.c: make Coverity happier (not a bug, #2459)
+
+	* libtiff/tif_dir.c: in _TIFFVGetField() and _TIFFVSetField(), make
+	Coverity happier (not a bug, #2459)
+
+	* libtiff/tif_dirread.c: in TIFFFetchNormalTag(), make Coverity happier
+	(not a bug, #2459)
+
+	* tools/tiff2pdf.c: close PDF file (bug #2479)
+
+	* tools/fax2ps.c: check malloc()/realloc() result (bug #2470)
+
+	* tools/tiffdump.c: detect cycle in TIFF directory chaining (bug #2463)
+	and avoid passing a NULL pointer to read() if seek() failed before (bug #2459)
+
+	* tools/tiffcrop.c: fix segfault if bad value passed to -Z option
+	(bug #2459) and add missing va_end in dump_info (#2459)
+
+	* tools/gif2tif.c: apply patch for CVE-2013-4243 (#2451)
+
+2014-11-20  Even Rouault  <even.rouault@spatialys.com>
 	* libtiff/tif_jpeg.c: fix segfault in JPEGFixupTagsSubsampling() on
 	corrupted image where tif->tif_dir.td_stripoffset == NULL (bug #2471)
 

@@ -528,6 +528,8 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 	uint32 ma;
 	uint64* mb;
 	uint32 n;
+	const TIFFField* fip;
+
 	switch(tag)
 	{
 		case TIFFTAG_JPEGIFOFFSET:
@@ -597,7 +599,10 @@ OJPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 		default:
 			return (*sp->vsetparent)(tif,tag,ap);
 	}
-	TIFFSetFieldBit(tif,TIFFFieldWithTag(tif,tag)->field_bit);
+	fip = TIFFFieldWithTag(tif,tag);
+	if( fip == NULL ) /* shouldn't happen */
+	    return(0);
+	TIFFSetFieldBit(tif,fip->field_bit);
 	tif->tif_flags|=TIFF_DIRTYDIRECT;
 	return(1);
 }

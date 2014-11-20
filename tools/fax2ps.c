@@ -346,6 +346,11 @@ main(int argc, char** argv)
 		pages = (uint16*) realloc(pages, (npages+1)*sizeof(uint16));
 	    else
 		pages = (uint16*) malloc(sizeof(uint16));
+	    if( pages == NULL )
+	    {
+		fprintf(stderr, "Out of memory\n");
+		exit(-1);
+	    }
 	    pages[npages++] = pageNumber;
 	    break;
 	case 'w':

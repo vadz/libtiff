@@ -2012,6 +2012,10 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
                     {
 		    crop_data->zones++;
 		    opt_offset = strchr(opt_ptr, ':');
+		    if (!opt_offset) {
+			TIFFError("Wrong parameter syntax for -Z", "tiffcrop -h");
+			exit(-1);
+		    }
                     *opt_offset = '\0';
                     crop_data->zonelist[i].position = atoi(opt_ptr);
                     crop_data->zonelist[i].total    = atoi(opt_offset + 1);
@@ -2595,6 +2599,7 @@ static void dump_info(FILE *dumpfile, int format, char *prefix, char *msg, ...)
     fprintf(dumpfile, "%s ", prefix);
     vfprintf(dumpfile, msg, ap);
     fprintf(dumpfile, "\n");
+    va_end(ap);
     }
   }
 

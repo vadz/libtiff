@@ -268,6 +268,8 @@ LZWPreDecode(TIFF* tif, uint16 s)
 	if( sp->dec_codetab == NULL )
         {
             tif->tif_setupdecode( tif );
+	    if( sp->dec_codetab == NULL )
+		return (0);
         }
 
 	/*
