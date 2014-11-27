@@ -1,3 +1,8 @@
+2014-11-27  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_config.vc.h: no longer use "#define snprintf _snprintf" with
+	Visual Studio 2015 aka VC 14 aka MSVC 1900
+
 2014-11-20  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_lzw.c: prevent potential null dereference of
