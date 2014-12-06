@@ -1,3 +1,7 @@
+2014-12-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffdump.c: Fix double-free bug.
+
 2014-11-27  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_config.vc.h: no longer use "#define snprintf _snprintf" with

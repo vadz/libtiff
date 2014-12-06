@@ -518,7 +518,10 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 			if (datatruncated)
 				printf(" ...");
 			if (!datafits)
-				_TIFFfree(datamem);
+                                {
+                                        _TIFFfree(datamem);
+                                        datamem = NULL;
+                                }
 		}
 		printf(">\n");
 	}
