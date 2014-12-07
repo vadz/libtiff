@@ -1,3 +1,8 @@
+2014-12-07  Even Rouault  <even.rouault@spatialys.com>
+
+	* tools/thumbnail.c, tools/tiffcrop.c: "fix" heap read over-run found with
+	Valgrind and Address Sanitizer on test suite
+
 2014-12-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2pdf.c (t2p_read_tiff_init): TIFFTAG_TRANSFERFUNCTION
