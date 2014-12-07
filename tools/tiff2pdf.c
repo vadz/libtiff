@@ -1136,8 +1136,10 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
                                  &(t2p->tiff_transferfunction[0]),
                                  &(t2p->tiff_transferfunction[1]),
                                  &(t2p->tiff_transferfunction[2]))) {
-			if(t2p->tiff_transferfunction[1] !=
-			   t2p->tiff_transferfunction[0]) {
+			if((t2p->tiff_transferfunction[1] != (float*) NULL) &&
+                           (t2p->tiff_transferfunction[2] != (float*) NULL) &&
+                           (t2p->tiff_transferfunction[1] !=
+                            t2p->tiff_transferfunction[0])) {
 				t2p->tiff_transferfunctioncount = 3;
 				t2p->tiff_pages[i].page_extra += 4;
 				t2p->pdf_xrefcount += 4;
@@ -1738,8 +1740,10 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			 &(t2p->tiff_transferfunction[0]),
 			 &(t2p->tiff_transferfunction[1]),
 			 &(t2p->tiff_transferfunction[2]))) {
-		if(t2p->tiff_transferfunction[1] !=
-		   t2p->tiff_transferfunction[0]) {
+		if((t2p->tiff_transferfunction[1] != (float*) NULL) &&
+                   (t2p->tiff_transferfunction[2] != (float*) NULL) &&
+                   (t2p->tiff_transferfunction[1] !=
+                    t2p->tiff_transferfunction[0])) {
 			t2p->tiff_transferfunctioncount=3;
 		} else {
 			t2p->tiff_transferfunctioncount=1;
@@ -2664,7 +2668,7 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 	tsize_t read=0;
 	uint16 i=0;
 	ttile_t tilecount=0;
-	tsize_t tilesize=0;
+	/* tsize_t tilesize=0; */
 	ttile_t septilecount=0;
 	tsize_t septilesize=0;
 #ifdef JPEG_SUPPORT
@@ -2853,7 +2857,7 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 		if(t2p->pdf_sample == T2P_SAMPLE_PLANAR_SEPARATE_TO_CONTIG){
 			septilesize=TIFFTileSize(input);
 			septilecount=TIFFNumberOfTiles(input);
-			tilesize=septilesize*t2p->tiff_samplesperpixel;
+			/* tilesize=septilesize*t2p->tiff_samplesperpixel; */
 			tilecount=septilecount/t2p->tiff_samplesperpixel;
 			buffer = (unsigned char*) _TIFFmalloc(t2p->tiff_datasize);
 			if(buffer==NULL){
