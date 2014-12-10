@@ -1035,7 +1035,7 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	uint16 xuint16=0;
 
 	directorycount=TIFFNumberOfDirectories(input);
-	t2p->tiff_pages = (T2P_PAGE*) _TIFFmalloc(directorycount * sizeof(T2P_PAGE));
+	t2p->tiff_pages = (T2P_PAGE*) _TIFFmalloc(TIFFSafeMultiply(tmsize_t,directorycount,sizeof(T2P_PAGE)));
 	if(t2p->tiff_pages==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
@@ -1046,7 +1046,7 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 		return;
 	}
 	_TIFFmemset( t2p->tiff_pages, 0x00, directorycount * sizeof(T2P_PAGE));
-	t2p->tiff_tiles = (T2P_TILES*) _TIFFmalloc(directorycount * sizeof(T2P_TILES));
+	t2p->tiff_tiles = (T2P_TILES*) _TIFFmalloc(TIFFSafeMultiply(tmsize_t,directorycount,sizeof(T2P_TILES)));
 	if(t2p->tiff_tiles==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 
@@ -1179,9 +1179,8 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 				TIFFTAG_TILELENGTH, 
 				&( t2p->tiff_tiles[i].tiles_tilelength) );
 			t2p->tiff_tiles[i].tiles_tiles = 
-			(T2P_TILE*) _TIFFmalloc(
-				t2p->tiff_tiles[i].tiles_tilecount 
-				* sizeof(T2P_TILE) );
+			(T2P_TILE*) _TIFFmalloc(TIFFSafeMultiply(tmsize_t,t2p->tiff_tiles[i].tiles_tilecount,
+                                                                 sizeof(T2P_TILE)) );
 			if( t2p->tiff_tiles[i].tiles_tiles == NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
@@ -1451,7 +1450,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				t2p->pdf_palette=NULL;
 			}
 			t2p->pdf_palette = (unsigned char*)
-				_TIFFmalloc(t2p->pdf_palettesize*3);
+				_TIFFmalloc(TIFFSafeMultiply(tmsize_t,t2p->pdf_palettesize,3));
 			if(t2p->pdf_palette==NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
@@ -1520,7 +1519,7 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 				t2p->pdf_palette=NULL;
 			}
 			t2p->pdf_palette = (unsigned char*) 
-				_TIFFmalloc(t2p->pdf_palettesize*4);
+				_TIFFmalloc(TIFFSafeMultiply(tmsize_t,t2p->pdf_palettesize,4));
 			if(t2p->pdf_palette==NULL){
 				TIFFError(
 					TIFF2PDF_MODULE, 
@@ -2109,7 +2108,8 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				_TIFFmalloc(t2p->tiff_datasize);
 			if (buffer == NULL) {
 				TIFFError(TIFF2PDF_MODULE, 
-	"Can't allocate %lu bytes of memory for t2p_readwrite_pdf_image, %s", 
+                                          "Can't allocate %lu bytes of memory for "
+                                          "t2p_readwrite_pdf_image, %s", 
 					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
@@ -5222,7 +5222,7 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 
 	t2p_read_tiff_init(t2p, input);
 	if(t2p->t2p_error!=T2P_ERR_OK){return(0);}
-	t2p->pdf_xrefoffsets= (uint32*) _TIFFmalloc(t2p->pdf_xrefcount * sizeof(uint32) );
+	t2p->pdf_xrefoffsets= (uint32*) _TIFFmalloc(TIFFSafeMultiply(tmsize_t,t2p->pdf_xrefcount,sizeof(uint32)) );
 	if(t2p->pdf_xrefoffsets==NULL){
 		TIFFError(
 			TIFF2PDF_MODULE, 

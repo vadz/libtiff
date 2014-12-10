@@ -1,3 +1,8 @@
+2014-12-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2pdf.c: Assure that memory size calculations for
+	_TIFFmalloc() do not overflow the range of tmsize_t.
+
 2014-12-07  Even Rouault  <even.rouault@spatialys.com>
 
 	* tools/thumbnail.c, tools/tiffcrop.c: "fix" heap read over-run found with
