@@ -1,3 +1,13 @@
+2014-12-15  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_jpeg.c: Fix regression introduced on 2010-05-07 that caused
+	all tiles/strips to include quantization tables even when the jpegtablesmode
+	had the JPEGTABLESMODE_QUANT bit set.
+	Also add explicit removal of Huffman tables when jpegtablesmode has the
+	JPEGTABLESMODE_HUFF bit set, which avoids Huffman tables to be emitted in the
+	first tile/strip (only useful in update scenarios. create-only was
+	fine)
+
 2014-12-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2pdf.c: Assure that memory size calculations for
