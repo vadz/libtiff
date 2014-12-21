@@ -1,3 +1,22 @@
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
+	Fix various crasher bugs on fuzzed images.
+	* libtiff/tif_dir.c: TIFFSetField(): refuse to set negative values for
+	TIFFTAG_XRESOLUTION and TIFFTAG_YRESOLUTION that cause asserts when writing
+	the directory
+	* libtiff/tif_dirread.c: TIFFReadDirectory(): refuse to read ColorMap or
+	TransferFunction if BitsPerSample has not yet been read, otherwise reading
+	it later will cause user code to crash if BitsPerSample > 1
+	* libtiff/tif_getimage.c: TIFFRGBAImageOK(): return FALSE if LOGLUV with
+	SamplesPerPixel != 3, or if CIELAB with SamplesPerPixel != 3 or BitsPerSample != 8
+	* libtiff/tif_next.c: in the "run mode", use tilewidth for tiled images
+	instead of imagewidth to avoid crash
+	* tools/bmp2tiff.c: fix crash due to int overflow related to input BMP dimensions
+	* tools/tiff2pdf.c: fix crash due to invalid tile count (should likely be checked by
+	libtiff too). Detect invalid settings of BitsPerSample/SamplesPerPixel for CIELAB / ITULAB
+	* tools/tiffcrop.c: fix crash due to invalid TileWidth/TileHeight
+	* tools/tiffdump.c: fix crash due to overflow of entry count.
+
 2014-12-15  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_jpeg.c: Fix regression introduced on 2010-05-07 that caused

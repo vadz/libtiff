@@ -182,8 +182,23 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 				    "Planarconfiguration", td->td_planarconfig);
 				return (0);
 			}
+			if( td->td_samplesperpixel != 3 )
+            {
+                sprintf(emsg,
+                        "Sorry, can not handle image with %s=%d",
+                        "Samples/pixel", td->td_samplesperpixel);
+                return 0;
+            }
 			break;
 		case PHOTOMETRIC_CIELAB:
+            if( td->td_samplesperpixel != 3 || td->td_bitspersample != 8 )
+            {
+                sprintf(emsg,
+                        "Sorry, can not handle image with %s=%d and %s=%d",
+                        "Samples/pixel", td->td_samplesperpixel,
+                        "Bits/sample", td->td_bitspersample);
+                return 0;
+            }
 			break;
 		default:
 			sprintf(emsg, "Sorry, can not handle image with %s=%d",

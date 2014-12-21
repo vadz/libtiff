@@ -1167,6 +1167,15 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 		if( (TIFFGetField(input, TIFFTAG_PLANARCONFIG, &xuint16) != 0)
 			&& (xuint16 == PLANARCONFIG_SEPARATE ) ){
 				TIFFGetField(input, TIFFTAG_SAMPLESPERPIXEL, &xuint16);
+                if( (t2p->tiff_tiles[i].tiles_tilecount % xuint16) != 0 )
+                {
+                    TIFFError(
+                        TIFF2PDF_MODULE, 
+                        "Invalid tile count, %s", 
+                        TIFFFileName(input));
+                    t2p->t2p_error = T2P_ERR_ERROR;
+                    return;
+                }
 				t2p->tiff_tiles[i].tiles_tilecount/= xuint16;
 		}
 		if( t2p->tiff_tiles[i].tiles_tilecount > 0){
@@ -1552,6 +1561,22 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 #endif
 			break;
 		case PHOTOMETRIC_CIELAB:
+            if( t2p->tiff_samplesperpixel != 3){
+                TIFFError(
+                    TIFF2PDF_MODULE, 
+                    "Unsupported samplesperpixel = %d for CIELAB", 
+                    t2p->tiff_samplesperpixel);
+                t2p->t2p_error = T2P_ERR_ERROR;
+                return;
+            }
+            if( t2p->tiff_bitspersample != 8){
+                TIFFError(
+                    TIFF2PDF_MODULE, 
+                    "Invalid bitspersample = %d for CIELAB", 
+                    t2p->tiff_bitspersample);
+                t2p->t2p_error = T2P_ERR_ERROR;
+                return;
+            }
 			t2p->pdf_labrange[0]= -127;
 			t2p->pdf_labrange[1]= 127;
 			t2p->pdf_labrange[2]= -127;
@@ -1567,6 +1592,22 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 			t2p->pdf_colorspace=T2P_CS_LAB;
 			break;
 		case PHOTOMETRIC_ITULAB:
+            if( t2p->tiff_samplesperpixel != 3){
+                TIFFError(
+                    TIFF2PDF_MODULE, 
+                    "Unsupported samplesperpixel = %d for ITULAB", 
+                    t2p->tiff_samplesperpixel);
+                t2p->t2p_error = T2P_ERR_ERROR;
+                return;
+            }
+            if( t2p->tiff_bitspersample != 8){
+                TIFFError(
+                    TIFF2PDF_MODULE, 
+                    "Invalid bitspersample = %d for ITULAB", 
+                    t2p->tiff_bitspersample);
+                t2p->t2p_error = T2P_ERR_ERROR;
+                return;
+            }
 			t2p->pdf_labrange[0]=-85;
 			t2p->pdf_labrange[1]=85;
 			t2p->pdf_labrange[2]=-75;

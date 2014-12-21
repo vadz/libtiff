@@ -1205,9 +1205,10 @@ static int writeBufferToContigTiles (TIFF* out, uint8* buf, uint32 imagelength,
   tsize_t tilesize = TIFFTileSize(out);
   unsigned char *tilebuf = NULL;
 
-  TIFFGetField(out, TIFFTAG_TILELENGTH, &tl);
-  TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw);
-  TIFFGetField(out, TIFFTAG_BITSPERSAMPLE, &bps);
+  if( !TIFFGetField(out, TIFFTAG_TILELENGTH, &tl) ||
+      !TIFFGetField(out, TIFFTAG_TILEWIDTH, &tw) ||
+      !TIFFGetField(out, TIFFTAG_BITSPERSAMPLE, &bps) )
+      return 1;
 
   tile_buffsize = tilesize;
   if (tilesize < (tsize_t)(tl * tile_rowsize))

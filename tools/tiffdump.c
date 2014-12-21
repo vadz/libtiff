@@ -374,6 +374,8 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 		void* datamem;
 		uint64 dataoffset;
 		int datatruncated;
+        int datasizeoverflow;
+
 		tag = *(uint16*)dp;
 		if (swabflag)
 			TIFFSwabShort(&tag);
@@ -412,13 +414,14 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 		else
 			typewidth = datawidth[type];
 		datasize = count*typewidth;
+        datasizeoverflow = (typewidth > 0 && datasize / typewidth != count);
 		datafits = 1;
 		datamem = dp;
 		dataoffset = 0;
 		datatruncated = 0;
 		if (!bigtiff)
 		{
-			if (datasize>4)
+			if (datasizeoverflow || datasize>4)
 			{
 				uint32 dataoffset32;
 				datafits = 0;
@@ -432,7 +435,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 		}
 		else
 		{
-			if (datasize>8)
+			if (datasizeoverflow || datasize>8)
 			{
 				datafits = 0;
 				datamem = NULL;
@@ -442,7 +445,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 			}
 			dp += sizeof(uint64);
 		}
-		if (datasize>0x10000)
+		if (datasizeoverflow || datasize>0x10000)
 		{
 			datatruncated = 1;
 			count = 0x10000/typewidth;

@@ -403,6 +403,13 @@ main(int argc, char* argv[])
 
 		width = info_hdr.iWidth;
 		length = (info_hdr.iHeight > 0) ? info_hdr.iHeight : -info_hdr.iHeight;
+        if( width <= 0 || length <= 0 )
+        {
+            TIFFError(infilename,
+                  "Invalid dimensions of BMP file" );
+            close(fd);
+            return -1;
+        }
 
 		switch (info_hdr.iBitCount)
 		{
@@ -593,6 +600,14 @@ main(int argc, char* argv[])
 
 			compr_size = file_hdr.iSize - file_hdr.iOffBits;
 			uncompr_size = width * length;
+            /* Detect int overflow */
+            if( uncompr_size / width != length )
+            {
+                TIFFError(infilename,
+                    "Invalid dimensions of BMP file" );
+                close(fd);
+                return -1;
+            }
 			comprbuf = (unsigned char *) _TIFFmalloc( compr_size );
 			if (!comprbuf) {
 				TIFFError(infilename,

@@ -160,6 +160,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	TIFFDirectory* td = &tif->tif_dir;
 	int status = 1;
 	uint32 v32, i, v;
+    double dblval;
 	char* s;
 	const TIFFField *fip = TIFFFindField(tif, tag, TIFF_ANY);
 	uint32 standard_tag = tag;
@@ -284,10 +285,16 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 			setDoubleArrayOneValue(&td->td_smaxsamplevalue, va_arg(ap, double), td->td_samplesperpixel);
 		break;
 	case TIFFTAG_XRESOLUTION:
-		td->td_xresolution = (float) va_arg(ap, double);
+        dblval = va_arg(ap, double);
+        if( dblval < 0 )
+            goto badvaluedouble;
+		td->td_xresolution = (float) dblval;
 		break;
 	case TIFFTAG_YRESOLUTION:
-		td->td_yresolution = (float) va_arg(ap, double);
+        dblval = va_arg(ap, double);
+        if( dblval < 0 )
+            goto badvaluedouble;
+		td->td_yresolution = (float) dblval;
 		break;
 	case TIFFTAG_PLANARCONFIG:
 		v = (uint16) va_arg(ap, uint16_vap);
@@ -694,6 +701,16 @@ badvalue32:
 		va_end(ap);
         }
 	return (0);
+badvaluedouble:
+        {
+        const TIFFField* fip=TIFFFieldWithTag(tif,tag);
+        TIFFErrorExt(tif->tif_clientdata, module,
+             "%s: Bad value %f for \"%s\" tag",
+             tif->tif_name, dblval,
+             fip ? fip->field_name : "Unknown");
+        va_end(ap);
+        }
+    return (0);
 }
 
 /*
