@@ -1,5 +1,26 @@
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
+	* tools/tiffcp.c: fix crash when converting YCbCr JPEG-compressed to none.
+	Based on patch by Tomasz Buchert (http://bugzilla.maptools.org/show_bug.cgi?id=2480)
+	Description: fix for Debian bug #741451
+	tiffcp crashes when converting JPEG-encoded TIFF to a different
+	encoding (like none or lzw). For example this will probably fail:
+	tiffcp -c none jpeg_encoded_file.tif output.tif
+	The reason is that when the input file contains JPEG data,
+	the tiffcp code forces conversion to RGB space. However,
+	the output normally inherits YCbCr subsampling parameters
+	from the input, which leads to a smaller working buffer
+	than necessary. The buffer is subsequently overrun inside
+	cpStripToTile() (called from writeBufferToContigTiles).
+	Note that the resulting TIFF file would be scrambled even
+	if tiffcp wouldn't crash, since the output file would contain
+	RGB data intepreted as subsampled YCbCr values.
+	This patch fixes the problem by forcing RGB space on the output
+	TIF if the input is JPEG-encoded and output is *not* JPEG-encoded.
+	Author: Tomasz Buchert <tomasz.buchert@inria.fr>
+
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
 	Fix various crasher bugs on fuzzed images.
 	* libtiff/tif_dir.c: TIFFSetField(): refuse to set negative values for
 	TIFFTAG_XRESOLUTION and TIFFTAG_YRESOLUTION that cause asserts when writing
