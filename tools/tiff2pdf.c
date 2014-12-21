@@ -1166,7 +1166,15 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 			t2p->tiff_pages[i].page_tilecount;
 		if( (TIFFGetField(input, TIFFTAG_PLANARCONFIG, &xuint16) != 0)
 			&& (xuint16 == PLANARCONFIG_SEPARATE ) ){
-				TIFFGetField(input, TIFFTAG_SAMPLESPERPIXEL, &xuint16);
+				if( !TIFFGetField(input, TIFFTAG_SAMPLESPERPIXEL, &xuint16) )
+				{
+					TIFFError(
+                        TIFF2PDF_MODULE, 
+                        "Missing SamplesPerPixel, %s", 
+                        TIFFFileName(input));
+                    t2p->t2p_error = T2P_ERR_ERROR;
+                    return;
+				}
                 if( (t2p->tiff_tiles[i].tiles_tilecount % xuint16) != 0 )
                 {
                     TIFFError(

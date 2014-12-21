@@ -1,5 +1,10 @@
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
+	* tools/tiff2pdf.c: check return code of TIFFGetField() when reading
+	TIFFTAG_SAMPLESPERPIXEL
+
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
 	* tools/tiffcp.c: fix crash when converting YCbCr JPEG-compressed to none.
 	Based on patch by Tomasz Buchert (http://bugzilla.maptools.org/show_bug.cgi?id=2480)
 	Description: fix for Debian bug #741451
