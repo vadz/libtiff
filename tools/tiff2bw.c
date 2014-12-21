@@ -171,6 +171,11 @@ main(int argc, char* argv[])
 		    argv[optind], samplesperpixel);
 		return (-1);
 	}
+	if( photometric == PHOTOMETRIC_RGB && samplesperpixel != 3) {
+		fprintf(stderr, "%s: Bad samples/pixel %u for PHOTOMETRIC_RGB.\n",
+		    argv[optind], samplesperpixel);
+		return (-1);
+	}
 	TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
 	if (bitspersample != 8) {
 		fprintf(stderr,

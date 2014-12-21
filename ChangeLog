@@ -1,5 +1,11 @@
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
+	* tools/tiff2bw.c: when Photometric=RGB, the utility only works if
+	SamplesPerPixel = 3. Enforce that
+	http://bugzilla.maptools.org/show_bug.cgi?id=2485 (CVE-2014-8127)
+
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
 	* tools/pal2rgb.c, tools/thumbnail.c: fix crash by disabling TIFFTAG_INKNAMES
 	copying. The right fix would be to properly copy it, but not worth the burden
 	for those esoteric utilities.
