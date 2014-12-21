@@ -1,5 +1,10 @@
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
+	* libtiff/tif_next.c: check that BitsPerSample = 2. Fixes
+	http://bugzilla.maptools.org/show_bug.cgi?id=2487 (CVE-2014-8129)
+
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
 	* tools/tiff2pdf.c: check return code of TIFFGetField() when reading
 	TIFFTAG_SAMPLESPERPIXEL
 
