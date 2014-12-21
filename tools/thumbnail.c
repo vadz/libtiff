@@ -274,7 +274,26 @@ cpTags(TIFF* in, TIFF* out)
 {
     struct cpTag *p;
     for (p = tags; p < &tags[NTAGS]; p++)
-	cpTag(in, out, p->tag, p->count, p->type);
+	{
+		/* Horrible: but TIFFGetField() expects 2 arguments to be passed */
+		/* if we request a tag that is defined in a codec, but that codec */
+		/* isn't used */
+		if( p->tag == TIFFTAG_GROUP3OPTIONS )
+		{
+			uint16 compression;
+			if( !TIFFGetField(in, TIFFTAG_COMPRESSION, &compression) ||
+				compression != COMPRESSION_CCITTFAX3 )
+				continue;
+		}
+		if( p->tag == TIFFTAG_GROUP4OPTIONS )
+		{
+			uint16 compression;
+			if( !TIFFGetField(in, TIFFTAG_COMPRESSION, &compression) ||
+				compression != COMPRESSION_CCITTFAX4 )
+				continue;
+		}
+		cpTag(in, out, p->tag, p->count, p->type);
+	}
 }
 #undef NTAGS
 

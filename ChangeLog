@@ -1,5 +1,12 @@
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
+	* tools/thumbnail.c, tools/tiffcmp.c: only read/write TIFFTAG_GROUP3OPTIONS
+	or TIFFTAG_GROUP4OPTIONS if compression is COMPRESSION_CCITTFAX3 or
+	COMPRESSION_CCITTFAX4
+	http://bugzilla.maptools.org/show_bug.cgi?id=2493 (CVE-2014-8128)
+
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
 	* libtiff/tif_next.c: check that BitsPerSample = 2. Fixes
 	http://bugzilla.maptools.org/show_bug.cgi?id=2487 (CVE-2014-8129)
 
