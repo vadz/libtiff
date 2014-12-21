@@ -1,5 +1,12 @@
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
+	* tools/pal2rgb.c, tools/thumbnail.c: fix crash by disabling TIFFTAG_INKNAMES
+	copying. The right fix would be to properly copy it, but not worth the burden
+	for those esoteric utilities.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2484 (CVE-2014-8127)
+
+2014-12-21  Even Rouault  <even.rouault@spatialys.com>
+
 	* tools/thumbnail.c: fix out-of-buffer write
 	http://bugzilla.maptools.org/show_bug.cgi?id=2489 (CVE-2014-8128)
 
