@@ -1,3 +1,8 @@
+2014-12-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffdump.c: Guard against arithmetic overflow when
+	calculating allocation buffer sizes.
+
 2014-12-21  Even Rouault  <even.rouault@spatialys.com>
 
 	* tools/tiff2bw.c: when Photometric=RGB, the utility only works if
