@@ -4295,7 +4295,8 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 	TIFFDirectory *td = &tif->tif_dir;
 	uint32 strip;
 
-    _TIFFFillStriles( tif );
+    if( !_TIFFFillStriles( tif ) )
+        return -1;
 
 	if (td->td_stripbytecount)
 		_TIFFfree(td->td_stripbytecount);
