@@ -1,5 +1,10 @@
 2014-12-24  Even Rouault  <even.rouault@spatialys.com>
 
+	* libtiff/tif_getimage.c: avoid divide by zero on invalid YCbCr subsampling.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2235
+
+2014-12-24  Even Rouault  <even.rouault@spatialys.com>
+
 	* tools/tiff2pdf.c: fix buffer overflow on some YCbCr JPEG compressed images.
 	http://bugzilla.maptools.org/show_bug.cgi?id=2445
 
