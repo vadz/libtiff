@@ -1,5 +1,10 @@
 2014-12-24  Even Rouault  <even.rouault@spatialys.com>
 
+	* tools/tiff2pdf.c: fix buffer overflow on some YCbCr JPEG compressed images.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2445
+
+2014-12-24  Even Rouault  <even.rouault@spatialys.com>
+
 	* tools/tiff2pdf.c: fix buffer overflow on YCbCr JPEG compressed image.
 	Derived from patch by Petr Gajdos,
 	http://bugzilla.maptools.org/show_bug.cgi?id=2443

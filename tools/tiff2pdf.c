@@ -1954,9 +1954,11 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 			}
 			for(i=0;i<stripcount;i++){
 				k = checkAdd64(k, sbc[i], t2p);
-				k -=4; /* don't use SOI or EOI of strip */
+				k -=2; /* don't use EOI of strip */
+				k +=2; /* add space for restart marker */
 			}
 			k = checkAdd64(k, 2, t2p); /* use EOI of last strip */
+			k = checkAdd64(k, 6, t2p); /* for DRI marker of first strip */
 			t2p->tiff_datasize = (tsize_t) k;
 			if ((uint64) t2p->tiff_datasize != k) {
 				TIFFError(TIFF2PDF_MODULE, "Integer overflow");
