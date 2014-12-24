@@ -2408,7 +2408,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				TIFFReadEncodedStrip(input, 
 				i, 
 				(tdata_t) &buffer[bufferoffset], 
-				stripsize);
+				TIFFmin(stripsize, t2p->tiff_datasize - bufferoffset));
 			if(read==-1){
 				TIFFError(TIFF2PDF_MODULE, 
 					"Error on decoding strip %u of %s", 
@@ -2455,7 +2455,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 						TIFFReadEncodedStrip(input, 
 							i + j*stripcount, 
 							(tdata_t) &(samplebuffer[samplebufferoffset]), 
-							sepstripsize);
+							TIFFmin(sepstripsize, stripsize - samplebufferoffset));
 					if(read==-1){
 						TIFFError(TIFF2PDF_MODULE, 
 					"Error on decoding strip %u of %s", 
@@ -2495,7 +2495,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				TIFFReadEncodedStrip(input, 
 				i, 
 				(tdata_t) &buffer[bufferoffset], 
-				stripsize);
+				TIFFmin(stripsize, t2p->tiff_datasize - bufferoffset));
 			if(read==-1){
 				TIFFError(TIFF2PDF_MODULE, 
 					"Error on decoding strip %u of %s", 
