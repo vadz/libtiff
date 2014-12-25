@@ -1,3 +1,8 @@
+2014-12-25  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_getimage.c, libtiff/tif_ojpeg.c, libtiff/tif_zip.c: fix
+	various typos found by Debian lintian tool (GDAL #5756)
+
 2014-12-24  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_getimage.c: avoid divide by zero on invalid YCbCr subsampling.
