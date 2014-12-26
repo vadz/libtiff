@@ -340,12 +340,16 @@ _tiffisCloseProc(thandle_t fd)
 static int
 _tiffDummyMapProc(thandle_t , void** base, toff_t* size )
 {
+	(void) base;
+	(void) size;
 	return (0);
 }
 
 static void
 _tiffDummyUnmapProc(thandle_t , void* base, toff_t size )
 {
+	(void) base;
+	(void) size;
 }
 
 /*

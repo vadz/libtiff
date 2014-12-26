@@ -1,3 +1,7 @@
+2014-12-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_stream.cxx: Fix warnings about unused parameters.
+
 2014-12-25  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_getimage.c, libtiff/tif_ojpeg.c, libtiff/tif_zip.c: fix
