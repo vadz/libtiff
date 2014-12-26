@@ -1,5 +1,7 @@
 2014-12-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffgt.c: Fix warnings about unused parameters.
+
 	* libtiff/tif_stream.cxx: Fix warnings about unused parameters.
 
 2014-12-25  Even Rouault  <even.rouault@spatialys.com>
