@@ -367,11 +367,11 @@ char *super_fgets(char *b, int *blen, FILE *file)
 
 int main(int argc, char *argv[])
 {            
-  unsigned int
-    length;
+  /* unsigned int */
+  /*   length; */
 
-  unsigned char
-    *buffer;
+  /*unsigned char
+   *buffer;*/
 
   int
     i,
@@ -392,8 +392,8 @@ int main(int argc, char *argv[])
     }
 
   mode = 0;
-  length = -1;
-  buffer = (unsigned char *)NULL;
+  /* length = -1; */
+  /* buffer = (unsigned char *)NULL; */
 
   for (i=1; i<argc; i++)
   {
