@@ -1,5 +1,7 @@
 2014-12-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcrop.c: Fix warnings about variables set but not used.
+
 	* contrib/iptcutil/iptcutil.c: Fix warnings about variables set
 	but not used.
 
