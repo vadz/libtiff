@@ -1,3 +1,9 @@
+2014-12-27  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_dir.c: in TIFFDefaultDirectory(), reset any already existing
+	extented tags installed by user code through the extender mechaninm before
+	calling the extender callback (GDAL #5054)
+
 2014-12-26  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffcrop.c: Fix warnings about variables set but not used.
