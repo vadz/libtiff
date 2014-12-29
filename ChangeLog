@@ -1,6 +1,7 @@
-2014-12-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+2014-12-29  Even Rouault  <even.rouault@spatialys.com>
 
-	* Update bundled libtool to 2.4.4 release.
+	* libtiff/tif_getimage.c: move test on vertical value of YCbCr subsampling.
+	to avoid buffer leak (fix previous fix, found by Coverity scan)
 
 2014-12-29  Even Rouault  <even.rouault@spatialys.com>
 
