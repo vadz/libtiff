@@ -1,3 +1,12 @@
+2014-12-29  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_next.c: add new tests to check that we don't read outside of
+	the compressed input stream buffer.
+
+	* libtiff/tif_getimage.c: in OJPEG case, fix checks on strile width/height
+    in the putcontig8bitYCbCr42tile, putcontig8bitYCbCr41tile and
+    putcontig8bitYCbCr21tile cases.
+
 2014-12-27  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_dir.c: in TIFFDefaultDirectory(), reset any already existing
