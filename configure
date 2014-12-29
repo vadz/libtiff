@@ -661,10 +661,6 @@ HAVE_RPATH_FALSE
 HAVE_RPATH_TRUE
 LIBOBJS
 tiff_libs_private
-AM_BACKSLASH
-AM_DEFAULT_VERBOSITY
-AM_DEFAULT_V
-AM_V
 CXXCPP
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
@@ -724,6 +720,10 @@ LIBTIFF_MAJOR_VERSION
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
+AM_BACKSLASH
+AM_DEFAULT_VERBOSITY
+AM_DEFAULT_V
+AM_V
 am__untar
 am__tar
 AMTAR
@@ -796,6 +796,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_silent_rules
 enable_maintainer_mode
 enable_dependency_tracking
 enable_ld_version_script
@@ -803,10 +804,10 @@ enable_shared
 enable_static
 with_pic
 enable_fast_install
+with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
-enable_silent_rules
 enable_rpath
 enable_largefile
 with_docdir
@@ -1479,6 +1480,8 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-silent-rules   less verbose build output (undo: "make V=1")
+  --disable-silent-rules  verbose build output (undo: "make V=0")
   --enable-maintainer-mode
                           enable make rules and dependencies not useful (and
                           sometimes confusing) to the casual installer
@@ -1493,8 +1496,6 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
-  --enable-silent-rules   less verbose build output (undo: "make V=1")
-  --disable-silent-rules  verbose build output (undo: "make V=0")
   --enable-rpath          Enable runtime linker paths (-R libtool option)
   --disable-largefile     omit support for large files
   --disable-ccitt         disable support for CCITT Group 3 & 4 algorithms
@@ -1545,6 +1546,9 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
                           both]
+  --with-aix-soname=aix|svr4|both
+                          shared library versioning (aka "SONAME") variant to
+                          provide on AIX, [default=aix].
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
@@ -2834,7 +2838,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-am__api_version='1.12'
+am__api_version='1.14'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -3018,8 +3022,8 @@ if test x"${MISSING+set}" != xset; then
   esac
 fi
 # Use eval to expand $SHELL
-if eval "$MISSING --run true"; then
-  am_missing_run="$MISSING --run "
+if eval "$MISSING --is-lightweight"; then
+  am_missing_run="$MISSING "
 else
   am_missing_run=
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: 'missing' script is too old or missing" >&5
@@ -3259,6 +3263,45 @@ else
 fi
 rmdir .tst 2>/dev/null
 
+# Check whether --enable-silent-rules was given.
+if test "${enable_silent_rules+set}" = set; then :
+  enableval=$enable_silent_rules;
+fi
+
+case $enable_silent_rules in # (((
+  yes) AM_DEFAULT_VERBOSITY=0;;
+   no) AM_DEFAULT_VERBOSITY=1;;
+    *) AM_DEFAULT_VERBOSITY=1;;
+esac
+am_make=${MAKE-make}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $am_make supports nested variables" >&5
+$as_echo_n "checking whether $am_make supports nested variables... " >&6; }
+if ${am_cv_make_support_nested_variables+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if $as_echo 'TRUE=$(BAR$(V))
+BAR0=false
+BAR1=true
+V=1
+am__doit:
+	@$(TRUE)
+.PHONY: am__doit' | $am_make -f - >/dev/null 2>&1; then
+  am_cv_make_support_nested_variables=yes
+else
+  am_cv_make_support_nested_variables=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_make_support_nested_variables" >&5
+$as_echo "$am_cv_make_support_nested_variables" >&6; }
+if test $am_cv_make_support_nested_variables = yes; then
+    AM_V='$(V)'
+  AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
+else
+  AM_V=$AM_DEFAULT_VERBOSITY
+  AM_DEFAULT_V=$AM_DEFAULT_VERBOSITY
+fi
+AM_BACKSLASH='\'
+
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
   # is not polluted with repeated "-I."
@@ -3321,12 +3364,58 @@ mkdir_p='$(MKDIR_P)'
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
 
+
+# We'll loop over all known methods to create a tar archive until one works.
+_am_tools='gnutar  pax cpio none'
+
 am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
 
 
+
+# POSIX will say in a future version that running "rm -f" with no argument
+# is OK; and we want to be able to make that assumption in our Makefile
+# recipes.  So use an aggressive probe to check that the usage we want is
+# actually supported "in the wild" to an acceptable degree.
+# See automake bug#10828.
+# To make any issue more visible, cause the running configure to be aborted
+# by default if the 'rm' program in use doesn't match our expectations; the
+# user can still override this though.
+if rm -f && rm -fr && rm -rf; then : OK; else
+  cat >&2 <<'END'
+Oops!
+
+Your 'rm' program seems unable to run without file operands specified
+on the command line, even when the '-f' option is present.  This is contrary
+to the behaviour of most rm programs out there, and not conforming with
+the upcoming POSIX standard: <http://austingroupbugs.net/view.php?id=542>
+
+Please tell bug-automake@gnu.org about your system, including the value
+of your $PATH and any error possibly output before this message.  This
+can help us improve future automake versions.
+
+END
+  if test x"$ACCEPT_INFERIOR_RM_PROGRAM" = x"yes"; then
+    echo 'Configuration will proceed anyway, since you have set the' >&2
+    echo 'ACCEPT_INFERIOR_RM_PROGRAM variable to "yes"' >&2
+    echo >&2
+  else
+    cat >&2 <<'END'
+Aborting the configuration process, to ensure you take notice of the issue.
+
+You can download and install GNU coreutils to get an 'rm' implementation
+that behaves properly: <http://www.gnu.org/software/coreutils/>.
+
+If you want to complete the configuration process using your problematic
+'rm' anyway, export the environment variable ACCEPT_INFERIOR_RM_PROGRAM
+to "yes", and re-run configure.
+
+END
+    as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
+  fi
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
@@ -4172,6 +4261,65 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC understands -c and -o together" >&5
+$as_echo_n "checking whether $CC understands -c and -o together... " >&6; }
+if ${am_cv_prog_cc_c_o+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+  # Make sure it works both with $CC and with simple cc.
+  # Following AC_PROG_CC_C_O, we do the test twice because some
+  # compilers refuse to overwrite an existing .o file with -o,
+  # though they will create one.
+  am_cv_prog_cc_c_o=yes
+  for am_i in 1 2; do
+    if { echo "$as_me:$LINENO: $CC -c conftest.$ac_ext -o conftest2.$ac_objext" >&5
+   ($CC -c conftest.$ac_ext -o conftest2.$ac_objext) >&5 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); } \
+         && test -f conftest2.$ac_objext; then
+      : OK
+    else
+      am_cv_prog_cc_c_o=no
+      break
+    fi
+  done
+  rm -f core conftest*
+  unset am_i
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_prog_cc_c_o" >&5
+$as_echo "$am_cv_prog_cc_c_o" >&6; }
+if test "$am_cv_prog_cc_c_o" != yes; then
+   # Losing compiler, so override with the script.
+   # FIXME: It is wrong to rewrite CC.
+   # But if we don't then we get into trouble of one sort or another.
+   # A longer-term fix would be to have automake use am__CC in this case,
+   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
+   CC="$am_aux_dir/compile $CC"
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 DEPDIR="${am__leading_dot}deps"
 
 ac_config_commands="$ac_config_commands depfiles"
@@ -4364,131 +4512,6 @@ else
 fi
 
 
-if test "x$CC" != xcc; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC and cc understand -c and -o together" >&5
-$as_echo_n "checking whether $CC and cc understand -c and -o together... " >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether cc understands -c and -o together" >&5
-$as_echo_n "checking whether cc understands -c and -o together... " >&6; }
-fi
-set dummy $CC; ac_cc=`$as_echo "$2" |
-		      sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
-if eval \${ac_cv_prog_cc_${ac_cc}_c_o+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-# Make sure it works both with $CC and with simple cc.
-# We do the test twice because some compilers refuse to overwrite an
-# existing .o file with -o, though they will create one.
-ac_try='$CC -c conftest.$ac_ext -o conftest2.$ac_objext >&5'
-rm -f conftest2.*
-if { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } &&
-   test -f conftest2.$ac_objext && { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; };
-then
-  eval ac_cv_prog_cc_${ac_cc}_c_o=yes
-  if test "x$CC" != xcc; then
-    # Test first that cc exists at all.
-    if { ac_try='cc -c conftest.$ac_ext >&5'
-  { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; }; then
-      ac_try='cc -c conftest.$ac_ext -o conftest2.$ac_objext >&5'
-      rm -f conftest2.*
-      if { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } &&
-	 test -f conftest2.$ac_objext && { { case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_try") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; };
-      then
-	# cc works too.
-	:
-      else
-	# cc exists but doesn't like -o.
-	eval ac_cv_prog_cc_${ac_cc}_c_o=no
-      fi
-    fi
-  fi
-else
-  eval ac_cv_prog_cc_${ac_cc}_c_o=no
-fi
-rm -f core conftest*
-
-fi
-if eval test \$ac_cv_prog_cc_${ac_cc}_c_o = yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-$as_echo "#define NO_MINUS_C_MINUS_O 1" >>confdefs.h
-
-fi
-
-# FIXME: we rely on the cache variable name because
-# there is no other way.
-set dummy $CC
-am_cc=`echo $2 | sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
-eval am_t=\$ac_cv_prog_cc_${am_cc}_c_o
-if test "$am_t" != yes; then
-   # Losing compiler, so override with the script.
-   # FIXME: It is wrong to rewrite CC.
-   # But if we don't then we get into trouble of one sort or another.
-   # A longer-term fix would be to have automake use am__CC in this case,
-   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
-   CC="$am_aux_dir/compile $CC"
-fi
-
 
 
 
@@ -4678,8 +4701,8 @@ esac
 
 
 
-macro_version='2.4.2.458.26-92994'
-macro_revision='2.4.3'
+macro_version='2.4.4'
+macro_revision='2.4.4'
 
 
 
@@ -5964,6 +5987,9 @@ sysv4 | sysv4.3*)
   ;;
 
 tpf*)
+  lt_cv_deplibs_check_method=pass_all
+  ;;
+os2*)
   lt_cv_deplibs_check_method=pass_all
   ;;
 esac
@@ -8731,6 +8757,58 @@ fi
 
 
 
+  shared_archive_member_spec=
+case $host,$enable_shared in
+power*-*-aix[5-9]*,yes)
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking which variant of shared library versioning to provide" >&5
+$as_echo_n "checking which variant of shared library versioning to provide... " >&6; }
+
+# Check whether --with-aix-soname was given.
+if test "${with_aix_soname+set}" = set; then :
+  withval=$with_aix_soname; case $withval in
+    aix|svr4|both)
+      ;;
+    *)
+      as_fn_error $? "Unknown argument to --with-aix-soname" "$LINENO" 5
+      ;;
+    esac
+    lt_cv_with_aix_soname=$with_aix_soname
+else
+  if ${lt_cv_with_aix_soname+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  lt_cv_with_aix_soname=aix
+fi
+
+    with_aix_soname=$lt_cv_with_aix_soname
+fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_aix_soname" >&5
+$as_echo "$with_aix_soname" >&6; }
+  if test aix != "$with_aix_soname"; then
+    # For the AIX way of multilib, we name the shared archive member
+    # based on the bitwidth used, traditionally 'shr.o' or 'shr_64.o',
+    # and 'shr.imp' or 'shr_64.imp', respectively, for the Import File.
+    # Even when GNU compilers ignore OBJECT_MODE but need '-maix64' flag,
+    # the AIX toolchain works better with OBJECT_MODE set (default 32).
+    if test 64 = "${OBJECT_MODE-32}"; then
+      shared_archive_member_spec=shr_64
+    else
+      shared_archive_member_spec=shr
+    fi
+  fi
+  ;;
+*)
+  with_aix_soname=aix
+  ;;
+esac
+
+
+
+
+
+
+
 
 
 
@@ -9169,6 +9247,11 @@ lt_prog_compiler_static=
       # Although the cygwin gcc ignores -fPIC, still need this for old-style
       # (--disable-auto-import) libraries
       lt_prog_compiler_pic='-DDLL_EXPORT'
+      case $host_os in
+      os2*)
+	lt_prog_compiler_static='$wl-static'
+	;;
+      esac
       ;;
 
     darwin* | rhapsody*)
@@ -9265,6 +9348,11 @@ lt_prog_compiler_static=
       # This hack is so that the source file can tell whether it is being
       # built for inclusion in a dll (and should export symbols for example).
       lt_prog_compiler_pic='-DDLL_EXPORT'
+      case $host_os in
+      os2*)
+	lt_prog_compiler_static='$wl-static'
+	;;
+      esac
       ;;
 
     hpux9* | hpux10* | hpux11*)
@@ -9905,6 +9993,34 @@ _LT_EOF
       link_all_deplibs=yes
       ;;
 
+    os2*)
+      hardcode_libdir_flag_spec='-L$libdir'
+      hardcode_minus_L=yes
+      allow_undefined_flag=unsupported
+      shrext_cmds=.dll
+      archive_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	$ECHO EXPORTS >> $output_objdir/$libname.def~
+	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
+	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
+	emximp -o $lib $output_objdir/$libname.def'
+      archive_expsym_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	$ECHO EXPORTS >> $output_objdir/$libname.def~
+	prefix_cmds="$SED"~
+	if test EXPORTS = "`$SED 1q $export_symbols`"; then
+	  prefix_cmds="$prefix_cmds -e 1d";
+	fi~
+	prefix_cmds="$prefix_cmds -e \"s/^\(.*\)$/_\1/g\""~
+	cat $export_symbols | $prefix_cmds >> $output_objdir/$libname.def~
+	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
+	emximp -o $lib $output_objdir/$libname.def'
+      old_archive_From_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
+      enable_shared_with_static_runtimes=yes
+      ;;
+
     interix[3-9]*)
       hardcode_direct=no
       hardcode_shlibpath_var=no
@@ -9978,6 +10094,9 @@ _LT_EOF
         fi
 
 	case $cc_basename in
+	tcc*)
+	  export_dynamic_flag_spec='-rdynamic'
+	  ;;
 	xlf* | bgf* | bgxlf* | mpixlf*)
 	  # IBM XL Fortran 10.1 on PPC cannot create shared libs itself
 	  whole_archive_flag_spec='--whole-archive$convenience --no-whole-archive'
@@ -10107,19 +10226,35 @@ _LT_EOF
 	no_entry_flag=
       else
 	# If we're using GNU nm, then we don't want the "-C" option.
-	# -C means demangle to AIX nm, but means don't demangle with GNU nm
-	# Also, AIX nm treats weak defined symbols like other global
-	# defined symbols, whereas GNU nm marks them as "W".
+	# -C means demangle to GNU nm, but means don't demangle to AIX nm.
+	# Without the "-l" option, or with the "-B" option, AIX nm treats
+	# weak defined symbols like other global defined symbols, whereas
+	# GNU nm marks them as "W".
+	# While the 'weak' keyword is ignored in the Export File, we need
+	# it in the Import File for the 'aix-soname' feature, so we have
+	# to replace the "-B" option with "-P" for AIX nm.
 	if $NM -V 2>&1 | $GREP 'GNU' > /dev/null; then
-	  export_symbols_cmds='$NM -Bpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W")) && (substr(\$ 3,1,1) != ".")) { print \$ 3 } }'\'' | sort -u > $export_symbols'
+	  export_symbols_cmds='$NM -Bpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W")) && (substr(\$ 3,1,1) != ".")) { if (\$ 2 == "W") { print \$ 3 " weak" } else { print \$ 3 } } }'\'' | sort -u > $export_symbols'
 	else
-	  export_symbols_cmds='$NM -BCpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B")) && (substr(\$ 3,1,1) != ".")) { print \$ 3 } }'\'' | sort -u > $export_symbols'
+	  export_symbols_cmds='`func_echo_all $NM | $SED -e '\''s/B\([^B]*\)$/P\1/'\''` -PCpgl $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) && (substr(\$ 1,1,1) != ".")) { if ((\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) { print \$ 1 " weak" } else { print \$ 1 } } }'\'' | sort -u > $export_symbols'
 	fi
 	aix_use_runtimelinking=no
 
 	# Test if we are trying to use run time linking or normal
 	# AIX style linking. If -brtl is somewhere in LDFLAGS, we
-	# need to do runtime linking.
+	# have runtime linking enabled, and use it for executables.
+	# For shared libraries, we enable/disable runtime linking
+	# depending on the kind of the shared library created -
+	# when "with_aix_soname,aix_use_runtimelinking" is:
+	# "aix,no"   lib.a(lib.so.V) shared, rtl:no,  for executables
+	# "aix,yes"  lib.so          shared, rtl:yes, for executables
+	#            lib.a           static archive
+	# "both,no"  lib.so.V(shr.o) shared, rtl:yes
+	#            lib.a(lib.so.V) shared, rtl:no,  for executables
+	# "both,yes" lib.so.V(shr.o) shared, rtl:yes, for executables
+	#            lib.a(lib.so.V) shared, rtl:no
+	# "svr4,*"   lib.so.V(shr.o) shared, rtl:yes, for executables
+	#            lib.a           static archive
 	case $host_os in aix4.[23]|aix4.[23].*|aix[5-9]*)
 	  for ld_flag in $LDFLAGS; do
 	  if (test x-brtl = "x$ld_flag" || test x-Wl,-brtl = "x$ld_flag"); then
@@ -10127,6 +10262,13 @@ _LT_EOF
 	    break
 	  fi
 	  done
+	  if test svr4,no = "$with_aix_soname,$aix_use_runtimelinking"; then
+	    # With aix-soname=svr4, we create the lib.so.V shared archives only,
+	    # so we don't have lib.a shared libs to link our executables.
+	    # We have to force runtime linking in this case.
+	    aix_use_runtimelinking=yes
+	    LDFLAGS="$LDFLAGS -Wl,-brtl"
+	  fi
 	  ;;
 	esac
 
@@ -10146,6 +10288,14 @@ _LT_EOF
       hardcode_libdir_separator=':'
       link_all_deplibs=yes
       file_list_spec='$wl-f,'
+      case $with_aix_soname,$aix_use_runtimelinking in
+      aix,*) ;; # traditional, no import file
+      svr4,* | *,yes) # use import file
+	# The Import File defines what to hardcode.
+	hardcode_direct=no
+	hardcode_direct_absolute=no
+	;;
+      esac
 
       if test yes = "$GCC"; then
 	case $host_os in aix4.[012]|aix4.[012].*)
@@ -10173,6 +10323,11 @@ _LT_EOF
 	if test yes = "$aix_use_runtimelinking"; then
 	  shared_flag="$shared_flag "'$wl-G'
 	fi
+	# Need to ensure runtime linking is disabled for the traditional
+	# shared library, or the linker may eventually find shared libraries
+	# /with/ Import File - we do not want to mix them.
+	shared_flag_aix='-shared'
+	shared_flag_svr4='-shared $wl-G'
       else
 	# not using gcc
 	if test ia64 = "$host_cpu"; then
@@ -10185,6 +10340,8 @@ _LT_EOF
 	  else
 	    shared_flag='$wl-bM:SRE'
 	  fi
+	  shared_flag_aix='$wl-bM:SRE'
+	  shared_flag_svr4='$wl-G'
 	fi
       fi
 
@@ -10192,7 +10349,7 @@ _LT_EOF
       # It seems that -bexpall does not export symbols beginning with
       # underscore (_), so it is better to generate a list of symbols to export.
       always_export_symbols=yes
-      if test yes = "$aix_use_runtimelinking"; then
+      if test aix,yes = "$with_aix_soname,$aix_use_runtimelinking"; then
 	# Warning - without using the other runtime loading flags (-brtl),
 	# -berok will link without error, but may produce a broken library.
 	allow_undefined_flag='-berok'
@@ -10307,8 +10464,20 @@ fi
 	    whole_archive_flag_spec='$convenience'
 	  fi
 	  archive_cmds_need_lc=yes
-	  # This is similar to how AIX traditionally builds its shared libraries.
-	  archive_expsym_cmds="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $wl-bnoentry $compiler_flags $wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
+	  archive_expsym_cmds='$RM -r $output_objdir/$realname.d~$MKDIR $output_objdir/$realname.d'
+	  # -brtl affects multiple linker settings, -berok does not and is overridden later
+	  compiler_flags_filtered='`func_echo_all "$compiler_flags " | $SED -e "s%-brtl\\([, ]\\)%-berok\\1%g"`'
+	  if test svr4 != "$with_aix_soname"; then
+	    # This is similar to how AIX traditionally builds its shared libraries.
+	    archive_expsym_cmds="$archive_expsym_cmds"'~$CC '$shared_flag_aix' -o $output_objdir/$realname.d/$soname $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$realname.d/$soname'
+	  fi
+	  if test aix != "$with_aix_soname"; then
+	    archive_expsym_cmds="$archive_expsym_cmds"'~$CC '$shared_flag_svr4' -o $output_objdir/$realname.d/$shared_archive_member_spec.o $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$STRIP -e $output_objdir/$realname.d/$shared_archive_member_spec.o~( func_echo_all "#! $soname($shared_archive_member_spec.o)"; if test shr_64 = "$shared_archive_member_spec"; then func_echo_all "# 64"; else func_echo_all "# 32"; fi; cat $export_symbols ) > $output_objdir/$realname.d/$shared_archive_member_spec.imp~$AR $AR_FLAGS $output_objdir/$soname $output_objdir/$realname.d/$shared_archive_member_spec.o $output_objdir/$realname.d/$shared_archive_member_spec.imp'
+	  else
+	    # used by -dlpreopen to get the symbols
+	    archive_expsym_cmds="$archive_expsym_cmds"'~$MV  $output_objdir/$realname.d/$soname $output_objdir'
+	  fi
+	  archive_expsym_cmds="$archive_expsym_cmds"'~$RM -r $output_objdir/$realname.d'
 	fi
       fi
       ;;
@@ -10627,6 +10796,16 @@ $as_echo "$lt_cv_irix_exported_symbol" >&6; }
       link_all_deplibs=yes
       ;;
 
+    linux*)
+      case $cc_basename in
+      tcc*)
+	# Fabrice Bellard et al's Tiny C Compiler
+	ld_shlibs=yes
+	archive_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $compiler_flags'
+	;;
+      esac
+      ;;
+
     netbsd*)
       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
 	archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
@@ -10672,8 +10851,28 @@ $as_echo "$lt_cv_irix_exported_symbol" >&6; }
       hardcode_libdir_flag_spec='-L$libdir'
       hardcode_minus_L=yes
       allow_undefined_flag=unsupported
-      archive_cmds='$ECHO "LIBRARY $libname INITINSTANCE" > $output_objdir/$libname.def~$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~echo DATA >> $output_objdir/$libname.def~echo " SINGLE NONSHARED" >> $output_objdir/$libname.def~echo EXPORTS >> $output_objdir/$libname.def~emxexp $libobjs >> $output_objdir/$libname.def~$CC -Zdll -Zcrtdll -o $lib $libobjs $deplibs $compiler_flags $output_objdir/$libname.def'
-      old_archive_from_new_cmds='emximp -o $output_objdir/$libname.a $output_objdir/$libname.def'
+      shrext_cmds=.dll
+      archive_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	$ECHO EXPORTS >> $output_objdir/$libname.def~
+	emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
+	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
+	emximp -o $lib $output_objdir/$libname.def'
+      archive_expsym_cmds='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	$ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	$ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	$ECHO EXPORTS >> $output_objdir/$libname.def~
+	prefix_cmds="$SED"~
+	if test EXPORTS = "`$SED 1q $export_symbols`"; then
+	  prefix_cmds="$prefix_cmds -e 1d";
+	fi~
+	prefix_cmds="$prefix_cmds -e \"s/^\(.*\)$/_\1/g\""~
+	cat $export_symbols | $prefix_cmds >> $output_objdir/$libname.def~
+	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
+	emximp -o $lib $output_objdir/$libname.def'
+      old_archive_From_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
+      enable_shared_with_static_runtimes=yes
       ;;
 
     osf3*)
@@ -11232,20 +11431,70 @@ aix[4-9]*)
       fi
       ;;
     esac
+    # Using Import Files as archive members, it is possible to support
+    # filename-based versioning of shared library archives on AIX. While
+    # this would work for both with and without runtime linking, it will
+    # prevent static linking of such archives. So we do filename-based
+    # shared library versioning with .so extension only, which is used
+    # when both runtime linking and shared linking is enabled.
+    # Unfortunately, runtime linking may impact performance, so we do
+    # not want this to be the default eventually. Also, we use the
+    # versioned .so libs for executables only if there is the -brtl
+    # linker flag in LDFLAGS as well, or --with-aix-soname=svr4 only.
+    # To allow for filename-based versioning support, we need to create
+    # libNAME.so.V as an archive file, containing:
+    # *) an Import File, referring to the versioned filename of the
+    #    archive as well as the shared archive member, telling the
+    #    bitwidth (32 or 64) of that shared object, and providing the
+    #    list of exported symbols of that shared object, eventually
+    #    decorated with the 'weak' keyword
+    # *) the shared object with the F_LOADONLY flag set, to really avoid
+    #    it being seen by the linker.
+    # At run time we better use the real file rather than another symlink,
+    # but for link time we create the symlink libNAME.so -> libNAME.so.V
+
+    case $with_aix_soname,$aix_use_runtimelinking in
     # AIX (on Power*) has no versioning support, so currently we cannot hardcode correct
     # soname into executable. Probably we can add versioning support to
     # collect2, so additional links can be useful in future.
-    if test yes = "$aix_use_runtimelinking"; then
+    aix,yes) # traditional libtool
+      dynamic_linker='AIX unversionable lib.so'
       # If using run time linking (on AIX 4.2 or later) use lib<name>.so
       # instead of lib<name>.a to let people know that these are not
       # typical AIX shared libraries.
       library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
-    else
+      ;;
+    aix,no) # traditional AIX only
+      dynamic_linker='AIX lib.a(lib.so.V)'
       # We preserve .a as extension for shared libraries through AIX4.2
       # and later when we are not doing run time linking.
       library_names_spec='$libname$release.a $libname.a'
       soname_spec='$libname$release$shared_ext$major'
-    fi
+      ;;
+    svr4,*) # full svr4 only
+      dynamic_linker="AIX lib.so.V($shared_archive_member_spec.o)"
+      library_names_spec='$libname$release$shared_ext$major $libname$shared_ext'
+      # We do not specify a path in Import Files, so LIBPATH fires.
+      shlibpath_overrides_runpath=yes
+      ;;
+    *,yes) # both, prefer svr4
+      dynamic_linker="AIX lib.so.V($shared_archive_member_spec.o), lib.a(lib.so.V)"
+      library_names_spec='$libname$release$shared_ext$major $libname$shared_ext'
+      # unpreferred sharedlib libNAME.a needs extra handling
+      postinstall_cmds='test -n "$linkname" || linkname="$realname"~func_stripname "" ".so" "$linkname"~$install_shared_prog "$dir/$func_stripname_result.$libext" "$destdir/$func_stripname_result.$libext"~test -z "$tstripme" || test -z "$striplib" || $striplib "$destdir/$func_stripname_result.$libext"'
+      postuninstall_cmds='for n in $library_names $old_library; do :; done~func_stripname "" ".so" "$n"~test "$func_stripname_result" = "$n" || func_append rmfiles " $odir/$func_stripname_result.$libext"'
+      # We do not specify a path in Import Files, so LIBPATH fires.
+      shlibpath_overrides_runpath=yes
+      ;;
+    *,no) # both, prefer aix
+      dynamic_linker="AIX lib.a(lib.so.V), lib.so.V($shared_archive_member_spec.o)"
+      library_names_spec='$libname$release.a $libname.a'
+      soname_spec='$libname$release$shared_ext$major'
+      # unpreferred sharedlib libNAME.so.V and symlink libNAME.so need extra handling
+      postinstall_cmds='test -z "$dlname" || $install_shared_prog $dir/$dlname $destdir/$dlname~test -z "$tstripme" || test -z "$striplib" || $striplib $destdir/$dlname~test -n "$linkname" || linkname=$realname~func_stripname "" ".a" "$linkname"~(cd "$destdir" && $LN_S -f $dlname $func_stripname_result.so)'
+      postuninstall_cmds='test -z "$dlname" || func_append rmfiles " $odir/$dlname"~for n in $old_library $library_names; do :; done~func_stripname "" ".a" "$n"~func_append rmfiles " $odir/$func_stripname_result.so"'
+      ;;
+    esac
     shlibpath_var=LIBPATH
   fi
   ;;
@@ -11433,7 +11682,7 @@ freebsd* | dragonfly*)
   version_type=freebsd-$objformat
   case $version_type in
     freebsd-elf*)
-      library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext $libname$shared_ext'
+      library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
       need_version=no
       need_lib_prefix=no
       ;;
@@ -11717,11 +11966,32 @@ openbsd* | bitrig*)
 
 os2*)
   libname_spec='$name'
+  version_type=windows
   shrext_cmds=.dll
+  need_version=no
   need_lib_prefix=no
-  library_names_spec='$libname$shared_ext $libname.a'
+  # OS/2 can only load a DLL with a base name of 8 characters or less.
+  soname_spec='`test -n "$os2dllname" && libname="$os2dllname";
+    v=$($ECHO $release$versuffix | tr -d .-);
+    n=$($ECHO $libname | cut -b -$((8 - ${#v})) | tr . _);
+    $ECHO $n$v`$shared_ext'
+  library_names_spec='${libname}_dll.$libext'
   dynamic_linker='OS/2 ld.exe'
-  shlibpath_var=LIBPATH
+  shlibpath_var=BEGINLIBPATH
+  sys_lib_search_path_spec="/lib /usr/lib /usr/local/lib"
+  sys_lib_dlsearch_path_spec=$sys_lib_search_path_spec
+  postinstall_cmds='base_file=`basename \$file`~
+    dlpath=`$SHELL 2>&1 -c '\''. $dir/'\''\$base_file'\''i; $ECHO \$dlname'\''`~
+    dldir=$destdir/`dirname \$dlpath`~
+    test -d \$dldir || mkdir -p \$dldir~
+    $install_prog $dir/$dlname \$dldir/$dlname~
+    chmod a+x \$dldir/$dlname~
+    if test -n '\''$stripme'\'' && test -n '\''$striplib'\''; then
+      eval '\''$striplib \$dldir/$dlname'\'' || exit \$?;
+    fi'
+  postuninstall_cmds='dldll=`$SHELL 2>&1 -c '\''. $file; $ECHO \$dlname'\''`~
+    dlpath=$dir/\$dldll~
+    $RM \$dlpath'
   ;;
 
 osf3* | osf4* | osf5*)
@@ -11797,7 +12067,7 @@ sysv4*MP*)
   ;;
 
 sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
-  version_type=freebsd-elf
+  version_type=sco
   need_lib_prefix=no
   need_version=no
   library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext $libname$shared_ext'
@@ -12326,7 +12596,7 @@ else
 #  endif
 #endif
 
-/* When -fvisbility=hidden is used, assume the code has been annotated
+/* When -fvisibility=hidden is used, assume the code has been annotated
    correspondingly for the symbols needed.  */
 #if defined __GNUC__ && (((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3))
 int fnord () __attribute__((visibility("default")));
@@ -12432,7 +12702,7 @@ else
 #  endif
 #endif
 
-/* When -fvisbility=hidden is used, assume the code has been annotated
+/* When -fvisibility=hidden is used, assume the code has been annotated
    correspondingly for the symbols needed.  */
 #if defined __GNUC__ && (((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3))
 int fnord () __attribute__((visibility("default")));
@@ -12581,8 +12851,12 @@ $as_echo_n "checking whether to build shared libraries... " >&6; }
     ;;
 
   aix[4-9]*)
-    if test ia64 != "$host_cpu" && test no = "$aix_use_runtimelinking"; then
-      test yes = "$enable_shared" && enable_static=no
+    if test ia64 != "$host_cpu"; then
+      case $enable_shared,$with_aix_soname,$aix_use_runtimelinking in
+      yes,aix,yes) ;;			# shared object as lib.so file only
+      yes,svr4,*) ;;			# shared object as lib.so archive member only
+      yes,*) enable_static=no ;;	# shared object in lib.a archive as well
+      esac
     fi
     ;;
   esac
@@ -13467,7 +13741,19 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
 
           # Test if we are trying to use run time linking or normal
           # AIX style linking. If -brtl is somewhere in LDFLAGS, we
-          # need to do runtime linking.
+          # have runtime linking enabled, and use it for executables.
+          # For shared libraries, we enable/disable runtime linking
+          # depending on the kind of the shared library created -
+          # when "with_aix_soname,aix_use_runtimelinking" is:
+          # "aix,no"   lib.a(lib.so.V) shared, rtl:no,  for executables
+          # "aix,yes"  lib.so          shared, rtl:yes, for executables
+          #            lib.a           static archive
+          # "both,no"  lib.so.V(shr.o) shared, rtl:yes
+          #            lib.a(lib.so.V) shared, rtl:no,  for executables
+          # "both,yes" lib.so.V(shr.o) shared, rtl:yes, for executables
+          #            lib.a(lib.so.V) shared, rtl:no
+          # "svr4,*"   lib.so.V(shr.o) shared, rtl:yes, for executables
+          #            lib.a           static archive
           case $host_os in aix4.[23]|aix4.[23].*|aix[5-9]*)
 	    for ld_flag in $LDFLAGS; do
 	      case $ld_flag in
@@ -13477,6 +13763,13 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
 	        ;;
 	      esac
 	    done
+	    if test svr4,no = "$with_aix_soname,$aix_use_runtimelinking"; then
+	      # With aix-soname=svr4, we create the lib.so.V shared archives only,
+	      # so we don't have lib.a shared libs to link our executables.
+	      # We have to force runtime linking in this case.
+	      aix_use_runtimelinking=yes
+	      LDFLAGS="$LDFLAGS -Wl,-brtl"
+	    fi
 	    ;;
           esac
 
@@ -13496,6 +13789,14 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
         hardcode_libdir_separator_CXX=':'
         link_all_deplibs_CXX=yes
         file_list_spec_CXX='$wl-f,'
+        case $with_aix_soname,$aix_use_runtimelinking in
+        aix,*) ;;	# no import file
+        svr4,* | *,yes) # use import file
+          # The Import File defines what to hardcode.
+          hardcode_direct_CXX=no
+          hardcode_direct_absolute_CXX=no
+          ;;
+        esac
 
         if test yes = "$GXX"; then
           case $host_os in aix4.[012]|aix4.[012].*)
@@ -13522,6 +13823,11 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
 	  if test yes = "$aix_use_runtimelinking"; then
 	    shared_flag=$shared_flag' $wl-G'
 	  fi
+	  # Need to ensure runtime linking is disabled for the traditional
+	  # shared library, or the linker may eventually find shared libraries
+	  # /with/ Import File - we do not want to mix them.
+	  shared_flag_aix='-shared'
+	  shared_flag_svr4='-shared $wl-G'
         else
           # not using gcc
           if test ia64 = "$host_cpu"; then
@@ -13534,6 +13840,8 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
 	    else
 	      shared_flag='$wl-bM:SRE'
 	    fi
+	    shared_flag_aix='$wl-bM:SRE'
+	    shared_flag_svr4='$wl-G'
           fi
         fi
 
@@ -13542,10 +13850,11 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
         # underscore (_), so it is better to generate a list of symbols to
 	# export.
         always_export_symbols_CXX=yes
-        if test yes = "$aix_use_runtimelinking"; then
+	if test aix,yes = "$with_aix_soname,$aix_use_runtimelinking"; then
           # Warning - without using the other runtime loading flags (-brtl),
           # -berok will link without error, but may produce a broken library.
-          allow_undefined_flag_CXX='-berok'
+          # The "-G" linker flag allows undefined symbols.
+          no_undefined_flag_CXX='-bernotok'
           # Determine the default libpath from the value encoded in an empty
           # executable.
           if test set = "${lt_cv_aix_libpath+set}"; then
@@ -13658,9 +13967,21 @@ fi
 	      whole_archive_flag_spec_CXX='$convenience'
 	    fi
 	    archive_cmds_need_lc_CXX=yes
-	    # This is similar to how AIX traditionally builds its shared
-	    # libraries.
-	    archive_expsym_cmds_CXX="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $wl-bnoentry $compiler_flags $wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
+	    archive_expsym_cmds_CXX='$RM -r $output_objdir/$realname.d~$MKDIR $output_objdir/$realname.d'
+	    # -brtl affects multiple linker settings, -berok does not and is overridden later
+	    compiler_flags_filtered='`func_echo_all "$compiler_flags " | $SED -e "s%-brtl\\([, ]\\)%-berok\\1%g"`'
+	    if test svr4 != "$with_aix_soname"; then
+	      # This is similar to how AIX traditionally builds its shared
+	      # libraries. Need -bnortl late, we may have -brtl in LDFLAGS.
+	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$CC '$shared_flag_aix' -o $output_objdir/$realname.d/$soname $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$realname.d/$soname'
+	    fi
+	    if test aix != "$with_aix_soname"; then
+	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$CC '$shared_flag_svr4' -o $output_objdir/$realname.d/$shared_archive_member_spec.o $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$STRIP -e $output_objdir/$realname.d/$shared_archive_member_spec.o~( func_echo_all "#! $soname($shared_archive_member_spec.o)"; if test shr_64 = "$shared_archive_member_spec"; then func_echo_all "# 64"; else func_echo_all "# 32"; fi; cat $export_symbols ) > $output_objdir/$realname.d/$shared_archive_member_spec.imp~$AR $AR_FLAGS $output_objdir/$soname $output_objdir/$realname.d/$shared_archive_member_spec.o $output_objdir/$realname.d/$shared_archive_member_spec.imp'
+	    else
+	      # used by -dlpreopen to get the symbols
+	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$MV  $output_objdir/$realname.d/$soname $output_objdir'
+	    fi
+	    archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$RM -r $output_objdir/$realname.d'
           fi
         fi
         ;;
@@ -13790,6 +14111,34 @@ fi
   ld_shlibs_CXX=no
   fi
 
+	;;
+
+      os2*)
+	hardcode_libdir_flag_spec_CXX='-L$libdir'
+	hardcode_minus_L_CXX=yes
+	allow_undefined_flag_CXX=unsupported
+	shrext_cmds=.dll
+	archive_cmds_CXX='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	  $ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	  $ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	  $ECHO EXPORTS >> $output_objdir/$libname.def~
+	  emxexp $libobjs | $SED /"_DLL_InitTerm"/d >> $output_objdir/$libname.def~
+	  $CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
+	  emximp -o $lib $output_objdir/$libname.def'
+	archive_expsym_cmds_CXX='$ECHO "LIBRARY ${soname%$shared_ext} INITINSTANCE TERMINSTANCE" > $output_objdir/$libname.def~
+	  $ECHO "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~
+	  $ECHO "DATA MULTIPLE NONSHARED" >> $output_objdir/$libname.def~
+	  $ECHO EXPORTS >> $output_objdir/$libname.def~
+	  prefix_cmds="$SED"~
+	  if test EXPORTS = "`$SED 1q $export_symbols`"; then
+	    prefix_cmds="$prefix_cmds -e 1d";
+	  fi~
+	  prefix_cmds="$prefix_cmds -e \"s/^\(.*\)$/_\1/g\""~
+	  cat $export_symbols | $prefix_cmds >> $output_objdir/$libname.def~
+	  $CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
+	  emximp -o $lib $output_objdir/$libname.def'
+	old_archive_From_new_cmds_CXX='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
+	enable_shared_with_static_runtimes_CXX=yes
 	;;
 
       dgux*)
@@ -14718,6 +15067,11 @@ lt_prog_compiler_static_CXX=
       # Although the cygwin gcc ignores -fPIC, still need this for old-style
       # (--disable-auto-import) libraries
       lt_prog_compiler_pic_CXX='-DDLL_EXPORT'
+      case $host_os in
+      os2*)
+	lt_prog_compiler_static_CXX='$wl-static'
+	;;
+      esac
       ;;
     darwin* | rhapsody*)
       # PIC is the default on this platform
@@ -15255,13 +15609,17 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
   case $host_os in
   aix[4-9]*)
     # If we're using GNU nm, then we don't want the "-C" option.
-    # -C means demangle to AIX nm, but means don't demangle with GNU nm
-    # Also, AIX nm treats weak defined symbols like other global defined
-    # symbols, whereas GNU nm marks them as "W".
+    # -C means demangle to GNU nm, but means don't demangle to AIX nm.
+    # Without the "-l" option, or with the "-B" option, AIX nm treats
+    # weak defined symbols like other global defined symbols, whereas
+    # GNU nm marks them as "W".
+    # While the 'weak' keyword is ignored in the Export File, we need
+    # it in the Import File for the 'aix-soname' feature, so we have
+    # to replace the "-B" option with "-P" for AIX nm.
     if $NM -V 2>&1 | $GREP 'GNU' > /dev/null; then
-      export_symbols_cmds_CXX='$NM -Bpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W")) && (substr(\$ 3,1,1) != ".")) { print \$ 3 } }'\'' | sort -u > $export_symbols'
+      export_symbols_cmds_CXX='$NM -Bpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W")) && (substr(\$ 3,1,1) != ".")) { if (\$ 2 == "W") { print \$ 3 " weak" } else { print \$ 3 } } }'\'' | sort -u > $export_symbols'
     else
-      export_symbols_cmds_CXX='$NM -BCpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B")) && (substr(\$ 3,1,1) != ".")) { print \$ 3 } }'\'' | sort -u > $export_symbols'
+      export_symbols_cmds_CXX='`func_echo_all $NM | $SED -e '\''s/B\([^B]*\)$/P\1/'\''` -PCpgl $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) && (substr(\$ 1,1,1) != ".")) { if ((\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) { print \$ 1 " weak" } else { print \$ 1 } } }'\'' | sort -u > $export_symbols'
     fi
     ;;
   pw32*)
@@ -15483,20 +15841,70 @@ aix[4-9]*)
       fi
       ;;
     esac
+    # Using Import Files as archive members, it is possible to support
+    # filename-based versioning of shared library archives on AIX. While
+    # this would work for both with and without runtime linking, it will
+    # prevent static linking of such archives. So we do filename-based
+    # shared library versioning with .so extension only, which is used
+    # when both runtime linking and shared linking is enabled.
+    # Unfortunately, runtime linking may impact performance, so we do
+    # not want this to be the default eventually. Also, we use the
+    # versioned .so libs for executables only if there is the -brtl
+    # linker flag in LDFLAGS as well, or --with-aix-soname=svr4 only.
+    # To allow for filename-based versioning support, we need to create
+    # libNAME.so.V as an archive file, containing:
+    # *) an Import File, referring to the versioned filename of the
+    #    archive as well as the shared archive member, telling the
+    #    bitwidth (32 or 64) of that shared object, and providing the
+    #    list of exported symbols of that shared object, eventually
+    #    decorated with the 'weak' keyword
+    # *) the shared object with the F_LOADONLY flag set, to really avoid
+    #    it being seen by the linker.
+    # At run time we better use the real file rather than another symlink,
+    # but for link time we create the symlink libNAME.so -> libNAME.so.V
+
+    case $with_aix_soname,$aix_use_runtimelinking in
     # AIX (on Power*) has no versioning support, so currently we cannot hardcode correct
     # soname into executable. Probably we can add versioning support to
     # collect2, so additional links can be useful in future.
-    if test yes = "$aix_use_runtimelinking"; then
+    aix,yes) # traditional libtool
+      dynamic_linker='AIX unversionable lib.so'
       # If using run time linking (on AIX 4.2 or later) use lib<name>.so
       # instead of lib<name>.a to let people know that these are not
       # typical AIX shared libraries.
       library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
-    else
+      ;;
+    aix,no) # traditional AIX only
+      dynamic_linker='AIX lib.a(lib.so.V)'
       # We preserve .a as extension for shared libraries through AIX4.2
       # and later when we are not doing run time linking.
       library_names_spec='$libname$release.a $libname.a'
       soname_spec='$libname$release$shared_ext$major'
-    fi
+      ;;
+    svr4,*) # full svr4 only
+      dynamic_linker="AIX lib.so.V($shared_archive_member_spec.o)"
+      library_names_spec='$libname$release$shared_ext$major $libname$shared_ext'
+      # We do not specify a path in Import Files, so LIBPATH fires.
+      shlibpath_overrides_runpath=yes
+      ;;
+    *,yes) # both, prefer svr4
+      dynamic_linker="AIX lib.so.V($shared_archive_member_spec.o), lib.a(lib.so.V)"
+      library_names_spec='$libname$release$shared_ext$major $libname$shared_ext'
+      # unpreferred sharedlib libNAME.a needs extra handling
+      postinstall_cmds='test -n "$linkname" || linkname="$realname"~func_stripname "" ".so" "$linkname"~$install_shared_prog "$dir/$func_stripname_result.$libext" "$destdir/$func_stripname_result.$libext"~test -z "$tstripme" || test -z "$striplib" || $striplib "$destdir/$func_stripname_result.$libext"'
+      postuninstall_cmds='for n in $library_names $old_library; do :; done~func_stripname "" ".so" "$n"~test "$func_stripname_result" = "$n" || func_append rmfiles " $odir/$func_stripname_result.$libext"'
+      # We do not specify a path in Import Files, so LIBPATH fires.
+      shlibpath_overrides_runpath=yes
+      ;;
+    *,no) # both, prefer aix
+      dynamic_linker="AIX lib.a(lib.so.V), lib.so.V($shared_archive_member_spec.o)"
+      library_names_spec='$libname$release.a $libname.a'
+      soname_spec='$libname$release$shared_ext$major'
+      # unpreferred sharedlib libNAME.so.V and symlink libNAME.so need extra handling
+      postinstall_cmds='test -z "$dlname" || $install_shared_prog $dir/$dlname $destdir/$dlname~test -z "$tstripme" || test -z "$striplib" || $striplib $destdir/$dlname~test -n "$linkname" || linkname=$realname~func_stripname "" ".a" "$linkname"~(cd "$destdir" && $LN_S -f $dlname $func_stripname_result.so)'
+      postuninstall_cmds='test -z "$dlname" || func_append rmfiles " $odir/$dlname"~for n in $old_library $library_names; do :; done~func_stripname "" ".a" "$n"~func_append rmfiles " $odir/$func_stripname_result.so"'
+      ;;
+    esac
     shlibpath_var=LIBPATH
   fi
   ;;
@@ -15682,7 +16090,7 @@ freebsd* | dragonfly*)
   version_type=freebsd-$objformat
   case $version_type in
     freebsd-elf*)
-      library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext $libname$shared_ext'
+      library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
       need_version=no
       need_lib_prefix=no
       ;;
@@ -15966,11 +16374,32 @@ openbsd* | bitrig*)
 
 os2*)
   libname_spec='$name'
+  version_type=windows
   shrext_cmds=.dll
+  need_version=no
   need_lib_prefix=no
-  library_names_spec='$libname$shared_ext $libname.a'
+  # OS/2 can only load a DLL with a base name of 8 characters or less.
+  soname_spec='`test -n "$os2dllname" && libname="$os2dllname";
+    v=$($ECHO $release$versuffix | tr -d .-);
+    n=$($ECHO $libname | cut -b -$((8 - ${#v})) | tr . _);
+    $ECHO $n$v`$shared_ext'
+  library_names_spec='${libname}_dll.$libext'
   dynamic_linker='OS/2 ld.exe'
-  shlibpath_var=LIBPATH
+  shlibpath_var=BEGINLIBPATH
+  sys_lib_search_path_spec="/lib /usr/lib /usr/local/lib"
+  sys_lib_dlsearch_path_spec=$sys_lib_search_path_spec
+  postinstall_cmds='base_file=`basename \$file`~
+    dlpath=`$SHELL 2>&1 -c '\''. $dir/'\''\$base_file'\''i; $ECHO \$dlname'\''`~
+    dldir=$destdir/`dirname \$dlpath`~
+    test -d \$dldir || mkdir -p \$dldir~
+    $install_prog $dir/$dlname \$dldir/$dlname~
+    chmod a+x \$dldir/$dlname~
+    if test -n '\''$stripme'\'' && test -n '\''$striplib'\''; then
+      eval '\''$striplib \$dldir/$dlname'\'' || exit \$?;
+    fi'
+  postuninstall_cmds='dldll=`$SHELL 2>&1 -c '\''. $file; $ECHO \$dlname'\''`~
+    dlpath=$dir/\$dldll~
+    $RM \$dlpath'
   ;;
 
 osf3* | osf4* | osf5*)
@@ -16046,7 +16475,7 @@ sysv4*MP*)
   ;;
 
 sysv5* | sco3.2v5* | sco5v6* | unixware* | OpenUNIX* | sysv4*uw2*)
-  version_type=freebsd-elf
+  version_type=sco
   need_lib_prefix=no
   need_version=no
   library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext $libname$shared_ext'
@@ -20814,6 +21243,7 @@ enable_shared='`$ECHO "$enable_shared" | $SED "$delay_single_quote_subst"`'
 enable_static='`$ECHO "$enable_static" | $SED "$delay_single_quote_subst"`'
 pic_mode='`$ECHO "$pic_mode" | $SED "$delay_single_quote_subst"`'
 enable_fast_install='`$ECHO "$enable_fast_install" | $SED "$delay_single_quote_subst"`'
+shared_archive_member_spec='`$ECHO "$shared_archive_member_spec" | $SED "$delay_single_quote_subst"`'
 SHELL='`$ECHO "$SHELL" | $SED "$delay_single_quote_subst"`'
 ECHO='`$ECHO "$ECHO" | $SED "$delay_single_quote_subst"`'
 PATH_SEPARATOR='`$ECHO "$PATH_SEPARATOR" | $SED "$delay_single_quote_subst"`'
@@ -21807,7 +22237,7 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
   case $ac_file$ac_mode in
     "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
-  # Autoconf 2.62 quotes --file arguments for eval, but not when files
+  # Older Autoconf quotes --file arguments for eval, but not when files
   # are listed without --file.  Let's play safe and only enable the eval
   # if we detect the quoting.
   case $CONFIG_FILES in
@@ -21858,7 +22288,7 @@ $as_echo X"$mf" |
     DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
     test -z "$DEPDIR" && continue
     am__include=`sed -n 's/^am__include = //p' < "$mf"`
-    test -z "am__include" && continue
+    test -z "$am__include" && continue
     am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
     # Find all dependency output files, they are included files with
     # $(DEPDIR) in their names.  We invoke sed twice because it is the
@@ -21972,6 +22402,9 @@ pic_mode=$pic_mode
 
 # Whether or not to optimize for fast installation.
 fast_install=$enable_fast_install
+
+# Shared archive member basename,for filename based shared library versioning on AIX.
+shared_archive_member_spec=$shared_archive_member_spec
 
 # Shell to use when invoking shell scripts.
 SHELL=$lt_SHELL

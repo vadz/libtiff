@@ -1,3 +1,7 @@
+2014-12-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* Update bundled libtool to 2.4.4 release.
+
 2014-12-29  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_next.c: add new tests to check that we don't read outside of
