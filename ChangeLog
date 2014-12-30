@@ -1,5 +1,18 @@
 2014-12-29  Even Rouault  <even.rouault@spatialys.com>
 
+	* libtiff/tif_jpeg.c: in JPEGFixupTags(), recognize SOF2, SOF9 and SOF10
+	markers to avoid emitting a warning (even if, according to the TechNote,
+	there are admitedly unusual/not recommended or even forbidden variants, but
+	they do work well with libjpeg for SOF2, and with libjpeg-turbo for SOF2,
+	SOF9 and SOF10).
+	Define in_color_space and input_components to the right values in
+	JPEGSetupEncode(), before calling jpeg_set_defaults(), as specified by
+	libjpeg API documentation, so as to be compatible with mozjpeg library.
+	Note: the default settings of mozjpeg will produce progressive scans, which
+	is forbidden by the TechNote.
+
+2014-12-29  Even Rouault  <even.rouault@spatialys.com>
+
 	* libtiff/tif_getimage.c: move test on vertical value of YCbCr subsampling.
 	to avoid buffer leak (fix previous fix, found by Coverity scan)
 
