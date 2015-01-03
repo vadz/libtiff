@@ -1,3 +1,9 @@
+2015-01-03  Even Rouault  <even.rouault@spatialys.com>
+
+	* libtiff/tif_dirread.c: in TIFFCheckDirOffset(), avoid uint16 overflow
+	when reading more than 65535 directories, and effectively error out when
+	reaching that limit.
+
 2014-12-29  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_jpeg.c: in JPEGFixupTags(), recognize SOF2, SOF9 and SOF10
