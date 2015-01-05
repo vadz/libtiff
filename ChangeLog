@@ -1,3 +1,7 @@
+2015-01-05  Olivier Paquet  <olivier.paquet@gmail.com>
+
+	* tools/tiff2pdf.c: Fixed unsigned integer addition overflow detection.
+
 2015-01-03  Even Rouault  <even.rouault@spatialys.com>
 
 	* libtiff/tif_dirread.c: in TIFFCheckDirOffset(), avoid uint16 overflow
