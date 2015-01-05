@@ -1,3 +1,9 @@
+2015-01-05  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* html/bugs.html: remove note about needing to email the tiff mailing
+	list administrator about being approved for membership, this appears
+	not to be true.
+
 2015-01-05  Olivier Paquet  <olivier.paquet@gmail.com>
 
 	* tools/tiff2pdf.c: Fixed unsigned integer addition overflow detection.
