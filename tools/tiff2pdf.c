@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <errno.h>
+#include <limits.h>
 
 #if HAVE_UNISTD_H
 # include <unistd.h>
@@ -1404,10 +1405,28 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 							&xuint16, &xuint16p)
 					   && xuint16 == 1) {
 						if(xuint16p[0] == EXTRASAMPLE_ASSOCALPHA){
+							if( t2p->tiff_bitspersample != 8 )
+							{
+							    TIFFError(
+								    TIFF2PDF_MODULE, 
+								    "No support for BitsPerSample=%d for RGBA",
+								    t2p->tiff_bitspersample);
+							    t2p->t2p_error = T2P_ERR_ERROR;
+							    return;
+							}
 							t2p->pdf_sample=T2P_SAMPLE_RGBAA_TO_RGB;
 							break;
 						}
 						if(xuint16p[0] == EXTRASAMPLE_UNASSALPHA){
+							if( t2p->tiff_bitspersample != 8 )
+							{
+							    TIFFError(
+								    TIFF2PDF_MODULE, 
+								    "No support for BitsPerSample=%d for RGBA",
+								    t2p->tiff_bitspersample);
+							    t2p->t2p_error = T2P_ERR_ERROR;
+							    return;
+							}
 							t2p->pdf_sample=T2P_SAMPLE_RGBA_TO_RGB;
 							break;
 						}
@@ -1701,6 +1720,8 @@ void t2p_read_tiff_data(T2P* t2p, TIFF* input){
 	}
 
 	t2p_compose_pdf_page(t2p);
+        if( t2p->t2p_error == T2P_ERR_ERROR )
+	    return;
 
 	t2p->pdf_transcode = T2P_TRANSCODE_ENCODE;
 	if(t2p->pdf_nopassthrough==0){
@@ -3643,7 +3664,7 @@ t2p_sample_rgba_to_rgb(tdata_t data, uint32 samplecount)
 	uint32 i = 0;
 	uint32 sample = 0;
 	uint8 alpha = 0;
-	
+
 	for (i = 0; i < samplecount; i++) {
 		sample=((uint32*)data)[i];
 		alpha=(uint8)((255 - ((sample >> 24) & 0xff)));
@@ -4374,6 +4395,15 @@ void t2p_compose_pdf_page(T2P* t2p){
 	} else {
 		tilewidth=(t2p->tiff_tiles[t2p->pdf_page]).tiles_tilewidth;
 		tilelength=(t2p->tiff_tiles[t2p->pdf_page]).tiles_tilelength;
+		if( tilewidth > INT_MAX ||
+		    tilelength > INT_MAX ||
+		    t2p->tiff_width > INT_MAX - tilewidth ||
+		    t2p->tiff_length > INT_MAX - tilelength )
+		{
+		    TIFFError(TIFF2PDF_MODULE, "Integer overflow");
+		    t2p->t2p_error = T2P_ERR_ERROR;
+		    return;
+		}
 		tilecountx=(t2p->tiff_width + 
 			tilewidth -1)/ 
 			tilewidth;
