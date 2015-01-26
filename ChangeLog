@@ -1,5 +1,9 @@
 2015-01-26  Even Rouault  <even.rouault@spatialys.com>
 
+	* libtiff 4.0.4beta released
+
+2015-01-26  Even Rouault  <even.rouault@spatialys.com>
+
 	* automake: updated to 1.15
 	* libtool: updated to 2.4.5
 
