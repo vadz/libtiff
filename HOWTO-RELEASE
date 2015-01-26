@@ -24,7 +24,8 @@ Notes on releasing.
 
 1. Commit any unsaved changes. 
 
-2. Create html/vX.X.html.  Take ChangeLog entries and html-ify in there. 
+2. Create html/vX.X.html and add it to cvs with 'cvs add html/vX.X.html'.
+   Take ChangeLog entries and html-ify in there. 
    Easist thing to do is take html/vX.(X-1).html and use it as a template.
    Add that file to the list of EXTRA_DIST files in the html/Makefile.am.
 

@@ -1,5 +1,10 @@
 2015-01-26  Even Rouault  <even.rouault@spatialys.com>
 
+	* add html/v4.0.4beta.html under version control
+	* HOWTO-RELEASE: write that cvs add html/vX.X.html must be used
+
+2015-01-26  Even Rouault  <even.rouault@spatialys.com>
+
 	* libtiff 4.0.4beta released
 
 2015-01-26  Even Rouault  <even.rouault@spatialys.com>
