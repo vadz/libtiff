@@ -1,3 +1,8 @@
+2015-01-26  Even Rouault  <even.rouault@spatialys.com>
+
+	* automake: updated to 1.15
+	* libtool: updated to 2.4.5
+
 2015-01-22  Even Rouault  <even.rouault@spatialys.com>
 
 	* tools/tiff2pdf.c: Fix two crashes (oCERT-2014-013)
