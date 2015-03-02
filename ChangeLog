@@ -1,3 +1,9 @@
+2015-03-02  Even Rouault  <even.rouault@spatialys.com>
+
+	* tools/tiffdither.c: check memory allocations to avoid writing to
+	NULL pointer. Also check multiplication overflow. Fixes #2501,
+	CVE-2014-8128. Derived from patch by Petr Gajdos.
+
 2015-01-26  Even Rouault  <even.rouault@spatialys.com>
 
 	* add html/v4.0.4beta.html under version control
