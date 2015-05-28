@@ -135,8 +135,7 @@ main(int argc, char* argv[])
         }
         if ((h.ras_depth != 1) &&
             (h.ras_depth != 8) &&
-            (h.ras_depth != 24) &&
-            (h.ras_depth != 32)) {
+            (h.ras_depth != 24)) {
                 fprintf(stderr, "%s: Improper image depth (%d).\n",
                         argv[optind], h.ras_depth);
                 fclose(in);

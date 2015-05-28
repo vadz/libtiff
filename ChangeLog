@@ -3,6 +3,7 @@
 	* tools/ras2tiff.c: Fix Sun Raster header definition to be safe
 	for 64-bit systems.  Add some header validations.  Should fix many
 	Coverity issues.
+	(main): Fix Coverity 1301206: "Integer handling issues  (BAD_SHIFT)".
 
 	* tools/tiffmedian.c (GetInputLine): Fix Coverity 1024795 "Nesting
 	level does not match indentation".
