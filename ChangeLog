@@ -4,6 +4,7 @@
 	for 64-bit systems.  Add some header validations.  Should fix many
 	Coverity issues.
 	(main): Fix Coverity 1301206: "Integer handling issues  (BAD_SHIFT)".
+	(main): Quiet Coverity 1024223 "Untrusted value as argument".
 
 	* tools/tiffmedian.c (GetInputLine): Fix Coverity 1024795 "Nesting
 	level does not match indentation".
