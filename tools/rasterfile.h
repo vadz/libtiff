@@ -1,17 +1,19 @@
 /* $Header$ */
 
+#include "tiff.h"
+
 /*
  * Description of header for files containing raster images
  */
 struct rasterfile {
 	char	ras_magic[4];		/* magic number */
-	long	ras_width;		/* width (pixels) of image */
-	long	ras_height;		/* height (pixels) of image */
-	long	ras_depth;		/* depth (1, 8, or 24 bits) of pixel */
-	long	ras_length;		/* length (bytes) of image */
-	long	ras_type;		/* type of file; see RT_* below */
-	long	ras_maptype;		/* type of colormap; see RMT_* below */
-	long	ras_maplength;		/* length (bytes) of following map */
+	int32	ras_width;		/* width (pixels) of image */
+	int32	ras_height;		/* height (pixels) of image */
+	int32	ras_depth;		/* depth (1, 8, or 24 bits) of pixel */
+	int32	ras_length;		/* length (bytes) of image */
+	int32	ras_type;		/* type of file; see RT_* below */
+	int32	ras_maptype;		/* type of colormap; see RMT_* below */
+	int32	ras_maplength;		/* length (bytes) of following map */
 	/* color map follows for ras_maplength bytes, followed by image */
 };
 #define	RAS_MAGIC	"\x59\xa6\x6a\x95"

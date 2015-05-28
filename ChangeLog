@@ -1,5 +1,9 @@
 2015-05-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/ras2tiff.c: Fix Sun Raster header definition to be safe
+	for 64-bit systems.  Add some header validations.  Should fix many
+	Coverity issues.
+
 	* tools/tiffmedian.c (GetInputLine): Fix Coverity 1024795 "Nesting
 	level does not match indentation".
 	(get_histogram): Quiet Coverity 1024386 "Out-of-bounds read".
