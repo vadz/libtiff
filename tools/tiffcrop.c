@@ -6023,15 +6023,15 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
         read_buff = new_buff;
       }
     }
-  read_buff[buffsize] = 0;
-  read_buff[buffsize+1] = 0;
-  read_buff[buffsize+2] = 0;
-
   if (!read_buff)
     {
     TIFFError("loadImage", "Unable to allocate/reallocate read buffer");
     return (-1);
     }
+
+  read_buff[buffsize] = 0;
+  read_buff[buffsize+1] = 0;
+  read_buff[buffsize+2] = 0;
 
   prev_readsize = buffsize;
   *read_ptr = read_buff;
