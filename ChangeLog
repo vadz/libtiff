@@ -8,6 +8,8 @@
 	code".
 	(writeSingleSection): Fix Coverity 1024796 "Nesting level does not
 	match indentation".
+	(writeCroppedImage): Fix Coverity 1024797 "Nesting level does not
+	match indentation".
 
 2015-03-02  Even Rouault  <even.rouault@spatialys.com>
 
