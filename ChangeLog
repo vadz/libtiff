@@ -2,6 +2,9 @@
 
 	* tools/tiffmedian.c (GetInputLine): Fix Coverity 1024795 "Nesting
 	level does not match indentation".
+	(get_histogram): Quiet Coverity 1024386 "Out-of-bounds read".
+	This was a benign mis-diagnosis but added code to enforce against
+	buffer overflow.
 
 	* tools/tiffcrop.c (ROTATE_ANY): Fix Coverity 1294542 "Logical
 	vs. bitwise operator".

@@ -371,9 +371,15 @@ get_histogram(TIFF* in, Colorbox* box)
 			break;
 		inptr = inputline;
 		for (j = imagewidth; j-- > 0;) {
-			red = *inptr++ >> COLOR_SHIFT;
-			green = *inptr++ >> COLOR_SHIFT;
-			blue = *inptr++ >> COLOR_SHIFT;
+			red = (*inptr++) & 0xff >> COLOR_SHIFT;
+			green = (*inptr++) & 0xff >> COLOR_SHIFT;
+			blue = (*inptr++) & 0xff >> COLOR_SHIFT;
+                        if ((red | green | blue) >= B_LEN) {
+                                fprintf(stderr,
+                                        "Logic error. "
+                                        "Histogram array overflow!\n");
+                                exit(-6);
+                        }
 			if (red < box->rmin)
 				box->rmin = red;
 		        if (red > box->rmax)
