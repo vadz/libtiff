@@ -1,5 +1,8 @@
 2015-05-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffmedian.c (GetInputLine): Fix Coverity 1024795 "Nesting
+	level does not match indentation".
+
 	* tools/tiffcrop.c (ROTATE_ANY): Fix Coverity 1294542 "Logical
 	vs. bitwise operator".
 	(readContigStripsIntoBuffer): Fix Coverity 1024545 "Division or
