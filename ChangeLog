@@ -1,3 +1,9 @@
+2015-05-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffsplit.c (cpTiles): Fix Coverity 1024304 "Resource
+	leak".
+	(cpStrips): Fix Coverity 1024305 "Resource leak".
+
 2015-05-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/ras2tiff.c: Fix Sun Raster header definition to be safe
