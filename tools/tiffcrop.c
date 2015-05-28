@@ -178,7 +178,7 @@ extern int getopt(int, char**, char*);
 #define ROTATECW_90   8
 #define ROTATECW_180 16
 #define ROTATECW_270 32
-#define ROTATE_ANY ROTATECW_90 || ROTATECW_180 || ROTATECW_270 
+#define ROTATE_ANY (ROTATECW_90 | ROTATECW_180 | ROTATECW_270)
 
 #define CROP_NONE     0
 #define CROP_MARGINS  1

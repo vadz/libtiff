@@ -1,3 +1,8 @@
+2015-05-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiffcrop.c (ROTATE_ANY): Fix Coverity 1294542 "Logical
+	vs. bitwise operator".
+
 2015-03-02  Even Rouault  <even.rouault@spatialys.com>
 
 	* tools/tiffdither.c: check memory allocations to avoid writing to
