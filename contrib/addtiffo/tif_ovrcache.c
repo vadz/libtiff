@@ -109,7 +109,9 @@ TIFFOvrCache *TIFFCreateOvrCache( TIFF *hTIFF, toff_t nDirOffset )
     {
 		TIFFErrorExt( hTIFF->tif_clientdata, hTIFF->tif_name,
 					  "Can't allocate memory for overview cache." );
-        /* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
+                /* TODO: use of TIFFError is inconsistent with use of fprintf in addtiffo.c, sort out */
+                if (psCache->pabyRow1Blocks) _TIFFfree(psCache->pabyRow1Blocks);
+                if (psCache->pabyRow2Blocks) _TIFFfree(psCache->pabyRow2Blocks);
         return NULL;
     }
 

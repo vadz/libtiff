@@ -1,5 +1,8 @@
 2015-05-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* contrib/addtiffo/tif_ovrcache.c (TIFFCreateOvrCache): Fix
+	Coverity 298615 "Resource leak".
+
 	* tools/tiffcp.c: Fix Coverity 1024306, 1024307, 1024308, 1024309
 	"Resource leak".
 
