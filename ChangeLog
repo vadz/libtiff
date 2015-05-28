@@ -1,5 +1,8 @@
 2015-05-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcp.c: Fix Coverity 1024306, 1024307, 1024308, 1024309
+	"Resource leak".
+
 	* tools/tiffsplit.c (cpTiles): Fix Coverity 1024304 "Resource
 	leak".
 	(cpStrips): Fix Coverity 1024305 "Resource leak".

@@ -1070,7 +1070,7 @@ DECLAREcpFunc(cpContig2SeparateByRow)
 	inbuf = _TIFFmalloc(scanlinesizein);
 	outbuf = _TIFFmalloc(scanlinesizeout);
 	if (!inbuf || !outbuf)
-		return 0;
+		goto bad;
 	_TIFFmemset(inbuf, 0, scanlinesizein);
 	_TIFFmemset(outbuf, 0, scanlinesizeout);
 	/* unpack channels */
@@ -1123,7 +1123,7 @@ DECLAREcpFunc(cpSeparate2ContigByRow)
 	inbuf = _TIFFmalloc(scanlinesizein);
 	outbuf = _TIFFmalloc(scanlinesizeout);
 	if (!inbuf || !outbuf)
-		return 0;
+                goto bad;
 	_TIFFmemset(inbuf, 0, scanlinesizein);
 	_TIFFmemset(outbuf, 0, scanlinesizeout);
 	for (row = 0; row < imagelength; row++) {
