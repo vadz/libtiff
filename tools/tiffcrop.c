@@ -6013,7 +6013,7 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
     {
     if (prev_readsize < buffsize)
       {
-      new_buff = _TIFFrealloc(read_buff, buffsize);
+      new_buff = _TIFFrealloc(read_buff, buffsize+3);
       if (!new_buff)
         {
 	free (read_buff);

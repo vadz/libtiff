@@ -11,6 +11,7 @@
 	(writeCroppedImage): Fix Coverity 1024797 "Nesting level does not
 	match indentation".
 	(loadImage): Fix Coverity 1299741 "Dereference before null check".
+	(loadImage): Fix Coverity 1299740 "Out-of-bounds write".
 
 2015-03-02  Even Rouault  <even.rouault@spatialys.com>
 
