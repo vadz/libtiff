@@ -4,6 +4,8 @@
 	vs. bitwise operator".
 	(readContigStripsIntoBuffer): Fix Coverity 1024545 "Division or
 	modulo by zero".
+	(readContigTilesIntoBuffer): Fix Coverity 1024586 "Logically dead
+	code".
 
 2015-03-02  Even Rouault  <even.rouault@spatialys.com>
 

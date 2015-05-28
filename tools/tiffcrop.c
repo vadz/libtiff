@@ -938,8 +938,8 @@ static int readContigTilesIntoBuffer (TIFF* in, uint8* buf,
 	    }
           }
         prev_trailing_bits += trailing_bits;
-        if (prev_trailing_bits > 7)
-	  prev_trailing_bits-= 8;
+        /* if (prev_trailing_bits > 7) */
+	/*   prev_trailing_bits-= 8; */
 	}
       }
     }
