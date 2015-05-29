@@ -1,5 +1,13 @@
 2015-05-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/bmp2tiff.c (main): Fix Coverity 1024225 "Untrusted value
+	as argument".
+	(main): Fix Coverity 1024678 "Unchecked return value from
+	library".
+	(main): Fix Coverity 1024679 "Unchecked return value from
+	library".
+	(main): Fix Coverity 1214160 "Ignoring number of bytes read".
+
 	* contrib/addtiffo/tif_ovrcache.c (TIFFCreateOvrCache): Fix
 	Coverity 298615 "Resource leak".
 
