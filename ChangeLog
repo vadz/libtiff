@@ -1,3 +1,10 @@
+2015-05-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* contrib/iptcutil/iptcutil.c (formatIPTC): Fix Coverity 1024468
+	"Infinite loop".
+	(formatIPTC): Fix Coverity 1024727 "Truncated stdio return value".
+	(formatIPTC): Fix Coverity 1214240 "Untrusted loop bound".
+
 2015-05-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* contrib/addtiffo/tif_ovrcache.c (TIFFCreateOvrCache): Fix
