@@ -2159,7 +2159,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 	uint16 v_samp=1;
 	uint16 ri=1;
 	uint32 rows=0;
-#endif
+#endif /* ifdef OJPEG_SUPPORT */
 #ifdef JPEG_SUPPORT
 	unsigned char* jpt;
 	float* xfloatp;
@@ -2167,7 +2167,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 	unsigned char* stripbuffer;
 	tsize_t striplength=0;
 	uint32 max_striplength=0;
-#endif
+#endif /* ifdef JPEG_SUPPORT */
 
 	/* Fail if prior error (in particular, can't trust tiff_datasize) */
 	if (t2p->t2p_error != T2P_ERR_OK)
@@ -2202,7 +2202,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			_TIFFfree(buffer);
 			return(t2p->tiff_datasize);
 		}
-#endif
+#endif /* ifdef CCITT_SUPPORT */
 #ifdef ZIP_SUPPORT
 		if (t2p->pdf_compression == T2P_COMPRESS_ZIP) {
 			buffer = (unsigned char*)
@@ -2227,7 +2227,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			_TIFFfree(buffer);
 			return(t2p->tiff_datasize);
 		}
-#endif
+#endif /* ifdef ZIP_SUPPORT */
 #ifdef OJPEG_SUPPORT
 		if(t2p->tiff_compression == COMPRESSION_OJPEG) {
 
@@ -2339,14 +2339,21 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2pWriteFile(output, (tdata_t) buffer, bufferoffset);
 				_TIFFfree(buffer);
 				return(bufferoffset);
+#if 0
+                                /*
+                                  This hunk of code removed code is clearly
+                                  mis-placed and we are not sure where it
+                                  should be (if anywhere)
+                                */
 				TIFFError(TIFF2PDF_MODULE, 
 	"No support for OJPEG image %s with no JPEG File Interchange offset", 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
+#endif
 			}
 		}
-#endif
+#endif /* ifdef OJPEG_SUPPORT */
 #ifdef JPEG_SUPPORT
 		if(t2p->tiff_compression == COMPRESSION_JPEG) {
 			uint32 count = 0;
@@ -2408,7 +2415,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 			_TIFFfree(buffer);
 			return(bufferoffset);
 		}
-#endif
+#endif /* ifdef JPEG_SUPPORT */
 		(void)0;
 	}
 
@@ -2625,7 +2632,7 @@ dataready:
 	case T2P_COMPRESS_G4:
 		TIFFSetField(output, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX4);
 		break;
-#endif
+#endif /* ifdef CCITT_SUPPORT */
 #ifdef JPEG_SUPPORT
 	case T2P_COMPRESS_JPEG:
 		if(t2p->tiff_photometric==PHOTOMETRIC_YCBCR) {
@@ -2671,7 +2678,7 @@ dataready:
 		}
 	
 		break;
-#endif
+#endif /* ifdef JPEG_SUPPORT */
 #ifdef ZIP_SUPPORT
 	case T2P_COMPRESS_ZIP:
 		TIFFSetField(output, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
@@ -2686,7 +2693,7 @@ dataready:
 				(t2p->pdf_defaultcompressionquality / 100));
 		}
 		break;
-#endif
+#endif /* ifdef ZIP_SUPPORT */
 	default:
 		break;
 	}
@@ -2700,7 +2707,7 @@ dataready:
 						     buffer,
 						     stripsize * stripcount); 
 	} else
-#endif
+#endif /* ifdef JPEG_SUPPORT */
         {
 		bufferoffset = TIFFWriteEncodedStrip(output, (tstrip_t)0,
 						     buffer,
