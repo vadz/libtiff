@@ -286,15 +286,21 @@ main(int argc, char* argv[])
 		switch(interleaving) {
 		case BAND:			/* band interleaved data */
 			for (band = 0; band < nbands; band++) {
-				lseek(fd,
-				      hdr_size + (length*band+row)*linebytes,
-				      SEEK_SET);
+				if (lseek(fd,
+                                          hdr_size + (length*band+row)*linebytes,
+                                          SEEK_SET) == (off_t)-1) {
+                                        fprintf(stderr,
+                                                "%s: %s: scanline %lu: seek error.\n",
+                                                argv[0], argv[optind],
+                                                (unsigned long) row);
+                                        break;
+                                }
 				if (read(fd, buf, linebytes) < 0) {
 					fprintf(stderr,
-					"%s: %s: scanline %lu: Read error.\n",
-					argv[0], argv[optind],
-					(unsigned long) row);
-				break;
+                                                "%s: %s: scanline %lu: Read error.\n",
+                                                argv[0], argv[optind],
+                                                (unsigned long) row);
+                                        break;
 				}
 				if (swab)	/* Swap bytes if needed */
 					swapBytesInScanline(buf, width, dtype);
@@ -366,7 +372,10 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 	uint32	    depth = TIFFDataWidth(dtype);
 	float	    cor_coef = 0, tmp;
 
-	fstat(fd, &filestat);
+	if (fstat(fd, &filestat) == -1) {
+                fprintf(stderr, "Failed to obtain file size.\n");
+		return -1;
+        }
 
 	if (filestat.st_size < hdr_size) {
 		fprintf(stderr, "Too large header size specified.\n");
@@ -394,6 +403,7 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		return 1;
 	} else if (*width == 0 && *length == 0) {
+                unsigned int fail = 0;
 		fprintf(stderr,	"Image width and height are not specified.\n");
 
 		for (w = (uint32) sqrt(imagesize / longt);
@@ -404,25 +414,45 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 				buf1 = _TIFFmalloc(scanlinesize);
 				buf2 = _TIFFmalloc(scanlinesize);
 				h = imagesize / w;
-				lseek(fd, hdr_size + (int)(h/2)*scanlinesize,
-				      SEEK_SET);
-				read(fd, buf1, scanlinesize);
-				read(fd, buf2, scanlinesize);
-				if (swab) {
-					swapBytesInScanline(buf1, w, dtype);
-					swapBytesInScanline(buf2, w, dtype);
-				}
-				tmp = (float) fabs(correlation(buf1, buf2,
-							       w, dtype));
-				if (tmp > cor_coef) {
-					cor_coef = tmp;
-					*width = w, *length = h;
-				}
+                                do {
+                                        if (lseek(fd, hdr_size + (int)(h/2)*scanlinesize,
+                                                  SEEK_SET) == (off_t)-1) {
+                                                fprintf(stderr, "seek error.\n");
+                                                fail=1;
+                                                break;
+                                        }
+                                        if (read(fd, buf1, scanlinesize) !=
+                                            (long) scanlinesize) {
+                                                fprintf(stderr, "read error.\n");
+                                                fail=1;
+                                                break;
+                                        }
+                                        if (read(fd, buf2, scanlinesize) !=
+                                            (long) scanlinesize) {
+                                                fprintf(stderr, "read error.\n");
+                                                fail=1;
+                                                break;
+                                        }
+                                        if (swab) {
+                                                swapBytesInScanline(buf1, w, dtype);
+                                                swapBytesInScanline(buf2, w, dtype);
+                                        }
+                                        tmp = (float) fabs(correlation(buf1, buf2,
+                                                                       w, dtype));
+                                        if (tmp > cor_coef) {
+                                                cor_coef = tmp;
+                                                *width = w, *length = h;
+                                        }
+                                } while (0);
 
-				_TIFFfree(buf1);
+                                _TIFFfree(buf1);
 				_TIFFfree(buf2);
 			}
 		}
+
+                if (fail) {
+                        return -1;
+                }
 
 		fprintf(stderr,
 			"Width is guessed as %lu, height is guessed as %lu.\n",
