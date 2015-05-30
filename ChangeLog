@@ -1,5 +1,8 @@
 2015-05-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_jpeg.c (JPEGCleanup): Fix Coverity 298624
+	"Dereference before null check".
+
 	* libtiff/tif_ojpeg.c (OJPEGReadBufferFill): Fix Coverity 603400
 	"Missing break in switch".
 
