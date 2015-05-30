@@ -17778,7 +17778,8 @@ _ACEOF
 fi
 
 
-for ac_func in floor isascii memmove memset mmap pow setmode sqrt strchr strrchr strstr strtol strtoull
+for ac_func in floor isascii memmove memset mmap pow setmode sqrt\
+ strchr strrchr strstr strtol strtoull
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"

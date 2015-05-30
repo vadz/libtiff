@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <math.h>
 
 #ifdef HAVE_UNISTD_H
@@ -125,9 +126,9 @@ static	int processCompressOptions(char*);
 
 int	convert(void);
 int	checksignature(void);
-void	readscreen(void);
+int	readscreen(void);
 int	readgifimage(char*);
-void	readextension(void);
+int	readextension(void);
 int	readraster(void);
 int	process(int, unsigned char**);
 void	initcolors(unsigned char [COLSIZE][3], int);
@@ -206,7 +207,8 @@ convert(void)
 
     if (!checksignature())
         return (-1);
-    readscreen();
+    if (!readscreen())
+        return (-1);
     while ((ch = getc(infile)) != ';' && ch != EOF) {
         switch (ch) {
             case '\0':  break;  /* this kludge for non-standard files */
@@ -214,7 +216,8 @@ convert(void)
                            return (-1);
 			mode = "a";		/* subsequent images append */
                         break;
-            case '!':   readextension();
+        case '!':   if (!readextension())
+                            return (-1);
                         break;
             default:    fprintf(stderr, "illegal GIF block type\n");
                         return (-1);
@@ -228,7 +231,11 @@ checksignature(void)
 {
     char buf[6];
 
-    fread(buf,1,6,infile);
+    if (fread(buf,1,6,infile) != 6) {
+        fprintf(stderr, "short read from file %s (%s)\n",
+                filename, strerror(errno));
+        return 0;
+    }
     if (strncmp(buf,"GIF",3)) {
         fprintf(stderr, "file is not a GIF file\n");
         return 0;
@@ -245,17 +252,27 @@ checksignature(void)
  *		Get information which is global to all the images stored 
  *	in the file
  */
-void
+int
 readscreen(void)
 {
     unsigned char buf[7];
 
-    fread(buf,1,7,infile);
+    if (fread(buf,1,7,infile) != 7) {
+        fprintf(stderr, "short read from file %s (%s)\n",
+                filename, strerror(errno));
+        return 0;
+    }
     global = buf[4] & 0x80;
     if (global) {
         globalbits = (buf[4] & 0x07) + 1;
-        fread(globalmap,3,((size_t)1)<<globalbits,infile);
+        if (fread(globalmap,3,((size_t)1)<<globalbits,infile) !=
+            ((size_t)1)<<globalbits) {
+            fprintf(stderr, "short read from file %s (%s)\n",
+                    filename, strerror(errno));
+            return 0;
+        }
     }
+    return 1;
 }
 
 int
@@ -266,16 +283,18 @@ readgifimage(char* mode)
     unsigned char localmap[256][3];
     int localbits;
     int status;
+    size_t raster_size;
 
-    if (fread(buf, 1, 9, infile) == 0) {
-        perror(filename);
+    if (fread(buf, 1, 9, infile) != 9) {
+        fprintf(stderr, "short read from file %s (%s)\n",
+                filename, strerror(errno));
 	return (0);
     }
-    width = buf[4] + (buf[5] << 8);
-    height = buf[6] + (buf[7] << 8);
+    width = (buf[4] + (buf[5] << 8)) & 0xffff; /* 16 bit */
+    height = (buf[6] + (buf[7] << 8)) & 0xffff;  /* 16 bit */
     local = buf[8] & 0x80;
     interleaved = buf[8] & 0x40;
-    if (width == 0 || height == 0 || width > 2000000000 / height) {
+    if (width == 0UL || height == 0UL || (width > 2000000000UL / height)) {
         fprintf(stderr, "Invalid value of width or height\n");
         return(0);
     }
@@ -283,8 +302,13 @@ readgifimage(char* mode)
         fprintf(stderr, "no colormap present for image\n");
         return (0);
     }
-
-    if ((raster = (unsigned char*) _TIFFmalloc(width*height+EXTRAFUDGE)) == NULL) {
+    raster_size=width*height;
+    if ((raster_size/width) == height) {
+        raster_size += EXTRAFUDGE;  /* Add elbow room */
+    } else {
+        raster_size=0;
+    }
+    if ((raster = (unsigned char*) _TIFFmalloc(raster_size)) == NULL) {
         fprintf(stderr, "not enough memory for image\n");
         return (0);
     }
@@ -293,7 +317,12 @@ readgifimage(char* mode)
 
         fprintf(stderr, "   local colors: %d\n", 1<<localbits);
 
-        fread(localmap, 3, ((size_t)1)<<localbits, infile);
+        if (fread(localmap, 3, ((size_t)1)<<localbits, infile) !=
+            ((size_t)1)<<localbits) {
+            fprintf(stderr, "short read from file %s (%s)\n",
+                    filename, strerror(errno));
+            return (0);
+        }
         initcolors(localmap, 1<<localbits);
     } else if (global) {
         initcolors(globalmap, 1<<globalbits);
@@ -309,15 +338,22 @@ readgifimage(char* mode)
  *		Read a GIF extension block (and do nothing with it).
  *
  */
-void
+int
 readextension(void)
 {
     int count;
     char buf[255];
+    int status = 1;
 
     (void) getc(infile);
     while ((count = getc(infile)) && count <= 255)
-        fread(buf, 1, count, infile);
+        if (fread(buf, 1, count, infile) != (size_t) count) {
+            fprintf(stderr, "short read from file %s (%s)\n",
+                    filename, strerror(errno));
+            status = 0;
+            break;
+        }
+    return status;
 }
 
 /*
@@ -351,7 +387,11 @@ readraster(void)
     }
     stackp = stack;
     for (count = getc(infile); count > 0 && count <= 255; count = getc(infile)) {
-	fread(buf,1,count,infile);
+	if (fread(buf,1,count,infile) != (size_t)count) {
+            fprintf(stderr, "short read from file %s (%s)\n",
+                    filename, strerror(errno));
+            return 0;
+        }
 	for (ch=buf; count-- > 0; ch++) {
 	    datum += (unsigned long) *ch << bits;
 	    bits += 8;
@@ -542,7 +582,7 @@ rasterize(int interleaved, char* mode)
 /*
  * Local Variables:
  * mode: c
- * c-basic-offset: 8
+ * c-basic-offset: 4
  * fill-column: 78
  * End:
  */

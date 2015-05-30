@@ -1,5 +1,18 @@
 2015-05-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/gif2tiff.c (readgifimage): Fix Coverity 1024222 "Untrusted
+	value as argument".
+	(checksignature): Fix Coverity 1024894 "Ignoring number of bytes
+	read".
+	(readextension): Fix Coverity 1024893 "Ignoring number of bytes
+	read".
+	(readgifimage): Fix Coverity 1024890 "Ignoring number of bytes
+	read".
+	(readraster): Fix Coverity 1024891 "Ignoring number of bytes
+	read".
+	(readgifimage): Fix Coverity 1024892 "Ignoring number of bytes
+	read".
+
 	* tools/tiff2pdf.c (t2p_readwrite_pdf_image): Fix Coverity 1024181
 	"Structurally dead code".
 

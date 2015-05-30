@@ -222,8 +222,8 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/libtiff-4.pc.in \
 	$(top_srcdir)/config/missing \
 	$(top_srcdir)/config/mkinstalldirs ChangeLog README TODO \
 	config/compile config/config.guess config/config.sub \
-	config/install-sh config/ltmain.sh config/missing \
-	config/mkinstalldirs
+	config/depcomp config/install-sh config/ltmain.sh \
+	config/missing config/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
