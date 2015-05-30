@@ -1,5 +1,8 @@
 2015-05-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* contrib/addtiffo/addtiffo.c (main): Possibly address Coverity
+	1024226 "Untrusted value as argument".
+
 	* tools/gif2tiff.c (readgifimage): Fix Coverity 1024222 "Untrusted
 	value as argument".
 	(checksignature): Fix Coverity 1024894 "Ignoring number of bytes
