@@ -1,5 +1,8 @@
 2015-05-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_ojpeg.c (OJPEGReadBufferFill): Fix Coverity 603400
+	"Missing break in switch".
+
 	* contrib/addtiffo/tif_overview.c (TIFF_DownSample): Check buffer
 	size calculation for overflow.
 
