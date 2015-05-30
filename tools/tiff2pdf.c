@@ -2345,7 +2345,6 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 				t2p->t2p_error = T2P_ERR_ERROR;
 				return(0);
 			}
-			return(t2p->tiff_datasize);
 		}
 #endif
 #ifdef JPEG_SUPPORT
@@ -2469,6 +2468,7 @@ tsize_t t2p_readwrite_pdf_image(T2P* t2p, TIFF* input, TIFF* output){
 					(unsigned long) t2p->tiff_datasize, 
 					TIFFFileName(input));
 				t2p->t2p_error = T2P_ERR_ERROR;
+                                _TIFFfree(buffer);
 				return(0);
 			}
 			for(i=0;i<stripcount;i++){
@@ -5366,9 +5366,9 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 				written += t2p_write_pdf_transfer_dict(t2p, output, i);
 				written += t2p_write_pdf_stream_dict_end(output);
 				written += t2p_write_pdf_stream_start(output);
-				streamlen=written;
+				/* streamlen=written; */ /* value not used */
 				written += t2p_write_pdf_transfer_stream(t2p, output, i);
-				streamlen=written-streamlen;
+				/* streamlen=written-streamlen; */ /* value not used */
 				written += t2p_write_pdf_stream_end(output);
 				written += t2p_write_pdf_obj_end(output);
 			}
@@ -5381,9 +5381,9 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 			written += t2p_write_pdf_stream_dict(t2p->pdf_palettesize, 0, output);
 			written += t2p_write_pdf_stream_dict_end(output);
 			written += t2p_write_pdf_stream_start(output);
-			streamlen=written;
+			/* streamlen=written; */ /* value not used */
 			written += t2p_write_pdf_xobject_palettecs_stream(t2p, output);
-			streamlen=written-streamlen;
+			/* streamlen=written-streamlen; */ /* value not used */
 			written += t2p_write_pdf_stream_end(output);
 			written += t2p_write_pdf_obj_end(output);
 		}
@@ -5395,9 +5395,9 @@ tsize_t t2p_write_pdf(T2P* t2p, TIFF* input, TIFF* output){
 			written += t2p_write_pdf_xobject_icccs_dict(t2p, output);
 			written += t2p_write_pdf_stream_dict_end(output);
 			written += t2p_write_pdf_stream_start(output);
-			streamlen=written;
+			/* streamlen=written; */ /* value not used */
 			written += t2p_write_pdf_xobject_icccs_stream(t2p, output);
-			streamlen=written-streamlen;
+			/* streamlen=written-streamlen; */ /* value not used */
 			written += t2p_write_pdf_stream_end(output);
 			written += t2p_write_pdf_obj_end(output);
 		}
