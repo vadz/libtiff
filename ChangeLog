@@ -1,5 +1,8 @@
 2015-05-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_luv.c (LogLuvDecodeTile): Fix Coverity 991227
+	"Division or modulo by zero".
+
 	* libtiff/tif_dirread.c (TIFFReadDirEntryDoubleArray): Fix
 	Coverity 298626 "Logically dead code".
 	(TIFFReadDirEntryFloatArray): Fix Coverity 298627 "Logically dead
