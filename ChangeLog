@@ -1,3 +1,10 @@
+2015-05-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_jpeg.c (JPEGDecode): Fix Coverity 602597 "Operands
+	don't affect result".  This change uses ifdefs to include
+	applicable code based on properties of libjpeg.  Still needs to be
+	re-tested with 12-bit "6b" and "MK1".
+
 2015-05-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dirwrite.c (_TIFFRewriteField): Fix Coverity 1024310
