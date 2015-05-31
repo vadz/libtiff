@@ -1,5 +1,8 @@
 2015-05-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_dirread.c (TIFFReadDirEntryDoubleArray): Fix
+	Coverity 298626 "Logically dead code".
+
 	* libtiff/tif_dir.c (TIFFNumberOfDirectories): Don't depend on ++
 	operator precedenc in evaluation.  Might quench Coverity 1134470
 	"Logically dead code".

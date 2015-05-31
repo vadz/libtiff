@@ -2657,11 +2657,6 @@ TIFFReadDirEntryDoubleArray(TIFF* tif, TIFFDirEntry* direntry, double** value)
 			break;
 	}
 	_TIFFfree(origdata);
-	if (err!=TIFFReadDirEntryErrOk)
-	{
-		_TIFFfree(data);
-		return(err);
-	}
 	*value=data;
 	return(TIFFReadDirEntryErrOk);
 }
