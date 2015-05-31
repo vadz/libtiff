@@ -2,7 +2,10 @@
 
 	* libtiff/tif_dirread.c (TIFFReadDirEntryDoubleArray): Fix
 	Coverity 298626 "Logically dead code".
-	(TIFFReadDirEntryFloatArray): Fix 298627 "Logically dead code".
+	(TIFFReadDirEntryFloatArray): Fix Coverity 298627 "Logically dead
+	code".
+	(TIFFReadDirEntryIfd8Array): Fix Coverity 298628 "Logically dead
+	code".
 
 	* libtiff/tif_dir.c (TIFFNumberOfDirectories): Don't depend on ++
 	operator precedenc in evaluation.  Might quench Coverity 1134470
