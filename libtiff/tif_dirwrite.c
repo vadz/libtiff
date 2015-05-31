@@ -2839,13 +2839,14 @@ _TIFFRewriteField(TIFF* tif, uint16 tag, TIFFDataType in_datatype,
                          "Error writing directory link");
             return (0);
         }
-        
-        _TIFFfree( buf_to_write );
     }
     else
     {
         memcpy( &entry_offset, buf_to_write, count*TIFFDataWidth(datatype));
     }
+
+    _TIFFfree( buf_to_write );
+    buf_to_write = 0;
 
 /* -------------------------------------------------------------------- */
 /*      Adjust the directory entry.                                     */

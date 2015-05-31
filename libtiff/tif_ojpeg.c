@@ -1497,14 +1497,17 @@ OJPEGReadHeaderInfoSecStreamDht(TIFF* tif)
 		nb[sizeof(uint32)+1]=JPEG_MARKER_DHT;
 		nb[sizeof(uint32)+2]=(m>>8);
 		nb[sizeof(uint32)+3]=(m&255);
-		if (OJPEGReadBlock(sp,m-2,&nb[sizeof(uint32)+4])==0)
+		if (OJPEGReadBlock(sp,m-2,&nb[sizeof(uint32)+4])==0) {
+                        _TIFFfree(nb);
 			return(0);
+                }
 		o=nb[sizeof(uint32)+4];
 		if ((o&240)==0)
 		{
 			if (3<o)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Corrupt DHT marker in JPEG data");
+                                _TIFFfree(nb);
 				return(0);
 			}
 			if (sp->dctable[o]!=0)
@@ -1516,12 +1519,14 @@ OJPEGReadHeaderInfoSecStreamDht(TIFF* tif)
 			if ((o&240)!=16)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Corrupt DHT marker in JPEG data");
+                                _TIFFfree(nb);
 				return(0);
 			}
 			o&=15;
 			if (3<o)
 			{
 				TIFFErrorExt(tif->tif_clientdata,module,"Corrupt DHT marker in JPEG data");
+                                _TIFFfree(nb);
 				return(0);
 			}
 			if (sp->actable[o]!=0)

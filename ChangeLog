@@ -1,5 +1,11 @@
 2015-05-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_dirwrite.c (_TIFFRewriteField): Fix Coverity 1024310
+	"Resource leak".
+
+	* libtiff/tif_ojpeg.c (OJPEGReadHeaderInfoSecStreamDht): Fix
+	Coverity 601720 "Resource leak".
+
 	* libtiff/tif_jpeg.c (JPEGCleanup): Fix Coverity 298624
 	"Dereference before null check".
 
