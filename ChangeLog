@@ -4,6 +4,8 @@
 	"Division or modulo by zero".
 	(LogLuvDecodeStrip): Fix Coverity 991239 "Division or modulo by
 	zero".
+	(LogLuvEncodeStrip): Fix Coverity 991240 "Division or modulo by
+	zero".
 
 	* libtiff/tif_dirread.c (TIFFReadDirEntryDoubleArray): Fix
 	Coverity 298626 "Logically dead code".
