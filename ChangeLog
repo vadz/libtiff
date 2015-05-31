@@ -1,5 +1,9 @@
 2015-05-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_dir.c (TIFFNumberOfDirectories): Don't depend on ++
+	operator precedenc in evaluation.  Might quench Coverity 1134470
+	"Logically dead code".
+
 	* libtiff/tif_jpeg.c (JPEGDecode): Fix Coverity 602597 "Operands
 	don't affect result".  This change uses ifdefs to include
 	applicable code based on properties of libjpeg.  Still needs to be
