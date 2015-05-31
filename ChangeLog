@@ -1,5 +1,9 @@
 2015-05-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_dir.c (TIFFNumberOfDirectories): Quiet Coverity
+	1134470 "Logically dead code" by making the roll-over check
+	explicit.
+
 	* libtiff/tif_luv.c (LogLuvDecodeTile): Fix Coverity 991227
 	"Division or modulo by zero".
 	(LogLuvDecodeStrip): Fix Coverity 991239 "Division or modulo by
