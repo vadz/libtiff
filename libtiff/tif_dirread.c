@@ -2414,11 +2414,6 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 			break;
 	}
 	_TIFFfree(origdata);
-	if (err!=TIFFReadDirEntryErrOk)
-	{
-		_TIFFfree(data);
-		return(err);
-	}
 	*value=data;
 	return(TIFFReadDirEntryErrOk);
 }
