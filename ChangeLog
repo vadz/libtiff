@@ -6,6 +6,8 @@
 	code".
 	(TIFFReadDirEntryIfd8Array): Fix Coverity 298628 "Logically dead
 	code".
+	(TIFFReadDirEntrySlong8Array): Fix Coverity 298629 "Logically dead
+	code"
 
 	* libtiff/tif_dir.c (TIFFNumberOfDirectories): Don't depend on ++
 	operator precedenc in evaluation.  Might quench Coverity 1134470
