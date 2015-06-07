@@ -220,6 +220,11 @@ TIFFWriteEncodedStrip(TIFF* tif, uint32 strip, void* data, tmsize_t cc)
         tif->tif_flags |= TIFF_BUF4WRITE;
 	tif->tif_curstrip = strip;
 
+        if (td->td_stripsperimage == 0) {
+                TIFFErrorExt(tif->tif_clientdata, module, "Zero strips per image");
+                return ((tmsize_t) -1);
+        }
+
 	tif->tif_row = (strip % td->td_stripsperimage) * td->td_rowsperstrip;
 	if ((tif->tif_flags & TIFF_CODERSETUP) == 0) {
 		if (!(*tif->tif_setupencode)(tif))

@@ -1,7 +1,10 @@
 2015-06-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
-	* libtiff/tif_read.c (TIFFStartTile): Fix Coverity 715973
+	* libtiff/tif_write.c (TIFFWriteEncodedStrip): Fix Coverity 715975
 	"Division or modulo by zero".
+
+	* libtiff/tif_read.c (TIFFStartTile): Fix Coverity 715973 and
+	715974 "Division or modulo by zero".
 
 2015-05-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
