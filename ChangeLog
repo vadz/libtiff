@@ -6,6 +6,8 @@
 	or modulo by zero".
 	(TIFFWriteRawStrip): Fix Coverity 715978 "Division or modulo by
 	zero".
+	(TIFFWriteScanline): Fix Coverity 715979 "Division or modulo by
+	zero".
 
 	* libtiff/tif_read.c (TIFFStartTile): Fix Coverity 715973 and
 	715974 "Division or modulo by zero".
