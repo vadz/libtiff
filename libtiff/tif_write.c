@@ -358,6 +358,7 @@ TIFFWriteEncodedTile(TIFF* tif, uint32 tile, void* data, tmsize_t cc)
 	static const char module[] = "TIFFWriteEncodedTile";
 	TIFFDirectory *td;
 	uint16 sample;
+        uint32 howmany32;
 
 	if (!WRITECHECKTILES(tif, module))
 		return ((tmsize_t)(-1));
@@ -403,10 +404,18 @@ TIFFWriteEncodedTile(TIFF* tif, uint32 tile, void* data, tmsize_t cc)
 	 * Compute tiles per row & per column to compute
 	 * current row and column
 	 */
-	tif->tif_row = (tile % TIFFhowmany_32(td->td_imagelength, td->td_tilelength))
-		* td->td_tilelength;
-	tif->tif_col = (tile % TIFFhowmany_32(td->td_imagewidth, td->td_tilewidth))
-		* td->td_tilewidth;
+        howmany32=TIFFhowmany_32(td->td_imagelength, td->td_tilelength);
+        if (howmany32 == 0) {
+                 TIFFErrorExt(tif->tif_clientdata,module,"Zero tiles");
+                return ((tmsize_t)(-1));
+        }
+	tif->tif_row = (tile % howmany32) * td->td_tilelength;
+        howmany32=TIFFhowmany_32(td->td_imagewidth, td->td_tilewidth);
+        if (howmany32 == 0) {
+                 TIFFErrorExt(tif->tif_clientdata,module,"Zero tiles");
+                return ((tmsize_t)(-1));
+        }
+	tif->tif_col = (tile % howmany32) * td->td_tilewidth;
 
 	if ((tif->tif_flags & TIFF_CODERSETUP) == 0) {
 		if (!(*tif->tif_setupencode)(tif))

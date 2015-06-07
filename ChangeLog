@@ -2,6 +2,8 @@
 
 	* libtiff/tif_write.c (TIFFWriteEncodedStrip): Fix Coverity 715975
 	"Division or modulo by zero".
+	(TIFFWriteEncodedTile): Fix Coverity 715976 and 715977 "Division
+	or modulo by zero".
 
 	* libtiff/tif_read.c (TIFFStartTile): Fix Coverity 715973 and
 	715974 "Division or modulo by zero".
