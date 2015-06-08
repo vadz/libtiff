@@ -1,3 +1,8 @@
+2015-06-08  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jpeg.c: Fix compilation in BITS_IN_JSAMPLE == 12
+	case
+
 2015-06-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_write.c (TIFFWriteEncodedStrip): Fix Coverity 715975

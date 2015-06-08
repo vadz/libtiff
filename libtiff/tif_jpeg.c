@@ -1203,20 +1203,22 @@ JPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 	{
 #if JPEG_LIB_MK1_OR_12BIT /* BITS_IN_JSAMPLE 12 or 16 */
 		JSAMPROW line_work_buf = NULL;
+#endif
 
 		/*
 		 * For 6B, only use temporary buffer for 12 bit imagery.
 		 * For Mk1 always use it.
 		 */
+#if JPEG_LIB_MK1_OR_12BIT /* BITS_IN_JSAMPLE 12 or 16 */
 #if !defined(JPEG_LIB_MK1)
-		if( sp->cinfo.d.data_precision == 12 )
+        if( sp->cinfo.d.data_precision == 12 )
 #endif
-		{
+        {
 			line_work_buf = (JSAMPROW)
 			    _TIFFmalloc(sizeof(short) * sp->cinfo.d.output_width
 			    * sp->cinfo.d.num_components );
 		}
-#endif /* JPEG_LIB_MK1_OR_12BIT */
+#endif
 
 		do {
 #if JPEG_LIB_MK1_OR_12BIT /* BITS_IN_JSAMPLE 12 or 16 */
@@ -1261,9 +1263,11 @@ JPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 					}
 				}
 			}
-			/* else */
+#if !defined(JPEG_LIB_MK1)
+            else
+#endif /*  !defined(JPEG_LIB_MK1) */
 #endif /* JPEG_LIB_MK1_OR_12BIT */
-#if !JPEG_LIB_MK1_OR_12BIT
+#if !defined(JPEG_LIB_MK1)
 			{
 				/*
 				 * In the libjpeg6b 8bit case.  We read directly into the
@@ -1274,7 +1278,7 @@ JPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 				if (TIFFjpeg_read_scanlines(sp, &bufptr, 1) != 1)
 					return (0);
 			}
-#endif /* !JPEG_LIB_MK1_OR_12BIT */
+#endif /* !defined(JPEG_LIB_MK1) */
 
 			++tif->tif_row;
 			buf += sp->bytesperline;
