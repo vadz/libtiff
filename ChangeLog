@@ -1,3 +1,9 @@
+2015-06-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_jpeg.c (JPEGDecode): Split JPEGDecode() into two
+	clean implementations in order to avoid pre-processor hell.  Only
+	one of the implementations is used in a given build.
+
 2015-06-08  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_jpeg.c: Fix compilation in BITS_IN_JSAMPLE == 12
