@@ -419,12 +419,6 @@ main(int argc, char* argv[])
 	  exit (1);
           }
 
-	if (pageHeight && (maxPageHeight > pageHeight))
-	  {
-	  TIFFError ("-H", "Max viewport height cannot exceed page height");
-	  exit (1);
-          }
-
         /* auto rotate requires a specified page width and height */
         if (auto_rotate == TRUE)
           {
@@ -864,6 +858,9 @@ int exportMaskedImage(FILE *fp, double pagewidth, double pageheight,
                 {
                if (splitheight < imageheight) /* More than one vertical image segments */
                  {
+                 /* Intra2net: Keep correct apspect ratio */
+                 xscale = (imagewidth + overlap) * (pageheight / splitheight) * scale;
+
                  xtran = -1.0 * column * (pagewidth - overlap);
                   subimage_height = imageheight - ((splitheight - overlap) * row);
                  ytran  = pageheight - subimage_height * (pageheight / splitheight);
@@ -895,6 +892,14 @@ int exportMaskedImage(FILE *fp, double pagewidth, double pageheight,
                  xtran = 0;
                   }
                 }
+
+            if (imagewidth <= pagewidth) {
+                /* Intra2net: Crop page at the bottom instead of the top (-> output starts at the top).
+                     Only do this in non-page-split mode */
+                if (imageheight <= splitheight) {
+                    ytran = pageheight - imageheight; /* Note: Will be negative for images longer than page size */
+                }
+            }
               bott_offset += ytran / (center ? 2 : 1);
               left_offset += xtran / (center ? 2 : 1);
               break;
@@ -1399,7 +1404,10 @@ int get_viewport (double pgwidth, double pgheight, double pswidth, double psheig
   /* Only one of maxPageHeight or maxPageWidth can be specified */
   if (maxPageHeight != 0)   /* Clip the viewport to maxPageHeight on each page */
     {
-    *view_height = maxPageHeight * PS_UNIT_SIZE;
+    if (pgheight != 0 && pgheight < maxPageHeight)
+      *view_height = pgheight * PS_UNIT_SIZE;
+    else
+      *view_height = maxPageHeight * PS_UNIT_SIZE;
     /*
      * if (res_unit == RESUNIT_CENTIMETER)
      * *view_height /= 2.54F;
@@ -1429,7 +1437,10 @@ int get_viewport (double pgwidth, double pgheight, double pswidth, double psheig
 
   if (maxPageWidth != 0)   /* Clip the viewport to maxPageWidth on each page */
     {
-    *view_width = maxPageWidth * PS_UNIT_SIZE;
+    if (pgwidth != 0 && pgwidth < maxPageWidth)
+      *view_width = pgwidth * PS_UNIT_SIZE;
+    else
+      *view_width = maxPageWidth * PS_UNIT_SIZE;
     /* if (res_unit == RESUNIT_CENTIMETER)
      *  *view_width /= 2.54F;
      */

@@ -6963,7 +6963,7 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
       TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
       }
     else /* Use the compression from the input file */
-      TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
+      CopyField(TIFFTAG_COMPRESSION, compression);
     }
 
   if (compression == COMPRESSION_JPEG)
