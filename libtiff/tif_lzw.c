@@ -436,16 +436,18 @@ LZWDecode(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 		if (code == CODE_EOI)
 			break;
 		if (code == CODE_CLEAR) {
-			free_entp = sp->dec_codetab + CODE_FIRST;
-			_TIFFmemset(free_entp, 0,
-				    (CSIZE - CODE_FIRST) * sizeof (code_t));
-			nbits = BITS_MIN;
-			nbitsmask = MAXCODE(BITS_MIN);
-			maxcodep = sp->dec_codetab + nbitsmask-1;
-			NextCode(tif, sp, bp, code, GetNextCode);
+			do {
+				free_entp = sp->dec_codetab + CODE_FIRST;
+				_TIFFmemset(free_entp, 0,
+					    (CSIZE - CODE_FIRST) * sizeof (code_t));
+				nbits = BITS_MIN;
+				nbitsmask = MAXCODE(BITS_MIN);
+				maxcodep = sp->dec_codetab + nbitsmask-1;
+				NextCode(tif, sp, bp, code, GetNextCode);
+			} while (code == CODE_CLEAR);	/* consecutive CODE_CLEAR codes */
 			if (code == CODE_EOI)
 				break;
-			if (code >= CODE_CLEAR) {
+			if (code > CODE_CLEAR) {
 				TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 				"LZWDecode: Corrupted LZW table at scanline %d",
 					     tif->tif_row);
@@ -655,16 +657,18 @@ LZWDecodeCompat(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 		if (code == CODE_EOI)
 			break;
 		if (code == CODE_CLEAR) {
-			free_entp = sp->dec_codetab + CODE_FIRST;
-			_TIFFmemset(free_entp, 0,
-				    (CSIZE - CODE_FIRST) * sizeof (code_t));
-			nbits = BITS_MIN;
-			nbitsmask = MAXCODE(BITS_MIN);
-			maxcodep = sp->dec_codetab + nbitsmask;
-			NextCode(tif, sp, bp, code, GetNextCodeCompat);
+			do {
+				free_entp = sp->dec_codetab + CODE_FIRST;
+				_TIFFmemset(free_entp, 0,
+					    (CSIZE - CODE_FIRST) * sizeof (code_t));
+				nbits = BITS_MIN;
+				nbitsmask = MAXCODE(BITS_MIN);
+				maxcodep = sp->dec_codetab + nbitsmask;
+				NextCode(tif, sp, bp, code, GetNextCodeCompat);
+			} while (code == CODE_CLEAR);	/* consecutive CODE_CLEAR codes */
 			if (code == CODE_EOI)
 				break;
-			if (code >= CODE_CLEAR) {
+			if (code > CODE_CLEAR) {
 				TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
 				"LZWDecode: Corrupted LZW table at scanline %d",
 					     tif->tif_row);
