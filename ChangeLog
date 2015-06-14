@@ -1,5 +1,9 @@
 2015-06-14  Lee Howard  <faxguy@howardsilvan.com>
 
+	* configure: contribution from Ludolf Holzheid on Bugzilla
+	Bug #2498.  Adds an option to select the file I/O style on 
+	Windows hosts.
+
 	* libtiff/tif_getimage.c: contribution from Gary Cramblitt 
 	on Bugzilla Bug #2409.  Correct reading of certain tiled TIFFs.
 

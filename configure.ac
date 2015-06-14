@@ -841,17 +841,28 @@ dnl this must be after the ogl test, since that looks for windows.h and we
 dnl test it
 dnl ---------------------------------------------------------------------------
 
+AC_ARG_ENABLE(win32-io,
+	      AS_HELP_STRING([--disable-win32-io],
+			     [disable Win32 I/O (Windows only, enabled by default except for Cygwin)]),,)
+
 win32_io_ok=no
 case "${host_os}" in
     cygwin*)
+        if test x"$ac_cv_header_windows_h" = xyes -a "x$enable_win32_io" = xyes ; then 
+            win32_io_ok=yes
+	fi
         ;;
     *)
-        if test x"$ac_cv_header_windows_h" = xyes; then 
+        if test x"$ac_cv_header_windows_h" = xyes -a ! "x$enable_win32_io" = xno ; then 
             win32_io_ok=yes
-	    AC_DEFINE(USE_WIN32_FILEIO,1,[define to use win32 IO system])
 	fi
         ;;
 esac
+
+if test "$win32_io_ok" = "yes" ; then
+    AC_DEFINE(USE_WIN32_FILEIO,1,[define to use win32 IO system])
+fi
+
 AM_CONDITIONAL([WIN32_IO], [test "$win32_io_ok" = yes])
 
 dnl ---------------------------------------------------------------------------
