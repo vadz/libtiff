@@ -1,5 +1,9 @@
 2015-06-14  Lee Howard  <faxguy@howardsilvan.com>
 
+	* libtiff/tif_unix.c: contribution from Vadim Zeitlin on
+	Bugzilla Bug #2510 fixes several harmless but still annoying 
+	warnings
+
 	* configure: contribution from Ludolf Holzheid on Bugzilla
 	Bug #2498.  Adds an option to select the file I/O style on 
 	Windows hosts.
