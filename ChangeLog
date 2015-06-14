@@ -1,5 +1,8 @@
 2015-06-14  Lee Howard  <faxguy@howardsilvan.com>
 
+	* tools/tiffgt.c (raster_draw): contribution from Jay Berkenbilt 
+	on Bugzilla Bug #2401.  Appropriately call glFlush().
+
 	* tools/tiff2pdf.c: change ColorTransform from "0" to "1"
 	following Bugzilla Bug #2150.
 
