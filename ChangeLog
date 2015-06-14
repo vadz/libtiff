@@ -1,5 +1,8 @@
 2015-06-14  Lee Howard  <faxguy@howardsilvan.com>
 
+	* libtiff/tif_getimage.c: contribution from Gary Cramblitt 
+	on Bugzilla Bug #2409.  Correct reading of certain tiled TIFFs.
+
 	* configure, configure.ac: contribution from Marcos H. Woehrmann
 	on Bugzilla Bug #2405.  Correct shell equality operator.
 
