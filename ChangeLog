@@ -1,3 +1,20 @@
+2015-06-13  Lee Howard  <faxguy@howardsilvan.com>
+
+	* libtiff/tif_lzw.c: contribution from Andy Cave - decode
+	files that contain consecutive CODE_CLEAR codes.
+
+	* tools/tiff2pdf.c: contribution from Antti S. Lankila on
+	Bugzilla Bug #2078. Suppress initial output of the header.
+
+	* tools/tiff2pdf.c: contribution from Yuriy M. Kaminskiy -
+	Take care in using the return value from snprintf().
+
+	* tools/tiffcrop.c: contribution from Eduardo Robles Elvira -
+	correctly copy the compression tag from the source TIFF.
+
+	* tools/tiff2ps.c: contribution from Eduardo Robles Elvira -
+	correct sizing and scaling problems with output document.
+
 2015-06-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_jpeg.c (JPEGDecode): Split JPEGDecode() into two
