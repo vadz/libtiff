@@ -1,3 +1,7 @@
+2015-06-16  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_unix.c: fix compilation with MSVC (fix by Jeff McKenna)
+
 2015-06-14  Lee Howard  <faxguy@howardsilvan.com>
 
 	* libtiff/tif_unix.c: contribution from Vadim Zeitlin on

@@ -114,9 +114,9 @@ _tiffCloseProc(thandle_t fd)
 static uint64
 _tiffSizeProc(thandle_t fd)
 {
+	struct stat sb;
 	fd_as_handle_union_t fdh;
 	fdh.h = fd;
-	struct stat sb;
 	if (fstat(fdh.fd,&sb)<0)
 		return(0);
 	else
