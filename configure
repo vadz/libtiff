@@ -837,6 +837,7 @@ with_jpeg12_include_dir
 with_jpeg12_lib
 enable_cxx
 with_x
+enable_win32_io
 enable_strip_chopping
 with_default_strip_size
 enable_defer_strile_load
@@ -1521,6 +1522,8 @@ Optional Features:
   --enable-jpeg12         enable libjpeg 8/12bit dual mode
   --enable-cxx            enable C++ stream API building (requires C++
                           compiler)
+  --disable-win32-io      disable Win32 I/O (Windows only, enabled by default
+                          except for Cygwin)
   --disable-strip-chopping
                           disable support for strip chopping (whether or not
                           to convert single-strip uncompressed images to
@@ -20346,19 +20349,32 @@ fi
 
 
 
+# Check whether --enable-win32-io was given.
+if test "${enable_win32_io+set}" = set; then :
+  enableval=$enable_win32_io;
+fi
+
+
 win32_io_ok=no
 case "${host_os}" in
     cygwin*)
+        if test x"$ac_cv_header_windows_h" = xyes -a "x$enable_win32_io" = xyes ; then
+            win32_io_ok=yes
+	fi
         ;;
     *)
-        if test x"$ac_cv_header_windows_h" = xyes; then
+        if test x"$ac_cv_header_windows_h" = xyes -a ! "x$enable_win32_io" = xno ; then
             win32_io_ok=yes
-
-$as_echo "#define USE_WIN32_FILEIO 1" >>confdefs.h
-
 	fi
         ;;
 esac
+
+if test "$win32_io_ok" = "yes" ; then
+
+$as_echo "#define USE_WIN32_FILEIO 1" >>confdefs.h
+
+fi
+
  if test "$win32_io_ok" = yes; then
   WIN32_IO_TRUE=
   WIN32_IO_FALSE='#'
