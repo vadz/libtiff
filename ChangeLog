@@ -1,3 +1,8 @@
+2015-06-16  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_getimage.c: Fix four Coverity issues related to
+	unintended sign extension.
+
 2015-06-16  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_unix.c: fix compilation with MSVC (fix by Jeff McKenna)
