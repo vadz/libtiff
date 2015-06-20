@@ -1,3 +1,16 @@
+2015-06-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/libtiff.def: Added exports for TIFFGetConfiguredCODECs,
+	TIFFReadRGBAImageOriented, TIFFSetCompressionScheme,
+	TIFFSwabArrayOfTriples, TIFFVGetFieldDefaulted, _TIFFCheckRealloc,
+	TIFFRasterScanline, TIFFSetErrorHandlerExt,
+	TIFFSetWarningHandlerExt, TIFFNumberOfDirectories,
+	TIFFCreateCustomDirectory, TIFFCreateEXIFDirectory,
+	TIFFWriteCustomDirectory, _TIFFRewriteField as recommended by
+	Roger Leigh and justified by use in libtiff tests, documentation,
+	and changelog notes.  Also sorted symbol list and removed
+	duplicate entries.
+
 2015-06-16  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_getimage.c: Fix four Coverity issues related to
