@@ -1,5 +1,8 @@
 2015-06-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* test/raw_decode.c (XMD_H): Avoid conflicting typedefs for INT32
+	and boolean in MinGW build due to including jpeglib.h.
+
 	* test/rewrite_tag.c (main): Fix problem with location of variable
 	declaration.
 
