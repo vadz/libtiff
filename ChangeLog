@@ -1,5 +1,8 @@
 2015-06-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* test/rewrite_tag.c (main): Fix problem with location of variable
+	declaration.
+
 	* libtiff/libtiff.def: Added exports for TIFFGetConfiguredCODECs,
 	TIFFReadRGBAImageOriented, TIFFSetCompressionScheme,
 	TIFFSwabArrayOfTriples, TIFFVGetFieldDefaulted, _TIFFCheckRealloc,
