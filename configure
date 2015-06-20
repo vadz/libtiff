@@ -17692,7 +17692,15 @@ then
 elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long long'
-  SSIZE_FORMAT='"%lld"'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'long long', but uses printf from WIN32 CRT
+      SSIZE_FORMAT='"%I64d"'
+      ;;
+    *)
+      SSIZE_FORMAT='"%lld"'
+      ;;
+  esac
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SSIZE_T" >&5
 $as_echo "$SSIZE_T" >&6; }

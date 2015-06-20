@@ -332,7 +332,15 @@ then
 elif test $ac_cv_sizeof_signed_long_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long long'
-  SSIZE_FORMAT='"%lld"'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'long long', but uses printf from WIN32 CRT
+      SSIZE_FORMAT='"%I64d"'
+      ;;
+    *)
+      SSIZE_FORMAT='"%lld"'
+      ;;
+  esac
 fi
 AC_MSG_RESULT($SSIZE_T)
 AC_DEFINE_UNQUOTED(TIFF_SSIZE_T,$SSIZE_T,[Signed size type])

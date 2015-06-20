@@ -1,5 +1,9 @@
 2015-06-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* configure.ac: For 64-bit MinGW, fix SSIZE_FORMAT formatting
+	specifier.  64-bit MinGW supports 'long long' but support for
+	'lld' is not assured by the run-time DLLs.
+
 	* test/raw_decode.c (XMD_H): Avoid conflicting typedefs for INT32
 	and boolean in MinGW build due to including jpeglib.h.
 
