@@ -1,5 +1,7 @@
 2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 4.0.4 released.
+
 	* configure.ac: Add a HAVE_FOO Automake conditional for each
 	add-on library.
 
