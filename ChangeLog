@@ -1,5 +1,8 @@
 2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* html/build.html: Try to improve the nmake-based VC++ build
+	description.
+
 	* libtiff/tiffconf.vc.h: Build fixes based on testing.
 
 	* libtiff/tif_config.vc.h: Build fixes based on testing.
