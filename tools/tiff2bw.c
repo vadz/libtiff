@@ -127,8 +127,10 @@ main(int argc, char* argv[])
 	unsigned char *inbuf, *outbuf;
 	char thing[1024];
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char *optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:r:R:G:B:")) != -1)
 		switch (c) {

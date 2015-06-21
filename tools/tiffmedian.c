@@ -123,8 +123,10 @@ main(int argc, char* argv[])
 	float floatv;
 	uint32 longv;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	num_colors = MAX_CMAP_SIZE;
 	while ((c = getopt(argc, argv, "c:C:r:f")) != -1)

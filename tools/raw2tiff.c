@@ -105,8 +105,10 @@ main(int argc, char* argv[])
 	uint32 row, col, band;
 	int	c;
 	unsigned char *buf = NULL, *buf1 = NULL;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:r:H:w:l:b:d:LMp:si:o:h")) != -1) {
 		switch (c) {

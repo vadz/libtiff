@@ -246,8 +246,10 @@ main(int argc, char* argv[])
 	double pageWidth = 0;
 	double pageHeight = 0;
 	uint32 diroff = 0;
+#if !HAVE_DECL_OPTARG
 	extern char *optarg;
 	extern int optind;
+#endif
 	FILE* output = stdout;
 
         pageOrientation[0] = '\0';

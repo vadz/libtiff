@@ -210,8 +210,10 @@ main(int argc, char* argv[])
 	uint32 rowsperstrip = (uint32) -1;
 	uint16 fillorder = 0;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char *optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:f:r:t:")) != -1)
 		switch (c) {

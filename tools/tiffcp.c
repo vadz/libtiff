@@ -168,8 +168,10 @@ main(int argc, char* argv[])
 	char mode[10];
 	char* mp = mode;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	*mp++ = 'w';
 	*mp = '\0';

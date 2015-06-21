@@ -72,8 +72,10 @@ main(int argc, char* argv[])
 {
 	TIFF *in, *out;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char *optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:h:r:v:z")) != -1)
 		switch (c) {

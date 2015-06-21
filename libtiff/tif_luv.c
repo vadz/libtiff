@@ -695,7 +695,9 @@ LogLuvEncodeTile(TIFF* tif, uint8* bp, tmsize_t cc, uint16 s)
 #ifndef M_PI
 #define M_PI		3.14159265358979323846
 #endif
+#undef log2 /* Conflict with C'99 function */
 #define log2(x)		((1./M_LN2)*log(x))
+#undef exp2  /* Conflict with C'99 function */
 #define exp2(x)		exp(M_LN2*(x))
 
 #define itrunc(x,m)	((m)==SGILOGENCODE_NODITHER ? \

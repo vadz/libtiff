@@ -1,8 +1,20 @@
 2015-06-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tif_config.vc.h: Make adjustments to match the new
+	definitions that configure produces, including for WIN64.  Still
+	needs to be tested.
+
 	* configure.ac: For 64-bit MinGW, fix SSIZE_FORMAT formatting
 	specifier.  64-bit MinGW supports 'long long' but support for
-	'lld' is not assured by the run-time DLLs.
+	'lld' is not assured by the run-time DLLs and so GCC warns.
+	Add TIFF_SIZE_T and TIFF_SIZE_FORMAT to provide a type definition
+	and printf format specifier to deal with printing values of
+	'size_t' type.  In particular, this was necessary for WIN64.
+	Added a configure test for if the system headers provide 'optarg'
+	(normal case) and block out the many explicit 'extern' statements
+	in the utilities.  This was found to be necessary under Windows
+	when getopt is in a DLL and the symbols are already imported with
+	dllimport via standard header files.
 
 	* test/raw_decode.c (XMD_H): Avoid conflicting typedefs for INT32
 	and boolean in MinGW build due to including jpeglib.h.

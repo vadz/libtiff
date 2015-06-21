@@ -74,8 +74,11 @@ static void	raster_reshape(int, int);
 static void	raster_keys(unsigned char, int, int);
 static void	raster_special(int, int, int);
 
+#if !HAVE_DECL_OPTARG
 extern  char* optarg;
 extern  int optind;
+#endif
+
 static TIFF* tif = NULL;
 
 int

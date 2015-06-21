@@ -69,8 +69,10 @@ main(int argc, char* argv[])
 	int dirnum = -1, multiplefiles, c;
 	uint16 order = 0;
 	TIFF* tif;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 	long flags = 0;
 	uint64 diroff = 0;
 	int chopstrips = 0;		/* disable strip chopping */

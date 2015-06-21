@@ -95,9 +95,11 @@ main(int argc, char* argv[])
 	int c;
 	int pn, npages;
 	float resY = 196.0;
+
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
-
+#endif
 
 	while ((c = getopt(argc, argv, "R:X:o:1234ABLMPUW5678abcflmprsuvwz?")) != -1)
 		switch (c) {

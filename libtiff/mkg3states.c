@@ -383,8 +383,11 @@ main(int argc, char* argv[])
     FILE* fd;
     char* outputfile;
     int c;
+
+#if !HAVE_DECL_OPTARG
     extern int optind;
     extern char* optarg;
+#endif
 
     while ((c = getopt(argc, argv, "c:s:bp")) != -1)
 	switch (c) {

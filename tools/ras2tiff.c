@@ -70,8 +70,10 @@ main(int argc, char* argv[])
 	uint16 config = PLANARCONFIG_CONTIG;
 	uint32 rowsperstrip = (uint32) -1;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:r:h")) != -1)
 		switch (c) {

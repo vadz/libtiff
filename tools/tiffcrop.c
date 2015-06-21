@@ -1541,8 +1541,10 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
     char *opt_ptr      = NULL;    /* Pointer to next token in option set */
     char *sep          = NULL;    /* Pointer to a token separator */
     unsigned int  i, j, start, end;
+#if !HAVE_DECL_OPTARG
     extern int   optind;
     extern char* optarg;
+#endif
 
     *mp++ = 'w';
     *mp = '\0';
@@ -1569,7 +1571,7 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
 		  }
 	        *dirnum = start - 1;
 		break;
-      case 'e': switch (tolower(optarg[0])) /* image export modes*/
+      case 'e': switch (tolower((int) optarg[0])) /* image export modes*/
                   {
 		  case 'c': crop_data->exp_mode = ONE_FILE_COMPOSITE;
  		            crop_data->img_mode = COMPOSITE_IMAGES;
@@ -1692,14 +1694,14 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
                     /* convert option to lowercase */
                     end = strlen (opt_ptr);
                     for (i = 0; i < end; i++)
-                      *(opt_ptr + i) = tolower(*(opt_ptr + i));
+                      *(opt_ptr + i) = tolower((int) *(opt_ptr + i));
                     /* Look for dump format specification */
                     if (strncmp(opt_ptr, "for", 3) == 0)
                       {
 		      /* convert value to lowercase */
                       end = strlen (opt_offset + 1);
                       for (i = 1; i <= end; i++)
-                        *(opt_offset + i) = tolower(*(opt_offset + i));
+                        *(opt_offset + i) = tolower((int) *(opt_offset + i));
                       /* check dump format value */
 		      if (strncmp (opt_offset + 1, "txt", 3) == 0)
                         {
@@ -1766,7 +1768,7 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
                     }
 		break;
       case 'E':	/* edge reference */
-		switch (tolower(optarg[0]))
+		switch (tolower((int) optarg[0]))
                   {
 		  case 't': crop_data->edge_ref = EDGE_TOP;
                             break;
@@ -1783,7 +1785,7 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
 		break;
       case 'F': /* flip eg mirror image or cropped segment, M was already used */
 		crop_data->crop_mode |= CROP_MIRROR;
-		switch (tolower(optarg[0]))
+		switch (tolower((int) optarg[0]))
                   {
 		  case  'h': crop_data->mirror = MIRROR_HORIZ;
                              break;
@@ -1889,7 +1891,7 @@ void  process_command_opts (int argc, char *argv[], char *mp, char *mode, uint32
                 *image_count = i;
 		break;
       case 'O': /* page orientation */ 
-		switch (tolower(optarg[0]))
+		switch (tolower((int) optarg[0]))
                   {
 		  case  'a': page->orient = ORIENTATION_AUTO;
                              break;
@@ -2108,7 +2110,10 @@ update_output_file (TIFF **tiffout, char *mode, int autoindex,
 int
 main(int argc, char* argv[])
   {
+
+#if !HAVE_DECL_OPTARG
   extern int optind;
+#endif
   uint16 defconfig = (uint16) -1;
   uint16 deffillorder = 0;
   uint32 deftilewidth = (uint32) 0;

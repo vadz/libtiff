@@ -71,8 +71,10 @@ static	int generateThumbnail(TIFF*, TIFF*);
 static	void initScale();
 static	void usage(void);
 
+#if !HAVE_DECL_OPTARG
 extern	char* optarg;
 extern	int optind;
+#endif
 
 int
 main(int argc, char* argv[])

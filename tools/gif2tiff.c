@@ -137,8 +137,11 @@ void	rasterize(int, char*);
 int
 main(int argc, char* argv[])
 {
+#if !HAVE_DECL_OPTARG
     extern int optind;
     extern char *optarg;
+#endif
+
     int c, status;
 
     while ((c = getopt(argc, argv, "c:r:")) != -1)

@@ -81,8 +81,11 @@ main(int argc, char* argv[])
 	int cmap = -1;
 	TIFF *in, *out;
 	int c;
+
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "C:c:p:r:")) != -1)
 		switch (c) {

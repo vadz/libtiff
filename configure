@@ -2198,6 +2198,52 @@ $as_echo "$ac_res" >&6; }
 
 } # ac_fn_c_check_type
 
+# ac_fn_c_check_decl LINENO SYMBOL VAR INCLUDES
+# ---------------------------------------------
+# Tests whether SYMBOL is declared in INCLUDES, setting cache variable VAR
+# accordingly.
+ac_fn_c_check_decl ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  as_decl_name=`echo $2|sed 's/ *(.*//'`
+  as_decl_use=`echo $2|sed -e 's/(/((/' -e 's/)/) 0&/' -e 's/,/) 0& (/g'`
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $as_decl_name is declared" >&5
+$as_echo_n "checking whether $as_decl_name is declared... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$4
+int
+main ()
+{
+#ifndef $as_decl_name
+#ifdef __cplusplus
+  (void) $as_decl_use;
+#else
+  (void) $as_decl_name;
+#endif
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  eval "$3=yes"
+else
+  eval "$3=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_c_check_decl
+
 # ac_fn_c_compute_int LINENO EXPR VAR INCLUDES
 # --------------------------------------------
 # Tries to find the compile-time value of EXPR in a program that includes
@@ -17192,6 +17238,18 @@ $as_echo "#define TM_IN_SYS_TIME 1" >>confdefs.h
 fi
 
 
+ac_fn_c_check_decl "$LINENO" "optarg" "ac_cv_have_decl_optarg" "$ac_includes_default"
+if test "x$ac_cv_have_decl_optarg" = xyes; then :
+  ac_have_decl=1
+else
+  ac_have_decl=0
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_OPTARG $ac_have_decl
+_ACEOF
+
+
 
 # Obtain size of an 'signed short' and define as SIZEOF_SIGNED_SHORT
 # The cast to long int works around a bug in the HP C Compiler
@@ -17513,6 +17571,42 @@ _ACEOF
 
 
 
+# Obtain the size of 'size_t' and define as SIZEOF_SIZE_T.  Result is
+# available in ac_cv_sizeof_size_t
+# The cast to long int works around a bug in the HP C Compiler
+# version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
+# declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
+# This bug is HP SR number 8606223364.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking size of size_t" >&5
+$as_echo_n "checking size of size_t... " >&6; }
+if ${ac_cv_sizeof_size_t+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if ac_fn_c_compute_int "$LINENO" "(long int) (sizeof (size_t))" "ac_cv_sizeof_size_t"        "$ac_includes_default"; then :
+
+else
+  if test "$ac_cv_type_size_t" = yes; then
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error 77 "cannot compute sizeof (size_t)
+See \`config.log' for more details" "$LINENO" 5; }
+   else
+     ac_cv_sizeof_size_t=0
+   fi
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sizeof_size_t" >&5
+$as_echo "$ac_cv_sizeof_size_t" >&6; }
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define SIZEOF_SIZE_T $ac_cv_sizeof_size_t
+_ACEOF
+
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for signed 8-bit type" >&5
 $as_echo_n "checking for signed 8-bit type... " >&6; }
 INT8_T='signed char'
@@ -17680,12 +17774,58 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+# Determine formatting specifier for 'size_t'.  While the size should
+# be precise, the type determined may not match the system definition.
+# A named type is provided to allow casting to the type we determined
+# without changing the actual size.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for 'size_t' format specifier" >&5
+$as_echo_n "checking for 'size_t' format specifier... " >&6; }
+SIZE_T='unknown'
+SIZE_FORMAT='unknown'
+if test $ac_cv_sizeof_unsigned_int -eq $ac_cv_sizeof_size_t
+then
+  SIZE_T='unsigned int'
+  SIZE_FORMAT='"%u"'
+elif test $ac_cv_sizeof_unsigned_long -eq $ac_cv_sizeof_size_t
+then
+  SIZE_T='unsigned long'
+  SIZE_FORMAT='"%lu"'
+elif test $ac_cv_sizeof_unsigned_long_long -eq $ac_cv_sizeof_size_t
+then
+  SIZE_T='unsigned long long'
+  case "${host_os}" in
+    mingw32*)
+      # MinGW32 understands 'unsigned long long', but uses printf from WIN32 CRT
+      SIZE_FORMAT='"%I64u"'
+      ;;
+    *)
+      SIZE_FORMAT='"%llu"'
+      ;;
+  esac
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $SIZE_FORMAT" >&5
+$as_echo "$SIZE_FORMAT" >&6; }
+
+cat >>confdefs.h <<_ACEOF
+#define TIFF_SIZE_T $SIZE_T
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define TIFF_SIZE_FORMAT $SIZE_FORMAT
+_ACEOF
+
+
 # Determine TIFF equivalent of ssize_t
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for signed size type" >&5
 $as_echo_n "checking for signed size type... " >&6; }
 SSIZE_T='unknown'
 SSIZE_FORMAT='unknown'
-if test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
+if test $ac_cv_sizeof_signed_int -eq $ac_cv_sizeof_unsigned_char_p
+then
+  SSIZE_T='signed int'
+  SSIZE_FORMAT='"%d"'
+elif test $ac_cv_sizeof_signed_long -eq $ac_cv_sizeof_unsigned_char_p
 then
   SSIZE_T='signed long'
   SSIZE_FORMAT='"%ld"'

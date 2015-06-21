@@ -247,8 +247,10 @@ main(int argc, char* argv[])
 	uint32	row, clr;
 
 	int	c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:r:o:h")) != -1) {
 		switch (c) {

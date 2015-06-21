@@ -98,8 +98,10 @@ main(int argc, char* argv[])
 	unsigned int w, h, prec, row;
 	char *infile;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 	tmsize_t scanline_size;
 
 	if (argc < 2) {

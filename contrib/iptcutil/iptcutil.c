@@ -801,11 +801,11 @@ void chstore(char *string,int max,char ch)
         switch(_p_flag&3)
           {
           case 1: 	    /* convert to upper */
-            c=toupper(ch);
+            c=toupper((int) ch);
             break;
 
           case 2: 	    /* convert to lower */
-            c=tolower(ch);
+            c=tolower((int) ch);
             break;
 
           default:	    /* use as is */

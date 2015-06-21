@@ -97,8 +97,11 @@ const char* floatfmt = "%s%g";		/* FLOAT */
 const char* doublefmt = "%s%g";		/* DOUBLE */
 
 static void dump(int, uint64);
+
+#if !HAVE_DECL_OPTARG
 extern int optind;
 extern char* optarg;
+#endif
 
 void
 usage()

@@ -323,8 +323,10 @@ static	void usage(int code);
 int
 main(int argc, char** argv)
 {
+#if !HAVE_DECL_OPTARG
     extern int optind;
     extern char* optarg;
+#endif
     uint16 *pages = NULL, npages = 0, pageNumber;
     int c, dowarnings = 0;		/* if 1, enable library warnings */
     TIFF* tif;
