@@ -1,5 +1,8 @@
 2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* test/Makefile.am: tiff2rgba-quad-tile.jpg.sh depends on the JPEG
+	library so only execute if JPEG is available.
+
 	* libtiff 4.0.4 released.
 
 	* configure.ac: Add a HAVE_FOO Automake conditional for each
