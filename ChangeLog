@@ -1,5 +1,12 @@
 2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* configure.ac: Add a HAVE_FOO Automake conditional for each
+	add-on library.
+
+	* test/Makefile.am (JPEG_DEPENDENT_CHECK_PROG): raw_decode
+	requires JPEG support to compile.  Use Automake conditional to
+	only include it when JPEG support is available.
+
 	* html/build.html: Try to improve the nmake-based VC++ build
 	description.
 

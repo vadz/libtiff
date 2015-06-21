@@ -47,8 +47,16 @@ XFAIL_TESTS =
 # Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif o-*
 
+if HAVE_JPEG
+JPEG_DEPENDENT_CHECK_PROG=raw_decode
+else
+JPEG_DEPENDENT_CHECK_PROG=
+endif
+
 # Executable programs which need to be built in order to support tests
-check_PROGRAMS = ascii_tag long_tag short_tag strip_rw rewrite raw_decode custom_dir
+check_PROGRAMS = \
+	ascii_tag long_tag short_tag strip_rw rewrite custom_dir \
+	$(JPEG_DEPENDENT_CHECK_PROG)
 
 # Test scripts to execute
 TESTSCRIPTS = \

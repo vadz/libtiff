@@ -688,6 +688,8 @@ if test "$HAVE_JPEG" = "yes" ; then
 
 fi
 
+AM_CONDITIONAL(HAVE_JPEG, test "$HAVE_JPEG" = 'yes')
+
 dnl ---------------------------------------------------------------------------
 dnl Check for Old JPEG.
 dnl ---------------------------------------------------------------------------
@@ -760,6 +762,8 @@ if test "$HAVE_JBIG" = "yes" ; then
 
 fi
 
+AM_CONDITIONAL(HAVE_JBIG, test "$HAVE_JBIG" = 'yes')
+
 dnl ---------------------------------------------------------------------------
 dnl Check for liblzma2.
 dnl ---------------------------------------------------------------------------
@@ -811,6 +815,8 @@ if test "$HAVE_LZMA" = "yes" ; then
   fi
 
 fi
+
+AM_CONDITIONAL(HAVE_LZMA, test "$HAVE_LZMA" = 'yes')
 
 dnl ---------------------------------------------------------------------------
 dnl Should 8/12 bit jpeg mode be enabled?

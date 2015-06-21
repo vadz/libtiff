@@ -116,7 +116,7 @@ host_triplet = @host@
 XFAIL_TESTS =
 check_PROGRAMS = ascii_tag$(EXEEXT) long_tag$(EXEEXT) \
 	short_tag$(EXEEXT) strip_rw$(EXEEXT) rewrite$(EXEEXT) \
-	raw_decode$(EXEEXT) custom_dir$(EXEEXT)
+	custom_dir$(EXEEXT) $(am__EXEEXT_1)
 subdir = test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acinclude.m4 \
@@ -132,6 +132,7 @@ CONFIG_HEADER = $(top_builddir)/libtiff/tif_config.h \
 	$(top_builddir)/libtiff/tiffconf.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@HAVE_JPEG_TRUE@am__EXEEXT_1 = raw_decode$(EXEEXT)
 am_ascii_tag_OBJECTS = ascii_tag.$(OBJEXT)
 ascii_tag_OBJECTS = $(am_ascii_tag_OBJECTS)
 ascii_tag_DEPENDENCIES = $(LIBTIFF)
@@ -597,6 +598,8 @@ TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
 
 # Extra files which should be cleaned by 'make clean'
 CLEANFILES = test_packbits.tif o-*
+@HAVE_JPEG_FALSE@JPEG_DEPENDENT_CHECK_PROG = 
+@HAVE_JPEG_TRUE@JPEG_DEPENDENT_CHECK_PROG = raw_decode
 
 # Test scripts to execute
 TESTSCRIPTS = \
@@ -1074,16 +1077,16 @@ rewrite.log: rewrite$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-raw_decode.log: raw_decode$(EXEEXT)
-	@p='raw_decode$(EXEEXT)'; \
-	b='raw_decode'; \
+custom_dir.log: custom_dir$(EXEEXT)
+	@p='custom_dir$(EXEEXT)'; \
+	b='custom_dir'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-custom_dir.log: custom_dir$(EXEEXT)
-	@p='custom_dir$(EXEEXT)'; \
-	b='custom_dir'; \
+raw_decode.log: raw_decode$(EXEEXT)
+	@p='raw_decode$(EXEEXT)'; \
+	b='raw_decode'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

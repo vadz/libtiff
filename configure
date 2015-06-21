@@ -656,6 +656,12 @@ X_CFLAGS
 XMKMF
 HAVE_CXX_FALSE
 HAVE_CXX_TRUE
+HAVE_LZMA_FALSE
+HAVE_LZMA_TRUE
+HAVE_JBIG_FALSE
+HAVE_JBIG_TRUE
+HAVE_JPEG_FALSE
+HAVE_JPEG_TRUE
 LIBTIFF_DOCDIR
 HAVE_RPATH_FALSE
 HAVE_RPATH_TRUE
@@ -18623,6 +18629,15 @@ $as_echo "#define JPEG_SUPPORT 1" >>confdefs.h
 
 fi
 
+ if test "$HAVE_JPEG" = 'yes'; then
+  HAVE_JPEG_TRUE=
+  HAVE_JPEG_FALSE='#'
+else
+  HAVE_JPEG_TRUE='#'
+  HAVE_JPEG_FALSE=
+fi
+
+
 
 # Check whether --enable-old-jpeg was given.
 if test "${enable_old_jpeg+set}" = set; then :
@@ -18761,6 +18776,15 @@ done
 
 fi
 
+ if test "$HAVE_JBIG" = 'yes'; then
+  HAVE_JBIG_TRUE=
+  HAVE_JBIG_FALSE='#'
+else
+  HAVE_JBIG_TRUE='#'
+  HAVE_JBIG_FALSE=
+fi
+
+
 
 HAVE_LZMA=no
 
@@ -18867,6 +18891,15 @@ $as_echo "#define LZMA_SUPPORT 1" >>confdefs.h
   fi
 
 fi
+
+ if test "$HAVE_LZMA" = 'yes'; then
+  HAVE_LZMA_TRUE=
+  HAVE_LZMA_FALSE='#'
+else
+  HAVE_LZMA_TRUE='#'
+  HAVE_LZMA_FALSE=
+fi
+
 
 
 HAVE_JPEG12=no
@@ -20794,6 +20827,18 @@ fi
 
 if test -z "${HAVE_RPATH_TRUE}" && test -z "${HAVE_RPATH_FALSE}"; then
   as_fn_error $? "conditional \"HAVE_RPATH\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_JPEG_TRUE}" && test -z "${HAVE_JPEG_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_JPEG\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_JBIG_TRUE}" && test -z "${HAVE_JBIG_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_JBIG\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_LZMA_TRUE}" && test -z "${HAVE_LZMA_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LZMA\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HAVE_CXX_TRUE}" && test -z "${HAVE_CXX_FALSE}"; then
