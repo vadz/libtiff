@@ -1,3 +1,8 @@
+2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/libtiff.def: TIFFRasterScanline does not exist so remove
+	export for it.
+
 2015-06-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_config.vc.h: Make adjustments to match the new
