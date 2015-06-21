@@ -1,3 +1,6 @@
+#ifndef _TIF_CONFIG_H_
+#define _TIF_CONFIG_H_
+
 /* Define to 1 if you have the <assert.h> header file. */
 #define HAVE_ASSERT_H 1
 
@@ -27,7 +30,7 @@
 #define HAVE_SETMODE 1
 
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't. */
-#define HAVE_DECL_OPTARG 1
+#define HAVE_DECL_OPTARG 0
 
 /* The size of a `int', as computed by sizeof. */
 #define SIZEOF_INT 4
@@ -119,6 +122,10 @@
 #endif
 
 #define lfind _lfind
+
+#pragma warning(disable : 4996) /* function deprecation warnings */
+
+#endif /* _TIF_CONFIG_H_ */
 /*
  * Local Variables:
  * mode: c

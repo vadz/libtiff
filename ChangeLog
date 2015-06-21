@@ -1,5 +1,9 @@
 2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tiffconf.vc.h: Build fixes based on testing.
+
+	* libtiff/tif_config.vc.h: Build fixes based on testing.
+
 	* libtiff/libtiff.def: TIFFRasterScanline does not exist so remove
 	export for it.
 
