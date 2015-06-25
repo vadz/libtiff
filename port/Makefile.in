@@ -196,7 +196,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/config/depcomp \
-	$(top_srcdir)/config/mkinstalldirs getopt.c lfind.c \
+	$(top_srcdir)/config/mkinstalldirs getopt.c lfind.c snprintf.c \
 	strcasecmp.c strtoul.c strtoull.c
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -345,7 +345,7 @@ tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = Makefile.vc libport.h
+EXTRA_DIST = Makefile.vc libport.h snprintf.c
 noinst_LTLIBRARIES = libport.la
 libport_la_SOURCES = dummy.c libport.h
 libport_la_LIBADD = @LTLIBOBJS@
@@ -405,6 +405,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/lfind.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/snprintf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoul.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoull.Plo@am__quote@

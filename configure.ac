@@ -414,11 +414,12 @@ AC_CHECK_TYPES([int8, int16, int32],,,
 ])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor isascii memmove memset mmap pow setmode sqrt\
- strchr strrchr strstr strtol strtoull])
+AC_CHECK_FUNCS([floor isascii memmove memset mmap pow setmode snprintf sqrt \
+strchr strrchr strstr strtol strtoul strtoull])
 
 dnl Will use local replacements for unavailable functions
 AC_REPLACE_FUNCS(getopt)
+AC_REPLACE_FUNCS(snprintf)
 AC_REPLACE_FUNCS(strcasecmp)
 AC_REPLACE_FUNCS(strtoul)
 AC_REPLACE_FUNCS(strtoull)

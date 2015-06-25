@@ -31,11 +31,14 @@
 #include <string.h>
 #include <unistd.h>
 
-#if HAVE_APPLE_OPENGL_FRAMEWORK
+#ifdef HAVE_OPENGL_GL_H
 # include <OpenGL/gl.h>
-# include <GLUT/glut.h>
 #else
 # include <GL/gl.h>
+#endif
+#ifdef HAVE_GLUT_GLUT_H
+# include <GLUT/glut.h>
+#else
 # include <GL/glut.h>
 #endif
 

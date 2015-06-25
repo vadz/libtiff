@@ -1,3 +1,11 @@
+2015-06-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* CMakeLists.txt: Add CMake patchset by Roger Leigh as posted to
+	libtiff mailing list on Mon, 22 Jun 2015 21:21:01 +0100. Several
+	corrections to ensure that the autotools build still works were
+	added by me.  I have not yet tested the build using 'cmake' or
+	MSVC with 'nmake'.
+
 2015-06-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/Makefile.am: tiff2rgba-quad-tile.jpg.sh depends on the JPEG
