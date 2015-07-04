@@ -1,3 +1,15 @@
+2015-07-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* cmake: Add d suffix to debug libraries with MSVC.  Patch #3 of 3
+	by Roger Leigh posted to tiff list on Wed, 1 Jul 2015 15:58:20
+	+0100.
+
+	* cmake: Add extra warning flags.  Patch #2 of 3 by Roger Leigh
+	posted to tiff list on Wed, 1 Jul 2015 15:58:20 +0100.
+
+	* cmake: Correct snprintf fallback for VS2015.  Patch #1 of 3 by
+	Roger Leigh posted to tiff list on Wed, 1 Jul 2015 15:58:20 +0100.
+
 2015-06-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* CMakeLists.txt: Add CMake patchset by Roger Leigh as posted to
