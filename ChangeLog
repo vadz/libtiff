@@ -1,3 +1,9 @@
+2015-08-13  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* CMakeLists.txt: Applied patch by Roger Leigh to fix libtiffxx
+	symbol versioning.  Patch was mailed to libtiff list on Thu, 13
+	Aug 2015.
+
 2015-07-04  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* cmake: Add d suffix to debug libraries with MSVC.  Patch #3 of 3
