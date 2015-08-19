@@ -57,6 +57,7 @@
 # include "libport.h"
 #endif
 
+#include "tiffiop.h"
 #include "tiffio.h"
 
 #ifndef HAVE_GETOPT
@@ -78,7 +79,7 @@ static	int quality = 75;		/* JPEG quality */
 static	uint16 predictor = 0;
 
 static void swapBytesInScanline(void *, uint32, TIFFDataType);
-static int guessSize(int, TIFFDataType, off_t, uint32, int,
+static int guessSize(int, TIFFDataType, _TIFF_off_t, uint32, int,
 		     uint32 *, uint32 *);
 static double correlation(void *, void *, uint32, TIFFDataType);
 static void usage(void);
@@ -89,7 +90,7 @@ main(int argc, char* argv[])
 {
 	uint32	width = 0, length = 0, linebytes, bufsize;
 	uint32	nbands = 1;		    /* number of bands in input image*/
-	off_t	hdr_size = 0;		    /* size of the header to skip */
+	_TIFF_off_t hdr_size = 0;	    /* size of the header to skip */
 	TIFFDataType dtype = TIFF_BYTE;
 	int16	depth = 1;		    /* bytes per pixel in input image */
 	int	swab = 0;		    /* byte swapping flag */
@@ -283,14 +284,14 @@ main(int argc, char* argv[])
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip );
 
-	lseek(fd, hdr_size, SEEK_SET);		/* Skip the file header */
+	_TIFF_lseek_f(fd, hdr_size, SEEK_SET);		/* Skip the file header */
 	for (row = 0; row < length; row++) {
 		switch(interleaving) {
 		case BAND:			/* band interleaved data */
 			for (band = 0; band < nbands; band++) {
-				if (lseek(fd,
+				if (_TIFF_lseek_f(fd,
                                           hdr_size + (length*band+row)*linebytes,
-                                          SEEK_SET) == (off_t)-1) {
+                                          SEEK_SET) == (_TIFF_off_t)-1) {
                                         fprintf(stderr,
                                                 "%s: %s: scanline %lu: seek error.\n",
                                                 argv[0], argv[optind],
@@ -364,17 +365,17 @@ swapBytesInScanline(void *buf, uint32 width, TIFFDataType dtype)
 }
 
 static int
-guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
+guessSize(int fd, TIFFDataType dtype, _TIFF_off_t hdr_size, uint32 nbands,
 	  int swab, uint32 *width, uint32 *length)
 {
 	const float longt = 40.0;    /* maximum possible height/width ratio */
 	char	    *buf1, *buf2;
-	struct stat filestat;
+	_TIFF_stat_s filestat;
 	uint32	    w, h, scanlinesize, imagesize;
 	uint32	    depth = TIFFDataWidth(dtype);
 	float	    cor_coef = 0, tmp;
 
-	if (fstat(fd, &filestat) == -1) {
+	if (_TIFF_fstat_f(fd, &filestat) == -1) {
                 fprintf(stderr, "Failed to obtain file size.\n");
 		return -1;
         }
@@ -417,8 +418,8 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 				buf2 = _TIFFmalloc(scanlinesize);
 				h = imagesize / w;
                                 do {
-                                        if (lseek(fd, hdr_size + (int)(h/2)*scanlinesize,
-                                                  SEEK_SET) == (off_t)-1) {
+                                        if (_TIFF_lseek_f(fd, hdr_size + (int)(h/2)*scanlinesize,
+                                                  SEEK_SET) == (_TIFF_off_t)-1) {
                                                 fprintf(stderr, "seek error.\n");
                                                 fail=1;
                                                 break;
@@ -462,7 +463,7 @@ guessSize(int fd, TIFFDataType dtype, off_t hdr_size, uint32 nbands,
 
 		return 1;
 	} else {
-		if (filestat.st_size<(off_t)(hdr_size+(*width)*(*length)*nbands*depth)) {
+		if (filestat.st_size<(_TIFF_off_t)(hdr_size+(*width)*(*length)*nbands*depth)) {
 			fprintf(stderr, "Input file too small.\n");
 		return -1;
 		}

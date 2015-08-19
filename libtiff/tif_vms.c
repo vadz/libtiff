@@ -66,7 +66,7 @@ _tiffWriteProc(thandle_t fd, tdata_t buf, tsize_t size)
 static toff_t
 _tiffSeekProc(thandle_t fd, toff_t off, int whence)
 {
-	return ((toff_t) lseek((int) fd, (off_t) off, whence));
+	return ((toff_t) _TIFF_lseek_f((int) fd, (_TIFF_off_t) off, whence));
 }
 
 static int
@@ -80,8 +80,8 @@ _tiffCloseProc(thandle_t fd)
 static toff_t
 _tiffSizeProc(thandle_t fd)
 {
-	struct stat sb;
-	return (toff_t) (fstat((int) fd, &sb) < 0 ? 0 : sb.st_size);
+	_TIFF_stat_s sb;
+	return (toff_t) (_TIFF_fstat_f((int) fd, &sb) < 0 ? 0 : sb.st_size);
 }
 
 #ifdef HAVE_MMAP

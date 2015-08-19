@@ -1,3 +1,11 @@
+2015-08-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffiop.h: First cut at supporting large files under
+	Microsoft Windows using tif_unix.c and the libtiff tools.  This
+	only works if the Windows CDK is new enough to support the APIs
+	used (Visual C++ 2005 or later).  Support for large files is not
+	actually tested yet.
+
 2015-08-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_jpeg.c: Applied patch by Räisä Olli to assure that

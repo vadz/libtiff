@@ -87,11 +87,11 @@ tiffconf.h:	tiffconf.vc.h
 	copy tiffconf.vc.h tiffconf.h
 
 libtiff.lib:	tif_config.h tiffconf.h $(OBJ)
-	$(AR) /out:libtiff.lib $(OBJ) $(LIBS)
+	$(AR) /out:libtiff.lib ..\port\libport.lib $(OBJ) $(LIBS)
 
 $(DLLNAME):	tif_config.h tiffconf.h libtiff.def $(OBJ)
 	$(LD) /debug /dll /def:libtiff.def /out:$(DLLNAME) \
-	/implib:libtiff_i.lib $(OBJ) $(LIBS)
+	/implib:libtiff_i.lib ..\port\libport.lib $(OBJ) $(LIBS)
 	
 clean:
 	-del tif_config.h tiffconf.h

@@ -171,7 +171,7 @@ dump(int fd, uint64 diroff)
 	uint64* visited_diroff = NULL;
 	unsigned int count_visited_dir = 0;
 
-	lseek(fd, (off_t) 0, 0);
+	_TIFF_lseek_f(fd, (_TIFF_off_t) 0, 0);
 	if (read(fd, (char*) &hdr, sizeof (TIFFHeaderCommon)) != sizeof (TIFFHeaderCommon))
 		ReadError("TIFF header");
 	if (hdr.common.tiff_magic != TIFF_BIGENDIAN
@@ -309,11 +309,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 
 	if (off == 0)			/* no more directories */
 		goto done;
-#if defined(__WIN32__) && defined(_MSC_VER)
-	if (_lseeki64(fd, (__int64)off, SEEK_SET) != (__int64)off) {
-#else
-	if (lseek(fd, (off_t)off, SEEK_SET) != (off_t)off) {
-#endif
+	if (_TIFF_lseek_f(fd, (_TIFF_off_t)off, SEEK_SET) != (_TIFF_off_t)off) {
 		Fatal("Seek error accessing TIFF directory");
 		goto done;
 	}
@@ -479,13 +475,8 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 		{
 			datamem = _TIFFmalloc((uint32)datasize);
 			if (datamem) {
-#if defined(__WIN32__) && defined(_MSC_VER)
-				if (_lseeki64(fd, (__int64)dataoffset, SEEK_SET)
-				    != (__int64)dataoffset)
-#else
-				if (lseek(fd, (off_t)dataoffset, 0) !=
-				    (off_t)dataoffset)
-#endif
+				if (_TIFF_lseek_f(fd, (_TIFF_off_t)dataoffset, 0) !=
+				    (_TIFF_off_t)dataoffset)
 				{
 					Error(
 				"Seek error accessing tag %u value", tag);

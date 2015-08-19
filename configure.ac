@@ -182,6 +182,10 @@ AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
 
+dnl If the `fseeko' function is available, define `HAVE_FSEEKO'. Define
+dnl `_LARGEFILE_SOURCE' if necessary.
+AC_FUNC_FSEEKO
+
 dnl Check if optarg (and presumably related externs) already declared in headers
 AC_CHECK_DECLS([optarg])
 

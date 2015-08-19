@@ -131,7 +131,7 @@ static   char tiffcrop_rev_date[] = "12-13-2010";
 #endif
 
 #ifndef HAVE_GETOPT
-extern int getopt(int, char**, char*);
+extern int getopt(int argc, char * const argv[], const char *optstring);
 #endif
 
 #ifdef NEED_LIBPORT

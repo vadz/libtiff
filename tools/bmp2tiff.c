@@ -57,6 +57,7 @@
 # include "libport.h"
 #endif
 
+#include "tiffiop.h"
 #include "tiffio.h"
 
 #ifndef O_BINARY
@@ -234,7 +235,7 @@ main(int argc, char* argv[])
 	uint32	rowsperstrip = (uint32) -1;
         uint16	photometric = PHOTOMETRIC_MINISBLACK;
 	int	fd = 0;
-	struct stat instat;
+	_TIFF_stat_s instat;
 	char	*outfilename = NULL, *infilename = NULL;
 	TIFF	*out = NULL;
 
@@ -307,7 +308,7 @@ main(int argc, char* argv[])
                 /* -------------------------------------------------------------------- */
                 /*      Read the BMPFileHeader. We need iOffBits value only             */
                 /* -------------------------------------------------------------------- */
-                if (lseek(fd, 10, SEEK_SET) == (off_t)-1) {
+                if (_TIFF_lseek_f(fd, 10, SEEK_SET) == (_TIFF_off_t)-1) {
                         TIFFError(infilename, "Failed to seek to offset");
                         goto bad;
                 }
@@ -319,7 +320,7 @@ main(int argc, char* argv[])
 #ifdef WORDS_BIGENDIAN
 		TIFFSwabLong(&file_hdr.iOffBits);
 #endif
-		if (fstat(fd, &instat) == -1) {
+		if (_TIFF_fstat_f(fd, &instat) == -1) {
                         TIFFError(infilename, "Failed obtain file information");
                         goto bad;
                 }
@@ -329,7 +330,7 @@ main(int argc, char* argv[])
                 /*      Read the BMPInfoHeader.                                         */
                 /* -------------------------------------------------------------------- */
 
-		if (lseek(fd, BFH_SIZE, SEEK_SET) == (off_t)-1) {
+		if (_TIFF_lseek_f(fd, BFH_SIZE, SEEK_SET) == (_TIFF_off_t)-1) {
                         TIFFError(infilename, "Failed to seek to offset");
                         goto bad;
                 }
@@ -479,7 +480,7 @@ main(int argc, char* argv[])
 					goto bad;
 				}
 
-				if (lseek(fd, BFH_SIZE + info_hdr.iSize, SEEK_SET) == (off_t)-1) {
+				if (_TIFF_lseek_f(fd, BFH_SIZE + info_hdr.iSize, SEEK_SET) == (_TIFF_off_t)-1) {
                                         TIFFError(infilename, "Failed to seek to offset");
                                         goto bad;
                                 }
@@ -613,7 +614,7 @@ main(int argc, char* argv[])
 					offset = file_hdr.iOffBits+(length-row-1)*size;
 				else
 					offset = file_hdr.iOffBits + row * size;
-				if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
+				if (_TIFF_lseek_f(fd, offset, SEEK_SET) == (_TIFF_off_t)-1) {
 					TIFFError(infilename,
 						  "scanline %lu: Seek error",
 						  (unsigned long) row);
@@ -681,7 +682,7 @@ main(int argc, char* argv[])
 				goto bad3;
 			}
 
-			if (lseek(fd, file_hdr.iOffBits, SEEK_SET) == (off_t)-1) {
+			if (_TIFF_lseek_f(fd, file_hdr.iOffBits, SEEK_SET) == (_TIFF_off_t)-1) {
                                 TIFFError(infilename, "Failed to seek to offset");
                                 goto bad3;
                         }
