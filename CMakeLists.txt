@@ -397,6 +397,10 @@ int main(void) {
 }"
   HAVE_SNPRINTF)
 
+if(NOT HAVE_SNPRINTF)
+  add_definitions(-DNEED_LIBPORT)
+endif()
+
 # CPU bit order
 set(fillorder FILLORDER_MSB2LSB)
 if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i.*86.*" OR

@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include "libport.h"
 
-int vsnprintf(char* str, size_t size, const char* format, va_list ap)
+int _TIFF_vsnprintf_f(char* str, size_t size, const char* format, va_list ap)
 {
   int count = -1;
 
@@ -23,7 +23,7 @@ int vsnprintf(char* str, size_t size, const char* format, va_list ap)
   return count;
 }
 
-int snprintf(char* str, size_t size, const char* format, ...)
+int _TIFF_snprintf_f(char* str, size_t size, const char* format, ...)
 {
   int count;
   va_list ap;

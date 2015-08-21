@@ -1,3 +1,9 @@
+2015-08-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/CMakeLists.txt, port/snprintf.c: Patch by Roger Leigh to
+	fix build issues when using Cmake due to Windows large file
+	changes.
+
 2015-08-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tiffiop.h: First cut at supporting large files under

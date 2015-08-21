@@ -26,6 +26,7 @@ extra_dist(Makefile.vc)
 
 include_directories(${PROJECT_SOURCE_DIR}/libtiff
                     ${PROJECT_BINARY_DIR}/libtiff
+                    ${PROJECT_SOURCE_DIR}/port
                     ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(bmp2tiff bmp2tiff.c)
