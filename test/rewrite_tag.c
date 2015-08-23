@@ -320,7 +320,7 @@ int rewrite_test( const char *filename, int length, int bigtiff,
 /*                                main()                                */
 /************************************************************************/
 int
-main(int argc, char **argv)
+main(void)
 {
     int failure = 0;
 

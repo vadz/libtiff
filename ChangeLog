@@ -1,3 +1,7 @@
+2015-08-23  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/rewrite_tag.c (main): Does not require any arguments.
+
 2015-08-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/CMakeLists.txt, port/snprintf.c: Patch by Roger Leigh to
