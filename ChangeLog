@@ -1,5 +1,9 @@
 2015-08-23  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff/tiffiop.h: For MinGW comiles, make sure that build
+	supports necessary __MSVCRT_VERSION__ (at least at least 0x800).
+	Otherwise large files can not be supported for POSIX-style I/O.
+
 	* tools/fax2tiff.c (main): Eliminate a compiler warning in 64-bit
 	builds about cast to thandle_t.
 

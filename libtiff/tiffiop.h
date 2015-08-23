@@ -276,6 +276,11 @@ struct tiff {
   'off_t' rather than 'long'.  It is wrong to use fseeko() and
   ftello() only on systems with special LFS support since some systems
   (e.g. FreeBSD) support a 64-bit off_t by default.
+
+  For MinGW, __MSVCRT_VERSION__ must be at least 0x800 to expose these
+  interfaces. The MinGW compiler must support the requested version.  MinGW
+  does not distribute the CRT (it is supplied by Microsoft) so the correct CRT
+  must be available on the target computer in order for the program to run.
 */
 #if defined(HAVE_FSEEKO)
 #  define fseek(stream,offset,whence)  fseeko(stream,offset,whence)
@@ -283,8 +288,8 @@ struct tiff {
 #endif
 #endif
 #if defined(__WIN32__) && \
-  !(defined(_MSC_VER) && _MSC_VER < 1400)/*  && \ */
-  /* !(defined(__MINGW32__) && __MSVCRT_VERSION__ < 0x800) */
+        !(defined(_MSC_VER) && _MSC_VER < 1400) && \
+        !(defined(__MSVCRT_VERSION__) && __MSVCRT_VERSION__ < 0x800)
 typedef unsigned int TIFFIOSize_t;
 #define _TIFF_lseek_f(fildes,offset,whence)  _lseeki64(fildes,/* __int64 */ offset,whence)
 /* #define _TIFF_tell_f(fildes) /\* __int64 *\/ _telli64(fildes) */
