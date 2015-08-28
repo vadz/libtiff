@@ -15,8 +15,8 @@ Notes on releasing.
      automake - ftp://ftp.gnu.org/pub/gnu/automake
      libtool  - ftp://ftp.gnu.org/pub/gnu/libtool
 
-   It is recommanded building m4 before autoconf, since the latest requires
-   the former.
+   It is recommended to install m4 before autoconf, since the later
+   requires the former.
 
    Release builds should only be done on a system with a functioning
    and correctly set system clock and on a filesystem which accurately
