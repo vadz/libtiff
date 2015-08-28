@@ -1,3 +1,8 @@
+2015-08-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/v4.0.5.html: Added HTML file describing the changes which
+	will appear in the 4.0.5 release.
+
 2015-08-23  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tiffiop.h: For MinGW comiles, make sure that build
