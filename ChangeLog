@@ -131,20 +131,20 @@
 2015-06-14  Lee Howard  <faxguy@howardsilvan.com>
 
 	* libtiff/tif_unix.c: contribution from Vadim Zeitlin on
-	Bugzilla Bug #2510 fixes several harmless but still annoying 
+	Bugzilla Bug #2510 fixes several harmless but still annoying
 	warnings
 
 	* configure: contribution from Ludolf Holzheid on Bugzilla
-	Bug #2498.  Adds an option to select the file I/O style on 
+	Bug #2498.  Adds an option to select the file I/O style on
 	Windows hosts.
 
-	* libtiff/tif_getimage.c: contribution from Gary Cramblitt 
+	* libtiff/tif_getimage.c: contribution from Gary Cramblitt
 	on Bugzilla Bug #2409.  Correct reading of certain tiled TIFFs.
 
 	* configure, configure.ac: contribution from Marcos H. Woehrmann
 	on Bugzilla Bug #2405.  Correct shell equality operator.
 
-	* tools/tiffgt.c (raster_draw): contribution from Jay Berkenbilt 
+	* tools/tiffgt.c (raster_draw): contribution from Jay Berkenbilt
 	on Bugzilla Bug #2401.  Appropriately call glFlush().
 
 	* tools/tiff2pdf.c: change ColorTransform from "0" to "1"
