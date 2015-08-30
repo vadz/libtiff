@@ -26,7 +26,9 @@
 LIBPORT = $(top_builddir)/port/libport.la
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
-EXTRA_DIST = Makefile.vc
+EXTRA_DIST = \
+	CMakeLists.txt \
+	Makefile.vc
 
 bin_PROGRAMS = \
 	bmp2tiff \

@@ -295,7 +295,12 @@ tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README tiffstream.cpp tiffstream.h
+EXTRA_DIST = \
+	CMakeLists.txt \
+	README \
+	tiffstream.cpp \
+	tiffstream.h
+
 all: all-am
 
 .SUFFIXES:

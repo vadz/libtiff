@@ -407,6 +407,9 @@ dist_doc_DATA = $(indexfile) $(docfiles)
 INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY BGCOLOR=white><ul><H2>Man Pages</h2><p>'
 INDEXEND = '</ul></BODY></HTML>'
 manpages = $(docfiles:.html=)
+EXTRA_DIST = \
+	CMakeLists.txt
+
 all: all-am
 
 .SUFFIXES:

@@ -401,7 +401,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = xtiff
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
-EXTRA_DIST = README
+EXTRA_DIST = \
+	CMakeLists.txt \
+	README
+
 tiff_bi_SOURCES = tiff-bi.c
 tiff_bi_LDADD = $(LIBTIFF)
 tiff_grayscale_SOURCES = tiff-grayscale.c

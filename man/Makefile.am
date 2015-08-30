@@ -96,3 +96,6 @@ dist_man3_MANS = \
 	TIFFWriteRawTile.3tiff \
 	TIFFWriteScanline.3tiff \
 	TIFFWriteTile.3tiff
+
+EXTRA_DIST = \
+	CMakeLists.txt

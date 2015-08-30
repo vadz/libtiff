@@ -295,7 +295,15 @@ tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README listtif.c maketif.c xtif_dir.c xtiffio.h xtiffiop.h
+EXTRA_DIST = \
+	CMakeLists.txt \
+	README \
+	listtif.c \
+	maketif.c \
+	xtif_dir.c \
+	xtiffio.h \
+	xtiffiop.h
+
 all: all-am
 
 .SUFFIXES:

@@ -36,6 +36,7 @@ TESTS_ENVIRONMENT = \
 EXTRA_DIST = \
 	$(TESTSCRIPTS) \
 	$(IMAGES_EXTRA_DIST) \
+	CMakeLists.txt \
 	common.sh
 
 # All of the tests to execute via 'make check'

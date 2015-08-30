@@ -38,13 +38,14 @@ docfiles = \
 	VERSION
 
 EXTRA_DIST = \
+	CMakeLists.txt \
 	HOWTO-RELEASE \
 	Makefile.vc \
 	SConstruct \
 	autogen.sh \
 	configure.com \
-	nmake.opt \
-	libtiff-4.pc.in
+	libtiff-4.pc.in \
+	nmake.opt
 
 dist_doc_DATA = $(docfiles)
 

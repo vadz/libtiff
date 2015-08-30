@@ -401,6 +401,9 @@ dist_man3_MANS = \
 	TIFFWriteScanline.3tiff \
 	TIFFWriteTile.3tiff
 
+EXTRA_DIST = \
+	CMakeLists.txt
+
 all: all-am
 
 .SUFFIXES:

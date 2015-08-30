@@ -457,7 +457,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LIBPORT = $(top_builddir)/port/libport.la
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
-EXTRA_DIST = Makefile.vc
+EXTRA_DIST = \
+	CMakeLists.txt \
+	Makefile.vc
+
 @HAVE_RPATH_TRUE@AM_LDFLAGS = $(LIBDIR)
 bmp2tiff_SOURCES = bmp2tiff.c
 bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)

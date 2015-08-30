@@ -640,6 +640,7 @@ TESTS_ENVIRONMENT = \
 EXTRA_DIST = \
 	$(TESTSCRIPTS) \
 	$(IMAGES_EXTRA_DIST) \
+	CMakeLists.txt \
 	common.sh
 
 

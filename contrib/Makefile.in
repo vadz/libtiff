@@ -355,7 +355,10 @@ tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README
+EXTRA_DIST = \
+	CMakeLists.txt \
+	README
+
 SUBDIRS = addtiffo dbs iptcutil mfs pds ras stream tags win_dib
 all: all-recursive
 

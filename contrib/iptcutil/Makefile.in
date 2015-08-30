@@ -346,7 +346,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
-EXTRA_DIST = README test.iptc test.txt
+EXTRA_DIST = \
+	CMakeLists.txt \
+	README \
+	test.iptc \
+	test.txt
+
 iptcutil_SOURCES = iptcutil.c
 iptcutil_LDADD = $(LIBTIFF)
 AM_CPPFLAGS = -I$(top_srcdir)/libtiff

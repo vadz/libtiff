@@ -124,3 +124,5 @@ htmldoc:
 		${GROFF} $(MANSRCDIR)/$$i > $(HTMLMANDIR)/$$i.html;	\
 	done
 
+EXTRA_DIST = \
+	CMakeLists.txt

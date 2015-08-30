@@ -295,7 +295,14 @@ tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = Makefile.w95 README.Tiffile README.tiff2dib Tiffile.cpp tiff2dib.c
+EXTRA_DIST = \
+	CMakeLists.txt \
+	Makefile.w95 \
+	README.Tiffile \
+	README.tiff2dib \
+	Tiffile.cpp \
+	tiff2dib.c
+
 all: all-am
 
 .SUFFIXES:

@@ -345,7 +345,12 @@ tiff_libs_private = @tiff_libs_private@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = Makefile.vc libport.h snprintf.c
+EXTRA_DIST = \
+	CMakeLists.txt \
+	Makefile.vc \
+	libport.h \
+	snprintf.c
+
 noinst_LTLIBRARIES = libport.la
 libport_la_SOURCES = dummy.c libport.h
 libport_la_LIBADD = @LTLIBOBJS@
