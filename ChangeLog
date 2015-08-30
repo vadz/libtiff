@@ -1,3 +1,7 @@
+2015-08-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: libtiff 4.0.5 released.
+
 2015-08-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* CMakeLists.txt: Applied patch by Roger Leigh (via tiff mailing
