@@ -1,5 +1,9 @@
 2015-08-30  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_lzw.c: make nextdata a unsigned type to avoid
+	undefined behaviour with shifts (gcc -fsanitize=shift)
+
+2015-08-30  Even Rouault <even.rouault at spatialys.com>
 	* libtiff/tif_fax3.c, libtiff/tif_lzw.c, libtiff/tif_predict.c:
 	add explicit masking with 0xff before casting
 	to unsigned char (make icc -check=conversions happy)
