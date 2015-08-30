@@ -836,13 +836,15 @@ LZWPreEncode(TIFF* tif, uint16 s)
 	} else							\
 		rat = (incount<<8) / outcount;			\
 }
+
+/* Explicit 0xff masking to make icc -check=conversions happy */
 #define	PutNextCode(op, c) {					\
 	nextdata = (nextdata << nbits) | c;			\
 	nextbits += nbits;					\
-	*op++ = (unsigned char)(nextdata >> (nextbits-8));		\
+	*op++ = (unsigned char)((nextdata >> (nextbits-8))&0xff);		\
 	nextbits -= 8;						\
 	if (nextbits >= 8) {					\
-		*op++ = (unsigned char)(nextdata >> (nextbits-8));	\
+		*op++ = (unsigned char)((nextdata >> (nextbits-8))&0xff);	\
 		nextbits -= 8;					\
 	}							\
 	outcount += nbits;					\
@@ -1048,8 +1050,9 @@ LZWPostEncode(TIFF* tif)
 		sp->enc_oldcode = (hcode_t) -1;
 	}
 	PutNextCode(op, CODE_EOI);
+        /* Explicit 0xff masking to make icc -check=conversions happy */
 	if (nextbits > 0) 
-		*op++ = (unsigned char)(nextdata << (8-nextbits));
+		*op++ = (unsigned char)((nextdata << (8-nextbits))&0xff);
 	tif->tif_rawcc = (tmsize_t)(op - tif->tif_rawdata);
 	return (1);
 }

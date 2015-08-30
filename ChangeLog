@@ -1,3 +1,13 @@
+2015-08-30  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_fax3.c, libtiff/tif_lzw.c, libtiff/tif_predict.c:
+	add explicit masking with 0xff before casting
+	to unsigned char (make icc -check=conversions happy)
+
+	* libtiff/tif_predict.c: operate on unsigned datatypes when
+	computing/applying differences to avoid undefined behaviour of
+	signed types (C standard compliance)
+
 2015-08-30  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: libtiff 4.0.5 released.

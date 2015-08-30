@@ -442,8 +442,9 @@ _TIFFFax3fillruns(unsigned char* buf, uint32* runs, uint32* erun, uint32 lastx)
 			FILL(n, cp);
 			run &= 7;
 		    }
+                    /* Explicit 0xff masking to make icc -check=conversions happy */
 		    if (run)
-			cp[0] |= 0xff00 >> run;
+			cp[0] = (unsigned char)((cp[0] | (0xff00 >> run))&0xff);
 		} else
 		    cp[0] |= _fillmasks[run]>>bx;
 		x += runs[1];
