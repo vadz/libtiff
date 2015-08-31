@@ -125,4 +125,5 @@ htmldoc:
 	done
 
 EXTRA_DIST = \
-	CMakeLists.txt
+	CMakeLists.txt \
+	HtmlDoc.cmake

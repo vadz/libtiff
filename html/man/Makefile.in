@@ -408,7 +408,8 @@ INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY 
 INDEXEND = '</ul></BODY></HTML>'
 manpages = $(docfiles:.html=)
 EXTRA_DIST = \
-	CMakeLists.txt
+	CMakeLists.txt \
+	HtmlDoc.cmake
 
 all: all-am
 

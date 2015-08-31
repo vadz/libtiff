@@ -43,12 +43,12 @@ if (POLICY CMP0054)
 endif(POLICY CMP0054)
 
 # Project version
-project(tiff VERSION 4.0.4 LANGUAGES C)
+project(tiff VERSION 4.0.5 LANGUAGES C)
 # the other tiff_VERSION_* variables are set automatically
 set(tiff_VERSION_ALPHA beta)
 # Library version (unlike libtool's baroque scheme, WYSIWYG here)
 set(SO_COMPATVERSION 5)
-set(SO_VERSION 5.2.1)
+set(SO_VERSION 5.2.2)
 
 # For autotools header compatibility
 set(PACKAGE_NAME "LibTIFF Software")
