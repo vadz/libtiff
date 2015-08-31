@@ -1,3 +1,11 @@
+2015-08-31  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_predict.c: fix generation of output with 16 bit
+	or 32 bit integer, when byte swapping is needed, in
+	horizontal predictor (#2521). Also fixes decoding when there is
+	a single pixel to code (unlikely case...) and byte swapping is
+	involved.
+
 2015-08-30  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_lzw.c: make nextdata a unsigned type to avoid
