@@ -1,4 +1,10 @@
 2015-08-31  Even Rouault <even.rouault at spatialys.com>
+	
+	* libtiff/tif_predict.c: pedantic change to add explicit masking
+	with 0xff before casting to uchar in floating-point horizontal
+	differencing and accumulation routines.
+
+2015-08-31  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_predict.c: fix generation of output with 16 bit
 	or 32 bit integer, when byte swapping is needed, in

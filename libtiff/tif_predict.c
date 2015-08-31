@@ -389,7 +389,8 @@ fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc)
 		return;
 
 	while (count > stride) {
-		REPEAT4(stride, cp[stride] += cp[0]; cp++)
+		REPEAT4(stride, cp[stride] =
+                        (unsigned char) ((cp[stride] + cp[0]) & 0xff); cp++)
 		count -= stride;
 	}
 
@@ -602,7 +603,7 @@ fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc)
 	cp = (uint8 *) cp0;
 	cp += cc - stride - 1;
 	for (count = cc; count > stride; count -= stride)
-		REPEAT4(stride, cp[stride] -= cp[0]; cp--)
+		REPEAT4(stride, cp[stride] = (unsigned char)((cp[stride] - cp[0])&0xff); cp--)
 }
 
 static int
