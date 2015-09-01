@@ -643,7 +643,8 @@ EXTRA_DIST = \
 	CMakeLists.txt \
 	common.sh \
 	TiffSplitTest.cmake \
-	TiffTestCommon.cmake
+	TiffTestCommon.cmake \
+	TiffTest.cmake
 
 
 # Extra files which should be cleaned by 'make clean'

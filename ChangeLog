@@ -1,5 +1,35 @@
+2015-08-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* CMakeLists.txt, libtiff/test/Makefile.am: Applied patches by
+	Roger Leigh (via tiff mailing list on 2015-08-31.
+
+	CMake reads all version information directly from configure.ac to
+	avoid duplication of values.  This basically greps over the file
+	for the LIBTIFF_* variables, then translates them to the form
+	needed for cmake. This includes the release version and libtool
+	shared library version information.
+
+	Make shared/static library building configurable.  Currently it
+	always builds shared libraries, with static libs having a _static
+	suffix (copying zlib, but it means it's got a non-standard name).
+	CMake has a -DBUILD_SHARED_LIBS=ON|OFF option to select one or the
+	other, which is now used instead.  There's now a single "tiff"
+	target to build either shared or static as required, and all the
+	tests and tools are linked with this. Note: the Windows tests fail
+	when linked with a static libtiff (says: libtiff.dll not found).
+	Not really a regression since this was not tested up to this
+	point, and it's likely the unit tests haven't (ever?) been run on
+	Windows with a static libtiff, so there's some additional
+	portability issue here to address.  Works fine on UNIX systems,
+	and fine on Windows with the default to build a DLL.
+
+	Add a missing file which wasn't being distributed, causing unit
+	tests to fail.  Note that "find . -name '*.cmake'" lists all the
+	CMake files which need distributing in addition to all the
+	CMakeLists.txt files (which now are distributed).
+
 2015-08-31  Even Rouault <even.rouault at spatialys.com>
-	
+
 	* libtiff/tif_predict.c: pedantic change to add explicit masking
 	with 0xff before casting to uchar in floating-point horizontal
 	differencing and accumulation routines.
@@ -18,6 +48,7 @@
 	undefined behaviour with shifts (gcc -fsanitize=shift)
 
 2015-08-30  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_fax3.c, libtiff/tif_lzw.c, libtiff/tif_predict.c:
 	add explicit masking with 0xff before casting
 	to unsigned char (make icc -check=conversions happy)

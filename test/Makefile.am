@@ -39,7 +39,8 @@ EXTRA_DIST = \
 	CMakeLists.txt \
 	common.sh \
 	TiffSplitTest.cmake \
-	TiffTestCommon.cmake
+	TiffTestCommon.cmake \
+	TiffTest.cmake
 
 # All of the tests to execute via 'make check'
 TESTS = $(check_PROGRAMS) $(TESTSCRIPTS)
