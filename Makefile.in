@@ -762,6 +762,7 @@ distcheck: dist
 	test -d $(distdir)/_build || exit 0; \
 	dc_install_base=`$(am__cd) $(distdir)/_inst && pwd | sed -e 's,^[^:\\/]:[\\/],/,'` \
 	  && dc_destdir="$${TMPDIR-/tmp}/am-dc-$$$$/" \
+	  && $(MAKE) $(AM_MAKEFLAGS) distcheck-hook \
 	  && am__cwd=`pwd` \
 	  && $(am__cd) $(distdir)/_build/sub \
 	  && ../../configure \
@@ -950,6 +951,16 @@ uninstall-am: uninstall-dist_docDATA uninstall-pkgconfigDATA
 
 .PRECIOUS: Makefile
 
+
+distcheck-hook:
+	mkdir $(distdir)/_build/cmake \
+	&& cd $(distdir)/_build/cmake \
+	&& cmake ../.. \
+	&& $(MAKE) \
+	&& ctest -V \
+	&& $(MAKE) DESTDIR=../../_inst/cmake install
+	$(RM) -r $(distdir)/_build/cmake
+	$(RM) -r $(distdir)/_inst/cmake
 
 release:
 	(rm -f $(top_srcdir)/RELEASE-DATE && echo $(LIBTIFF_RELEASE_DATE) > $(top_srcdir)/RELEASE-DATE)

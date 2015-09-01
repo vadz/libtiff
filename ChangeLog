@@ -1,3 +1,14 @@
+2015-09-01  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* CMakeLists.txt, Makefile.am, configure.ac: Applied patches by
+	Roger Leigh (via tiff mailing list on 2015-09-01).
+
+	CMake build is now included in 'distcheck' target.
+
+	Builds with CMake 2.8.9 and newer.
+
+	Tar is now resquested to use POSIX PAX format.
+
 2015-08-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* CMakeLists.txt, libtiff/test/Makefile.am: Applied patches by

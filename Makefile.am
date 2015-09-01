@@ -49,6 +49,16 @@ EXTRA_DIST = \
 
 dist_doc_DATA = $(docfiles)
 
+distcheck-hook:
+	mkdir $(distdir)/_build/cmake \
+	&& cd $(distdir)/_build/cmake \
+	&& cmake ../.. \
+	&& $(MAKE) \
+	&& ctest -V \
+	&& $(MAKE) DESTDIR=../../_inst/cmake install
+	$(RM) -r $(distdir)/_build/cmake
+	$(RM) -r $(distdir)/_inst/cmake
+
 SUBDIRS = port libtiff tools build contrib test man html
 
 release:
