@@ -1,5 +1,10 @@
 2015-09-01  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* Makefile.am (distcheck-hook), configure.ac: Applied patches by
+	Roger Leigh (via tiff mailing list on 2015-09-01) to fix issue
+	with BSD make and to make use of cmake in 'distcheck' target
+	conditional on if cmake is available.
+
 	* CMakeLists.txt, Makefile.am, configure.ac: Applied patches by
 	Roger Leigh (via tiff mailing list on 2015-09-01).
 

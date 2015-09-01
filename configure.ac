@@ -109,8 +109,11 @@ AM_PROG_CC_C_O
 dnl We want warnings. As many warnings as possible.
 VL_PROG_CC_WARNINGS()
 
+dnl Checks for programs
 AC_PROG_INSTALL
 AC_PROG_LN_S
+# Used only for validating the source distribution during distcheck
+AC_PATH_PROG(CMAKE, cmake)
 
 
 # Check if LD supports linker scripts, and define automake conditional

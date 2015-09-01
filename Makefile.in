@@ -278,6 +278,7 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CMAKE = @CMAKE@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -953,12 +954,14 @@ uninstall-am: uninstall-dist_docDATA uninstall-pkgconfigDATA
 
 
 distcheck-hook:
-	mkdir $(distdir)/_build/cmake \
-	&& cd $(distdir)/_build/cmake \
-	&& cmake ../.. \
-	&& $(MAKE) \
-	&& ctest -V \
-	&& $(MAKE) DESTDIR=../../_inst/cmake install
+	if [ -x "$(CMAKE)" ]; then \
+	  mkdir $(distdir)/_build/cmake \
+	  && cd $(distdir)/_build/cmake \
+	  && cmake ../.. \
+	  && $(MAKE) \
+	  && ctest -V \
+	  && $(MAKE) DESTDIR=../../_inst/cmake install ; \
+	fi
 	$(RM) -r $(distdir)/_build/cmake
 	$(RM) -r $(distdir)/_inst/cmake
 
