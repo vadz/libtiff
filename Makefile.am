@@ -58,8 +58,8 @@ distcheck-hook:
 	  && ctest -V \
 	  && $(MAKE) DESTDIR=../../_inst/cmake install ; \
 	fi
-	$(RM) -r $(distdir)/_build/cmake
-	$(RM) -r $(distdir)/_inst/cmake
+	rm -rf $(distdir)/_build/cmake
+	rm -rf $(distdir)/_inst/cmake
 
 SUBDIRS = port libtiff tools build contrib test man html
 
