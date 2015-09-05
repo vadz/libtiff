@@ -3268,11 +3268,7 @@ TIFFReadDirEntryCheckRangeLong8Slong8(int64 value)
 /*
  * Largest 64-bit signed integer value.
  */
-#if defined(__WIN32__) && defined(_MSC_VER)
-# define TIFF_INT64_MAX 0x7FFFFFFFFFFFFFFFI64
-#else
-# define TIFF_INT64_MAX 0x7FFFFFFFFFFFFFFFLL
-#endif
+#define TIFF_INT64_MAX ((int64)(((uint64) ~0) >> 1))
 
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeSlong8Long8(uint64 value)
