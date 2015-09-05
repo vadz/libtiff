@@ -3174,11 +3174,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong(int32 value)
 /*
  * Largest 32-bit unsigned integer value.
  */
-#if defined(__WIN32__) && defined(_MSC_VER)
-# define TIFF_UINT32_MAX 0xFFFFFFFFI64
-#else
-# define TIFF_UINT32_MAX 0xFFFFFFFFLL
-#endif
+#define TIFF_UINT32_MAX 0xFFFFFFFFU
 
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
@@ -3192,7 +3188,7 @@ TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeLongSlong8(int64 value)
 {
-	if ((value<0) || (value > TIFF_UINT32_MAX))
+	if ((value < 0) || (value > (int64) TIFF_UINT32_MAX))
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
