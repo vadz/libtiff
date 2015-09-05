@@ -3209,19 +3209,21 @@ TIFFReadDirEntryCheckRangeSlongLong(uint32 value)
 		return(TIFFReadDirEntryErrOk);
 }
 
+/* Check that the 8-byte unsigned value can fit in a 4-byte unsigned range */
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeSlongLong8(uint64 value)
 {
-	if (value > 0x7FFFFFFFUL)
+	if (value > 0x7FFFFFFF)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
+/* Check that the 8-byte signed value can fit in a 4-byte signed range */
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeSlongSlong8(int64 value)
 {
-	if ((value < 0L-0x80000000UL) || (value > 0x7FFFFFFFL))
+        if ((value < 0-((int64) 0x7FFFFFFF+1)) || (value > 0x7FFFFFFF))
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
