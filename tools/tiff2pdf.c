@@ -358,6 +358,7 @@ t2p_enable(TIFF *tif)
  * Procs for TIFFClientOpen
  */
 
+#ifdef OJPEG_SUPPORT
 static tmsize_t 
 t2pReadFile(TIFF *tif, tdata_t data, tmsize_t size)
 {
@@ -367,6 +368,7 @@ t2pReadFile(TIFF *tif, tdata_t data, tmsize_t size)
 		return proc(client, data, size);
 	return -1;
 }
+#endif /* OJPEG_SUPPORT */
 
 static tmsize_t 
 t2pWriteFile(TIFF *tif, tdata_t data, tmsize_t size)
@@ -443,6 +445,7 @@ t2p_unmapproc(thandle_t handle, void *data, toff_t offset)
 	(void) handle, (void) data, (void) offset;
 }
 
+#if defined(OJPEG_SUPPORT) || defined(JPEG_SUPPORT)
 static uint64
 checkAdd64(uint64 summand1, uint64 summand2, T2P* t2p)
 {
@@ -456,6 +459,7 @@ checkAdd64(uint64 summand1, uint64 summand2, T2P* t2p)
 
 	return bytes;
 }
+#endif /* defined(OJPEG_SUPPORT) || defined(JPEG_SUPPORT) */
 
 static uint64
 checkMultiply64(uint64 first, uint64 second, T2P* t2p)

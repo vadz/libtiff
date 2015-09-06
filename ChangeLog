@@ -1,3 +1,11 @@
+2015-09-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2pdf.c: Fix compiler warning about unused function
+	when JPEG is not available.
+
+	* tools/fax2ps.c (main): Detect failure to write to temporary
+	file.
+
 2015-09-05  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_dirread.c (TIFFReadDirEntryCheckRangeSlongSlong8):
