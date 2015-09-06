@@ -70,3 +70,22 @@ release:
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libtiff-4.pc
+
+# Special rules to assist with Coverity submissions.
+PACKAGE_CHANGE_DATE=`awk '/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/ { print substr($$1,1,4) substr($$1,6,2) substr($$1,9,2); exit; }' $(top_srcdir)/ChangeLog`
+COVERITY_EMAIL=bfriesen@simple.dallas.tx.us
+COVERITY_TARBALL=libtiff.xz
+COVERITY_VERSION=devel-${PACKAGE_CHANGE_DATE}
+COVERITY_DESCRIPTION='libtiff development'
+coverity:
+	$(MAKE) clean
+	cov-build --dir cov-int $(MAKE)
+	tar caf $(COVERITY_TARBALL) cov-int
+	curl --limit-rate 50K \
+	--form token=`cat $$HOME/.coverity_key_tiff` \
+	--form email=$(COVERITY_EMAIL) \
+	--form file=@$(COVERITY_TARBALL) \
+	--form version=$(COVERITY_VERSION) \
+	--form description=$(COVERITY_DESCRIPTION) \
+	https://scan.coverity.com/builds?project=tiff
+	$(RM) $(COVERITY_TARBALL)

@@ -1,5 +1,8 @@
 2015-09-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* Makefile.am: Added a 'coverity' rule to assist with Coverity
+	submissions.
+
 	* tools/tiff2pdf.c: Fix compiler warning about unused function
 	when JPEG is not available.
 
