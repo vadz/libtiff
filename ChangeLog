@@ -1,5 +1,8 @@
 2015-09-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffgt.c: Silence glut API deprecation warnings on MacOS
+	X.  Patch by Roger Leigh.
+
 	* Makefile.am: Added a 'coverity' rule to assist with Coverity
 	submissions.
 

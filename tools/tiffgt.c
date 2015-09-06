@@ -82,6 +82,12 @@ extern  char* optarg;
 extern  int optind;
 #endif
 
+/* GLUT framework on MacOS X produces deprecation warnings */
+# if defined(__GNUC__) && defined(__APPLE__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+# endif
+
 static TIFF* tif = NULL;
 
 int
@@ -408,7 +414,10 @@ raster_special(int key, int x, int y)
         glutPostRedisplay();
 }
 
-
+/* GLUT framework on MacOS X produces deprecation warnings */
+# if defined(__GNUC__) && defined(__APPLE__)
+#  pragma GCC diagnostic pop
+# endif
 
 char* stuff[] = {
 "usage: tiffgt [options] file.tif",
