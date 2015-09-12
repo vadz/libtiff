@@ -41,7 +41,7 @@ dnl Versioning.
 dnl Don't fill the ALPHA_VERSION field, if not applicable.
 LIBTIFF_MAJOR_VERSION=4
 LIBTIFF_MINOR_VERSION=0
-LIBTIFF_MICRO_VERSION=5
+LIBTIFF_MICRO_VERSION=6
 LIBTIFF_ALPHA_VERSION=
 LIBTIFF_VERSION=$LIBTIFF_MAJOR_VERSION.$LIBTIFF_MINOR_VERSION.$LIBTIFF_MICRO_VERSION$LIBTIFF_ALPHA_VERSION
 dnl This will be used with the 'make release' target
@@ -77,7 +77,7 @@ dnl     increment age.
 dnl  6. If any interfaces have been removed since the last public release,
 dnl     then set age to 0.                                
 LIBTIFF_CURRENT=7
-LIBTIFF_REVISION=3
+LIBTIFF_REVISION=4
 LIBTIFF_AGE=2
 LIBTIFF_VERSION_INFO=$LIBTIFF_CURRENT:$LIBTIFF_REVISION:$LIBTIFF_AGE
 
