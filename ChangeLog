@@ -1,3 +1,7 @@
+2015-09-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/v4.0.6.html: Added release notes for 4.0.6.
+
 2015-09-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffgt.c: Silence glut API deprecation warnings on MacOS
