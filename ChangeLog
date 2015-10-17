@@ -1,3 +1,8 @@
+2015-10-17  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dir.c, libtiff/tif_dirread.c, libtiff/tif_getimage.c,
+	  libtiff/tif_print.c: fix -Wshadow warnings (only in libtiff/)
+
 2015-09-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 4.0.6 released.

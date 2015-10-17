@@ -4572,7 +4572,6 @@ TIFFFetchDirectory(TIFF* tif, uint64 diroff, TIFFDirEntry** pdir,
 		}
 		else
 		{
-			tmsize_t m;
 			uint64 dircount64;
 			m=off+sizeof(uint64);
 			if ((m<off)||(m<(tmsize_t)sizeof(uint64))||(m>tif->tif_size)) {
