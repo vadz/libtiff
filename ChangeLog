@@ -1,3 +1,9 @@
+2015-10-28  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dir.c, libtiff/tif_dirinfo.c, libtiff/tif_compress.c,
+	libtiff/tif_jpeg_12.c: suppress warnings about 'no previous
+	declaration/prototype'
+
 2015-10-19  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tiffiop.h, libtiff/tif_dirwrite.c: suffix constants by U to fix 

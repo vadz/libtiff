@@ -521,7 +521,7 @@ TIFFFindField(TIFF* tif, uint32 tag, TIFFDataType dt)
 	return tif->tif_foundfield = (ret ? *ret : NULL);
 }
 
-const TIFFField*
+static const TIFFField*
 _TIFFFindFieldByName(TIFF* tif, const char *field_name, TIFFDataType dt)
 {
 	TIFFField key = {0, 0, 0, TIFF_NOTYPE, 0, 0, 0, 0, 0, 0, NULL, NULL};
