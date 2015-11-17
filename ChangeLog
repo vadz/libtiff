@@ -1,3 +1,9 @@
+2015-11-17  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirread.c: prevent reading ColorMap or TransferFunction
+	if BitsPerPixel > 24, so as to avoid huge memory allocation and file
+	read attempts
+
 2015-11-02  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: remove duplicated assignment (reported by
