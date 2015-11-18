@@ -1779,7 +1779,7 @@ OJPEGReadHeaderInfoSecTablesQTable(TIFF* tif)
 			ob[sizeof(uint32)+3]=67;
 			ob[sizeof(uint32)+4]=m;
 			TIFFSeekFile(tif,sp->qtable_offset[m],SEEK_SET); 
-			p=TIFFReadFile(tif,&ob[sizeof(uint32)+5],64);
+			p=(uint32)TIFFReadFile(tif,&ob[sizeof(uint32)+5],64);
 			if (p!=64)
 				return(0);
 			sp->qtable[m]=ob;
@@ -1822,7 +1822,7 @@ OJPEGReadHeaderInfoSecTablesDcTable(TIFF* tif)
 				}
 			}
 			TIFFSeekFile(tif,sp->dctable_offset[m],SEEK_SET);
-			p=TIFFReadFile(tif,o,16);
+			p=(uint32)TIFFReadFile(tif,o,16);
 			if (p!=16)
 				return(0);
 			q=0;
@@ -1843,7 +1843,7 @@ OJPEGReadHeaderInfoSecTablesDcTable(TIFF* tif)
 			rb[sizeof(uint32)+4]=m;
 			for (n=0; n<16; n++)
 				rb[sizeof(uint32)+5+n]=o[n];
-			p=TIFFReadFile(tif,&(rb[sizeof(uint32)+21]),q);
+			p=(uint32)TIFFReadFile(tif,&(rb[sizeof(uint32)+21]),q);
 			if (p!=q)
 				return(0);
 			sp->dctable[m]=rb;
@@ -1886,7 +1886,7 @@ OJPEGReadHeaderInfoSecTablesAcTable(TIFF* tif)
 				}
 			}
 			TIFFSeekFile(tif,sp->actable_offset[m],SEEK_SET);  
-			p=TIFFReadFile(tif,o,16);
+			p=(uint32)TIFFReadFile(tif,o,16);
 			if (p!=16)
 				return(0);
 			q=0;
@@ -1907,7 +1907,7 @@ OJPEGReadHeaderInfoSecTablesAcTable(TIFF* tif)
 			rb[sizeof(uint32)+4]=(16|m);
 			for (n=0; n<16; n++)
 				rb[sizeof(uint32)+5+n]=o[n];
-			p=TIFFReadFile(tif,&(rb[sizeof(uint32)+21]),q);
+			p=(uint32)TIFFReadFile(tif,&(rb[sizeof(uint32)+21]),q);
 			if (p!=q)
 				return(0);
 			sp->actable[m]=rb;

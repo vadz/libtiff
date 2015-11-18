@@ -922,7 +922,7 @@ PixarLogPreEncode(TIFF* tif, uint16 s)
 	    we need to simplify this code to reflect a ZLib that is likely updated
 	    to deal with 8byte memory sizes, though this code will respond
 	    apropriately even before we simplify it */
-	sp->stream.avail_out = tif->tif_rawdatasize;
+	sp->stream.avail_out = (uInt)tif->tif_rawdatasize;
 	if ((tmsize_t)sp->stream.avail_out != tif->tif_rawdatasize)
 	{
 		TIFFErrorExt(tif->tif_clientdata, module, "ZLib cannot deal with buffers this size");

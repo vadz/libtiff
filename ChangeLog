@@ -1,5 +1,9 @@
 2015-11-18  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/*.c: fix clang -Wshorten-64-to-32 warnings
+
+2015-11-18  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirread.c: initialize double* data at line 3693 to NULL
 	to please MSVC 2013
 

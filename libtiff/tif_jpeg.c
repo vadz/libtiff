@@ -1893,7 +1893,7 @@ JPEGEncode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 
         if( sp->cinfo.c.data_precision == 12 )
         {
-            line16_count = (sp->bytesperline * 2) / 3;
+            line16_count = (int)((sp->bytesperline * 2) / 3);
             line16 = (short *) _TIFFmalloc(sizeof(short) * line16_count);
             if (!line16)
             {
@@ -2138,8 +2138,7 @@ JPEGVSetField(TIFF* tif, uint32 tag, va_list ap)
 			/* XXX */
 			return (0);
 		}
-		_TIFFsetByteArray(&sp->jpegtables, va_arg(ap, void*),
-		    (long) v32);
+		_TIFFsetByteArray(&sp->jpegtables, va_arg(ap, void*), v32);
 		sp->jpegtables_length = v32;
 		TIFFSetFieldBit(tif, FIELD_JPEGTABLES);
 		break;

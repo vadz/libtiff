@@ -402,7 +402,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		if ((tif->tif_flags & TIFF_INSUBIFD) == 0) {
 			td->td_nsubifd = (uint16) va_arg(ap, uint16_vap);
 			_TIFFsetLong8Array(&td->td_subifd, (uint64*) va_arg(ap, uint64*),
-			    (long) td->td_nsubifd);
+			    (uint32) td->td_nsubifd);
 		} else {
 			TIFFErrorExt(tif->tif_clientdata, module,
 				     "%s: Sorry, cannot nest SubIFDs",
@@ -421,7 +421,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		v = (td->td_samplesperpixel - td->td_extrasamples) > 1 ? 3 : 1;
 		for (i = 0; i < v; i++)
 			_TIFFsetShortArray(&td->td_transferfunction[i],
-			    va_arg(ap, uint16*), 1L<<td->td_bitspersample);
+			    va_arg(ap, uint16*), 1U<<td->td_bitspersample);
 		break;
 	case TIFFTAG_REFERENCEBLACKWHITE:
 		/* XXX should check for null range */
