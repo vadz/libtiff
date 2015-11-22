@@ -343,7 +343,7 @@ TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 		rowsperstrip=td->td_imagelength;
 	stripsperplane=((td->td_imagelength+rowsperstrip-1)/rowsperstrip);
 	stripinplane=(strip%stripsperplane);
-	plane=(strip/stripsperplane);
+	plane=(uint16)(strip/stripsperplane);
 	rows=td->td_imagelength-stripinplane*rowsperstrip;
 	if (rows>rowsperstrip)
 		rows=rowsperstrip;

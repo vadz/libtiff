@@ -1,3 +1,8 @@
+2015-11-22  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/*.c: fix MSVC warnings related to cast shortening and
+	assignment within conditional expression
+
 2015-11-18  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/*.c: fix clang -Wshorten-64-to-32 warnings

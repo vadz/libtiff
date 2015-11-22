@@ -700,7 +700,7 @@ PredictorVGetField(TIFF* tif, uint32 tag, va_list ap)
 
 	switch (tag) {
 	case TIFFTAG_PREDICTOR:
-		*va_arg(ap, uint16*) = sp->predictor;
+		*va_arg(ap, uint16*) = (uint16)sp->predictor;
 		break;
 	default:
 		return (*sp->vgetparent)(tif, tag, ap);
