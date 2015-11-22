@@ -1,5 +1,9 @@
 2015-11-22  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/*.c: fix typos in comments (patch by Kurt Schwehr)
+ 
+2015-11-22  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/*.c: fix MSVC warnings related to cast shortening and
 	assignment within conditional expression
 
