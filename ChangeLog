@@ -1,3 +1,7 @@
+2015-12-06  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_close.c: rename variable to avoid -Wshadow warning
+
 2015-11-22  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/*.c: fix typos in comments (patch by Kurt Schwehr)
