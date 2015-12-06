@@ -37,7 +37,7 @@
 static void
 _TIFFprintAsciiBounded(FILE* fd, const char* cp, size_t max_chars);
 
-static const char *photoNames[] = {
+static const char * const photoNames[] = {
     "min-is-white",				/* PHOTOMETRIC_MINISWHITE */
     "min-is-black",				/* PHOTOMETRIC_MINISBLACK */
     "RGB color",				/* PHOTOMETRIC_RGB */
@@ -52,7 +52,7 @@ static const char *photoNames[] = {
 };
 #define	NPHOTONAMES	(sizeof (photoNames) / sizeof (photoNames[0]))
 
-static const char *orientNames[] = {
+static const char * const orientNames[] = {
     "0 (0x0)",
     "row 0 top, col 0 lhs",			/* ORIENTATION_TOPLEFT */
     "row 0 top, col 0 rhs",			/* ORIENTATION_TOPRIGHT */

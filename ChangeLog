@@ -1,5 +1,9 @@
 2015-12-06  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_print.c: constify photoNames and orientNames arrays
+
+2015-12-06  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_close.c, libtiff/tif_extension.c : rename link
 	variable to avoid -Wshadow warnings
 
