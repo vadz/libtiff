@@ -1,5 +1,9 @@
 2015-12-06  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/uvcode.h: const'ify uv_code array
+
+2015-12-06  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirinfo.c: const'ify tiffFields, exifFields,
 	tiffFieldArray and exifFieldArray arrays
 
