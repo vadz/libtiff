@@ -266,7 +266,7 @@ TIFFWriteEncodedStrip(TIFF* tif, uint32 strip, void* data, tmsize_t cc)
 	tif->tif_postdecode( tif, (uint8*) data, cc );
 
 	if (!(*tif->tif_encodestrip)(tif, (uint8*) data, cc, sample))
-		return (0);
+		return ((tmsize_t) -1);
 	if (!(*tif->tif_postencode)(tif))
 		return ((tmsize_t) -1);
 	if (!isFillOrder(tif, td->td_fillorder) &&
@@ -446,7 +446,7 @@ TIFFWriteEncodedTile(TIFF* tif, uint32 tile, void* data, tmsize_t cc)
 	tif->tif_postdecode( tif, (uint8*) data, cc );
 
 	if (!(*tif->tif_encodetile)(tif, (uint8*) data, cc, sample))
-		return (0);
+		return ((tmsize_t) -1);
 	if (!(*tif->tif_postencode)(tif))
 		return ((tmsize_t)(-1));
 	if (!isFillOrder(tif, td->td_fillorder) &&

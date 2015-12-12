@@ -66,7 +66,7 @@ DumpModeEncode(TIFF* tif, uint8* pp, tmsize_t cc, uint16 s)
 		cc -= n;
 		if (tif->tif_rawcc >= tif->tif_rawdatasize &&
 		    !TIFFFlushData1(tif))
-			return (-1);
+			return (0);
 	}
 	return (1);
 }

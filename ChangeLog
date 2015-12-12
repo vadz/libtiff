@@ -1,3 +1,10 @@
+2015-12-12  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_write.c: TIFFWriteEncodedStrip() and TIFFWriteEncodedTile()
+	should return -1 in case of failure of tif_encodestrip() as documented
+	* libtiff/tif_dumpmode.c: DumpModeEncode() should return 0 in case of
+	failure so that the above mentionned functions detect the error.
+
 2015-12-06  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/uvcode.h: const'ify uv_code array
