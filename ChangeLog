@@ -2,7 +2,8 @@
 
 	* libtiff/tif_dirwrite.c: fix truncation to 32 bit of file offsets in
 	TIFFLinkDirectory() and TIFFWriteDirectorySec() when aligning directory
-	offsets on a even offset (affects BigTIFF)
+	offsets on a even offset (affects BigTIFF). This was a regression of the
+	changeset of 2015-10-19.
 
 2015-12-12  Even Rouault <even.rouault at spatialys.com>
 
