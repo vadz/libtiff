@@ -780,7 +780,7 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 				goto bad;
 		}
 		else
-			tif->tif_diroff=(TIFFSeekFile(tif,0,SEEK_END)+1)&(~1U);
+			tif->tif_diroff=(TIFFSeekFile(tif,0,SEEK_END)+1)&(~((toff_t)1));
 		if (pdiroff!=NULL)
 			*pdiroff=tif->tif_diroff;
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
@@ -2370,7 +2370,7 @@ TIFFLinkDirectory(TIFF* tif)
 {
 	static const char module[] = "TIFFLinkDirectory";
 
-	tif->tif_diroff = (TIFFSeekFile(tif,0,SEEK_END)+1) &~ 1U;
+	tif->tif_diroff = (TIFFSeekFile(tif,0,SEEK_END)+1) & (~((toff_t)1));
 
 	/*
 	 * Handle SubIFDs

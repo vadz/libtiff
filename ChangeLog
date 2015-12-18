@@ -1,3 +1,9 @@
+2015-12-18  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirwrite.c: fix truncation to 32 bit of file offsets in
+	TIFFLinkDirectory() and TIFFWriteDirectorySec() when aligning directory
+	offsets on a even offset (affects BigTIFF)
+
 2015-12-12  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_write.c: TIFFWriteEncodedStrip() and TIFFWriteEncodedTile()
