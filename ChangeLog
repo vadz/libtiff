@@ -1,3 +1,8 @@
+2015-12-19  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_fax3.c: remove dead assignment in Fax3PutEOLgdal(). Found
+	by Clang Static Analyzer
+
 2015-12-18  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirwrite.c: fix truncation to 32 bit of file offsets in

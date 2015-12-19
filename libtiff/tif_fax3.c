@@ -697,7 +697,6 @@ Fax3PutEOL(TIFF* tif)
 				align = sp->bit + (8 - align);
 			else
 				align = sp->bit - align;
-			code = 0;
 			tparm=align; 
 			_PutBits(tif, 0, tparm);
 		}
