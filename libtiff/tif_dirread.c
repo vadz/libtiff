@@ -3457,12 +3457,12 @@ TIFFReadDirectory(TIFF* tif)
 	 * the fields to check type and tag information,
 	 * and to extract info required to size data
 	 * structures.  A second pass is made afterwards
-	 * to read in everthing not taken in the first pass.
+	 * to read in everything not taken in the first pass.
 	 * But we must process the Compression tag first
 	 * in order to merge in codec-private tag definitions (otherwise
 	 * we may get complaints about unknown tags).  However, the
 	 * Compression tag may be dependent on the SamplesPerPixel
-	 * tag value because older TIFF specs permited Compression
+	 * tag value because older TIFF specs permitted Compression
 	 * to be written as a SamplesPerPixel-count tag entry.
 	 * Thus if we don't first figure out the correct SamplesPerPixel
 	 * tag value then we may end up ignoring the Compression tag
@@ -3663,7 +3663,7 @@ TIFFReadDirectory(TIFF* tif)
 				 * DataType and SampleFormat tags are supposed to be
 				 * written as one value/sample, but some vendors
 				 * incorrectly write one value only -- so we accept
-				 * that as well (yech). Other vendors write correct
+				 * that as well (yuck). Other vendors write correct
 				 * value for NumberOfSamples, but incorrect one for
 				 * BitsPerSample and friends, and we will read this
 				 * too.
@@ -3741,7 +3741,7 @@ TIFFReadDirectory(TIFF* tif)
 					uint32 countrequired;
 					uint32 incrementpersample;
 					uint16* value=NULL;
-                    /* It would be dangerous to instanciate those tag values */
+                    /* It would be dangerous to instantiate those tag values */
                     /* since if td_bitspersample has not yet been read (due to */
                     /* unordered tags), it could be read afterwards with a */
                     /* values greater than the default one (1), which may cause */
@@ -4394,7 +4394,7 @@ TIFFCheckDirOffset(TIFF* tif, uint64 diroff)
 
 	tif->tif_dirnumber++;
 
-	if (tif->tif_dirnumber > tif->tif_dirlistsize) {
+	if (tif->tif_dirlist == NULL || tif->tif_dirnumber > tif->tif_dirlistsize) {
 		uint64* new_dirlist;
 
 		/*
