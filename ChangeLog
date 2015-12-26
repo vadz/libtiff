@@ -1,3 +1,11 @@
+2015-12-26  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_getimage.c: fix out-of-bound reads in TIFFRGBAImage
+	interface in case of unsupported values of SamplesPerPixel/ExtraSamples
+	for LogLUV / CIELab. Add explicit call to TIFFRGBAImageOK() in
+	TIFFRGBAImageBegin(). Fix CVE-2015-8665 reported by limingxing and
+	CVE-2015-8683 reported by zzf of Alibaba.
+
 2015-12-21  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: workaround false positive warning of Clang Static
