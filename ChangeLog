@@ -1,5 +1,10 @@
 2015-12-27  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_pixarlog.c: avoid zlib error messages to pass a NULL
+	string to %s formatter, which is undefined behaviour in sprintf().
+
+2015-12-27  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_next.c: fix potential out-of-bound write in NeXTDecode()
 	triggered by http://lcamtuf.coredump.cx/afl/vulns/libtiff5.tif
 	(bugzilla #2508)
