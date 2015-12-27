@@ -103,10 +103,10 @@ NeXTDecode(TIFF* tif, uint8* buf, tmsize_t occ, uint16 s)
 		}
 		default: {
 			uint32 npixels = 0, grey;
+			tmsize_t op_offset = 0;
 			uint32 imagewidth = tif->tif_dir.td_imagewidth;
             if( isTiled(tif) )
                 imagewidth = tif->tif_dir.td_tilewidth;
-            tmsize_t op_offset = 0;
 
 			/*
 			 * The scanline is composed of a sequence of constant
