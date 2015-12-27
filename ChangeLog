@@ -1,5 +1,11 @@
 2015-12-27  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_next.c: fix potential out-of-bound write in NeXTDecode()
+	triggered by http://lcamtuf.coredump.cx/afl/vulns/libtiff5.tif
+	(bugzilla #2508)
+
+2015-12-27  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_luv.c: fix potential out-of-bound writes in decode
 	functions in non debug builds by replacing assert()s by regular if
 	checks (bugzilla #2522).
