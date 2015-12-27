@@ -1,3 +1,10 @@
+2015-12-27  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_luv.c: fix potential out-of-bound writes in decode
+	functions in non debug builds by replacing assert()s by regular if
+	checks (bugzilla #2522).
+	Fix potential out-of-bound reads in case of short input data.
+
 2015-12-26  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c: fix out-of-bound reads in TIFFRGBAImage
