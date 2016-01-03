@@ -1,3 +1,8 @@
+2016-01-03  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c, tif_dirread.c: fix indentation issues raised
+	by GCC 6 -Wmisleading-indentation
+
 2015-12-27  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_pixarlog.c: avoid zlib error messages to pass a NULL
