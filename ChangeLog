@@ -1,3 +1,8 @@
+2016-01-09  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_fax3.h: make Param member of TIFFFaxTabEnt structure
+	a uint16 to reduce size of the binary.
+
 2016-01-03  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c, tif_dirread.c: fix indentation issues raised
