@@ -170,7 +170,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	 * We want to force the custom code to be used for custom
 	 * fields even if the tag happens to match a well known 
 	 * one - important for reinterpreted handling of standard
-	 * tag values in custom directories (ie. EXIF) 
+	 * tag values in custom directories (i.e. EXIF) 
 	 */
 	if (fip->field_bit == FIELD_CUSTOM) {
 		standard_tag = 0;
@@ -834,7 +834,7 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 	 * We want to force the custom code to be used for custom
 	 * fields even if the tag happens to match a well known 
 	 * one - important for reinterpreted handling of standard
-	 * tag values in custom directories (ie. EXIF) 
+	 * tag values in custom directories (i.e. EXIF) 
 	 */
 	if (fip->field_bit == FIELD_CUSTOM) {
 		standard_tag = 0;
@@ -885,7 +885,7 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 				*va_arg(ap, double**) = td->td_sminsamplevalue;
 			else
 			{
-				/* libtiff historially treats this as a single value. */
+				/* libtiff historically treats this as a single value. */
 				uint16 i;
 				double v = td->td_sminsamplevalue[0];
 				for (i=1; i < td->td_samplesperpixel; ++i)
@@ -899,7 +899,7 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 				*va_arg(ap, double**) = td->td_smaxsamplevalue;
 			else
 			{
-				/* libtiff historially treats this as a single value. */
+				/* libtiff historically treats this as a single value. */
 				uint16 i;
 				double v = td->td_smaxsamplevalue[0];
 				for (i=1; i < td->td_samplesperpixel; ++i)

@@ -1,3 +1,8 @@
+2016-01-23  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/*: upstream typo fixes (mostly contributed by Kurt Schwehr)
+	coming from GDAL internal libtiff
+
 2016-01-09  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_fax3.h: make Param member of TIFFFaxTabEnt structure
