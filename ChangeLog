@@ -1,3 +1,9 @@
+2016-04-27  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirread.c: when compiled with DEFER_STRILE_LOAD,
+	fix regression, introduced on 2014-12-23, when reading a one-strip
+	file without a StripByteCounts tag. GDAL #6490
+
 2016-04-07  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* html/bugs.html: Replace Andrey Kiselev with Bob Friesenhahn for
