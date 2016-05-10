@@ -1,3 +1,8 @@
+2016-05-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_config.vc.h (HAVE_SNPRINTF): Applied patch by Edward
+	Lam to define HAVE_SNPRINTF for Visual Studio 2015.
+
 2016-04-27  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: when compiled with DEFER_STRILE_LOAD,
