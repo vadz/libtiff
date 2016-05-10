@@ -1,3 +1,8 @@
+2016-05-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_config.vc.h (HAVE_SNPRINTF): Add a '1' to the
+	HAVE_SNPRINTF definition.'
+
 2016-05-09  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_config.vc.h (HAVE_SNPRINTF): Applied patch by Edward

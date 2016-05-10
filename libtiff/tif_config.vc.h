@@ -108,7 +108,7 @@
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #define snprintf _snprintf
 #else
-#define HAVE_SNPRINTF
+#define HAVE_SNPRINTF 1
 #endif
 
 /* Define to 1 if your processor stores words with the most significant byte
