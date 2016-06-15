@@ -1,3 +1,18 @@
+2016-06-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/libtiff.def: Added _TIFFMultiply32 and _TIFFMultiply64
+	to libtiff.def
+
+2016-06-05  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/Makefile.am: The libtiff tools bmp2tiff, gif2tiff,
+	ras2tiff, sgi2tiff, sgisv, and ycbcr are completely removed from
+	the distribution.  The libtiff tools rgb2ycbcr and thumbnail are
+	only built in the build tree for testing.  Old files are put in
+	new 'archive' subdirectory of the source repository, but not in
+	distribution archives.  These changes are made in order to lessen
+	the maintenance burden.
+
 2016-05-10  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_config.vc.h (HAVE_SNPRINTF): Add a '1' to the
