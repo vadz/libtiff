@@ -1,3 +1,8 @@
+2016-06-28  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_pixarlog.c: fix potential buffer write overrun in
+	PixarLogDecode() on corrupted/unexpected images (reported by Mathias Svensson)
+
 2016-06-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/libtiff.def: Added _TIFFMultiply32 and _TIFFMultiply64
