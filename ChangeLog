@@ -1,3 +1,13 @@
+2016-07-0333Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c: make TIFFReadEncodedStrip() and
+	TIFFReadEncodedTile() directly use user provided buffer when
+	no compression (and other conditions) to save a memcpy().
+
+	* libtiff/tif_write.c: make TIFFWriteEncodedStrip() and
+	TIFFWriteEncodedTile() directly use user provided buffer when
+	no compression to save a memcpy().
+
 2016-07-01  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_luv.c: validate that for COMPRESSION_SGILOG and

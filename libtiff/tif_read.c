@@ -38,6 +38,8 @@ static int TIFFStartTile(TIFF* tif, uint32 tile);
 static int TIFFCheckRead(TIFF*, int);
 static tmsize_t
 TIFFReadRawStrip1(TIFF* tif, uint32 strip, void* buf, tmsize_t size,const char* module);
+static tmsize_t
+TIFFReadRawTile1(TIFF* tif, uint32 tile, void* buf, tmsize_t size, const char* module);
 
 #define NOSTRIP ((uint32)(-1))       /* undefined state */
 #define NOTILE ((uint32)(-1))         /* undefined state */
@@ -350,6 +352,24 @@ TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 	stripsize=TIFFVStripSize(tif,rows);
 	if (stripsize==0)
 		return((tmsize_t)(-1));
+
+    /* shortcut to avoid an extra memcpy() */
+    if( td->td_compression == COMPRESSION_NONE &&
+        size!=(tmsize_t)(-1) && size >= stripsize &&
+        !isMapped(tif) &&
+        ((tif->tif_flags&TIFF_NOREADRAW)==0) )
+    {
+        if (TIFFReadRawStrip1(tif, strip, buf, stripsize, module) != stripsize)
+            return ((tmsize_t)(-1));
+
+        if (!isFillOrder(tif, td->td_fillorder) &&
+            (tif->tif_flags & TIFF_NOBITREV) == 0)
+            TIFFReverseBits(buf,stripsize);
+
+        (*tif->tif_postdecode)(tif,buf,stripsize);
+        return (stripsize);
+    }
+
 	if ((size!=(tmsize_t)(-1))&&(size<stripsize))
 		stripsize=size;
 	if (!TIFFFillStrip(tif,strip))
@@ -661,6 +681,24 @@ TIFFReadEncodedTile(TIFF* tif, uint32 tile, void* buf, tmsize_t size)
 		    (unsigned long) tile, (unsigned long) td->td_nstrips);
 		return ((tmsize_t)(-1));
 	}
+
+    /* shortcut to avoid an extra memcpy() */
+    if( td->td_compression == COMPRESSION_NONE &&
+        size!=(tmsize_t)(-1) && size >= tilesize &&
+        !isMapped(tif) &&
+        ((tif->tif_flags&TIFF_NOREADRAW)==0) )
+    {
+        if (TIFFReadRawTile1(tif, tile, buf, tilesize, module) != tilesize)
+            return ((tmsize_t)(-1));
+
+        if (!isFillOrder(tif, td->td_fillorder) &&
+            (tif->tif_flags & TIFF_NOBITREV) == 0)
+            TIFFReverseBits(buf,tilesize);
+
+        (*tif->tif_postdecode)(tif,buf,tilesize);
+        return (tilesize);
+    }
+
 	if (size == (tmsize_t)(-1))
 		size = tilesize;
 	else if (size > tilesize)
