@@ -771,12 +771,13 @@ PrintData(FILE* fd, uint16 type, uint32 count, unsigned char* data)
 	}
 	case TIFF_SLONG8: {
 		int64 *llp = (int64*)data;
-		while (count-- > 0)
+		while (count-- > 0) {
                         int64 val;
                         memcpy(&val, llp, sizeof(int64));
                         llp ++;
                         fprintf(fd, slong8fmt, sep, val);
                         sep = " ";
+                }
 		break;
 	}
 	case TIFF_RATIONAL: {
