@@ -20,7 +20,7 @@
 
 	* libtiff/tif_pixarlog.c: fix potential buffer write overrun in
 	PixarLogDecode() on corrupted/unexpected images (reported by Mathias Svensson)
-	(CVE-2016-587)
+	(CVE-2016-5875)
 
 2016-06-15  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
