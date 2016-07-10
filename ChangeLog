@@ -1,4 +1,9 @@
-2016-07-0333Even Rouault <even.rouault at spatialys.com>
+2016-07-10 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiffdump.c: fix a few misaligned 64-bit reads warned
+	by -fsanitize
+
+2016-07-03 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c: make TIFFReadEncodedStrip() and
 	TIFFReadEncodedTile() directly use user provided buffer when
