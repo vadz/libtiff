@@ -1,5 +1,12 @@
 2016-07-10 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: Fix out-of-bounds read on
+	memory-mapped files in TIFFReadRawStrip1() and TIFFReadRawTile1()
+	when stripoffset is beyond tmsize_t max value (reported by
+	Mathias Svensson)
+
+2016-07-10 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffdump.c: fix a few misaligned 64-bit reads warned
 	by -fsanitize
 

@@ -31,6 +31,9 @@
 #include "tiffiop.h"
 #include <stdio.h>
 
+#define TIFF_SIZE_T_MAX ((size_t) ~ ((size_t)0))
+#define TIFF_TMSIZE_T_MAX (tmsize_t)(TIFF_SIZE_T_MAX >> 1)
+
 int TIFFFillStrip(TIFF* tif, uint32 strip);
 int TIFFFillTile(TIFF* tif, uint32 tile);
 static int TIFFStartStrip(TIFF* tif, uint32 strip);
@@ -421,7 +424,7 @@ TIFFReadRawStrip1(TIFF* tif, uint32 strip, void* buf, tmsize_t size,
 		tmsize_t n;
 		ma=(tmsize_t)td->td_stripoffset[strip];
 		mb=ma+size;
-		if (((uint64)ma!=td->td_stripoffset[strip])||(ma>tif->tif_size))
+		if ((td->td_stripoffset[strip] > (uint64)TIFF_TMSIZE_T_MAX)||(ma>tif->tif_size))
 			n=0;
 		else if ((mb<ma)||(mb<size)||(mb>tif->tif_size))
 			n=tif->tif_size-ma;
@@ -755,7 +758,7 @@ TIFFReadRawTile1(TIFF* tif, uint32 tile, void* buf, tmsize_t size, const char* m
 		tmsize_t n;
 		ma=(tmsize_t)td->td_stripoffset[tile];
 		mb=ma+size;
-		if (((uint64)ma!=td->td_stripoffset[tile])||(ma>tif->tif_size))
+		if ((td->td_stripoffset[tile] > (uint64)TIFF_TMSIZE_T_MAX)||(ma>tif->tif_size))
 			n=0;
 		else if ((mb<ma)||(mb<size)||(mb>tif->tif_size))
 			n=tif->tif_size-ma;
