@@ -1,3 +1,10 @@
+2016-07-11 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiffcrop.c: Avoid access outside of stack allocated array
+	on a tiled separate TIFF with more than 8 samples per pixel.
+	Reported by Kaixiang Zhang of the Cloud Security Team, Qihoo 360
+	(CVE-2016-5321, bugzilla #2558)
+
 2016-07-10 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c: Fix out-of-bounds read on
