@@ -95,9 +95,13 @@ main(int argc, char* argv[])
 			break;
 		case 'h':
 			horizSubSampling = atoi(optarg);
+            if( horizSubSampling != 1 && horizSubSampling != 2 && horizSubSampling != 4 )
+                usage(-1);
 			break;
 		case 'v':
 			vertSubSampling = atoi(optarg);
+            if( vertSubSampling != 1 && vertSubSampling != 2 && vertSubSampling != 4 )
+                usage(-1);
 			break;
 		case 'r':
 			rowsperstrip = atoi(optarg);
