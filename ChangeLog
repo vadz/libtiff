@@ -1,10 +1,18 @@
 2016-08-15 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_pixarlog.c: Fix write buffer overflow in PixarLogEncode
+	if more input samples are provided than expected by PixarLogSetupEncode.
+	Idea based on libtiff-CVE-2016-3990.patch from
+	libtiff-4.0.3-25.el7_2.src.rpm by Nikola Forro, but with different and
+	simpler check. (bugzilla #2544)
+
+2016-08-15 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiff2rgba.c: Fix integer overflow in size of allocated
 	buffer, when -b mode is enabled, that could result in out-of-bounds
 	write. Based initially on patch tiff-CVE-2016-3945.patch from
 	libtiff-4.0.3-25.el7_2.src.rpm by Nikola Forro, with correction for
-	invalid tests that rejected valid files.
+	invalid tests that rejected valid files. (bugzilla #2545)
 
 2016-07-11 Even Rouault <even.rouault at spatialys.com>
 
