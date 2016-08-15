@@ -1,5 +1,11 @@
 2016-08-15 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcrop.c: Fix out-of-bounds write in loadImage().
+	From patch libtiff-CVE-2016-3991.patch from
+	libtiff-4.0.3-25.el7_2.src.rpm by Nikola Forro (bugzilla #2543)
+
+2016-08-15 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_pixarlog.c: Fix write buffer overflow in PixarLogEncode
 	if more input samples are provided than expected by PixarLogSetupEncode.
 	Idea based on libtiff-CVE-2016-3990.patch from
