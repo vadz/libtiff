@@ -1,5 +1,11 @@
 2016-08-15 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiff2bw.c: fix weight computation that could result of color
+	value overflow (no security implication). Fix bugzilla #2550.
+	Patch by Frank Freudenberg.
+
+2016-08-15 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/rgb2ycbcr.c: validate values of -v and -h parameters to
 	avoid potential divide by zero. Fixes CVE-2016-3623 (bugzilla #2569)
 
