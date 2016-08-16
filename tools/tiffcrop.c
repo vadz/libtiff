@@ -6001,6 +6001,7 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
     }
   else
     {
+    uint32 buffsize_check;
     readunit = STRIP;
     TIFFGetFieldDefaulted(in, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
     stsize = TIFFStripSize(in);
@@ -6017,7 +6018,6 @@ loadImage(TIFF* in, struct image_data *image, struct dump_opts *dump, unsigned c
 	TIFFError("loadImage", "Integer overflow when calculating buffer size");
 	exit(-1);
     }
-    uint32 buffsize_check;
     buffsize_check = ((length * width * spp * bps) + 7);
     if (length != ((buffsize_check - 7) / width / spp / bps))
     {
