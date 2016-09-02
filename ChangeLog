@@ -1,3 +1,7 @@
+2016-09-03 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirwrite.c: fix warnings raised by GCC 5 -Wfloat-conversion
+
 2016-08-16 Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiffcrop.c: fix C99'ism.
