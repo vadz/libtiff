@@ -186,7 +186,9 @@ TIFFYCbCrtoRGB(TIFFYCbCrToRGB *ycbcr, uint32 Y, int32 Cb, int32 Cr,
 	int32 i;
 
 	/* XXX: Only 8-bit YCbCr input supported for now */
-	Y = HICLAMP(Y, 255), Cb = CLAMP(Cb, 0, 255), Cr = CLAMP(Cr, 0, 255);
+	Y = HICLAMP(Y, 255);
+	Cb = CLAMP(Cb, 0, 255);
+	Cr = CLAMP(Cr, 0, 255);
 
 	i = ycbcr->Y_tab[Y] + ycbcr->Cr_r_tab[Cr];
 	*r = CLAMP(i, 0, 255);

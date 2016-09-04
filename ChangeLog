@@ -1,3 +1,7 @@
+2016-09-04 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/*.c: fix warnings raised by clang 3.9 -Wcomma
+
 2016-09-03 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirwrite.c, libtiff/tif_color.c: fix warnings raised

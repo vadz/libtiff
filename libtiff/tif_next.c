@@ -72,7 +72,8 @@ NeXTDecode(TIFF* tif, uint8* buf, tmsize_t occ, uint16 s)
 		return (0);
 	}
 	for (row = buf; cc > 0 && occ > 0; occ -= scanline, row += scanline) {
-		n = *bp++, cc--;
+		n = *bp++;
+		cc--;
 		switch (n) {
 		case LITERALROW:
 			/*
@@ -134,7 +135,8 @@ NeXTDecode(TIFF* tif, uint8* buf, tmsize_t occ, uint16 s)
                 }
 				if (cc == 0)
 					goto bad;
-				n = *bp++, cc--;
+				n = *bp++;
+				cc--;
 			}
 			break;
 		}

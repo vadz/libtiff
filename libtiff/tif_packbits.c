@@ -82,7 +82,9 @@ PackBitsEncode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 		/*
 		 * Find the longest string of identical bytes.
 		 */
-		b = *bp++, cc--, n = 1;
+		b = *bp++;
+		cc--;
+		n = 1;
 		for (; cc > 0 && b == *bp; cc--, bp++)
 			n++;
 	again:
@@ -223,7 +225,8 @@ PackBitsDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 	bp = (char*) tif->tif_rawcp;
 	cc = tif->tif_rawcc;
 	while (cc > 0 && occ > 0) {
-		n = (long) *bp++, cc--;
+		n = (long) *bp++;
+		cc--;
 		/*
 		 * Watch out for compilers that
 		 * don't sign extend chars...
@@ -242,7 +245,8 @@ PackBitsDecode(TIFF* tif, uint8* op, tmsize_t occ, uint16 s)
 				n = (long)occ;
 			}
 			occ -= n;
-			b = *bp++, cc--;
+			b = *bp++;
+			cc--;
 			while (n-- > 0)
 				*op++ = (uint8) b;
 		} else {		/* copy next n+1 bytes literally */
