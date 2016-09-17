@@ -1,3 +1,7 @@
+2016-09-17 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_lzma.c: typo fix in comment
+
 2016-09-04 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/*.c: fix warnings raised by clang 3.9 -Wcomma
