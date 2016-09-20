@@ -1,3 +1,8 @@
+2016-09-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/man/index.html: Comment out links to documentation for
+	abandoned utilities.
+
 2016-09-17 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_lzma.c: typo fix in comment
