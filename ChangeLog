@@ -1,3 +1,8 @@
+2016-09-25  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html: Change as many remotesensing.org broken links to a working
+	URL as possible.
+
 2016-09-24  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff/tif_getimage.c (TIFFRGBAImageOK): Reject attempts to
