@@ -1,5 +1,13 @@
 2016-10-08 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiff2pdf.c: fix read -largely- outsize of buffer in
+	t2p_readwrite_pdf_image_tile(), causing crash, when reading a
+	JPEG compressed image with TIFFTAG_JPEGTABLES length being one.
+	Reported as MSVR 35101 by Axel Souchet and Vishal Chauhan from
+	the MSRC Vulnerabilities & Mitigations team.
+
+2016-10-08 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffcp.c: fix read of undefined variable in case of missing
 	required tags. Found on test case of MSVR 35100.
 	* tools/tiffcrop.c: fix read of undefined buffer in

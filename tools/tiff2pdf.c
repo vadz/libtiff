@@ -2887,13 +2887,13 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 				return(0);
 			}
 			if(TIFFGetField(input, TIFFTAG_JPEGTABLES, &count, &jpt) != 0) {
-				if (count > 0) {
+				if (count >= 2) {
 					_TIFFmemcpy(buffer, jpt, count);
 					bufferoffset += count - 2;
 					table_end[0] = buffer[bufferoffset-2];
 					table_end[1] = buffer[bufferoffset-1];
 				}
-				if (count > 0) {
+				if (count >= 2) {
 					xuint32 = bufferoffset;
 					bufferoffset += TIFFReadRawTile(
 						input, 
