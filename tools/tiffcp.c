@@ -592,8 +592,8 @@ static	copyFunc pickCopyFunc(TIFF*, TIFF*, uint16, uint16);
 static int
 tiffcp(TIFF* in, TIFF* out)
 {
-	uint16 bitspersample, samplesperpixel;
-	uint16 input_compression, input_photometric;
+	uint16 bitspersample, samplesperpixel = 1;
+	uint16 input_compression, input_photometric = PHOTOMETRIC_MINISBLACK;
 	copyFunc cf;
 	uint32 width, length;
 	struct cpTag* p;
