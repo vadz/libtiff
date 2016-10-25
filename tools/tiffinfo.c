@@ -294,9 +294,10 @@ void
 TIFFReadContigTileData(TIFF* tif)
 {
 	unsigned char *buf;
-	tsize_t rowsize = TIFFTileRowSize(tif);
+	tmsize_t rowsize = TIFFTileRowSize(tif);
+    tmsize_t tilesize = TIFFTileSize(tif);
 
-	buf = (unsigned char *)_TIFFmalloc(TIFFTileSize(tif));
+	buf = (unsigned char *)_TIFFmalloc(tilesize);
 	if (buf) {
 		uint32 tw=0, th=0, w=0, h=0;
 		uint32 row, col;
@@ -305,6 +306,12 @@ TIFFReadContigTileData(TIFF* tif)
 		TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 		TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tw);
 		TIFFGetField(tif, TIFFTAG_TILELENGTH, &th);
+        if( rowsize == 0 || th > tilesize / rowsize )
+        {
+            fprintf(stderr, "Cannot display data: th * rowsize > tilesize\n");
+            _TIFFfree(buf);
+            return;
+        }
 		for (row = 0; row < h; row += th) {
 			for (col = 0; col < w; col += tw) {
 				if (TIFFReadTile(tif, buf, col, row, 0, 0) < 0) {
@@ -322,9 +329,10 @@ void
 TIFFReadSeparateTileData(TIFF* tif)
 {
 	unsigned char *buf;
-	tsize_t rowsize = TIFFTileRowSize(tif);
+    tmsize_t rowsize = TIFFTileRowSize(tif);
+    tmsize_t tilesize = TIFFTileSize(tif);
 
-	buf = (unsigned char *)_TIFFmalloc(TIFFTileSize(tif));
+	buf = (unsigned char *)_TIFFmalloc(tilesize);
 	if (buf) {
 		uint32 tw=0, th=0, w=0, h=0;
 		uint32 row, col;
@@ -335,6 +343,12 @@ TIFFReadSeparateTileData(TIFF* tif)
 		TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tw);
 		TIFFGetField(tif, TIFFTAG_TILELENGTH, &th);
 		TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+        if( rowsize == 0 || th > tilesize / rowsize )
+        {
+            fprintf(stderr, "Cannot display data: th * rowsize > tilesize\n");
+            _TIFFfree(buf);
+            return;
+        }
 		for (row = 0; row < h; row += th) {
 			for (col = 0; col < w; col += tw) {
 				for (s = 0; s < samplesperpixel; s++) {

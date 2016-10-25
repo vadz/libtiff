@@ -1,3 +1,12 @@
+2016-10-25 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiffinfo.c: fix out-of-bound read on some tiled images.
+	(http://bugzilla.maptools.org/show_bug.cgi?id=2517)
+
+	* libtiff/tif_compress.c: make TIFFNoDecode() return 0 to indicate an
+	error and make upper level read routines treat it accordingly.
+	(linked to the test case of http://bugzilla.maptools.org/show_bug.cgi?id=2517)
+
 2016-10-14 Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiffcrop.c: fix out-of-bound read of up to 3 bytes in
