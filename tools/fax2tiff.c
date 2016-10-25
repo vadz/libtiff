@@ -116,7 +116,7 @@ main(int argc, char* argv[])
 	extern char* optarg;
 #endif
 
-	while ((c = getopt(argc, argv, "R:X:o:1234ABLMPUW5678abcflmprsuvwz?")) != -1)
+	while ((c = getopt(argc, argv, "R:X:o:r:1234ABLMPUW5678abcflmprsuvwz?")) != -1)
 		switch (c) {
 			/* input-related options */
 		case '3':		/* input is g3-encoded */

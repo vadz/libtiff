@@ -1,3 +1,9 @@
+2016-10-26 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/fax2tiff.c: fix segfault when specifying -r without
+	argument. Patch by Yuriy M. Kaminskiy.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2572
+
 2016-10-25 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dir.c: discard values of SMinSampleValue and
