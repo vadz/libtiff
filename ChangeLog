@@ -11,7 +11,7 @@
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2500
 	(CVE-2014-8127, duplicate: CVE-2016-3658)
 	
-	* libtiff/tif_write.c: avoid null pointer dereference on td_stripoffset
+	* libtiff/tif_dirwrite.c: avoid null pointer dereference on td_stripoffset
 	when writing directory, if FIELD_STRIPOFFSETS was artificially set
 	for a hack case	in OJPEG case.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2500
