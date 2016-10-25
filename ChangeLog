@@ -1,5 +1,24 @@
 2016-10-25 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dir.c: discard values of SMinSampleValue and
+	SMaxSampleValue when they have been read and the value of
+	SamplesPerPixel is changed afterwards (like when reading a
+	OJPEG compressed image with a missing SamplesPerPixel tag,
+	and whose photometric is RGB or YCbCr, forcing SamplesPerPixel
+	being 3). Otherwise when rewriting the directory (for example
+	with tiffset, we will expect 3 values whereas the array had been
+	allocated with just one), thus causing a out of bound read access.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2500
+	(CVE-2014-8127, duplicate: CVE-2016-3658)
+	
+	* libtiff/tif_write.c: avoid null pointer dereference on td_stripoffset
+	when writing directory, if FIELD_STRIPOFFSETS was artificially set
+	for a hack case	in OJPEG case.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2500
+	(CVE-2014-8127, duplicate: CVE-2016-3658)
+
+2016-10-25 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffinfo.c: fix out-of-bound read on some tiled images.
 	(http://bugzilla.maptools.org/show_bug.cgi?id=2517)
 
