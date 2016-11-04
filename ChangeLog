@@ -1,3 +1,8 @@
+2016-11-04 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_predic.c: fix memory leaks in error code paths added in
+	previous commit (fix for MSVR 35105)
+
 2016-10-31 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_predict.h, libtiff/tif_predict.c:
