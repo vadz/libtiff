@@ -1,3 +1,11 @@
+2016-11-10 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_strip.c: make TIFFNumberOfStrips() return the td->td_nstrips
+	value when it is non-zero, instead of recomputing it. This is needed in
+	TIFF_STRIPCHOP mode where td_nstrips is modified. Fixes a read outsize of
+	array in tiffsplit (or other utilities using TIFFNumberOfStrips()).
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2587
+
 2016-11-04 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_predic.c: fix memory leaks in error code paths added in
