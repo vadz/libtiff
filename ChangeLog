@@ -35,7 +35,7 @@
 	value when it is non-zero, instead of recomputing it. This is needed in
 	TIFF_STRIPCHOP mode where td_nstrips is modified. Fixes a read outsize of
 	array in tiffsplit (or other utilities using TIFFNumberOfStrips()).
-	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2587
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2587 (CVE-2016-9273)
 
 2016-11-04 Even Rouault <even.rouault at spatialys.com>
 
