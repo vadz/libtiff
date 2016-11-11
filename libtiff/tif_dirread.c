@@ -3628,6 +3628,7 @@ TIFFReadDirectory(TIFF* tif)
 	if (tif->tif_dir.td_planarconfig == PLANARCONFIG_SEPARATE)
 		tif->tif_dir.td_stripsperimage /= tif->tif_dir.td_samplesperpixel;
 	if (!TIFFFieldSet(tif, FIELD_STRIPOFFSETS)) {
+#ifdef OJPEG_SUPPORT
 		if ((tif->tif_dir.td_compression==COMPRESSION_OJPEG) &&
 		    (isTiled(tif)==0) &&
 		    (tif->tif_dir.td_nstrips==1)) {
@@ -3640,7 +3641,9 @@ TIFFReadDirectory(TIFF* tif)
 			 * JpegInterchangeFormat stream.
 			 */
 			TIFFSetFieldBit(tif, FIELD_STRIPOFFSETS);
-		} else {
+		} else
+#endif
+        {
 			MissingRequired(tif,
 				isTiled(tif) ? "TileOffsets" : "StripOffsets");
 			goto bad;
