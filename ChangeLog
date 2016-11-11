@@ -1,5 +1,12 @@
 2016-11-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_aux.c: fix crash in TIFFVGetFieldDefaulted()
+	when requesting Predictor tag and that the zip/lzw codec is not
+	configured.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2591
+
+2016-11-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirread.c: in TIFFFetchNormalTag(), make sure that
 	values of tags with TIFF_SETGET_C16_ASCII / TIFF_SETGET_C32_ASCII
 	access are null terminated, to avoid potential read outside buffer
