@@ -1,5 +1,11 @@
 2016-11-11 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiff2pdf.c: fix potential integer overflows on 32 bit builds
+	in t2p_read_tiff_size()
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2576
+
+2016-11-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_aux.c: fix crash in TIFFVGetFieldDefaulted()
 	when requesting Predictor tag and that the zip/lzw codec is not
 	configured.

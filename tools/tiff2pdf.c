@@ -1903,6 +1903,10 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 #ifdef CCITT_SUPPORT
 		if(t2p->pdf_compression == T2P_COMPRESS_G4 ){
 			TIFFGetField(input, TIFFTAG_STRIPBYTECOUNTS, &sbc);
+            if (sbc[0] != (uint64)(tmsize_t)sbc[0]) {
+                TIFFError(TIFF2PDF_MODULE, "Integer overflow");
+                t2p->t2p_error = T2P_ERR_ERROR;
+            }
 			t2p->tiff_datasize=(tmsize_t)sbc[0];
 			return;
 		}
@@ -1910,6 +1914,10 @@ void t2p_read_tiff_size(T2P* t2p, TIFF* input){
 #ifdef ZIP_SUPPORT
 		if(t2p->pdf_compression == T2P_COMPRESS_ZIP){
 			TIFFGetField(input, TIFFTAG_STRIPBYTECOUNTS, &sbc);
+            if (sbc[0] != (uint64)(tmsize_t)sbc[0]) {
+                TIFFError(TIFF2PDF_MODULE, "Integer overflow");
+                t2p->t2p_error = T2P_ERR_ERROR;
+            }
 			t2p->tiff_datasize=(tmsize_t)sbc[0];
 			return;
 		}
