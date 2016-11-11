@@ -1,5 +1,12 @@
 2016-11-11 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiff2pdf.c: avoid undefined behaviour related to overlapping
+	of source and destination buffer in memcpy() call in
+	t2p_sample_rgbaa_to_rgb()
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2577
+
+2016-11-11 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiff2pdf.c: fix potential integer overflows on 32 bit builds
 	in t2p_read_tiff_size()
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2576
