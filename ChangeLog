@@ -1,3 +1,8 @@
+2016-11-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/v4.0.7.html: Add a file to document the pending 4.0.7
+	release.
+
 2016-11-11 Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiff2pdf.c: avoid undefined behaviour related to overlapping
