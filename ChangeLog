@@ -1,5 +1,10 @@
 2016-11-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffinfo.c (TIFFReadContigTileData): Fix signed/unsigned
+	comparison warning.
+	(TIFFReadSeparateTileData): Fix signed/unsigned comparison
+	warning.
+
 	* tools/tiffcrop.c (readContigTilesIntoBuffer): Fix
 	signed/unsigned comparison warning.
 
