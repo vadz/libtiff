@@ -1,5 +1,8 @@
 2016-11-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiffcrop.c (readContigTilesIntoBuffer): Fix
+	signed/unsigned comparison warning.
+
 	* html/v4.0.7.html: Add a file to document the pending 4.0.7
 	release.
 
