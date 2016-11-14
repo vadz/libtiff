@@ -37,7 +37,7 @@
 	values of tags with TIFF_SETGET_C16_ASCII / TIFF_SETGET_C32_ASCII
 	access are null terminated, to avoid potential read outside buffer
 	in _TIFFPrintField().
-	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2590
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2590 (CVE-2016-9297)
 
 2016-11-11 Even Rouault <even.rouault at spatialys.com>
 
