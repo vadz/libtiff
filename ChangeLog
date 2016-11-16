@@ -1,3 +1,12 @@
+2016-11-16 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirread.c: in TIFFFetchNormalTag(), do not dereference
+	NULL pointer when values of tags with TIFF_SETGET_C16_ASCII / TIFF_SETGET_C32_ASCII
+	access are 0-byte arrays.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2593 (regression introduced
+	by previous fix done on 2016-11-11 for CVE-2016-9297).
+	Reported by Henri Salo.
+
 2016-11-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiffinfo.c (TIFFReadContigTileData): Fix signed/unsigned
