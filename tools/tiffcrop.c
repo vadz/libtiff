@@ -1349,6 +1349,7 @@ static int writeBufferToSeparateTiles (TIFF* out, uint8* buf, uint32 imagelength
   {
       TIFFError(TIFFFileName(out),
             "Error, uint32 overflow when computing (imagewidth * bps * spp) + 7");
+      _TIFFfree(obuf);
       return 1;
   }
   src_rowsize = ((imagewidth * spp * bps) + 7U) / 8;
