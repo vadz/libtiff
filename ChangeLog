@@ -1,3 +1,11 @@
+2016-11-17  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_getimage.c: Fix some benign warnings which appear in
+	64-bit compilation under Microsoft Visual Studio of the form
+	"Arithmetic overflow: 32-bit value is shifted, then cast to 64-bit
+	value.  Results might not be an expected value.".  Problem was
+	reported on November 16, 2016 on the tiff mailing list.
+
 2016-11-16 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: in TIFFFetchNormalTag(), do not dereference
