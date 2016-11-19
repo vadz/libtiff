@@ -388,7 +388,7 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 		void* datamem;
 		uint64 dataoffset;
 		int datatruncated;
-        int datasizeoverflow;
+                int datasizeoverflow;
 
 		tag = *(uint16*)dp;
 		if (swabflag)
@@ -427,8 +427,8 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 			typewidth = 0;
 		else
 			typewidth = datawidth[type];
-		datasize = count*typewidth;
-        datasizeoverflow = (typewidth > 0 && datasize / typewidth != count);
+		datasize = TIFFSafeMultiply(tmsize_t,count,typewidth);
+                datasizeoverflow = (typewidth > 0 && datasize / typewidth != count);
 		datafits = 1;
 		datamem = dp;
 		dataoffset = 0;
@@ -463,17 +463,17 @@ ReadDirectory(int fd, unsigned int ix, uint64 off)
 		{
 			datatruncated = 1;
 			count = 0x10000/typewidth;
-			datasize = count*typewidth;
+			datasize = TIFFSafeMultiply(tmsize_t,count,typewidth);
 		}
 		if (count>maxitems)
 		{
 			datatruncated = 1;
 			count = maxitems;
-			datasize = count*typewidth;
+                        datasize = TIFFSafeMultiply(tmsize_t,count,typewidth);
 		}
 		if (!datafits)
 		{
-			datamem = _TIFFmalloc((uint32)datasize);
+			datamem = _TIFFmalloc(datasize);
 			if (datamem) {
 				if (_TIFF_lseek_f(fd, (_TIFF_off_t)dataoffset, 0) !=
 				    (_TIFF_off_t)dataoffset)
