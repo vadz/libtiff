@@ -78,6 +78,15 @@ information is located here:
 
 <UL>
 
+    <LI> libtiff/tif_dirread.c: in TIFFFetchNormalTag(), do not
+        dereference NULL pointer when values of tags with
+        TIFF_SETGET_C16_ASCII / TIFF_SETGET_C32_ASCII access are
+        0-byte arrays.  Fixes
+        http://bugzilla.maptools.org/show_bug.cgi?id=2593 (regression
+        introduced by previous fix done on 2016-11-11 for
+        CVE-2016-9297).  Reported by Henri Salo. Assigned as
+        CVE-2016-9448
+
     <LI> libtiff/tif_aux.c: fix crash in TIFFVGetFieldDefaulted() when
         requesting Predictor tag and that the zip/lzw codec is not
         configured.  Fixes
@@ -362,7 +371,6 @@ information is located here:
         libtiff-4.0.3-25.el7_2.src.rpm by Nikola Forro (bugzilla
         #2543)
 
-
     <LI> tools/tiff2rgba.c: Fix integer overflow in size of allocated
         buffer, when -b mode is enabled, that could result in
         out-of-bounds write. Based initially on patch
@@ -378,6 +386,10 @@ information is located here:
 
     <LI> tools/tiffdump.c: fix a few misaligned 64-bit reads warned by
         -fsanitize
+
+    <LI> tools/tiffdump.c (ReadDirectory): Remove uint32 cast to
+        _TIFFmalloc() argument which resulted in Coverity report.
+        Added more mutiplication overflow checks.
 
 </UL>
 

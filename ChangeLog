@@ -1,5 +1,9 @@
 2016-11-19  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* libtiff 4.0.7 released.
+
+	* configure.ac: Update for 4.0.7 release.
+
 	* tools/tiffdump.c (ReadDirectory): Remove uint32 cast to
 	_TIFFmalloc() argument which resulted in Coverity report.  Added
 	more mutiplication overflow checks.
