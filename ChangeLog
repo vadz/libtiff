@@ -1,3 +1,8 @@
+2016-11-20 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_getimage.c, libtiff/tif_open.c: add parenthesis to
+	fix cppcheck clarifyCalculation warnings
+
 2016-11-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/fax2tiff.c (main): Applied patch by Jörg Ahrens to fix
