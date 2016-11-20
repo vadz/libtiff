@@ -2,6 +2,8 @@
 
 	* libtiff/tif_getimage.c, libtiff/tif_open.c: add parenthesis to
 	fix cppcheck clarifyCalculation warnings
+	* libtiff/tif_predict.c, libtiff/tif_print.c: fix printf unsigned
+	vs signed formatting (cppcheck invalidPrintfArgType_uint warnings)
 
 2016-11-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
