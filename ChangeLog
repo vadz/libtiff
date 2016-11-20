@@ -1,3 +1,10 @@
+2016-11-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/fax2tiff.c (main): Applied patch by Jörg Ahrens to fix
+	passing client data for Win32 builds using tif_win32.c
+	(USE_WIN32_FILEIO defined) for file I/O.  Patch was provided via
+	email on November 20, 2016.
+
 2016-11-19  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* libtiff 4.0.7 released.
