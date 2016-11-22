@@ -99,7 +99,7 @@
 	writeBufferToSeparateStrips(), writeBufferToContigTiles() and
 	writeBufferToSeparateTiles() that could cause heap buffer overflows.
 	Reported by Henri Salo from Nixu Corporation.
-	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2592
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2592 (CVE-2016-9532)
 
 2016-11-10 Even Rouault <even.rouault at spatialys.com>
 
