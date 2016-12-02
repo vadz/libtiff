@@ -1,3 +1,13 @@
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_pixarlog.c, libtiff/tif_luv.c: fix heap-based buffer
+	overflow on generation of PixarLog / LUV compressed files, with
+	ColorMap, TransferFunction attached and nasty plays with bitspersample.
+	The fix for LUV has not been tested, but suffers from the same kind
+	of issue of PixarLog.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2604
+
 2016-12-02 Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiffcp.c: avoid uint32 underflow in cpDecodedStrips that 
