@@ -1,3 +1,10 @@
+2016-12-02 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c, libtiff/tiffiop.h: fix uint32 overflow in
+	TIFFReadEncodedStrip() that caused an integer division by zero.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2596
+
 2016-11-20 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c, libtiff/tif_open.c: add parenthesis to
