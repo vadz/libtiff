@@ -1,5 +1,12 @@
 2016-12-02 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcp.c: avoid uint32 underflow in cpDecodedStrips that 
+	can cause various issues, such as buffer overflows in the library.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2598
+
+2016-12-02 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c, libtiff/tiffiop.h: fix uint32 overflow in
 	TIFFReadEncodedStrip() that caused an integer division by zero.
 	Reported by Agostino Sarubbo.
