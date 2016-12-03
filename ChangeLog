@@ -1,8 +1,16 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tif_dir.c: when TIFFGetField(, TIFFTAG_NUMBEROFINKS, ) is called,
+	limit the return number of inks to SamplesPerPixel, so that code that parses
+	ink names doesn't go past the end of the buffer.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2599
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffcp.c: avoid potential division by zero is BitsPerSamples tag is
 	missing.
-	Reported by Agostino sarubbo.
+	Reported by Agostino Sarubbo.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2597
 
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
