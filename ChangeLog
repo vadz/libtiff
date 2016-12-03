@@ -1,5 +1,20 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dirread.c: modify ChopUpSingleUncompressedStrip() to
+	instanciate compute ntrips as TIFFhowmany_32(td->td_imagelength, rowsperstrip),
+	instead of a logic based on the total size of data. Which is faulty is
+	the total size of data is not sufficient to fill the whole image, and thus
+	results in reading outside of the StripByCounts/StripOffsets arrays when
+	using TIFFReadScanline().
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2608.
+
+	* libtiff/tif_strip.c: revert the change in TIFFNumberOfStrips() done
+	for http://bugzilla.maptools.org/show_bug.cgi?id=2587 / CVE-2016-9273 since
+	the above change is a better fix that makes it unnecessary.
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_pixarlog.c, libtiff/tif_luv.c: fix heap-based buffer
 	overflow on generation of PixarLog / LUV compressed files, with
 	ColorMap, TransferFunction attached and nasty plays with bitspersample.
