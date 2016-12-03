@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcp.c: avoid potential division by zero is BitsPerSamples tag is
+	missing.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2607
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* man/Makefile.am: remove thumbnail.1 and rgb2ycbcr.1 from installed man
 	pages since the corresponding utilities are no longer installed.
 	Reported by Havard Eidnes 
