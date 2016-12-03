@@ -1,5 +1,9 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_write.c: fix misleading indentation as warned by GCC.
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffcp.c: replace assert( (bps % 8) == 0 ) by a non assert check.
 	Reported by Agostino Sarubbo.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2605
