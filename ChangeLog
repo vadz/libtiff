@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcp.c: avoid potential division by zero is BitsPerSamples tag is
+	missing.
+	Reported by Agostino sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2597
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffinfo.c: fix null pointer dereference in -r mode when the image has
 	no StripByteCount tag.
 	Reported by Agostino Sarubbo.

@@ -1378,7 +1378,7 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
 	uint8* bufp = (uint8*) buf;
 	uint32 tw, tl;
 	uint32 row;
-	uint16 bps, bytes_per_sample;
+	uint16 bps = 0, bytes_per_sample;
 
 	tilebuf = _TIFFmalloc(tilesize);
 	if (tilebuf == 0)
@@ -1387,6 +1387,12 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
 	(void) TIFFGetField(in, TIFFTAG_TILEWIDTH, &tw);
 	(void) TIFFGetField(in, TIFFTAG_TILELENGTH, &tl);
 	(void) TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bps);
+        if( bps == 0 )
+        {
+            TIFFError(TIFFFileName(in), "Error, cannot read BitsPerSample");
+            status = 0;
+            goto done;
+        }
 	assert( bps % 8 == 0 );
 	bytes_per_sample = bps/8;
 
