@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcrop.c: add 3 extra bytes at end of strip buffer in
+	readSeparateStripsIntoBuffer() to avoid read outside of heap allocated buffer.
+	Reported by Agostina Sarubo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2621
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffcrop.c: fix readContigStripsIntoBuffer() in -i (ignore) mode so
 	that the output buffer is correctly incremented to avoid write outside bounds.
 	Reported by Agostino Sarubbo.

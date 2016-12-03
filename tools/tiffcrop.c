@@ -4815,10 +4815,17 @@ static int readSeparateStripsIntoBuffer (TIFF *in, uint8 *obuf, uint32 length,
   nstrips = TIFFNumberOfStrips(in);
   strips_per_sample = nstrips /spp;
 
+  /* Add 3 padding bytes for combineSeparateSamples32bits */
+  if( (size_t) stripsize > 0xFFFFFFFFU - 3U )
+  {
+      TIFFError("readSeparateStripsIntoBuffer", "Integer overflow when calculating buffer size.");
+      exit(-1);
+  }
+
   for (s = 0; (s < spp) && (s < MAX_SAMPLES); s++)
     {
     srcbuffs[s] = NULL;
-    buff = _TIFFmalloc(stripsize);
+    buff = _TIFFmalloc(stripsize + 3);
     if (!buff)
       {
       TIFFError ("readSeparateStripsIntoBuffer", 
@@ -4827,6 +4834,9 @@ static int readSeparateStripsIntoBuffer (TIFF *in, uint8 *obuf, uint32 length,
         _TIFFfree (srcbuffs[i]);
       return 0;
       }
+    buff[stripsize] = 0;
+    buff[stripsize+1] = 0;
+    buff[stripsize+2] = 0;
     srcbuffs[s] = buff;
     }
 
