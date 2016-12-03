@@ -45,7 +45,6 @@
 #include <string.h>
 
 #include <ctype.h>
-#include <assert.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -1393,7 +1392,12 @@ DECLAREreadFunc(readSeparateTilesIntoBuffer)
             status = 0;
             goto done;
         }
-	assert( bps % 8 == 0 );
+        if( (bps % 8) != 0 )
+        {
+            TIFFError(TIFFFileName(in), "Error, cannot handle BitsPerSample that is not a multiple of 8");
+            status = 0;
+            goto done;
+        }
 	bytes_per_sample = bps/8;
 
 	for (row = 0; row < imagelength; row += tl) {
@@ -1584,7 +1588,12 @@ DECLAREwriteFunc(writeBufferToSeparateTiles)
             _TIFFfree(obuf);
             return 0;
         }
-	assert( bps % 8 == 0 );
+        if( (bps % 8) != 0 )
+        {
+            TIFFError(TIFFFileName(out), "Error, cannot handle BitsPerSample that is not a multiple of 8");
+            _TIFFfree(obuf);
+            return 0;
+        }
 	bytes_per_sample = bps/8;
 
 	for (row = 0; row < imagelength; row += tl) {
