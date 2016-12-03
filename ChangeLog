@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcrop.c: fix readContigStripsIntoBuffer() in -i (ignore) mode so
+	that the output buffer is correctly incremented to avoid write outside bounds.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2620
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_ojpeg.c: make OJPEGDecode() early exit in case of failure in
 	OJPEGPreDecode(). This will avoid a divide by zero, and potential other issues.
 	Reported by Agostino Sarubbo.

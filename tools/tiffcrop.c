@@ -3698,7 +3698,7 @@ static int readContigStripsIntoBuffer (TIFF* in, uint8* buf)
                                   (unsigned long) strip, (unsigned long)rows);
                         return 0;
                 }
-                bufp += bytes_read;
+                bufp += stripsize;
         }
 
         return 1;
