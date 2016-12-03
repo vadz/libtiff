@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* man/Makefile.am: remove thumbnail.1 and rgb2ycbcr.1 from installed man
+	pages since the corresponding utilities are no longer installed.
+	Reported by Havard Eidnes 
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2606
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tif_dir.c: when TIFFGetField(, TIFFTAG_NUMBEROFINKS, ) is called,
 	limit the return number of inks to SamplesPerPixel, so that code that parses
 	ink names doesn't go past the end of the buffer.
