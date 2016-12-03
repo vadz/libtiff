@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_ojpeg.c: make OJPEGDecode() early exit in case of failure in
+	OJPEGPreDecode(). This will avoid a divide by zero, and potential other issues.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2611
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirread.c: modify ChopUpSingleUncompressedStrip() to
 	instanciate compute ntrips as TIFFhowmany_32(td->td_imagelength, rowsperstrip),
 	instead of a logic based on the total size of data. Which is faulty is
