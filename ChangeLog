@@ -1,5 +1,12 @@
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffinfo.c: fix null pointer dereference in -r mode when the image has
+	no StripByteCount tag.
+	Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2594
+
+2016-12-03 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffcrop.c: fix integer division by zero when BitsPerSample is missing.
 	Reported by Agostino Sarubbo.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2619

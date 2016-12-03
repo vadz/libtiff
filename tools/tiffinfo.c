@@ -417,7 +417,7 @@ TIFFReadRawData(TIFF* tif, int bitrev)
 	uint64* stripbc=NULL;
 
 	TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbc);
-	if (nstrips > 0) {
+	if (stripbc != NULL && nstrips > 0) {
 		uint32 bufsize = (uint32) stripbc[0];
 		tdata_t buf = _TIFFmalloc(bufsize);
 		tstrip_t s;
