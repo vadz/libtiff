@@ -1,3 +1,10 @@
+2016-12-04 Even Rouault <even.rouault at spatialys.com>
+
+	* html/man/Makefile.am: remove thumbnail.1.html and rgb2ycbcr.1.html
+	from installed pages since the corresponding utilities are no longer
+	installed. Reported by Havard Eidnes
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2606
+
 2016-12-03 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_write.c: fix misleading indentation as warned by GCC.
