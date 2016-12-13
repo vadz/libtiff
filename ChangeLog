@@ -4,7 +4,7 @@
 	Param member of TIFFFaxTabEnt structure a uint16 to reduce size of
 	the binary. It happens that the Hylafax software uses the tables that
 	follow this typedef (TIFFFaxMainTable, TIFFFaxWhiteTable,
-	TIFFFaxBlackTable), also they are not in a public libtiff header.
+	TIFFFaxBlackTable), although they are not in a public libtiff header.
 	Raised by Lee Howard.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2636
 
