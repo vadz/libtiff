@@ -1,3 +1,13 @@
+2016-12-13 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_fax3.h: revert change done on 2016-01-09 that made
+	Param member of TIFFFaxTabEnt structure a uint16 to reduce size of
+	the binary. It happens that the Hylafax software uses the tables that
+	follow this typedef (TIFFFaxMainTable, TIFFFaxWhiteTable,
+	TIFFFaxBlackTable), also they are not in a public libtiff header.
+	Raised by Lee Howard.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2636
+
 2016-12-04 Even Rouault <even.rouault at spatialys.com>
 
 	* html/man/Makefile.am: remove thumbnail.1.html and rgb2ycbcr.1.html
