@@ -81,7 +81,7 @@ extern void _TIFFFax3fillruns(unsigned char*, uint32*, uint32*, uint32);
 #define S_MakeUp   11
 #define S_EOL      12
 
-/* WARNING: do not change the layout of this structure as the Halyfax software */
+/* WARNING: do not change the layout of this structure as the HylaFAX software */
 /* really depends on it. See http://bugzilla.maptools.org/show_bug.cgi?id=2636 */
 typedef struct {                /* state table entry */
 	unsigned char State;    /* see above */
