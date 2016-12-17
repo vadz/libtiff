@@ -430,6 +430,8 @@ extern int TIFFReadRGBAImageOriented(TIFF*, uint32, uint32, uint32*, int, int);
 
 extern int TIFFReadRGBAStrip(TIFF*, uint32, uint32 * );
 extern int TIFFReadRGBATile(TIFF*, uint32, uint32, uint32 * );
+extern int TIFFReadRGBAStripExt(TIFF*, uint32, uint32 *, int stop_on_error );
+extern int TIFFReadRGBATileExt(TIFF*, uint32, uint32, uint32 *, int stop_on_error );
 extern int TIFFRGBAImageOK(TIFF*, char [1024]);
 extern int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
 extern int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
