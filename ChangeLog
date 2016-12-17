@@ -1,3 +1,10 @@
+2016-12-17 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiff2ps.c: fix 2 heap-based buffer overflows (in PSDataBW
+	and PSDataColorContig). Reported by Agostino Sarubbo.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2633 and
+	http://bugzilla.maptools.org/show_bug.cgi?id=2634.
+
 2016-12-13 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_fax3.h: revert change done on 2016-01-09 that made
