@@ -1,3 +1,10 @@
+2016-12-18 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiff2pdf.c: prevent heap-based buffer overflow in -j mode
+	on a paletted image. Note: this fix errors out before the overflow
+	happens. There could probably be a better fix.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2635
+
 2016-12-17 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tiffio.h, libtiff/tif_getimage.c: add TIFFReadRGBAStripExt()
