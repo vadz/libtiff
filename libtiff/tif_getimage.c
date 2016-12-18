@@ -283,6 +283,13 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	img->redcmap = NULL;
 	img->greencmap = NULL;
 	img->bluecmap = NULL;
+	img->Map = NULL;
+	img->BWmap = NULL;
+	img->PALmap = NULL;
+	img->ycbcr = NULL;
+	img->cielab = NULL;
+	img->UaToAa = NULL;
+	img->Bitdepth16To8 = NULL;
 	img->req_orientation = ORIENTATION_BOTLEFT;     /* It is the default */
 
 	img->tif = tif;
@@ -468,13 +475,6 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			    photoTag, img->photometric);
                         goto fail_return;
 	}
-	img->Map = NULL;
-	img->BWmap = NULL;
-	img->PALmap = NULL;
-	img->ycbcr = NULL;
-	img->cielab = NULL;
-	img->UaToAa = NULL;
-	img->Bitdepth16To8 = NULL;
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &img->width);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &img->height);
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ORIENTATION, &img->orientation);
@@ -494,10 +494,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 	return 1;
 
   fail_return:
-        _TIFFfree( img->redcmap );
-        _TIFFfree( img->greencmap );
-        _TIFFfree( img->bluecmap );
-        img->redcmap = img->greencmap = img->bluecmap = NULL;
+        TIFFRGBAImageEnd( img );
         return 0;
 }
 
