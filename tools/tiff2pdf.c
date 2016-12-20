@@ -2896,6 +2896,7 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			}
 			if(TIFFGetField(input, TIFFTAG_JPEGTABLES, &count, &jpt) != 0) {
 				if (count >= 4) {
+                                        int retTIFFReadRawTile;
                     /* Ignore EOI marker of JpegTables */
 					_TIFFmemcpy(buffer, jpt, count - 2);
 					bufferoffset += count - 2;
@@ -2903,22 +2904,23 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 					table_end[0] = buffer[bufferoffset-2];
 					table_end[1] = buffer[bufferoffset-1];
 					xuint32 = bufferoffset;
-                    bufferoffset -= 2;
-					bufferoffset += TIFFReadRawTile(
+                                        bufferoffset -= 2;
+                                        retTIFFReadRawTile= TIFFReadRawTile(
 						input, 
 						tile, 
 						(tdata_t) &(((unsigned char*)buffer)[bufferoffset]), 
 						-1);
+                                        if( retTIFFReadRawTile < 0 )
+                                        {
+                                            _TIFFfree(buffer);
+                                            t2p->t2p_error = T2P_ERR_ERROR;
+                                            return(0);
+                                        }
+					bufferoffset += retTIFFReadRawTile;
                     /* Overwrite SOI marker of image scan with previously */
                     /* saved end of JpegTables */
 					buffer[xuint32-2]=table_end[0];
 					buffer[xuint32-1]=table_end[1];
-				} else {
-					bufferoffset += TIFFReadRawTile(
-						input, 
-						tile, 
-						(tdata_t) &(((unsigned char*)buffer)[bufferoffset]), 
-						-1);
 				}
 			}
 			t2pWriteFile(output, (tdata_t) buffer, bufferoffset);

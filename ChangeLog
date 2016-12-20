@@ -1,5 +1,11 @@
 2016-12-20 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiff2pdf.c: avoid potential invalid memory read in
+	t2p_writeproc.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2639
+
+2016-12-20 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiff2pdf.c: fix wrong usage of memcpy() that can trigger
 	unspecified behaviour.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2638
