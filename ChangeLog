@@ -1,3 +1,9 @@
+2016-12-20 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiff2pdf.c: fix wrong usage of memcpy() that can trigger
+	unspecified behaviour.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2638
+
 2016-12-18 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c: fix potential memory leaks in error code

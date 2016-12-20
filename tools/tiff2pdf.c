@@ -3593,7 +3593,8 @@ void t2p_tile_collapse_left(
 	
 	edgescanwidth = (scanwidth * edgetilewidth + (tilewidth - 1))/ tilewidth;
 	for(i=0;i<tilelength;i++){
-		_TIFFmemcpy( 
+                /* We use memmove() since there can be overlaps in src and dst buffers for the first items */
+		memmove( 
 			&(((char*)buffer)[edgescanwidth*i]), 
 			&(((char*)buffer)[scanwidth*i]), 
 			edgescanwidth);
