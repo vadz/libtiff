@@ -2895,7 +2895,7 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 				return(0);
 			}
 			if(TIFFGetField(input, TIFFTAG_JPEGTABLES, &count, &jpt) != 0) {
-				if (count >= 4) {
+				if (count > 4) {
                                         int retTIFFReadRawTile;
                     /* Ignore EOI marker of JpegTables */
 					_TIFFmemcpy(buffer, jpt, count - 2);
