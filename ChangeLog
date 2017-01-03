@@ -1,3 +1,10 @@
+2017-01-03 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jpeg.c: increase libjpeg max memory usable to
+	10 MB instead of libjpeg 1MB default. This helps when creating files
+	with "big" tile, without using libjpeg temporary files.
+	Related to https://trac.osgeo.org/gdal/ticket/6757
+
 2016-12-20 Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiff2pdf.c: avoid potential heap-based overflow in
