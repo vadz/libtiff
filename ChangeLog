@@ -1,5 +1,11 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_jpeg.c: validate BitsPerSample in JPEGSetupEncode() to avoid
+	undefined behaviour caused by invalid shift exponent.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2648
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dir.c, tif_dirread.c, tif_dirwrite.c: implement various clampings
 	of double to other data types to avoid undefined behaviour if the output range
 	isn't big enough to hold the input value.

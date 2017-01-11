@@ -1632,6 +1632,13 @@ JPEGSetupEncode(TIFF* tif)
                             "Invalig horizontal/vertical sampling value");
                     return (0);
                 }
+                if( td->td_bitspersample > 16 )
+                {
+                    TIFFErrorExt(tif->tif_clientdata, module,
+                                 "BitsPerSample %d not allowed for JPEG",
+                                 td->td_bitspersample);
+                    return (0);
+                }
 
 		/*
 		 * A ReferenceBlackWhite field *must* be present since the
