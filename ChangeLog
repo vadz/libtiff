@@ -1,6 +1,6 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
-	* libtiff/tiffiop.h, tif_unix.c, tif_win32.c, tif_vms.c: add _TIFFcalloc()
+	* libtiff/tiffio.h, tif_unix.c, tif_win32.c, tif_vms.c: add _TIFFcalloc()
 
 	* libtiff/tif_read.c: TIFFReadBufferSetup(): use _TIFFcalloc() to zero
 	initialize tif_rawdata.
