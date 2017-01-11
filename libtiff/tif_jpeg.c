@@ -1626,6 +1626,13 @@ JPEGSetupEncode(TIFF* tif)
 	case PHOTOMETRIC_YCBCR:
 		sp->h_sampling = td->td_ycbcrsubsampling[0];
 		sp->v_sampling = td->td_ycbcrsubsampling[1];
+                if( sp->h_sampling == 0 || sp->v_sampling == 0 )
+                {
+                    TIFFErrorExt(tif->tif_clientdata, module,
+                            "Invalig horizontal/vertical sampling value");
+                    return (0);
+                }
+
 		/*
 		 * A ReferenceBlackWhite field *must* be present since the
 		 * default value is inappropriate for YCbCr.  Fill in the

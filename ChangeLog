@@ -1,3 +1,9 @@
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jpeg.c: avoid integer division by zero in
+	JPEGSetupEncode() when horizontal or vertical sampling is set to 0.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2653
+
 2017-01-03 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_jpeg.c: increase libjpeg max memory usable to
