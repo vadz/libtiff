@@ -1,5 +1,13 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dirread.c: avoid division by floating point 0 in
+	TIFFReadDirEntryCheckedRational() and TIFFReadDirEntryCheckedSrational(),
+	and return 0 in that case (instead of infinity as before presumably)
+	Apparently some sanitizers do not like those divisions by zero.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2644
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirwrite.c: in TIFFWriteDirectoryTagCheckedRational, replace
 	assertion by runtime check to error out if passed value is strictly
 	negative.
