@@ -7996,7 +7996,6 @@ writeCroppedImage(TIFF *in, TIFF *out, struct image_data *image,
   if (!TIFFWriteDirectory(out))
     {
     TIFFError("","Failed to write IFD for page number %d", pagenum);
-    TIFFClose(out);
     return (-1);
     }
 

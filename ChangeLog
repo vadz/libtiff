@@ -1,5 +1,16 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dirwrite.c: in TIFFWriteDirectoryTagCheckedRational, replace
+	assertion by runtime check to error out if passed value is strictly
+	negative.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2535
+
+	* tools/tiffcrop.c: remove extraneous TIFFClose() in error code path, that
+	caused double free.
+	Related to http://bugzilla.maptools.org/show_bug.cgi?id=2535
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_jpeg.c: avoid integer division by zero in
 	JPEGSetupEncode() when horizontal or vertical sampling is set to 0.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2653
