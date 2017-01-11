@@ -1,5 +1,15 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dir.c, tif_dirread.c, tif_dirwrite.c: implement various clampings
+	of double to other data types to avoid undefined behaviour if the output range
+	isn't big enough to hold the input value.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2643
+	http://bugzilla.maptools.org/show_bug.cgi?id=2642
+	http://bugzilla.maptools.org/show_bug.cgi?id=2646
+	http://bugzilla.maptools.org/show_bug.cgi?id=2647
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirread.c: avoid division by floating point 0 in
 	TIFFReadDirEntryCheckedRational() and TIFFReadDirEntryCheckedSrational(),
 	and return 0 in that case (instead of infinity as before presumably)

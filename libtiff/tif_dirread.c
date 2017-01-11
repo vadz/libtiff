@@ -40,6 +40,7 @@
  */
 
 #include "tiffiop.h"
+#include <float.h>
 
 #define IGNORE 0          /* tag placeholder used below */
 #define FAILED_FII    ((uint32) -1)
@@ -2406,7 +2407,14 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloatArray(TIFF* tif, TIFFDirEnt
 				ma=(double*)origdata;
 				mb=data;
 				for (n=0; n<count; n++)
-					*mb++=(float)(*ma++);
+                                {
+                                    double val = *ma++;
+                                    if( val > FLT_MAX )
+                                        val = FLT_MAX;
+                                    else if( val < -FLT_MAX )
+                                        val = -FLT_MAX;
+                                    *mb++=(float)val;
+                                }
 			}
 			break;
 	}
