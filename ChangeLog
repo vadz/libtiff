@@ -1,5 +1,11 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: avoid potential undefined behaviour on signed integer
+	addition in TIFFReadRawStrip1() in isMapped() case.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2650
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_jpeg.c: validate BitsPerSample in JPEGSetupEncode() to avoid
 	undefined behaviour caused by invalid shift exponent.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2648
