@@ -1,5 +1,11 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_luv.c, tif_lzw.c, tif_packbits.c: return 0 in Encode
+	functions instead of -1 when TIFFFlushData1() fails.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2130
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiffcp.c: error out cleanly in cpContig2SeparateByRow and
 	cpSeparate2ContigByRow if BitsPerSample != 8 to avoid heap based overflow.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2656 and
