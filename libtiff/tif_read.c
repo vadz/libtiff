@@ -420,7 +420,7 @@ TIFFReadRawStrip1(TIFF* tif, uint32 strip, void* buf, tmsize_t size,
 			return ((tmsize_t)(-1));
 		}
 	} else {
-		tmsize_t ma;
+		tmsize_t ma = 0;
 		tmsize_t n;
 		if ((td->td_stripoffset[strip] > (uint64)TIFF_TMSIZE_T_MAX)||
                     ((ma=(tmsize_t)td->td_stripoffset[strip])>tif->tif_size))
