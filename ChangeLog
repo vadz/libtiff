@@ -1,5 +1,13 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tiffiop.h, tif_unix.c, tif_win32.c, tif_vms.c: add _TIFFcalloc()
+
+	* libtiff/tif_read.c: TIFFReadBufferSetup(): use _TIFFcalloc() to zero
+	initialize tif_rawdata.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2651
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_getimage.c: add explicit uint32 cast in putagreytile to
 	avoid UndefinedBehaviorSanitizer warning.
 	Patch by Nicolás Peña.
