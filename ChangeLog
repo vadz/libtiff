@@ -1,5 +1,12 @@
 2017-01-11 Even Rouault <even.rouault at spatialys.com>
 
+	* tools/tiffcp.c: error out cleanly in cpContig2SeparateByRow and
+	cpSeparate2ContigByRow if BitsPerSample != 8 to avoid heap based overflow.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2656 and
+	http://bugzilla.maptools.org/show_bug.cgi?id=2657
+
+2017-01-11 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tiffio.h, tif_unix.c, tif_win32.c, tif_vms.c: add _TIFFcalloc()
 
 	* libtiff/tif_read.c: TIFFReadBufferSetup(): use _TIFFcalloc() to zero
