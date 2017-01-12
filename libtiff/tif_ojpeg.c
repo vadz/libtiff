@@ -1918,7 +1918,10 @@ OJPEGReadHeaderInfoSecTablesAcTable(TIFF* tif)
 				rb[sizeof(uint32)+5+n]=o[n];
 			p=(uint32)TIFFReadFile(tif,&(rb[sizeof(uint32)+21]),q);
 			if (p!=q)
+                        {
+                                _TIFFfree(rb);
 				return(0);
+                        }
 			sp->actable[m]=rb;
 			sp->sos_tda[m]=(sp->sos_tda[m]|m);
 		}
