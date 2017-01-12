@@ -1,6 +1,7 @@
 2017-01-12 Even Rouault <even.rouault at spatialys.com>
 
-	* libtiff/tif_ojpeg.c: fix leak in OJPEGReadHeaderInfoSecTablesAcTable
+	* libtiff/tif_ojpeg.c: fix leak in OJPEGReadHeaderInfoSecTablesQTable,
+	OJPEGReadHeaderInfoSecTablesDcTable and OJPEGReadHeaderInfoSecTablesAcTable
 	when read fails.
 	Patch by Nicolás Peña.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2659

@@ -1790,7 +1790,10 @@ OJPEGReadHeaderInfoSecTablesQTable(TIFF* tif)
 			TIFFSeekFile(tif,sp->qtable_offset[m],SEEK_SET); 
 			p=(uint32)TIFFReadFile(tif,&ob[sizeof(uint32)+5],64);
 			if (p!=64)
+                        {
+                                _TIFFfree(ob);
 				return(0);
+                        }
 			sp->qtable[m]=ob;
 			sp->sof_tq[m]=m;
 		}
@@ -1854,7 +1857,10 @@ OJPEGReadHeaderInfoSecTablesDcTable(TIFF* tif)
 				rb[sizeof(uint32)+5+n]=o[n];
 			p=(uint32)TIFFReadFile(tif,&(rb[sizeof(uint32)+21]),q);
 			if (p!=q)
+                        {
+                                _TIFFfree(rb);
 				return(0);
+                        }
 			sp->dctable[m]=rb;
 			sp->sos_tda[m]=(m<<4);
 		}
