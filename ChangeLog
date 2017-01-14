@@ -1,3 +1,8 @@
+2017-01-14 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/raw2tiff.c: avoid integer division by zero.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2631
+
 2017-01-12 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_ojpeg.c: fix leak in OJPEGReadHeaderInfoSecTablesQTable,

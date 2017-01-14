@@ -408,8 +408,14 @@ guessSize(int fd, TIFFDataType dtype, _TIFF_off_t hdr_size, uint32 nbands,
 	} else if (*width == 0 && *length == 0) {
                 unsigned int fail = 0;
 		fprintf(stderr,	"Image width and height are not specified.\n");
+                w = (uint32) sqrt(imagesize / longt);
+                if( w == 0 )
+                {
+                    fprintf(stderr, "Too small image size.\n");
+                    return -1;
+                }
 
-		for (w = (uint32) sqrt(imagesize / longt);
+		for (;
 		     w < sqrt(imagesize * longt);
 		     w++) {
 			if (imagesize % w == 0) {
