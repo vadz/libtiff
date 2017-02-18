@@ -1,3 +1,10 @@
+2017-02-18 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_lzw.c: in LZWPostEncode(), increase, if necessary, the
+	code bit-width after flushing the remaining code and before emitting
+	the EOI code.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=1982
+
 2017-01-31 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_jpeg.c: only run JPEGFixupTagsSubsampling() if the
