@@ -1,5 +1,11 @@
 2017-02-18 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_pixarlog.c: fix memory leak in error code path of
+	PixarLogSetupDecode(). Patch by Nicolás Peña.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2665
+
+2017-02-18 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_lzw.c: in LZWPostEncode(), increase, if necessary, the
 	code bit-width after flushing the remaining code and before emitting
 	the EOI code.
