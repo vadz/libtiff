@@ -1,3 +1,8 @@
+2017-02-25 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_fax3.c, tif_predict.c, tif_getimage.c: fix GCC 7
+	-Wimplicit-fallthrough warnings.
+
 2017-02-18 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_pixarlog.c: fix memory leak in error code path of
