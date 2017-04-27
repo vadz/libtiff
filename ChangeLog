@@ -1,4 +1,13 @@
-2017-04-27
+2017-04-27 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_ojpeg.c: fix potential memory leak in
+	OJPEGReadHeaderInfoSecTablesQTable, OJPEGReadHeaderInfoSecTablesDcTable
+	and OJPEGReadHeaderInfoSecTablesAcTable
+	Patch by Nicolás Peña.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2670
+
+2017-04-27 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirread.c: fix memory leak in non DEFER_STRILE_LOAD
 	mode (ie default) when there is both a StripOffsets and
 	TileOffsets tag, or a StripByteCounts and TileByteCounts
