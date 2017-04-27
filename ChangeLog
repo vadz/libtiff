@@ -1,5 +1,14 @@
 2017-04-27 Even Rouault <even.rouault at spatialys.com>
 
+	* litiff/tif_fax3.c: avoid crash in Fax3Close() on empty file.
+	Patch by Alan Coopersmith  + complement by myself.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2673
+	* tools/fax2tiff.c: emit appropriate message if the input file is
+	empty. Patch by Alan Coopersmith.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2672
+
+2017-04-27 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_ojpeg.c: fix potential memory leak in
 	OJPEGReadHeaderInfoSecTablesQTable, OJPEGReadHeaderInfoSecTablesDcTable
 	and OJPEGReadHeaderInfoSecTablesAcTable
