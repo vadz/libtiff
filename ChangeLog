@@ -1,3 +1,10 @@
+2017-04-27
+	* libtiff/tif_dirread.c: fix memory leak in non DEFER_STRILE_LOAD
+	mode (ie default) when there is both a StripOffsets and
+	TileOffsets tag, or a StripByteCounts and TileByteCounts
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2689
+	* tools/tiff2ps.c: call TIFFClose() in error code paths.
+
 2017-02-25 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_fax3.c, tif_predict.c, tif_getimage.c: fix GCC 7

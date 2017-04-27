@@ -466,10 +466,16 @@ main(int argc, char* argv[])
 		if (tif != NULL) {
 			if (dirnum != -1
                             && !TIFFSetDirectory(tif, (tdir_t)dirnum))
+                        {
+                                TIFFClose(tif);
 				return (-1);
+                        }
 			else if (diroff != 0 &&
 			    !TIFFSetSubDirectory(tif, diroff))
+                        {
+                                TIFFClose(tif);
 				return (-1);
+                        }
 			np = TIFF2PS(output, tif, pageWidth, pageHeight,
 				     leftmargin, bottommargin, centered);
                         if (np < 0)

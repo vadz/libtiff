@@ -3738,6 +3738,14 @@ TIFFReadDirectory(TIFF* tif)
                                 _TIFFmemcpy( &(tif->tif_dir.td_stripoffset_entry),
                                              dp, sizeof(TIFFDirEntry) );
 #else                          
+                                if( tif->tif_dir.td_stripoffset != NULL )
+                                {
+                                    TIFFErrorExt(tif->tif_clientdata, module,
+                                        "tif->tif_dir.td_stripoffset is "
+                                        "already allocated. Likely duplicated "
+                                        "StripOffsets/TileOffsets tag");
+                                    goto bad;
+                                }
 				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripoffset))  
 					goto bad;
 #endif                                
@@ -3748,7 +3756,15 @@ TIFFReadDirectory(TIFF* tif)
                                 _TIFFmemcpy( &(tif->tif_dir.td_stripbytecount_entry),
                                              dp, sizeof(TIFFDirEntry) );
 #else                          
-				if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))  
+                                if( tif->tif_dir.td_stripbytecount != NULL )
+                                {
+                                    TIFFErrorExt(tif->tif_clientdata, module,
+                                        "tif->tif_dir.td_stripbytecount is "
+                                        "already allocated. Likely duplicated "
+                                        "StripByteCounts/TileByteCounts tag");
+                                    goto bad;
+                                }
+                                if (!TIFFFetchStripThing(tif,dp,tif->tif_dir.td_nstrips,&tif->tif_dir.td_stripbytecount))  
 					goto bad;
 #endif                                
 				break;
