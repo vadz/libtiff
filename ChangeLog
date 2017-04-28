@@ -1,3 +1,8 @@
+2017-04-28 Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiff2bw.c: close TIFF handle in error code path.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2677
+
 2017-04-27 Even Rouault <even.rouault at spatialys.com>
 
 	* litiff/tif_fax3.c: avoid crash in Fax3Close() on empty file.

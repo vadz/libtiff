@@ -165,23 +165,27 @@ main(int argc, char* argv[])
 		fprintf(stderr,
 	    "%s: Bad photometric; can only handle RGB and Palette images.\n",
 		    argv[optind]);
+		TIFFClose(in);
 		return (-1);
 	}
 	TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
 	if (samplesperpixel != 1 && samplesperpixel != 3) {
 		fprintf(stderr, "%s: Bad samples/pixel %u.\n",
 		    argv[optind], samplesperpixel);
+		TIFFClose(in);
 		return (-1);
 	}
 	if( photometric == PHOTOMETRIC_RGB && samplesperpixel != 3) {
 		fprintf(stderr, "%s: Bad samples/pixel %u for PHOTOMETRIC_RGB.\n",
 		    argv[optind], samplesperpixel);
+		TIFFClose(in);
 		return (-1);
 	}
 	TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
 	if (bitspersample != 8) {
 		fprintf(stderr,
 		    " %s: Sorry, only handle 8-bit samples.\n", argv[optind]);
+		TIFFClose(in);
 		return (-1);
 	}
 	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &w);
@@ -190,7 +194,10 @@ main(int argc, char* argv[])
 
 	out = TIFFOpen(argv[optind+1], "w");
 	if (out == NULL)
+	{
+		TIFFClose(in);
 		return (-1);
+	}
 	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, w);
 	TIFFSetField(out, TIFFTAG_IMAGELENGTH, h);
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
