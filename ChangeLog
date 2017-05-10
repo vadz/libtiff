@@ -1,5 +1,12 @@
 2017-05-10 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: TIFFFillStrip() and TIFFFillTile():
+	avoid excessive memory allocation in case of shorten files.
+	Only effective on 64 bit builds and non-mapped cases.
+	Credit to OSS-Fuzz (locally run, on GDAL)
+
+2017-05-10 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_zip.c, tif_pixarlog.c, tif_predict.c: fix memory
 	leak when the underlying codec (ZIP, PixarLog) succeeds its
 	setupdecode() method, but PredictorSetup fails.
