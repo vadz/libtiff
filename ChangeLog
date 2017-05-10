@@ -1,3 +1,9 @@
+2017-05-10 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c: TIFFFillStrip(): add limitation to the number
+	of bytes read in case td_stripbytecount[strip] is bigger than
+	reasonable, so as to avoid excessive memory allocation.
+
 2017-04-28 Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiff2bw.c: close TIFF handle in error code path.
