@@ -1,5 +1,12 @@
 2017-05-10 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_zip.c, tif_pixarlog.c, tif_predict.c: fix memory
+	leak when the underlying codec (ZIP, PixarLog) succeeds its
+	setupdecode() method, but PredictorSetup fails.
+	Credit to OSS-Fuzz (locally run, on GDAL)
+
+2017-05-10 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c: TIFFFillStrip(): add limitation to the number
 	of bytes read in case td_stripbytecount[strip] is bigger than
 	reasonable, so as to avoid excessive memory allocation.

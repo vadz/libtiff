@@ -678,6 +678,12 @@ PixarLogSetupDecode(TIFF* tif)
 
 	assert(sp != NULL);
 
+	/* This function can possibly be called several times by */
+	/* PredictorSetupDecode() if this function succeeds but */
+	/* PredictorSetup() fails */
+	if( (sp->state & PLSTATE_INIT) != 0 )
+		return 1;
+
 	/* Make sure no byte swapping happens on the data
 	 * after decompression. */
 	tif->tif_postdecode = _TIFFNoPostDecode;  
