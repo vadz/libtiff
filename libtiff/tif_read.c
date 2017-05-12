@@ -55,6 +55,7 @@ TIFFFillStripPartial( TIFF *tif, int strip, tmsize_t read_ahead, int restart )
         tmsize_t unused_data;
         uint64 read_offset;
         tmsize_t cc, to_read;
+        tmsize_t read_ahead_mod;
         /* tmsize_t bytecountm; */
         
         if (!_TIFFFillStriles( tif ) || !tif->tif_dir.td_stripbytecount)
@@ -67,7 +68,14 @@ TIFFFillStripPartial( TIFF *tif, int strip, tmsize_t read_ahead, int restart )
          */
 
         /* bytecountm=(tmsize_t) td->td_stripbytecount[strip]; */
-        if (read_ahead*2 > tif->tif_rawdatasize) {
+
+        /* Not completely sure where the * 2 comes from, but probably for */
+        /* an exponentional growth strategy of tif_rawdatasize */
+        if( read_ahead < TIFF_TMSIZE_T_MAX / 2 )
+                read_ahead_mod = read_ahead * 2;
+        else
+                read_ahead_mod = read_ahead;
+        if (read_ahead_mod > tif->tif_rawdatasize) {
                 assert( restart );
                 
                 tif->tif_curstrip = NOSTRIP;
@@ -77,7 +85,7 @@ TIFFFillStripPartial( TIFF *tif, int strip, tmsize_t read_ahead, int restart )
                                      (unsigned long) strip);
                         return (0);
                 }
-                if (!TIFFReadBufferSetup(tif, 0, read_ahead*2))
+                if (!TIFFReadBufferSetup(tif, 0, read_ahead_mod))
                         return (0);
         }
 
@@ -219,7 +227,18 @@ TIFFSeek(TIFF* tif, uint32 row, uint16 sample )
         
         if( !whole_strip )
         {
-                read_ahead = tif->tif_scanlinesize * 16 + 5000;
+                /* 16 is for YCbCr mode where we may need to read 16 */
+                /* lines at a time to get a decompressed line, and 5000 */
+                /* is some constant value, for example for JPEG tables */
+                if( tif->tif_scanlinesize < TIFF_TMSIZE_T_MAX / 16 &&
+                    tif->tif_scanlinesize * 16 < TIFF_TMSIZE_T_MAX - 5000 )
+                {
+                        read_ahead = tif->tif_scanlinesize * 16 + 5000;
+                }
+                else
+                {
+                        read_ahead = tif->tif_scanlinesize;
+                }
         }
 
         /*

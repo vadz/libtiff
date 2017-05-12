@@ -1,3 +1,10 @@
+2017-05-12 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c: TIFFFillStripPartial() / TIFFSeek(),
+	avoid potential integer overflows with read_ahead in
+	CHUNKY_STRIP_READ_SUPPORT mode. Should
+	especially occur on 32 bit platforms.
+
 2017-05-10 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c: TIFFFillStrip() and TIFFFillTile():
