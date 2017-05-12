@@ -1,5 +1,12 @@
 2017-05-12 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: TIFFFillStripPartial():
+	avoid excessive memory allocation in case of shorten files.
+	Only effective on 64 bit builds.
+	Credit to OSS-Fuzz (locally run, on GDAL)
+
+2017-05-12 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c: TIFFFillStripPartial() / TIFFSeek(),
 	avoid potential integer overflows with read_ahead in
 	CHUNKY_STRIP_READ_SUPPORT mode. Should
