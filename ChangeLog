@@ -1,5 +1,12 @@
 2017-05-13 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_pixarlog.c, tif_luv.c: avoid potential int32
+	overflows in multiply_ms() and add_ms().
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1558
+	Credit to OSS-Fuzz
+
+2017-05-13 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_color.c: avoid potential int32 overflow in
 	TIFFYCbCrToRGBInit()
 	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1533
