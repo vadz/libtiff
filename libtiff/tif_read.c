@@ -277,7 +277,10 @@ TIFFFillStripPartial( TIFF *tif, int strip, tmsize_t read_ahead, int restart )
         if( restart )
                 return TIFFStartStrip(tif, strip);
         else
+        {
+                tif->tif_rawcc = tif->tif_rawdataloaded;
                 return 1;
+        }
 }
 
 /*
@@ -1260,7 +1263,10 @@ TIFFStartStrip(TIFF* tif, uint32 strip)
 	else
 	{
 		tif->tif_rawcp = tif->tif_rawdata;
-		tif->tif_rawcc = (tmsize_t)td->td_stripbytecount[strip];
+		if( tif->tif_rawdataloaded > 0 )
+			tif->tif_rawcc = tif->tif_rawdataloaded;
+		else
+			tif->tif_rawcc = (tmsize_t)td->td_stripbytecount[strip];
 	}
 	return ((*tif->tif_predecode)(tif,
 			(uint16)(strip / td->td_stripsperimage)));

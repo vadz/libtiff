@@ -1,3 +1,12 @@
+2017-05-13 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c: update tif_rawcc in CHUNKY_STRIP_READ_SUPPORT
+	mode with tif_rawdataloaded when calling TIFFStartStrip() or
+	TIFFFillStripPartial(). This avoids reading beyond tif_rawdata
+	when bytecount > tif_rawdatasize.
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1545.
+	Credit to OSS-Fuzz
+
 2017-05-12 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c: TIFFFillStripPartial():
