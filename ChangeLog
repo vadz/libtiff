@@ -1,3 +1,9 @@
+2017-05-14 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_packbits.c: fix out-of-buffer read in PackBitsDecode()
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1563
+	Credit to OSS-Fuzz
+
 2017-05-13 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_pixarlog.c, tif_luv.c: avoid potential int32
