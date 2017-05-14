@@ -1,5 +1,11 @@
 2017-05-14 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_luv.c: LogL16InitState(): avoid excessive memory
+	allocation when RowsPerStrip tag is missing.
+	Credit to OSS-Fuzz (locally run, on GDAL)
+
+2017-05-14 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_packbits.c: fix out-of-buffer read in PackBitsDecode()
 	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1563
 	Credit to OSS-Fuzz
