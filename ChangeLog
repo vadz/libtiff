@@ -1,5 +1,11 @@
 2017-05-17 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: _TIFFVSetField(): fix outside range cast of double to
+	float.
+	Credit to Google Autofuzz project
+
+2017-05-17 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_getimage.c: initYCbCrConversion(): add basic validation of
 	luma and refBlackWhite coefficients (just check they are not NaN for now),
 	to avoid potential float to int overflows.
