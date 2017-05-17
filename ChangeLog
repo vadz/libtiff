@@ -1,3 +1,10 @@
+2017-05-17 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_lzw.c: update dec_bitsleft at beginning of LZWDecode(),
+	and update tif_rawcc at end of LZWDecode(). This is needed to properly
+	work with the latest chnges in tif_read.c in CHUNKY_STRIP_READ_SUPPORT
+	mode.
+
 2017-05-14 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_luv.c: LogL16InitState(): avoid excessive memory
