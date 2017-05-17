@@ -1,5 +1,13 @@
 2017-05-17 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_getimage.c: initYCbCrConversion(): add basic validation of
+	luma and refBlackWhite coefficients (just check they are not NaN for now),
+	to avoid potential float to int overflows.
+	Fixes ://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1663
+	Credit to OSS Fuzz
+
+2017-05-17 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_pixarlog.c: PixarLogDecode(): resync tif_rawcp with
 	next_in and tif_rawcc with avail_in at beginning and end of function,
 	similarly to what is done in LZWDecode(). Likely needed so that it
