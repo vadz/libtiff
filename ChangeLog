@@ -1,5 +1,13 @@
 2017-05-17 Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_pixarlog.c: PixarLogDecode(): resync tif_rawcp with
+	next_in and tif_rawcc with avail_in at beginning and end of function,
+	similarly to what is done in LZWDecode(). Likely needed so that it
+	works properly with latest chnges in tif_read.c in CHUNKY_STRIP_READ_SUPPORT
+	mode. But untested...
+
+2017-05-17 Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_lzw.c: update dec_bitsleft at beginning of LZWDecode(),
 	and update tif_rawcc at end of LZWDecode(). This is needed to properly
 	work with the latest chnges in tif_read.c in CHUNKY_STRIP_READ_SUPPORT
