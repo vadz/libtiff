@@ -1,3 +1,10 @@
+2017-05-18 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_getimage.c: initYCbCrConversion(): check luma[1] is not zero
+	to avoid division by zero.
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1665
+	Credit to OSS Fuzz
+
 2017-05-17 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c: _TIFFVSetField(): fix outside range cast of double to

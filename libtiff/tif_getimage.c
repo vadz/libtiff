@@ -2265,8 +2265,10 @@ initYCbCrConversion(TIFFRGBAImage* img)
 	    &refBlackWhite);
 
         /* Do some validation to avoid later issues. Detect NaN for now */
+        /* and also if lumaGreen is zero since we divide by it later */
         if( luma[0] != luma[0] ||
             luma[1] != luma[1] ||
+            luma[1] == 0.0 ||
             luma[2] != luma[2] )
         {
             TIFFErrorExt(img->tif->tif_clientdata, module,
