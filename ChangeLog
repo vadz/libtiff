@@ -1,3 +1,10 @@
+2017-05-20 Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_getimage.c: initYCbCrConversion(): stricter validation for
+	refBlackWhite coefficients values. To avoid invalid float->int32 conversion.
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1718
+	Credit to OSS Fuzz
+
 2017-05-18 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c: initYCbCrConversion(): check luma[1] is not zero
@@ -16,7 +23,7 @@
 	* libtiff/tif_getimage.c: initYCbCrConversion(): add basic validation of
 	luma and refBlackWhite coefficients (just check they are not NaN for now),
 	to avoid potential float to int overflows.
-	Fixes ://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1663
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1663
 	Credit to OSS Fuzz
 
 2017-05-17 Even Rouault <even.rouault at spatialys.com>
