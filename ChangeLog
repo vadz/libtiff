@@ -1,3 +1,8 @@
+2017-05-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/v4.0.8.html: Add description of changes targeting the 4.0.8
+	release.
+
 2017-05-20 Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c: initYCbCrConversion(): stricter validation for
