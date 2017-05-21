@@ -69,17 +69,11 @@ set(docfiles
     TIFFWriteRawTile.3tiff.html
     TIFFWriteScanline.3tiff.html
     TIFFWriteTile.3tiff.html
-    bmp2tiff.1.html
     fax2ps.1.html
     fax2tiff.1.html
-    gif2tiff.1.html
     pal2rgb.1.html
     ppm2tiff.1.html
-    ras2tiff.1.html
     raw2tiff.1.html
-    rgb2ycbcr.1.html
-    sgi2tiff.1.html
-    thumbnail.1.html
     tiff2bw.1.html
     tiff2pdf.1.html
     tiff2ps.1.html
@@ -93,8 +87,7 @@ set(docfiles
     tiffinfo.1.html
     tiffmedian.1.html
     tiffset.1.html
-    tiffsplit.1.html
-    tiffsv.1.html)
+    tiffsplit.1.html)
 
 set(doc_DATA ${indexfile} ${docfiles})
 

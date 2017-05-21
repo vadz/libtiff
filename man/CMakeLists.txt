@@ -23,17 +23,11 @@
 # OF THIS SOFTWARE.
 
 set(man1_MANS
-  bmp2tiff.1
   fax2ps.1
   fax2tiff.1
-  gif2tiff.1
   pal2rgb.1
   ppm2tiff.1
-  ras2tiff.1
   raw2tiff.1
-  rgb2ycbcr.1
-  sgi2tiff.1
-  thumbnail.1
   tiff2bw.1
   tiff2pdf.1
   tiff2ps.1
@@ -47,8 +41,7 @@ set(man1_MANS
   tiffinfo.1
   tiffmedian.1
   tiffset.1
-  tiffsplit.1
-  tiffsv.1)
+  tiffsplit.1)
 
 set(man3_MANS
   libtiff.3tiff
