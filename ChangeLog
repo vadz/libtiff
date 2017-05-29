@@ -1,3 +1,10 @@
+2017-05-20  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_color.c: TIFFYCbCrToRGBInit(): stricter clamping to avoid
+	int32 overflow in TIFFYCbCrtoRGB().
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1844
+	Credit to OSS Fuzz
+
 2017-05-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* configure.ac: libtiff 4.0.8 released.
