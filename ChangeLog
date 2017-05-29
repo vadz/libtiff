@@ -1,5 +1,13 @@
 2017-05-29  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_getimage.c: initYCbCrConversion(): stricter validation for
+	refBlackWhite coefficients values. To avoid invalid float->int32 conversion
+	(when refBlackWhite[0] == 2147483648.f)
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1907
+	Credit to OSS Fuzz
+
+2017-05-29  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_color.c: TIFFYCbCrToRGBInit(): stricter clamping to avoid
 	int32 overflow in TIFFYCbCrtoRGB().
 	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=1844
