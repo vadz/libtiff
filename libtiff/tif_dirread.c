@@ -3580,6 +3580,10 @@ TIFFReadDirectory(TIFF* tif)
 							goto bad;
 						dp->tdir_tag=IGNORE;
 						break;
+                                        default:
+                                            if( !_TIFFCheckFieldIsValidForCodec(tif, dp->tdir_tag) )
+                                                dp->tdir_tag=IGNORE;
+                                            break;
 				}
 			}
 		}

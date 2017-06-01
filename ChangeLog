@@ -1,3 +1,23 @@
+2017-06-01  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirinfo.c, tif_dirread.c: add _TIFFCheckFieldIsValidForCodec(),
+	and use it in TIFFReadDirectory() so as to ignore fields whose tag is a
+	codec-specified tag but this codec is not enabled. This avoids TIFFGetField()
+	to behave differently depending on whether the codec is enabled or not, and
+	thus can avoid stack based buffer overflows in a number of TIFF utilities
+	such as tiffsplit, tiffcmp, thumbnail, etc.
+	Patch derived from 0063-Handle-properly-CODEC-specific-tags.patch
+	(http://bugzilla.maptools.org/show_bug.cgi?id=2580) by Raphaël Hertzog.
+	Fixes:
+	http://bugzilla.maptools.org/show_bug.cgi?id=2580
+	http://bugzilla.maptools.org/show_bug.cgi?id=2693
+	http://bugzilla.maptools.org/show_bug.cgi?id=2625 (CVE-2016-10095)
+	http://bugzilla.maptools.org/show_bug.cgi?id=2564 (CVE-2015-7554)
+	http://bugzilla.maptools.org/show_bug.cgi?id=2561 (CVE-2016-5318)
+	http://bugzilla.maptools.org/show_bug.cgi?id=2499 (CVE-2014-8128)
+	http://bugzilla.maptools.org/show_bug.cgi?id=2441
+	http://bugzilla.maptools.org/show_bug.cgi?id=2433
+
 2017-05-29  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c: initYCbCrConversion(): stricter validation for
