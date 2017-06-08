@@ -1,3 +1,9 @@
+2017-06-08  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_swab.c: if DISABLE_CHECK_TIFFSWABMACROS is defined, do not do
+	the #ifdef TIFFSwabXXX checks. Make it easier for GDAL to rename the symbols
+	of its internal libtiff copy.
+
 2017-06-01  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirinfo.c, tif_dirread.c: add _TIFFCheckFieldIsValidForCodec(),
