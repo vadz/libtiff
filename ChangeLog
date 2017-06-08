@@ -1,5 +1,26 @@
 2017-06-08  Even Rouault <even.rouault at spatialys.com>
 
+	* .travis.yml, build/travis-ci: new files from
+	0001-ci-Add-Travis-support-for-Linux-builds-with-Autoconf.patch by
+	Roger Leigh (sent to mailing list on 2017-06-08)
+	This patch adds support for the Travis-CI service.
+
+	* .appveyor.yml: new file from
+	0002-ci-Add-AppVeyor-support.patch by Roger Leigh (sent to mailing
+	list on 2017-06-08)
+	This patch adds a .appveyor.yml file to the top-level.  This allows
+	one to opt in to having a branch built on Windows with Cygwin,
+	MinGW and MSVC automatically when a branch is pushed to GitHub,
+	GitLab, BitBucket or any other supported git hosting service.
+	
+	* CMakeLists.txt, test/CMakeLists.txt, test/TiffTestCommon.cmake: apply
+	patch 0001-cmake-Improve-Cygwin-and-MingGW-test-support.patch from Roger
+	Leigh (sent to mailing list on 2017-06-08)
+	This patch makes the CMake build system support running the tests
+	with MinGW or Cygwin.
+
+2017-06-08  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_swab.c: if DISABLE_CHECK_TIFFSWABMACROS is defined, do not do
 	the #ifdef TIFFSwabXXX checks. Make it easier for GDAL to rename the symbols
 	of its internal libtiff copy.

@@ -185,6 +185,18 @@ target_link_libraries(custom_dir tiff port)
 set(TEST_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/output")
 file(MAKE_DIRECTORY "${TEST_OUTPUT}")
 
+set(tiff_test_extra_args
+    "-DTIFFCP=$<TARGET_FILE:tiffcp>"
+    "-DTIFFINFO=$<TARGET_FILE:tiffinfo>"
+    "-DTIFFSPLIT=$<TARGET_FILE:tiffsplit>"
+    "-DLIBTIFF=$<TARGET_FILE:tiff>")
+if(WIN32)
+  list(APPEND tiff_test_extra_args "-DWIN32=${WIN32}")
+endif()
+if(CYGWIN)
+  list(APPEND tiff_test_extra_args "-DCYGWIN=${CYGWIN}")
+endif()
+
 macro(tiff_test_convert name command1 command2 command3 infile outfile validate)
   add_test(NAME "${name}"
            COMMAND "${CMAKE_COMMAND}"
@@ -193,9 +205,8 @@ macro(tiff_test_convert name command1 command2 command3 infile outfile validate)
            "-DCONVERT_COMMAND3=${command3}"
            "-DINFILE=${infile}"
            "-DOUTFILE=${outfile}"
-           "-DTIFFINFO=$<TARGET_FILE:tiffinfo>"
-           "-DLIBTIFF=$<TARGET_FILE:tiff>"
            "-DVALIDATE=${validate}"
+           ${tiff_test_extra_args}
            -P "${CMAKE_CURRENT_SOURCE_DIR}/TiffTest.cmake")
 endmacro()
 
@@ -205,8 +216,7 @@ macro(tiff_test_stdout name command infile outfile)
            "-DSTDOUT_COMMAND=${command}"
            "-DINFILE=${infile}"
            "-DOUTFILE=${outfile}"
-           "-DTIFFINFO=$<TARGET_FILE:tiffinfo>"
-           "-DLIBTIFF=$<TARGET_FILE:tiff>"
+           ${tiff_test_extra_args}
            -P "${CMAKE_CURRENT_SOURCE_DIR}/TiffTest.cmake")
 endmacro()
 
@@ -215,8 +225,7 @@ macro(tiff_test_reader name command infile)
            COMMAND "${CMAKE_COMMAND}"
            "-DREADER_COMMAND=${command}"
            "-DINFILE=${infile}"
-           "-DTIFFINFO=$<TARGET_FILE:tiffinfo>"
-           "-DLIBTIFF=$<TARGET_FILE:tiff>"
+           ${tiff_test_extra_args}
            -P "${CMAKE_CURRENT_SOURCE_DIR}/TiffTest.cmake")
 endmacro()
 
@@ -344,9 +353,7 @@ add_test(NAME "tiffcp-split"
          "-DTESTFILES=${ESCAPED_UNCOMPRESSED}"
          "-DCONJOINED=${TEST_OUTPUT}/tiffcp-split-conjoined.tif"
          "-DSPLITFILE=${TEST_OUTPUT}/tiffcp-split-split-"
-         "-DTIFFCP=$<TARGET_FILE:tiffcp>"
-         "-DTIFFSPLIT=$<TARGET_FILE:tiffsplit>"
-         "-DLIBTIFF=$<TARGET_FILE:tiff>"
+         ${tiff_test_extra_args}
          -P "${CMAKE_CURRENT_SOURCE_DIR}/TiffSplitTest.cmake")
 add_test(NAME "tiffcp-split-join"
          COMMAND "${CMAKE_COMMAND}"
@@ -354,9 +361,7 @@ add_test(NAME "tiffcp-split-join"
          "-DCONJOINED=${TEST_OUTPUT}/tiffcp-split-join-conjoined.tif"
          "-DSPLITFILE=${TEST_OUTPUT}/tiffcp-split-join-split-"
          "-DRECONJOINED=${TEST_OUTPUT}/tiffcp-split-join-reconjoined.tif"
-         "-DTIFFCP=$<TARGET_FILE:tiffcp>"
-         "-DTIFFSPLIT=$<TARGET_FILE:tiffsplit>"
-         "-DLIBTIFF=$<TARGET_FILE:tiff>"
+         ${tiff_test_extra_args}
          -P "${CMAKE_CURRENT_SOURCE_DIR}/TiffSplitTest.cmake")
 
 # PDF
