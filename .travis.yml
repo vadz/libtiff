@@ -14,18 +14,21 @@ addons:
     - liblzma-dev
     - zlib1g-dev
 
-compiler:
-  - gcc
-  - clang
+os:
+  - linux
+  - osx
 
 env:
   matrix:
     - BUILD=autoconf
     - BUILD=cmake TOOL="Unix Makefiles" TYPE=Release
-    - BUILD=cmake TOOL="Ninja" TYPE=Release
+    - BUILD=cmake TOOL="Ninja" TYPE=Debug
 
 matrix:
   fast_finish: true
+  exclude:
+    - os: linux
+      env: BUILD=cmake TOOL="Ninja" TYPE=Debug NETACCESSOR=cfurl TRANSCODER=macosunicodeconverter
 
 script:
-  - ./build/travis-ci "$BUILD" "$TOOL" "$TYPE"
+  - sh ./build/travis-ci "$BUILD" "$TOOL" "$TYPE"

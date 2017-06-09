@@ -1,3 +1,10 @@
+2017-06-10  Even Rouault <even.rouault at spatialys.com>
+
+	* .appveyor.yml, .travis.yml, build/travis-ci: apply patches
+	0001-ci-Travis-script-improvements.patch and
+	0002-ci-Invoke-helper-script-via-shell.patch by Roger Leigh
+	(sent to mailing list)
+
 2017-06-08  Even Rouault <even.rouault at spatialys.com>
 
 	* .travis.yml, build/travis-ci: new files from

@@ -7,24 +7,31 @@ environment:
 
   matrix:
     - compiler: cygwin-cmake
+      configuration: Release
       generator: Unix Makefiles
       shared: ON
     - compiler: cygwin-cmake
+      configuration: Debug
       generator: Unix Makefiles
       shared: OFF
     - compiler: mingw64-cmake
+      configuration: Release
       generator: Unix Makefiles
       shared: ON
     - compiler: mingw64-cmake
+      configuration: Debug
       generator: Unix Makefiles
       shared: OFF
     - compiler: vc14-cmake
+      configuration: Release
       generator: Visual Studio 14 2015 Win64
       shared: ON
     - compiler: vc14-cmake
+      configuration: Debug
       generator: Visual Studio 14 2015 Win64
       shared: OFF
     - compiler: vc14-nmake
+      configuration: Release
 
 cache:
   - 'c:\projects\download -> appveyor.yml'
@@ -37,7 +44,6 @@ clone_folder: 'c:\projects\libtiff'
 clone_depth: 5
 
 platform: x64
-configuration: Release
 
 init:
   - git config --global core.autocrlf input
