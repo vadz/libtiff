@@ -1,3 +1,12 @@
+2017-06-12  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirread.c: fix regression of libtiff 4.0.8 in
+	ChopUpSingleUncompressedStrip() regarding update of newly single-strip
+	uncompressed files whose bytecount is 0. Before the change of 2016-12-03,
+	the condition bytecount==0 used to trigger an early exit/disabling of
+	strip chop. Re-introduce that in update mode. Otherwise this cause
+	later incorrect setting for the value of StripByCounts/StripOffsets.
+
 2017-06-10  Even Rouault <even.rouault at spatialys.com>
 
 	* .appveyor.yml, .travis.yml, build/travis-ci: apply patches
