@@ -6,6 +6,7 @@
 	the condition bytecount==0 used to trigger an early exit/disabling of
 	strip chop. Re-introduce that in update mode. Otherwise this cause
 	later incorrect setting for the value of StripByCounts/StripOffsets.
+	( https://trac.osgeo.org/gdal/ticket/6924 )
 
 2017-06-10  Even Rouault <even.rouault at spatialys.com>
 
