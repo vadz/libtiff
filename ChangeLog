@@ -1,3 +1,16 @@
+2017-06-18  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tiffiop.h: add TIFF_NOSANITIZE_UNSIGNED_INT_OVERFLOW macro to
+	disable CLang warnings raised by -fsanitize=undefined,unsigned-integer-overflow
+	* libtiff/tif_predict.c: decorate legitimate functions where unsigned int
+	overflow occur with TIFF_NOSANITIZE_UNSIGNED_INT_OVERFLOW
+	* libtiff/tif_dirread.c: avoid unsigned int overflow in EstimateStripByteCounts()
+	and BYTECOUNTLOOKSBAD when file is too short.
+	* libtiff/tif_jpeg.c: avoid (harmless) unsigned int overflow on tiled images.
+	* libtiff/tif_fax3.c: avoid unsigned int overflow in Fax3Encode2DRow(). Could
+	potentially be a bug with huge rows.
+	* libtiff/tif_getimage.c: avoid many (harmless) unsigned int overflows.
+
 2017-06-12  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: TIFFFetchStripThing(): limit the number of items

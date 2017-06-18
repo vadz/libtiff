@@ -4002,7 +4002,8 @@ TIFFReadDirectory(TIFF* tif)
 		#define	BYTECOUNTLOOKSBAD \
 		    ( (tif->tif_dir.td_stripbytecount[0] == 0 && tif->tif_dir.td_stripoffset[0] != 0) || \
 		      (tif->tif_dir.td_compression == COMPRESSION_NONE && \
-		       tif->tif_dir.td_stripbytecount[0] > TIFFGetFileSize(tif) - tif->tif_dir.td_stripoffset[0]) || \
+		       (tif->tif_dir.td_stripoffset[0] <= TIFFGetFileSize(tif) && \
+		        tif->tif_dir.td_stripbytecount[0] > TIFFGetFileSize(tif) - tif->tif_dir.td_stripoffset[0])) || \
 		      (tif->tif_mode == O_RDONLY && \
 		       tif->tif_dir.td_compression == COMPRESSION_NONE && \
 		       tif->tif_dir.td_stripbytecount[0] < TIFFScanlineSize64(tif) * tif->tif_dir.td_imagelength) )
@@ -4386,7 +4387,11 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 			}
 			space+=datasize;
 		}
-		space = filesize - space;
+		if( filesize < space )
+                    /* we should perhaps return in error ? */
+                    space = filesize;
+                else
+                    space = filesize - space;
 		if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 			space /= td->td_samplesperpixel;
 		for (strip = 0; strip < td->td_nstrips; strip++)
