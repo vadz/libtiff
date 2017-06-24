@@ -1,3 +1,11 @@
+2017-06-24  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jpeg.c: add anti-denial of service measure to avoid excessive
+	CPU consumption on progressive JPEGs with a huge number of scans.
+	See http://www.libjpeg-turbo.org/pmwiki/uploads/About/TwoIssueswiththeJPEGStandard.pdf
+	Note: only affects libtiff since 2014-12-29 where support of non-baseline JPEG
+	was added.
+
 2017-06-18  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tiffiop.h: add TIFF_NOSANITIZE_UNSIGNED_INT_OVERFLOW macro to
