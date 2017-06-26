@@ -1,6 +1,12 @@
+2017-06-26  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jbig.c: fix memory leak in error code path of JBIGDecode()
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2706
+	Reported by team OWL337
+
 2017-06-24  Even Rouault <even.rouault at spatialys.com>
 
-	* libjpeg/tif_jpeg.c: error out at decoding time if anticipated libjpeg
+	* libtiff/tif_jpeg.c: error out at decoding time if anticipated libjpeg
 	memory allocation is above 100 MB. libjpeg in case of multiple scans,
 	which is allowed even in baseline JPEG, if components are spread over several
 	scans and not interleavedin a single one, needs to allocate memory (or
