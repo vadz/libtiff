@@ -636,6 +636,8 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* d
 				err=TIFFReadDirEntryCheckedDouble(tif,direntry,&m);
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
+				if ((m > FLT_MAX) || (m < FLT_MIN))
+					return(TIFFReadDirEntryErrRange);
 				*value=(float)m;
 				return(TIFFReadDirEntryErrOk);
 			}

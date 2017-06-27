@@ -1,3 +1,8 @@
+2017-06-27  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirread.c: in TIFFReadDirEntryFloat(), check that a
+	double value can fit in a float before casting. Patch by Nicolas RUFF
+
 2017-06-26  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_jbig.c: fix memory leak in error code path of JBIGDecode()
