@@ -394,6 +394,7 @@ extern int TIFFInitOJPEG(TIFF*, int);
 #endif
 #ifdef JPEG_SUPPORT
 extern int TIFFInitJPEG(TIFF*, int);
+extern int TIFFJPEGIsFullStripRequired(TIFF*);
 #endif
 #ifdef JBIG_SUPPORT
 extern int TIFFInitJBIG(TIFF*, int);

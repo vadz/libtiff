@@ -1,3 +1,12 @@
+2017-06-29  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tiffiop.h, libtiff/tif_jpeg.c, libtiff/tif_jpeg_12.c,
+	libtiff/tif_read.c: make TIFFReadScanline() works in
+	CHUNKY_STRIP_READ_SUPPORT mode with JPEG stream with multiple scans.
+	Also make configurable through a LIBTIFF_JPEG_MAX_ALLOWED_SCAN_NUMBER
+	environment variable the maximum number of scans allowed. Defaults to
+	100.
+
 2017-06-27  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: in TIFFReadDirEntryFloat(), check that a
