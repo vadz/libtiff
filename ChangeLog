@@ -1,5 +1,13 @@
 2017-06-30  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dirwrite.c: in TIFFWriteDirectoryTagCheckedXXXX()
+	functions associated with LONG8/SLONG8 data type, replace assertion that
+	the file is BigTIFF, by a non-fatal error.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2712
+	Reported by team OWL337
+
+2017-06-30  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c, tiffiop.h: add a _TIFFReadEncodedStripAndAllocBuffer()
 	function, variant of TIFFReadEncodedStrip() that allocates the
 	decoded buffer only after a first successful TIFFFillStrip(). This avoids
