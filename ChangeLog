@@ -1,5 +1,16 @@
 2017-06-30  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c, tiffiop.h: add a _TIFFReadEncodedStripAndAllocBuffer()
+	function, variant of TIFFReadEncodedStrip() that allocates the
+	decoded buffer only after a first successful TIFFFillStrip(). This avoids
+	excessive memory allocation on corrupted files.
+	* libtiff/tif_getimage.c: use _TIFFReadEncodedStripAndAllocBuffer(). 
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2708 and
+	https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2433 .
+	Credit to OSS Fuzz
+
+2017-06-30  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c: TIFFFillTile(): add limitation to the number
 	of bytes read in case td_stripbytecount[strip] is bigger than
 	reasonable, so as to avoid excessive memory allocation (similarly to
