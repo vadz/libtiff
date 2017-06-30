@@ -1,5 +1,12 @@
 2017-06-30  Even Rouault <even.rouault at spatialys.com>
 
+	* man: update documentation regarding SubIFD tag and
+	TIFFSetSubDirectory() data type.
+	Patch by Eric Piel
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2671
+
+2017-06-30  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_dirwrite.c: in TIFFWriteDirectoryTagCheckedXXXX()
 	functions associated with LONG8/SLONG8 data type, replace assertion that
 	the file is BigTIFF, by a non-fatal error.
