@@ -2128,7 +2128,7 @@ TIFFWriteDirectoryTagCheckedLong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* di
 	assert(count<0x20000000);
 	assert(sizeof(uint64)==8);
 	if( !(tif->tif_flags&TIFF_BIGTIFF) ) {
-		TIFFErrorExt(tif->tif_clientdata,"TIFFWriteDirectoryTagCheckedLong8","LONG8 not allowed for ClassicTIFF");
+		TIFFErrorExt(tif->tif_clientdata,"TIFFWriteDirectoryTagCheckedLong8Array","LONG8 not allowed for ClassicTIFF");
 		return(0);
 	}
 	if (tif->tif_flags&TIFF_SWAB)
@@ -2143,7 +2143,7 @@ TIFFWriteDirectoryTagCheckedSlong8(TIFF* tif, uint32* ndir, TIFFDirEntry* dir, u
 	int64 m;
 	assert(sizeof(int64)==8);
 	if( !(tif->tif_flags&TIFF_BIGTIFF) ) {
-		TIFFErrorExt(tif->tif_clientdata,"TIFFWriteDirectoryTagCheckedLong8","SLONG8 not allowed for ClassicTIFF");
+		TIFFErrorExt(tif->tif_clientdata,"TIFFWriteDirectoryTagCheckedSlong8","SLONG8 not allowed for ClassicTIFF");
 		return(0);
 	}
 	m=value;
@@ -2159,7 +2159,7 @@ TIFFWriteDirectoryTagCheckedSlong8Array(TIFF* tif, uint32* ndir, TIFFDirEntry* d
 	assert(count<0x20000000);
 	assert(sizeof(int64)==8);
 	if( !(tif->tif_flags&TIFF_BIGTIFF) ) {
-		TIFFErrorExt(tif->tif_clientdata,"TIFFWriteDirectoryTagCheckedLong8","SLONG8 not allowed for ClassicTIFF");
+		TIFFErrorExt(tif->tif_clientdata,"TIFFWriteDirectoryTagCheckedSlong8Array","SLONG8 not allowed for ClassicTIFF");
 		return(0);
 	}
 	if (tif->tif_flags&TIFF_SWAB)
