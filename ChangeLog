@@ -1,3 +1,13 @@
+2017-07-02  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_read.c: TIFFStartTile(): set tif_rawcc to
+	tif_rawdataloaded when it is set. Similarly to TIFFStartStrip().
+	This issue was revealed by the change of 2017-06-30 in TIFFFileTile(),
+	limiting the number of bytes read. But it could probably have been hit
+	too in CHUNKY_STRIP_READ_SUPPORT mode previously ?
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2454
+	Credit to OSS Fuzz
+
 2017-06-30  Even Rouault <even.rouault at spatialys.com>
 
 	* man: update documentation regarding SubIFD tag and

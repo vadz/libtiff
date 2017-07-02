@@ -1421,7 +1421,10 @@ TIFFStartTile(TIFF* tif, uint32 tile)
 	else
 	{
 		tif->tif_rawcp = tif->tif_rawdata;
-		tif->tif_rawcc = (tmsize_t)td->td_stripbytecount[tile];
+		if( tif->tif_rawdataloaded > 0 )
+			tif->tif_rawcc = tif->tif_rawdataloaded;
+		else
+			tif->tif_rawcc = (tmsize_t)td->td_stripbytecount[tile];
 	}
 	return ((*tif->tif_predecode)(tif,
 			(uint16)(tile/td->td_stripsperimage)));
