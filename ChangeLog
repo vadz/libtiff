@@ -1,5 +1,16 @@
 2017-07-04  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c, tiffiop.h: add a _TIFFReadEncodedTileAndAllocBuffer()
+	and _TIFFReadTileAndAllocBuffer() variants of TIFFReadEncodedTile() and
+	TIFFReadTile() that allocates the decoded buffer only after a first
+	successful TIFFFillTile(). This avoids excessive memory allocation
+	on corrupted files.
+	* libtiff/tif_getimage.c: use _TIFFReadTileAndAllocBuffer().
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2470
+	Credit to OSS Fuzz.
+
+2017-07-04  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_error.c, tif_warning.c: correctly use va_list when both
 	an old-style and new-style warning/error handlers are installed.
 	Patch by Paavo Helde (sent on the mailing list)
