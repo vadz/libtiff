@@ -1,3 +1,9 @@
+2017-07-04  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_error.c, tif_warning.c: correctly use va_list when both
+	an old-style and new-style warning/error handlers are installed.
+	Patch by Paavo Helde (sent on the mailing list)
+
 2017-07-02  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c: TIFFStartTile(): set tif_rawcc to
