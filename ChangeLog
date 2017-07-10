@@ -1,3 +1,10 @@
+2017-07-10  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_pixarlog.c: avoid excessive memory allocation on decoding
+	when RowsPerStrip tag is not defined (and thus td_rowsperstrip == UINT_MAX)
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2554
+	Credit to OSS Fuzz
+
 2017-07-04  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_read.c, tiffiop.h: add a _TIFFReadEncodedTileAndAllocBuffer()
