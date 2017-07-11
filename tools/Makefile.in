@@ -113,16 +113,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = bmp2tiff$(EXEEXT) fax2ps$(EXEEXT) fax2tiff$(EXEEXT) \
-	gif2tiff$(EXEEXT) pal2rgb$(EXEEXT) ppm2tiff$(EXEEXT) \
-	ras2tiff$(EXEEXT) raw2tiff$(EXEEXT) rgb2ycbcr$(EXEEXT) \
-	thumbnail$(EXEEXT) tiff2bw$(EXEEXT) tiff2pdf$(EXEEXT) \
-	tiff2ps$(EXEEXT) tiff2rgba$(EXEEXT) tiffcmp$(EXEEXT) \
-	tiffcp$(EXEEXT) tiffcrop$(EXEEXT) tiffdither$(EXEEXT) \
-	tiffdump$(EXEEXT) tiffinfo$(EXEEXT) tiffmedian$(EXEEXT) \
-	tiffset$(EXEEXT) tiffsplit$(EXEEXT) $(am__EXEEXT_1)
+bin_PROGRAMS = fax2ps$(EXEEXT) fax2tiff$(EXEEXT) pal2rgb$(EXEEXT) \
+	ppm2tiff$(EXEEXT) raw2tiff$(EXEEXT) tiff2bw$(EXEEXT) \
+	tiff2pdf$(EXEEXT) tiff2ps$(EXEEXT) tiff2rgba$(EXEEXT) \
+	tiffcmp$(EXEEXT) tiffcp$(EXEEXT) tiffcrop$(EXEEXT) \
+	tiffdither$(EXEEXT) tiffdump$(EXEEXT) tiffinfo$(EXEEXT) \
+	tiffmedian$(EXEEXT) tiffset$(EXEEXT) tiffsplit$(EXEEXT) \
+	$(am__EXEEXT_1)
 @HAVE_OPENGL_TRUE@am__append_1 = tiffgt
-EXTRA_PROGRAMS = sgi2tiff$(EXEEXT) sgisv$(EXEEXT) ycbcr$(EXEEXT)
+EXTRA_PROGRAMS = rgb2ycbcr$(EXEEXT) thumbnail$(EXEEXT)
+check_PROGRAMS = rgb2ycbcr$(EXEEXT) thumbnail$(EXEEXT)
 subdir = tools
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acinclude.m4 \
@@ -140,43 +140,28 @@ CONFIG_CLEAN_VPATH_FILES =
 @HAVE_OPENGL_TRUE@am__EXEEXT_1 = tiffgt$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_bmp2tiff_OBJECTS = bmp2tiff.$(OBJEXT)
-bmp2tiff_OBJECTS = $(am_bmp2tiff_OBJECTS)
-bmp2tiff_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
+am_fax2ps_OBJECTS = fax2ps.$(OBJEXT)
+fax2ps_OBJECTS = $(am_fax2ps_OBJECTS)
+fax2ps_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-am_fax2ps_OBJECTS = fax2ps.$(OBJEXT)
-fax2ps_OBJECTS = $(am_fax2ps_OBJECTS)
-fax2ps_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 am_fax2tiff_OBJECTS = fax2tiff.$(OBJEXT)
 fax2tiff_OBJECTS = $(am_fax2tiff_OBJECTS)
 fax2tiff_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
-am_gif2tiff_OBJECTS = gif2tiff.$(OBJEXT)
-gif2tiff_OBJECTS = $(am_gif2tiff_OBJECTS)
-gif2tiff_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 am_pal2rgb_OBJECTS = pal2rgb.$(OBJEXT)
 pal2rgb_OBJECTS = $(am_pal2rgb_OBJECTS)
 pal2rgb_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 am_ppm2tiff_OBJECTS = ppm2tiff.$(OBJEXT)
 ppm2tiff_OBJECTS = $(am_ppm2tiff_OBJECTS)
 ppm2tiff_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
-am_ras2tiff_OBJECTS = ras2tiff.$(OBJEXT)
-ras2tiff_OBJECTS = $(am_ras2tiff_OBJECTS)
-ras2tiff_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 am_raw2tiff_OBJECTS = raw2tiff.$(OBJEXT)
 raw2tiff_OBJECTS = $(am_raw2tiff_OBJECTS)
 raw2tiff_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 am_rgb2ycbcr_OBJECTS = rgb2ycbcr.$(OBJEXT)
 rgb2ycbcr_OBJECTS = $(am_rgb2ycbcr_OBJECTS)
 rgb2ycbcr_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
-sgi2tiff_SOURCES = sgi2tiff.c
-sgi2tiff_OBJECTS = sgi2tiff.$(OBJEXT)
-sgi2tiff_LDADD = $(LDADD)
-sgisv_SOURCES = sgisv.c
-sgisv_OBJECTS = sgisv.$(OBJEXT)
-sgisv_LDADD = $(LDADD)
 am_thumbnail_OBJECTS = thumbnail.$(OBJEXT)
 thumbnail_OBJECTS = $(am_thumbnail_OBJECTS)
 thumbnail_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
@@ -227,9 +212,6 @@ tiffset_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
 am_tiffsplit_OBJECTS = tiffsplit.$(OBJEXT)
 tiffsplit_OBJECTS = $(am_tiffsplit_OBJECTS)
 tiffsplit_DEPENDENCIES = $(LIBTIFF) $(LIBPORT)
-ycbcr_SOURCES = ycbcr.c
-ycbcr_OBJECTS = ycbcr.$(OBJEXT)
-ycbcr_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -264,24 +246,21 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) $(fax2tiff_SOURCES) \
-	$(gif2tiff_SOURCES) $(pal2rgb_SOURCES) $(ppm2tiff_SOURCES) \
-	$(ras2tiff_SOURCES) $(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) \
-	sgi2tiff.c sgisv.c $(thumbnail_SOURCES) $(tiff2bw_SOURCES) \
+SOURCES = $(fax2ps_SOURCES) $(fax2tiff_SOURCES) $(pal2rgb_SOURCES) \
+	$(ppm2tiff_SOURCES) $(raw2tiff_SOURCES) $(rgb2ycbcr_SOURCES) \
+	$(thumbnail_SOURCES) $(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) \
+	$(tiff2ps_SOURCES) $(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) \
+	$(tiffcp_SOURCES) $(tiffcrop_SOURCES) $(tiffdither_SOURCES) \
+	$(tiffdump_SOURCES) $(tiffgt_SOURCES) $(tiffinfo_SOURCES) \
+	$(tiffmedian_SOURCES) $(tiffset_SOURCES) $(tiffsplit_SOURCES)
+DIST_SOURCES = $(fax2ps_SOURCES) $(fax2tiff_SOURCES) \
+	$(pal2rgb_SOURCES) $(ppm2tiff_SOURCES) $(raw2tiff_SOURCES) \
+	$(rgb2ycbcr_SOURCES) $(thumbnail_SOURCES) $(tiff2bw_SOURCES) \
 	$(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) $(tiff2rgba_SOURCES) \
 	$(tiffcmp_SOURCES) $(tiffcp_SOURCES) $(tiffcrop_SOURCES) \
 	$(tiffdither_SOURCES) $(tiffdump_SOURCES) $(tiffgt_SOURCES) \
 	$(tiffinfo_SOURCES) $(tiffmedian_SOURCES) $(tiffset_SOURCES) \
-	$(tiffsplit_SOURCES) ycbcr.c
-DIST_SOURCES = $(bmp2tiff_SOURCES) $(fax2ps_SOURCES) \
-	$(fax2tiff_SOURCES) $(gif2tiff_SOURCES) $(pal2rgb_SOURCES) \
-	$(ppm2tiff_SOURCES) $(ras2tiff_SOURCES) $(raw2tiff_SOURCES) \
-	$(rgb2ycbcr_SOURCES) sgi2tiff.c sgisv.c $(thumbnail_SOURCES) \
-	$(tiff2bw_SOURCES) $(tiff2pdf_SOURCES) $(tiff2ps_SOURCES) \
-	$(tiff2rgba_SOURCES) $(tiffcmp_SOURCES) $(tiffcp_SOURCES) \
-	$(tiffcrop_SOURCES) $(tiffdither_SOURCES) $(tiffdump_SOURCES) \
-	$(tiffgt_SOURCES) $(tiffinfo_SOURCES) $(tiffmedian_SOURCES) \
-	$(tiffset_SOURCES) $(tiffsplit_SOURCES) ycbcr.c
+	$(tiffsplit_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -448,6 +427,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -464,20 +444,14 @@ EXTRA_DIST = \
 	Makefile.vc
 
 @HAVE_RPATH_TRUE@AM_LDFLAGS = $(LIBDIR)
-bmp2tiff_SOURCES = bmp2tiff.c
-bmp2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 fax2ps_SOURCES = fax2ps.c
 fax2ps_LDADD = $(LIBTIFF) $(LIBPORT)
 fax2tiff_SOURCES = fax2tiff.c
 fax2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
-gif2tiff_SOURCES = gif2tiff.c
-gif2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 pal2rgb_SOURCES = pal2rgb.c
 pal2rgb_LDADD = $(LIBTIFF) $(LIBPORT)
 ppm2tiff_SOURCES = ppm2tiff.c
 ppm2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
-ras2tiff_SOURCES = ras2tiff.c rasterfile.h
-ras2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 raw2tiff_SOURCES = raw2tiff.c
 raw2tiff_LDADD = $(LIBTIFF) $(LIBPORT)
 rgb2ycbcr_SOURCES = rgb2ycbcr.c
@@ -597,9 +571,14 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-bmp2tiff$(EXEEXT): $(bmp2tiff_OBJECTS) $(bmp2tiff_DEPENDENCIES) $(EXTRA_bmp2tiff_DEPENDENCIES) 
-	@rm -f bmp2tiff$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(bmp2tiff_OBJECTS) $(bmp2tiff_LDADD) $(LIBS)
+clean-checkPROGRAMS:
+	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
 
 fax2ps$(EXEEXT): $(fax2ps_OBJECTS) $(fax2ps_DEPENDENCIES) $(EXTRA_fax2ps_DEPENDENCIES) 
 	@rm -f fax2ps$(EXEEXT)
@@ -609,10 +588,6 @@ fax2tiff$(EXEEXT): $(fax2tiff_OBJECTS) $(fax2tiff_DEPENDENCIES) $(EXTRA_fax2tiff
 	@rm -f fax2tiff$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(fax2tiff_OBJECTS) $(fax2tiff_LDADD) $(LIBS)
 
-gif2tiff$(EXEEXT): $(gif2tiff_OBJECTS) $(gif2tiff_DEPENDENCIES) $(EXTRA_gif2tiff_DEPENDENCIES) 
-	@rm -f gif2tiff$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(gif2tiff_OBJECTS) $(gif2tiff_LDADD) $(LIBS)
-
 pal2rgb$(EXEEXT): $(pal2rgb_OBJECTS) $(pal2rgb_DEPENDENCIES) $(EXTRA_pal2rgb_DEPENDENCIES) 
 	@rm -f pal2rgb$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(pal2rgb_OBJECTS) $(pal2rgb_LDADD) $(LIBS)
@@ -621,10 +596,6 @@ ppm2tiff$(EXEEXT): $(ppm2tiff_OBJECTS) $(ppm2tiff_DEPENDENCIES) $(EXTRA_ppm2tiff
 	@rm -f ppm2tiff$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(ppm2tiff_OBJECTS) $(ppm2tiff_LDADD) $(LIBS)
 
-ras2tiff$(EXEEXT): $(ras2tiff_OBJECTS) $(ras2tiff_DEPENDENCIES) $(EXTRA_ras2tiff_DEPENDENCIES) 
-	@rm -f ras2tiff$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(ras2tiff_OBJECTS) $(ras2tiff_LDADD) $(LIBS)
-
 raw2tiff$(EXEEXT): $(raw2tiff_OBJECTS) $(raw2tiff_DEPENDENCIES) $(EXTRA_raw2tiff_DEPENDENCIES) 
 	@rm -f raw2tiff$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(raw2tiff_OBJECTS) $(raw2tiff_LDADD) $(LIBS)
@@ -632,14 +603,6 @@ raw2tiff$(EXEEXT): $(raw2tiff_OBJECTS) $(raw2tiff_DEPENDENCIES) $(EXTRA_raw2tiff
 rgb2ycbcr$(EXEEXT): $(rgb2ycbcr_OBJECTS) $(rgb2ycbcr_DEPENDENCIES) $(EXTRA_rgb2ycbcr_DEPENDENCIES) 
 	@rm -f rgb2ycbcr$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(rgb2ycbcr_OBJECTS) $(rgb2ycbcr_LDADD) $(LIBS)
-
-sgi2tiff$(EXEEXT): $(sgi2tiff_OBJECTS) $(sgi2tiff_DEPENDENCIES) $(EXTRA_sgi2tiff_DEPENDENCIES) 
-	@rm -f sgi2tiff$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(sgi2tiff_OBJECTS) $(sgi2tiff_LDADD) $(LIBS)
-
-sgisv$(EXEEXT): $(sgisv_OBJECTS) $(sgisv_DEPENDENCIES) $(EXTRA_sgisv_DEPENDENCIES) 
-	@rm -f sgisv$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(sgisv_OBJECTS) $(sgisv_LDADD) $(LIBS)
 
 thumbnail$(EXEEXT): $(thumbnail_OBJECTS) $(thumbnail_DEPENDENCIES) $(EXTRA_thumbnail_DEPENDENCIES) 
 	@rm -f thumbnail$(EXEEXT)
@@ -701,27 +664,18 @@ tiffsplit$(EXEEXT): $(tiffsplit_OBJECTS) $(tiffsplit_DEPENDENCIES) $(EXTRA_tiffs
 	@rm -f tiffsplit$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tiffsplit_OBJECTS) $(tiffsplit_LDADD) $(LIBS)
 
-ycbcr$(EXEEXT): $(ycbcr_OBJECTS) $(ycbcr_DEPENDENCIES) $(EXTRA_ycbcr_DEPENDENCIES) 
-	@rm -f ycbcr$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(ycbcr_OBJECTS) $(ycbcr_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmp2tiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fax2ps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fax2tiff.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gif2tiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pal2rgb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppm2tiff.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ras2tiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raw2tiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rgb2ycbcr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sgi2tiff.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sgisv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thumbnail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiff2bw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiff2pdf.Po@am__quote@
@@ -737,7 +691,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffmedian.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffsplit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ycbcr.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -863,6 +816,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 check: check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
@@ -901,7 +855,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -969,18 +924,19 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: install-am install-strip
+.MAKE: check-am install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
-	clean-binPROGRAMS clean-generic clean-libtool cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+	clean-libtool cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS

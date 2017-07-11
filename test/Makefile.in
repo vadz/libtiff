@@ -410,13 +410,12 @@ am__set_TESTS_bases = \
 RECHECK_LOGS = $(TEST_LOGS)
 AM_RECURSIVE_TARGETS = check recheck
 @HAVE_JPEG_TRUE@am__EXEEXT_2 = tiff2rgba-quad-tile.jpg.sh
-am__EXEEXT_3 = bmp2tiff_palette.sh bmp2tiff_rgb.sh gif2tiff.sh \
-	ppm2tiff_pbm.sh ppm2tiff_pgm.sh ppm2tiff_ppm.sh tiffcp-g3.sh \
-	tiffcp-g3-1d.sh tiffcp-g3-1d-fill.sh tiffcp-g3-2d.sh \
-	tiffcp-g3-2d-fill.sh tiffcp-g4.sh tiffcp-logluv.sh \
-	tiffcp-thumbnail.sh tiffdump.sh tiffinfo.sh tiffcp-split.sh \
-	tiffcp-split-join.sh tiff2ps-PS1.sh tiff2ps-PS2.sh \
-	tiff2ps-PS3.sh tiff2ps-EPS1.sh tiff2pdf.sh \
+am__EXEEXT_3 = ppm2tiff_pbm.sh ppm2tiff_pgm.sh ppm2tiff_ppm.sh \
+	tiffcp-g3.sh tiffcp-g3-1d.sh tiffcp-g3-1d-fill.sh \
+	tiffcp-g3-2d.sh tiffcp-g3-2d-fill.sh tiffcp-g4.sh \
+	tiffcp-logluv.sh tiffcp-thumbnail.sh tiffdump.sh tiffinfo.sh \
+	tiffcp-split.sh tiffcp-split-join.sh tiff2ps-PS1.sh \
+	tiff2ps-PS2.sh tiff2ps-PS3.sh tiff2ps-EPS1.sh tiff2pdf.sh \
 	tiffcrop-doubleflip-logluv-3c-16b.sh \
 	tiffcrop-doubleflip-minisblack-1c-16b.sh \
 	tiffcrop-doubleflip-minisblack-1c-8b.sh \
@@ -621,6 +620,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -658,9 +658,6 @@ CLEANFILES = test_packbits.tif o-*
 
 # Test scripts to execute
 TESTSCRIPTS = \
-	bmp2tiff_palette.sh \
-	bmp2tiff_rgb.sh \
-	gif2tiff.sh \
 	ppm2tiff_pbm.sh \
 	ppm2tiff_pgm.sh \
 	ppm2tiff_ppm.sh \
@@ -750,13 +747,6 @@ TIFFIMAGES = \
 	images/rgb-3c-8b.tiff \
 	images/quad-tile.jpg.tiff
 
-BMPIMAGES = \
-	images/palette-1c-8b.bmp \
-	images/rgb-3c-8b.bmp
-
-GIFIMAGES = \
-	images/palette-1c-8b.gif
-
 PNMIMAGES = \
 	images/minisblack-1c-8b.pgm \
 	images/miniswhite-1c-1b.pbm \
@@ -768,8 +758,6 @@ PNMIMAGES = \
 # files which are not currently used by the tests.
 IMAGES_EXTRA_DIST = \
 	images/README.txt \
-	$(BMPIMAGES) \
-	$(GIFIMAGES) \
 	$(PNMIMAGES) \
 	$(TIFFIMAGES)
 
@@ -1142,27 +1130,6 @@ custom_dir.log: custom_dir$(EXEEXT)
 raw_decode.log: raw_decode$(EXEEXT)
 	@p='raw_decode$(EXEEXT)'; \
 	b='raw_decode'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-bmp2tiff_palette.sh.log: bmp2tiff_palette.sh
-	@p='bmp2tiff_palette.sh'; \
-	b='bmp2tiff_palette.sh'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-bmp2tiff_rgb.sh.log: bmp2tiff_rgb.sh
-	@p='bmp2tiff_rgb.sh'; \
-	b='bmp2tiff_rgb.sh'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-gif2tiff.sh.log: gif2tiff.sh
-	@p='gif2tiff.sh'; \
-	b='gif2tiff.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
