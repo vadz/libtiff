@@ -1,3 +1,8 @@
+2017-07-11  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_lzw.c: fix 4.0.8 regression in the decoding of old-style LZW
+	compressed files.
+
 2017-07-10  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_pixarlog.c: avoid excessive memory allocation on decoding
