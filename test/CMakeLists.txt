@@ -43,6 +43,7 @@ set(TESTSCRIPTS
     tiffcp-g4.sh
     tiffcp-logluv.sh
     tiffcp-thumbnail.sh
+    tiffcp-lzw-compat.sh
     tiffdump.sh
     tiffinfo.sh
     tiffcp-split.sh
@@ -118,7 +119,8 @@ set(TIFFIMAGES
     images/palette-1c-8b.tiff
     images/rgb-3c-16b.tiff
     images/rgb-3c-8b.tiff
-    images/quad-tile.jpg.tiff)
+    images/quad-tile.jpg.tiff
+    images/quad-lzw-compat.tiff)
 
 set(BMPIMAGES
     images/palette-1c-8b.bmp
@@ -332,6 +334,7 @@ add_convert_test(tiffcp   g31dfill   "-c g3:1d:fill" "images/miniswhite-1c-1b.ti
 add_convert_test(tiffcp   g32d       "-c g3:2d"      "images/miniswhite-1c-1b.tiff" FALSE)
 add_convert_test(tiffcp   g32dfill   "-c g3:2d:fill" "images/miniswhite-1c-1b.tiff" FALSE)
 add_convert_test(tiffcp   g4         "-c g4"         "images/miniswhite-1c-1b.tiff" FALSE)
+add_convert_test(tiffcp   none       "-c none"       "images/quad-lzw-compat.tiff" FALSE)
 add_convert_test_multi(tiffcp tiffcp "" logluv "-c none" "-c sgilog" ""
                        "images/logluv-3c-16b.tiff"    FALSE)
 add_convert_test_multi(tiffcp thumbnail "" thumbnail "g3:1d" "" ""

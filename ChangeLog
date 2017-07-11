@@ -1,5 +1,11 @@
 2017-07-11  Even Rouault <even.rouault at spatialys.com>
 
+	* test/tiffcp-lzw-compat.sh, test/images/quad-lzw-compat.tiff: new files
+	to test old-style LZW decompression
+	* test/common.sh, Makefile.am, CMakeList.txt: updated with above
+
+2017-07-11  Even Rouault <even.rouault at spatialys.com>
+
 	* refresh autoconf/make stuff with what is on Ubuntu 16.04 (minor changes)
 
 2017-07-11  Even Rouault <even.rouault at spatialys.com>

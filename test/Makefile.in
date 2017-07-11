@@ -413,10 +413,10 @@ AM_RECURSIVE_TARGETS = check recheck
 am__EXEEXT_3 = ppm2tiff_pbm.sh ppm2tiff_pgm.sh ppm2tiff_ppm.sh \
 	tiffcp-g3.sh tiffcp-g3-1d.sh tiffcp-g3-1d-fill.sh \
 	tiffcp-g3-2d.sh tiffcp-g3-2d-fill.sh tiffcp-g4.sh \
-	tiffcp-logluv.sh tiffcp-thumbnail.sh tiffdump.sh tiffinfo.sh \
-	tiffcp-split.sh tiffcp-split-join.sh tiff2ps-PS1.sh \
-	tiff2ps-PS2.sh tiff2ps-PS3.sh tiff2ps-EPS1.sh tiff2pdf.sh \
-	tiffcrop-doubleflip-logluv-3c-16b.sh \
+	tiffcp-logluv.sh tiffcp-thumbnail.sh tiffcp-lzw-compat.sh \
+	tiffdump.sh tiffinfo.sh tiffcp-split.sh tiffcp-split-join.sh \
+	tiff2ps-PS1.sh tiff2ps-PS2.sh tiff2ps-PS3.sh tiff2ps-EPS1.sh \
+	tiff2pdf.sh tiffcrop-doubleflip-logluv-3c-16b.sh \
 	tiffcrop-doubleflip-minisblack-1c-16b.sh \
 	tiffcrop-doubleflip-minisblack-1c-8b.sh \
 	tiffcrop-doubleflip-minisblack-2c-8b-alpha.sh \
@@ -669,6 +669,7 @@ TESTSCRIPTS = \
 	tiffcp-g4.sh \
 	tiffcp-logluv.sh \
 	tiffcp-thumbnail.sh \
+	tiffcp-lzw-compat.sh \
 	tiffdump.sh \
 	tiffinfo.sh \
 	tiffcp-split.sh \
@@ -1207,6 +1208,13 @@ tiffcp-logluv.sh.log: tiffcp-logluv.sh
 tiffcp-thumbnail.sh.log: tiffcp-thumbnail.sh
 	@p='tiffcp-thumbnail.sh'; \
 	b='tiffcp-thumbnail.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tiffcp-lzw-compat.sh.log: tiffcp-lzw-compat.sh
+	@p='tiffcp-lzw-compat.sh'; \
+	b='tiffcp-lzw-compat.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
