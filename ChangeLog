@@ -1,5 +1,13 @@
 2017-07-11  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_lzw.c: fix potential out-of-buffer read on 1-byte LZW
+	strips. Crashing issue only on memory mapped files, where the strip
+	offset is the last byte of the file, and the file size is a multiple
+	of one page size on the CPU architecture (typically 4096). Credit
+	to myself :-)
+
+2017-07-11  Even Rouault <even.rouault at spatialys.com>
+
 	* test/tiffcp-lzw-compat.sh, test/images/quad-lzw-compat.tiff: new files
 	to test old-style LZW decompression
 	* test/common.sh, Makefile.am, CMakeList.txt: updated with above

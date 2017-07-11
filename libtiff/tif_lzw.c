@@ -275,7 +275,8 @@ LZWPreDecode(TIFF* tif, uint16 s)
 	/*
 	 * Check for old bit-reversed codes.
 	 */
-	if (tif->tif_rawdata[0] == 0 && (tif->tif_rawdata[1] & 0x1)) {
+	if (tif->tif_rawcc >= 2 &&
+	    tif->tif_rawdata[0] == 0 && (tif->tif_rawdata[1] & 0x1)) {
 #ifdef LZW_COMPAT
 		if (!sp->dec_decode) {
 			TIFFWarningExt(tif->tif_clientdata, module,
