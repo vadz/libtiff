@@ -1,5 +1,11 @@
 2017-07-11  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_dir.c: avoid potential null pointer dereference in
+	_TIFFVGetField() on corrupted TIFFTAG_NUMBEROFINKS tag instance.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2713
+
+2017-07-11  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_lzw.c: fix potential out-of-buffer read on 1-byte LZW
 	strips. Crashing issue only on memory mapped files, where the strip
 	offset is the last byte of the file, and the file size is a multiple
