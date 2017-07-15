@@ -41,6 +41,7 @@
 
 #include "tiffiop.h"
 #include <float.h>
+#include <stdlib.h>
 
 #define IGNORE 0          /* tag placeholder used below */
 #define FAILED_FII    ((uint32) -1)
@@ -5470,6 +5471,22 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp)
 	if (dir->tdir_count<(uint64)nstrips)
 	{
 		uint64* resizeddata;
+		const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag);
+		const char* pszMax = getenv("LIBTIFF_STRILE_ARRAY_MAX_RESIZE_COUNT");
+		uint32 max_nstrips = 1000000;
+		if( pszMax )
+			max_nstrips = (uint32) atoi(pszMax);
+		TIFFReadDirEntryOutputErr(tif,TIFFReadDirEntryErrCount,
+		            module,
+		            fip ? fip->field_name : "unknown tagname",
+		            ( nstrips <= max_nstrips ) );
+
+		if( nstrips > max_nstrips )
+		{
+			_TIFFfree(data);
+			return(0);
+		}
+
 		resizeddata=(uint64*)_TIFFCheckMalloc(tif,nstrips,sizeof(uint64),"for strip array");
 		if (resizeddata==0) {
 			_TIFFfree(data);

@@ -1,5 +1,17 @@
 2017-07-15  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: in TIFFFetchStripThing(), only grow the
+	arrays that hold StripOffsets/StripByteCounts, when they are smaller
+	than the expected number of striles, up to 1 million striles, and
+	error out beyond. Can be tweaked by setting the environment variable
+	LIBTIFF_STRILE_ARRAY_MAX_RESIZE_COUNT.
+	This partially goes against a change added on 2002-12-17 to accept
+	those arrays of wrong sizes, but is needed to avoid denial of services.
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2350
+	Credit to OSS Fuzz
+
+2017-07-15  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c: TIFFFillStrip() / TIFFFillTile().
 	Complementary fix for http://bugzilla.maptools.org/show_bug.cgi?id=2708
 	in the isMapped() case, so as to avoid excessive memory allocation
