@@ -813,7 +813,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDataAndRealloc(
                             "Failed to allocate memory for %s "
                             "(%ld elements of %ld bytes each)",
                             "TIFFReadDirEntryArray",
-                             (long) 1, (long) already_read + to_read);
+                             (long) 1, (long) (already_read + to_read));
                 return TIFFReadDirEntryErrAlloc;
             }
             *pdest = new_dest;
