@@ -1,3 +1,10 @@
+2017-07-15  Even Rouault <even.rouault at spatialys.com>
+
+	* tools/tiff2pdf.c: prevent heap buffer overflow write in "Raw"
+	mode on PlanarConfig=Contig input images.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2715
+	Reported by team OWL337
+
 2017-07-11  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dir.c: avoid potential null pointer dereference in
