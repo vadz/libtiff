@@ -1,5 +1,12 @@
 2017-07-15  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: TIFFFillStrip() / TIFFFillTile().
+	Complementary fix for http://bugzilla.maptools.org/show_bug.cgi?id=2708
+	in the isMapped() case, so as to avoid excessive memory allocation
+	when we need a temporary buffer but the file is truncated.
+
+2017-07-15  Even Rouault <even.rouault at spatialys.com>
+
 	* tools/tiff2pdf.c: prevent heap buffer overflow write in "Raw"
 	mode on PlanarConfig=Contig input images.
 	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2715
