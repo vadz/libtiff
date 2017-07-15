@@ -1,5 +1,13 @@
 2017-07-15  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_read.c: add protection against excessive memory
+	allocation attempts in TIFFReadDirEntryArray() on short files.
+	Effective for mmap'ed case. And non-mmap'ed case, but restricted
+	to 64bit builds.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2675
+
+2017-07-15  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_read.c: in TIFFFetchStripThing(), only grow the
 	arrays that hold StripOffsets/StripByteCounts, when they are smaller
 	than the expected number of striles, up to 1 million striles, and
