@@ -1314,7 +1314,7 @@ LogL16InitState(TIFF* tif)
 	}
         if( isTiled(tif) )
             sp->tbuflen = multiply_ms(td->td_tilewidth, td->td_tilelength);
-        else if( td->td_rowsperstrip != (uint32)-1 )
+        else if( td->td_rowsperstrip < td->td_imagelength )
             sp->tbuflen = multiply_ms(td->td_imagewidth, td->td_rowsperstrip);
         else
             sp->tbuflen = multiply_ms(td->td_imagewidth, td->td_imagelength);
@@ -1416,7 +1416,7 @@ LogLuvInitState(TIFF* tif)
 	}
         if( isTiled(tif) )
             sp->tbuflen = multiply_ms(td->td_tilewidth, td->td_tilelength);
-        else if( td->td_rowsperstrip != (uint32)-1 )
+        else if( td->td_rowsperstrip < td->td_imagelength )
             sp->tbuflen = multiply_ms(td->td_imagewidth, td->td_rowsperstrip);
         else
             sp->tbuflen = multiply_ms(td->td_imagewidth, td->td_imagelength);
