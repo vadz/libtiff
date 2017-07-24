@@ -1,5 +1,17 @@
 2017-07-24  Even Rouault <even.rouault at spatialys.com>
 
+	* libtiff/tif_getimage.c: fix fromskew computation when to-be-skipped
+	pixel number is not a multiple of the horizontal subsampling, and
+	also in some other cases. Impact putcontig8bitYCbCr44tile,
+	putcontig8bitYCbCr42tile, putcontig8bitYCbCr41tile,
+	putcontig8bitYCbCr21tile and putcontig8bitYCbCr12tile
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2637 (discovered
+	by Agostino Sarubbo)
+	and https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=2691 (credit
+	to OSS Fuzz)
+
+2017-07-24  Even Rouault <even.rouault at spatialys.com>
+
 	* libtiff/tif_getimage.c: gtTileContig() and gtTileSeparate():
 	properly break from loops on error when stoponerr is set, instead
 	of going on iterating on row based loop.
