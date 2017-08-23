@@ -1949,7 +1949,14 @@ TIFFWriteDirectoryTagSubifd(TIFF* tif, uint32* ndir, TIFFDirEntry* dir)
 		for (p=0; p < tif->tif_dir.td_nsubifd; p++)
 		{
                         assert(pa != 0);
-			assert(*pa <= 0xFFFFFFFFUL);
+
+                        /* Could happen if an classicTIFF has a SubIFD of type LONG8 (which is illegal) */
+                        if( *pa > 0xFFFFFFFFUL)
+                        {
+                            TIFFErrorExt(tif->tif_clientdata,module,"Illegal value for SubIFD tag");
+                            _TIFFfree(o);
+                            return(0);
+                        }
 			*pb++=(uint32)(*pa++);
 		}
 		n=TIFFWriteDirectoryTagCheckedIfdArray(tif,ndir,dir,TIFFTAG_SUBIFD,tif->tif_dir.td_nsubifd,o);
