@@ -821,7 +821,12 @@ TIFFWriteDirectorySec(TIFF* tif, int isimage, int imagedone, uint64* pdiroff)
 			TIFFDirEntry* nb;
 			for (na=0, nb=dir; ; na++, nb++)
 			{
-				assert(na<ndir);
+				if( na == ndir )
+                                {
+                                    TIFFErrorExt(tif->tif_clientdata,module,
+                                                 "Cannot find SubIFD tag");
+                                    goto bad;
+                                }
 				if (nb->tdir_tag==TIFFTAG_SUBIFD)
 					break;
 			}
