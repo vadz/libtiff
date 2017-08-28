@@ -746,7 +746,8 @@ TIFFIMAGES = \
 	images/palette-1c-8b.tiff \
 	images/rgb-3c-16b.tiff \
 	images/rgb-3c-8b.tiff \
-	images/quad-tile.jpg.tiff
+	images/quad-tile.jpg.tiff \
+	images/quad-lzw-compat.tiff
 
 PNMIMAGES = \
 	images/minisblack-1c-8b.pgm \
