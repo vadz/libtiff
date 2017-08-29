@@ -1,3 +1,14 @@
+2017-08-29  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jpeg.c: accept reading the last strip of a JPEG compressed
+	file if the codestream height is larger than the truncated height of the
+	strip. Emit a warning in this situation since this is non compliant.
+
+2017-08-28  Even Rouault <even.rouault at spatialys.com>
+
+	* test/Makefile.am: add missing reference to images/quad-lzw-compat.tiff
+	to fix "make distcheck". Patch by Roger Leigh
+
 2017-08-23  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirwrite.c: replace assertion to tag value not fitting
