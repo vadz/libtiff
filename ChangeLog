@@ -1,3 +1,12 @@
+2017-09-27  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tiffiop.h, tif_aux.c: redirect SeekOK() macro to a _TIFFSeekoK()
+	function that checks if the offset is not bigger than INT64_MAX, so as
+	to avoid a -1 error return code of TIFFSeekFile() to match a required
+	seek to UINT64_MAX/-1.
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2726
+	Adapted from proposal by Nicolas Ruff.
+
 2017-08-29  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_jpeg.c: accept reading the last strip of a JPEG compressed

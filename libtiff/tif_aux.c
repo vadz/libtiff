@@ -359,6 +359,13 @@ _TIFFUInt64ToDouble(uint64 ui64)
 	}
 }
 
+int _TIFFSeekOK(TIFF* tif, toff_t off)
+{
+    /* Huge offsets, expecially -1 / UINT64_MAX, can cause issues */
+    /* See http://bugzilla.maptools.org/show_bug.cgi?id=2726 */
+    return off <= (~(uint64)0)/2 && TIFFSeekFile(tif,off,SEEK_SET)==off;
+}
+
 /* vim: set ts=8 sts=8 sw=8 noet: */
 /*
  * Local Variables:
