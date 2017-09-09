@@ -1,4 +1,9 @@
-2017-09-27  Even Rouault <even.rouault at spatialys.com>
+2017-09-09  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_dirread.c: add NULL check to avoid likely false positive
+	null-pointer dereference warning by CLang Static Analyzer.
+
+2017-09-07  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tiffiop.h, tif_aux.c: redirect SeekOK() macro to a _TIFFSeekoK()
 	function that checks if the offset is not bigger than INT64_MAX, so as
