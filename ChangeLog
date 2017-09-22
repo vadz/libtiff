@@ -1,7 +1,7 @@
 2017-09-09  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: add NULL check to avoid likely false positive
-	null-pointer dereference warning by CLang Static Analyzer.
+	null-pointer dereference warning by CLang Static Analyzer. 
 
 2017-09-07  Even Rouault <even.rouault at spatialys.com>
 
