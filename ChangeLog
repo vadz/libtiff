@@ -1,3 +1,8 @@
+2017-09-29  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/libtiff.def: add TIFFReadRGBAStripExt and TIFFReadRGBATileExt
+	Fixes http://bugzilla.maptools.org/show_bug.cgi?id=2735
+
 2017-09-09  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_dirread.c: add NULL check to avoid likely false positive
