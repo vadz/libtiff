@@ -155,7 +155,7 @@ main(int argc, char* argv[])
                     return 4;
                 }
                     
-                if (wc > 1) {
+                if (wc > 1 || TIFFFieldWriteCount(fip) == TIFF_VARIABLE) {
                         int     i, size;
                         void    *array;
 
