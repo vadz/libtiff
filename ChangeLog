@@ -1,3 +1,8 @@
+2017-10-10  Even Rouault <even.rouault at spatialys.com>
+
+	* nmake.opt: support a DEBUG=1 option, so as to adjust OPTFLAGS and use
+	/MDd runtime in debug mode.
+
 2017-10-01  Even Rouault <even.rouault at spatialys.com>
 
 	* tools/tiffset.c: fix setting a single value for the ExtraSamples tag
