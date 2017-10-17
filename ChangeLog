@@ -1,3 +1,9 @@
+2017-10-17  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_jpeg.c: add compatibility with libjpeg-turbo 1.5.2 that
+	honours max_memory_to_use > 0.
+	Cf https://github.com/libjpeg-turbo/libjpeg-turbo/issues/162
+
 2017-10-10  Even Rouault <even.rouault at spatialys.com>
 
 	* nmake.opt: support a DEBUG=1 option, so as to adjust OPTFLAGS and use
