@@ -1,3 +1,10 @@
+2017-10-23  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_getimage.c: avoid floating point division by zero in
+	initCIELabConversion()
+	Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3733
+	Credit to OSS Fuzz
+
 2017-10-17  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_jpeg.c: add compatibility with libjpeg-turbo 1.5.2 that
