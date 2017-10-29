@@ -283,11 +283,10 @@ main(int argc, char* argv[])
 		}
 #if defined(_WIN32) && defined(USE_WIN32_FILEIO)
                 client_data.fh = _get_osfhandle(fileno(in));
-                TIFFSetClientdata(faxTIFF, (thandle_t) client_data.fh);
 #else
                 client_data.fd = fileno(in);
-                TIFFSetClientdata(faxTIFF, (thandle_t) client_data.fd);
 #endif
+                TIFFSetClientdata(faxTIFF, (thandle_t) &client_data);
 		TIFFSetFileName(faxTIFF, (const char*)argv[optind]);
 		TIFFSetField(out, TIFFTAG_IMAGEWIDTH, xsize);
 		TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 1);

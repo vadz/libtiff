@@ -1,3 +1,11 @@
+2017-10-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/fax2tiff.c (_FAX_Client_Data): Pass FAX_Client_Data as the
+	client data.  This client data is not used at all at the moment,
+	but it makes the most sense.  Issue that the value of
+	client_data.fd was passed where a pointer is expected was reported
+	via email by Gerald Schade on Sun, 29 Oct 2017.
+
 2017-10-23  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_getimage.c: avoid floating point division by zero in
