@@ -1,5 +1,9 @@
 2017-10-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* tools/tiff2pdf.c (t2p_sample_realize_palette): Fix possible
+	arithmetic overflow in bounds checking code and eliminate
+	comparison between signed and unsigned type.
+
 	* tools/fax2tiff.c (_FAX_Client_Data): Pass FAX_Client_Data as the
 	client data.  This client data is not used at all at the moment,
 	but it makes the most sense.  Issue that the value of

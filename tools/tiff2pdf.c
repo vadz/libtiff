@@ -3660,11 +3660,15 @@ tsize_t t2p_sample_realize_palette(T2P* t2p, unsigned char* buffer){
 	uint32 sample_offset=0;
 	uint32 i=0;
 	uint32 j=0;
+        size_t data_size;
 	sample_count=t2p->tiff_width*t2p->tiff_length;
 	component_count=t2p->tiff_samplesperpixel;
-        if( sample_count * component_count > t2p->tiff_datasize )
+        data_size=TIFFSafeMultiply(size_t,sample_count,component_count);
+        if( (data_size == 0U) || (t2p->tiff_datasize < 0) ||
+            (data_size > (size_t) t2p->tiff_datasize) )
         {
-            TIFFError(TIFF2PDF_MODULE,  "Error: sample_count * component_count > t2p->tiff_datasize");
+            TIFFError(TIFF2PDF_MODULE,
+                      "Error: sample_count * component_count > t2p->tiff_datasize");
             t2p->t2p_error = T2P_ERR_ERROR;
             return 1;
         }
