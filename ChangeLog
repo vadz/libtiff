@@ -1,3 +1,10 @@
+2017-11-01  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2bw.c (main): Free memory allocated in the tiff2bw
+	program.  This is in response to the report associated with
+	CVE-2017-16232 but does not solve the extremely high memory usage
+	with the associated POC file.
+
 2017-10-29  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* tools/tiff2pdf.c (t2p_sample_realize_palette): Fix possible
