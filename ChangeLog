@@ -1,3 +1,8 @@
+2017-11-17  Even Rouault <even.rouault at spatialys.com>
+
+	* libtiff/tif_aux.c, tif_getimage.c, tif_read.c: typo fixes in
+	comments.
+
 2017-11-02  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
 	* test/Makefile.am: Add some tests for tiff2bw.

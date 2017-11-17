@@ -544,7 +544,7 @@ TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 
 /* Variant of TIFFReadEncodedStrip() that does 
  * * if *buf == NULL, *buf = _TIFFmalloc(bufsizetoalloc) only after TIFFFillStrip() has
- *   suceeded. This avoid excessive memory allocation in case of truncated
+ *   succeeded. This avoid excessive memory allocation in case of truncated
  *   file.
  * * calls regular TIFFReadEncodedStrip() if *buf != NULL
  */
@@ -1019,7 +1019,7 @@ TIFFReadEncodedTile(TIFF* tif, uint32 tile, void* buf, tmsize_t size)
 
 /* Variant of TIFFReadTile() that does 
  * * if *buf == NULL, *buf = _TIFFmalloc(bufsizetoalloc) only after TIFFFillTile() has
- *   suceeded. This avoid excessive memory allocation in case of truncated
+ *   succeeded. This avoid excessive memory allocation in case of truncated
  *   file.
  * * calls regular TIFFReadEncodedTile() if *buf != NULL
  */
@@ -1038,7 +1038,7 @@ _TIFFReadTileAndAllocBuffer(TIFF* tif,
 
 /* Variant of TIFFReadEncodedTile() that does 
  * * if *buf == NULL, *buf = _TIFFmalloc(bufsizetoalloc) only after TIFFFillTile() has
- *   suceeded. This avoid excessive memory allocation in case of truncated
+ *   succeeded. This avoid excessive memory allocation in case of truncated
  *   file.
  * * calls regular TIFFReadEncodedTile() if *buf != NULL
  */

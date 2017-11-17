@@ -138,7 +138,7 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 			/*
 			 * TODO: if at all meaningful and useful, make more complete
 			 * support check here, or better still, refactor to let supporting
-			 * code decide whether there is support and what meaningfull
+			 * code decide whether there is support and what meaningful
 			 * error to return
 			 */
 			break;
@@ -416,7 +416,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			/*
 			 * TODO: if at all meaningful and useful, make more complete
 			 * support check here, or better still, refactor to let supporting
-			 * code decide whether there is support and what meaningfull
+			 * code decide whether there is support and what meaningful
 			 * error to return
 			 */
 			break;
