@@ -1,3 +1,8 @@
+2017-11-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* html/v4.0.9.html: Add HTML file to document changes in libtiff
+	v4.0.9.
+
 2017-11-17  Even Rouault <even.rouault at spatialys.com>
 
 	* libtiff/tif_aux.c, tif_getimage.c, tif_read.c: typo fixes in
@@ -351,7 +356,7 @@
 	one to opt in to having a branch built on Windows with Cygwin,
 	MinGW and MSVC automatically when a branch is pushed to GitHub,
 	GitLab, BitBucket or any other supported git hosting service.
-	
+
 	* CMakeLists.txt, test/CMakeLists.txt, test/TiffTestCommon.cmake: apply
 	patch 0001-cmake-Improve-Cygwin-and-MingGW-test-support.patch from Roger
 	Leigh (sent to mailing list on 2017-06-08)
