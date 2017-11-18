@@ -1,5 +1,7 @@
 2017-11-18  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
 
+	* configure.ac: libtiff 4.0.9 released.
+
 	* html/v4.0.9.html: Add HTML file to document changes in libtiff
 	v4.0.9.
 
