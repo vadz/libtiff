@@ -113,7 +113,7 @@ Notes on releasing.
     ftp.remotesensing.org ftp site.
 
       scp tiff-*.tar.gz tiff-*.zip \
-    	 warmerdam@upload.osgeo.org:/osgeo/download/libtiff
+    	 bfriesen@upload.osgeo.org:/osgeo/download/libtiff
 
 16. Announce to list, tiff@lists.maptools.org
 
